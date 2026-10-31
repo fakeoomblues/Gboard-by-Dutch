@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.1.0**
+**Ontwikkelbundel: 1.2.0-dev.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 

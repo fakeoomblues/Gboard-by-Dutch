@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/fefcb2ec0d0e4d654c04e92d7e757051fc5abe59/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.2.0-dev.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [fefcb2ec0d0e](https://github.com/johninnl/nl-morphe-patches/commit/fefcb2ec0d0e4d654c04e92d7e757051fc5abe59). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.2.0-dev.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.1.0...v1.2.0-dev.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **ED:** remove embedded consent and vacancy promotions ([ee6c003](https://github.com/johninnl/nl-morphe-patches/commit/ee6c003e11cdf67560a9fb1d9d8f5ab98510b419))
+* **release:** advertise the dev bundle to Morphe sources ([b8c6719](https://github.com/johninnl/nl-morphe-patches/commit/b8c6719b7d0aadb8b51075fed677f7c3daacaebe))
+* **release:** exclude released changes from dev announcements ([fefcb2e](https://github.com/johninnl/nl-morphe-patches/commit/fefcb2ec0d0e4d654c04e92d7e757051fc5abe59))
+* **release:** publish dev bundles through Morphe discovery ([37ed1f6](https://github.com/johninnl/nl-morphe-patches/commit/37ed1f6f0f3eaff72972aa6823c6758932e29a07))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/eb2db87b8deec9f04bc3e5cffd648d4c90690095/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.1.0.**
