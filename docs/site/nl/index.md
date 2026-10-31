@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Patchbundel: 1.2.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Patchbundel: 1.3.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -170,7 +170,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="de tijd mobi.inthepocket.mediafin.detijd 5.6.1 disable tracking hide mijn tijd (expert) hide premium banner hide ads read full articles skip consent screens skip onboarding" markdown>
+<article class="dap-app-card" data-category="news" data-search="de tijd mobi.inthepocket.mediafin.detijd 5.6.1 disable tracking hide mijn tijd (expert) hide premium banner hide ads hide newspaper shortcut read full articles skip consent screens skip onboarding" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [De Tijd](apps/detijd.md)
@@ -178,12 +178,13 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">5.6.1</span></p>
 <p class="dap-app-card__package">mobi.inthepocket.mediafin.detijd</p>
 <details class="dap-app-card__patches">
-<summary>7 patches</summary>
+<summary>8 patches</summary>
 <ul>
 <li>Disable tracking <span class="dap-app-card__target">5.6.1</span></li>
 <li>Hide Mijn Tijd (expert) <span class="dap-app-card__target">5.6.1 · standaard uit</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">5.6.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">5.6.1</span></li>
+<li>Hide newspaper shortcut <span class="dap-app-card__target">5.6.1</span></li>
 <li>Read full articles <span class="dap-app-card__target">5.6.1</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">5.6.1</span></li>
 <li>Skip onboarding <span class="dap-app-card__target">5.6.1</span></li>

@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.2.2](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.2.2)** · 40 apps · 168 patches
+**Patch bundle [v1.3.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.3.0)** · 40 apps · 169 patches
 
 ### Weather
 
@@ -59,7 +59,7 @@ it does not guarantee anonymity or remove all network traffic.
 | [AD](https://johninnl.github.io/nl-morphe-patches/apps/ad/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 5 |
 | [Bright](https://johninnl.github.io/nl-morphe-patches/apps/bright/) | Ads · Tracking · Prompts · Articles | 10.181.0 | APKS | 4 |
 | [De Morgen](https://johninnl.github.io/nl-morphe-patches/apps/demorgen/) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
-| [De Tijd](https://johninnl.github.io/nl-morphe-patches/apps/detijd/) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 7 |
+| [De Tijd](https://johninnl.github.io/nl-morphe-patches/apps/detijd/) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 8 |
 | [DS Nieuws](https://johninnl.github.io/nl-morphe-patches/apps/dsnieuws/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [ED](https://johninnl.github.io/nl-morphe-patches/apps/ed/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [FTM](https://johninnl.github.io/nl-morphe-patches/apps/ftm/) | Ads · Tracking · Prompts · Articles | 2.6.8 | APKS | 5 |

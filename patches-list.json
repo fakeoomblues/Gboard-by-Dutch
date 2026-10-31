@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -3867,6 +3867,40 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide newspaper shortcut",
+      "description": "Removes the Krant card from Meer while preserving Puzzles, Videos and Podcasts.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "mobi.inthepocket.mediafin.detijd",
+          "name": "De Tijd",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "33b358dd130e12ea84e7231f191e7d94194c797226522237063da6396a0d3b9f"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.6.1",
+              "versionCodes": {
+                "ARM64_V8A": 5060100,
+                "ARMEABI_V7A": 5060100,
+                "X86_64": 5060100,
+                "X86": 5060100
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]

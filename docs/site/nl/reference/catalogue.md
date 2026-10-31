@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.2.2**
+**Patchbundel: 1.3.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -98,6 +98,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide Mijn Tijd (expert) | Uit | 5.6.1 |
 | Hide Premium banner | Aan | 5.6.1 |
 | Hide ads | Aan | 5.6.1 |
+| Hide newspaper shortcut | Aan | 5.6.1 |
 | Read full articles | Aan | 5.6.1 |
 | Skip consent screens | Aan | 5.6.1 |
 | Skip onboarding | Aan | 5.6.1 |

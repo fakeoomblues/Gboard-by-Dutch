@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.2.2**
+**Patch bundle: 1.3.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -98,6 +98,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Mijn Tijd (expert) | Off | 5.6.1 |
 | Hide Premium banner | On | 5.6.1 |
 | Hide ads | On | 5.6.1 |
+| Hide newspaper shortcut | On | 5.6.1 |
 | Read full articles | On | 5.6.1 |
 | Skip consent screens | On | 5.6.1 |
 | Skip onboarding | On | 5.6.1 |

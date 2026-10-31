@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ff9d59cfca1179648bd4e41ffdf138c34028a753/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.3.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [ff9d59cfca11](https://github.com/johninnl/nl-morphe-patches/commit/ff9d59cfca1179648bd4e41ffdf138c34028a753). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.3.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.2.2...v1.3.0) (2026-10-31)
+
+### ✨ New Features
+
+* **De Tijd:** hide the Krant shortcut from Meer ([b49182e](https://github.com/johninnl/nl-morphe-patches/commit/b49182e891451a4477a7a959eb2995eb1f06735f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/93a1c0518f8c54acef3793544b85fcff8c1607c3/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.2.2.**
