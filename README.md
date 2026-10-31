@@ -5,6 +5,14 @@
   </picture>
 </p>
 
+<p align="center">
+  <a href="https://morphe.software/add-source?github=johninnl/nl-morphe-patches">
+    <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" width="320">
+  </a>
+</p>
+
+<p align="center">Open the button on your Android device to add this patch source to Morphe Manager.</p>
+
 # Dutch App Patches
 
 Community patches for Dutch Android apps, compatible with Morphe. Choose which
@@ -21,9 +29,9 @@ All app targets listed below belong to the production patch set.
 
 1. Install [Morphe Manager](https://morphe.software/).
 2. Check your app's guide for the supported version and original download.
-3. Add `johninnl/nl-morphe-patches` as a source in Manager, choose your patches
-   and apply them to the original app file. The source needs a published bundle
-   before Manager can download patches.
+3. Open [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches)
+   on your Android device, then choose your patches in Manager and apply them
+   to the original app file.
 
 The [installation guide](docs/site/en/guides/install.md) explains updates and
 signing. Some patches change notifications or other app features; review the
