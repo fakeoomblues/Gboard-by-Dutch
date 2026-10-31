@@ -36,7 +36,7 @@ APPS = {
         "Hide ads": [], "Disable tracking": ["Hide ads"],
         "Skip consent screens": ["Disable tracking", "Hide ads"],
         "Hide Premium banner": [],
-    } for app in ("nieuwsblad", "dsnieuws", "hbvl")},
+    } for app in ("nieuwsblad", "dsnieuws", "hbvl", "gva")},
     "tvgids": {"Hide ads": [], "Disable tracking": ["Hide ads"],
                "Skip consent screens": ["Disable tracking", "Hide ads"]},
     "marktplaats": {"Hide ads": [], "Disable tracking": ["Hide ads"], "Disable ThreatMetrix": [], "Skip consent screens": ["Disable tracking", "Hide ads"], "Google sign-in via microG-Re": []},
@@ -178,7 +178,7 @@ def verifier_command(app: str, destination: Path, effective: set[str], apk: Path
                 raise ValueError("KIJK validation needs the original APK for payload checks")
             command += ["--original-apk", str(original_input), "--patched-apk", str(apk)]
         return command
-    if app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
+    if app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "gva", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
         command = [sys.executable, f"tests/verify_{app}.py", str(destination)]
     else:
         command = [sys.executable, "tests/verify_targets.py", app, str(destination)]

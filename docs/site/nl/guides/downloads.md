@@ -17,6 +17,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Dumpert](../apps/dumpert.md) | 5.8.0 / 22001778 | [APKS](https://buzzheavier.com/nh0wyw185itn) |
 | [FTM](../apps/ftm.md) | 2.6.8 / 58 | [APKS](https://buzzheavier.com/2cv2n5bgc3tn) |
 | [Flitsmeister](../apps/flitsmeister.md) | 14.17 / 1287 | [APKS](https://buzzheavier.com/87mpz44q4p8h) |
+| [GVA](../apps/gva.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/1thesia58zm2) |
 | [HBVL](../apps/hbvl.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/7lz3azzelidy) |
 | [HLN](../apps/hln.md) | 9.22.0 / 2009220000 | [APKS](https://buzzheavier.com/0p35mq8c5mu7) |
 | [Humo](../apps/humo.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/fe1uzx562ngl) |

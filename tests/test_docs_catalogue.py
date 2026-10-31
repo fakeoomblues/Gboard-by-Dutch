@@ -72,6 +72,9 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_gva_links_to_its_news_guide(self):
+        self.assertEqual(self.module.app_page({'packageName': 'be.concentra.gva.MediaApp'}), ('gva', 'news'))
+
     def test_release_commits_every_generated_catalogue_page(self):
         config = json.loads((ROOT / '.releaserc').read_text())
         assets = next(plugin[1]['assets'] for plugin in config['plugins']

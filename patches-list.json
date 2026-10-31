@@ -567,6 +567,40 @@
       "category": null,
       "compatiblePackages": [
         {
+          "packageName": "be.concentra.gva.MediaApp",
+          "name": "GVA",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "97b1b643443572a7830acef8649525aee79fa9a5d882b97fc516f01f7067b749"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
+      "description": "Stops inventoried native and embedded-reader measurement, remote logging and advertising identifiers while preserving push and account functions.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
           "packageName": "be.concentra.hbvl.MediaApp",
           "name": "HBVL",
           "description": null,
@@ -2011,6 +2045,40 @@
       "category": null,
       "compatiblePackages": [
         {
+          "packageName": "be.concentra.gva.MediaApp",
+          "name": "GVA",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "97b1b643443572a7830acef8649525aee79fa9a5d882b97fc516f01f7067b749"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide Premium banner",
+      "description": "Hides publisher paywall cards and subscription buttons without changing server article access, account entitlements or billing.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
           "packageName": "be.concentra.hbvl.MediaApp",
           "name": "HBVL",
           "description": null,
@@ -2815,6 +2883,40 @@
                 "ARMEABI_V7A": 58,
                 "X86_64": 58,
                 "X86": 58
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads",
+      "description": "Suppresses Kaching advertising, sponsored publisher groups and identified Shop and NYT promotion cards.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.concentra.gva.MediaApp",
+          "name": "GVA",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "97b1b643443572a7830acef8649525aee79fa9a5d882b97fc516f01f7067b749"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
               },
               "isExperimental": false,
               "minSdk": 32,
@@ -4594,6 +4696,40 @@
                 "ARMEABI_V7A": 58,
                 "X86_64": 58,
                 "X86": 58
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip consent screens",
+      "description": "Skips automatic consent and PayOrOk screens and persists normal onboarding completion without recording consent.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.concentra.gva.MediaApp",
+          "name": "GVA",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "97b1b643443572a7830acef8649525aee79fa9a5d882b97fc516f01f7067b749"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
               },
               "isExperimental": false,
               "minSdk": 32,

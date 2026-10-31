@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">38 apps</span> · Patchbundel: 1.0.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">39 apps</span> · Patchbundel: 1.0.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -277,6 +277,27 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/ftm.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="news" data-search="gva be.concentra.gva.mediaapp 22.0.0 disable tracking hide premium banner hide ads skip consent screens" markdown>
+<p class="dap-app-card__category">Nieuws en lezen</p>
+
+### [GVA](apps/gva.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">22.0.0</span></p>
+<p class="dap-app-card__package">be.concentra.gva.MediaApp</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">22.0.0</span></li>
+<li>Hide Premium banner <span class="dap-app-card__target">22.0.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">22.0.0</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">22.0.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/gva.md){ .dap-app-card__link }
 
 </article>
 

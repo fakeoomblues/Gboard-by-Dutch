@@ -102,6 +102,12 @@ class InputStagingTests(unittest.TestCase):
 
 
 class TargetRoutingTests(unittest.TestCase):
+    def test_gva_uses_mediahuis_controls_and_its_own_verifier(self):
+        self.assertEqual(validator.APPS.get('gva'), validator.APPS['hbvl'])
+        self.assertEqual(
+            validator.verifier_command('gva', Path('decoded'), {'Hide ads'}),
+            [sys.executable, 'tests/verify_gva.py', 'decoded', '-e', 'Hide ads'])
+
     def test_west_privacy_controls_and_bound_apk_verifier(self):
         self.assertEqual(validator.APPS.get('west'), {
             'Hide ads': [], 'Disable tracking': ['Hide ads'],

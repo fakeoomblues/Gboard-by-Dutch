@@ -10,6 +10,7 @@ Choose an app to see its patches, defaults and supported original file.
 | [De Tijd](../detijd.md) | 5.6.1 | 5060100 |
 | [DS Nieuws](../dsnieuws.md) | 22.0.0 | 2012316104 |
 | [FTM](../ftm.md) | 2.6.8 | 58 |
+| [GVA](../gva.md) | 22.0.0 | 2012316104 |
 | [HBVL](../hbvl.md) | 22.0.0 | 2012316104 |
 | [HLN](../hln.md) | 9.22.0 | 2009220000 |
 | [Humo](../humo.md) | 7.53.1 | 23136515 |

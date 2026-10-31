@@ -20,6 +20,7 @@ APP_PAGES = {
     'com.twipemobile.nbmobile': ('nieuwsblad', 'news'),
     'com.twipemobile.dsmobile': ('dsnieuws', 'news'),
     'be.concentra.hbvl.MediaApp': ('hbvl', 'news'),
+    'be.concentra.gva.MediaApp': ('gva', 'news'),
     'com.mecom.tctubantia.nl': ('tubantia', 'news'),
     'com.talpa.kijk': ('kijk-android-tv', 'entertainment'),
     'nl.sbs.kijk': ('kijk', 'entertainment'),

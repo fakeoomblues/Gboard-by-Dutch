@@ -156,6 +156,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
 
+## GVA
+
+[Wat veranderen de patches?](../apps/gva.md)
+
+`be.concentra.gva.MediaApp`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 22.0.0 |
+| Hide Premium banner | Aan | 22.0.0 |
+| Hide ads | Aan | 22.0.0 |
+| Skip consent screens | Aan | 22.0.0 |
+
 ## HBVL
 
 [Wat veranderen de patches?](../apps/hbvl.md)
