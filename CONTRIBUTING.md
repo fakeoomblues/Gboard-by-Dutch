@@ -45,6 +45,12 @@ with its expected branch and version to reject stale manifests, wrong-channel
 downloads, signing-key changes or incomplete uploads. Promote to `main` only
 after the requested user confirmation.
 
+Dev announcements exclude commits reachable from earlier stable or dev release
+tags. Promoting one app from a combined commit must not announce that app again
+in the next dev build. The release-note guard rejects replayed commits and keeps
+explicit shared-change app scopes mandatory. Archived changelog history remains
+available separately from each release announcement.
+
 ## Write for users
 
 Keep Dutch and English app pages aligned. Describe each patch's visible effect,

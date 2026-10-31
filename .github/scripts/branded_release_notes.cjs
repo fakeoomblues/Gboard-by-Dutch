@@ -64,6 +64,16 @@ function git(context, ...args) {
   return execFileSync("git", args, {cwd: context.cwd, env: context.env, encoding: "utf8", maxBuffer: 16 * 1024 * 1024}).trim();
 }
 
+function unreleasedCommitHashes(context) {
+  if (context.branch?.name !== "dev" && context.branch?.type !== "prerelease") return null;
+  const semver = require("semver");
+  const head = context.nextRelease.gitHead;
+  const tags = git(context, "tag", "--merged", head).split("\n")
+    .filter(tag => semver.valid(tag));
+  const hashes = git(context, "rev-list", head, ...(tags.length ? ["--not", ...tags] : []));
+  return new Set(hashes.split("\n").filter(Boolean));
+}
+
 // Every public bullet is scoped: Morphe treats unscoped quoted patch names
 // such as `Hide ads` as applicable to every app carrying that patch name.
 // Explicit trailers cover changes to shared code and scopes naming multiple apps.
@@ -78,15 +88,20 @@ function appImpact(context) {
     if (names.length) apps.set(file.slice(root.length).split("/")[0], names);
   }
   const base = context.lastRelease.gitTag;
-  const changed = base ? git(context, "diff", "--name-only", base, head).split("\n") : git(context, "ls-tree", "-r", "--name-only", head).split("\n");
+  const unreleased = unreleasedCommitHashes(context);
+  const freshFiles = unreleased && new Set([...unreleased].flatMap(hash =>
+    git(context, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "-m", "--first-parent", hash).split("\n")));
+  const changed = (base ? git(context, "diff", "--name-only", base, head).split("\n") : git(context, "ls-tree", "-r", "--name-only", head).split("\n"))
+    .filter(file => !freshFiles || freshFiles.has(file));
   const namesFor = files => [...new Set(files.filter(file => file.startsWith(root))
     .flatMap(file => apps.get(file.slice(root.length).split("/")[0]) || []))];
-  return {apps, changed, namesFor, affected: namesFor(changed)};
+  return {apps, changed, namesFor, affected: namesFor(changed), unreleased};
 }
 
 function scopeCommits(commits, context) {
   const impact = context && appImpact(context);
   return commits.flatMap(commit => {
+    if (impact?.unreleased && !impact.unreleased.has(commit.hash)) return [];
     const match = /^(\w+)(?:\(([^)]+)\))?(!?): (.*)/.exec(commit.message);
     if (!match) return [commit];
     const apps = /^Release-Apps: (.+)$/mi.exec(commit.message)?.[1].split(",").map(app => app.trim());
@@ -98,10 +113,15 @@ function scopeCommits(commits, context) {
     // Do not advertise those controls a second time.
     if (impact && impact.namesFor(files).length && !inferred.length &&
         !relevant.some(file => file.startsWith("patches/src/main/kotlin/patches/shared/") || file.startsWith("extensions/"))) return [];
-    const scopes = apps || (inferred.length ? inferred : [match[2] || "General"]);
+    const shared = relevant.some(file => file.startsWith("patches/src/main/kotlin/patches/shared/") || file.startsWith("extensions/"));
+    const direct = impact?.namesFor(files) || [];
+    const declared = apps && impact && !shared
+      ? apps.filter(app => !direct.includes(app) || inferred.includes(app)) : apps;
+    if (apps?.length && declared && !declared.length && inferred.length) throw new Error("Release-Apps omits the remaining changed apps");
+    const scopes = declared || (inferred.length ? inferred : [match[2] || "General"]);
     if (scopes.some(scope => !/^[\p{L}\p{N}][\p{L}\p{N} ._&/-]*$/u.test(scope))) throw new Error("Invalid Release-Apps scope");
     return [...new Set(scopes)].map(scope => ({...commit, message: commit.message.replace(match[0], `${match[1]}(${scope})${match[3]}: ${match[4]}`)}));
   });
 }
 
-module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact };
+module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact, unreleasedCommitHashes };

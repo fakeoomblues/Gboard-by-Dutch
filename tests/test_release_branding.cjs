@@ -231,6 +231,70 @@ test("multi-app notes use one explicit Morphe scope per app", () => {
   ]);
 });
 
+function partialPromotion(run) {
+  return releaseRepository(({dir, git, commit}) => {
+    const files = Object.fromEntries(['A', 'B'].map(name => [name, `patches/src/main/kotlin/patches/${name.toLowerCase()}/Compatibility.kt`]));
+    const write = (name, revision) => {
+      const file = path.join(dir, files[name]); fs.mkdirSync(path.dirname(file), {recursive: true});
+      fs.writeFileSync(file, `val app = Compatibility(name = "${name}", packageName = "example.${name}")\n// ${revision}\n`);
+    };
+    write('A', 'old'); write('B', 'old'); git('add', '.'); commit('feat: baseline'); git('tag', 'v1.0.0');
+    git('switch', '-c', 'dev'); write('A', 'new'); write('B', 'new'); git('add', '.');
+    const message = 'feat: add both controls\n\nRelease-Apps: A, B'; const combined = commit(message); git('tag', 'v1.1.0-dev.1');
+    write('B', 'fixed'); git('add', '.'); const fixMessage = 'fix(B): repair the remaining control'; const fix = commit(fixMessage);
+    git('switch', 'main'); write('A', 'new'); git('add', '.'); const stable = commit('feat(A): approved control'); git('tag', 'v1.1.0');
+    git('switch', 'dev'); git('merge', '--no-edit', 'main');
+    const ctx = context('1.2.0-dev.1'); ctx.cwd = dir; ctx.branch = {name: 'dev', type: 'prerelease'};
+    ctx.lastRelease = {version: '1.1.0', gitTag: 'v1.1.0', gitHead: stable};
+    ctx.nextRelease.gitHead = git('rev-parse', 'HEAD');
+    ctx.commits = [{hash: combined, message}, {hash: fix, message: fixMessage}];
+    return run({ctx, combined, fix, git, write, commit});
+  });
+}
+
+test('partial promotion announces only the app still changed for stable', () => partialPromotion(({ctx, combined}) => {
+  ctx.branch = {name: 'main', type: 'release'};
+  const notes = plugin().scopeCommits(ctx.commits.filter(c => c.hash === combined), ctx);
+  assert.deepEqual(notes.map(c => c.message.split('\n')[0]), ['feat(B): add both controls']);
+}));
+
+test('dev notes exclude commits already in any published ancestor release', () => partialPromotion(({ctx, combined, fix, git, write, commit}) => {
+  const notes = plugin().scopeCommits(ctx.commits, ctx);
+  assert.deepEqual(notes.map(c => c.hash), [fix]);
+  const guard = require('../.github/scripts/verify_release_notes.cjs');
+  const header = '## [1.2.0-dev.1](https://github.com/test/repo/compare/v1.1.0...v1.2.0-dev.1)\n\n';
+  const bullet = hash => `* **B:** repair ([${hash.slice(0, 7)}](https://github.com/test/repo/commit/${hash}))\n`;
+  ctx.nextRelease.notes = header + bullet(fix);
+  assert.doesNotThrow(() => guard.verifyNotes(ctx));
+  ctx.nextRelease.notes += bullet(combined);
+  assert.throws(() => guard.verifyNotes(ctx), /replayed|previously released|outside/);
+  const publishedHead = ctx.nextRelease.gitHead;
+  git('tag', 'v1.2.0-dev.1');
+  assert.deepEqual(plugin().scopeCommits(ctx.commits, ctx), [], 'An existing release tag cannot be announced again');
+  write('B', 'next fix'); git('add', '.'); const next = commit('fix(B): next dev correction');
+  ctx.lastRelease = {version: '1.2.0-dev.1', gitTag: 'v1.2.0-dev.1', gitHead: publishedHead};
+  ctx.nextRelease = {version: '1.2.0-dev.2', gitTag: 'v1.2.0-dev.2', gitHead: next};
+  ctx.commits.push({hash: next, message: 'fix(B): next dev correction'});
+  assert.deepEqual(plugin().scopeCommits(ctx.commits, ctx).map(c => c.hash), [next]);
+  ctx.nextRelease.notes = '## [1.2.0-dev.2](https://github.com/test/repo/compare/v1.2.0-dev.1...v1.2.0-dev.2)\n\n' + bullet(next);
+  assert.doesNotThrow(() => guard.verifyNotes(ctx));
+  ctx.nextRelease.notes += bullet(fix);
+  assert.throws(() => guard.verifyNotes(ctx), /replayed|previously released|outside/);
+}));
+
+test('new source changes made during a merge still require an app scope', () => partialPromotion(({ctx, git, write}) => {
+  const published = ctx.nextRelease.gitHead; git('tag', 'v1.2.0-dev.1');
+  ctx.lastRelease = {version:'1.2.0-dev.1', gitTag:'v1.2.0-dev.1', gitHead:published};
+  write('A', 'new merge resolution'); git('add', '.');
+  const tree = git('write-tree');
+  const merged = git('commit-tree', tree, '-p', published, '-p', git('rev-parse', 'v1.1.0'), '-m', 'Merge with a new source resolution');
+  git('update-ref', 'HEAD', merged);
+  ctx.nextRelease = {version:'1.2.0-dev.2',gitTag:'v1.2.0-dev.2',gitHead:merged};
+  ctx.commits = [];
+  ctx.nextRelease.notes = '## [1.2.0-dev.2](https://github.com/test/repo/compare/v1.2.0-dev.1...v1.2.0-dev.2)\n\n';
+  assert.throws(() => require('../.github/scripts/verify_release_notes.cjs').verifyNotes(ctx), /Missing release notes scope.*A/);
+}));
+
 test("unscoped general notes cannot match common quoted patch names in Morphe", () => {
   const [commit] = plugin().scopeCommits([{hash: source, message: "fix: correct `Hide ads` reporting"}]);
   assert.equal(commit.message, "fix(General): correct `Hide ads` reporting");

@@ -1,7 +1,7 @@
 "use strict";
 
 const {execFileSync} = require("node:child_process");
-const {appImpact} = require("./branded_release_notes.cjs");
+const {appImpact, unreleasedCommitHashes} = require("./branded_release_notes.cjs");
 const ROOT = "patches/src/main/kotlin/patches/";
 const compact = value => value.replace(/[^\p{L}\p{N}]/gu, "").toLowerCase();
 
@@ -14,10 +14,11 @@ function verifyNotes(context) {
     throw new Error(`Release notes must compare against the preceding release ${base}`);
   }
   const range = base ? `${base}..${head}` : head;
-  const commits = new Set(git("log", "--no-merges", "--format=%H", range).split("\n").filter(Boolean));
+  const unreleased = unreleasedCommitHashes(context);
+  const commits = new Set(git("log", "--no-merges", "--format=%H", range).split("\n").filter(hash => hash && (!unreleased || unreleased.has(hash))));
   for (const line of notes.split("\n").filter(line => /^\* /.test(line))) {
     const hash = /\/commit\/([a-f0-9]{40,64})/.exec(line)?.[1];
-    if (!hash || !commits.has(hash)) throw new Error("Release notes contain a replayed commit outside the release range");
+    if (!hash || !commits.has(hash)) throw new Error("Release notes contain a replayed or previously released commit outside the candidate changes");
     if (!/^\* \*\*[^*]+:\*\*/.test(line)) throw new Error("Every release bullet needs an explicit app or General scope");
   }
 
