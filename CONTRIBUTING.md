@@ -2,7 +2,7 @@
 
 Prepare changes for `main`. Use conventional commit messages such as
 `feat(app): ...`, `fix(app): ...` and `docs: ...`. Release automation publishes
-production bundles from `main`. All current app targets belong to that release.
+production bundles from `main` and development prereleases from `dev`. All current app targets belong to that release.
 Do not manually publish versions or edit generated release metadata.
 
 Keep each patch restricted to its declared app versions and form factor. Fail
@@ -33,14 +33,17 @@ and `python3 scripts/check_docs_site.py` to validate documentation.
 Keep stable publication on `main`. For a dev prerelease, publish the signed
 bundle and the generated `patches-bundle.json` on `dev`; its version and
 `download_url` must identify the same prerelease asset. Morphe reads the branch
-manifest when selecting a source channel. Marking a GitHub release as a
-prerelease does not update that manifest.
+manifest when selecting a source channel. The `dev` release workflow generates and commits that manifest with the signed
+bundle. Marking a GitHub release as a prerelease alone does not update it.
 
 Before reporting a dev build available in Manager, fetch the public raw
 `dev/patches-bundle.json`, follow its download URL, verify the repository signing
 key and bundle version, and check that the new apps are present. Confirm that
 `main/patches-bundle.json` and GitHub's latest stable release remain unchanged.
-Promote to `main` only after the requested user confirmation.
+The release workflow runs `node .github/scripts/verify_release_discovery.cjs`
+with its expected branch and version to reject stale manifests, wrong-channel
+downloads, signing-key changes or incomplete uploads. Promote to `main` only
+after the requested user confirmation.
 
 ## Write for users
 
@@ -64,8 +67,7 @@ Configure GitHub Packages access and the build secrets before enabling
 releases. Set `JOHNINNL_RELEASE_TOKEN` to a token owned by `johninnl`; checkout
 and publishing require it. Use `MORPHE_SIGNING_KEY` for bundle signing and
 retain its public key. Keep the map and Bright build inputs in their Actions
-secrets. Enable GitHub Pages with Actions. This repository uses a single
-production branch, `main`.
+secrets. Enable GitHub Pages with Actions. This repository uses `main` for production and `dev` for prereleases.
 
 The first release creates `patches-bundle.json`; no download manifest is
 supplied for an artifact that has not been published. Start `main` with the

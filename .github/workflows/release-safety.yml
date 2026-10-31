@@ -28,7 +28,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Test release notes and Morphe app scopes
-        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs
+        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs
       - name: Validate candidate release notes against source changes
         run: node .github/scripts/preview_release_notes.cjs
       - uses: actions/upload-artifact@v7

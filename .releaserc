@@ -1,6 +1,11 @@
 {
   "branches": [
-    "main"
+    "main",
+    {
+      "name": "dev",
+      "prerelease": "dev",
+      "channel": "dev"
+    }
   ],
   "plugins": [
     [
@@ -39,22 +44,22 @@
           "types": [
             {
               "type": "fix",
-              "section": "🐛 Bug Fixes",
+              "section": "\ud83d\udc1b Bug Fixes",
               "hidden": false
             },
             {
               "type": "feat",
-              "section": "✨ New Features",
+              "section": "\u2728 New Features",
               "hidden": false
             },
             {
               "type": "bump",
-              "section": "🚀 Updated App Support",
+              "section": "\ud83d\ude80 Updated App Support",
               "hidden": false
             },
             {
               "type": "perf",
-              "section": "🔧 Improvements",
+              "section": "\ud83d\udd27 Improvements",
               "hidden": false
             },
             {

@@ -3,12 +3,12 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   release:
     name: Release
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     permissions:
       contents: write
       packages: write
@@ -64,7 +64,7 @@ jobs:
         run: python3 -m unittest discover -s tests
 
       - name: Verify release integration tests
-        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs
+        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs
 
       - name: Verify Medium reader and private ABI
         env:
@@ -86,6 +86,13 @@ jobs:
           MORPHE_SIGNING_KEY: ${{ secrets.MORPHE_SIGNING_KEY }}
           SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
           BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
+
+      - name: Verify published Morphe discovery metadata
+        if: steps.release.outputs.new_release_published == 'true'
+        env:
+          EXPECTED_VERSION: ${{ steps.release.outputs.new_release_version }}
+          SOURCE_BRANCH: ${{ github.ref_name }}
+        run: node .github/scripts/verify_release_discovery.cjs --branch "$SOURCE_BRANCH" --version "$EXPECTED_VERSION"
 
       - name: Attest
         if: steps.release.outputs.new_release_published == 'true'

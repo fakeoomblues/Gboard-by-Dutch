@@ -83,10 +83,12 @@ def _patch_rows(group, dutch):
 
 def bundle_label(data, dutch):
     version = str(data['version']).lstrip('v')
-    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise ValueError('Bundle version must use numeric major.minor.patch')
+    if not re.fullmatch(r'\d+\.\d+\.\d+(?:-dev\.\d+)?', version):
+        raise ValueError('Bundle version must use major.minor.patch with an optional dev prerelease')
     if version == '0.0.0':
         return 'Bronmomentopname · nog niet uitgebracht' if dutch else 'Source snapshot · unreleased'
+    if '-dev.' in version:
+        return ('Ontwikkelbundel: ' if dutch else 'Development patch bundle: ') + version
     return ('Patchbundel: ' if dutch else 'Patch bundle: ') + version
 
 

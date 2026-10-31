@@ -72,6 +72,16 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_dev_bundle_keeps_its_prerelease_version(self):
+        data = fixture()
+        data['version'] = '1.2.0-dev.1'
+        try:
+            rendered = self.module.render(data, 'en')
+        except ValueError as error:
+            self.fail(f'Dev build metadata must be renderable: {error}')
+        self.assertIn('1.2.0-dev.1', rendered)
+        self.assertIn('Development', self.module.bundle_label(data, False))
+
     def test_gva_and_ed_link_to_their_own_news_guides(self):
         for package, slug in [('be.concentra.gva.MediaApp', 'gva'), ('com.mecom.ed.nl', 'ed')]:
             with self.subTest(package=package):

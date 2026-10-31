@@ -257,12 +257,12 @@ test("release guard rejects replayed bullets and missing app scopes before publi
   assert.throws(()=>guard.verifyNotes(ctx),/unchanged|scope/i);
 }));
 
-test("release configuration publishes only main and validates pull requests to main", () => {
+test("stable publication stays on main and dev publishes prereleases", () => {
   const {load} = require("js-yaml");
-  assert.deepEqual(releaseConfig.branches, ["main"]);
+  assert.deepEqual(releaseConfig.branches, ["main", {name: "dev", prerelease: "dev", channel: "dev"}]);
   const release = load(fs.readFileSync(path.join(root, ".github/workflows/release.yml"), "utf8"));
-  assert.deepEqual(release.on.push.branches, ["main"]);
-  assert.equal(release.jobs.release.if, "github.ref == 'refs/heads/main'");
+  assert.deepEqual(release.on.push.branches, ["main", "dev"]);
+  assert.equal(release.jobs.release.if, "github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'");
   const safety = load(fs.readFileSync(path.join(root, ".github/workflows/release-safety.yml"), "utf8"));
   assert.deepEqual(safety.on.pull_request.branches, ["main"]);
   assert.equal(fs.existsSync(path.join(root, ".github/dependabot.yml")), false,
