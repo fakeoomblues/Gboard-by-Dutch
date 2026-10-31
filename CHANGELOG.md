@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/961ab4e3f7b026568bd912eb1c87cd414ee162e1/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.2.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [961ab4e3f7b0](https://github.com/johninnl/nl-morphe-patches/commit/961ab4e3f7b026568bd912eb1c87cd414ee162e1). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.2.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.2.0...v1.2.1) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **ED:** hide empty listening placeholders ([961ab4e](https://github.com/johninnl/nl-morphe-patches/commit/961ab4e3f7b026568bd912eb1c87cd414ee162e1))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/547199d3dc5a243598e989e0d8be39f8d311b30d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.2.0.**

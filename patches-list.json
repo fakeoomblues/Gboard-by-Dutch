@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -3796,6 +3796,40 @@
                 "ARMEABI_V7A": 10596,
                 "X86_64": 10596,
                 "X86": 10596
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide empty listening carousel",
+      "description": "Hides the blank Luister verder loading row and its invalid placeholder links. Real listening history, podcast carousels and playback remain available.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.mecom.ed.nl",
+          "name": "ED",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.22.0",
+              "versionCodes": {
+                "ARM64_V8A": 9220000,
+                "ARMEABI_V7A": 9220000,
+                "X86_64": 9220000,
+                "X86": 9220000
               },
               "isExperimental": false,
               "minSdk": 32,
