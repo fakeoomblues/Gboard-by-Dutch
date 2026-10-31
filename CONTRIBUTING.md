@@ -42,12 +42,16 @@ must use the app guides' end-user explanations.
 
 ## Repository setup
 
-The initial snapshot has no tags or inherited Git history. Configure GitHub
-Packages access and the build secrets before enabling releases. Use a new
-`MORPHE_SIGNING_KEY` for bundle signing and retain its public key as required by
-the release tooling. `RELEASE_DEPLOY_KEY` is optional for repositories whose
-branch rules require a deploy-key bypass. Enable GitHub Pages with Actions.
-This repository uses a single production branch, `main`.
+Follow the mandatory identity rules in [AGENTS.md](AGENTS.md). Activate
+`johninnl` with `gh auth switch --user johninnl` before working. Every author,
+committer and release publisher must use that identity.
+
+Configure GitHub Packages access and the build secrets before enabling
+releases. Set `JOHNINNL_RELEASE_TOKEN` to a token owned by `johninnl`; checkout
+and publishing require it. Use `MORPHE_SIGNING_KEY` for bundle signing and
+retain its public key. Keep the map and Bright build inputs in their Actions
+secrets. Enable GitHub Pages with Actions. This repository uses a single
+production branch, `main`.
 
 The first release creates `patches-bundle.json`; no download manifest is
 supplied for an artifact that has not been published. Start `main` with the

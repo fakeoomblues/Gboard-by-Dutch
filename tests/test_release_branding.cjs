@@ -162,13 +162,12 @@ test("release configuration publishes only main and validates pull requests to m
   assert.equal(release.jobs.release.if, "github.ref == 'refs/heads/main'");
   const safety = load(fs.readFileSync(path.join(root, ".github/workflows/release-safety.yml"), "utf8"));
   assert.deepEqual(safety.on.pull_request.branches, ["main"]);
-  const dependabot = load(fs.readFileSync(path.join(root, ".github/dependabot.yml"), "utf8"));
-  for (const update of dependabot.updates) {
-    assert.equal(update["target-branch"], "main", `${update["package-ecosystem"]} updates must target main`);
-  }
+  assert.equal(fs.existsSync(path.join(root, ".github/dependabot.yml")), false,
+    "dependency updates must be committed by the repository owner");
   const plugins = releaseConfig.plugins.map(item => Array.isArray(item) ? item[0] : item);
   assert.deepEqual(plugins.filter(name => name.startsWith("./.github/scripts/")), [
-    "./.github/scripts/branded_release_notes.cjs", "./.github/scripts/verify_release_notes.cjs"
+    "./.github/scripts/branded_release_notes.cjs", "./.github/scripts/verify_release_notes.cjs",
+    "./.github/scripts/verify_identity.cjs"
   ]);
 });
 

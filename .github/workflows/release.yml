@@ -15,14 +15,35 @@ jobs:
       id-token: write
       attestations: write
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.JOHNINNL_RELEASE_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.JOHNINNL_RELEASE_TOKEN }}
+      GIT_AUTHOR_NAME: johninnl
+      GIT_AUTHOR_EMAIL: 349981574+johninnl@users.noreply.github.com
+      GIT_COMMITTER_NAME: johninnl
+      GIT_COMMITTER_EMAIL: 349981574+johninnl@users.noreply.github.com
     steps:
-      # Use the configured deploy key for release commits when required by the
-      # repository's branch rules; otherwise checkout uses the built-in token.
+      - name: Verify release publisher before checkout
+        shell: bash
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo 'JOHNINNL_RELEASE_TOKEN is required' >&2
+            exit 1
+          fi
+          login="$(gh api --hostname github.com user --jq .login)"
+          if [ "$login" != johninnl ]; then
+            echo 'JOHNINNL_RELEASE_TOKEN must belong to johninnl' >&2
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          token: ${{ secrets.JOHNINNL_RELEASE_TOKEN }}
+
+      - name: Verify release identity and history
+        run: node .github/scripts/verify_identity.cjs --release
 
       - name: Setup Java
         uses: actions/setup-java@v6
@@ -43,11 +64,10 @@ jobs:
         run: python3 -m unittest discover -s tests
 
       - name: Verify release integration tests
-        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs
+        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs
 
       - name: Verify Medium reader and private ABI
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
           BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
         run: |
@@ -63,7 +83,6 @@ jobs:
         uses: cycjimmy/semantic-release-action@v8
         id: release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MORPHE_SIGNING_KEY: ${{ secrets.MORPHE_SIGNING_KEY }}
           SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
           BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
@@ -80,7 +99,6 @@ jobs:
       - name: Verify project compiles
         if: steps.release.outputs.new_release_published != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
           BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
         run: ./gradlew :patches:buildAndroid clean --no-daemon
