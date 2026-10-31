@@ -1,14 +1,14 @@
 # Marktplaats
 
-**Appversie:** 16.19.0 · **Build:** 633464 · **Origineel bestand:** APKM
+**Appversie:** 16.19.0 · **Build:** 633464 · **Origineel bestand:** APKS
 
-[Download originele app](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/marktplaats-16-19-0-android-apk-download/){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/xdwu08cpm8pm){ .md-button .md-button--primary }
 
 Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
 
 ## Ondersteunde originele bestanden
 
-Gebruik het volledige APKM-archief voor versie 16.19.0, build 633464. Kies een van deze varianten op APKMirror:
+De gekoppelde APKS is het volledige Android 12L+-pakket voor versie 16.19.0, build 633464. Oudere APKMirror-varianten van de uitgever blijven ondersteund zoals hieronder vermeld.
 
 | Variant | Minimale Android-versie | Schermdichtheid |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-Gebruik de volledige Android 12L+-APKM via de link hierboven om Meldingen te behouden. Oudere of onvolledige archieven kunnen deze functie missen, waardoor Meldingen op een laadscherm blijft staan.
+Gebruik de volledige Android 12L+-APKS via de link hierboven om Meldingen te behouden. Oudere of onvolledige archieven kunnen deze functie missen, waardoor Meldingen op een laadscherm blijft staan.
 
 Braze-marketingpush is uitgeschakeld. Gewone aanbiedingen, chat, accounts en betalingen blijven online. ThreatMetrix uitschakelen kan beveiligde login- of betaalfuncties beïnvloeden. Google-login vereist een compatibele microG-Re-installatie.
 

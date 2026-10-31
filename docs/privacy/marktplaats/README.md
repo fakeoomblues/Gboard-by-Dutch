@@ -83,9 +83,14 @@ installation or consent success is fabricated.
 
 API32 inputs now require the fused Notifications-module metadata in the read-only
 preflight. Incomplete API32 archives fail before resource edits with an instruction
-to select the complete APKM. Existing API26/28/29 inputs retain their prior guards;
+to select the complete archive. Existing API26/28/29 inputs retain their prior guards;
 those archives can omit optional features. The public download points to the
 complete API32 distribution. The feature's class/method ABI, native libraries
-and registration are checked in rebuilt artifacts. On-device acceptance of the
-repaired 16.19.0 build remains pending; the phone was not navigated or modified
-during this investigation.
+and registration are checked in rebuilt artifacts. The user subsequently confirmed that Notifications was solved after the
+complete-package repair. Device navigation and installation were performed
+by the user; the agent only read package metadata, APK files and logs.
+
+The documented original download is the complete ZIP-based APKS repackaging at
+https://buzzheavier.com/xdwu08cpm8pm. It contains all twelve original APK payloads,
+including the Notifications feature, byte-for-byte unchanged from the verified
+publisher APKM; only the outer archive format changes.

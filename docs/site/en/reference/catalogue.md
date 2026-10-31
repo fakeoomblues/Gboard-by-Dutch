@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.2.2-dev.1**
+**Patch bundle: 1.2.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 

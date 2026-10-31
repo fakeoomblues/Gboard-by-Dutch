@@ -11,7 +11,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import patches.shared.uniqueMatch
 
 internal val marktplaats = Compatibility(
-    name = "Marktplaats", packageName = "nl.marktplaats.android", apkFileType = ApkFileType.APKM,
+    name = "Marktplaats", packageName = "nl.marktplaats.android", apkFileType = ApkFileType.APKS,
     signatures = setOf("742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"),
     targets = listOf(
         AppTarget(version = "16.19.0", versionCode = 633464, minSdk = 26),
@@ -35,7 +35,7 @@ internal val originalInput = resourcePatch {
                 .filter { it.getAttributeNS(android, "name") == "com.android.dynamic.apk.fused.modules" }
             check(modules.size == 1 && "alertscentercompose" in modules.single()
                 .getAttributeNS(android, "value").split(",").map(String::trim)) {
-                "Incomplete Marktplaats input: select the complete 16.19.0 APKM including split_alertscentercompose.apk"
+                "Incomplete Marktplaats input: select the complete 16.19.0 archive including split_alertscentercompose.apk"
             }
         }
     }

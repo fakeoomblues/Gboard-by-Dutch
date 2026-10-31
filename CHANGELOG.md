@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/93a1c0518f8c54acef3793544b85fcff8c1607c3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.2.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [93a1c0518f8c](https://github.com/johninnl/nl-morphe-patches/commit/93a1c0518f8c54acef3793544b85fcff8c1607c3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.2.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.2.1...v1.2.2) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **Marktplaats:** restore Notifications with complete APKS input ([93a1c05](https://github.com/johninnl/nl-morphe-patches/commit/93a1c0518f8c54acef3793544b85fcff8c1607c3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/846485023e0a0dc57b5d156660cd9f243848f591/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.2.2-dev.1.**
