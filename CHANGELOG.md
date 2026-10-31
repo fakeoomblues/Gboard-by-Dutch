@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/[secure]/nl-morphe-patches/5156ac7ba8ff76c4e328b3df94ac7d6aceeffbc4/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.0.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=[secure]/nl-morphe-patches) · [User guide](https://[secure].github.io/nl-morphe-patches/en/)
+
+Source: [5156ac7ba8ff](https://github.com/[secure]/nl-morphe-patches/commit/5156ac7ba8ff76c4e328b3df94ac7d6aceeffbc4). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.0.1](https://github.com/[secure]/nl-morphe-patches/compare/v1.0.0...v1.0.1) (2026-10-31)
+
+### 🚀 Updated App Support
+
+* **9292:** support additional 9292 and Marktplaats APKM builds ([5156ac7](https://github.com/[secure]/nl-morphe-patches/commit/5156ac7ba8ff76c4e328b3df94ac7d6aceeffbc4))
+* **Marktplaats:** support additional 9292 and Marktplaats APKM builds ([5156ac7](https://github.com/[secure]/nl-morphe-patches/commit/5156ac7ba8ff76c4e328b3df94ac7d6aceeffbc4))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d0ddc143a33db9e5a916bb5d674a7a73db0b1879/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.0.0.**
