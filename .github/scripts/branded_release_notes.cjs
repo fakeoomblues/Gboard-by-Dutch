@@ -93,8 +93,11 @@ function appImpact(context) {
     git(context, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "-m", "--first-parent", hash).split("\n")));
   const changed = (base ? git(context, "diff", "--name-only", base, head).split("\n") : git(context, "ls-tree", "-r", "--name-only", head).split("\n"))
     .filter(file => !freshFiles || freshFiles.has(file));
-  const namesFor = files => [...new Set(files.filter(file => file.startsWith(root))
-    .flatMap(file => apps.get(file.slice(root.length).split("/")[0]) || []))];
+  const namesFor = files => [...new Set(files.flatMap(file => {
+    const owner = file.startsWith(root) ? file.slice(root.length).split("/")[0]
+      : file.startsWith("support/medium/") ? "medium" : null;
+    return apps.get(owner) || [];
+  }))];
   return {apps, changed, namesFor, affected: namesFor(changed), unreleased};
 }
 

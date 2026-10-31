@@ -382,3 +382,24 @@ test("each shared-only commit requires its own affected-app declaration", () => 
   ctx.nextRelease.notes="## [1.1.0](https://github.com/test/repo/compare/v1.0.0...v1.1.0) (2026-10-30)\n"+bullet("Paper",direct)+"\n"+bullet("Paper",declared);
   assert.doesNotThrow(()=>guard.verifyNotes(ctx));
 }));
+
+
+test("Medium vendor dependency fixes are announced only for Medium", () => releaseRepository(({dir, git, commit}) => {
+  for (const name of ["Medium", "Other"]) {
+    const file = path.join(dir, `patches/src/main/kotlin/patches/${name.toLowerCase()}/Compatibility.kt`);
+    fs.mkdirSync(path.dirname(file), {recursive: true});
+    fs.writeFileSync(file, `val app = Compatibility(name = "${name}")\n`);
+  }
+  git("add", "."); const base = commit("feat: fixture baseline"); git("tag", "v1.0.0");
+  const vendor = path.join(dir, "support/medium/vendor/build.gradle.kts");
+  fs.mkdirSync(path.dirname(vendor), {recursive: true});
+  fs.writeFileSync(vendor, 'dependencies { implementation("com.google.re2j:re2j:1.8") }\n');
+  git("add", "."); const message = "fix(Medium): package the isolated regex dependency"; const head = commit(message);
+  const ctx = {...context("1.0.1"), cwd: dir, commits: [{hash: head, message}],
+    lastRelease: {version: "1.0.0", gitTag: "v1.0.0", gitHead: base},
+    nextRelease: {version: "1.0.1", gitTag: "v1.0.1", gitHead: head}};
+  assert.deepEqual(plugin().appImpact(ctx).affected, ["Medium"]);
+  assert.deepEqual(plugin().scopeCommits(ctx.commits, ctx).map(c => c.message.split("\n")[0]), [message]);
+  ctx.nextRelease.notes = `## [1.0.1](https://github.com/test/repo/compare/v1.0.0...v1.0.1)\n\n* **Medium:** complete dependency ([${head.slice(0, 7)}](https://github.com/test/repo/commit/${head}))\n`;
+  assert.doesNotThrow(() => require("../.github/scripts/verify_release_notes.cjs").verifyNotes(ctx));
+}));
