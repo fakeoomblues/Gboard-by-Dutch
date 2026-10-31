@@ -14,6 +14,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | **Hide Mijn Tijd (expert)** | Uit | Verwijdert Mijn Tijd uit de onderste balk als je geen account gebruikt. |
 | **Hide Premium banner** | Aan | Verbergt automatische aanbiedingen en de servicebanner, ook berichten die daarin staan. Push en het berichtencentrum blijven beschikbaar. |
 | **Hide ads** | Aan | Verwijdert de ondersteunde advertentieplaatsen en behoudt gewone inhoud. |
+| **Hide newspaper shortcut** | Aan | Verwijdert de Krant-kaart uit Meer en behoudt Puzzels, Video's en Podcasts. |
 | **Read full articles** | Aan | Toont geleverde artikelalinea’s en opent het beschikbare De essentie-overzicht direct. |
 | **Skip consent screens** | Aan | Slaat automatische toestemmingsschermen voor advertenties over; handmatige privacykeuzes blijven beschikbaar. |
 | **Skip onboarding** | Aan | Opent de app direct zonder de introductieschermen. |

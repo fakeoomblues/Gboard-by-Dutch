@@ -4,6 +4,8 @@ from pathlib import Path
 import unittest
 
 from detijd_navigation import verify_account_tabs, verify_moments_gate
+from detijd_shortcuts import verify_newspaper_shortcut
+from detijd_shortcuts import OFFSET as SHORTCUT_OFFSET
 
 EDITS = json.loads(Path(__file__).with_name('detijd_hermes_edits.json').read_text())
 
@@ -17,6 +19,17 @@ def model_image(function_id, selected):
 
 
 class DeTijdNavigationTests(unittest.TestCase):
+    def test_newspaper_shortcut_is_removed_without_blank_slots_or_other_card_changes(self):
+        for selected in (False, True):
+            with self.subTest(hidden=selected):
+                self.assertEqual(verify_newspaper_shortcut(model_image(33434, selected), selected), 4)
+
+    def test_newspaper_shortcut_removal_rejects_a_blank_first_slot(self):
+        data = model_image(33434, True)
+        data[SHORTCUT_OFFSET + 189] = 1
+        with self.assertRaisesRegex(AssertionError, 'No blank shortcut slots'):
+            verify_newspaper_shortcut(data, True)
+
     def test_mijn_tijd_filter_preserves_other_tabs_indexes_and_weekend_labels(self):
         for selected in (False, True):
             with self.subTest(expert=selected):

@@ -8,6 +8,7 @@ import zipfile
 
 from detijd_native import verify_native
 from detijd_navigation import verify_account_tabs, verify_moments_gate
+from detijd_shortcuts import verify_newspaper_shortcut
 
 SHA256 = 'e14787df25e9b2529bd18ee6860332ace0742646282bf4471043070cd8bb8c35'
 EDITS = json.loads(Path(__file__).with_name('detijd_hermes_edits.json').read_text())
@@ -16,6 +17,7 @@ GROUPS = {
     'Hide Premium banner': 'premium', 'Skip consent screens': 'consent',
     'Skip onboarding': 'onboarding', 'Read full articles': 'articles',
     'Hide Mijn Tijd (expert)': 'accountTabs',
+    'Hide newspaper shortcut': 'newspaperShortcut',
 }
 
 
@@ -69,6 +71,7 @@ def main():
     groups = verify_hermes(data, selected)
     print(f'PASS navigation: {verify_account_tabs(data, "accountTabs" in groups)} route/index/label/descriptor cases')
     print(f'PASS Moments: {verify_moments_gate(data, "articles" in groups)} login/offer/feed/weekend cases')
+    print(f'PASS shortcuts: {verify_newspaper_shortcut(data, "newspaperShortcut" in groups)} locale/date/retained-card cases')
     count = verify_native(args.root, 'ads' in groups, 'tracking' in groups, 'premium' in groups)
     print(f'PASS native: {count} original/retained method contracts and functional manifest state')
     if args.apk:

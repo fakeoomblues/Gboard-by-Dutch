@@ -14,6 +14,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Hide Mijn Tijd (expert)** | Off | Removes Mijn Tijd from the bottom bar if you do not use an account. |
 | **Hide Premium banner** | On | Hides automatic in-app offers and the service banner, including notices displayed there. Push and the message centre remain. |
 | **Hide ads** | On | Removes the supported advertising placements while keeping ordinary content available. |
+| **Hide newspaper shortcut** | On | Removes the Krant card from Meer while keeping Puzzles, Videos and Podcasts. |
 | **Read full articles** | On | Shows delivered article paragraphs and opens the available De essentie feed directly. |
 | **Skip consent screens** | On | Skips automatic advertising-consent screens; manual privacy choices remain available. |
 | **Skip onboarding** | On | Opens the app directly without the introductory setup screens. |

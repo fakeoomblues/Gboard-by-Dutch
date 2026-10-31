@@ -45,6 +45,7 @@ APPS = {
         "Skip consent screens": ["Disable tracking", "Hide ads"],
         "Hide Premium banner": [], "Skip onboarding": [],
         "Read full articles": ["Hide ads"], "Hide Mijn Tijd (expert)": [],
+        "Hide newspaper shortcut": [],
     },
     **{app: {
         "Hide ads": [], "Disable tracking": ["Hide ads"],
