@@ -16,7 +16,7 @@ Use the complete APKM archive for version 16.19.0, build 633464. Choose one of t
 | ARM64 and ARMv7 | Android 9 | 480–640 dpi |
 | Noarch | Android 10 | 480–640 dpi |
 
-Other 16.19.0 variants are not included. Version 16.17.0, build 633462, also remains supported with its [original APKS](https://buzzheavier.com/cq3amiskfsdy).
+Other variants and older versions are not supported.
 
 ## Patches
 

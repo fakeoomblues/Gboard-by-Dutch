@@ -216,35 +216,12 @@ def verify_manifest(root,hidden,tracking=False,merged=None,auth=False):
 
 
 def verify(root,selected,apk,behaviour_only=None):
+    # Historical canonical data above remains the independent binding/effects
+    # oracle for 16.19, but old APKs are no longer public validation targets.
     metadata=(root/'apktool.yml').read_text()
-    if re.search(r"versionName: ['\"]?16\.19\.0['\"]?",metadata):
-        from marktplaats_1619 import verify as verify_1619
-        return verify_1619(root,selected,apk,behaviour_only)
-    assert re.search(r"versionName: ['\"]?16\.17\.0['\"]?",metadata),'Unsupported Marktplaats version'
-    assert selected<=NAMES
-    source=Smali(root);decl=DexDeclarations.from_apk(apk);hidden=bool(selected&AD_NAMES);consent=CONSENT in selected;tracking='Disable tracking' in selected or consent;expert=EXPERT in selected;auth=AUTH in selected
-    if not behaviour_only:
-        if not selected:assert decl.source_sha256==BASE_SHA256
-        for owner,sig,flags,local,count,digest in CONTRACTS:
-            actual=decl.classes[owner].methods[sig];body=source.body(owner,sig);value=canonical(body)
-            assert actual.access_flags==flags and int(re.search(r'\.locals (\d+)',body)[1])==local,'Marktplaats ABI changed'
-            owned=[e for e in (EDITS if hidden else [])+(TRACKING_EDITS if tracking else [])+(SECURITY_EDITS if expert else [])+(CONSENT_EDITS if consent else [])+(AUTH_EDITS if auth else []) if (e['owner'],e['signature'])==(owner,sig)]
-            if owned:value=restore_alignment(restore_edits(value,owned,local),count)
-            assert len(value.code)==count and value.digest()==digest,'Marktplaats original graph changed: '+owner+'->'+sig
-        verify_manifest(root,hidden,tracking,bool(selected),auth)
-        if selected:
-            with zipfile.ZipFile(apk) as archive:
-                actual={name:hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist() if name.startswith('lib/') and name.endswith('.so')}
-            assert actual==NATIVE_LIBRARIES,'Marktplaats native libraries changed'
-    sdk,archive=sdk_classes()
-    try:
-        f=AuthFixture(source,decl,sdk)
-        groups={'auth':lambda f,_:(verify_auth(f,auth),verify_protocol(ProtocolFixture(source,decl,sdk)) if auth else None),'consent':lambda f,_:verify_consent(f,consent),'push':lambda f,_:verify_push(f,tracking),'security':lambda f,_:verify_security(f,expert),'sdk':lambda f,_:verify_sdk_entries(f,tracking),'persisted':lambda f,_:verify_persisted(f,tracking),'resources':lambda f,_:verify_manifest(root,hidden,tracking,bool(selected),auth),'firebase':lambda f,_:verify_firebase(f,tracking),'marketing':lambda f,_:verify_marketing(f,tracking),'tracking':lambda f,_:verify_measurement(f,tracking),'slots':verify_slots,'ads':verify_ad_init,'admissions':verify_ad_admission,'fallbacks':verify_ad_fallbacks,'cleanup':verify_ad_cleanup,
-                **{name:(lambda f,h,g=name:verify_ad_consumers(f,h,g)) for name in ('loaders','home','lifetime')}}
-        for name,fn in groups.items():
-            if behaviour_only is None or behaviour_only==name:fn(f,hidden)
-    finally:archive.close()
-    print('PASS Marktplaats: '+(', '.join(sorted(selected)) or 'original')+f' ({len(CONTRACTS)} method contracts; group {behaviour_only or "all"})')
+    assert re.search(r"versionName: ['\"]?16\.19\.0['\"]?",metadata),'Unsupported Marktplaats version'
+    from marktplaats_1619 import verify as verify_1619
+    return verify_1619(root,selected,apk,behaviour_only)
 
 
 if __name__=='__main__':

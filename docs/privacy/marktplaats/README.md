@@ -1,15 +1,15 @@
 # Marktplaats
 
-Version **16.17.0**, build **633462**, package `nl.marktplaats.android`.
-Published in stable **v1.16.0**; the user reports that the patched app works.
-The stable release has three controls. This development branch adds consent and
-microG-Re controls and makes ThreatMetrix blocking a normal, default-on control.
-Those follow-ups still need their own device acceptance.
+Version **16.19.0**, build **633464**, package `nl.marktplaats.android`.
+Only the inspected Android 8, 9 and 10 minimum-SDK variants are supported.
+The five controls include consent, microG-Re and independent ThreatMetrix
+blocking. Older versions are rejected. The checks below describe source and
+rebuilt-artifact evidence; account and payment flows still need device acceptance.
 [All app READMEs](../README.md).
 
 ## Evidence and controls
 
-The development Google-auth follow-up routes the exact identitycredentials
+The Google-auth control routes the exact identitycredentials
 service to an installed, enabled microG-Re service and selects that provider for
 single Google ID options, including on Android34+. It adds the original publisher
 package/certificate metadata used by Morphe. Other GMS service actions retain
@@ -55,12 +55,10 @@ listing, payment, subscription, consent or security success is invented.
 Stopped optional senders do not admit new events through the checked paths.
 Known queued Firebase measurements use an intentional privacy discard, without a
 successful-send acknowledgement. Some old SDK files and vendor-side history may
-remain. Seven original native libraries are retained unchanged.
+remain. The original native libraries in each supported variant are retained unchanged.
 
 Evidence includes original/rebuilt APK checks, exact method restoration and
 bounded execution of retained instructions. It does not establish every Android
-runtime outcome. Re-signed startup, search/listing/chat, account/push, Maps and
-checkout/security behavior is not exhaustively established by the user’s normal-use
-report. The microG-Re sign-in follow-up needs a successful device login. No
-transaction or data deletion was performed during the build/source verification;
-the read-only anonymous backend samples are recorded in the implementation audit.
+runtime outcome. Re-signed startup, search/listing/chat, account/push, Maps,
+Google sign-in and checkout/security behavior need device acceptance for this
+build. No transaction or data deletion was performed during this verification.

@@ -9,10 +9,6 @@ internal fun suppressAdRequests() {
     // Return the native absent-view state before reading/marking the banner cache.
     exact("Le13;", "q(Landroid/content/Context;I${root}core/datamodel/TargetingConfiguration;${root}core/datamodel/search/ItemsVisualisation;)Landroid/view/View;",
         1, 12, 108).addInstructions(0, "const/4 v0, 0x0\nreturn-object v0")
-    // This factory already returns null when no context is available; every
-    // original caller has the corresponding nullable-view branch.
-    if (!isMarktplaats1619()) exact("Lecc;", "a(Landroid/content/Context;Lrcc;Lwbc;Lnkg;)Lcom/pubmatic/sdk/openwrap/banner/POBBannerView;",
-        17, 11, 36).addInstructions(0, "const/4 v0, 0x0\nreturn-object v0")
     // Finish with the real no-content callback; never leave on-start pending or
     // claim a loaded ad without a view. VIP callbacks write their failed state.
     exact("Ls2i;", "a(Landroid/content/Context;Landroid/view/ViewGroup;${root}core/datamodel/TargetingConfiguration;[Lok;Ljava/lang/String;" +

@@ -44,7 +44,7 @@ internal fun suppressFirebaseMeasurement() {
     // Only the settings branch returns its existing unavailable/null outcome,
     // after the native worker check and SettingsRequest query validation.
     val settings = exact("Llc3;", "call()Ljava/lang/Object;", 17, 12, 197)
-    val settingsStart = if (isMarktplaats1619()) 160 else 23
+    val settingsStart = 160
     check(settings.getInstruction(settingsStart).opcode == Opcode.NEW_INSTANCE &&
         settings.getInstruction<ReferenceInstruction>(settingsStart).reference.toString() == boundCode("Lgvg;"))
     check(settings.getInstruction<ReferenceInstruction>(settingsStart - 2).reference.toString() == boundCode("Lhla;->R(Lzie;)Ljava/util/HashMap;"))

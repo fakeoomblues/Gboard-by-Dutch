@@ -304,11 +304,7 @@ private val references1619 = mapOf(
 )
 
 context(context: BytecodePatchContext)
-internal fun isMarktplaats1619() = context.packageMetadata.versionName == "16.19.0"
-
-context(context: BytecodePatchContext)
 internal fun boundCode(value: String): String {
-    if (!isMarktplaats1619()) return value
     // R8 can move methods between merged owners; resolve full members first.
     val members = Regex("L[^;\\s]+;->[^\\s,}]+")
         .replace(value) { references1619[it.value] ?: it.value }

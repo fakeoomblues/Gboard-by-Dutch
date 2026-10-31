@@ -56,24 +56,13 @@ internal fun suppressAdFallbacks() {
             goto/16 :native_completion
         """.trimIndent(), ExternalLabel("native_completion", last))
     }
-    if (isMarktplaats1619()) {
-        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 17, 90, 20, 62, "v0")
-        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 22, 91, 20, 68, "v0")
-    } else {
-        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 16, 85, 18, 59, "p1")
-        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 21, 90, 20, 67, "v0")
-    }
+    unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 17, 90, 20, 62, "v0")
+    unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 22, 91, 20, 68, "v0")
     unavailable("${root}core/advertising/nativead/NativeAdRepo\$getSponsoredAd\$1;", 8, 42, 20, 33, "p1")
 
     // 16.19 removed the Compose VIP loader; its remaining PubMatic callers
     // are the guarded LRP loader and the no-content callback in qqi. The new
     // factory returns a non-null wrapper that callers dereference immediately.
-    val vip = "${root}feature/vip/feature/advertising/"
-    if (!isMarktplaats1619()) exact("${vip}b;", "b(Lhyh;)V", 17, 11, 45).addInstructions(0, "return-void")
     exact("Lxvh;", "b(${root}core/datamodel/MpAd;${root}feature/vip/d;Z)V", 17, 10, 57)
         .addInstructions(0, "return-void")
-    // This native custom loader has no pre-load state/callback to finish. Keep
-    // its initial Result validation and invalid-label error before returning.
-    if (!isMarktplaats1619()) exact("${vip}VipComposableBannerViewModel\$loadBanner\$1;", suspendMethod, 17, 7, 52)
-        .addInstructions(5, "sget-object v0, Lkotlin/Unit;->a:Lkotlin/Unit;\nreturn-object v0")
 }

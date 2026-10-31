@@ -34,6 +34,16 @@ class ProfileTests(unittest.TestCase):
         for text in bad:
             with self.subTest(text=text),self.assertRaises(AssertionError):self.read(text)
 
+    def test_public_verifier_rejects_retired_build_before_dex_or_manifest_access(self):
+        from verify_marktplaats import verify as verify_public
+        with tempfile.TemporaryDirectory() as scratch:
+            root=Path(scratch)
+            (root/'apktool.yml').write_text(self.metadata(minimum=32,version='16.17.0',code=633462))
+            # Neither an APK nor decoded code is present: retired input must
+            # stop at dispatch before historical fixture code can run.
+            with self.assertRaisesRegex(AssertionError,'Unsupported Marktplaats version'):
+                verify_public(root,set(),root/'missing.apk')
+
 
 @unittest.skipUnless(os.environ.get('MARKTPLAATS_FIXTURES'),
                      'Set MARKTPLAATS_FIXTURES to the ignored genuine fixture directory')
