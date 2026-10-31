@@ -1,8 +1,8 @@
 # NRC
 
-**App version:** 5.12.24 · **Build:** 626 · **Original file:** APK
+**App version:** 5.12.25 · **Build:** 627 · **Original file:** APK
 
-[Download original app](https://buzzheavier.com/qhawp9l19uhc){ .md-button .md-button--primary }
+[Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 

@@ -2,7 +2,7 @@
 
 Version-specific source/SDK/configuration evidence is not a packet capture showing that every listed host received data. [All app READMEs](../README.md).
 
-Use the original APK, **5.12.24 / 626**, Android 6+. The user confirmed the app works and approved stable publication on 2026-10-28.
+Use the original APK, **5.12.25 / 627**, Android 6+. The input guard rejects the previous version and build. Inspection resolves 384 pinned original method contracts, including the new companion constructors and updated startup methods. Device acceptance of the previous build does not establish runtime acceptance of this build.
 
 | Patch | Effect |
 | --- | --- |

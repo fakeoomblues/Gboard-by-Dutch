@@ -15,7 +15,7 @@ import patches.shared.uniqueMatch
 internal val nrc = Compatibility(
     name = "NRC", packageName = "com.twipemobile.nrc", apkFileType = ApkFileType.APK,
     signatures = setOf("3bcd6c6a3c997e65d458dcf8860c90ce04d14c3fb35f3e11e3e945f1d89a5807"),
-    targets = listOf(AppTarget(version = "5.12.24", versionCode = 626, minSdk = 23)),
+    targets = listOf(AppTarget(version = "5.12.25", versionCode = 627, minSdk = 23)),
 )
 internal val originalInput = patches.shared.originalInput(nrc)
 internal const val WEB = "Lpinch/nrcnext/extensions/WebViewExtensionsKt;"

@@ -29,7 +29,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [NOS Teletekst](../apps/nos-teletekst.md) | 2.8.10 / 62 | [APKS](https://buzzheavier.com/xse5agsu2tia) |
 | [NPO Start](../apps/npo-start.md) | 1.48.2-2405 / 240497937 | [APKS](https://buzzheavier.com/ys1rjymo12zp) |
 | [NPO Start Android TV](../apps/npo-start-android-tv.md) | 1.48.2-2405 / 245497937 | [APKS](https://buzzheavier.com/1s5dezsqvxbq) |
-| [NRC](../apps/nrc.md) | 5.12.24 / 626 | [APK](https://buzzheavier.com/qhawp9l19uhc) |
+| [NRC](../apps/nrc.md) | 5.12.25 / 627 | [Use your own APK](#local-original-inputs) |
 | [NU.nl](../apps/nunl.md) | 26.9.0 / 210156 | [APKS](https://buzzheavier.com/bdaekl17vud0) |
 | [Nieuwsblad](../apps/nieuwsblad.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/gunldnthepyn) |
 | [Omroep Brabant](../apps/omroep-brabant.md) | 11.1.0 / 7331764 | [APKS](https://buzzheavier.com/hkxqb9c6hj02) |

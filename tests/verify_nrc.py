@@ -1,4 +1,4 @@
-"""Independent NRC 5.12.24 emitted checks; no publisher source or article text."""
+"""Independent NRC 5.12.25/627 emitted checks; no publisher source or article text."""
 import argparse
 import hashlib
 import json
@@ -413,7 +413,7 @@ RETAINED = [('pinch/nrcnext/ui/webview/ErrorTrackingWebViewClient',
   '<clinit>()V',
   0,
   '',
-  'cef147d8c944e46298e50dbb2df6a6f853163d00f496d111a181650c78ed1811'),
+  'da663f1fe057ffd2b3be1ed0c0ed159b2e8c82dcab1f40c6510121671394e9a0'),
  ('pinch/nrcnext/ui/article/AnalyticsTrackerJavascriptHandlerMediahuis',
   '<init>(Lnl/pinch/nrc/analytics/AnalyticsTracker;Z)V',
   0,
@@ -1589,6 +1589,16 @@ RETAINED.extend([('pinch/nrcnext/extensions/UriExtensionsKt',
   0,
   '',
   '113b096fca73c2adea1325ea0b046f20e2a12b85219d04b5385ff0964b516cd0')])
+
+# Build 627 adds a NAME-only companion to the Mediahuis WebView bridge.
+# Its constructors have no telemetry or registration side effects; retain both.
+RETAINED.extend([
+ ('pinch/nrcnext/ui/article/AnalyticsTrackerJavascriptHandlerMediahuis$Companion',
+  '<init>()V', 0, '', '8f8dcae5f3ad16d5c943bdc2594abc2c124d4f388aea14939264465fa4e7554d'),
+ ('pinch/nrcnext/ui/article/AnalyticsTrackerJavascriptHandlerMediahuis$Companion',
+  '<init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V', 0, '', '145f60c0bf417372a2101b53ad6ed9e6298c516ea09e297b1f290d9802c00bf4'),
+])
+
 
 def source(root, cls):
     matches = list(root.glob('smali*/'+cls+'.smali')) + list(root.glob('smali/smali*/'+cls+'.smali'))
