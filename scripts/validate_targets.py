@@ -56,6 +56,12 @@ APPS = {
         "Skip consent screens": ["Disable tracking", "Hide ads"],
         "Hide Premium banner": [],
     } for app in ("nieuwsblad", "dsnieuws", "hbvl", "gva")},
+    "ed": {
+        "Hide ads": [], "Disable tracking": ["Hide ads"],
+        "Skip consent screens": ["Disable tracking", "Hide ads"],
+        "Hide Premium banner": [], "Read full articles": [],
+        "Hide empty listening carousel": [],
+    },
     "tvgids": {"Hide ads": [], "Disable tracking": ["Hide ads"],
                "Skip consent screens": ["Disable tracking", "Hide ads"]},
     "marktplaats": {"Hide ads": [], "Disable tracking": ["Hide ads"], "Disable ThreatMetrix": [], "Skip consent screens": ["Disable tracking", "Hide ads"], "Google sign-in via microG-Re": []},
@@ -116,7 +122,7 @@ APPS = {
         "Hide ads": [], "Disable tracking": ["Hide ads"],
         "Skip consent screens": ["Disable tracking", "Hide ads"],
         "Hide Premium banner": [], "Read full articles": [],
-    } for app in ("ad", "tubantia", "ed")},
+    } for app in ("ad", "tubantia")},
     "nrc": {
         "Hide ads": [], "Disable tracking": ["Hide ads"],
         "Skip consent screens": ["Disable tracking", "Hide ads"],

@@ -1043,5 +1043,15 @@
       "return-object v0"
     ],
     "sites": []
+  },
+  {
+    "class": "s99",
+    "signature": "g(Lix;IZLxe7;ZLyg3;I)V",
+    "control": "listening",
+    "prefix": [
+      "if-eqz p4, @original",
+      "return-void"
+    ],
+    "sites": []
   }
 ]

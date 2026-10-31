@@ -220,13 +220,16 @@ class TargetRoutingTests(unittest.TestCase):
     def test_gva_and_ed_use_their_own_verifiers_and_sibling_selections(self):
         for app, sibling in [('gva', 'hbvl'), ('ed', 'ad')]:
             with self.subTest(app=app):
-                self.assertEqual(validator.APPS.get(app), validator.APPS[sibling])
+                expected = dict(validator.APPS[sibling])
+                if app == 'ed':
+                    expected['Hide empty listening carousel'] = []
+                self.assertEqual(validator.APPS.get(app), expected)
                 self.assertEqual(
                     validator.verifier_command(app, Path('decoded'), {'Hide ads'}),
                     [sys.executable, f'tests/verify_{app}.py', 'decoded', '-e', 'Hide ads'])
                 self.assertEqual(
                     len(validator.patch_selections(validator.APPS[app], None)),
-                    len(validator.APPS[sibling]) + 1)
+                    len(expected) + 1)
 
     def test_west_privacy_controls_and_bound_apk_verifier(self):
         self.assertEqual(validator.APPS.get('west'), {

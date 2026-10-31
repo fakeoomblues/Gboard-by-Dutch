@@ -138,6 +138,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 9.22.0 |
 | Hide Premium banner | Aan | 9.22.0 |
 | Hide ads | Aan | 9.22.0 |
+| Hide empty listening carousel | Aan | 9.22.0 |
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
 

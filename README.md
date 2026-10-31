@@ -61,7 +61,7 @@ it does not guarantee anonymity or remove all network traffic.
 | [De Morgen](https://johninnl.github.io/nl-morphe-patches/apps/demorgen/) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [De Tijd](https://johninnl.github.io/nl-morphe-patches/apps/detijd/) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 7 |
 | [DS Nieuws](https://johninnl.github.io/nl-morphe-patches/apps/dsnieuws/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
-| [ED](https://johninnl.github.io/nl-morphe-patches/apps/ed/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 5 |
+| [ED](https://johninnl.github.io/nl-morphe-patches/apps/ed/) | Ads · Tracking · Prompts · Articles · Listening | 9.22.0 | APKS | 6 |
 | [FTM](https://johninnl.github.io/nl-morphe-patches/apps/ftm/) | Ads · Tracking · Prompts · Articles | 2.6.8 | APKS | 5 |
 | [GVA](https://johninnl.github.io/nl-morphe-patches/apps/gva/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [HBVL](https://johninnl.github.io/nl-morphe-patches/apps/hbvl/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |

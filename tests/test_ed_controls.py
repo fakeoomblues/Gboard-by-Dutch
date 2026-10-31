@@ -118,6 +118,24 @@ class EdControlTests(unittest.TestCase):
                         else:
                             self.assertIs(result, item)
 
+    def test_loading_listening_cards_are_hidden_and_real_history_enters_original_renderer(self):
+        source_path = Path(__file__).parents[1] / "patches/src/main/kotlin/patches/ed/ListeningCarouselPatch.kt"
+        self.assertTrue(source_path.is_file(), "ED needs a guard for its clickable detailepisode_1 loading cards")
+        source = source_path.read_text()
+        block = re.search(r'renderer\.addInstructionsWithLabels\(0, """(.*?)"""', source, re.S)
+        self.assertIsNotNone(block)
+        self.assertIn('ExternalLabel("listening_content", renderer.getInstruction(0))', source)
+        guard = block[1] + "\n:listening_content\n"
+        signature = "g(Lix;IZLxe7;ZLyg3;I)V"
+        original = parse(".method public static final " + signature + "\n.locals 20\nreturn-void\n.end method", signature)
+        emitted = parse(".method public static final " + signature + "\n.locals 20\n" + guard + "\nreturn-void\n.end method", signature)
+        row = {"class": "s99", "signature": signature, "control": "listening", "prefix": ["if-eqz p4, @original", "return-void"], "sites": []}
+        self.assertEqual(digest(restored(emitted, row, {"listening": True})), digest(original.canonical()))
+        self.assertEqual(emitted.instructions[:2], ["if-eqz p4, :listening_content", "return-void"])
+        self.assertEqual(emitted.labels[":listening_content"], 2)
+        self.assertTrue(active_controls({"Hide empty listening carousel"})["listening"])
+        self.assertFalse(active_controls({"Hide ads"})["listening"])
+
     def test_automatic_section_marketing_follows_annoyance_controls(self):
         for selection, expected in [
             (set(), False), ({'Hide ads'}, False), ({'Disable tracking'}, False),

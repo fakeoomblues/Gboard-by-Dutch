@@ -235,7 +235,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="ed com.mecom.ed.nl 9.22.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="ed com.mecom.ed.nl 9.22.0 disable tracking hide premium banner hide ads hide empty listening carousel read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [ED](apps/ed.md)
@@ -243,11 +243,12 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">9.22.0</span></p>
 <p class="dap-app-card__package">com.mecom.ed.nl</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
 <li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>
+<li>Hide empty listening carousel <span class="dap-app-card__target">9.22.0</span></li>
 <li>Read full articles <span class="dap-app-card__target">9.22.0</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">9.22.0</span></li>
 </ul>

@@ -138,6 +138,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 9.22.0 |
 | Hide Premium banner | On | 9.22.0 |
 | Hide ads | On | 9.22.0 |
+| Hide empty listening carousel | On | 9.22.0 |
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
 
