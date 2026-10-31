@@ -95,7 +95,8 @@ test("publisher checks the authenticated GitHub user and propagates API failure"
 test("semantic-release checks identity before its commit/push prepare hook", () => {
   const config = JSON.parse(fs.readFileSync(path.join(root, ".releaserc"), "utf8"));
   const plugins = config.plugins.map(value => Array.isArray(value) ? value[0] : value);
-  assert.equal(plugins[plugins.indexOf("@semantic-release/git") - 1], "./.github/scripts/verify_identity.cjs");
+  assert.equal(plugins[plugins.indexOf("./.github/scripts/public_git.cjs") - 1], "./.github/scripts/verify_identity.cjs");
+  assert.deepEqual(Object.keys(require("../.github/scripts/public_git.cjs")).sort(), ["prepare", "verifyConditions"]);
   assert.equal(guard.verifyConditions, guard.prepare);
   assert.throws(() => guard.prepare({}, {cwd: root, env: {}}), /JOHNINNL_RELEASE_TOKEN/);
   assert.throws(() => guard.verifyMessage("\nco-AUTHORED-by: fixture <fixture@example.test>", "Release notes"), /Release notes/);

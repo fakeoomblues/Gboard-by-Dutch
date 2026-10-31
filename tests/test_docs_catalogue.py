@@ -75,7 +75,7 @@ class SiteCatalogueTests(unittest.TestCase):
     def test_release_commits_every_generated_catalogue_page(self):
         config = json.loads((ROOT / '.releaserc').read_text())
         assets = next(plugin[1]['assets'] for plugin in config['plugins']
-                      if isinstance(plugin, list) and plugin[0] == '@semantic-release/git')
+                      if isinstance(plugin, list) and plugin[0] == './.github/scripts/public_git.cjs')
         for language in ('en', 'nl'):
             self.assertIn(f'docs/site/{language}/index.md', assets)
             self.assertIn(f'docs/site/{language}/reference/catalogue.md', assets)

@@ -4,6 +4,21 @@ const MARKER = "<!-- dap-release-branding:v1 -->";
 const REPOSITORY = "johninnl/nl-morphe-patches";
 const GUIDE = "https://johninnl.github.io/nl-morphe-patches/en/";
 
+function restorePublicLinks(notes) {
+  if (typeof notes !== "string") return notes;
+  // semantic-release mistakes GIT_AUTHOR_NAME for a secret. Restore only this
+  // repository's known public URL prefixes; retain all other secret masking.
+  return notes
+    .replace(/https:\/\/github\.com\/\[secure\]\/nl-morphe-patches(?=[/?#\s)"'<>]|$)/g,
+      "https://github.com/johninnl/nl-morphe-patches")
+    .replaceAll("https://raw.githubusercontent.com/[secure]/nl-morphe-patches/",
+      "https://raw.githubusercontent.com/johninnl/nl-morphe-patches/")
+    .replaceAll("https://[secure].github.io/nl-morphe-patches/",
+      "https://johninnl.github.io/nl-morphe-patches/")
+    .replace(/https:\/\/morphe\.software\/add-source\?github=\[secure\]\/nl-morphe-patches(?=[&#\s)"'<>]|$)/g,
+      "https://morphe.software/add-source?github=johninnl/nl-morphe-patches");
+}
+
 function renderNotes(notes, context) {
   if (notes.startsWith(`${MARKER}\n`)) return notes;
 
@@ -89,4 +104,4 @@ function scopeCommits(commits, context) {
   });
 }
 
-module.exports = { generateNotes, renderNotes, scopeCommits, appImpact };
+module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact };

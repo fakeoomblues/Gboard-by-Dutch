@@ -107,6 +107,109 @@ test("configured semantic-release generateNotes pipeline emits one complete bran
   assert.match(notes, /🐛 Bug Fixes/);
 });
 
+test("public-link restoration is confined to this repository and preserves other masked values", () => {
+  const urls = [
+    "https://github.com/johninnl/nl-morphe-patches/compare/v1.0.0...v1.0.1",
+    "https://raw.githubusercontent.com/johninnl/nl-morphe-patches/abc/banner.png",
+    "https://johninnl.github.io/nl-morphe-patches/en/",
+    "https://morphe.software/add-source?github=johninnl/nl-morphe-patches",
+  ];
+  const protectedText = [
+    "secret: [secure]", "author: [secure]", "https://example.test/[secure]/",
+    "https://github.com/[secure]/another-repo/",
+    "https://github.com/[secure]/nl-morphe-patches-private/",
+    "https://raw.githubusercontent.com/[secure]/another-repo/main/file",
+    "https://[secure].github.io/another-repo/",
+    "https://morphe.software/add-source?github=[secure]/nl-morphe-patches-private",
+  ].join("\n");
+  const original = urls.join("\n") + "\n" + protectedText;
+  const masked = urls.join("\n").replaceAll("johninnl", "[secure]") + "\n" + protectedText;
+  assert.equal(plugin().restorePublicLinks(masked), original);
+  assert.equal(plugin().restorePublicLinks(original), original);
+  assert.equal(plugin().restorePublicLinks(undefined), undefined);
+});
+
+test("real semantic-release pipeline restores public links for writers and post-commit publishing without revealing secrets", async () => {
+  const {default: buildPlugins} = await import("semantic-release/lib/plugins/index.js");
+  const cwd = fs.mkdtempSync(path.join(require("node:os").tmpdir(), "morphe-masked-notes-"));
+  const secret = "fixture-authorization-secret-7823";
+  const env = {...process.env, GITHUB_REPOSITORY: "johninnl/nl-morphe-patches",
+    GIT_AUTHOR_NAME: "johninnl", GIT_COMMITTER_NAME: "johninnl",
+    GIT_AUTHOR_EMAIL: "349981574+johninnl@users.noreply.github.com",
+    GIT_COMMITTER_EMAIL: "349981574+johninnl@users.noreply.github.com",
+    GH_TOKEN: secret, GITHUB_TOKEN: secret};
+  const git = (...args) => require("node:child_process").execFileSync("git", args, {cwd, env, encoding: "utf8"}).trim();
+  try {
+    git("init", "-b", "main");
+    const declarations = path.join(cwd, "patches/src/main/kotlin/patches/fixture");
+    fs.mkdirSync(declarations, {recursive: true});
+    fs.writeFileSync(path.join(declarations, "Compatibility.kt"), 'val app = Compatibility(name = "Fixture")\n');
+    git("add", "."); git("-c", "commit.gpgsign=false", "commit", "-m", "feat(Fixture): initial support");
+    const base = git("rev-parse", "HEAD"); git("tag", "v1.0.0");
+    const message = `fix(release): keep ${secret} masked`;
+    git("-c", "commit.gpgsign=false", "commit", "--allow-empty", "-m", message);
+    const head = git("rev-parse", "HEAD");
+    const ctx = {...context("1.0.1"), cwd, env,
+      lastRelease: {version: "1.0.0", gitTag: "v1.0.0", gitHead: base},
+      nextRelease: {version: "1.0.1", gitTag: "v1.0.1", gitHead: head},
+      commits: [{hash: head, message}],
+      logger: {log(){}, success(){}, warn(){}, error(){}, scope(){return this;}}};
+    const assertRestored = notes => {
+      assert.match(notes, /https:\/\/github\.com\/johninnl\/nl-morphe-patches\//);
+      assert.match(notes, /https:\/\/raw\.githubusercontent\.com\/johninnl\/nl-morphe-patches\//);
+      assert.match(notes, /https:\/\/johninnl\.github\.io\/nl-morphe-patches\/en\//);
+      assert.match(notes, /https:\/\/morphe\.software\/add-source\?github=johninnl\/nl-morphe-patches/);
+      assert.match(notes, /keep \[secure\] masked/);
+      assert.ok(!notes.includes(secret), "real secrets must remain masked");
+    };
+    let published;
+    const writerConfig = releaseConfig.plugins.find(value => Array.isArray(value) && value[0] === "./.github/scripts/public_changelog.cjs");
+    const writer = [path.join(root, writerConfig[0]), writerConfig[1]];
+    const gitConfig = releaseConfig.plugins.find(value => Array.isArray(value) && value[0] === "./.github/scripts/public_git.cjs")[1];
+    const releaseCommit = {prepare(config, input) {
+      return require("../.github/scripts/public_git.cjs").prepare(config, input, async name => {
+        assert.equal(name, "@semantic-release/git", "delegate to the original Git plugin");
+        return {prepare(actualConfig, actualContext) {
+          assert.equal(actualConfig.message, gitConfig.message);
+          assert.deepEqual(actualConfig.assets, gitConfig.assets);
+          assert.equal(actualContext.env.GIT_AUTHOR_NAME, "johninnl");
+          assert.equal(actualContext.env.GH_TOKEN, secret);
+          assertRestored(actualContext.nextRelease.notes);
+          git("add", "CHANGELOG.md", "patches-bundle.json");
+          git("-c", "commit.gpgsign=false", "commit", "-m", `chore: generated release fixture\n\n${actualContext.nextRelease.notes}`);
+          assertRestored(git("log", "-1", "--format=%B"));
+        }};
+      });
+    }};
+    const githubConfig = releaseConfig.plugins.find(value => Array.isArray(value) && value[0] === "./.github/scripts/public_github.cjs")[1];
+    const publisher = require("../.github/scripts/public_github.cjs").createHooks(async name => {
+      assert.equal(name, "@semantic-release/github", "delegate to the original GitHub plugin");
+      return {publish(actualConfig, input) {
+        assert.deepEqual(actualConfig.assets, githubConfig.assets);
+        assert.equal(actualConfig.successComment, false);
+        assert.equal(input.env.GH_TOKEN, secret);
+        assert.equal(input.env.GIT_AUTHOR_NAME, "johninnl");
+        published = input.nextRelease.notes;
+        assertRestored(published);
+        return {name: "offline fixture publisher"};
+      }};
+    });
+    ctx.options = {...ctx.options, plugins: [noteConfig, writer, [releaseCommit, gitConfig], [publisher, githubConfig]]};
+    const pipeline = await buildPlugins(ctx, {});
+    ctx.nextRelease.notes = await pipeline.generateNotes(ctx);
+    assert.match(ctx.nextRelease.notes, /https:\/\/\[secure\]\.github\.io/);
+    assert.match(ctx.nextRelease.notes, /keep \[secure\] masked/);
+    await pipeline.prepare(ctx);
+    assert.notEqual(ctx.nextRelease.gitHead, head, "the real prepare pipeline must detect the fixture commit");
+    assert.match(ctx.nextRelease.notes, /https:\/\/\[secure\]\.github\.io/,
+      "core must regenerate and mask notes again after the prepare commit");
+    assertRestored(fs.readFileSync(path.join(cwd, "CHANGELOG.md"), "utf8"));
+    assertRestored(JSON.parse(fs.readFileSync(path.join(cwd, "patches-bundle.json"), "utf8")).description);
+    await pipeline.publish(ctx);
+    assertRestored(published);
+  } finally { fs.rmSync(cwd, {recursive: true, force: true}); }
+});
+
 const os = require("node:os");
 const { execFileSync } = require("node:child_process");
 
@@ -166,8 +269,9 @@ test("release configuration publishes only main and validates pull requests to m
     "dependency updates must be committed by the repository owner");
   const plugins = releaseConfig.plugins.map(item => Array.isArray(item) ? item[0] : item);
   assert.deepEqual(plugins.filter(name => name.startsWith("./.github/scripts/")), [
-    "./.github/scripts/branded_release_notes.cjs", "./.github/scripts/verify_release_notes.cjs",
-    "./.github/scripts/verify_identity.cjs"
+    "./.github/scripts/branded_release_notes.cjs", "./.github/scripts/public_changelog.cjs",
+    "./.github/scripts/verify_release_notes.cjs", "./.github/scripts/verify_identity.cjs", "./.github/scripts/public_git.cjs",
+    "./.github/scripts/public_github.cjs"
   ]);
 });
 
