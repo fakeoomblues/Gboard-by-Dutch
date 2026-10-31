@@ -76,3 +76,35 @@ Seen in a live ED WebView during inspection: an iframe titled `Nationale Vacatur
 Seen in the publisher APK: the home, region and football-center section coroutines call `MainActivity.E(ContentType, String, Llmg)` to resolve automatic marketing. The legacy path in `nja.y` creates Temptation HTML flows separately from the two resolvers suppressed by the initial port. The follow-up stops this optional automatic entry point for Skip consent screens, Hide Premium banner and Read full articles. All three original caller bodies and manual authentication paths remain pinned. Attribution of the user's full-screen HTML login offer to this automatic path is an inference pending the next phone test; no timer or precise user trigger was established.
 
 The inspection briefly opened ED and selected Eindhoven. The user's phone was then left alone, and the temporary WebView forwarding socket was removed. No app data was cleared and no consent/account state was changed.
+
+
+## ED empty listening carousel follow-up (2026-10-31)
+
+The user reproduced a blank, horizontally scrollable row between the featured
+podcast and My favourites. Its cards were clickable but opened the generic
+retry screen. Native Frida proof inside ED confirmed UID 10840, and the
+focused capture observed `ao.a` and `kz.c` requesting the literal
+`detailepisode_1`, followed by Amalia HTTP errors with `{"message":"Not found"}`.
+
+This row is a loading fixture, not advertising. The publisher's `c6d.a`
+creates `detailepisode_` sample IDs; `ibd.h` contains eight copies of the
+fixture card. The Continue Listening mapper (`nw.invokeSuspend`, branch 1)
+returns null for an empty history list. `n88` interprets that null as
+`ibd.h` plus loading=true, conflating empty content with pending content.
+
+The independent **Hide empty listening carousel** control guards only the
+loading parameter of `s99.g(Lix;IZLxe7;ZLyg3;I)V`. It returns before opening
+any Compose group for loading=true; loading=false branches to the original
+first instruction through an explicit ExternalLabel. The full original
+renderer remains intact, including real history, callbacks and playback.
+The other podcast carousels are not changed. The ED preservation baseline
+now includes all 58 original methods of this shared utility class, bringing
+the total to 1,499 original methods and 85 allowed-edit specifications.
+
+The equivalent live guard removed the blank row on the connected phone,
+and the user confirmed the visible fix. The user then played a real podcast episode, returned to Luister, and
+confirmed that a real resume card appears and works. The same in-UID capture
+observed loading=false entering the retained renderer and requests for the
+real episode ID `38440282`. Both empty-history and populated-history behavior
+are therefore confirmed on the connected phone. Instrumentation is private diagnostic tooling and is not
+included in the released patch bundle.

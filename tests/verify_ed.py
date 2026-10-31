@@ -18,7 +18,7 @@ from ed_annoyances import verify_vacancy_widgets, verify_personalisation_notice
 HERE = Path(__file__).parent
 ORIGINALS = json.loads((HERE / "ed_originals.json").read_text())
 EDITS = {(row["class"], row["signature"]): row for row in json.loads((HERE / "ed_edits.json").read_text())}
-NAMES = {"Hide ads", "Disable tracking", "Skip consent screens", "Hide Premium banner", "Read full articles"}
+NAMES = {"Hide ads", "Disable tracking", "Skip consent screens", "Hide Premium banner", "Read full articles", "Hide empty listening carousel"}
 OWNER = "com/kubus/module/network/model/SectionResponse"
 TOPICS = "com/kubusapp/onboarding/OnBoardingPushNotificationActivity"
 A = "{http://schemas.android.com/apk/res/android}"
@@ -61,6 +61,7 @@ def active_controls(selected):
         "automaticMarketing": bool(selected & {"Skip consent screens", "Hide Premium banner", "Read full articles"}),
         "filters": tracking or bool(selected & {"Hide ads", "Hide Premium banner"}),
         "flags": True,
+        "listening": "Hide empty listening carousel" in selected,
     }
 
 
