@@ -2,7 +2,7 @@
 
 **App version:** 4.5.3.1 · **Build:** 4531 · **Original file:** APKS
 
-[Use your own original app file](../guides/downloads.md#local-original-inputs)
+[Download original app](https://buzzheavier.com/k9v1po19ewp9){ .md-button .md-button--primary }
 
 Select the complete original split archive in Morphe Manager.
 
