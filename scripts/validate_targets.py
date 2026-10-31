@@ -51,6 +51,7 @@ APPS = {
         "Hide ads": [], "Disable tracking": ["Hide ads"],
         "Skip consent screens": ["Disable tracking", "Hide ads"],
         "Hide Premium banner": [], "Read full articles": [],
+        **({"Hide empty listening carousel": []} if app == "hln" else {}),
     } for app in ("demorgen", "humo", "hln")},
     **{app: {
         "Hide ads": [], "Disable tracking": ["Hide ads"],

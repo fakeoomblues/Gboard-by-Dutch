@@ -2,7 +2,7 @@
 MODEL = 'com/kubus/module/network/model/'
 OWNER = MODEL + 'SectionResponse'
 TYPE = 'L' + OWNER + ';'
-NAMES = {'Hide ads', 'Disable tracking', 'Skip consent screens', 'Hide Premium banner', 'Read full articles'}
+NAMES = {'Hide ads', 'Disable tracking', 'Skip consent screens', 'Hide Premium banner', 'Read full articles', 'Hide empty listening carousel'}
 FULL = ('ht0', 'a(Ljava/lang/String;ZZLbt3;)Ljava/lang/Object;')
 MARKETING = ('mla', 'a(Ljava/lang/String;Lnet/persgroep/marketingtemplatessdk/core/types/Appearance;Ljava/util/List;Lgla;Lbt3;)Ljava/lang/Object;')
 PAYWALL = ('nq8', 'k(Lcom/persgroep/temptationsdk/data/model/ResolveResponse;)Ljava/util/ArrayList;')

@@ -217,11 +217,11 @@ class TargetRoutingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'publisher original'):
             validator.verifier_command('buienalarm', Path('decoded'), set())
 
-    def test_gva_and_ed_use_their_own_verifiers_and_sibling_selections(self):
-        for app, sibling in [('gva', 'hbvl'), ('ed', 'ad')]:
+    def test_gva_ed_and_hln_use_their_own_verifiers_and_sibling_selections(self):
+        for app, sibling in [('gva', 'hbvl'), ('ed', 'ad'), ('hln', 'humo')]:
             with self.subTest(app=app):
                 expected = dict(validator.APPS[sibling])
-                if app == 'ed':
+                if app in {'ed', 'hln'}:
                     expected['Hide empty listening carousel'] = []
                 self.assertEqual(validator.APPS.get(app), expected)
                 self.assertEqual(
@@ -262,6 +262,7 @@ class TargetRoutingTests(unittest.TestCase):
             'Hide ads': [], 'Disable tracking': ['Hide ads'],
             'Skip consent screens': ['Disable tracking', 'Hide ads'],
             'Hide Premium banner': [], 'Read full articles': [],
+            'Hide empty listening carousel': [],
         })
         self.assertEqual(
             validator.verifier_command('hln', Path('decoded'), {'Read full articles'}),
@@ -319,6 +320,8 @@ class TargetRoutingTests(unittest.TestCase):
                 }
                 if app in ('demorgen', 'humo', 'hln'):
                     expected['Read full articles'] = []
+                if app == 'hln':
+                    expected['Hide empty listening carousel'] = []
                 self.assertEqual(validator.APPS.get(app), expected)
                 self.assertEqual(
                     validator.verifier_command(app, Path('decoded'), {'Hide ads'}),

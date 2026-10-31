@@ -41,6 +41,8 @@ def prefix(root, item, expected):
 
 def verify(root: Path, selected: set[str]) -> None:
     assert selected <= NAMES, selected - NAMES
+    from hln_listening import verify_listening
+    verify_listening(root, selected)
     ads = bool(selected & {'Hide ads', 'Disable tracking', 'Skip consent screens'})
     tracking = bool(selected & {'Disable tracking', 'Skip consent screens'})
     premium = 'Hide Premium banner' in selected

@@ -13,6 +13,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide Premium banner** | On | Hides automatic subscription offers and Premium promotions. |
 | **Hide ads** | On | Removes supported ads in feeds, articles, videos and games. |
+| **Hide empty listening carousel** | On | Hides blank Luister verder loading cards and invalid links. Real listening history and podcasts remain available. |
 | **Read full articles** | On | Displays complete article text when the publisher supplies it. Does not create a subscription. |
 | **Skip consent screens** | On | Skips automatic consent, login and notification setup. Starts with guest reading and notifications off; manual settings remain. |
 
