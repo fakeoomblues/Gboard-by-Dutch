@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Release
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+      attestations: write
+    runs-on: ubuntu-latest
+    steps:
+      # Use the configured deploy key for release commits when required by the
+      # repository's branch rules; otherwise checkout uses the built-in token.
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Python regression tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Verify release integration tests
+        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs
+
+      - name: Verify Medium reader and private ABI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
+          BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
+        run: |
+          ./gradlew :patches:buildAndroid :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest --no-daemon
+          python3 scripts/medium/check_bundle.py
+          python3 -m unittest discover -s scripts/medium/tests
+          # The release version is assigned later; never upload preflight bundles.
+          python3 -c 'from pathlib import Path; [p.unlink() for p in Path("patches/build/libs").glob("*.mpp")]'
+
+      # Semantic release runs its own Gradle build command.
+      # Only main publishes releases, as specified by .releaserc.
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v8
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MORPHE_SIGNING_KEY: ${{ secrets.MORPHE_SIGNING_KEY }}
+          SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
+          BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
+
+      - name: Attest
+        if: steps.release.outputs.new_release_published == 'true'
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-name: 'Morphe Patches ${{ steps.release.outputs.new_release_git_tag }}'
+          subject-path: patches/build/libs/patches-*.mpp
+
+      # Always verify compilation when semantic-release did not publish a release.
+      # This covers chore and documentation commits without a version change.
+      - name: Verify project compiles
+        if: steps.release.outputs.new_release_published != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHARED_MAPS_API_KEY: ${{ secrets.SHARED_MAPS_API_KEY }}
+          BRIGHT_ARTICLE_SIGNING_KEY: ${{ secrets.BRIGHT_ARTICLE_SIGNING_KEY }}
+        run: ./gradlew :patches:buildAndroid clean --no-daemon
