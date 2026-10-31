@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/eb2db87b8deec9f04bc3e5cffd648d4c90690095/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.1.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [eb2db87b8dee](https://github.com/johninnl/nl-morphe-patches/commit/eb2db87b8deec9f04bc3e5cffd648d4c90690095). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.1.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.0.1...v1.1.0) (2026-10-31)
+
+### ✨ New Features
+
+* **GVA:** add approved GVA patch controls ([eb2db87](https://github.com/johninnl/nl-morphe-patches/commit/eb2db87b8deec9f04bc3e5cffd648d4c90690095))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/5156ac7ba8ff76c4e328b3df94ac7d6aceeffbc4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.0.1.**
