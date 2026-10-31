@@ -35,6 +35,7 @@ APP_PAGES = {
     'com.xs2theworld.weeronline': ('weeronline', 'weather'),
     'nl.weerplaza.app': ('weerplaza', 'weather'),
     'nl.flitsmeister': ('flitsmeister', 'mobility'),
+    'com.dennisk.rollerbank': ('rollerbank', 'mobility'),
     'nl.dumpert': ('dumpert', 'entertainment'),
     'nl.ftm.ftmpulse': ('ftm', 'news'),
     'com.twipemobile.nrc': ('nrc', 'news'),

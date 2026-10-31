@@ -28,6 +28,13 @@ MEDIA_REFERENCES = {
 }
 
 APPS = {
+    "rollerbank": {
+        "Fix Google services": [], "Hide ads": ["Fix Google services"],
+        "Disable tracking": ["Hide ads", "Fix Google services"],
+        "Skip consent screens": ["Disable tracking", "Hide ads", "Fix Google services"],
+        "Hide Premium banner": ["Fix Google services"],
+        "Enable En Route alerts": ["Fix Google services"],
+    },
     "buienalarm": {
         "Fix Google services": [], "Hide ads": ["Fix Google services"],
         "Hide Premium banner": ["Fix Google services"],
@@ -284,7 +291,11 @@ def verifier_command(app: str, destination: Path, effective: set[str], apk: Path
                 raise ValueError("KIJK validation needs the original APK for payload checks")
             command += ["--original-apk", str(original_input), "--patched-apk", str(apk)]
         return command
-    if app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "gva", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "ed", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
+    if app == "rollerbank":
+        if original_reference is None or not original_reference.is_dir():
+            raise ValueError("Rollerbank validation needs the decoded original APK")
+        command = [sys.executable, "tests/verify_rollerbank.py", str(destination), "--original-root", str(original_reference)]
+    elif app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "gva", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "ed", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
         command = [sys.executable, f"tests/verify_{app}.py", str(destination)]
     else:
         command = [sys.executable, "tests/verify_targets.py", app, str(destination)]
@@ -383,7 +394,14 @@ def main() -> None:
     except (ValueError, KeyError, zipfile.BadZipFile) as error:
         parser.error(str(error))
     trusted_decoded = None
-    if args.app in MEDIA_REFERENCES:
+    if args.app == "rollerbank":
+        if hashlib.sha256(reference.read_bytes()).hexdigest() != "d8e32f93fe1d9697a9897076b2cbfac8f20f6f98cf5113098cfe6a8d60243d7c":
+            raise SystemExit("Expected inspected Rollerbank 4.5.3.1 original base APK")
+        trusted_decoded = out / "decoded-original"
+        run(["apktool", "d", "-f", "-o", str(trusted_decoded), str(reference)], out / "decode-original.log")
+        run(verifier_command(args.app, trusted_decoded, set(), original_reference=trusted_decoded), out / "verify-original.log")
+        print("PASS: Rollerbank original input and decoded reference", flush=True)
+    elif args.app in MEDIA_REFERENCES:
         try:
             verify_reference_input(args.app, patch_input, reference)
         except (AssertionError, ValueError) as error:

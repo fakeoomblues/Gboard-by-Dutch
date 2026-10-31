@@ -402,6 +402,21 @@ Check the supported app versions and default setting for each patch. The app pag
 | Guest session playback host | On | 3.5.1 |
 | Unlock Premium playback | On | 3.5.1 |
 
+## Rollerbank
+
+[What do the patches change?](../apps/rollerbank.md)
+
+`com.dennisk.rollerbank`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 4.5.3.1 |
+| Enable En Route alerts | On | 4.5.3.1 |
+| Fix Google services | On | 4.5.3.1 |
+| Hide Premium banner | On | 4.5.3.1 |
+| Hide ads | On | 4.5.3.1 |
+| Skip consent screens | On | 4.5.3.1 |
+
 ## RTL Nieuws
 
 [What do the patches change?](../apps/rtl-nieuws.md)

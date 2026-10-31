@@ -28,3 +28,4 @@ Each application has a version-specific README with tracking destinations, their
 | 9292 | Dev; PairIP startup fix pending | [Domains, data and patch effects](9292/README.md) |
 | Marktplaats | Published in stable v1.16.0; user reports normal use; additional controls in development | [Domains, data and patch effects](marktplaats/README.md) |
 | TVgids.nl | Dev candidate; build/source checks, phone acceptance pending | [Domains, data and patch effects](tvgids-nl/README.md) |
+| Rollerbank | Local audit and test build; unpublished | [Data, patch effects and notification feasibility](rollerbank/README.md) |

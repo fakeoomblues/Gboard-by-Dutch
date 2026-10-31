@@ -402,6 +402,21 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Guest session playback host | Aan | 3.5.1 |
 | Unlock Premium playback | Aan | 3.5.1 |
 
+## Rollerbank
+
+[Wat veranderen de patches?](../apps/rollerbank.md)
+
+`com.dennisk.rollerbank`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 4.5.3.1 |
+| Enable En Route alerts | Aan | 4.5.3.1 |
+| Fix Google services | Aan | 4.5.3.1 |
+| Hide Premium banner | Aan | 4.5.3.1 |
+| Hide ads | Aan | 4.5.3.1 |
+| Skip consent screens | Aan | 4.5.3.1 |
+
 ## RTL Nieuws
 
 [Wat veranderen de patches?](../apps/rtl-nieuws.md)

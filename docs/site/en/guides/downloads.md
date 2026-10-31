@@ -36,6 +36,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Omroep West](../apps/omroep-west.md) | 20.1 / 10596 | Use your own file |
 | [Parool](../apps/parool.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/mezktjli0rmt) |
 | [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
+| [Rollerbank](../apps/rollerbank.md) | 4.5.3.1 / 4531 | Use your own file |
 | [RTL Nieuws](../apps/rtl-nieuws.md) | 12.7.1 / 1558 | [APKS](https://buzzheavier.com/lvklis48sf8r) |
 | [TVgids.nl](../apps/tvgids-nl.md) | 7.0.16 / 106691 | [APK](https://buzzheavier.com/tgxpzbzghwec) |
 | [Trouw](../apps/trouw.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/30zwvpz9wqse) |

@@ -1054,6 +1054,40 @@
     },
     {
       "name": "Disable tracking",
+      "description": "Includes ad removal. Disables optional Analytics, Crashlytics identifiers and reports, queued Google SDK diagnostics and Firebase Sessions. Retains functional push, authentication and report submission.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
       "description": "Includes ad removal; disables audited analytics, optional tracking identifiers and diagnostics while preserving account, push and playback services.",
       "default": true,
       "category": null,
@@ -1464,6 +1498,40 @@
       "options": []
     },
     {
+      "name": "Enable En Route alerts",
+      "description": "Enables local En Route access and nearby static-camera warnings using the app's real data and distance settings. Requests notification permission and preserves later notification choices, location permissions, authentication and purchases.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable WebView debugging",
       "description": "Diagnostic only: permits local inspection of KIJK's hosted frontend. Disabled by default; use for test builds.",
       "default": false,
@@ -1559,6 +1627,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix Google services",
+      "description": "Preserves the original public app certificate in Google SDK requests and uses the authorized community Maps key. Keeps the original Firebase and Places configuration.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -2335,6 +2437,40 @@
                 "ARMEABI_V7A": 23136515,
                 "X86_64": 23136515,
                 "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide Premium banner",
+      "description": "Skips the Premium introduction, removes settings Upgrades and removes the Premium/Remove ads toolbar overflow from every main page. Preserves normal onboarding completion and purchase status.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
               },
               "isExperimental": false,
               "minSdk": 32,
@@ -3419,6 +3555,40 @@
                 "ARMEABI_V7A": 23136515,
                 "X86_64": 23136515,
                 "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads",
+      "description": "Removes banner and native advertising and their list placements. Stops the app's Google Mobile Ads initialization and requests. Preserves reports, maps, location and purchases.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
               },
               "isExperimental": false,
               "minSdk": 32,
@@ -5297,6 +5467,40 @@
                 "ARMEABI_V7A": 23136515,
                 "X86_64": 23136515,
                 "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip consent screens",
+      "description": "Removes mandatory advertising consent from Home setup and allows completion without granting advertising consent. Includes ad and tracking controls; retains optional location and notification setup.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.dennisk.rollerbank",
+          "name": "Rollerbank",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "dff7cf9d4f59e4be49a5135425a00c6feb0fc561d5b3aa0d703456dab6d9b788"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.5.3.1",
+              "versionCodes": {
+                "ARM64_V8A": 4531,
+                "ARMEABI_V7A": 4531,
+                "X86_64": 4531,
+                "X86": 4531
               },
               "isExperimental": false,
               "minSdk": 32,
