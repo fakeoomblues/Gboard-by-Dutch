@@ -72,6 +72,9 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_gva_links_to_its_news_guide(self):
+        self.assertEqual(self.module.app_page({'packageName': 'be.concentra.gva.MediaApp'}), ('gva', 'news'))
+
     def test_dev_bundle_keeps_its_prerelease_version(self):
         data = fixture()
         data['version'] = '1.2.0-dev.1'
