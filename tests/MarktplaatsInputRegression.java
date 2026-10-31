@@ -42,7 +42,7 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
             if(node!=guard)check(node.getDependencies().contains(guard),"preflight precedes "+patch.getName());
         List<X509Certificate> mixed=new ArrayList<>(trusted);mixed.addAll(untrusted);
         String pkg="nl.marktplaats.android", version=original.getVersionName(), code=original.getVersionCode();
-        List<Integer> supported=version.equals("16.19.0")&&code.equals("633464") ? List.of(26,28,29) : List.of();
+        List<Integer> supported=version.equals("16.19.0")&&code.equals("633464") ? List.of(26,28,29,32) : List.of();
         check(supported.contains(minSdk),"original is an exact supported publisher build");
         PackageMetadata[] invalid={metadata(original,"wrong.package",version,code,trusted),metadata(original,pkg,"0.0.0",code,trusted),
             metadata(original,pkg,version,"1",trusted),new PackageMetadata(pkg,version,code,null),
@@ -53,7 +53,8 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
             "retired 16.17.0/633462","retired version with current build","current version with retired build"};
         try(ResourcePatchContext context=new ResourcePatchContext(config(originalFile,scratch,"guard"))) {
             var manifest=context.get("AndroidManifest.xml",false).toPath();Files.createDirectories(manifest.getParent());
-            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\""+minSdk+"\"/></manifest>";
+            String module="<application><meta-data android:name=\"com.android.dynamic.apk.fused.modules\" android:value=\"alertscentercompose\"/></application>";
+            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\""+minSdk+"\"/>"+module+"</manifest>";
             Files.writeString(manifest,xml);guard.execute(context);
             check(Files.readString(manifest).equals(xml),"actual original accepted without mutation");
             Field field=ResourcePatchContext.class.getDeclaredField("packageMetadata");field.setAccessible(true);
@@ -62,6 +63,16 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
                 try{guard.execute(context);}catch(IllegalStateException expected){refused=true;}
                 check(refused,"actual guard rejects "+names[i]);
                 check(Files.readString(manifest).equals(xml),"invalid "+names[i]+" leaves manifest intact");
+            }
+            field.set(context,original);
+            if(minSdk==32) {
+                for(String incomplete:List.of(xml.replace(module,""),xml.replace("alertscentercompose","otherfeature"))) {
+                    Files.writeString(manifest,incomplete);boolean refused=false;
+                    try{guard.execute(context);}catch(IllegalStateException expected){refused=true;}
+                    check(refused,"API32 input without the Notifications module is rejected");
+                    check(Files.readString(manifest).equals(incomplete),"incomplete module input remains unchanged");
+                }
+                Files.writeString(manifest,xml);
             }
             // Use the retired build's genuine minimum as well: rejecting its
             // metadata under API 26 alone could merely prove an SDK mismatch.

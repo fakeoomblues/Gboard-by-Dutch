@@ -24,7 +24,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Humo](../apps/humo.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/fe1uzx562ngl) |
 | [KIJK Android](../apps/kijk.md) | 9.8.0 / 2026101500 | Gebruik eigen bestand |
 | [KIJK Android TV](../apps/kijk-android-tv.md) | 7.2.7 / 10003 | [APKS](https://buzzheavier.com/oh3usdc9o9xi) |
-| [Marktplaats](../apps/marktplaats.md) | 16.19.0 / 633464 | [APKM](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/) |
+| [Marktplaats](../apps/marktplaats.md) | 16.19.0 / 633464 | [APKS](https://buzzheavier.com/xdwu08cpm8pm) |
 | [Medium](../apps/medium.md) | 4.5.1784911033 / 1784911033 | [APKS](https://buzzheavier.com/ky9k5pmnicni) |
 | [NOS Teletekst](../apps/nos-teletekst.md) | 2.8.10 / 62 | [APKS](https://buzzheavier.com/xse5agsu2tia) |
 | [NPO Start](../apps/npo-start.md) | 1.48.2-2405 / 240497937 | [APKS](https://buzzheavier.com/ys1rjymo12zp) |

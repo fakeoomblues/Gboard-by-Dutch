@@ -22,12 +22,12 @@ class ProfileTests(unittest.TestCase):
             root=Path(scratch);(root/'apktool.yml').write_text(metadata)
             return profile(root)
 
-    def test_three_exact_original_variants(self):
-        hashes={self.read(self.metadata(minimum=value))['base_sha256'] for value in [26,28,29]}
-        self.assertEqual(len(hashes),3)
+    def test_four_exact_original_variants(self):
+        hashes={self.read(self.metadata(minimum=value))['base_sha256'] for value in [26,28,29,32]}
+        self.assertEqual(len(hashes),4)
 
     def test_unvalidated_build_metadata_is_rejected(self):
-        bad=[self.metadata(minimum=value) for value in [24,25,27,30,31,32,33,999]]
+        bad=[self.metadata(minimum=value) for value in [24,25,27,30,31,33,999]]
         bad += [self.metadata(version='16.17.0'),self.metadata(code=633462),self.metadata(target=36),
                 self.metadata().replace('  minSdkVersion: 26\n',''),
                 self.metadata()+'  minSdkVersion: 28\n']
