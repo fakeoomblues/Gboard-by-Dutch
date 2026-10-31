@@ -50,6 +50,20 @@ class VendorInventoryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             vendor.inspect_jar(self.jar(name), self.root / "app")
 
+    def test_jsoup_optional_regex_backend_requires_both_relocated_runtime_classes(self):
+        names = {vendor.PREFIX + suffix for suffix in ["jsoup/helper/Re2jRegex", "re2j/Pattern", "re2j/Matcher"]}
+        path = self.root / "regex.jar"
+        for missing in [None, vendor.PREFIX + "re2j/Pattern", vendor.PREFIX + "re2j/Matcher"]:
+            with self.subTest(missing=missing):
+                with zipfile.ZipFile(path, "w") as output:
+                    for name in names - ({missing} if missing else set()):
+                        output.writestr(name + ".class", class_bytes(name))
+                if missing:
+                    with self.assertRaisesRegex(ValueError, "RE2J backend"):
+                        vendor.inspect_jar(path)
+                else:
+                    self.assertEqual(vendor.inspect_jar(path)["class_count"], 3)
+
 
 if __name__ == "__main__":
     unittest.main()

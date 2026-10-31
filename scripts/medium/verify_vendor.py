@@ -25,6 +25,10 @@ def inspect_jar(path, app_smali=None):
             definitions.add(internal)
     if not definitions:
         raise ValueError("Vendor artifact contains no classes")
+    if PREFIX + "jsoup/helper/Re2jRegex" in definitions:
+        required = {PREFIX + "re2j/Pattern", PREFIX + "re2j/Matcher"}
+        if not required <= definitions:
+            raise ValueError("jsoup RE2J backend is packaged without its isolated Pattern/Matcher dependency")
     app_types = set()
     if app_smali is not None:
         for folder in app_smali.glob("smali*"):
