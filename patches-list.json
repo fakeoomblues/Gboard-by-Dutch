@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -82,7 +82,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APKS",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -797,7 +797,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APKS",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -1703,7 +1703,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APKS",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -3174,7 +3174,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APKS",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -5043,7 +5043,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APKS",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
