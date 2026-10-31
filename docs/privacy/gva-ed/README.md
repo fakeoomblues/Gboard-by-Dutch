@@ -64,3 +64,15 @@ Local retained reports use `build/validation/gva-matrix`, `build/validation/ed-m
 No release was selected manually. The normal Gradle metadata generator adds exactly nine compatibility records, leaves existing records and the project version unchanged, and feeds the existing catalogue and README generators.
 
 Final regression results: 331 Python tests passed (34 skipped), 29 release/identity Node tests passed, 80 app guides match metadata, and the strict site build and rendered-link checker pass for 78 bilingual page pairs. Independent review found no actionable source, compatibility, verifier or documentation issue. All 13 pulled publisher APKs still match the device checksums recorded before the investigation.
+
+## ED follow-up from phone testing
+
+The user accepted GVA and reported three remaining ED annoyances in the first dev build: a personalisation-consent placeholder, a large Nationale Vacaturebank widget in Eindhoven, and an unsolicited full-screen login offer.
+
+Seen in the publisher APK: the personalisation notice uses string IDs `0x7f1400ed` and `0x7f1400ec` through `Lcw7;->c(IIILyg3;Lv07;)V`. The new guard returns only for that text ID; the original social-content consent notice and manual privacy/login routes remain intact. It neither grants nor fabricates consent.
+
+Seen in a live ED WebView during inspection: an iframe titled `Nationale Vacaturebank` uses `https://mobileapi.ed.nl/static/widgets/nationalevacaturebank-blue.html`. The native feed renderer selects `HtmlEmbedDataTeaser.d/e` as light/dark HTML. Hide ads now drops that commercial teaser before its WebView is created; unknown/editorial embeds, links, commented-out markup, other widget paths and deceptive host suffixes are retained.
+
+Seen in the publisher APK: the home, region and football-center section coroutines call `MainActivity.E(ContentType, String, Llmg)` to resolve automatic marketing. The legacy path in `nja.y` creates Temptation HTML flows separately from the two resolvers suppressed by the initial port. The follow-up stops this optional automatic entry point for Skip consent screens, Hide Premium banner and Read full articles. All three original caller bodies and manual authentication paths remain pinned. Attribution of the user's full-screen HTML login offer to this automatic path is an inference pending the next phone test; no timer or precise user trigger was established.
+
+The inspection briefly opened ED and selected Eindhoven. The user's phone was then left alone, and the temporary WebView forwarding socket was removed. No app data was cleared and no consent/account state was changed.

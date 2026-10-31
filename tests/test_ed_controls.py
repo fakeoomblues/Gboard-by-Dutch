@@ -7,6 +7,7 @@ from pathlib import Path
 from ad_onboarding import parse, digest
 from verify_ad import verify_filters
 from verify_ed import OWNER, active_controls, restored
+from ad_emitted import evaluate, obj
 
 
 class EdControlTests(unittest.TestCase):
@@ -43,7 +44,8 @@ class EdControlTests(unittest.TestCase):
         self.assertNotEqual(digest(restored(bypass, row, active)), digest(original.canonical()))
 
     def fixture(self, ads, premium):
-        source = (Path(__file__).parents[1] / "patches/src/main/kotlin/patches/ed/ContentFiltersPatch.kt").read_text()
+        directory = Path(__file__).parents[1] / "patches/src/main/kotlin/patches/ed"
+        source = (directory / "ContentFiltersPatch.kt").read_text() + (directory / "VacancyWidget.kt").read_text()
         methods = []
         model, owner = "Lcom/kubus/module/network/model/", "L" + OWNER + ";"
         for name, result, params, locals_, body in re.findall(r'helper\("(morphe\w+)", "([^"]+)", (listOf\([^\n]+?\)|emptyList\(\)), (\d+), """(.*?)"""\)', source, re.S):
@@ -67,6 +69,63 @@ class EdControlTests(unittest.TestCase):
         for ads, premium in [(False, False), (True, False), (False, True), (True, True)]:
             with self.subTest(ads=ads, premium=premium):
                 verify_filters(self.fixture(ads, premium), ads, premium)
+
+    def test_vacancy_widget_is_removed_without_removing_editorial_embeds(self):
+        widget = 'https://mobileapi.ed.nl/static/widgets/nationalevacaturebank-blue.html'
+        commercial = [
+            f'<iframe title="Nationale Vacaturebank" src="{widget}"></iframe>',
+            f"<IFRAME SRC = '{widget}?region=eindhoven&amp;theme=blue'></IFRAME>",
+        ]
+        editorial = [
+            None, '', '<p>Editorial article text</p>',
+            f'<!-- Editorial example > <iframe src="{widget}"></iframe> -->',
+
+            f'<iframe src={widget}?region=eindhoven srcdoc=Editorial></iframe>',
+            f'<!DOCTYPE html PUBLIC "<iframe src=\'{widget}\'>"><p>Editorial</p>',
+            f'<![CDATA[<iframe src="{widget}"></iframe>]]>',
+            f'<iframe src\xa0="{widget}"></iframe>',
+
+            f'<iframe src="https://www.youtube.com/embed/editorial"><iframe src="{widget}"></iframe></iframe>',
+            f'<noscript><iframe src="{widget}"></iframe></noscript>',
+            f'<xmp><iframe src="{widget}"></iframe></xmp>',
+            f'<plaintext>Example <iframe src="{widget}"></iframe>',
+
+            f'<iframe title=" src=\'{widget}\'" src="https://www.youtube.com/embed/editorial"></iframe>',
+            f'<script>const example = \'<iframe src="{widget}"></iframe>\';</script><iframe src="https://www.youtube.com/embed/editorial"></iframe>',
+            f'<div title=\'<iframe src="{widget}"></iframe>\'>Editorial</div>',
+            f'<textarea><iframe src="{widget}"></iframe></textarea>',
+            f'<iframe src="https://www.youtube.com/embed/editorial" src="{widget}"></iframe>',
+            f'<iframe src="{widget}" srcdoc="Editorial inline content"></iframe>',
+
+            '<iframe src="https://www.youtube.com/embed/editorial"></iframe>',
+            f'<a href="{widget}">An editorial link</a>',
+            f'<!-- <iframe src="{widget}"></iframe> -->',
+            f'<iframe data-src="{widget}"></iframe>',
+            f'<iframe src="{widget}.editorial"></iframe>',
+            '<iframe src="https://mobileapi.ed.nl.evil.test/static/widgets/nationalevacaturebank-blue.html"></iframe>',
+            '<iframe src="https://mobileapi.ed.nl/static/widgets/editorial.html"></iframe>',
+        ]
+        for ads, premium in [(False, False), (True, False), (False, True), (True, True)]:
+            root = self.fixture(ads, premium)
+            for html in commercial + editorial:
+                for field in ['d', 'e']:
+                    with self.subTest(ads=ads, premium=premium, html=html, field=field):
+                        item = obj('com/kubus/module/network/model/HtmlEmbedDataTeaser', d=None, e=None)
+                        item[field] = html
+                        result = evaluate(root, 'morpheNormalize(Ljava/lang/Object;)Ljava/lang/Object;', [item])
+                        if ads and html in commercial:
+                            self.assertIn(result, (None, 0))
+                        else:
+                            self.assertIs(result, item)
+
+    def test_automatic_section_marketing_follows_annoyance_controls(self):
+        for selection, expected in [
+            (set(), False), ({'Hide ads'}, False), ({'Disable tracking'}, False),
+            ({'Skip consent screens'}, True), ({'Hide Premium banner'}, True),
+            ({'Read full articles'}, True),
+        ]:
+            with self.subTest(selection=selection):
+                self.assertEqual(active_controls(selection).get('automaticMarketing'), expected)
 
 
 if __name__ == "__main__":

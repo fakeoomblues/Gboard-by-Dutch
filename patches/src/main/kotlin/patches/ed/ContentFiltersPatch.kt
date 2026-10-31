@@ -12,6 +12,7 @@ internal val contentFilters = bytecodePatch {
         check(cls.methods.none { it.name.startsWith("morphe") }) { "ED filters already installed" }
         cls.methods.add(helper("morpheAds", "Z", emptyList(), 1, FALSE))
         cls.methods.add(helper("morphePremium", "Z", emptyList(), 1, FALSE))
+        addVacancyWidgetFilter(cls)
         cls.methods.add(helper("morpheFilter", "Ljava/util/List;", listOf("Ljava/util/List;"), 4, """
             if-eqz p0, :null_list
             new-instance v0, Ljava/util/ArrayList;
@@ -73,6 +74,19 @@ internal val contentFilters = bytecodePatch {
             if-nez v0, :drop
             instance-of v0, p0, ${MODEL}CrossPromotionAdvertisementComponent;
             if-nez v0, :drop
+            instance-of v0, p0, ${MODEL}HtmlEmbedDataTeaser;
+            if-eqz v0, :afterVacancyWidget
+            move-object v0, p0
+            check-cast v0, ${MODEL}HtmlEmbedDataTeaser;
+            iget-object v1, v0, ${MODEL}HtmlEmbedDataTeaser;->d:Ljava/lang/String;
+            invoke-static {v1}, $FILTER->morpheVacancyHtml(Ljava/lang/String;)Z
+            move-result v1
+            if-nez v1, :drop
+            iget-object v0, v0, ${MODEL}HtmlEmbedDataTeaser;->e:Ljava/lang/String;
+            invoke-static {v0}, $FILTER->morpheVacancyHtml(Ljava/lang/String;)Z
+            move-result v0
+            if-nez v0, :drop
+            :afterVacancyWidget
             instance-of v0, p0, Lcom/popular/core/model/data/ArticleItem;
             if-eqz v0, :next10
             move-object v0, p0

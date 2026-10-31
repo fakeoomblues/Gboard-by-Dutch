@@ -4,7 +4,7 @@ import app.morphe.patcher.patch.bytecodePatch
 
 /** Both callers already accept these exact completed empty result types. */
 internal val emptyMarketingTemplates = bytecodePatch {
-    dependsOn(originalInput)
+    dependsOn(originalInput, automaticSectionPrompts)
     execute {
         exact("Lnet/persgroep/marketingtemplatessdk/core/models/ResolveResponse;", "<init>(ZLjava/util/List;)V")
         change("Lema;", "a(Ljava/lang/String;Lnet/persgroep/marketingtemplatessdk/core/types/Appearance;Ljava/util/List;Lyla;Lgt3;)Ljava/lang/Object;", """

@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 
 from ad_onboarding import method, digest, Obj, VM, EncryptedPreferences
 from verify_ad import verify_filters, verify_call_kinds
+from ed_annoyances import verify_vacancy_widgets, verify_personalisation_notice
 
 HERE = Path(__file__).parent
 ORIGINALS = json.loads((HERE / "ed_originals.json").read_text())
@@ -57,6 +58,7 @@ def active_controls(selected):
         "premium": "Hide Premium banner" in selected,
         "full": "Read full articles" in selected,
         "marketing": bool(selected & {"Hide Premium banner", "Read full articles"}),
+        "automaticMarketing": bool(selected & {"Skip consent screens", "Hide Premium banner", "Read full articles"}),
         "filters": tracking or bool(selected & {"Hide ads", "Hide Premium banner"}),
         "flags": True,
     }
@@ -71,10 +73,11 @@ def restored(m, row, active):
     if prefix:
         actual = list(m.instructions[:len(prefix)])
         expected = list(prefix)
-        if expected[1:2] == ["if-ne p1, v0, @original"]:
-            label = actual[1].rsplit(", ", 1)[1]
-            assert m.labels[label] == len(prefix), "ED onboarding branch must enter the real original instruction"
-            actual[1] = expected[1]
+        for i, instruction in enumerate(expected):
+            if instruction.endswith(", @original"):
+                label = actual[i].rsplit(", ", 1)[1]
+                assert m.labels[label] == len(prefix), "ED guard must enter the real original instruction"
+                actual[i] = instruction
         assert physical(actual, m.locals) == physical(expected, m.locals), (row["class"], row["signature"], "typed selected prefix", actual, expected)
         remove.update(range(len(prefix)))
         delta = len(prefix)
@@ -122,6 +125,8 @@ def verify_helpers(root, active):
     text = next(root.glob("smali*/" + OWNER + ".smali")).read_text()
     names = set(re.findall(r"^\.method[^\n]* (morphe\w+)\(", text, re.M))
     expected = {"morpheAds", "morphePremium", "morpheFilter", "morphePrimary", "morpheNormalize", "morpheOverlay", "morpheSingle", "morpheEmpty", "morpheArticleComponents"} if active["filters"] else set()
+    if active["filters"]:
+        expected.add("morpheVacancyHtml")
     if active["tracking"]:
         expected |= {"morpheSuppressFiam", "morpheAdvertisingInfo"}
     assert names == expected, ("ED only selected helper dependencies", names, expected)
@@ -129,7 +134,14 @@ def verify_helpers(root, active):
         for name, flag in [("morpheAds", "ads"), ("morphePremium", "premium")]:
             assert method(root, OWNER, name + "()Z").instructions[:2] == [f"const/4 v0, 0x{int(active[flag]):x}", "return v0"]
         verify_filters(root, active["ads"], active["premium"])
-        verify_call_kinds(root)
+        verify_vacancy_widgets(root, active["ads"])
+        verify_call_kinds(root, {
+            ('Ljava/lang/String;', 'matches(Ljava/lang/String;)Z'),
+            ('Ljava/util/regex/Pattern;', 'compile(Ljava/lang/String;)Ljava/util/regex/Pattern;'),
+            ('Ljava/util/regex/Pattern;', 'matcher(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;'),
+            ('Ljava/util/regex/Matcher;', 'find()Z'),
+            ('Ljava/util/regex/Matcher;', 'group()Ljava/lang/String;'),
+        })
     if active["tracking"]:
         assert method(root, OWNER, "morpheSuppressFiam(Lif6;Z)V").canonical()["instructions"] == ["if-eqz p0, @2", "iput-boolean p1, p0, Lif6;->c:Z", "return-void"]
         assert method(root, OWNER, "morpheAdvertisingInfo()Lcom/google/android/gms/ads/identifier/AdvertisingIdClient$Info;").instructions == [
@@ -208,6 +220,8 @@ def verify(root, selected):
     active = active_controls(selected)
     verify_manifest(root, active)
     verify_helpers(root, active)
+    if active["consent"]:
+        verify_personalisation_notice(root)
     originals = {(c, s) for c, s, _ in ORIGINALS["methods"]}
     assert set(EDITS) <= originals, "Every edit must have an independent ED original pin"
     for cls, sig, expected in ORIGINALS["methods"]:

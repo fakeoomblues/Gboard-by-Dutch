@@ -1,4 +1,5 @@
-"""Small strict interpreter for generated AD DTO filters, not a second policy."""
+"""Small strict interpreter for generated AD/ED DTO filters, not a second policy."""
+import re
 from verify_ad import code
 from verify_weerplaza import smali_string
 from ad_contracts import OWNER, TYPE
@@ -42,6 +43,14 @@ def evaluate(root, sig, args):
             elif 'MediaOverlayComponent;-><init>' in ref:v[0].update(c=v[1],d=v[2])
             elif '->isAdvertorial()Z' in ref:result=v[0].get('advertorial',False)
             elif 'String;->equalsIgnoreCase' in ref:result=isinstance(v[1],str) and v[0].lower()==v[1].lower()
+            elif 'String;->matches(' in ref:result=re.fullmatch(v[1],v[0],re.ASCII) is not None
+            elif 'Pattern;->compile(' in ref:
+                # Python 3.12 spells Java's strict end-of-input anchor as \Z.
+                result=re.compile(v[0].replace(r'\z',r'\Z'),re.ASCII)
+            elif 'Pattern;->matcher(' in ref:result={'matches':v[0].finditer(v[1]),'current':None}
+            elif 'Matcher;->find()Z' in ref:
+                v[0]['current']=next(v[0]['matches'],None);result=v[0]['current'] is not None
+            elif 'Matcher;->group()' in ref:result=v[0]['current'].group()
             elif '->iterator()' in ref:result=iter(v[0])
             elif '->hasNext()Z' in ref:
                 # A buffered iterator models the actual Java iterator protocol.

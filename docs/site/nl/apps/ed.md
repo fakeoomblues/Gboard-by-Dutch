@@ -2,7 +2,7 @@
 
 **Appversie:** 9.22.0 · **Build:** 9220000 · **Origineel bestand:** APKS
 
-[Download originele app](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/pi3usslla0jt){ .md-button .md-button--primary }
 
 Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
 

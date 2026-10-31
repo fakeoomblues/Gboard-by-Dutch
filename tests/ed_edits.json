@@ -1021,5 +1021,27 @@
         ]
       }
     ]
+  },
+  {
+    "class": "cw7",
+    "signature": "c(IIILyg3;Lv07;)V",
+    "control": "consent",
+    "prefix": [
+      "move/from16 v0, p0",
+      "const v1, 0x7f1400ed",
+      "if-ne v0, v1, @original",
+      "return-void"
+    ],
+    "sites": []
+  },
+  {
+    "class": "com/kubusapp/MainActivity",
+    "signature": "E(Lcom/persgroep/temptationsdk/data/model/ContentType;Ljava/lang/String;Llmg;)Ljava/lang/Object;",
+    "control": "automaticMarketing",
+    "prefix": [
+      "sget-object v0, Lzdi;->a:Lzdi;",
+      "return-object v0"
+    ],
+    "sites": []
   }
 ]

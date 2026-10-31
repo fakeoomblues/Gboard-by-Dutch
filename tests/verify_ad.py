@@ -150,7 +150,7 @@ def verify_models(root, active):
         assert digest(code(root, MODEL+name, sig,count)) == expected, 'AD constructor preserves original raw/cache assignments: '+name
 
 
-def verify_call_kinds(root):
+def verify_call_kinds(root, additional_platform_calls=frozenset()):
     from ad_sdk import sdk_classes
     sdk,archive=sdk_classes()
     try:
@@ -170,7 +170,7 @@ def verify_call_kinds(root):
                     while target not in contract[2] and contract[1]:contract=sdk(contract[1]);assert contract
                     assert target in contract[2] and (kind=='static') == bool(contract[2][target]&8), target
                     # These platform APIs all predate API32; never use List.of/copyOf.
-                    assert (typ,target) in {('Ljava/util/List;','iterator()Ljava/util/Iterator;'),('Ljava/util/List;','add(Ljava/lang/Object;)Z'),('Ljava/util/List;','isEmpty()Z'),('Ljava/util/List;','remove(I)Ljava/lang/Object;'),('Ljava/util/Iterator;','hasNext()Z'),('Ljava/util/Iterator;','next()Ljava/lang/Object;'),('Ljava/util/ArrayList;','<init>()V'),('Ljava/lang/String;','equalsIgnoreCase(Ljava/lang/String;)Z')}, (typ,target)
+                    assert (typ,target) in {('Ljava/util/List;','iterator()Ljava/util/Iterator;'),('Ljava/util/List;','add(Ljava/lang/Object;)Z'),('Ljava/util/List;','isEmpty()Z'),('Ljava/util/List;','remove(I)Ljava/lang/Object;'),('Ljava/util/Iterator;','hasNext()Z'),('Ljava/util/Iterator;','next()Ljava/lang/Object;'),('Ljava/util/ArrayList;','<init>()V'),('Ljava/lang/String;','equalsIgnoreCase(Ljava/lang/String;)Z')} | set(additional_platform_calls), (typ,target)
     finally:archive.close()
 
 
