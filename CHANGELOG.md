@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.4.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [91739dd5b29f](https://github.com/johninnl/nl-morphe-patches/commit/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.4.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.3.1...v1.4.0) (2026-10-31)
+
+### ✨ New Features
+
+* **Rollerbank:** remove ads and enable En Route camera alerts ([91739dd](https://github.com/johninnl/nl-morphe-patches/commit/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8d8dac5b361f94f293a8a22152928501f305e8ad/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.3.1.**

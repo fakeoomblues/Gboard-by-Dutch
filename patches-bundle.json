@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-10-31T22:38:37",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8d8dac5b361f94f293a8a22152928501f305e8ad/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.3.1.**\n\n[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)\n\nSource: [8d8dac5b361f](https://github.com/johninnl/nl-morphe-patches/commit/8d8dac5b361f94f293a8a22152928501f305e8ad). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.3.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.3.0...v1.3.1) (2026-10-31)\n\n### 🐛 Bug Fixes\n\n* **HLN:** hide empty listening placeholders ([8d8dac5](https://github.com/johninnl/nl-morphe-patches/commit/8d8dac5b361f94f293a8a22152928501f305e8ad))",
-  "download_url": "https://github.com/johninnl/nl-morphe-patches/releases/download/v1.3.1/patches-1.3.1.mpp",
+  "created_at": "2026-10-31T23:14:45",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.4.0.**\n\n[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)\n\nSource: [91739dd5b29f](https://github.com/johninnl/nl-morphe-patches/commit/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.4.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.3.1...v1.4.0) (2026-10-31)\n\n### ✨ New Features\n\n* **Rollerbank:** remove ads and enable En Route camera alerts ([91739dd](https://github.com/johninnl/nl-morphe-patches/commit/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1))",
+  "download_url": "https://github.com/johninnl/nl-morphe-patches/releases/download/v1.4.0/patches-1.4.0.mpp",
   "signature_download_url": "",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }
