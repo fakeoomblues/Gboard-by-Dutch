@@ -28,6 +28,20 @@ Install `docs/site-requirements.txt`, run `python3 scripts/generate_docs_catalog
 `python3 scripts/check_markdown_links.py`, `python3 -m mkdocs build --strict`
 and `python3 scripts/check_docs_site.py` to validate documentation.
 
+## Verify dev distribution
+
+Keep stable publication on `main`. For a dev prerelease, publish the signed
+bundle and the generated `patches-bundle.json` on `dev`; its version and
+`download_url` must identify the same prerelease asset. Morphe reads the branch
+manifest when selecting a source channel. Marking a GitHub release as a
+prerelease does not update that manifest.
+
+Before reporting a dev build available in Manager, fetch the public raw
+`dev/patches-bundle.json`, follow its download URL, verify the repository signing
+key and bundle version, and check that the new apps are present. Confirm that
+`main/patches-bundle.json` and GitHub's latest stable release remain unchanged.
+Promote to `main` only after the requested user confirmation.
+
 ## Write for users
 
 Keep Dutch and English app pages aligned. Describe each patch's visible effect,
