@@ -133,6 +133,11 @@ def verify_manifest(root,selected,variant):
             assert not any(n.tag=='uses-permission' and n.get(A+'name')==attrs[A+'name'] for n in manifest)
             manifest.insert(index,ET.Element('uses-permission',attrs))
     if selected:
+        fused=variant.get('fused_modules',[])
+        if fused:
+            nodes=[n for n in app if n.tag=='meta-data' and n.get(A+'name')=='com.android.dynamic.apk.fused.modules']
+            assert len(nodes)==1 and nodes[0].attrib=={A+'name':'com.android.dynamic.apk.fused.modules',A+'value':','.join(fused)},'Marktplaats bundled Notifications registration missing or changed'
+            app.remove(nodes[0])
         for key,value in variant['packaging']['attributes'].items():
             assert key not in manifest.attrib
             manifest.set(key,value)
@@ -431,6 +436,13 @@ def verify(root,selected,apk,behaviour_only=None):
     assert selected<=legacy.NAMES
     variant=profile(root);source=Smali(root);decl=DexDeclarations.from_apk(apk)
     if not selected:assert decl.source_sha256==variant['base_sha256'],'Marktplaats original APK digest changed'
+    if selected:
+        for feature in variant.get('features',{}).values():
+            for expected in feature['classes']:
+                assert expected['name'] in decl.classes,'Marktplaats bundled Notifications code missing'
+                actual=decl.classes[expected['name']]
+                assert actual.access_flags==expected['flags'] and actual.superclass==expected['superclass'] and list(actual.interfaces)==expected['interfaces'],'Marktplaats Notifications class declaration changed'
+                assert {sig:m.access_flags for sig,m in actual.methods.items()}==expected['methods'],'Marktplaats Notifications methods missing or changed'
     edits=selected_edits(selected)
     expected_helpers=set()
     if selected&legacy.AD_NAMES:expected_helpers.update(HELPERS['ads'])

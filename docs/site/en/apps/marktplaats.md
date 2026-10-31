@@ -2,7 +2,7 @@
 
 **App version:** 16.19.0 · **Build:** 633464 · **Original file:** APKM
 
-[Download original app](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/){ .md-button .md-button--primary }
+[Download original app](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/marktplaats-16-19-0-android-apk-download/){ .md-button .md-button--primary }
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 
@@ -12,6 +12,7 @@ Use the complete APKM archive for version 16.19.0, build 633464. Choose one of t
 
 | Variant | Minimum Android version | Screen density |
 | --- | --- | --- |
+| Complete bundle with Notifications | Android 12L | 120–480 dpi |
 | ARM64, x86 and x86_64 | Android 8 | 480 dpi |
 | ARM64 and ARMv7 | Android 9 | 480–640 dpi |
 | Noarch | Android 10 | 480–640 dpi |
@@ -35,6 +36,8 @@ The ad and tracking controls cover the supported optional activity from: Adjust,
 Blocking measurement does not block every function from the same provider. Essential app services can still connect.
 
 ## Before using
+
+Use the complete Android 12L+ APKM linked above to retain Notifications. Older or incomplete archives can omit this feature and leave Meldingen on a loading screen.
 
 Braze marketing push is disabled. Functional listings, chat, accounts and payments remain online. Disabling ThreatMetrix can affect protected login or checkout features. Google sign-in requires a compatible microG-Re installation.
 

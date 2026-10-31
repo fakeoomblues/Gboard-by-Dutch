@@ -1,7 +1,7 @@
 # Marktplaats
 
 Version **16.19.0**, build **633464**, package `nl.marktplaats.android`.
-Only the inspected Android 8, 9 and 10 minimum-SDK variants are supported.
+Only the inspected Android 8, 9, 10 and 12L minimum-SDK variants are supported.
 The five controls include consent, microG-Re and independent ThreatMetrix
 blocking. Older versions are rejected. The checks below describe source and
 rebuilt-artifact evidence; account and payment flows still need device acceptance.
@@ -62,3 +62,30 @@ bounded execution of retained instructions. It does not establish every Android
 runtime outcome. Re-signed startup, search/listing/chat, account/push, Maps,
 Google sign-in and checkout/security behavior need device acceptance for this
 build. No transaction or data deletion was performed during this verification.
+
+
+## Notifications module repair (2026-10-31)
+
+The original 16.17.0 APKS export contains only base, arm64 and density APKs.
+The Notifications action requests `alertscentercompose`; its activity code is
+absent from that export. Read-only inspection of the connected phone confirmed
+16.17.0/633462 and `DynamicModuleInstallActivity` in the paused activity stack.
+No original installed-split inventory could be recovered, so whether the split
+was omitted during export or had not yet been downloaded remains unknown.
+
+The complete Android 12L+ 16.19.0 APKM contains `split_alertscentercompose.apk`.
+All twelve APK signatures match the pinned publisher certificate; the six base
+DEX payloads are byte-identical to the previously supported API26 distribution.
+The feature contains 113 classes and 404 method declarations. Morphe's merger
+preserves those declarations and adds the native fused-module registration,
+allowing the original navigation to use the bundled feature. No download,
+installation or consent success is fabricated.
+
+API32 inputs now require the fused Notifications-module metadata in the read-only
+preflight. Incomplete API32 archives fail before resource edits with an instruction
+to select the complete APKM. Existing API26/28/29 inputs retain their prior guards;
+those archives can omit optional features. The public download points to the
+complete API32 distribution. The feature's class/method ABI, native libraries
+and registration are checked in rebuilt artifacts. On-device acceptance of the
+repaired 16.19.0 build remains pending; the phone was not navigated or modified
+during this investigation.
