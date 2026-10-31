@@ -1,4 +1,34 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f4641f52b622ab03e3fc9b5aac161f71c5d6352a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.2.0-dev.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f4641f52b622](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.2.0-dev.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.2.0-dev.1...v1.2.0-dev.2) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **AD:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **Buienalarm:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **Buienradar:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **Marktplaats:** retire version 16.17.0 ([aaf7bc7](https://github.com/johninnl/nl-morphe-patches/commit/aaf7bc780ecb5e7972cd09c32194cd0638ef5f0e))
+* **Medium:** include the isolated regex dependency ([93f46b1](https://github.com/johninnl/nl-morphe-patches/commit/93f46b185cf332cbd6de797a85431be511b0a2b9))
+* **NPO Start Android TV:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **NPO Start:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **NU.nl:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+* **release:** scope Medium dependency changes to the reader ([68adbc2](https://github.com/johninnl/nl-morphe-patches/commit/68adbc25431caae3b03aa5eec8fb4fb6869521bb))
+* **RTL Nieuws:** accept verified public Android APK variants ([f4641f5](https://github.com/johninnl/nl-morphe-patches/commit/f4641f52b622ab03e3fc9b5aac161f71c5d6352a))
+
+### 🚀 Updated App Support
+
+* **NRC:** support 5.12.25 build 627 ([ae2ea28](https://github.com/johninnl/nl-morphe-patches/commit/ae2ea28064eae228f487ffd8c27da5980af971fc))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/fefcb2ec0d0e4d654c04e92d7e757051fc5abe59/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.2.0-dev.1.**

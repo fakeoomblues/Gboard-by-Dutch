@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.2.0-dev.1**
+**Ontwikkelbundel: 1.2.0-dev.2**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -256,11 +256,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable ThreatMetrix | Aan | 16.17.0, 16.19.0 |
-| Disable tracking | Aan | 16.17.0, 16.19.0 |
-| Google sign-in via microG-Re | Aan | 16.17.0, 16.19.0 |
-| Hide ads | Aan | 16.17.0, 16.19.0 |
-| Skip consent screens | Aan | 16.17.0, 16.19.0 |
+| Disable ThreatMetrix | Aan | 16.19.0 |
+| Disable tracking | Aan | 16.19.0 |
+| Google sign-in via microG-Re | Aan | 16.19.0 |
+| Hide ads | Aan | 16.19.0 |
+| Skip consent screens | Aan | 16.19.0 |
 
 ## Medium
 
@@ -330,12 +330,12 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 5.12.24 |
-| Hide Premium banner | Aan | 5.12.24 |
-| Hide ads | Aan | 5.12.24 |
-| Hide newspaper tab | Aan | 5.12.24 |
-| Read full articles | Aan | 5.12.24 |
-| Skip consent screens | Aan | 5.12.24 |
+| Disable tracking | Aan | 5.12.25 |
+| Hide Premium banner | Aan | 5.12.25 |
+| Hide ads | Aan | 5.12.25 |
+| Hide newspaper tab | Aan | 5.12.25 |
+| Read full articles | Aan | 5.12.25 |
+| Skip consent screens | Aan | 5.12.25 |
 
 ## NU.nl
 

@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.2.0-dev.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.2.0-dev.1)** · 40 apps · 167 patches
+**Patch bundle [v1.2.0-dev.2](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.2.0-dev.2)** · 40 apps · 167 patches
 
 ### Weather
 
@@ -70,7 +70,7 @@ it does not guarantee anonymity or remove all network traffic.
 | [Medium](https://johninnl.github.io/nl-morphe-patches/apps/medium/) | Tracking · Prompts · Articles | 4.5.1784911033 | APKS | 3 |
 | [Nieuwsblad](https://johninnl.github.io/nl-morphe-patches/apps/nieuwsblad/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [NOS Teletekst](https://johninnl.github.io/nl-morphe-patches/apps/nos-teletekst/) | Tracking | 2.8.10 | APKS | 2 |
-| [NRC](https://johninnl.github.io/nl-morphe-patches/apps/nrc/) | Ads · Tracking · Prompts · Articles · Newspaper tab | 5.12.24 | APK | 6 |
+| [NRC](https://johninnl.github.io/nl-morphe-patches/apps/nrc/) | Ads · Tracking · Prompts · Articles · Newspaper tab | 5.12.25 | APK | 6 |
 | [NU.nl](https://johninnl.github.io/nl-morphe-patches/apps/nunl/) | Ads · Tracking · Prompts | 26.9.0 | APKS | 4 |
 | [Omroep Brabant](https://johninnl.github.io/nl-morphe-patches/apps/omroep-brabant/) | Ads · Tracking · Prompts | 11.1.0 | APKS | 3 |
 | [Omroep West](https://johninnl.github.io/nl-morphe-patches/apps/omroep-west/) | Ads · Tracking · Prompts | 20.1 | APKS | 3 |
@@ -106,7 +106,7 @@ it does not guarantee anonymity or remove all network traffic.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
-| [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.17.0, 16.19.0 | APKM | 5 |
+| [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.19.0 | APKM | 5 |
 
 [Patch defaults and supported versions](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/) · [English](https://johninnl.github.io/nl-morphe-patches/en/reference/catalogue/)
 

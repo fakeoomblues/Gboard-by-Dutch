@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.2.0-dev.1**
+**Development patch bundle: 1.2.0-dev.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -256,11 +256,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable ThreatMetrix | On | 16.17.0, 16.19.0 |
-| Disable tracking | On | 16.17.0, 16.19.0 |
-| Google sign-in via microG-Re | On | 16.17.0, 16.19.0 |
-| Hide ads | On | 16.17.0, 16.19.0 |
-| Skip consent screens | On | 16.17.0, 16.19.0 |
+| Disable ThreatMetrix | On | 16.19.0 |
+| Disable tracking | On | 16.19.0 |
+| Google sign-in via microG-Re | On | 16.19.0 |
+| Hide ads | On | 16.19.0 |
+| Skip consent screens | On | 16.19.0 |
 
 ## Medium
 
@@ -330,12 +330,12 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 5.12.24 |
-| Hide Premium banner | On | 5.12.24 |
-| Hide ads | On | 5.12.24 |
-| Hide newspaper tab | On | 5.12.24 |
-| Read full articles | On | 5.12.24 |
-| Skip consent screens | On | 5.12.24 |
+| Disable tracking | On | 5.12.25 |
+| Hide Premium banner | On | 5.12.25 |
+| Hide ads | On | 5.12.25 |
+| Hide newspaper tab | On | 5.12.25 |
+| Read full articles | On | 5.12.25 |
+| Skip consent screens | On | 5.12.25 |
 
 ## NU.nl
 
