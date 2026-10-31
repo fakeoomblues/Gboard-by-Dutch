@@ -9,6 +9,8 @@ Choose an app to see its patches, defaults and supported original file.
 | [De Morgen](../demorgen.md) | 7.53.1 | 23136515 |
 | [De Tijd](../detijd.md) | 5.6.1 | 5060100 |
 | [DS Nieuws](../dsnieuws.md) | 22.0.0 | 2012316104 |
+| [ED](../ed.md) | 9.22.0 | 9220000 |
+| [GVA](../gva.md) | 22.0.0 | 2012316104 |
 | [FTM](../ftm.md) | 2.6.8 | 58 |
 | [HBVL](../hbvl.md) | 22.0.0 | 2012316104 |
 | [HLN](../hln.md) | 9.22.0 | 2009220000 |

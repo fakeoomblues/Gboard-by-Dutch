@@ -127,6 +127,20 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 5.8.0 |
 | Skip consent screens | On | 5.8.0 |
 
+## ED
+
+[What do the patches change?](../apps/ed.md)
+
+`com.mecom.ed.nl`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 9.22.0 |
+| Hide Premium banner | On | 9.22.0 |
+| Hide ads | On | 9.22.0 |
+| Read full articles | On | 9.22.0 |
+| Skip consent screens | On | 9.22.0 |
+
 ## Flitsmeister
 
 [What do the patches change?](../apps/flitsmeister.md)
@@ -155,6 +169,19 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 2.6.8 |
 | Read full articles | On | 2.6.8 |
 | Skip consent screens | On | 2.6.8 |
+
+## GVA
+
+[What do the patches change?](../apps/gva.md)
+
+`be.concentra.gva.MediaApp`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 22.0.0 |
+| Hide Premium banner | On | 22.0.0 |
+| Hide ads | On | 22.0.0 |
+| Skip consent screens | On | 22.0.0 |
 
 ## HBVL
 

@@ -127,6 +127,20 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 5.8.0 |
 | Skip consent screens | Aan | 5.8.0 |
 
+## ED
+
+[Wat veranderen de patches?](../apps/ed.md)
+
+`com.mecom.ed.nl`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 9.22.0 |
+| Hide Premium banner | Aan | 9.22.0 |
+| Hide ads | Aan | 9.22.0 |
+| Read full articles | Aan | 9.22.0 |
+| Skip consent screens | Aan | 9.22.0 |
+
 ## Flitsmeister
 
 [Wat veranderen de patches?](../apps/flitsmeister.md)
@@ -155,6 +169,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 2.6.8 |
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
+
+## GVA
+
+[Wat veranderen de patches?](../apps/gva.md)
+
+`be.concentra.gva.MediaApp`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 22.0.0 |
+| Hide Premium banner | Aan | 22.0.0 |
+| Hide ads | Aan | 22.0.0 |
+| Skip consent screens | Aan | 22.0.0 |
 
 ## HBVL
 
