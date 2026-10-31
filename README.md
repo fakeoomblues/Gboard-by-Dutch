@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.2.0-dev.3](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.2.0-dev.3)** · 40 apps · 168 patches
+**Patch bundle [v1.2.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.2.1)** · 40 apps · 168 patches
 
 ### Weather
 

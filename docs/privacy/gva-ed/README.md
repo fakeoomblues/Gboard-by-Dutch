@@ -102,8 +102,9 @@ now includes all 58 original methods of this shared utility class, bringing
 the total to 1,499 original methods and 85 allowed-edit specifications.
 
 The equivalent live guard removed the blank row on the connected phone,
-and the user confirmed the visible fix. A populated-history device check
-remains pending; synthetic guard checks and complete retained-method hashes
-prove the non-loading path is preserved but do not substitute for that
-runtime check. Instrumentation is private diagnostic tooling and is not
+and the user confirmed the visible fix. The user then played a real podcast episode, returned to Luister, and
+confirmed that a real resume card appears and works. The same in-UID capture
+observed loading=false entering the retained renderer and requests for the
+real episode ID `38440282`. Both empty-history and populated-history behavior
+are therefore confirmed on the connected phone. Instrumentation is private diagnostic tooling and is not
 included in the released patch bundle.

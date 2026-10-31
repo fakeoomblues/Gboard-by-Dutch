@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Development patch bundle: 1.2.0-dev.3</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Patch bundle: 1.2.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
