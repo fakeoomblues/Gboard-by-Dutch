@@ -2,7 +2,7 @@
 
 **Appversie:** 5.12.25 · **Build:** 627 · **Origineel bestand:** APK
 
-[Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/4kvfijnjpukd){ .md-button .md-button--primary }
 
 Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
 
