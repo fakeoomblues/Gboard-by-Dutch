@@ -33,7 +33,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Unreleased source snapshot** · 38 apps · 158 patches
+**Patch bundle [v1.0.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.0.0)** · 38 apps · 158 patches
 
 ### Weather
 
