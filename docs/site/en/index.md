@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Patch bundle: 1.3.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">40 apps</span> · Patch bundle: 1.3.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
@@ -346,7 +346,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="hln be.persgroep.android.news.mobilehln 9.22.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="hln be.persgroep.android.news.mobilehln 9.22.0 disable tracking hide premium banner hide ads hide empty listening carousel read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [HLN](apps/hln.md)
@@ -354,11 +354,12 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">9.22.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilehln</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
 <li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>
+<li>Hide empty listening carousel <span class="dap-app-card__target">9.22.0</span></li>
 <li>Read full articles <span class="dap-app-card__target">9.22.0</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">9.22.0</span></li>
 </ul>

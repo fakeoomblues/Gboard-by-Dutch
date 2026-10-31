@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.3.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.3.0)** · 40 apps · 169 patches
+**Patch bundle [v1.3.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.3.1)** · 40 apps · 170 patches
 
 ### Weather
 
@@ -65,7 +65,7 @@ it does not guarantee anonymity or remove all network traffic.
 | [FTM](https://johninnl.github.io/nl-morphe-patches/apps/ftm/) | Ads · Tracking · Prompts · Articles | 2.6.8 | APKS | 5 |
 | [GVA](https://johninnl.github.io/nl-morphe-patches/apps/gva/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [HBVL](https://johninnl.github.io/nl-morphe-patches/apps/hbvl/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
-| [HLN](https://johninnl.github.io/nl-morphe-patches/apps/hln/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 5 |
+| [HLN](https://johninnl.github.io/nl-morphe-patches/apps/hln/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Humo](https://johninnl.github.io/nl-morphe-patches/apps/humo/) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [Medium](https://johninnl.github.io/nl-morphe-patches/apps/medium/) | Tracking · Prompts · Articles | 4.5.1784911033 | APKS | 3 |
 | [Nieuwsblad](https://johninnl.github.io/nl-morphe-patches/apps/nieuwsblad/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |

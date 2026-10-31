@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -3830,6 +3830,40 @@
                 "ARMEABI_V7A": 9220000,
                 "X86_64": 9220000,
                 "X86": 9220000
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide empty listening carousel",
+      "description": "Hides the blank Luister verder loading row and its invalid placeholder links. Real listening history, podcast carousels and playback remain available.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilehln",
+          "name": "HLN",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.22.0",
+              "versionCodes": {
+                "ARM64_V8A": 2009220000,
+                "ARMEABI_V7A": 2009220000,
+                "X86_64": 2009220000,
+                "X86": 2009220000
               },
               "isExperimental": false,
               "minSdk": 32,

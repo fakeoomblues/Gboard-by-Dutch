@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.3.0**
+**Patch bundle: 1.3.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -209,6 +209,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 9.22.0 |
 | Hide Premium banner | On | 9.22.0 |
 | Hide ads | On | 9.22.0 |
+| Hide empty listening carousel | On | 9.22.0 |
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
 
