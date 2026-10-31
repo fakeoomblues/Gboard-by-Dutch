@@ -11,9 +11,12 @@ internal val rtl = Compatibility(
     name = "RTL Nieuws", packageName = "nl.rtl.rtlnieuws", apkFileType = ApkFileType.APKS,
     signatures = setOf("80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
         "862a0a19d90fe0c678bde313d7a8606e3a97a0c209ab0b56626eb8eaf18571f9"),
-    targets = listOf(AppTarget(version = "12.7.1", versionCode = 1558, minSdk = 32)),
+    targets = listOf(AppTarget(version = "12.7.1", versionCode = 1558, minSdk = 24)),
 )
-internal val originalInput = patches.shared.originalInput(rtl)
+// Public publisher variants share the inspected DEX and version code.
+internal val originalInput = patches.shared.originalInput(
+    rtl, additionalMinSdksByVersion = mapOf("12.7.1" to setOf(29, 32)),
+)
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 internal fun exact(cls: String, signature: String) = Fingerprint(

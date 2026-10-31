@@ -18,6 +18,7 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import patches.buienradar.shared.Constants.COMPATIBILITY_BUIENRADAR
+import patches.buienradar.shared.Constants.originalInput
 
 @Suppress("unused")
 val hidePremiumBannerPatch = bytecodePatch(
@@ -26,6 +27,7 @@ val hidePremiumBannerPatch = bytecodePatch(
         "trial notification.",
 ) {
     compatibleWith(COMPATIBILITY_BUIENRADAR)
+    dependsOn(originalInput)
 
     execute {
         // Enum constant: first static field assigned after its name string in <clinit>.

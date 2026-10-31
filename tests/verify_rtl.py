@@ -18,7 +18,12 @@ from verify_dumpert import Smali, canonicalize, absolute_registers, audit_call, 
 from verify_parool import sdk_classes
 
 NAMES = {'Hide ads', 'Disable tracking', 'Skip consent screens', EXPERT_NAME}
-BASE_SHA256 = '85aacb2b5785c338a9801a57fe71f57f41d47bae1ada56ef19fee9b8520299e4'
+# Exact inspected public publisher base APKs (API24, API29 and API32).
+BASE_SHA256S = {
+    '85aacb2b5785c338a9801a57fe71f57f41d47bae1ada56ef19fee9b8520299e4',
+    'be206b2ca02125ae332aa96b7cf20e1f9b39e6e3a92bff6166f5e4a7e8827232',
+    'c8d366662a84f2d445fa4fd3b542d60d5882bad3fbf0dd95a84b28fd585f53f2',
+}
 CONTRACTS = CONTRACTS + ADS_CONTRACTS + TRACKING_CONTRACTS
 
 
@@ -53,7 +58,7 @@ def verify(root: Path, selected: set[str], apk: Path | None = None):
     source = Smali(root)
     declarations = DexDeclarations.from_apk(apk) if apk else smali_declarations(root)
     if not selected and apk:
-        assert declarations.source_sha256 == BASE_SHA256, 'Expected inspected RTL original APK'
+        assert declarations.source_sha256 in BASE_SHA256S, 'Expected inspected RTL original APK'
     edits = {}
     for edit in ADS_EDITS:
         edits.setdefault((edit['owner'], edit['signature']), []).append(edit)

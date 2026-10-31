@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import patches.buienradar.shared.Constants.COMPATIBILITY_BUIENRADAR
+import patches.buienradar.shared.Constants.originalInput
 
 @Suppress("unused")
 val hideAdsPatch = bytecodePatch(
@@ -22,6 +23,7 @@ val hideAdsPatch = bytecodePatch(
     description = "Removes the banner/native ads between the weather cards and the pre-roll ads in weather videos, and does not start the Google Mobile Ads SDK.",
 ) {
     compatibleWith(COMPATIBILITY_BUIENRADAR)
+    dependsOn(originalInput)
 
     execute {
 

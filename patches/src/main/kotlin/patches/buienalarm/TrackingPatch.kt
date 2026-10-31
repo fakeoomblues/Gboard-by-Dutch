@@ -13,6 +13,7 @@ import org.w3c.dom.Element
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
 
 private val trackingResources = resourcePatch {
+    dependsOn(originalInput)
     execute {
         document("AndroidManifest.xml").use { doc ->
             val application = doc.getElementsByTagName("application").item(0) as Element
@@ -109,7 +110,7 @@ val disableTracking = bytecodePatch(
     description = "Disables app analytics, advertising IDs, partner targeting, crash/session reporting and marketing SDK startup while retaining weather and configuration services.",
 ) {
     compatibleWith(buienalarm)
-    dependsOn(trackingResources, hideAds, optionalTelemetry)
+    dependsOn(originalInput, trackingResources, hideAds, optionalTelemetry)
     execute {
         fun stop(fingerprint: Fingerprint) {
             fingerprint.method.addInstructions(0, "return-void")

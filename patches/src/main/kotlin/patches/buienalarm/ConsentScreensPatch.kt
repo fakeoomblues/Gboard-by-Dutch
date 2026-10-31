@@ -19,7 +19,7 @@ val skipConsentScreens = bytecodePatch(
     description = "Skips the cookie onboarding and automatic ad/Premium choice screens after disabling tracking. Does not accept or reject consent; manual Privacy settings remain available.",
 ) {
     compatibleWith(buienalarm)
-    dependsOn(disableTracking)
+    dependsOn(originalInput, disableTracking)
     execute {
         val cookies = Fingerprint(
             definingClass = "Lorg/yoki/android/buienalarm/activity/FirstRunActivity;",

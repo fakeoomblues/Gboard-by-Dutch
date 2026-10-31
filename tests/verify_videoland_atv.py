@@ -292,5 +292,11 @@ if __name__ == '__main__':
     parser.add_argument('--unavailable', action='store_true')
     parser.add_argument('--ads', action='store_true')
     parser.add_argument('--tracking', action='store_true')
+    parser.add_argument('--original-apks')
+    parser.add_argument('--patched-apk')
     args = parser.parse_args()
     print(f'PASS: {verify(args.original, args.patched, args.ads, args.tracking, args.subscription, args.unavailable)} original Videoland TV methods and selected effects')
+    if args.original_apks or args.patched_apk:
+        from media_inputs import verify_payload
+        assert args.original_apks and args.patched_apk
+        print(f'PASS: {verify_payload(args.original_apks, args.patched_apk)} complete Videoland TV payload entries')

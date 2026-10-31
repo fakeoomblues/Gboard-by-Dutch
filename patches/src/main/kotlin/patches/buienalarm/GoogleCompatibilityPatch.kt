@@ -26,6 +26,7 @@ private const val HELPER = "Lpatches/buienalarm/extension/SignatureCompatibility
 private const val PACKAGE_MANAGER = "Landroid/content/pm/PackageManager;"
 
 private val communityMapsKey = resourcePatch {
+    dependsOn(originalInput)
     execute {
         val key = CommunityMapsKey.value
         check(Regex("AIza[0-9A-Za-z_-]{35}").matches(key)) { "Missing authorized community Maps key" }
@@ -47,7 +48,7 @@ val googleCompatibility = bytecodePatch(
     description = "Preserves the original app certificate for Firebase and supplies the authorized community key for Google Maps.",
 ) {
     compatibleWith(buienalarm)
-    dependsOn(communityMapsKey)
+    dependsOn(originalInput, communityMapsKey)
     extendWith("extensions/signature.mpe")
 
     execute {

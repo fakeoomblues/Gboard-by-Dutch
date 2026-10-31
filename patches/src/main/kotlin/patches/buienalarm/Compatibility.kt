@@ -14,3 +14,4 @@ internal val buienalarm = Compatibility(
     ),
     targets = listOf(AppTarget(version = "4.32.0", versionCode = 3723, minSdk = 26)),
 )
+internal val originalInput = patches.shared.originalInput(buienalarm)

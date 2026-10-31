@@ -7,12 +7,20 @@ import tempfile
 from unittest.mock import patch
 import zipfile
 
-from verify_rtl import restore_owned_edits
+from verify_rtl import restore_owned_edits, verify
 from verify_parool import sdk_classes
 from verify_dumpert import absolute_registers
 
 
 class RtlContractTests(unittest.TestCase):
+    def test_uninspected_original_is_rejected_before_contract_inspection(self):
+        # The complete APK pin remains independent of retained method hashes.
+        # A repack with the same selected methods must still be inspected first.
+        from types import SimpleNamespace
+        with patch('verify_rtl.DexDeclarations.from_apk', return_value=SimpleNamespace(source_sha256='0' * 64)):
+            with self.assertRaisesRegex(AssertionError, 'Expected inspected RTL original APK'):
+                verify(Path('/unused'), set(), Path('/uninspected.apk'))
+
     def test_parameter_aliases_do_not_rename_fields_methods_or_labels(self):
         self.assertEqual(absolute_registers('iget-object p0, p1, Lfixture;->p0:Ljava/lang/Object;', 3),
                          'iget-object v3, v4, Lfixture;->p0:Ljava/lang/Object;')

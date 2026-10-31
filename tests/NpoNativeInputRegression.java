@@ -100,7 +100,8 @@ class NpoNativeInputRegression extends OriginalInputRegression {
                 Map<String,byte[]> unknown=new TreeMap<>(complete);
                 unknown.put("lib/mips/libpairipcore.so",complete.values().iterator().next());
                 probe(guard,fixture(base,scratch,label+"-unknown",unknown),metadata,sdk,scratch,label+"-unknown",false);
-                if(label.equals("TV"))probe(guard,fixture(base,scratch,"TV-API32",complete),metadata,32,scratch,"TV-API32",true);
+                for(int variantSdk:new int[]{24,29,32})
+                    probe(guard,fixture(base,scratch,label+"-API"+variantSdk,complete),metadata,variantSdk,scratch,label+"-API"+variantSdk,true);
                 for(String path:complete.keySet().stream().filter(n->n.endsWith(LIB)).toList()) {
                     String abi=path.split("/")[1];Map<String,byte[]> subset=new TreeMap<>();complete.forEach((key,value)->{if(key.startsWith("lib/"+abi+"/"))subset.put(key,value);});
                     probe(guard,fixture(base,scratch,label+"-"+abi,subset),metadata,sdk,scratch,label+"-"+abi,true);

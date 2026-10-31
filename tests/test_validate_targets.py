@@ -101,12 +101,121 @@ class InputStagingTests(unittest.TestCase):
             self.assertIn("split_config.en.apk", archive.namelist())
 
 
+    def archive(self, name, contents):
+        source = self.root / name
+        with zipfile.ZipFile(source, 'w') as archive:
+            for filename, data in contents:
+                archive.writestr(filename, data)
+        return source
+
+    def test_xapk_without_manifest_preserves_every_apk_payload(self):
+        contents = {'com.publisher.news.apk': b'publisher-signed-base',
+                    'config.arm64_v8a.apk': b'signed-native-split',
+                    'config.en.apk': b'signed-language-split',
+                    'config.xxhdpi.apk': b'signed-density-split'}
+        source = self.archive('public.xapk', contents.items())
+        original = source.read_bytes()
+        staged, reference = validator.prepare_input(source, self.output)
+        self.assertEqual(reference.read_bytes(), contents['com.publisher.news.apk'])
+        with zipfile.ZipFile(staged) as archive:
+            expected = dict(contents)
+            expected['base.apk'] = expected.pop('com.publisher.news.apk')
+            self.assertEqual(set(archive.namelist()), set(expected))
+            for name, data in expected.items():
+                self.assertEqual(archive.read(name), data)
+        self.assertEqual(source.read_bytes(), original)
+
+    def test_manifest_base_hint_disambiguates_feature_split(self):
+        manifest = {'split_apks': [{'id': 'base', 'file': 'publisher.apk'},
+                                   {'id': 'feature', 'file': 'reader.apk'}]}
+        source = self.archive('hinted.xapk', [('manifest.json', json.dumps(manifest)),
+                              ('publisher.apk', b'base'), ('reader.apk', b'feature'),
+                              ('config.en.apk', b'language')])
+        original = source.read_bytes()
+        staged, reference = validator.prepare_input(source, self.output)
+        self.assertEqual(reference.read_bytes(), b'base')
+        with zipfile.ZipFile(staged) as archive:
+            self.assertEqual(archive.read('base.apk'), b'base')
+            self.assertEqual(archive.read('reader.apk'), b'feature')
+            self.assertEqual(archive.read('config.en.apk'), b'language')
+        self.assertEqual(source.read_bytes(), original)
+
+    def test_existing_base_takes_precedence_and_keeps_metadata_archive_bytes(self):
+        source = self.archive('existing.apkm', [('base.apk', b'base'), ('feature.apk', b'feature'),
+                              ('info.json', '{"pname":"publisher"}'),
+                              ('manifest.json', '{"split_apks":[{"id":"base","file":"missing.apk"}]}')])
+        original = source.read_bytes()
+        staged, reference = validator.prepare_input(source, self.output)
+        self.assertEqual(staged.read_bytes(), original)
+        self.assertEqual(reference.read_bytes(), b'base')
+        self.assertEqual(source.read_bytes(), original)
+
+    def test_ambiguous_base_candidates_are_rejected_without_writing(self):
+        source = self.archive('ambiguous.xapk', [('publisher.apk', b'one'), ('reader.apk', b'two')])
+        original = source.read_bytes()
+        with self.assertRaisesRegex(ValueError, '[Aa]mbiguous|[Ee]xpected.*base'):
+            validator.prepare_input(source, self.output)
+        self.assertEqual(list(self.output.iterdir()), [])
+        self.assertEqual(source.read_bytes(), original)
+
+    def test_duplicate_apk_basenames_are_rejected(self):
+        source = self.archive('duplicate.xapk', [('publisher.apk', b'base'),
+                              ('one/config.en.apk', b'one'), ('two/config.en.apk', b'two')])
+        with self.assertRaisesRegex(ValueError, '[Cc]ollid|[Dd]uplicate'):
+            validator.prepare_input(source, self.output)
+        self.assertEqual(list(self.output.iterdir()), [])
+
+    def test_path_traversal_is_rejected_even_with_canonical_base(self):
+        for member in ['../config.en.apk', '/config.en.apk', 'nested/../../config.en.apk',
+                       r'..\config.en.apk']:
+            with self.subTest(member=member):
+                source = self.archive('unsafe.apks', [('base.apk', b'base'), (member, b'unsafe')])
+                original = source.read_bytes()
+                with self.assertRaisesRegex(ValueError, '[Uu]nsafe.*path'):
+                    validator.prepare_input(source, self.output)
+                self.assertEqual(source.read_bytes(), original)
+                self.assertEqual(list(self.output.iterdir()), [])
+
+    def test_conflicting_or_missing_manifest_base_hint_is_rejected(self):
+        for hints in [[{'id': 'base', 'file': 'missing.apk'}],
+                      [{'id': 'base', 'file': 'publisher.apk'}, {'id': 'base', 'file': 'reader.apk'}]]:
+            with self.subTest(hints=hints):
+                source = self.archive('bad-hint.xapk', [('publisher.apk', b'base'), ('reader.apk', b'feature'),
+                                      ('manifest.json', json.dumps({'split_apks': hints}))])
+                with self.assertRaisesRegex(ValueError, '[Bb]ase'):
+                    validator.prepare_input(source, self.output)
+                self.assertEqual(list(self.output.iterdir()), [])
+
+    def test_nested_xapk_members_stage_under_unique_original_basenames(self):
+        source = self.archive('nested.xapk', [('apks/publisher.apk', b'base'),
+                              ('apks/config.en.apk', b'language')])
+        staged, reference = validator.prepare_input(source, self.output)
+        with zipfile.ZipFile(staged) as archive:
+            self.assertEqual(archive.namelist(), ['base.apk', 'config.en.apk'])
+            self.assertEqual(archive.read('config.en.apk'), b'language')
+        self.assertEqual(reference.read_bytes(), b'base')
+
+
 class TargetRoutingTests(unittest.TestCase):
     def test_gva_uses_mediahuis_controls_and_its_own_verifier(self):
         self.assertEqual(validator.APPS.get('gva'), validator.APPS['hbvl'])
         self.assertEqual(
             validator.verifier_command('gva', Path('decoded'), {'Hide ads'}),
             [sys.executable, 'tests/verify_gva.py', 'decoded', '-e', 'Hide ads'])
+
+    def test_buienalarm_routes_all_controls_with_publisher_reference(self):
+        self.assertEqual(validator.APPS['buienalarm'], {
+            'Fix Google services': [], 'Hide ads': ['Fix Google services'],
+            'Hide Premium banner': ['Fix Google services'],
+            'Disable tracking': ['Hide ads', 'Fix Google services'],
+            'Skip consent screens': ['Disable tracking', 'Hide ads', 'Fix Google services'],
+        })
+        self.assertEqual(validator.verifier_command('buienalarm', Path('decoded'), {'Hide ads'},
+                         original_reference=Path('publisher.apk')),
+                         [sys.executable, 'tests/verify_buienalarm.py', 'decoded', '--original', 'publisher.apk', '-e', 'Hide ads'])
+        self.assertEqual(len(validator.patch_selections(validator.APPS['buienalarm'], None)), 6)
+        with self.assertRaisesRegex(ValueError, 'publisher original'):
+            validator.verifier_command('buienalarm', Path('decoded'), set())
 
     def test_gva_and_ed_use_their_own_verifiers_and_sibling_selections(self):
         for app, sibling in [('gva', 'hbvl'), ('ed', 'ad')]:
@@ -470,3 +579,41 @@ class VideolandMobileRoutingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'whole original'):
             validator.verifier_command('videoland', Path('/output'), set(), apk=Path('/out.apk'),
                                        original_reference=Path('/stock'))
+
+
+class MediaRoutingTests(unittest.TestCase):
+    def test_medium_controls_route_to_complete_original_and_payload_checks(self):
+        self.assertEqual(set(validator.APPS['medium']),
+                         {'Disable optional tracking', 'Hide native promotions', 'Read full articles natively'})
+        command = validator.verifier_command('medium', Path('/out'), {'Read full articles natively'},
+                    apk=Path('/out.apk'), original_reference=Path('/stock'), original_input=Path('/source.apks'))
+        self.assertEqual(command, [sys.executable, 'tests/verify_medium.py', '/stock', '/out',
+            '-e', 'Read full articles natively', '--original-apks', '/source.apks', '--patched-apk', '/out.apk'])
+
+    def test_npo_dependencies_preserve_control_isolation_and_form_factor(self):
+        expected = {'Fix PairIP startup': [], 'Hide ads': ['Fix PairIP startup'],
+                    'Disable tracking': ['Fix PairIP startup']}
+        for app in ['npo', 'npostarttv']:
+            self.assertEqual(validator.APPS[app], expected)
+            command = validator.verifier_command(app, Path('/out'), {'Fix PairIP startup', 'Hide ads'},
+                        original_reference=Path('/stock'))
+            self.assertEqual(command[:4], [sys.executable, 'tests/verify_npo.py', '/stock', '/out'])
+            self.assertEqual('--phone' in command, app == 'npo')
+            self.assertNotIn('Disable tracking', command)
+
+    def test_tv_unavailable_content_is_included_without_forcing_other_controls(self):
+        self.assertEqual(validator.APPS['videolandatv'], {'Hide ads': [], 'Disable tracking': [],
+                                                       'Hide unavailable content': []})
+        command = validator.verifier_command('videolandatv', Path('/out'), {'Hide unavailable content'},
+                    apk=Path('/out.apk'), original_reference=Path('/stock'), original_input=Path('/source.apks'))
+        self.assertEqual(command, [sys.executable, 'tests/verify_videoland_atv.py', '/stock', '/out',
+            '--unavailable', '--original-apks', '/source.apks', '--patched-apk', '/out.apk'])
+
+    def test_new_media_routes_reject_missing_references_and_split_payload(self):
+        for app in ['medium', 'npo', 'npostarttv', 'videolandatv']:
+            with self.subTest(app=app):
+                with self.assertRaisesRegex(ValueError, 'decoded publisher original'):
+                    validator.verifier_command(app, Path('/out'), set())
+                with self.assertRaisesRegex(ValueError, 'whole original split'):
+                    validator.verifier_command(app, Path('/out'), set(), apk=Path('/out.apk'),
+                                               original_reference=Path('/stock'))

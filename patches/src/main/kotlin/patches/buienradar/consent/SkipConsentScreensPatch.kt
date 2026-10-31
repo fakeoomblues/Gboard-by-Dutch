@@ -13,6 +13,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import patches.buienradar.ad.hideAdsPatch
 import patches.buienradar.shared.Constants.COMPATIBILITY_BUIENRADAR
+import patches.buienradar.shared.Constants.originalInput
 import patches.buienradar.tracking.disableTrackingPatch
 
 /**
@@ -42,7 +43,7 @@ val skipConsentScreensPatch = bytecodePatch(
         "and ads. Records no consent choice; Privacy settings on the Info tab remain available.",
 ) {
     compatibleWith(COMPATIBILITY_BUIENRADAR)
-    dependsOn(disableTrackingPatch, hideAdsPatch)
+    dependsOn(originalInput, disableTrackingPatch, hideAdsPatch)
 
     execute {
         SplashRouteFingerprint.method.apply {

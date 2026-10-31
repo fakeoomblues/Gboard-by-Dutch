@@ -19,9 +19,12 @@ internal const val ANDROID = "http://schemas.android.com/apk/res/android"
 internal val nunl = Compatibility(
     name = "NU.nl", packageName = "nl.sanomamedia.android.nu", apkFileType = ApkFileType.APKS,
     signatures = setOf("80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92", "a78f41c09876d3cccbd87b5ef0d537ce7e2577f45e2749aff8fc5f8d21f8e986"),
-    targets = listOf(AppTarget(version = "26.9.0", versionCode = 210156, minSdk = 32)),
+    targets = listOf(AppTarget(version = "26.9.0", versionCode = 210156, minSdk = 29)),
 )
-internal val originalInput = patches.shared.originalInput(nunl)
+// Public publisher variants share the inspected DEX and version code.
+internal val originalInput = patches.shared.originalInput(
+    nunl, additionalMinSdksByVersion = mapOf("26.9.0" to setOf(32)),
+)
 
 internal fun exact(cls: String, name: String, result: String = "V", vararg params: String) =
     Fingerprint(definingClass = cls, name = name, returnType = result, parameters = params.toList())

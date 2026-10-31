@@ -5,10 +5,12 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import org.w3c.dom.Element
 import patches.buienradar.shared.Constants.COMPATIBILITY_BUIENRADAR
+import patches.buienradar.shared.Constants.originalInput
 
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
 
 private val trackingResources = resourcePatch {
+    dependsOn(originalInput)
     execute {
         document("AndroidManifest.xml").use { doc ->
             val application = doc.getElementsByTagName("application").item(0) as Element
@@ -74,7 +76,7 @@ val disableTrackingPatch = bytecodePatch(
         "Weather alerts keep working.",
 ) {
     compatibleWith(COMPATIBILITY_BUIENRADAR)
-    dependsOn(trackingResources)
+    dependsOn(originalInput, trackingResources)
 
     execute {
         // Snowplow trackers are never created. All users null-check them and log instead.

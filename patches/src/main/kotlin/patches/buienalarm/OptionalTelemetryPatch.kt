@@ -6,6 +6,7 @@ import app.morphe.patcher.patch.bytecodePatch
 
 /** Optional subscription SDK telemetry, separate from purchases and entitlements. */
 internal val optionalTelemetry = bytecodePatch {
+    dependsOn(originalInput)
     execute {
         val prefix = "Lcom/revenuecat/purchases/"
         for (name in listOf("getAutomaticDeviceIdentifierCollectionEnabled", "getDiagnosticsEnabled")) {

@@ -19,11 +19,11 @@ internal val npoPhone = Compatibility(
     description = "Patches for the Android phone and tablet application.",
     formFactor = FormFactor.MOBILE,
     signatures = npoTv.signatures,
-    targets = listOf(AppTarget(version = "1.48.2-2405", versionCode = 240497937, minSdk = 32)),
+    targets = listOf(AppTarget(version = "1.48.2-2405", versionCode = 240497937, minSdk = 24)),
 )
-// The publisher ships the same TV version/code with API 24 and API 32 manifests.
-// Catalogue minSdk describes the lowest supported device; preflight accepts only these two variants.
-private val metadataInput = patches.shared.originalInput(npoTv, additionalMinSdks = setOf(32), variants = listOf(npoPhone))
+// The inspected public phone and TV variants share their form factor's DEX and
+// PairIP images, but declare API 24, 29 or 32. Retain their original manifest SDK.
+private val metadataInput = patches.shared.originalInput(npoTv, additionalMinSdks = setOf(29, 32), variants = listOf(npoPhone))
 internal val originalInput = resourcePatch {
     dependsOn(metadataInput)
     execute { requirePairipLibraries() }

@@ -23,12 +23,14 @@ class NpoPhoneInputRegression extends OriginalInputRegression {
             }
             try(ResourcePatchContext context=new ResourcePatchContext(config(originalFile,scratch,"phone-guard"))) {
                 Path xml=context.get("AndroidManifest.xml",false).toPath();Files.createDirectories(xml.getParent());
-                Files.writeString(xml,xml(32));guard.execute(context);
-                check(true,"phone build accepted by production resource guard");
-                for(int sdk:new int[]{24,31,33}) {
+                for(int sdk:new int[]{24,29,32}) {
+                    String content=xml(sdk);Files.writeString(xml,content);guard.execute(context);
+                    check(Files.readString(xml).equals(content),"phone minSdk "+sdk+" accepted unchanged");
+                }
+                for(int sdk:new int[]{23,25,28,30,31,33}) {
                     String content=xml(sdk);Files.writeString(xml,content);boolean refused=false;
                     try{guard.execute(context);}catch(IllegalStateException expected){refused=true;}
-                    check(refused,"phone rejects minSdk "+sdk+" despite TV API24 support");
+                    check(refused,"phone rejects minSdk "+sdk+" outside inspected API24/29/32 variants");
                     check(Files.readString(xml).equals(content),"rejected phone fixture remains intact");
                 }
                 Files.writeString(xml,xml(32));

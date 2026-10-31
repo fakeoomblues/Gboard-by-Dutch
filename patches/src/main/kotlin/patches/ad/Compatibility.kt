@@ -16,8 +16,11 @@ internal const val MODEL = "Lcom/kubus/module/network/model/"
 internal const val FILTER = "${MODEL}SectionResponse;"
 internal val ad = Compatibility(name = "AD", packageName = "be.persgroep.android.news.mobilead", apkFileType = ApkFileType.APKS,
     signatures = setOf("80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92", "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"),
-    targets = listOf(AppTarget(version = "9.22.0", versionCode = 9220000, minSdk = 32)))
-internal val originalInput = patches.shared.originalInput(ad)
+    targets = listOf(AppTarget(version = "9.22.0", versionCode = 9220000, minSdk = 24)))
+// Public publisher variants share the inspected DEX and version code.
+internal val originalInput = patches.shared.originalInput(
+    ad, additionalMinSdksByVersion = mapOf("9.22.0" to setOf(32)),
+)
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 internal fun exact(cls: String, sig: String) = Fingerprint(definingClass = cls, name = sig.substringBefore('('),

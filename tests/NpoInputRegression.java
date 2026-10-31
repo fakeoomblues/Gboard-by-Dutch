@@ -8,7 +8,7 @@ import app.morphe.patcher.*;
 import app.morphe.patcher.patch.*;
 import com.reandroid.apk.ApkModule;
 
-/** Exercise the shipped guard with real publisher metadata and both TV manifest variants. */
+/** Exercise the shipped guard with real publisher metadata and all inspected TV manifest variants. */
 class NpoInputRegression extends OriginalInputRegression {
     public static void main(String[] args) throws Exception {
         File originalFile=new File(args[1]), scratch=new File(args[2]);
@@ -34,7 +34,7 @@ class NpoInputRegression extends OriginalInputRegression {
             check(!trusted.isEmpty(),"fixture has a real publisher signer");
             try(ResourcePatchContext context=new ResourcePatchContext(config(originalFile,scratch,"npo-guard"))) {
                 Path xml=context.get("AndroidManifest.xml",false).toPath();Files.createDirectories(xml.getParent());
-                for(int sdk:List.of(24,32)) {
+                for(int sdk:List.of(24,29,32)) {
                     String content=xml(sdk);
                     Files.writeString(xml,content);guard.execute(context);
                     check(Files.readString(xml).equals(content),"TV minSdk "+sdk+" accepted without manifest rewriting");

@@ -86,7 +86,12 @@ def verify(original, patched, ads, tracking, consent=False):
 
 
 def verify_payload(original_apks, patched_apk):
-    """Require the whole three-APK input and preserve non-DEX packaged payloads."""
+    """Require an inspected complete input and preserve non-DEX packaged payloads."""
+    with zipfile.ZipFile(original_apks) as package:
+        members = {n for n in package.namelist() if n.lower().endswith('.apk')}
+    if members != {'base.apk', 'split_config.arm64_v8a.apk', 'split_config.xxxhdpi.apk'}:
+        from media_inputs import verify_payload as verify_public_payload
+        return verify_public_payload(original_apks, patched_apk)
     payload = {}
     # APKS merging drops resource API qualifiers already implied by minSdk24.
     def merged_name(name):

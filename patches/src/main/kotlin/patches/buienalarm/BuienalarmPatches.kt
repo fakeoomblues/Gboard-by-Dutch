@@ -41,6 +41,7 @@ private fun org.w3c.dom.Document.singleElement(attribute: String, value: String)
 }
 
 private val hideBannerContainers = resourcePatch {
+    dependsOn(originalInput)
     execute {
         for ((layout, id) in listOf("activity_main" to "banner_fragment", "fragment_weather" to "banner1")) {
             document("res/layout/$layout.xml").use { doc ->
@@ -59,7 +60,7 @@ val hideAds = bytecodePatch(
     description = "Disables banners and full-screen video/interstitial requests, and removes reserved banner space.",
 ) {
     compatibleWith(buienalarm)
-    dependsOn(hideBannerContainers, googleCompatibility)
+    dependsOn(originalInput, hideBannerContainers, googleCompatibility)
     execute {
         // The weather screen starts this coordinator before its banner/premium
         // decision. Return Unit before it creates or awaits an interstitial.
@@ -119,7 +120,7 @@ val hidePremiumBanner = resourcePatch(
     description = "Hides the Buienalarm Premium promotion card in Settings.",
 ) {
     compatibleWith(buienalarm)
-    dependsOn(googleCompatibility)
+    dependsOn(originalInput, googleCompatibility)
     execute {
         document("res/xml/preferences_general.xml").use { doc ->
             doc.documentElement.setAttribute("xmlns:app", APP)

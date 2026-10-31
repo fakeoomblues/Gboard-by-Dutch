@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import patches.buienradar.shared.Constants.COMPATIBILITY_BUIENRADAR
+import patches.buienradar.shared.Constants.originalInput
 
 @Suppress("unused")
 val disableSwrvePatch = bytecodePatch(
@@ -21,7 +22,7 @@ val disableSwrvePatch = bytecodePatch(
     default = false,
 ) {
     compatibleWith(COMPATIBILITY_BUIENRADAR)
-    dependsOn(disableTrackingPatch)
+    dependsOn(originalInput, disableTrackingPatch)
 
     execute {
         // App.onCreate: `if (config.modelBlacklist.contains(Build.MODEL)) SwrveEmpty else SwrveImp`.

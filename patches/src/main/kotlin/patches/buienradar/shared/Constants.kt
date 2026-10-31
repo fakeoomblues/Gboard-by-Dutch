@@ -23,4 +23,6 @@ internal object Constants {
             )
         )
     )
+    val originalInput = patches.shared.originalInput(COMPATIBILITY_BUIENRADAR,
+        additionalMinSdksByVersion = mapOf("7.4.8" to setOf(29, 32)))
 }

@@ -18,6 +18,10 @@ NAMES = {'Hide ads', 'Hide Premium banner', 'Disable tracking', 'Skip consent sc
 BANNERS = ['activity_current_and_extremes', 'fragment_sun', 'fragment_splash', 'fragment_splash_pro', 'fragment_flash', 'fragment_settings_menu']
 ASSETS = ['openwrapsdk.js', 'omsdk-v1.js', 'apn_omsdk.js', 'apn_renderNativeAssets.html', 'apn_vastvideo.html', 'mobilevastplayer.js', 'astmediationmanager.js', 'pob_mraid.js', 'dsa_page.html', 'PubMatic_Logo.svg', 'pob_info_button.svg', 'pob_person_button.svg']
 
+def zero_dp(value):
+    """Accept equivalent apktool renderings of the compiled zero-dp value."""
+    return isinstance(value, str) and re.fullmatch(r'0(?:\.0+)?(?:dp|dip)', value) is not None
+
 def resource(root, path):
     p = root / path
     return p if p.exists() else root / 'apktool' / path
@@ -277,7 +281,7 @@ def verify(root: Path, selected: set[str]) -> None:
         doc = ET.parse(resource(root, f'res/layout/{layout}.xml'))
         id_ = '@id/bottom_navigation_view_ad_holder' if layout == 'main_drawer' else '@id/banner_container'
         el, = [e for e in doc.iter() if e.get(A+'id') == id_]
-        assert (el.get(A+'visibility') == 'gone' and el.get(A+'layout_height') in {'0dp','0.0dip'}) == ads, 'Collapse '+layout
+        assert (el.get(A+'visibility') == 'gone' and zero_dp(el.get(A+'layout_height'))) == ads, 'Collapse '+layout
     verify_hourly_promotion(root, premium)
     verify_premium_navigation(root, premium)
     stopped('l8/g', 'j(Landroidx/appcompat/app/AppCompatActivity;)V', premium)
