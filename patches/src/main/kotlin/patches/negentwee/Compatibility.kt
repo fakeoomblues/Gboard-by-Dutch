@@ -9,11 +9,12 @@ import com.android.tools.smali.dexlib2.Opcode
 import patches.shared.uniqueMatch
 
 internal val negentwee = Compatibility(
-    name = "9292", packageName = "nl.negentwee", apkFileType = ApkFileType.APKS,
+    name = "9292", packageName = "nl.negentwee", apkFileType = ApkFileType.APKM,
     signatures = setOf("7ad4a3503739803a8eec7f2f8d9a4e678d6f33f9b77d5be81e2c089371352af6"),
-    targets = listOf(AppTarget(version = "2.48.1", versionCode = 32189, minSdk = 32)),
+    targets = listOf(AppTarget(version = "2.48.1", versionCode = 32189, minSdk = 24)),
 )
-internal val originalInput = patches.shared.originalInput(negentwee)
+internal val originalInput = patches.shared.originalInput(negentwee,
+    additionalMinSdksByVersion = mapOf("2.48.1" to setOf(29, 32)))
 private val payloads = setOf(Opcode.PACKED_SWITCH_PAYLOAD, Opcode.SPARSE_SWITCH_PAYLOAD, Opcode.ARRAY_PAYLOAD)
 
 context(context: app.morphe.patcher.patch.BytecodePatchContext)

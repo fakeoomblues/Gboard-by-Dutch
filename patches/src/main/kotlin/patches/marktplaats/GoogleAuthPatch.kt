@@ -1,7 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
@@ -21,9 +19,10 @@ private const val microg = "app.revanced.android.gms"
 private const val available = "morpheMicrogAvailable(Landroid/content/Context;)Z"
 private const val choose = "morpheGoogleProvider(${factory}Ljava/lang/Object;)Lit3;"
 
+context(context: app.morphe.patcher.patch.BytecodePatchContext)
 private fun helper(name: String, parameters: List<String>, result: String, code: String, locals: Int = 4) =
     MutableMethod(ImmutableMethod(provider, name,
-        parameters.map { ImmutableMethodParameter(it, emptySet(), null) }, result, 9, emptySet(), emptySet(),
+        parameters.map { ImmutableMethodParameter(boundCode(it), emptySet(), null) }, boundCode(result), 9, emptySet(), emptySet(),
         ImmutableMethodImplementation(locals + parameters.size, emptyList(), emptyList(), emptyList()),
     )).apply { addInstructions(0, code.trimIndent()) }
 

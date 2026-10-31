@@ -1,7 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.Opcode
@@ -45,12 +43,14 @@ internal fun suppressCoreMeasurement() {
     exact("Lc8h;", "a(Landroidx/fragment/app/w;Ljava/lang/String;)V", 9, 3, 5)
         .addInstructions(0, "return-void")
     val resume = exact("Lwg;", "onActivityResumed(Landroid/app/Activity;)V", 17, 13, 308)
-    val first = resume.getInstruction(146)
-    val successor = resume.getInstruction(182)
-    check(first.opcode == Opcode.SGET_OBJECT && (first as? ReferenceInstruction)?.reference.toString() == "Lc8h;->a:Lkotlin/Lazy;")
+    val sliceStart = if (isMarktplaats1619()) 150 else 146
+    val sliceEnd = if (isMarktplaats1619()) 186 else 182
+    val first = resume.getInstruction(sliceStart)
+    val successor = resume.getInstruction(sliceEnd)
+    check(first.opcode == Opcode.SGET_OBJECT && (first as? ReferenceInstruction)?.reference.toString() == boundCode("Lc8h;->a:Lkotlin/Lazy;"))
     check(successor.opcode == Opcode.INVOKE_INTERFACE &&
-        (successor as? ReferenceInstruction)?.reference.toString() == "Lz68;->getKoin()Lv68;") {
+        (successor as? ReferenceInstruction)?.reference.toString() == boundCode("Lz68;->getKoin()Lv68;")) {
         "Marktplaats UserZoom lifecycle slice changed"
     }
-    resume.addInstructionsWithLabels(146, "goto/16 :functional_resume", ExternalLabel("functional_resume", successor))
+    resume.addInstructionsWithLabels(sliceStart, "goto/16 :functional_resume", ExternalLabel("functional_resume", successor))
 }

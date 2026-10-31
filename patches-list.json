@@ -82,7 +82,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -99,6 +99,18 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            },
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
@@ -729,7 +741,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -747,6 +759,18 @@
               "isExperimental": false,
               "minSdk": 32,
               "description": null
+            },
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
             }
           ]
         }
@@ -763,7 +787,7 @@
           "packageName": "nl.negentwee",
           "name": "9292",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "7ad4a3503739803a8eec7f2f8d9a4e678d6f33f9b77d5be81e2c089371352af6"
@@ -779,7 +803,7 @@
                 "X86": 32189
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -1542,7 +1566,7 @@
           "packageName": "nl.negentwee",
           "name": "9292",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "7ad4a3503739803a8eec7f2f8d9a4e678d6f33f9b77d5be81e2c089371352af6"
@@ -1558,7 +1582,7 @@
                 "X86": 32189
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -1635,7 +1659,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -1652,6 +1676,18 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            },
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
@@ -2970,7 +3006,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -2988,6 +3024,18 @@
               "isExperimental": false,
               "minSdk": 32,
               "description": null
+            },
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
             }
           ]
         }
@@ -3004,7 +3052,7 @@
           "packageName": "nl.negentwee",
           "name": "9292",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "7ad4a3503739803a8eec7f2f8d9a4e678d6f33f9b77d5be81e2c089371352af6"
@@ -3020,7 +3068,7 @@
                 "X86": 32189
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -4703,7 +4751,7 @@
           "packageName": "nl.marktplaats.android",
           "name": "Marktplaats",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "742dc275b25928621a8fbdb4362876825c8aec6a4afdbd04d0b8d72b9ca22052"
@@ -4721,6 +4769,18 @@
               "isExperimental": false,
               "minSdk": 32,
               "description": null
+            },
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
             }
           ]
         }
@@ -4737,7 +4797,7 @@
           "packageName": "nl.negentwee",
           "name": "9292",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": null,
           "signatures": [
             "7ad4a3503739803a8eec7f2f8d9a4e678d6f33f9b77d5be81e2c089371352af6"
@@ -4753,7 +4813,7 @@
                 "X86": 32189
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 24,
               "description": null
             }
           ]

@@ -83,7 +83,7 @@ it does not guarantee anonymity or remove all network traffic.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
-| [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKS | 4 |
+| [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
 | [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 6 |
 
 ### Entertainment
@@ -104,7 +104,7 @@ it does not guarantee anonymity or remove all network traffic.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
-| [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.17.0 | APKS | 5 |
+| [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.17.0, 16.19.0 | APKM | 5 |
 
 [Patch defaults and supported versions](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/) · [English](https://johninnl.github.io/nl-morphe-patches/en/reference/catalogue/)
 

@@ -1,8 +1,6 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 
@@ -46,10 +44,11 @@ internal fun suppressFirebaseMeasurement() {
     // Only the settings branch returns its existing unavailable/null outcome,
     // after the native worker check and SettingsRequest query validation.
     val settings = exact("Llc3;", "call()Ljava/lang/Object;", 17, 12, 197)
-    check(settings.getInstruction(23).opcode == Opcode.NEW_INSTANCE &&
-        settings.getInstruction<ReferenceInstruction>(23).reference.toString() == "Lgvg;")
-    check(settings.getInstruction<ReferenceInstruction>(21).reference.toString() == "Lhla;->R(Lzie;)Ljava/util/HashMap;")
-    settings.addInstructions(23, "return-object v4")
+    val settingsStart = if (isMarktplaats1619()) 160 else 23
+    check(settings.getInstruction(settingsStart).opcode == Opcode.NEW_INSTANCE &&
+        settings.getInstruction<ReferenceInstruction>(settingsStart).reference.toString() == boundCode("Lgvg;"))
+    check(settings.getInstruction<ReferenceInstruction>(settingsStart - 2).reference.toString() == boundCode("Lhla;->R(Lzie;)Ljava/util/HashMap;"))
+    settings.addInstructions(settingsStart, "return-object v4")
 
     // Complete a fresh Sessions settings update after ResultKt validation and
     // before mutex acquisition/HTTP job creation. Keep resume/error branches.

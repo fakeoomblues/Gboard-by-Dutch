@@ -1,6 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 
 private const val root = "Lcom/horizon/android/"
 private const val container = "${root}core/advertising/nativead/view/NativeAdContainer;"
@@ -12,7 +11,7 @@ internal fun suppressAdRequests() {
         1, 12, 108).addInstructions(0, "const/4 v0, 0x0\nreturn-object v0")
     // This factory already returns null when no context is available; every
     // original caller has the corresponding nullable-view branch.
-    exact("Lecc;", "a(Landroid/content/Context;Lrcc;Lwbc;Lnkg;)Lcom/pubmatic/sdk/openwrap/banner/POBBannerView;",
+    if (!isMarktplaats1619()) exact("Lecc;", "a(Landroid/content/Context;Lrcc;Lwbc;Lnkg;)Lcom/pubmatic/sdk/openwrap/banner/POBBannerView;",
         17, 11, 36).addInstructions(0, "const/4 v0, 0x0\nreturn-object v0")
     // Finish with the real no-content callback; never leave on-start pending or
     // claim a loaded ad without a view. VIP callbacks write their failed state.

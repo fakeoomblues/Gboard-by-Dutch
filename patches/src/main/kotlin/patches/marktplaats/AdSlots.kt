@@ -1,6 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
@@ -16,6 +15,7 @@ private const val section = "Lcom/horizon/android/feature/vip/VipContentSection;
 private val adTypes = listOf("SRP_HEADER_NATIVE_AD", "SRP_LIST_NATIVE_AD", "DISPLAY_BANNER")
 
 /** Nulls/unknown values pass through; lists without removed elements retain identity. */
+context(context: app.morphe.patcher.patch.BytecodePatchContext)
 private fun listFilter(owner: String, name: String, predicate: String) = MutableMethod(ImmutableMethod(
     owner, name, listOf(ImmutableMethodParameter(list, emptySet(), null)), list, 9, emptySet(), emptySet(),
     ImmutableMethodImplementation(6, emptyList(), emptyList(), emptyList()),

@@ -1,7 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -22,7 +20,7 @@ internal fun suppressAdFallbacks() {
     val owner = target(repoOwner, wrapper).classDef
     check(owner.methods.none { it.name == "morpheNoAd" })
     owner.methods.add(MutableMethod(ImmutableMethod(
-        repoOwner, "morpheNoAd", emptyList(), "Lrzc;", 9, emptySet(), emptySet(),
+        repoOwner, "morpheNoAd", emptyList(), boundCode("Lrzc;"), 9, emptySet(), emptySet(),
         ImmutableMethodImplementation(7, emptyList(), emptyList(), emptyList()),
     )).apply {
         addInstructions(0, """
@@ -58,16 +56,24 @@ internal fun suppressAdFallbacks() {
             goto/16 :native_completion
         """.trimIndent(), ExternalLabel("native_completion", last))
     }
-    unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 16, 85, 18, 59, "p1")
-    unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 21, 90, 20, 67, "v0")
+    if (isMarktplaats1619()) {
+        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 17, 90, 20, 62, "v0")
+        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 22, 91, 20, 68, "v0")
+    } else {
+        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForAd\$1;", 16, 85, 18, 59, "p1")
+        unavailable("${root}core/advertising/targeting/AdTargetingRepository\$requestDisplayTargetingForListing\$2;", 21, 90, 20, 67, "v0")
+    }
     unavailable("${root}core/advertising/nativead/NativeAdRepo\$getSponsoredAd\$1;", 8, 42, 20, 33, "p1")
 
+    // 16.19 removed the Compose VIP loader; its remaining PubMatic callers
+    // are the guarded LRP loader and the no-content callback in qqi. The new
+    // factory returns a non-null wrapper that callers dereference immediately.
     val vip = "${root}feature/vip/feature/advertising/"
-    exact("${vip}b;", "b(Lhyh;)V", 17, 11, 45).addInstructions(0, "return-void")
+    if (!isMarktplaats1619()) exact("${vip}b;", "b(Lhyh;)V", 17, 11, 45).addInstructions(0, "return-void")
     exact("Lxvh;", "b(${root}core/datamodel/MpAd;${root}feature/vip/d;Z)V", 17, 10, 57)
         .addInstructions(0, "return-void")
     // This native custom loader has no pre-load state/callback to finish. Keep
     // its initial Result validation and invalid-label error before returning.
-    exact("${vip}VipComposableBannerViewModel\$loadBanner\$1;", suspendMethod, 17, 7, 52)
+    if (!isMarktplaats1619()) exact("${vip}VipComposableBannerViewModel\$loadBanner\$1;", suspendMethod, 17, 7, 52)
         .addInstructions(5, "sget-object v0, Lkotlin/Unit;->a:Lkotlin/Unit;\nreturn-object v0")
 }

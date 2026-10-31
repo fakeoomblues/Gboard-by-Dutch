@@ -28,7 +28,7 @@ LANG = {
     },
 }
 DOWNLOAD_ROW = re.compile(r'^\| \[[^\]]+\]\(\.\./apps/(?P<slug>[a-z0-9-]+)\.md\) \| (?P<version>\S+) / (?P<build>\d+) \| (?P<download>.+) \|$')
-BUTTON = re.compile(r'\[[^\]]+\]\((?P<url>https://buzzheavier\.com/[a-z0-9]{12}|\.\./guides/downloads\.md#local-original-inputs)\)(?:\{ \.md-button(?: \.md-button--primary)? \})?')
+BUTTON = re.compile(r'\[[^\]]+\]\((?P<url>https://buzzheavier\.com/[a-z0-9]{12}|https://www\.apkmirror\.com/apk/[a-z0-9/_-]+/|\.\./guides/downloads\.md#local-original-inputs)\)(?:\{ \.md-button(?: \.md-button--primary)? \})?')
 INTERNAL_DETAILS = re.compile(r'(?i)\b(?:smali|bytecode|opcode|method fingerprint|register allocation|payload dump|decompil(?:ed|ation)|packet capture|Frida|DEX|callback hook|runtime trace)\b|/patches/src/|/tests/|docs/privacy/|```')
 
 

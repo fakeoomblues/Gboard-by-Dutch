@@ -1,6 +1,9 @@
 """Original Marktplaats16.17.0 contracts; hashes/ABIs, no publisher source/keys."""
 BASE_SHA256='341cdd423d7ba8a11b5aed3f4627c33947e0588e554cad7d4feb5d2abe7e4794'
 MANIFEST_DIGEST='7e13f1f9896b4708257b3c5515ec4c52f38797888884732208e71934878604f6'
+# Preserve the original decoder contract and exact Apktool 3.0.2 output
+# from the same BASE_SHA256 publisher APK.
+MANIFEST_DIGESTS={MANIFEST_DIGEST,'8dc9ba208820bd39365dafe245b8e579d8914d3e8a9da312c30fa427baf18513'}
 APPLICATION='com.horizon.android.HorizonApplication'
 AD_PROVIDER={'{http://schemas.android.com/apk/res/android}authorities': 'nl.marktplaats.android.mobileadsinitprovider', '{http://schemas.android.com/apk/res/android}exported': 'false', '{http://schemas.android.com/apk/res/android}initOrder': '100', '{http://schemas.android.com/apk/res/android}name': 'com.google.android.gms.ads.MobileAdsInitProvider'}
 MERGE_PACKAGING={'attributes': {'{http://schemas.android.com/apk/res/android}splitTypes': '', '{http://schemas.android.com/apk/res/android}requiredSplitTypes': 'base__abi,base__density'}, 'metadata': [(222, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.splits.required', '{http://schemas.android.com/apk/res/android}value': 'true'}), (223, {'{http://schemas.android.com/apk/res/android}name': 'com.android.stamp.source', '{http://schemas.android.com/apk/res/android}value': 'https://play.google.com/store'}), (224, {'{http://schemas.android.com/apk/res/android}name': 'com.android.stamp.type', '{http://schemas.android.com/apk/res/android}value': 'STAMP_TYPE_DISTRIBUTION_APK'}), (225, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.splits', '{http://schemas.android.com/apk/res/android}resource': '@xml/splits0'}), (226, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.derived.apk.id', '{http://schemas.android.com/apk/res/android}value': '5'})], 'extractNativeLibs': 'false'}

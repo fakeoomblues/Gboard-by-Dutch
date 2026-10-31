@@ -22,6 +22,10 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
     public static void main(String[] args) throws Exception {
         File bundle=new File(args[0]), originalFile=new File(args[1]), scratch=new File(args[3]);
         PackageMetadata original=read(originalFile), other=read(new File(args[2]));
+        int minSdk;
+        try(ApkModule apk=ApkModule.loadApkFile(originalFile)) {
+            minSdk=apk.getAndroidManifest().getMinSdkVersion();
+        }
         List<X509Certificate> trusted=original.getSigningCertificates().values().stream().flatMap(Collection::stream).distinct().toList();
         List<X509Certificate> untrusted=other.getSigningCertificates().values().stream().flatMap(Collection::stream).distinct().toList();
         check(!trusted.isEmpty()&&!untrusted.isEmpty()&&Collections.disjoint(trusted,untrusted),"real disjoint publisher certificates");
@@ -35,14 +39,17 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
         for(Patch<?> patch:named) for(Patch<?> node:closure(patch))
             if(node!=guard)check(node.getDependencies().contains(guard),"preflight precedes "+patch.getName());
         List<X509Certificate> mixed=new ArrayList<>(trusted);mixed.addAll(untrusted);
-        String pkg="nl.marktplaats.android", version="16.17.0", code="633462";
+        String pkg="nl.marktplaats.android", version=original.getVersionName(), code=original.getVersionCode();
+        List<Integer> supported=version.equals("16.17.0")&&code.equals("633462") ? List.of(32) :
+            version.equals("16.19.0")&&code.equals("633464") ? List.of(26,28,29) : List.of();
+        check(supported.contains(minSdk),"original is an exact supported publisher build");
         PackageMetadata[] invalid={metadata(original,"wrong.package",version,code,trusted),metadata(original,pkg,"0.0.0",code,trusted),
             metadata(original,pkg,version,"1",trusted),new PackageMetadata(pkg,version,code,null),
             metadata(original,pkg,version,code,untrusted),metadata(original,pkg,version,code,mixed)};
         String[] names={"package","version","code","missing signer","untrusted signer","mixed signer"};
         try(ResourcePatchContext context=new ResourcePatchContext(config(originalFile,scratch,"guard"))) {
             var manifest=context.get("AndroidManifest.xml",false).toPath();Files.createDirectories(manifest.getParent());
-            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\"32\"/></manifest>";
+            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\""+minSdk+"\"/></manifest>";
             Files.writeString(manifest,xml);guard.execute(context);
             check(Files.readString(manifest).equals(xml),"actual original accepted without mutation");
             Field field=ResourcePatchContext.class.getDeclaredField("packageMetadata");field.setAccessible(true);
@@ -53,7 +60,15 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
                 check(Files.readString(manifest).equals(xml),"invalid "+names[i]+" leaves manifest intact");
             }
             field.set(context,original);
-            for(String usesSdk:List.of("<uses-sdk android:minSdkVersion=\"999\"/>","")) {
+            for(int minimum:supported) {
+                String accepted=xml.replace("minSdkVersion=\""+minSdk+"\"","minSdkVersion=\""+minimum+"\"");
+                Files.writeString(manifest,accepted);guard.execute(context);
+                check(Files.readString(manifest).equals(accepted),"declared minimum SDK accepted without mutation");
+            }
+            List<String> rejected=new ArrayList<>(List.of(""));
+            for(int minimum:List.of(25,26,27,28,29,30,31,32,33,999))
+                if(!supported.contains(minimum))rejected.add("<uses-sdk android:minSdkVersion=\""+minimum+"\"/>");
+            for(String usesSdk:rejected) {
                 String bad="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">"+usesSdk+"</manifest>";
                 Files.writeString(manifest,bad);boolean refused=false;
                 try{guard.execute(context);}catch(IllegalStateException expected){refused=true;}
@@ -61,7 +76,10 @@ class MarktplaatsInputRegression extends OriginalInputRegression {
                 check(Files.readString(manifest).equals(bad),"invalid minSdk leaves manifest intact");
             }
         }
-        try(BytecodePatchContext context=new BytecodePatchContext(config(originalFile,scratch,"methods"),original)) {
+        // Exercise the generic shape guard in its legacy branch; 16.19 requires
+        // explicit production bindings even when a synthetic method exists.
+        PackageMetadata legacy=metadata(original,pkg,"16.17.0","633462",trusted);
+        try(BytecodePatchContext context=new BytecodePatchContext(config(originalFile,scratch,"methods"),legacy)) {
             String type="Lregression/Required;";
             var body=new ImmutableMethodImplementation(2,List.of(new ImmutableInstruction10x(Opcode.RETURN_VOID)),List.of(),List.of());
             var zero=new ImmutableMethod(type,"required",List.of(),"V",1,Set.of(),Set.of(),body);

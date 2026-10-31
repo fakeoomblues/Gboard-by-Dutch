@@ -229,11 +229,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable ThreatMetrix | On | 16.17.0 |
-| Disable tracking | On | 16.17.0 |
-| Google sign-in via microG-Re | On | 16.17.0 |
-| Hide ads | On | 16.17.0 |
-| Skip consent screens | On | 16.17.0 |
+| Disable ThreatMetrix | On | 16.17.0, 16.19.0 |
+| Disable tracking | On | 16.17.0, 16.19.0 |
+| Google sign-in via microG-Re | On | 16.17.0, 16.19.0 |
+| Hide ads | On | 16.17.0, 16.19.0 |
+| Skip consent screens | On | 16.17.0, 16.19.0 |
 
 ## Medium
 

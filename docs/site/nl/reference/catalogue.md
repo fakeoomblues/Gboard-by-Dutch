@@ -229,11 +229,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable ThreatMetrix | Aan | 16.17.0 |
-| Disable tracking | Aan | 16.17.0 |
-| Google sign-in via microG-Re | Aan | 16.17.0 |
-| Hide ads | Aan | 16.17.0 |
-| Skip consent screens | Aan | 16.17.0 |
+| Disable ThreatMetrix | Aan | 16.17.0, 16.19.0 |
+| Disable tracking | Aan | 16.17.0, 16.19.0 |
+| Google sign-in via microG-Re | Aan | 16.17.0, 16.19.0 |
+| Hide ads | Aan | 16.17.0, 16.19.0 |
+| Skip consent screens | Aan | 16.17.0, 16.19.0 |
 
 ## Medium
 

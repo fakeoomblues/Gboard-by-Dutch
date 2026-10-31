@@ -17,7 +17,7 @@ LIST='Ljava/util/List;'
 class Fixture:
     def __init__(self,source,declarations,sdk):
         self.source,self.declarations,self.sdk=source,declarations,sdk
-        self.rows={r[:2]:r for r in CONTRACTS};self.programs={};self.statics={};self.events=[]
+        self.rows={tuple(r[:2]):r for r in getattr(source,"contracts",CONTRACTS)};self.programs={};self.statics={};self.events=[]
         self.memory=Memory(self.parents);self.memory.statics=self.statics
         owners={RESPONSE,REQUEST,ITEM,TYPE,ORDER,SECTION}
         self.native={key for key in self.rows if key[0] in owners}

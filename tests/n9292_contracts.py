@@ -1,6 +1,28 @@
-"""Original9292 2.48.1 method contracts; hashes, no publisher source or keys."""
+"""Original 9292 2.48.1 method contracts; hashes, no publisher source or keys."""
 BASE_SHA256='444d3c52123146492b55bd769e6352c09f44956b4afa02104dc4cf5ce964dc71'
 MANIFEST_DIGEST='9a1d5ef7b1a8bced01e8c13b7ebcc65ec93cb6ec9bca0887df0a40e131719b1d'
+# Exact publisher base APKs, indexed by the binary manifest's minimum SDK.
+# API 24 and 29 have byte-identical DEX; all 182 baseline method contracts apply.
+ORIGINAL_VARIANTS = {
+    24: {
+        'base_sha256': '43ed02a8bf737897b74622fb364661b341080fb78ead9ea238a7c3fb6813efc5',
+        'manifest_digests': {'ffbb54e5442305dd176e92c969e18ee73494c9bd992ed483f33d20b98c13a617'},
+        'derived_apk_id': '2',
+    },
+    29: {
+        'base_sha256': '9a3d1ce57a55b9a46a7d0d0b41008d6e05c68fc717a1509e843047a9524ffb18',
+        'manifest_digests': {'65a3f82f2d8e6671b95a44477b97ce73596e8079310c77e8f20e0ca5c4419efd'},
+        'derived_apk_id': '3',
+    },
+    32: {
+        'base_sha256': BASE_SHA256,
+        # Retain the original decoder contract alongside the exact Apktool 3.0.2
+        # representation recovered from the same pinned publisher APK.
+        'manifest_digests': {MANIFEST_DIGEST,
+            '4489dbffbb7950c519b0b5c1a671a1e585e8d7e2c500a198530934cf9a4d0e3a'},
+        'derived_apk_id': '4',
+    },
+}
 MERGE_PACKAGING={'attributes': {'{http://schemas.android.com/apk/res/android}splitTypes': '', '{http://schemas.android.com/apk/res/android}requiredSplitTypes': 'base__abi,base__density'}, 'metadata': [(67, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.splits.required', '{http://schemas.android.com/apk/res/android}value': 'true'}), (68, {'{http://schemas.android.com/apk/res/android}name': 'com.android.stamp.source', '{http://schemas.android.com/apk/res/android}value': 'https://play.google.com/store'}), (69, {'{http://schemas.android.com/apk/res/android}name': 'com.android.stamp.type', '{http://schemas.android.com/apk/res/android}value': 'STAMP_TYPE_DISTRIBUTION_APK'}), (70, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.splits', '{http://schemas.android.com/apk/res/android}resource': '@xml/splits0'}), (71, {'{http://schemas.android.com/apk/res/android}name': 'com.android.vending.derived.apk.id', '{http://schemas.android.com/apk/res/android}value': '4'})]}
 TRACKING_PERMISSIONS=[(8, {'{http://schemas.android.com/apk/res/android}name': 'com.google.android.gms.permission.AD_ID'}), (27, {'{http://schemas.android.com/apk/res/android}name': 'android.permission.ACCESS_ADSERVICES_AD_ID'}), (28, {'{http://schemas.android.com/apk/res/android}name': 'android.permission.ACCESS_ADSERVICES_ATTRIBUTION'}), (29, {'{http://schemas.android.com/apk/res/android}name': 'android.permission.ACCESS_ADSERVICES_TOPICS'})]
 CONTRACTS=[

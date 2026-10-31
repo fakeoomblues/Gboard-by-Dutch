@@ -6,7 +6,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 
 | App | Versie / build | Origineel bestand |
 | --- | --- | --- |
-| [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKS](https://buzzheavier.com/owlolzxsfin0) |
+| [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |
 | [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/jtbt2vu0n7jp) |
@@ -22,7 +22,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Humo](../apps/humo.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/fe1uzx562ngl) |
 | [KIJK Android](../apps/kijk.md) | 9.8.0 / 2026101500 | Gebruik eigen bestand |
 | [KIJK Android TV](../apps/kijk-android-tv.md) | 7.2.7 / 10003 | [APKS](https://buzzheavier.com/oh3usdc9o9xi) |
-| [Marktplaats](../apps/marktplaats.md) | 16.17.0 / 633462 | [APKS](https://buzzheavier.com/cq3amiskfsdy) |
+| [Marktplaats](../apps/marktplaats.md) | 16.19.0 / 633464 | [APKM](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/) |
 | [Medium](../apps/medium.md) | 4.5.1784911033 / 1784911033 | [APKS](https://buzzheavier.com/ky9k5pmnicni) |
 | [NOS Teletekst](../apps/nos-teletekst.md) | 2.8.10 / 62 | [APKS](https://buzzheavier.com/xse5agsu2tia) |
 | [NPO Start](../apps/npo-start.md) | 1.48.2-2405 / 240497937 | [APKS](https://buzzheavier.com/ys1rjymo12zp) |

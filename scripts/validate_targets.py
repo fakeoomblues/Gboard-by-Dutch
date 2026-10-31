@@ -238,6 +238,7 @@ def main() -> None:
     parser.add_argument("input", type=Path, help="Original APK, APKM/APKS set, or directory of base and split APKs")
     parser.add_argument("--bundle", type=Path, help="Override the bundle for the current project version")
     parser.add_argument("--selection", action="append", help="Validate only this patch name, or 'all'; repeatable")
+    parser.add_argument("--output", type=Path, help="Keep this input variant's reports and APKs in a separate directory")
     parser.add_argument("--compact", action="store_true", help="Remove transient decoded trees and single-selection APKs after successful verification")
     args = parser.parse_args()
     original = args.input.resolve()
@@ -250,7 +251,7 @@ def main() -> None:
         bundle = ROOT / "patches/build/libs" / f"patches-{version[1]}.mpp"
     if not bundle.is_file():
         raise SystemExit(f"Build the bundle first: {bundle}")
-    out = ROOT / "build/validation" / args.app
+    out = args.output.resolve() if args.output else ROOT / "build/validation" / args.app
     out.mkdir(parents=True, exist_ok=True)
     run([sys.executable, "scripts/bootstrap.py"], out / "bootstrap.log")
 

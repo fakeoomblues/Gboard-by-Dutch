@@ -94,6 +94,8 @@
           "patches-bundle.json",
           "patches-list.json",
           "README.md",
+          "docs/site/en/index.md",
+          "docs/site/nl/index.md",
           "docs/site/en/reference/catalogue.md",
           "docs/site/nl/reference/catalogue.md"
         ],

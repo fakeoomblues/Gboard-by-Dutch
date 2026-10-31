@@ -9,7 +9,7 @@ from brabant_effects import restore_edits,restore_alignment
 from dex_declarations import DexDeclarations
 from verify_dumpert import Smali,xml_digest
 from verify_parool import sdk_classes
-from n9292_contracts import CONTRACTS,BASE_SHA256,MANIFEST_DIGEST,MERGE_PACKAGING,TRACKING_PERMISSIONS
+from n9292_contracts import CONTRACTS,ORIGINAL_VARIANTS,MERGE_PACKAGING,TRACKING_PERMISSIONS
 from n9292_vm import Fixture,CONFIG,DELEGATE,BOOL,GET,LOCATION,LOCATE,CONT
 from n9292_tracking_vm import TrackingFixture,verify_app_measurement,verify_measurement_metadata,verify_crash_collection,verify_crash_settings,verify_optional_services,verify_persisted_measurement,ARBITER,SPI,SETTINGS,UPLOADER,UPLOAD
 from rtl_vm import Reference,VmThrown
@@ -224,10 +224,25 @@ def verify_voucher_state(f,hidden):
             assert actual==(read+2 if enabled else skipped),'9292 voucher UI gate changed'
 
 
+def original_variant(root):
+    # Apktool moves uses-sdk/version metadata into apktool.yml. Require it so
+    # merged outputs are checked against their own exact publisher variant.
+    metadata=(root/'apktool.yml').read_text()
+    def field(name):
+        values=re.findall(r'^  '+name+r": ['\"]?([^'\"\s]+)['\"]?\s*$",metadata,re.M)
+        assert len(values)==1,'9292 missing/ambiguous '+name
+        return values[0]
+    assert field('versionName')=='2.48.1' and field('versionCode')=='32189','9292 version changed'
+    assert field('targetSdkVersion')=='36','9292 target SDK changed'
+    minimum=int(field('minSdkVersion'))
+    assert minimum in ORIGINAL_VARIANTS,'9292 unsupported minimum SDK'
+    return ORIGINAL_VARIANTS[minimum]
+
+
 def verify(root,selected,apk):
     assert selected<=NAMES
-    source=Smali(root);decl=DexDeclarations.from_apk(apk)
-    if not selected:assert decl.source_sha256==BASE_SHA256
+    source=Smali(root);decl=DexDeclarations.from_apk(apk);variant=original_variant(root)
+    if not selected:assert decl.source_sha256==variant['base_sha256'],'9292 original APK digest changed'
     consent='Skip consent screens' in selected
     tracking='Disable tracking' in selected or consent
     hidden='Hide ads' in selected or tracking
@@ -277,8 +292,11 @@ def verify(root,selected,apk):
         app=manifest.find('application')
         for index,attributes in MERGE_PACKAGING['metadata']:
             assert not any(n.tag=='meta-data' and n.get(A+'name')==attributes[A+'name'] for n in app),'9292 merged APK retained original Play/split metadata'
+            attributes=dict(attributes)
+            if attributes[A+'name']=='com.android.vending.derived.apk.id':
+                attributes[A+'value']=variant['derived_apk_id']
             app.insert(index,ET.Element('meta-data',attributes))
-    assert xml_digest(manifest)==MANIFEST_DIGEST,'9292 original manifest changed'
+    assert xml_digest(manifest) in variant['manifest_digests'],'9292 original manifest changed'
     sdk,archive=sdk_classes()
     try:
         f=Fixture(source,decl,sdk)

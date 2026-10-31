@@ -1,9 +1,6 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.Opcode
@@ -24,9 +21,9 @@ internal fun suppressPersistedMeasurement() {
     }
     val status = "Lcom/google/android/datatransport/runtime/backends/BackendResponse\$Status;"
     check(method.getInstruction(42).opcode == Opcode.NEW_INSTANCE &&
-        method.getInstruction<ReferenceInstruction>(42).reference.toString() == "Lqt0;" &&
+        method.getInstruction<ReferenceInstruction>(42).reference.toString() == boundCode("Lqt0;") &&
         method.getInstruction<ReferenceInstruction>(43).reference.toString() == "$status->FATAL_ERROR:$status" &&
-        method.getInstruction<ReferenceInstruction>(44).reference.toString() == "Lqt0;-><init>(${status}J)V") {
+        method.getInstruction<ReferenceInstruction>(44).reference.toString() == boundCode("Lqt0;-><init>(${status}J)V")) {
         "Marktplaats native fatal-discard path changed"
     }
     val classDef = target(owner, signature).classDef
@@ -39,7 +36,7 @@ internal fun suppressPersistedMeasurement() {
             move-result v4
             if-nez v4, :next
         """.trimIndent() }
-    classDef.methods.add(MutableMethod(ImmutableMethod(owner, "morpheMeasurementBatch",
+    classDef.methods.add(MutableMethod(ImmutableMethod(boundCode(owner), "morpheMeasurementBatch",
         listOf(ImmutableMethodParameter("Ljava/util/ArrayList;", emptySet(), null)),
         "Ljava/util/ArrayList;", 9, emptySet(), emptySet(),
         ImmutableMethodImplementation(6, emptyList(), emptyList(), emptyList()))).apply {
@@ -67,12 +64,13 @@ internal fun suppressPersistedMeasurement() {
     // both run the filter. Keep original persisted rows, context and extras.
     method.replaceInstruction(113,
         "invoke-static {v0}, $owner->morpheMeasurementBatch(Ljava/util/ArrayList;)Ljava/util/ArrayList;")
+    val discardWait = if (isMarktplaats1619()) "v14" else "v13"
     method.addInstructionsWithLabels(114, """
         move-result-object v0
         invoke-virtual {v0}, Ljava/util/ArrayList;->isEmpty()Z
         move-result v8
         if-eqz v8, :keep
-        const-wide/16 v13, -0x1
+        const-wide/16 $discardWait, -0x1
         goto/32 :fatal
         :keep
         move-object v8, v9

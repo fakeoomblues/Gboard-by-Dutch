@@ -72,6 +72,14 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_release_commits_every_generated_catalogue_page(self):
+        config = json.loads((ROOT / '.releaserc').read_text())
+        assets = next(plugin[1]['assets'] for plugin in config['plugins']
+                      if isinstance(plugin, list) and plugin[0] == '@semantic-release/git')
+        for language in ('en', 'nl'):
+            self.assertIn(f'docs/site/{language}/index.md', assets)
+            self.assertIn(f'docs/site/{language}/reference/catalogue.md', assets)
+
     @classmethod
     def setUpClass(cls):
         spec = importlib.util.spec_from_file_location('docs_catalogue', ROOT / 'scripts/generate_docs_catalog.py')

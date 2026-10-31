@@ -1,6 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableField
@@ -26,7 +25,7 @@ val skipConsentScreens = bytecodePatch(
         val owner = target(client, ready).classDef
         val field = "morpheRejectedStartupConsent"
         check(owner.fields.none { it.name == field }) { "Marktplaats consent guard already exists" }
-        owner.fields.add(MutableField(ImmutableField(client, field, "Z", AccessFlags.PRIVATE.value,
+        owner.fields.add(MutableField(ImmutableField(boundCode(client), field, "Z", AccessFlags.PRIVATE.value,
             null, emptySet(), emptySet())))
         // Keep the original non-null View check. b=true identifies a privacy
         // manager opened manually. Startup never reaches showView/focus/metrics.

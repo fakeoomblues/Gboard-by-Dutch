@@ -1,10 +1,22 @@
 # Marktplaats
 
-**App version:** 16.17.0 · **Build:** 633462 · **Original file:** APKS
+**App version:** 16.19.0 · **Build:** 633464 · **Original file:** APKM
 
-[Download original app](https://buzzheavier.com/cq3amiskfsdy){ .md-button .md-button--primary }
+[Download original app](https://www.apkmirror.com/apk/marktplaats-bv/marktplaats/marktplaats-16-19-0-release/){ .md-button .md-button--primary }
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
+
+## Supported original files
+
+Use the complete APKM archive for version 16.19.0, build 633464. Choose one of these variants on APKMirror:
+
+| Variant | Minimum Android version | Screen density |
+| --- | --- | --- |
+| ARM64, x86 and x86_64 | Android 8 | 480 dpi |
+| ARM64 and ARMv7 | Android 9 | 480–640 dpi |
+| Noarch | Android 10 | 480–640 dpi |
+
+Other 16.19.0 variants are not included. Version 16.17.0, build 633462, also remains supported with its [original APKS](https://buzzheavier.com/cq3amiskfsdy).
 
 ## Patches
 

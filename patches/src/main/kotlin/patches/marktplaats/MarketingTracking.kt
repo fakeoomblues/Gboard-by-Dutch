@@ -1,6 +1,5 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 
 private const val braze = "Lcom/braze/Braze;"
 private const val companion = "Lcom/braze/Braze\$Companion;"

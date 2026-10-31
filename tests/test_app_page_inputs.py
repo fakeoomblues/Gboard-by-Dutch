@@ -31,9 +31,9 @@ def fixture(language='en', version='1.0', build='100', input_type='APKS', state=
 '''
 
 
-def metadata(path):
+def metadata(path, input_type="APKS"):
     def package(version, code, factor):
-        return {'packageName': 'nl.uitzendinggemist', 'apkFileType': 'APKS', 'formFactor': factor,
+        return {'packageName': 'nl.uitzendinggemist', 'apkFileType': input_type, 'formFactor': factor,
                 'targets': [{'version': version, 'versionCodes': {'ALL': code}}]}
     path.write_text(json.dumps({'patches': [
         {'name': 'Hide ads', 'default': True, 'compatiblePackages': [package('1.0', 100, 'MOBILE'), package('2.0', 200, 'TV')]},
@@ -43,10 +43,10 @@ def metadata(path):
 
 
 class AppPageTests(unittest.TestCase):
-    def check(self, language='en', text=None, rows=None):
+    def check(self, language='en', text=None, rows=None, input_type='APKS'):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
-            apps = metadata(directory / 'metadata.json')
+            apps = metadata(directory / 'metadata.json', input_type)
             target = directory / 'npo-start.md'
             target.write_text(text or fixture(language))
             rows = {'npo-start': {'url': '../guides/downloads.md#local-original-inputs', 'version': '1.0', 'build': '100'}} if rows is None else rows
@@ -55,6 +55,17 @@ class AppPageTests(unittest.TestCase):
     def test_local_original_inputs_work_in_both_languages_without_invented_download(self):
         for language in ('en', 'nl'):
             self.assertEqual(self.check(language), [])
+
+    def test_apkmirror_apkm_button_matches_the_selected_version(self):
+        url = 'https://www.apkmirror.com/apk/example/app/app-1-0-release/'
+        for language in ('en', 'nl'):
+            text = fixture(language, input_type='APKM').replace(
+                '../guides/downloads.md#local-original-inputs', url)
+            rows = {'npo-start': {'url': url, 'version': '1.0', 'build': '100'}}
+            self.assertEqual(self.check(language, text, rows, input_type='APKM'), [])
+            rows['npo-start']['url'] = url + 'other/'
+            self.assertTrue(any('downloads guide row' in error for error in
+                                self.check(language, text, rows, input_type='APKM')))
 
     def test_phone_page_does_not_inherit_tv_controls(self):
         self.assertEqual(self.check(), [])

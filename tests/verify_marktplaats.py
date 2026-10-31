@@ -10,7 +10,7 @@ from brabant_effects import restore_edits,restore_alignment
 from dex_declarations import DexDeclarations
 from verify_dumpert import Smali,xml_digest
 from verify_parool import sdk_classes
-from marktplaats_contracts import CONTRACTS,BASE_SHA256,MANIFEST_DIGEST,APPLICATION,AD_PROVIDER,MERGE_PACKAGING,NATIVE_LIBRARIES,TRACKING_PERMISSIONS
+from marktplaats_contracts import CONTRACTS,BASE_SHA256,MANIFEST_DIGESTS,APPLICATION,AD_PROVIDER,MERGE_PACKAGING,NATIVE_LIBRARIES,TRACKING_PERMISSIONS
 from marktplaats_vm import Fixture,RESPONSE,REQUEST,ORDER,LIST
 from marktplaats_ads_vm import verify_slots,verify_ad_init
 from marktplaats_tracking_vm import verify_measurement,HUB,HUB_NAMES,GAID,CONFIG as TRACK_CONFIG
@@ -212,10 +212,15 @@ def verify_manifest(root,hidden,tracking=False,merged=None,auth=False):
         for index,attrs in TRACKING_PERMISSIONS:
             assert not any(n.tag=='uses-permission' and n.get(A+'name')==attrs[A+'name'] for n in manifest),'Marktplaats advertising permission remains'
             manifest.insert(index,ET.Element('uses-permission',attrs))
-    assert xml_digest(manifest)==MANIFEST_DIGEST,'Marktplaats original manifest changed'
+    assert xml_digest(manifest) in MANIFEST_DIGESTS,'Marktplaats original manifest changed'
 
 
 def verify(root,selected,apk,behaviour_only=None):
+    metadata=(root/'apktool.yml').read_text()
+    if re.search(r"versionName: ['\"]?16\.19\.0['\"]?",metadata):
+        from marktplaats_1619 import verify as verify_1619
+        return verify_1619(root,selected,apk,behaviour_only)
+    assert re.search(r"versionName: ['\"]?16\.17\.0['\"]?",metadata),'Unsupported Marktplaats version'
     assert selected<=NAMES
     source=Smali(root);decl=DexDeclarations.from_apk(apk);hidden=bool(selected&AD_NAMES);consent=CONSENT in selected;tracking='Disable tracking' in selected or consent;expert=EXPERT in selected;auth=AUTH in selected
     if not behaviour_only:

@@ -1,8 +1,6 @@
 package patches.marktplaats
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 
@@ -39,14 +37,14 @@ internal fun suppressRemainingSdkEntries() {
         .addInstructions(0, "const/4 p0, 0x1\nreturn p0")
     val timer = exact(analytics, "e()V", 17, 6, 44)
     check(timer.getInstruction(4).opcode == Opcode.IGET_OBJECT &&
-        timer.getInstruction<ReferenceInstruction>(4).reference.toString() == "$analytics->f:Lxz2;")
+        timer.getInstruction<ReferenceInstruction>(4).reference.toString() == boundCode("$analytics->f:Lxz2;"))
     // Replace the common anchor: both the existing-timer and no-timer incoming
     // branches must clear the job after native cancellation, before returning.
     timer.replaceInstruction(4, "iput-object v1, p0, $analytics->g:Ls8f;")
     timer.addInstructions(5, "return-void\niget-object v0, p0, $analytics->f:Lxz2;")
     val send = exact(analytics, "d(Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;", 17, 12, 115)
     check(send.getInstruction(35).opcode == Opcode.IGET_OBJECT &&
-        send.getInstruction<ReferenceInstruction>(35).reference.toString() == "$analytics->d:Lxnk;" &&
+        send.getInstruction<ReferenceInstruction>(35).reference.toString() == boundCode("$analytics->d:Lxnk;") &&
         send.getInstruction<ReferenceInstruction>(34).reference.toString() == "Lkotlin/ResultKt;->b(Ljava/lang/Object;)V")
     // Native Unit completes optional telemetry before repository/HTTP admission.
     // Retain coroutine validation, resume/error paths and setup-ID retrieval.

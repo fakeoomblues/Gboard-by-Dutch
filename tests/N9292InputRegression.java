@@ -22,6 +22,11 @@ class N9292InputRegression extends OriginalInputRegression {
     public static void main(String[] args) throws Exception {
         File bundle=new File(args[0]), originalFile=new File(args[1]), scratch=new File(args[3]);
         PackageMetadata original=read(originalFile), other=read(new File(args[2]));
+        int minSdk;
+        try(ApkModule apk=ApkModule.loadApkFile(originalFile)) {
+            minSdk=apk.getAndroidManifest().getMinSdkVersion();
+        }
+        check(Set.of(24,29,32).contains(minSdk),"original minimum SDK is a supported variant");
         List<X509Certificate> trusted=original.getSigningCertificates().values().stream().flatMap(Collection::stream).distinct().toList();
         List<X509Certificate> untrusted=other.getSigningCertificates().values().stream().flatMap(Collection::stream).distinct().toList();
         check(!trusted.isEmpty()&&!untrusted.isEmpty()&&Collections.disjoint(trusted,untrusted),"real disjoint publisher certificates");
@@ -42,7 +47,7 @@ class N9292InputRegression extends OriginalInputRegression {
         String[] names={"package","version","code","missing signer","untrusted signer","mixed signer"};
         try(ResourcePatchContext context=new ResourcePatchContext(config(originalFile,scratch,"guard"))) {
             var manifest=context.get("AndroidManifest.xml",false).toPath();Files.createDirectories(manifest.getParent());
-            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\"32\"/></manifest>";
+            String xml="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\""+minSdk+"\"/></manifest>";
             Files.writeString(manifest,xml);guard.execute(context);
             check(Files.readString(manifest).equals(xml),"actual original accepted without mutation");
             Field field=ResourcePatchContext.class.getDeclaredField("packageMetadata");field.setAccessible(true);
@@ -53,7 +58,15 @@ class N9292InputRegression extends OriginalInputRegression {
                 check(Files.readString(manifest).equals(xml),"invalid "+names[i]+" leaves manifest intact");
             }
             field.set(context,original);
-            for(String usesSdk:List.of("<uses-sdk android:minSdkVersion=\"999\"/>","")) {
+            for(int supported:List.of(24,29,32)) {
+                String supportedXml=xml.replace("minSdkVersion=\""+minSdk+"\"","minSdkVersion=\""+supported+"\"");
+                Files.writeString(manifest,supportedXml);guard.execute(context);
+                check(Files.readString(manifest).equals(supportedXml),"declared minimum SDK "+supported+" accepted without mutation");
+            }
+            for(String usesSdk:List.of("<uses-sdk android:minSdkVersion=\"23\"/>","<uses-sdk android:minSdkVersion=\"25\"/>",
+                    "<uses-sdk android:minSdkVersion=\"28\"/>","<uses-sdk android:minSdkVersion=\"30\"/>",
+                    "<uses-sdk android:minSdkVersion=\"31\"/>","<uses-sdk android:minSdkVersion=\"33\"/>",
+                    "<uses-sdk android:minSdkVersion=\"999\"/>","")) {
                 String bad="<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">"+usesSdk+"</manifest>";
                 Files.writeString(manifest,bad);boolean refused=false;
                 try{guard.execute(context);}catch(IllegalStateException expected){refused=true;}
