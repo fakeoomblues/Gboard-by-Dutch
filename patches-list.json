@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.19.0",
+  "version": "1.19.1",
   "patches": [
     {
       "name": "Alert distances",
@@ -2359,25 +2359,8 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "9.30.53",
-              "versionCodes": {
-                "ARM64_V8A": 93053240,
-                "ARMEABI_V7A": 93053240,
-                "X86_64": 93053240,
-                "X86": 93053240
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": "9.44.52",
-              "versionCodes": {
-                "ARM64_V8A": 94452240,
-                "ARMEABI_V7A": 94452240,
-                "X86_64": 94452240,
-                "X86": 94452240
-              },
+              "version": null,
+              "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": null
@@ -2394,25 +2377,8 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "9.30.53",
-              "versionCodes": {
-                "ARM64_V8A": 93053240,
-                "ARMEABI_V7A": 93053240,
-                "X86_64": 93053240,
-                "X86": 93053240
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": "9.44.52",
-              "versionCodes": {
-                "ARM64_V8A": 94452240,
-                "ARMEABI_V7A": 94452240,
-                "X86_64": 94452240,
-                "X86": 94452240
-              },
+              "version": null,
+              "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": null

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2c920a152821ca4d54561096ad8419f625680a83/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.19.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [2c920a152821](https://github.com/johninnl/nl-morphe-patches/commit/2c920a152821ca4d54561096ad8419f625680a83). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.19.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.19.0...v1.19.1) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **YouTube Music:** discover compatible Gearslip browser layouts across versions ([2c920a1](https://github.com/johninnl/nl-morphe-patches/commit/2c920a152821ca4d54561096ad8419f625680a83))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/1bb6679db1d6161ea28a78228379716bf4f52990/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.19.0.**
