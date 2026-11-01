@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.9.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [b17fcabce88a](https://github.com/johninnl/nl-morphe-patches/commit/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.9.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.8.0...v1.9.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Projectivy Launcher:** add Unlock Premium for 4.73 ([b17fcab](https://github.com/johninnl/nl-morphe-patches/commit/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ed0e21c82cd14a27d7c52191ad5959b3ed5f8096/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.8.0.**
