@@ -99,6 +99,8 @@ public final class Customization {
                 "Answers privacy and terms silently; declines personalized ads"});
         LABELS.put("shareAlerts", new String[]{"Share alerts with Maps",
                 "Shows Waze alerts in Ungoogled Maps"});
+        LABELS.put("navigationBroadcasts", new String[]{"Broadcast navigation data",
+                "Road limit and zone data for other apps; keeps Waze active in the background"});
         LABELS.put("stayAwake", new String[]{"Stay awake in the background",
                 "Keeps Waze running for Maps"});
         LABELS.put("biggerPins", new String[]{"Bigger alert pins",
@@ -328,6 +330,7 @@ public final class Customization {
 
     /** Whether [feature] is switched on; every patched feature starts on, but those in STARTS_OFF. */
     public static boolean on(String feature) {
+        if (feature.equals("stayAwake") && NavigationBroadcasts.isEnabled()) return true;
         boolean start = !STARTS_OFF.contains(feature);
         SharedPreferences p = prefs();
         return p == null ? start : p.getBoolean(feature, start);
@@ -362,6 +365,7 @@ public final class Customization {
         if (feature.equals("flockCameras")) Flock.switched(on);
         if (feature.equals("speedCameras")) SpeedCameras.switched(on);
         if (feature.equals("shareAlerts")) Bridge.switched(on);
+        if (feature.equals("navigationBroadcasts")) NavigationBroadcasts.switched(on);
         reapply(feature + (on ? " on" : " off"));
     }
 
