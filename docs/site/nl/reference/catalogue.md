@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.16.0**
+**Patchbundel: 1.17.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -581,6 +581,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Average speed zone bar | Aan | 5.26.90.901 |
 | Bigger alert pins | Uit | 5.26.90.901 |
 | Bigger speedometer | Aan | 5.26.90.901 |
+| Broadcast navigation data | Aan | 5.26.90.901 |
 | Change app name | Aan | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
@@ -602,6 +603,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speed cameras everywhere | Uit | 5.26.90.901 |
 | Speed limit sign | Uit | 5.26.90.901 |
 | Stay awake in the background | Uit | 5.26.90.901 |
+| Support Gearslip | Aan | 5.26.90.901 |
 | YT Music Morphe in Waze | Aan | Alle versies |
 
 ## Weeronline
