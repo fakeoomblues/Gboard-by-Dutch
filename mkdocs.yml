@@ -173,6 +173,7 @@ nav:
       - Other apps:
           - apps/other/index.md
           - apps/marktplaats.md
+          - apps/projectivy.md
   - Learn about tracking:
       - learn/index.md
       - learn/how-tracking-works.md
