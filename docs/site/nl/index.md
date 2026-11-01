@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">45 apps</span> · Patchbundel: 1.11.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Patchbundel: 1.12.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -490,6 +490,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/medium.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.0 individual wuplay catalog rows" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Monet Android TV](apps/monet.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">1.1.0</span></p>
+<p class="dap-app-card__package">com.klevico.monet</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Individual Wuplay catalog rows <span class="dap-app-card__target">1.1.0 · standaard uit</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/monet.md){ .dap-app-card__link }
 
 </article>
 

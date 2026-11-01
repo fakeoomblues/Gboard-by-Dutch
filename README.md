@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.11.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.11.0)** · 45 apps · 184 patches
+**Patch bundle [v1.12.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.12.0)** · 46 apps · 185 patches
 
 ### Weather
 
@@ -111,6 +111,7 @@ it does not guarantee anonymity or remove all network traffic.
 | --- | --- | --- | --- | --- |
 | [AT4K Launcher](https://johninnl.github.io/nl-morphe-patches/apps/at4k/) | Plus/Pro | 1.2 | APK | 1 |
 | [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
+| [Monet Android TV](https://johninnl.github.io/nl-morphe-patches/apps/monet/) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](https://johninnl.github.io/nl-morphe-patches/apps/projectivy/) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 
 [Patch defaults and supported versions](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/) · [English](https://johninnl.github.io/nl-morphe-patches/en/reference/catalogue/)

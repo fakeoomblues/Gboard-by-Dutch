@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -4309,6 +4309,40 @@
               },
               "isExperimental": false,
               "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Individual Wuplay catalog rows",
+      "description": "Choose individual published Wuplay catalogs in Monet's Content picker, with Wuplay icons and refresh independent of Recommendations. Requires Wuplay's catalog publisher.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.klevico.monet",
+          "name": "Monet Android TV",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "4bec386a6baae56f0694d3be54f67e0625b973109e0dbb947df2a5d0254975e0"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.1.0",
+              "versionCodes": {
+                "ARM64_V8A": 134,
+                "ARMEABI_V7A": 134,
+                "X86_64": 134,
+                "X86": 134
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]

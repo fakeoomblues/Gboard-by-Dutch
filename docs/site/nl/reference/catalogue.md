@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.11.0**
+**Patchbundel: 1.12.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -288,6 +288,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable optional tracking | Aan | 4.5.1784911033 |
 | Hide native promotions | Aan | 4.5.1784911033 |
 | Read full articles natively | Aan | 4.5.1784911033 |
+
+## Monet Android TV
+
+[Wat veranderen de patches?](../apps/monet.md)
+
+`com.klevico.monet`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Individual Wuplay catalog rows | Uit | 1.1.0 |
 
 ## Nieuwsblad
 

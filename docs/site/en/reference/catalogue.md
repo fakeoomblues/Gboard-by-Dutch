@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.11.0**
+**Patch bundle: 1.12.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -288,6 +288,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable optional tracking | On | 4.5.1784911033 |
 | Hide native promotions | On | 4.5.1784911033 |
 | Read full articles natively | On | 4.5.1784911033 |
+
+## Monet Android TV
+
+[What do the patches change?](../apps/monet.md)
+
+`com.klevico.monet`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Individual Wuplay catalog rows | Off | 1.1.0 |
 
 ## Nieuwsblad
 
