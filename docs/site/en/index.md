@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.22.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">51 apps</span> · Development patch bundle: 1.23.0-dev.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -882,6 +882,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/tvgids-nl.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="vela maps app.vela 0.5.2621 external speed controls" markdown>
+<p class="dap-app-card__category">Traffic</p>
+
+### [Vela Maps](apps/vela.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.5.2621</span></p>
+<p class="dap-app-card__package">app.vela</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>External speed controls <span class="dap-app-card__target">0.5.2621</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/vela.md){ .dap-app-card__link }
 
 </article>
 

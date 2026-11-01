@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.22.0",
+  "version": "1.23.0-dev.1",
   "patches": [
     {
       "name": "Alert distances",
@@ -346,7 +346,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Shares current speed, road limits and observed average-speed zone progress with compatible local apps, also in the background without an overlay.",
+      "description": "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -390,7 +390,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Broadcasts current speed, the road speed limit and average-speed zone observations locally, including in the background. No overlay required.",
+      "description": "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. No overlay required.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -2211,6 +2211,40 @@
               },
               "isExperimental": false,
               "minSdk": 27,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "External speed controls",
+      "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback and provider settings.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.vela",
+          "name": "Vela Maps",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "29938b4858063e42e677ff95c901cd48248a7f032a3ae85f9b9e5617568b0d36"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "0.5.2621",
+              "versionCodes": {
+                "ARM64_V8A": 46210,
+                "ARMEABI_V7A": 46210,
+                "X86_64": 46210,
+                "X86": 46210
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
