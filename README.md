@@ -134,7 +134,7 @@ XAPK, including Notifications and native splits. See the
 [privacy evidence and limits](docs/privacy/2dehands/README.md).
 Signed-in, incoming-push and checkout acceptance follows stable publication.
 
-The source branch also contains the [full Waze 5.26.90.901 catalog](docs/waze/README.md): 24 deWaze controls alongside the two audio patches, plus silent consent completion and expanded privacy controls. The release table above follows published bundle metadata.
+The source branch also contains the [full Waze 5.26.90.901 catalog](docs/waze/README.md): 24 controls from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) (De-Waze), ported to this version, alongside the two audio patches, plus silent consent completion and expanded privacy controls. The release table above follows published bundle metadata.
 
 App pages describe patch effects, supported versions, defaults and relevant
 limits. Advertising and tracking services are listed where useful.

@@ -43,3 +43,12 @@ Additional terms under GPLv3 Section 7 retained from the upstream NOTICE:
 The name "Morphe" and any Morphe branding may not be used to endorse or
 promote products derived from this software without specific prior
 written permission.
+
+
+Waze patch catalog adaptation
+-----------------------------
+
+Source: bearinmindcat/morphe-patches (bearinmind patches), commit
+32e42e0f757581147307af27196e3aca517d0570.
+Licensed under the GNU General Public License, version 3.
+Adapted for Waze 5.26.90.901 and extended by this project.

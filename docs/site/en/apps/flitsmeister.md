@@ -2,7 +2,7 @@
 
 **App version:** 14.17 · **Build:** 1287 · **Original file:** APKS
 
-[Download original app](https://buzzheavier.com/87mpz44q4p8h){ .md-button .md-button--primary }
+[Download original app](https://buzzheavier.com/1esn82va0l3d){ .md-button .md-button--primary }
 
 [Install Flitsmeister for Android Auto: steps with screenshots](../guides/android-auto.md){ .md-button }
 

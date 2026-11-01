@@ -2,7 +2,7 @@
 
 **App version:** 0.9.4-beta · **Build:** 49 · **Original file:** APK
 
-[Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download original app](https://buzzheavier.com/03cd7t0bs8qt){ .md-button .md-button--primary }
 
 Select the original Wuplay Android TV APK in Morphe Manager.
 

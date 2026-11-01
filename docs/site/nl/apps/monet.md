@@ -2,7 +2,7 @@
 
 **Appversie:** 1.1.0 · **Build:** 134 · **Origineel bestand:** APK
 
-[Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/xk5uwpz9uobd){ .md-button .md-button--primary }
 
 Selecteer de originele Monet-launcher-APK in Morphe Manager.
 
