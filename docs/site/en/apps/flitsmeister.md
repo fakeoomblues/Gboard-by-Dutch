@@ -13,6 +13,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Disable partner services** | On | Removes Parking, Toll and Carwash entries and related settings. |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Fix PairIP startup** | On | Lets the patched app start and use its supported features after installation. Keep this enabled. |
+| **Guest mode** | On | Adds Continue as guest to onboarding and lets you reopen the app without signing in. |
 | **Hide Pro notices** | On | Hides automatic Pro/Plus offers, badges and Android Auto upgrade notices. |
 | **Hide ads** | On | Removes commercial location-based promotions, their images and advertising notifications. Traffic warnings remain. |
 | **Unlock Pro** | On | Enables locally controlled Pro options. Features requiring account activation still depend on the service. |
@@ -26,5 +27,9 @@ Blocking measurement does not block every function from the same provider. Essen
 ## Before using
 
 Navigation, live traffic/location exchange, accounts and reports still use online services. Unlock Pro does not activate backend services. For Android Auto, follow the [KingInstaller installation steps](../guides/android-auto.md).
+
+Choose **Continue as guest** to finish onboarding without an account. Location permission remains your choice. Guest mode keeps optional login available and does not activate account services such as cloud history or parking. It does not repair Google sign-in or remove Android Auto's separate account requirement.
+
+Device testing of the new guest flow is pending.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

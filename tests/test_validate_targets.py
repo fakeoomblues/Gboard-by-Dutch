@@ -459,6 +459,7 @@ class TargetRoutingTests(unittest.TestCase):
         self.assertEqual(validator.APPS['flitsmeister'], {
             'Fix PairIP startup': [], 'Unlock Pro': [], 'Hide Pro notices': [],
             'Disable partner services': [], 'Hide ads': [], 'Disable tracking': [],
+            'Guest mode': ['Fix PairIP startup'],
         })
         self.assertEqual(
             validator.verifier_command('flitsmeister', Path('decoded'), {'Unlock Pro'}),

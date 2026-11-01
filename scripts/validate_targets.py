@@ -145,6 +145,7 @@ APPS = {
     "flitsmeister": {
         "Fix PairIP startup": [], "Unlock Pro": [], "Hide Pro notices": [],
         "Disable partner services": [], "Hide ads": [], "Disable tracking": [],
+        "Guest mode": ["Fix PairIP startup"],
     },
 }
 
