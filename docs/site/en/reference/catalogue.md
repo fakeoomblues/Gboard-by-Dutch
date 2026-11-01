@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.14.0**
+**Patch bundle: 1.15.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -164,6 +164,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable partner services | On | 14.17 |
 | Disable tracking | On | 14.17 |
 | Fix PairIP startup | On | 14.17 |
+| Guest mode | On | 14.17 |
 | Hide Pro notices | On | 14.17 |
 | Hide ads | On | 14.17 |
 | Unlock Pro | On | 14.17 |

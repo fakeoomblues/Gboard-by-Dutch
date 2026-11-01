@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.14.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.14.0)** · 46 apps · 210 patches
+**Patch bundle [v1.15.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.15.0)** · 46 apps · 211 patches
 
 ### Weather
 
@@ -86,7 +86,7 @@ it does not guarantee anonymity or remove all network traffic.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
-| [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 6 |
+| [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 7 |
 | [Rollerbank](https://johninnl.github.io/nl-morphe-patches/apps/rollerbank/) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
 | [Waze](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/#waze) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 27 |
 

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.14.0**
+**Patchbundel: 1.15.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -164,6 +164,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable partner services | Aan | 14.17 |
 | Disable tracking | Aan | 14.17 |
 | Fix PairIP startup | Aan | 14.17 |
+| Guest mode | Aan | 14.17 |
 | Hide Pro notices | Aan | 14.17 |
 | Hide ads | Aan | 14.17 |
 | Unlock Pro | Aan | 14.17 |

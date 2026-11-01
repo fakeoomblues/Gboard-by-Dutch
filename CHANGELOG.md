@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/68b50783fd3d73aaedd4949028dd7269636baad6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.15.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [68b50783fd3d](https://github.com/johninnl/nl-morphe-patches/commit/68b50783fd3d73aaedd4949028dd7269636baad6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.15.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.14.0...v1.15.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Flitsmeister:** allow onboarding without an account ([68b5078](https://github.com/johninnl/nl-morphe-patches/commit/68b50783fd3d73aaedd4949028dd7269636baad6))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/643e179fd308a1897b46f6afde176e884f7ab529/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.14.0.**

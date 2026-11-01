@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -2221,6 +2221,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Guest mode",
+      "description": "Adds Continue as guest to onboarding and allows reopening the app without an account. Keeps optional login and services that require a genuine account.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.flitsmeister",
+          "name": "Flitsmeister",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "ba4fdde5ed7d1082f6ba1af87df2ca39c81b094af20d36ff55b583aa3e3353e6"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "14.17",
+              "versionCodes": {
+                "ARM64_V8A": 1287,
+                "ARMEABI_V7A": 1287,
+                "X86_64": 1287,
+                "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
               "description": null
             }
           ]
