@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f37146291e28589186ae07c65523997d9e164d88/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.8.0-dev.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f37146291e28](https://github.com/johninnl/nl-morphe-patches/commit/f37146291e28589186ae07c65523997d9e164d88). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.8.0-dev.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.7.0...v1.8.0-dev.1) (2026-11-01)
+
+### ✨ New Features
+
+* **Projectivy Launcher:** disable tracking on 4.73 ([f371462](https://github.com/johninnl/nl-morphe-patches/commit/f37146291e28589186ae07c65523997d9e164d88))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/062679e47e11ad97b7beaba6699367136071d237/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.7.0.**

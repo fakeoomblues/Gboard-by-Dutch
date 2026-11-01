@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.7.0**
+**Development patch bundle: 1.8.0-dev.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -403,6 +403,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Guest session playback host | On | 3.5.1 |
 | Unlock Premium playback | On | 3.5.1 |
+
+## Projectivy Launcher
+
+[What do the patches change?](../apps/projectivy.md)
+
+`com.spocky.projengmenu`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 4.73 |
 
 ## Rollerbank
 

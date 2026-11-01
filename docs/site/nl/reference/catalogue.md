@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.7.0**
+**Ontwikkelbundel: 1.8.0-dev.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -403,6 +403,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Guest session playback host | Aan | 3.5.1 |
 | Unlock Premium playback | Aan | 3.5.1 |
+
+## Projectivy Launcher
+
+[Wat veranderen de patches?](../apps/projectivy.md)
+
+`com.spocky.projengmenu`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 4.73 |
 
 ## Rollerbank
 
