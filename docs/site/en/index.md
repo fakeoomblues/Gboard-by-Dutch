@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">51 apps</span> · Patch bundle: 1.23.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.23.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1120,24 +1120,6 @@ hide:
 </details>
 
 [Guide and downloads](apps/youtube-music.md){ .dap-app-card__link }
-
-</article>
-
-<article class="dap-app-card" data-category="entertainment" data-search="youtube music app.morphe.android.apps.youtube.music any gearslip music browser support" markdown>
-<p class="dap-app-card__category">Entertainment</p>
-
-### [YouTube Music](apps/youtube-music-morphe.md)
-
-<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
-<p class="dap-app-card__package">app.morphe.android.apps.youtube.music</p>
-<details class="dap-app-card__patches">
-<summary>1 patch</summary>
-<ul>
-<li>Gearslip music browser support <span class="dap-app-card__target">Any</span></li>
-</ul>
-</details>
-
-[Guide and downloads](apps/youtube-music-morphe.md){ .dap-app-card__link }
 
 </article>
 

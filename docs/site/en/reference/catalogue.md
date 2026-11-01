@@ -687,14 +687,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-## YouTube Music
-
-[What do the patches change?](../apps/youtube-music-morphe.md)
-
-`app.morphe.android.apps.youtube.music`
-
-| Patch | Default | App versions |
-| --- | --- | --- |
-| Gearslip music browser support | On | Any |
-
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

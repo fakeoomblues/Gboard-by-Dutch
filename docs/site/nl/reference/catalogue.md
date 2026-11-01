@@ -687,14 +687,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-## YouTube Music
-
-[Wat veranderen de patches?](../apps/youtube-music-morphe.md)
-
-`app.morphe.android.apps.youtube.music`
-
-| Patch | Standaard | App-versies |
-| --- | --- | --- |
-| Gearslip music browser support | Aan | Alle versies |
-
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

@@ -6,11 +6,11 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 
 | App | Version / build | Original file |
 | --- | --- | --- |
-| [2dehands](../apps/2dehands.md) | 16.19.0 / 633464 | Use your own complete XAPK |
+| [2dehands](../apps/2dehands.md) | 16.19.0 / 633464 | [XAPK](https://buzzheavier.com/p3t8spl0cswx) |
 | [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |
-| [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/jtbt2vu0n7jp) |
+| [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/9fl1lzedekqp) |
 | [Buienradar](../apps/buienradar.md) | 7.4.8 / 7897 | [APKM](https://buzzheavier.com/v4m79608e677) |
 | [DS Nieuws](../apps/dsnieuws.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/xekgzljrg2lg) |
 | [De Morgen](../apps/demorgen.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/ci8cm8ebuwf2) |
@@ -52,13 +52,11 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Monet Android TV](../apps/monet.md) | 1.1.0 / 134 | [APK](https://buzzheavier.com/xk5uwpz9uobd) |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
-| [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | Use your own file |
-| [YT Music Morphe](../apps/youtube-music-morphe.md) | 9.30.53 / 93053240 | Use your own file |
-| [YouTube Music](../apps/youtube-music.md) | 9.44.52 / 94452240 | Use your own file |
+| [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
+| [YouTube Music](../apps/youtube-music.md) | 9.44.52 / 94452240 | [APKM](https://buzzheavier.com/olrt69s67h6z) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
 | [Weerplaza](../apps/weerplaza.md) | 3.13.1 / 734 | [APKS](https://buzzheavier.com/cr9f6qs8tfsh) |
-| YouTube Music | 9.44.52 / 94452240 | [APKM](https://buzzheavier.com/6smwck61rgg7) |
 
 ## Use your own file {#local-original-inputs}
 

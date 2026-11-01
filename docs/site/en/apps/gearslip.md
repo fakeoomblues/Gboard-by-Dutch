@@ -2,7 +2,7 @@
 
 **App version:** 0.3.31-alpha · **Build:** 13 · **Original file:** APK
 
-[Choose an original file](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download original app](https://buzzheavier.com/szlgyqfl0ghx){ .md-button .md-button--primary }
 
 Use the official Gearslip APK. The patches also support 0.3.12-alpha, build 12.
 

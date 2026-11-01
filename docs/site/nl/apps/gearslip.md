@@ -2,7 +2,7 @@
 
 **Appversie:** 0.3.31-alpha · **Build:** 13 · **Origineel bestand:** APK
 
-[Kies een origineel bestand](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/szlgyqfl0ghx){ .md-button .md-button--primary }
 
 Gebruik de officiële Gearslip-APK. De patches ondersteunen ook 0.3.12-alpha, build 12.
 
