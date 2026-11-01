@@ -1,9 +1,9 @@
-# 2dehands privacy controls — development
+# 2dehands privacy controls
 
 Inspected original: `be.tweedehands.m` **16.19.0 / 633464**, minimum SDK **32**,
 target SDK **37**. The supplied eight-member XAPK includes Notifications.
 Publisher SHA-256: `7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47`.
-This work is not a published stable release.
+Stable publication uses the main release workflow. Signed-in account, incoming-push and checkout acceptance follows publication.
 
 ## Implemented policy
 

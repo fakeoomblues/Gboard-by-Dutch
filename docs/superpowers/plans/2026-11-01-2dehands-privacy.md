@@ -104,3 +104,9 @@
 - Local APK and MPP delivered under Downloads/2dehands-privacy-16.19.0-20261101-164055 with SHA256SUMS. Original XAPK hash is unchanged. Nothing published or promoted.
 - Still pending: signed-in account/incoming push/payment acceptance by the user; final background/stored-grant and broader runtime acceptance must not be inferred from anonymous tests. Async user choice asks phone versus isolated emulator.
 - Public docs match metadata generated from the actual bundle in isolated metadata-preview. The checked-in released catalogue remains unchanged; generic docs check against that old released catalogue reports the future 2dehands page as extra. Do not present this branch as publication/merge CI acceptance until that release integration is resolved.
+
+### Main publication sequencing
+
+- User explicitly clarified that signed-in/account, incoming-push and payment acceptance happens after publication on main. Do not gate stable publication on those checks or perform additional emulator acceptance before release.
+- Selectively cherry-picked only the 2dehands commit onto current origin/main in release/2dehands-approved; unrelated dev changes are excluded.
+- Current main already generates candidate metadata in its Documentation workflow, resolving the earlier stale-catalogue PR concern without modifying generated release files.

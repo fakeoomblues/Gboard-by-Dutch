@@ -1,6 +1,6 @@
 # 2dehands
 
-**Ondersteuning in ontwikkeling:** deze patches worden gevalideerd en zitten nog niet in een gepubliceerde release.
+**Privacy-patches:** advertenties, optionele tracking en toestemmingsformulieren voor precies dit originele bestand. Accountgebruik, inkomende pushmeldingen en betalen worden na stabiele publicatie gevalideerd.
 
 **Appversie:** 16.19.0 · **Build:** 633464 · **Origineel bestand:** XAPK
 

@@ -1,6 +1,6 @@
 # 2dehands
 
-**Development support:** these controls are being validated and are not yet in a published release.
+**Privacy controls:** advertising, optional tracking and consent-form controls for this exact original. Account, incoming push and checkout acceptance follows stable publication.
 
 **App version:** 16.19.0 · **Build:** 633464 · **Original file:** XAPK
 
