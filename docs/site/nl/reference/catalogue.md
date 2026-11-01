@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.20.0**
+**Patchbundel: 1.21.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -205,7 +205,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Hide apps from drawer | Uit | 0.3.12-alpha, 0.3.31-alpha |
+| Hide apps from drawer | Aan | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | Aan | 0.3.12-alpha, 0.3.31-alpha |
 
 ## GVA

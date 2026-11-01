@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -4817,8 +4817,8 @@
     },
     {
       "name": "Hide apps from drawer",
-      "description": "Hides selected packages from Gearslip's discovered app tiles. Does not disable or uninstall apps; Gearslip's built-in Settings remain available.",
-      "default": false,
+      "description": "Adds an Apps card to Gearslip's phone settings. Every installed car app is ticked by default; unticking one hides its tile from the car drawer. Does not disable or uninstall apps.",
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -4857,17 +4857,7 @@
           ]
         }
       ],
-      "options": [
-        {
-          "key": "hiddenPackages",
-          "title": "Packages to hide",
-          "description": "Comma-separated Android package names. Empty keeps Gearslip's own exclusions only. All discovered tiles from each listed package are hidden.",
-          "required": false,
-          "type": "kotlin.String",
-          "default": "",
-          "values": null
-        }
-      ]
+      "options": []
     },
     {
       "name": "Hide empty listening carousel",

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/dfb458d72dca25332e429af9a352e2469b817aee/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.21.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [dfb458d72dca](https://github.com/johninnl/nl-morphe-patches/commit/dfb458d72dca25332e429af9a352e2469b817aee). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.21.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.20.0...v1.21.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Gearslip:** choose drawer apps from phone settings ([dfb458d](https://github.com/johninnl/nl-morphe-patches/commit/dfb458d72dca25332e429af9a352e2469b817aee))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/1ae705851644e42444d8e45f196d11ffd4c908ff/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.20.0.**

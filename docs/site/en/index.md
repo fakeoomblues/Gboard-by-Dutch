@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.20.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.21.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -355,7 +355,7 @@ hide:
 <details class="dap-app-card__patches">
 <summary>2 patches</summary>
 <ul>
-<li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha · default off</span></li>
+<li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 <li>Keep music player entries <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 </ul>
 </details>
