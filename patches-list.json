@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -4306,6 +4306,40 @@
                 "ARMEABI_V7A": 1622,
                 "X86_64": 1622,
                 "X86": 1622
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Publish selected catalog channels",
+      "description": "Select catalogs from the default profile in the Wuplay TV channels launcher entry. Publishes Android TV preview channels with artwork and Wuplay links; requires Android TV 8 or later.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.wuplay.androidtv",
+          "name": "Wuplay Android TV",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "ae406f7d398ae1ae418238f83d07554e6aa6cf5855b66edb9c4c85995d435e7f"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "0.9.4-beta",
+              "versionCodes": {
+                "ARM64_V8A": 49,
+                "ARMEABI_V7A": 49,
+                "X86_64": 49,
+                "X86": 49
               },
               "isExperimental": false,
               "minSdk": 24,

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.10.0**
+**Patchbundel: 1.11.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -580,5 +580,15 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide Premium banner | Aan | 3.13.1 |
 | Hide ads | Aan | 3.13.1 |
 | Skip consent screens | Aan | 3.13.1 |
+
+## Wuplay Android TV
+
+[Wat veranderen de patches?](../apps/wuplay.md)
+
+`app.wuplay.androidtv`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Publish selected catalog channels | Uit | 0.9.4-beta |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

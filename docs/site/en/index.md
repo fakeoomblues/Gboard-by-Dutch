@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">44 apps</span> · Patch bundle: 1.10.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">45 apps</span> · Patch bundle: 1.11.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
@@ -968,6 +968,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/weerplaza.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="wuplay android tv app.wuplay.androidtv 0.9.4-beta publish selected catalog channels" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Wuplay Android TV](apps/wuplay.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.9.4-beta</span></p>
+<p class="dap-app-card__package">app.wuplay.androidtv</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Publish selected catalog channels <span class="dap-app-card__target">0.9.4-beta · default off</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/wuplay.md){ .dap-app-card__link }
 
 </article>
 

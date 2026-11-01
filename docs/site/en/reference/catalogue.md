@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.10.0**
+**Patch bundle: 1.11.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -580,5 +580,15 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Premium banner | On | 3.13.1 |
 | Hide ads | On | 3.13.1 |
 | Skip consent screens | On | 3.13.1 |
+
+## Wuplay Android TV
+
+[What do the patches change?](../apps/wuplay.md)
+
+`app.wuplay.androidtv`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Publish selected catalog channels | Off | 0.9.4-beta |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

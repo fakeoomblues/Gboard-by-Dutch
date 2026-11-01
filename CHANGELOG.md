@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f6d93736e5ed33070f1c58904c029d3a49cd92fc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.11.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f6d93736e5ed](https://github.com/johninnl/nl-morphe-patches/commit/f6d93736e5ed33070f1c58904c029d3a49cd92fc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.11.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.10.0...v1.11.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Wuplay Android TV:** publish selected default-profile catalog channels ([f6d9373](https://github.com/johninnl/nl-morphe-patches/commit/f6d93736e5ed33070f1c58904c029d3a49cd92fc))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/867e14fe0e449eb6dc7938a2caa6524ea37f3a54/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.10.0.**
