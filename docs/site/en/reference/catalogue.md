@@ -536,6 +536,8 @@ Check the supported app versions and default setting for each patch. The app pag
 
 ## Waze
 
+[What do the patches change?](../apps/waze.md)
+
 `com.waze`
 
 | Patch | Default | App versions |

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # Editorial destinations only; app names, versions and patches come from metadata.
 APP_PAGES = {
     'com.spocky.projengmenu': ('projectivy', 'other'),
-    'com.waze': (None, 'mobility'),  # Audio add-on: catalogue entry, no full-app guide.
+    'com.waze': ('waze', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
