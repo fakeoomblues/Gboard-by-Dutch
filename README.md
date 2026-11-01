@@ -129,8 +129,8 @@ targets Monet 1.1.0 / 134 and adds dedicated Wuplay catalog choices with stable
 saved selections and refresh independent of Recommendations.
 
 The optional [Wuplay catalog publisher](docs/site/en/apps/wuplay.md) targets
-Wuplay Android TV 0.9.4-beta / 49. It adds a separate TV launcher entry for
-selecting default-profile catalogs and publishing Android TV preview channels.
+Wuplay Android TV 0.9.4-beta / 49. Its **Settings > Catalogs > TV channels**
+entry publishes only selected default-profile Home catalogs as Android TV preview channels.
 It is disabled by default and does not include Monet changes.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for build requirements, app verification
