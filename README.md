@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.9.0-dev.5](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.9.0-dev.5)** · 43 apps · 210 patches
+**Patch bundle [v1.9.0-dev.6](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.9.0-dev.6)** · 46 apps · 214 patches
 
 ### Weather
 
@@ -94,6 +94,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
 | [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 7 |
+| [Gearslip](https://johninnl.github.io/nl-morphe-patches/apps/gearslip/) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 2 |
 | [Rollerbank](https://johninnl.github.io/nl-morphe-patches/apps/rollerbank/) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
 | [Waze](https://johninnl.github.io/nl-morphe-patches/apps/waze/) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 29 |
 
@@ -110,6 +111,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [TVgids.nl](https://johninnl.github.io/nl-morphe-patches/apps/tvgids-nl/) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](https://johninnl.github.io/nl-morphe-patches/apps/videoland/) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](https://johninnl.github.io/nl-morphe-patches/apps/videoland-android-tv/) | Ads · Tracking | 1.117.0 | APKS | 3 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | 9.30.53, 9.44.52 | APKM | 1 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music-morphe/) | See guide | 9.30.53, 9.44.52 | APK | 1 |
 
 ### Other apps
 

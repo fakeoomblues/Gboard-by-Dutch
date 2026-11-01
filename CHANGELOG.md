@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.9.0-dev.6.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [8e2b0b4d4e91](https://github.com/johninnl/nl-morphe-patches/commit/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.9.0-dev.6](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.5...v1.9.0-dev.6) (2026-11-01)
+
+### ✨ New Features
+
+* **Gearslip:** retain music players and filter unwanted drawer apps ([7fcd3a3](https://github.com/johninnl/nl-morphe-patches/commit/7fcd3a3eacfc18933cd6c8c334ff0752e5dd2c33))
+* **YouTube Music:** verify Gearslip callers for music browsing ([8e2b0b4](https://github.com/johninnl/nl-morphe-patches/commit/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/af580ac0c13727c2d7447499df3a90247c45a2a4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.9.0-dev.5.**

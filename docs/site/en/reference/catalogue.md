@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.5**
+**Development patch bundle: 1.9.0-dev.6**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -172,6 +172,17 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 2.6.8 |
 | Read full articles | On | 2.6.8 |
 | Skip consent screens | On | 2.6.8 |
+
+## Gearslip
+
+[What do the patches change?](../apps/gearslip.md)
+
+`app.seb3thehacker.gearslip`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Hide apps from drawer | Off | 0.3.12-alpha, 0.3.31-alpha |
+| Keep music player entries | On | 0.3.12-alpha, 0.3.31-alpha |
 
 ## GVA
 
@@ -600,5 +611,25 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Premium banner | On | 3.13.1 |
 | Hide ads | On | 3.13.1 |
 | Skip consent screens | On | 3.13.1 |
+
+## YouTube Music
+
+[What do the patches change?](../apps/youtube-music.md)
+
+`com.google.android.apps.youtube.music`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Gearslip music browser support | On | 9.30.53, 9.44.52 |
+
+## YouTube Music
+
+[What do the patches change?](../apps/youtube-music-morphe.md)
+
+`app.morphe.android.apps.youtube.music`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Gearslip music browser support | On | 9.30.53, 9.44.52 |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)
