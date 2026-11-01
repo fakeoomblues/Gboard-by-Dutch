@@ -1,4 +1,5 @@
 package org.ungoogled.waze;
+import nl.johninnl.navigation.NavigationState;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

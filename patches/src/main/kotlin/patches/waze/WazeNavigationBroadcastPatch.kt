@@ -29,7 +29,7 @@ private object BroadcastInsightFingerprint : Fingerprint(
 @Suppress("unused")
 val wazeNavigationBroadcastPatch = bytecodePatch(
     name = "Broadcast navigation data",
-    description = "Broadcasts the road speed limit and average-speed zone observations locally, including in the background. No overlay required.",
+    description = "Broadcasts current speed, the road speed limit and average-speed zone observations locally, including in the background. No overlay required.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
     dependsOn(wazeStayAwakePatch)
@@ -47,7 +47,7 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         WazeApplicationCreateFingerprint.method.addInstruction(0,
             "invoke-static { p0 }, $NAVIGATION_BROADCASTS->init(Landroid/app/Application;)V")
         NativeSpeedLimitFingerprint.method.addInstruction(0,
-            "invoke-static/range { p2 .. p3 }, $NAVIGATION_BROADCASTS->speed(Ljava/lang/String;I)V")
+            "invoke-static/range { p2 .. p5 }, $NAVIGATION_BROADCASTS->speed(Ljava/lang/String;ID)V")
         BroadcastLegacyZoneFingerprint.method.addInstruction(0,
             "invoke-static/range { p1 .. p1 }, $NAVIGATION_BROADCASTS->legacy(Ljava/lang/Object;)V")
         BroadcastLegacyClearFingerprint.method.addInstruction(0,

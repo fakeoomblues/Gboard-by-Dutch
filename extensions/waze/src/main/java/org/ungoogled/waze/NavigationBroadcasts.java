@@ -1,5 +1,8 @@
 package org.ungoogled.waze;
 
+import nl.johninnl.navigation.NavigationState;
+import nl.johninnl.navigation.NavigationProtocol;
+
 import android.app.Application;
 import android.app.BroadcastOptions;
 import android.content.BroadcastReceiver;
@@ -42,10 +45,11 @@ public final class NavigationBroadcasts {
             if (installed) return;
             app = application; installed = true;
             IntentFilter filter = new IntentFilter(REQUEST);
+            filter.addAction(NavigationProtocol.REQUEST);
             BroadcastReceiver receiver = new BroadcastReceiver() {
                 @Override public void onReceive(Context c, Intent in) {
                     long now = SystemClock.elapsedRealtime();
-                    if (!REQUEST.equals(in.getAction()) || !isEnabled() || now - lastRequest < 1000) return;
+                    if (!(REQUEST.equals(in.getAction()) || NavigationProtocol.REQUEST.equals(in.getAction())) || !isEnabled() || now - lastRequest < 1000) return;
                     lastRequest = now; publish(true);
                 }
             };
@@ -70,6 +74,12 @@ public final class NavigationBroadcasts {
     }
 
     /** Called by LocationSensorListener.updateSpeedometer, not a visible speedometer View. */
+    public static void speed(String units, int limit, double currentKmh) {
+        final long at = SystemClock.elapsedRealtime();
+        main(() -> { if (isEnabled()) { STATE.current(currentKmh, at); dirty = true; } });
+        speed(units, limit);
+    }
+
     public static void speed(String units, int limit) {
         final long at = SystemClock.elapsedRealtime();
         if (!isEnabled()) return;
@@ -143,46 +153,26 @@ public final class NavigationBroadcasts {
         @Override public void run() {
             if (!isEnabled()) { switched(false); return; }
             NavigationState.Snapshot n = STATE.snapshot(SystemClock.elapsedRealtime());
-            if (dirty || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") ||
-                    !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus)) publish(false);
+            if (dirty || n.currentStatus.equals("valid") || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") ||
+                    !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
+                    !n.currentStatus.equals(lastCurrentStatus)) publish(false);
             MAIN.postDelayed(this, 1000);
         }
     };
 
-    private static String lastRoadStatus = "", lastZoneStatus = "";
+    private static String lastRoadStatus = "", lastZoneStatus = "", lastCurrentStatus = "";
     private static void publish(boolean force) {
         if (app == null) return;
         long now = SystemClock.elapsedRealtime();
         NavigationState.Snapshot n = STATE.snapshot(now);
-        boolean transition = !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus);
+        boolean transition = !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
+                    !n.currentStatus.equals(lastCurrentStatus);
         if (!force && !transition && now - lastSent < (dirty ? 1000 : 5000)) return;
-        Intent intent = snapshot(n, now).addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        String target = receiverPackage(); if (!target.isEmpty()) intent.setPackage(target);
-        if (Build.VERSION.SDK_INT >= 34) {
-            app.sendBroadcast(intent, null, BroadcastOptions.makeBasic().setShareIdentityEnabled(true).toBundle());
-        } else app.sendBroadcast(intent);
-        lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; dirty = false;
+        NavigationProtocol.send(app, snapshot(n, now), receiverPackage());
+        lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; lastCurrentStatus = n.currentStatus; dirty = false;
     }
 
     static Intent snapshot(NavigationState.Snapshot n, long now) {
-        Intent i = new Intent(ACTION).putExtra("schema_version", 1)
-                .putExtra("source_package", app == null ? "com.waze" : app.getPackageName()).putExtra("publisher_session_id", SESSION)
-                .putExtra("sequence", ++sequence).putExtra("sent_elapsed_ms", now)
-                .putExtra("sent_unix_ms", System.currentTimeMillis())
-                .putExtra("road_speed_limit_status", n.roadStatus).putExtra("road_updated_elapsed_ms", n.roadAt)
-                .putExtra("road_max_age_ms", NavigationState.ROAD_TTL_MS)
-                .putExtra("zone_status", n.zoneStatus).putExtra("zone_updated_elapsed_ms", n.zoneAt)
-                .putExtra("zone_max_age_ms", NavigationState.ZONE_TTL_MS);
-        if (!Double.isNaN(n.limitKmh)) i.putExtra("road_speed_limit_kmh", n.limitKmh)
-                .putExtra("road_speed_limit_display", n.rawLimit).putExtra("road_speed_limit_display_unit", n.unit);
-        if (n.zoneStatus.equals("active")) {
-            i.putExtra("zone_source", n.source).putExtra("zone_segment_id", n.segment)
-                    .putExtra("zone_session", n.zoneSession).putExtra("zone_remaining_m", n.remaining)
-                    .putExtra("zone_progress_percent", n.progress).putExtra("zone_progress_estimated", n.progressEstimated)
-                    .putExtra("zone_observation_start_elapsed_ms", n.observationStart)
-                    .putExtra("zone_observed_distance_m", n.observedMeters).putExtra("zone_average_partial", true);
-            if (!Double.isNaN(n.averageKmh)) i.putExtra("zone_average_speed_kmh", n.averageKmh);
-        }
-        return i;
+        return NavigationProtocol.snapshot(ACTION, app == null ? "com.waze" : app.getPackageName(), SESSION, ++sequence, n, now);
     }
 }

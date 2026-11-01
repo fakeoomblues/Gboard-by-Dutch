@@ -4,6 +4,8 @@
 
 The patch automatically includes the existing **Stay awake in the background** control. While navigation broadcasting is enabled, that keep-alive is effective even if its separate runtime switch was previously off. Its patch option defaults to 180 minutes; choose a longer timeout for longer route-less sessions. This extends Waze's own idle timeout, not Android's process lifetime. The keep-alive is also applied when Waze reports native initialization ready, without requiring a new server sync. Waze must be initialized, its native engine must remain running, and background location must be permitted when required by Android. The broadcaster itself never brings an Activity to the foreground or starts a route. Missing native data expires rather than being repeated as a current observation.
 
+For a receiver compatible with both Waze and Flitsmeister, use the [shared contract](../navigation-broadcasts.md). Both apps publish the common `nl.johninnl.navigation.NAVIGATION_STATE` action; Waze retains the aliases below. The native callback also exports `normalizedSpeedKph` as optional `current_speed_kmh`, with status and a 5000 ms maximum observation age. Zero is valid. The shared source implements both providers' schema and partial-average calculation.
+
 ## Actions and transport
 
 - State: `nl.johninnl.waze.NAVIGATION_STATE`

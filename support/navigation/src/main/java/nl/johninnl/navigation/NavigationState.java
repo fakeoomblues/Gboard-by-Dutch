@@ -1,22 +1,40 @@
-package org.ungoogled.waze;
+package nl.johninnl.navigation;
 
 import java.util.Locale;
 
 /** Native observations only; no Activity, GPS, wall-clock or overlay dependency. */
-final class NavigationState {
-    static final long ROAD_TTL_MS = 30_000, ZONE_TTL_MS = 90_000;
+public final class NavigationState {
+    public static final long ROAD_TTL_MS = 30_000, ZONE_TTL_MS = 90_000;
+    public static final long SPEED_TTL_MS = 5000;
+    private String speedStatus = "unknown";
+    private double currentKmh = Double.NaN;
+    private long speedAt = -1;
+    private boolean estimated;
     private String roadStatus = "unknown", zoneStatus = "unknown", unit = "", source = "", segment = "";
     private long roadAt = -1, zoneAt = -1, startAt, session;
     private double limitKmh = Double.NaN;
     private int rawLimit = -1, firstLeft, minimumLeft, left, percent;
 
-    void reset(boolean enabled) {
+    public void reset(boolean enabled) {
+        speedStatus = enabled ? "unknown" : "disabled"; speedAt = -1; currentKmh = Double.NaN;
         roadStatus = zoneStatus = enabled ? "unknown" : "disabled";
         roadAt = zoneAt = -1; limitKmh = Double.NaN; rawLimit = -1;
         source = segment = "";
     }
 
-    void speed(String units, int limit, long at) {
+    public void current(double kmh, long at) {
+        if (at < speedAt) return;
+        speedAt = at;
+        currentKmh = Double.isFinite(kmh) && kmh >= 0 && kmh <= 500 ? kmh : Double.NaN;
+        speedStatus = Double.isNaN(currentKmh) ? "unknown" : "valid";
+    }
+
+    public void zone(String id, int remaining, int progress, long at) {
+        if (remaining < 0 || progress < 0 || progress > 100) return;
+        update("flitsmeister", id, remaining, progress, at);
+    }
+
+    public void speed(String units, int limit, long at) {
         if (at < roadAt) return;
         roadAt = at; rawLimit = limit;
         unit = units == null ? "" : units.trim().toLowerCase(Locale.ROOT).replace(" ", "");
@@ -26,12 +44,12 @@ final class NavigationState {
         roadStatus = Double.isNaN(limitKmh) ? "unknown" : "valid";
     }
 
-    void legacy(int progress, int remaining, long at) {
+    public void legacy(int progress, int remaining, long at) {
         if (progress < 0 || progress > 100 || remaining < 0) return;
         update("legacy", "", remaining, progress, at);
     }
 
-    void insights(String id, int remaining, long at) {
+    public void insights(String id, int remaining, long at) {
         if (remaining < 0) return;
         update("insights", id == null ? "" : id, remaining, -1, at);
     }
@@ -46,21 +64,23 @@ final class NavigationState {
         if (!zoneStatus.equals("active") || identityChanged || resetDistance || resetProgress) {
             session++; startAt = at; firstLeft = minimumLeft = remaining; source = feed; segment = id;
         }
+        estimated = progress < 0 || feed.equals("flitsmeister");
         zoneStatus = "active"; zoneAt = at; left = remaining;
         minimumLeft = Math.min(minimumLeft, remaining); percent = progress;
     }
 
-    void clear(String feed, long at) {
+    public void clear(String feed, long at) {
         if (at < zoneAt || (zoneStatus.equals("active") && !source.equals(feed))) return;
         zoneStatus = "inactive"; zoneAt = at; source = feed;
     }
 
     private void expire(long now) {
+        if (speedAt >= 0 && now - speedAt > SPEED_TTL_MS && !speedStatus.equals("disabled")) speedStatus = "stale";
         if (roadAt >= 0 && now - roadAt > ROAD_TTL_MS && !roadStatus.equals("disabled")) roadStatus = "stale";
         if (zoneAt >= 0 && now - zoneAt > ZONE_TTL_MS && zoneStatus.equals("active")) zoneStatus = "stale";
     }
 
-    Snapshot snapshot(long now) {
+    public Snapshot snapshot(long now) {
         expire(now);
         boolean active = zoneStatus.equals("active");
         int observed = active ? firstLeft - minimumLeft : -1;
@@ -72,19 +92,23 @@ final class NavigationState {
                 roadStatus.equals("valid") ? limitKmh : Double.NaN,
                 roadStatus.equals("valid") ? rawLimit : -1, unit, source, segment,
                 session, active ? startAt : -1, active ? left : -1, observed, progress,
-                active && percent < 0, avg);
+                active && estimated, avg, speedStatus, speedAt, speedStatus.equals("valid") ? currentKmh : Double.NaN);
     }
 
-    static final class Snapshot {
-        final String roadStatus, zoneStatus, unit, source, segment;
-        final long roadAt, zoneAt, zoneSession, observationStart;
-        final int rawLimit, remaining, observedMeters;
-        final double limitKmh, progress, averageKmh;
-        final boolean progressEstimated;
+    public static final class Snapshot {
+        public final String currentStatus;
+        public final long currentAt;
+        public final double currentKmh;
+        public final String roadStatus, zoneStatus, unit, source, segment;
+        public final long roadAt, zoneAt, zoneSession, observationStart;
+        public final int rawLimit, remaining, observedMeters;
+        public final double limitKmh, progress, averageKmh;
+        public final boolean progressEstimated;
         Snapshot(String roadStatus, String zoneStatus, long roadAt, long zoneAt, double limitKmh,
                  int rawLimit, String unit, String source, String segment, long zoneSession,
                  long observationStart, int remaining, int observedMeters, double progress,
-                 boolean progressEstimated, double averageKmh) {
+                 boolean progressEstimated, double averageKmh, String currentStatus, long currentAt, double currentKmh) {
+            this.currentStatus = currentStatus; this.currentAt = currentAt; this.currentKmh = currentKmh;
             this.roadStatus = roadStatus; this.zoneStatus = zoneStatus; this.roadAt = roadAt; this.zoneAt = zoneAt;
             this.limitKmh = limitKmh; this.rawLimit = rawLimit; this.unit = unit; this.source = source;
             this.segment = segment; this.zoneSession = zoneSession; this.observationStart = observationStart;

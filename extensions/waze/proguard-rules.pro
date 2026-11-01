@@ -9,3 +9,5 @@
 -dontwarn androidx.compose.**
 
 -keep class org.ungoogled.waze.** { *; }
+
+-keep class nl.johninnl.navigation.** { *; }
