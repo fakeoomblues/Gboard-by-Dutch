@@ -1,6 +1,6 @@
 # Waze patch catalog
 
-The source branch provides 27 patches: the two existing audio patches, all 24 Waze patches from deWaze, and silent consent completion. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
+The source branch provides 29 patches: the two existing audio patches, all 24 Waze patches from deWaze, silent consent completion, native navigation broadcasts and Gearslip host support. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
 
 The audio patches remain **Any**: their source was unchanged and both applied with fingerprint validation to this build. This confirms application to this version; signed-in playback, shelves and provider login need live provider testing.
 
@@ -11,6 +11,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Average speed zone bar | On | 5.26.90.901 | [WazeZoneBarPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeZoneBarPatch.kt) |
 | Bigger alert pins | Off | 5.26.90.901 | [WazeMapSkinPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeMapSkinPatch.kt) |
 | Bigger speedometer | On | 5.26.90.901 | [WazeSpeedometerPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeSpeedometerPatch.kt) |
+| Broadcast navigation data | On | 5.26.90.901 | [WazeNavigationBroadcastPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeNavigationBroadcastPatch.kt) |
 | Change app name | On | 5.26.90.901 | [WazeAppNamePatch.kt](../../patches/src/main/kotlin/patches/waze/WazeAppNamePatch.kt) |
 | Flock cameras | On | 5.26.90.901 | [WazeFlockCamerasPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeFlockCamerasPatch.kt) |
 | Full black | On | 5.26.90.901 | [WazeBlackPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeBlackPatch.kt) |
@@ -32,6 +33,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Speed cameras everywhere | Off | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
 | Speed limit sign | Off | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
 | Stay awake in the background | Off | 5.26.90.901 | [WazeShareAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeShareAlertsPatch.kt) |
+| Support Gearslip | On | 5.26.90.901 | [WazeGearslipPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeGearslipPatch.kt) |
 | YT Music Morphe in Waze | On | Any | [YouTubeMusicMorphePatch.kt](../../patches/src/main/kotlin/patches/waze/YouTubeMusicMorphePatch.kt) |
 
 ## Configuration
@@ -57,10 +59,12 @@ Run the project Android build, then:
 python3 scripts/validate_waze.py ORIGINAL.apkm patches/build/libs/patches-VERSION.mpp morphe-desktop-all.jar --output /tmp/waze-validation
 ```
 
-The validator requires all 27 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
+The validator requires all 29 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
 
 See the [privacy audit and follow-up](privacy-audit.md) and [validation evidence](validation.md) for tested behavior and limits. Patch application and synthetic tests do not establish live road alerts, routing, Android Auto behavior, signed-in media playback, or companion Maps delivery. Report speed limit retains upstream’s unverified status.
 
 ## Source and license
 
 Catalog patches and `org.ungoogled.waze` runtime classes derive from [bearinmindcat/morphe-patches](https://github.com/bearinmindcat/morphe-patches), locally supplied as deWaze. [upstream.json](upstream.json) records the exact commit and hashes of all imported source files. They retain their package namespace and are distributed under the repository’s GPLv3 license and applicable notice. The existing audio integration remains in `app.wazeytm.extension.waze`.
+
+[Navigation broadcast contract and Gearslip support](navigation-broadcasts.md).
