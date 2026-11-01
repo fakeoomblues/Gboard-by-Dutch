@@ -557,6 +557,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 ## Waze
 
+[Wat veranderen de patches?](../apps/waze.md)
+
 `com.waze`
 
 | Patch | Standaard | App-versies |

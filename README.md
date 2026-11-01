@@ -38,6 +38,13 @@ signing. Some patches change notifications or other app features; review the
 app page before choosing them. A tracking patch reduces the listed tracking;
 it does not guarantee anonymity or remove all network traffic.
 
+### Waze or Flitsmeister missing from Android Auto?
+
+Use the [Android Auto walkthrough with screenshots (Nederlands)](https://johninnl.github.io/nl-morphe-patches/guides/android-auto/)
+or [English](https://johninnl.github.io/nl-morphe-patches/en/guides/android-auto/).
+It explains why navigation apps need extra installation steps and takes you
+through Shizuku-Next, KingInstaller and Android Auto's app list.
+
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
@@ -88,7 +95,7 @@ it does not guarantee anonymity or remove all network traffic.
 | [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
 | [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 7 |
 | [Rollerbank](https://johninnl.github.io/nl-morphe-patches/apps/rollerbank/) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
-| [Waze](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/#waze) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 27 |
+| [Waze](https://johninnl.github.io/nl-morphe-patches/apps/waze/) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 27 |
 
 ### Entertainment
 
