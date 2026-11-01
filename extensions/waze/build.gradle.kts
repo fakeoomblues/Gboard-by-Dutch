@@ -4,10 +4,14 @@ extension {
 
 dependencies {
     compileOnly(project(":extensions:waze:stub"))
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.16.1")
 }
 
 android {
     namespace = "app.wazeytm.extension.waze"
+    defaultConfig { minSdk = 32 }
+    testOptions { unitTests.isIncludeAndroidResources = true }
     buildTypes { getByName("release") { proguardFiles("proguard-rules.pro") } }
 }
 configurations.matching { it.name == "releaseRuntimeClasspath" || it.name == "debugRuntimeClasspath" }
