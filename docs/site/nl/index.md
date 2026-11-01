@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Patchbundel: 1.9.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">44 apps</span> · Patchbundel: 1.10.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -80,6 +80,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/ad.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="at4k launcher (tv) com.overdevs.at4k 1.2 unlock premium" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [AT4K Launcher (TV)](apps/at4k.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">1.2</span></p>
+<p class="dap-app-card__package">com.overdevs.at4k</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Unlock Premium <span class="dap-app-card__target">1.2</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/at4k.md){ .dap-app-card__link }
 
 </article>
 

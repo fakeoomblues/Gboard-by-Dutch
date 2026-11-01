@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/867e14fe0e449eb6dc7938a2caa6524ea37f3a54/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.10.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [867e14fe0e44](https://github.com/johninnl/nl-morphe-patches/commit/867e14fe0e449eb6dc7938a2caa6524ea37f3a54). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.10.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0...v1.10.0) (2026-11-01)
+
+### ✨ New Features
+
+* **AT4K Launcher:** unlock premium on version 1.2 ([d544d2e](https://github.com/johninnl/nl-morphe-patches/commit/d544d2e970cecfdecd1ebe06c4cc3f5c090ddedb))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.9.0.**

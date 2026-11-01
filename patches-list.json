@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -6044,6 +6044,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock Premium",
+      "description": "Enables locally enforced premium features and saves the premium preference on launcher startup.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.overdevs.at4k",
+          "name": "AT4K Launcher",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "bfc84ab1296c72653ebca20a2f4cd293bc342a67dd4c61df931edfbad5271685"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.2",
+              "versionCodes": {
+                "ARM64_V8A": 19,
+                "ARMEABI_V7A": 19,
+                "X86_64": 19,
+                "X86": 19
+              },
+              "isExperimental": false,
+              "minSdk": 27,
               "description": null
             }
           ]

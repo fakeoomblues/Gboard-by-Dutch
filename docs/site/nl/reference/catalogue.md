@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.9.0**
+**Patchbundel: 1.10.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -30,6 +30,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 9.22.0 |
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
+
+## AT4K Launcher
+
+[Wat veranderen de patches?](../apps/at4k.md)
+
+`com.overdevs.at4k`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Unlock Premium | Aan | 1.2 |
 
 ## Bright
 

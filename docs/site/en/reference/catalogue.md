@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.9.0**
+**Patch bundle: 1.10.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -30,6 +30,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 9.22.0 |
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
+
+## AT4K Launcher
+
+[What do the patches change?](../apps/at4k.md)
+
+`com.overdevs.at4k`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Unlock Premium | On | 1.2 |
 
 ## Bright
 
