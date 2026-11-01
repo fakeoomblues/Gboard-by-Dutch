@@ -15,7 +15,7 @@
 
 # Dutch App Patches
 
-Community patches for Dutch Android apps, compatible with Morphe. Choose which
+Community patches for Dutch and Belgian Android apps, compatible with Morphe. Choose which
 ads, tracking and prompts to remove, and read what each patch changes in the
 [Dutch guide](https://johninnl.github.io/nl-morphe-patches/) or
 [English guide](https://johninnl.github.io/nl-morphe-patches/en/).
@@ -126,6 +126,13 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 Targets and defaults vary by patch; the bundle version is separate from each app version.
 <!-- PATCHES_END -->
+
+**2dehands (Belgium):** the 16.19.0 / 633464 profile has four default-on
+advertising, tracking, ThreatMetrix and consent-form controls. Use the complete
+XAPK, including Notifications and native splits. See the
+[2dehands guide](docs/site/en/apps/2dehands.md) and
+[privacy evidence and limits](docs/privacy/2dehands/README.md).
+Signed-in, incoming-push and checkout acceptance follows stable publication.
 
 The source branch also contains the [full Waze 5.26.90.901 catalog](docs/waze/README.md): 24 deWaze controls alongside the two audio patches, plus silent consent completion and expanded privacy controls. The release table above follows published bundle metadata.
 
