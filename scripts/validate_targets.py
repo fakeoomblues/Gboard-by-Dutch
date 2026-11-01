@@ -28,6 +28,7 @@ MEDIA_REFERENCES = {
 }
 
 APPS = {
+    "at4k": {"Unlock Premium": []},
     "rollerbank": {
         "Fix Google services": [], "Hide ads": ["Fix Google services"],
         "Disable tracking": ["Hide ads", "Fix Google services"],
@@ -244,6 +245,17 @@ def prepare_input(original: Path, out: Path) -> tuple[Path, Path]:
 
 def verifier_command(app: str, destination: Path, effective: set[str], apk: Path | None = None,
                      original_reference: Path | None = None, original_input: Path | None = None) -> list[str]:
+    if app == 'at4k':
+        if original_reference is None or not original_reference.is_dir():
+            raise ValueError('AT4K verification needs the decoded original APK')
+        command = [sys.executable, 'tests/verify_at4k.py', str(original_reference), str(destination)]
+        for patch in sorted(effective):
+            command += ['-e', patch]
+        if apk is not None:
+            if original_input is None:
+                raise ValueError('AT4K verification needs the original APK payloads')
+            command += ['--original-apk', str(original_input), '--patched-apk', str(apk)]
+        return command
     if app == 'buienalarm':
         if original_reference is None:
             raise ValueError('Buienalarm verification needs the publisher original')
@@ -397,13 +409,15 @@ def main() -> None:
     except (ValueError, KeyError, zipfile.BadZipFile) as error:
         parser.error(str(error))
     trusted_decoded = None
-    if args.app == "rollerbank":
-        if hashlib.sha256(reference.read_bytes()).hexdigest() != "d8e32f93fe1d9697a9897076b2cbfac8f20f6f98cf5113098cfe6a8d60243d7c":
-            raise SystemExit("Expected inspected Rollerbank 4.5.3.1 original base APK")
+    if args.app in {"rollerbank", "at4k"}:
+        digest = {"rollerbank": "d8e32f93fe1d9697a9897076b2cbfac8f20f6f98cf5113098cfe6a8d60243d7c",
+                  "at4k": "ac34c0abf1ceee5d5133dc3e99bde9173a00c5a16132852507ed23c0fbd41341"}[args.app]
+        if hashlib.sha256(reference.read_bytes()).hexdigest() != digest:
+            raise SystemExit(f"Expected inspected {args.app} original base APK")
         trusted_decoded = out / "decoded-original"
         run(["apktool", "d", "-f", "-o", str(trusted_decoded), str(reference)], out / "decode-original.log")
         run(verifier_command(args.app, trusted_decoded, set(), original_reference=trusted_decoded), out / "verify-original.log")
-        print("PASS: Rollerbank original input and decoded reference", flush=True)
+        print(f"PASS: {args.app} original input and decoded reference", flush=True)
     elif args.app in MEDIA_REFERENCES:
         try:
             verify_reference_input(args.app, patch_input, reference)

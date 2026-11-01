@@ -36,6 +36,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Omroep West](../apps/omroep-west.md) | 20.1 / 10596 | Gebruik eigen bestand |
 | [Parool](../apps/parool.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/mezktjli0rmt) |
 | [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
+| [AT4K Launcher](../apps/at4k.md) | 1.2 / 19 | Gebruik je eigen bestand |
 | [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | Gebruik je eigen bestand |
 | [Rollerbank](../apps/rollerbank.md) | 4.5.3.1 / 4531 | [APKS](https://buzzheavier.com/k9v1po19ewp9) |
 | [RTL Nieuws](../apps/rtl-nieuws.md) | 12.7.1 / 1558 | [APKS](https://buzzheavier.com/lvklis48sf8r) |
