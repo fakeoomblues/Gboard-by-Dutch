@@ -15,7 +15,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | **Disable partner services** | Aan | Verwijdert Parkeren, Tol en Carwash en de bijbehorende instellingen. |
 | **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
 | **Fix PairIP startup** | Aan | Laat de gepatchte app na installatie starten en de ondersteunde functies gebruiken. Laat deze patch aan. |
-| **Guest mode** | Aan | Voegt Doorgaan als gast toe en laat de app opnieuw openen zonder inloggen. |
+| **Guest mode** | Aan | Voegt Doorgaan als gast toe, laat de app zonder inloggen openen en verbergt het grote accountaanmaakblok. |
 | **Hide Pro notices** | Aan | Verbergt automatische Pro/Plus-aanbiedingen, badges en Android Auto-upgradeberichten. |
 | **Hide ads** | Aan | Verwijdert commerciële locatiepromoties, hun afbeeldingen en reclamemeldingen. Verkeerswaarschuwingen blijven. |
 | **Unlock Pro** | Aan | Schakelt lokaal geregelde Pro-opties in. Functies waarvoor accountactivering nodig is blijven afhankelijk van de dienst. |
@@ -32,6 +32,6 @@ Navigatie, live verkeers-/locatie-uitwisseling, accounts en meldingen gebruiken 
 
 Kies **Doorgaan als gast** om de introductie zonder account af te ronden. Je kiest zelf of je locatietoestemming geeft. Optioneel inloggen blijft beschikbaar. Gastmodus activeert geen accountdiensten, zoals ritgeschiedenis in de cloud of parkeren. De patch herstelt Google-inloggen niet en verwijdert de afzonderlijke accountvereiste van Android Auto niet.
 
-De nieuwe gastmodus moet nog op een toestel worden getest.
+Doorgaan als gast en de kaart openen zijn op één telefoon getest. Het verbergen van het accountaanmaakblok moet nog op een toestel worden getest.
 
 [Installeren](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardkeuzes](../reference/catalogue.md)

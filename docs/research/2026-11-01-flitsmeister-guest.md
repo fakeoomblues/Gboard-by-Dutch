@@ -23,7 +23,13 @@ The four-architecture APKM also contains native libraries outside the repository
 
 ## Pending device verification
 
-The new button has not been rendered or tapped in a running patched app. Accountless map loading, live traffic, destination search, route calculation, navigation and cold relaunch remain unverified on-device. Do not infer these from a successful build or instruction execution.
+The user installed v1.15.0 through Morphe and confirmed that Continue as guest opens the map. The phone's menu independently reported driving without an account and displayed report/traffic counts. The actual installed APK passed the complete seven-control Flitsmeister verifier: the emitted bytecode and retained contracts for startup, car callbacks, Pro, partner services, advertising and tracking remained intact. This does not establish every runtime effect. Its signing certificate matches the prior installation, so the update preserved the existing signing identity.
+
+Destination search, route calculation, navigation and cold relaunch have not been explicitly verified on-device. Do not infer them from guest map access or instruction execution.
+
+The screenshot exposed a separate native account sign-up card in the menu. The follow-up Guest mode change returns only from `Lstb;->b`, the dedicated `MenuNoAccountMessage` composable. Whole-method hashes retain the menu parent, common banner renderer and neighboring account banner, preserving the small Login control, report counts, menu rows and other patch effects. The new banner verifier fails on the v1.15.0 installed APK before that change. Rendered card removal still awaits device testing.
+
+Guest-only and all-seven-control APK validation also pass for the card-removal change. Comparing compiled patch payloads with the downloaded v1.15.0 release finds 24 Flitsmeister classes: 23 are byte-for-byte identical and only `GuestModePatchKt.class` changes. This supports preservation of the other patch implementations without claiming exhaustive runtime testing.
 
 The attached phone's installed signing key differs from the Mac's test signing key. The user declined reinstalling/clearing Flitsmeister and requested publishing the patch on `main` so it can be patched and tested through Morphe using the phone's existing key. No phone app data was cleared and no replacement APK was installed.
 

@@ -49,7 +49,7 @@ private val guestResources = resourcePatch {
 @Suppress("unused")
 val guestMode = bytecodePatch(
     name = "Guest mode",
-    description = "Adds Continue as guest to onboarding and allows reopening the app without an account. Keeps optional login and services that require a genuine account.",
+    description = "Adds Continue as guest to onboarding, allows reopening without an account and hides the guest sign-up card. Keeps optional login and services that require a genuine account.",
     default = true,
 ) {
     compatibleWith(flitsmeister)
@@ -57,6 +57,18 @@ val guestMode = bytecodePatch(
     execute {
         check(guestLabelId != 0) { "Guest label resource patch did not run" }
         applyPlans(listOf(
+            MethodPlan(
+                "Lstb;->b(Lz39;Landroidx/compose/runtime/Composer;I)V", 11, 62,
+                listOf(
+                    Guard(0, Opcode.INVOKE_VIRTUAL, listOf(8), "Ljava/lang/Object;->getClass()Ljava/lang/Class;"),
+                    Guard(30, Opcode.CONST_STRING, listOf(2), "nl.flitsmeister.menu.presentation.MenuNoAccountMessage (MenuBanner.kt:110)"),
+                    Guard(47, Opcode.INVOKE_STATIC_RANGE, (1..7).toList(), "Lstb;->a(Ljava/lang/String;Ljava/lang/String;Lkxb;Ljava/lang/String;Lz39;Landroidx/compose/runtime/Composer;I)V"),
+                ),
+                // This leaf renders only the large account sign-up card. The
+                // menu's Login control, reports, rows and other banners remain.
+                listOf(Edit(0, "body", "return-void")),
+                mapOf("Lria;->b(ILandroidx/compose/runtime/Composer;I)Ljava/lang/String;" to 3),
+            ),
             MethodPlan(
                 "Lu8d;->invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
                 31, 218,

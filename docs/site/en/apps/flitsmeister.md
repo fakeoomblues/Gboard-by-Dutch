@@ -15,7 +15,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Disable partner services** | On | Removes Parking, Toll and Carwash entries and related settings. |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Fix PairIP startup** | On | Lets the patched app start and use its supported features after installation. Keep this enabled. |
-| **Guest mode** | On | Adds Continue as guest to onboarding and lets you reopen the app without signing in. |
+| **Guest mode** | On | Adds Continue as guest, lets you reopen without signing in, and hides the large account sign-up card. |
 | **Hide Pro notices** | On | Hides automatic Pro/Plus offers, badges and Android Auto upgrade notices. |
 | **Hide ads** | On | Removes commercial location-based promotions, their images and advertising notifications. Traffic warnings remain. |
 | **Unlock Pro** | On | Enables locally controlled Pro options. Features requiring account activation still depend on the service. |
@@ -32,6 +32,6 @@ Navigation, live traffic/location exchange, accounts and reports still use onlin
 
 Choose **Continue as guest** to finish onboarding without an account. Location permission remains your choice. Guest mode keeps optional login available and does not activate account services such as cloud history or parking. It does not repair Google sign-in or remove Android Auto's separate account requirement.
 
-Device testing of the new guest flow is pending.
+Guest entry and map access have been tested on one phone. Device testing of the sign-up card removal is pending.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

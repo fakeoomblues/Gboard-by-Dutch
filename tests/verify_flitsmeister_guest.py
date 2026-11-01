@@ -11,10 +11,15 @@ from verify_flitsmeister import canonical, digest, method
 
 LANDING = 'Lu8d;->invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;'
 GATE = 'Lcei;->a(Lvn4;)Ljava/lang/Object;'
+BANNER = 'Lstb;->b(Lz39;Landroidx/compose/runtime/Composer;I)V'
 BUTTON = 'Laa8;->b(Landroidx/compose/ui/Modifier;Ljava/lang/String;Luy1;Lvy1;Landroidx/compose/foundation/shape/CornerSize;ZZLz39;Landroidx/compose/runtime/Composer;II)V'
 ORIGINAL_LANDING = 'db64fc556fe39bbffc4310733c799832bee478fde3728d3693b944bc291eb92b'
 ORIGINAL_GATE = '56ec172c5711df15e75d0e306a3238235909b399b599298b60b5ac9708967a35'
+ORIGINAL_BANNER = '340aa923d072ae65d012d1ec28959054523438cf92273a908d6dcf7154d8fce6'
 RETAINED = {
+    'Lstb;->a(Ljava/lang/String;Ljava/lang/String;Lkxb;Ljava/lang/String;Lz39;Landroidx/compose/runtime/Composer;I)V': 'fae411f6b87ab4dfa99e47bc22990835fbe1e0fc4b88b2c8c16f1ce23842b7cb',
+    'Lstb;->c(Lhxb;Lb49;Landroidx/compose/runtime/Composer;I)V': '16787f75ecc7dd433c1091e3b41dcfcd9afee67070d684f17584d50312b1a13b',
+    'Lkzb;->invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;': '3457e5a9f6a3935faa8ffedc31dfbd6e818c44f518d2469f5220dbd9867f4bde',
     'Lnad;->invoke()Ljava/lang/Object;': 'ea22b79ae6f2a6cb8807e9e63c53166a4331677ab6a96315e2564b51bc297572',
     'Lcdd;->a(Landroid/content/Context;)V': '78c533b96a68273004ceabf97af5dd84d562a8c5b0a65dcdee8cf784f9173bf7',
     'Lnl/flitsmeister/features/onboarding/composables/OnboardingActivity;->u()V': '3b24338f81c62d6210fb1e98f8a14b1790c680b3fff1724d96f149c3e5f4c906',
@@ -107,6 +112,24 @@ def resource(root, directory, name):
     return matches[0]
 
 
+def verify_banner(root, enabled):
+    body = method(root, BANNER)
+    if not enabled:
+        assert digest(body) == ORIGINAL_BANNER
+        return
+    callback = Reference({}, 'Lz39;')
+    composer = Reference({}, 'Landroidx/compose/runtime/Composer;')
+
+    def invoke(target, args):
+        if target == 'Ljava/lang/Object;->getClass()Ljava/lang/Class;':
+            return Reference({}, 'Ljava/lang/Class;')
+        raise AssertionError('Guest mode must not render or dispatch the account sign-up card: ' + target)
+
+    execute(Program(canonical(body), {}, {}),
+            {'v8': callback, 'v9': composer, 'v10': 0}, invoke)
+    assert callback.value == {} and composer.value == {}, 'Guest banner changed its arguments'
+
+
 def verify_button(root, enabled):
     body = method(root, LANDING)
     instructions = canonical(body)
@@ -159,6 +182,7 @@ def verify_button(root, enabled):
 def verify(root, enabled):
     verify_gate(root, enabled)
     verify_button(root, enabled)
+    verify_banner(root, enabled)
     for descriptor, expected in RETAINED.items():
         assert digest(method(root, descriptor)) == expected, 'Native account/permission/completion path changed: ' + descriptor
 
