@@ -137,6 +137,8 @@ XAPK, including Notifications and native splits. See the
 [privacy evidence and limits](docs/privacy/2dehands/README.md).
 Signed-in, incoming-push and checkout acceptance follows stable publication.
 
+The source branch includes [RainViewer 8.4.1 privacy controls](docs/rainviewer/README.md) for ads, tracking, consent and subscription prompts, plus an audit of all 19 built-in plan-comparison features and the local sharing-watermark restriction. These changes are not yet part of the published release table.
+
 The source branch also contains the [full Waze 5.26.90.901 catalog](docs/waze/README.md): 24 controls from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) (De-Waze), ported to this version, alongside the two audio patches, plus silent consent completion and expanded privacy controls. The release table above follows published bundle metadata. Eleven optional controls adapted from Forsigh Waze Patches add driving, camera/hazard, reconnect, recent-list privacy and phone display choices for this Waze version; see the Waze catalog for source credits, configuration and validation limits.
 
 App pages describe patch effects, supported versions, defaults and relevant
