@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/99cd3e255f5f728f5ac8d162f563233682690014/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.19.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [99cd3e255f5f](https://github.com/johninnl/nl-morphe-patches/commit/99cd3e255f5f728f5ac8d162f563233682690014). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.19.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.19.1...v1.19.2) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **Waze:** accept patched Gearslip as a car host ([99cd3e2](https://github.com/johninnl/nl-morphe-patches/commit/99cd3e255f5f728f5ac8d162f563233682690014))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2c920a152821ca4d54561096ad8419f625680a83/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.19.1.**

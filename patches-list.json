@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.19.1",
+  "version": "1.19.2",
   "patches": [
     {
       "name": "Alert distances",
@@ -7421,7 +7421,7 @@
     },
     {
       "name": "Support Gearslip",
-      "description": "Allows the official Gearslip release host while retaining Android Auto host validation.",
+      "description": "Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto host validation.",
       "default": true,
       "category": null,
       "compatiblePackages": [
