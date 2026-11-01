@@ -175,7 +175,6 @@ Source: [828331cdd3b4](https://github.com/johninnl/nl-morphe-patches/commit/8283
 ### 🐛 Bug Fixes
 
 * **2dehands:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
-* **Marktplaats:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
 
 ### ✨ New Features
 
