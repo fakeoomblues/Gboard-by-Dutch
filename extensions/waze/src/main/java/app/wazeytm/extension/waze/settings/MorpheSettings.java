@@ -4,15 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
-/** Retain the existing audio preference while shipping only the YT Music integration. */
+/** Shared application context and per-provider preferences for the native audio add-ons. */
 public final class MorpheSettings {
-    public enum Feature { PATCHED_YOUTUBE_MUSIC }
+    public enum Feature { PATCHED_YOUTUBE_MUSIC, SOUNDCLOUD }
     private MorpheSettings() { }
 
     public static boolean isEnabled(Feature feature) {
         Context context = getContext();
         return context == null || context.getSharedPreferences("morphe_patch_settings", Context.MODE_PRIVATE)
-                .getBoolean("patched_youtube_music_support", true);
+                .getBoolean(feature == Feature.PATCHED_YOUTUBE_MUSIC ? "patched_youtube_music_support" : "soundcloud_support", true);
     }
 
     @SuppressLint("PrivateApi")

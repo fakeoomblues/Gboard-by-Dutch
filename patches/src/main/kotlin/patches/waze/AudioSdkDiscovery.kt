@@ -12,7 +12,15 @@ import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
-internal data class AudioSdkMethods(val items: MutableMethod, val disconnect: MutableMethod)
+internal data class AudioSdkMethods(
+    val items: MutableMethod, val disconnect: MutableMethod, val connected: MutableMethod,
+    val adapterType: String, val managerType: String
+)
+
+internal data class SoundCloudSdkMethods(
+    val sdk: AudioSdkMethods, val availability: MutableMethod, val start: MutableMethod,
+    val failed: MutableMethod, val suspended: MutableMethod, val rootGetter: MethodReference
+)
 
 private fun MethodReference.parameters() = parameterTypes.map { it.toString() }
 private fun MutableMethod.calls() = implementation!!.instructions.mapNotNull {
@@ -78,5 +86,67 @@ internal fun discoverAudioSdk(): AudioSdkMethods {
         "mediaItemClass" to mediaType.javaName(), "managerClass" to publish.definingClass.javaName(),
         "managerInstanceMethod" to singleton.name, "publishMethod" to publish.name
     )) returnString(bindings, name, value)
-    return AudioSdkMethods(items, disconnect)
+    return AudioSdkMethods(items, disconnect, callback.method, adapter.type, publish.definingClass)
+}
+
+context(context: BytecodePatchContext)
+internal fun discoverSoundCloudSdk(): SoundCloudSdkMethods {
+    val sdk = discoverAudioSdk()
+    val adapter = context.mutableClassDefBy(sdk.adapterType)
+    val manager = context.mutableClassDefBy(sdk.managerType)
+    val callback = context.mutableClassDefBy(sdk.connected.definingClass)
+    val init = Fingerprint(returnType = "Landroid/content/Intent;",
+        parameters = listOf("Ljava/lang/String;", "Ljava/lang/String;"),
+        filters = listOf(string("com.waze.sdk.audio.ACTION_INIT")))
+        .matchAll().toList().unique("audio init-intent factory")
+    val startup = context.mutableClassDefBy(init.originalClassDef.type)
+    val availability = startup.methods.filter { AccessFlags.STATIC.isSet(it.accessFlags)
+            && it.returnType == "Z" && it.parameters() == listOf("Landroid/content/Intent;")
+            && it.calls().any { call -> call.definingClass == "Landroid/content/pm/PackageManager;"
+                && call.name == "queryBroadcastReceivers" } }.unique("audio receiver check")
+    val start = startup.methods.filter { !AccessFlags.STATIC.isSet(it.accessFlags)
+            && it.returnType == "Z" && it.parameters() == listOf(
+                "Ljava/lang/String;", "Ljava/lang/String;", "Ljava/lang/Runnable;")
+            && it.calls().any { call -> call.definingClass == "Landroid/os/Handler;"
+                && call.name == "postDelayed" } }.unique("audio startup watchdog")
+    val register = manager.methods.filter { !AccessFlags.STATIC.isSet(it.accessFlags)
+            && it.returnType == "Z" && it.parameters() == listOf("Landroid/content/res/Resources;",
+                "Ljava/lang/String;", "Ljava/lang/String;", "Landroid/os/Bundle;", "Landroid/os/Messenger;") }
+        .unique("audio partner registration")
+    val packageChanged = manager.methods.filter { !AccessFlags.STATIC.isSet(it.accessFlags)
+            && it.returnType == "V" && it.parameters() == listOf("Ljava/lang/String;", "Z")
+            && it.calls().any { call -> call.definingClass == "Ljava/util/Iterator;" && call.name == "remove"
+                && call.parameters().isEmpty() } }.unique("audio package-disconnect callback")
+    val transport = adapter.fields.filter { !AccessFlags.STATIC.isSet(it.accessFlags) }
+        .map { it.type }.distinct().mapNotNull { context.classDefByOrNull(it) }
+        .filter { type -> AccessFlags.ABSTRACT.isSet(type.accessFlags)
+            && type.fields.none { !AccessFlags.STATIC.isSet(it.accessFlags) }
+            && type.methods.any { it.returnType == "V" && it.parameters() == listOf(
+                "Ljava/lang/String;", "Landroid/os/Bundle;") } }.unique("media transport-control type")
+    adapter.fields.filter { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == transport.type }
+        .unique("media transport-control field")
+    val remove = sdk.disconnect.calls().filter { call -> call.definingClass.startsWith("Lcom/waze/sdk/")
+        && call.returnType == "V" && call.parameters() == listOf("Ljava/lang/String;")
+        && context.mutableClassDefBy(call.definingClass).methods.any { helper ->
+            helper.name == call.name && helper.parameters() == call.parameters() && helper.calls().any { nested ->
+                nested.definingClass == "Ljava/util/Map;" && nested.name == "remove"
+            }
+        } }.unique("cached-browser removal")
+    val factory = context.mutableClassDefBy(remove.definingClass)
+    factory.fields.filter { AccessFlags.STATIC.isSet(it.accessFlags) && it.type == factory.type }
+        .unique("browser-factory singleton field")
+    factory.fields.filter { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == "Ljava/util/Map;" }
+        .unique("browser-factory cache field")
+    val rootGetter = sdk.connected.calls().filter { it.returnType == "Ljava/lang/String;"
+        && it.parameters().isEmpty() && adapter.fields.any { field -> field.type == it.definingClass } }
+        .unique("media-browser root getter")
+    fun callbackMethod(name: String) = callback.methods.filter { it.name == name
+        && it.parameters().isEmpty() && it.returnType == "V" }.unique("$name browser callback")
+    for ((name, value) in listOf(
+        "factoryClass" to factory.type.javaName(), "registerMethod" to register.name,
+        "packageChangedMethod" to packageChanged.name, "transportClass" to transport.type.javaName(),
+        "disconnectMethod" to sdk.disconnect.name
+    )) returnString("Lapp/wazeytm/extension/waze/WazeAudioBindings;", name, value)
+    return SoundCloudSdkMethods(sdk, availability, start, callbackMethod("onConnectionFailed"),
+        callbackMethod("onConnectionSuspended"), rootGetter)
 }

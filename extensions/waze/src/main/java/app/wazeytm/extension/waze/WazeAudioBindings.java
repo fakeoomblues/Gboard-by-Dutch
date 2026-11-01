@@ -7,5 +7,10 @@ final class WazeAudioBindings {
     static String mediaItemClass() { return ""; }
     static String managerClass() { return ""; }
     static String managerInstanceMethod() { return ""; }
+    static String factoryClass() { return ""; }
+    static String registerMethod() { return ""; }
+    static String packageChangedMethod() { return ""; }
+    static String transportClass() { return ""; }
+    static String disconnectMethod() { return ""; }
     static String publishMethod() { return ""; }
 }
