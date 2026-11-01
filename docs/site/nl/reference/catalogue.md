@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.19.2**
+**Patchbundel: 1.20.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -590,14 +590,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Alert distances | Aan | 5.26.90.901 |
 | All moods | Uit | 5.26.90.901 |
+| Auto zoom | Uit | 5.26.90.901 |
 | Average speed zone bar | Aan | 5.26.90.901 |
 | Bigger alert pins | Uit | 5.26.90.901 |
 | Bigger speedometer | Aan | 5.26.90.901 |
 | Broadcast navigation data | Aan | 5.26.90.901 |
+| Car alerts as notifications | Uit | 5.26.90.901 |
+| Car traffic meter | Uit | 5.26.90.901 |
 | Change app name | Aan | 5.26.90.901 |
+| Extra map info | Uit | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
 | Hide ads | Aan | 5.26.90.901 |
+| Lane guidance | Uit | 5.26.90.901 |
 | Map skin | Aan | 5.26.90.901 |
 | Navigation distances | Uit | 5.26.90.901 |
 | No AI reporting | Uit | 5.26.90.901 |
@@ -613,6 +618,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speed camera alerts | Aan | 5.26.90.901 |
 | Speed camera sound at any speed | Aan | 5.26.90.901 |
 | Speed cameras everywhere | Uit | 5.26.90.901 |
+| Speed limit controls | Uit | 5.26.90.901 |
 | Speed limit sign | Uit | 5.26.90.901 |
 | Stay awake in the background | Uit | 5.26.90.901 |
 | Support Gearslip | Aan | 5.26.90.901 |

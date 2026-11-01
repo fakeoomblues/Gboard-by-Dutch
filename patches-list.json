@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.19.2",
+  "version": "1.20.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -137,6 +137,47 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Auto zoom",
+      "description": "Keeps your auto-zoom choice after settings sync. Choose off, on or by speed.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "mode",
+          "title": "Auto-zoom mode",
+          "description": "Also editable in Customization after patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "speed",
+          "values": {
+            "Off": "no",
+            "On": "yes",
+            "By speed": "speed"
+          }
+        }
+      ]
     },
     {
       "name": "Average speed zone bar",
@@ -346,6 +387,60 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Car alerts as notifications",
+      "description": "Uses car notifications for supported Waze alerts. Availability depends on the car host.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Car traffic meter",
+      "description": "Enables the traffic meter on supported car navigation screens.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Change app name",
@@ -2048,6 +2143,52 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Extra map info",
+      "description": "Separate switches for an always-visible compass and available toll prices.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "compass",
+          "title": "Always show compass",
+          "description": "Adds a compass switch in Customization.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "tolls",
+          "title": "Toll prices",
+          "description": "Shows prices when supplied with route data. Adds a separate switch in Customization.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Fix Google Maps",
@@ -5113,6 +5254,43 @@
       "options": []
     },
     {
+      "name": "Lane guidance",
+      "description": "Enables lane guidance and optional straight-ahead hints. Keeps your Waze lane-guidance preference.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "straightAhead",
+          "title": "Straight-ahead hints",
+          "description": "Adds a separate switch in Customization. Lane data must be available for the road.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Map skin",
       "description": "Bigger map labels, a wider arrow and a warm day background.",
       "default": true,
@@ -7341,6 +7519,61 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Speed limit controls",
+      "description": "Keeps the speed limit visible and enables limit-drop warnings with an editable distance.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "alwaysShow",
+          "title": "Always show speed limit",
+          "description": "Adds a separate visibility switch. Reporting and sign style stay independent.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "limitDrops",
+          "title": "Limit-drop warnings",
+          "description": "Adds a separate warning switch in Customization.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "distance",
+          "title": "Limit-drop warning distance (m)",
+          "description": "0 to 20000 metres. Also editable in Customization after patching.",
+          "required": true,
+          "type": "kotlin.Int",
+          "default": 1000,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Speed limit sign",

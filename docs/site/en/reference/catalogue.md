@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.19.2**
+**Patch bundle: 1.20.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -590,14 +590,19 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Alert distances | On | 5.26.90.901 |
 | All moods | Off | 5.26.90.901 |
+| Auto zoom | Off | 5.26.90.901 |
 | Average speed zone bar | On | 5.26.90.901 |
 | Bigger alert pins | Off | 5.26.90.901 |
 | Bigger speedometer | On | 5.26.90.901 |
 | Broadcast navigation data | On | 5.26.90.901 |
+| Car alerts as notifications | Off | 5.26.90.901 |
+| Car traffic meter | Off | 5.26.90.901 |
 | Change app name | On | 5.26.90.901 |
+| Extra map info | Off | 5.26.90.901 |
 | Flock cameras | On | 5.26.90.901 |
 | Full black | On | 5.26.90.901 |
 | Hide ads | On | 5.26.90.901 |
+| Lane guidance | Off | 5.26.90.901 |
 | Map skin | On | 5.26.90.901 |
 | Navigation distances | Off | 5.26.90.901 |
 | No AI reporting | Off | 5.26.90.901 |
@@ -613,6 +618,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speed camera alerts | On | 5.26.90.901 |
 | Speed camera sound at any speed | On | 5.26.90.901 |
 | Speed cameras everywhere | Off | 5.26.90.901 |
+| Speed limit controls | Off | 5.26.90.901 |
 | Speed limit sign | Off | 5.26.90.901 |
 | Stay awake in the background | Off | 5.26.90.901 |
 | Support Gearslip | On | 5.26.90.901 |

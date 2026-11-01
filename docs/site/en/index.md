@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.19.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.20.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -968,7 +968,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods average speed zone bar bigger alert pins bigger speedometer broadcast navigation data change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car traffic meter change app name extra map info flock cameras full black hide ads lane guidance map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](apps/waze.md)
@@ -976,18 +976,23 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>29 patches</summary>
+<summary>35 patches</summary>
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Auto zoom <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Broadcast navigation data <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Car traffic meter <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Extra map info <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Hide ads <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Lane guidance <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Map skin <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Navigation distances <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>No AI reporting <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
@@ -1003,6 +1008,7 @@ hide:
 <li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Speed limit controls <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Support Gearslip <span class="dap-app-card__target">5.26.90.901</span></li>
