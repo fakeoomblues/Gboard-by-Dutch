@@ -10,21 +10,19 @@ Run the JVM extension policy checks:
 python3 -m unittest tests/test_gearslip_ytm_policy.py
 ```
 
-Inspect actual emitted APK DEX after applying the bundle:
+Compatibility is declared as Any. Discovery uses the original UID diagnostic and ownership lookup, then the browser-root and eligibility call graph. The production patch has no release/obfuscation map. It preserves original method bodies behind wrappers so changed register allocations do not shift parameters. Unknown/ambiguous contracts fail before APK emission.
+
+Inspect the actual emitted APK and recover runtime-test bindings without a release table:
 
 ```sh
-python3 scripts/ytmusic/verify_gearslip_dex.py patched.apk --version 9.30.53 --apkanalyzer /path/to/android-sdk/cmdline-tools/latest/bin/apkanalyzer
-python3 scripts/ytmusic/verify_gearslip_dex.py patched.apk --version 9.44.52 --apkanalyzer /path/to/android-sdk/cmdline-tools/latest/bin/apkanalyzer
+python3 scripts/ytmusic/verify_gearslip_dex.py patched.apk --dexlib-classpath /path/to/morphe-desktop-all.jar > bindings.json
 ```
 
-The same checks fail on both supplied inputs before patching with `Missing actual-callback-UID trust hook`. Structural inspection is not execution.
+`--version` is an optional informational label. The inspector reads every APK DEX and verifies wrapper UID forwarding, original policy/eligibility fallbacks and browser references. It is not an interpreter and does not establish successful playback.
 
-`CallerPolicyProbe.java` is an Android instrumentation runner for the real patched DEX. Build a small probe APK with this runner and its manifest `instrumentation` target set to a separately installed patched YT Music test copy. Sign the probe with the same test key as the target. Invoke it with `am instrument -w -e host app.seb3thehacker.gearslip.morphetest <probe-package>/nl.johninnl.ytmusic.probe.CallerPolicyProbe` after explicitly configuring that host in the patch. The probe uses the target's actual classloader, actual obfuscated methods, and real PackageManager UID ownership. It verifies:
+`CallerPolicyProbe.java` uses the discovered bindings (`manager`, `caller`, `client`, `trust`, `eligible`, `browsable`, `context`, `membership`) as instrumentation arguments. It contains no release table. Build a minimal, separately installed policy fixture and probe using `build_policy_fixture.py`, then pass each binding as `-e key value` to its printed runner. These fixtures copy each input DEX unchanged and do not expose a music service or account providers. The probe checks configured host ownership, spoof/invalid UID rejection, eligibility and original unrelated-client fallback with deliberately unset server dependencies. Unrelated-client results or exceptions are compared directly with the preserved original methods, without assuming a particular flag implementation. Other declared versions can be used as fixture labels; this alone does not turn unchanged DEX into a newly tested real app release.
 
-- A configured installed host is admitted before dereferencing the server flag or certificate dependencies.
-- A configured host string under a different UID is rejected, including an invalid UID.
-- Browser eligibility succeeds for the host and is unchanged for an unrelated client.
-- An unrelated trust request reaches the original policy. The deliberately unset flag provider raises an expected NPE; this proves fallback preservation, not a runtime rejection result.
+Known real reference APKs are 9.30.53 and 9.44.52. A version-relabelled fixture verifies that metadata no longer blocks otherwise recognized code. Renamed types/methods/fields and changed register allocations are covered by `BrowserDiscoveryTest` alongside rejection cases.
 
 To validate the real Binder path separately, connect the configured host's `MediaBrowserCompat` to the patched target's `com.google.android.apps.youtube.music.mediabrowser.MusicBrowserService`. Record the callback package and UID from the service's callback or the compat transport, and verify `PackageManager.getPackagesForUid(clientUid)` contains exactly that claimed package. Do not read `Binder.getCallingUid()` later from a handler callback: it can be the service's own UID. A test app claiming the host's package while using another UID must fail; an unrelated correctly identified client must retain the stock result. Capture root ID, children result, metadata and play/pause separately. A reflective policy check does not establish successful browsing, authenticated content, playback or vehicle projection.
 

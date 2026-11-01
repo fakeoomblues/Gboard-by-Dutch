@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -13,11 +14,13 @@ import java.util.Collections;
 public final class CallerPolicyProbe extends Instrumentation {
     private String host;
     private int checks;
+    private Bundle bindings;
 
     @Override public void onCreate(Bundle args) {
         super.onCreate(args);
         host = args == null ? null : args.getString("host");
         if (host == null) host = "app.seb3thehacker.gearslip";
+        bindings = args == null ? new Bundle() : args;
         start();
     }
 
@@ -27,27 +30,32 @@ public final class CallerPolicyProbe extends Instrumentation {
             Context context = getTargetContext();
             ClassLoader loader = context.getClassLoader();
             String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-            boolean old = "9.30.53".equals(version);
-            check(old || "9.44.52".equals(version), "Unsupported target version " + version);
-            String[] types = old ? new String[]{"kyh", "awld", "awjm", "u"}
-                    : new String[]{"hdv", "zph", "znr", "t"};
-            Class<?> manager = loader.loadClass(types[0]);
-            Class<?> caller = loader.loadClass(types[1]);
-            Class<?> client = loader.loadClass(types[2]);
+            check(bindings.getString("manager") != null, "Pass the emitted APK discovery bindings");
+            Class<?> manager = loader.loadClass(bindings.getString("manager"));
+            Class<?> caller = loader.loadClass(bindings.getString("caller"));
+            Class<?> client = loader.loadClass(bindings.getString("client"));
             Object policy = allocate(manager);
-            Field ctx = manager.getDeclaredField("q");
+            Field ctx = manager.getDeclaredField(bindings.getString("context"));
             ctx.setAccessible(true);
             ctx.set(policy, context);
-            Field browseSet = manager.getDeclaredField(types[3]);
+            Field browseSet = manager.getDeclaredField(bindings.getString("membership"));
             browseSet.setAccessible(true);
             browseSet.set(policy, Collections.emptySet());
-            Object hostCaller = caller.getConstructor(String.class).newInstance(host);
-            Object hostClient = client.getConstructor(String.class).newInstance(host);
+            Constructor<?> callerConstructor = caller.getDeclaredConstructor(String.class);
+            Constructor<?> clientConstructor = client.getDeclaredConstructor(String.class);
+            callerConstructor.setAccessible(true);
+            clientConstructor.setAccessible(true);
+            Object hostCaller = callerConstructor.newInstance(host);
+            Object hostClient = clientConstructor.newInstance(host);
             int hostUid = context.getPackageManager().getApplicationInfo(host, 0).uid;
             check(hostUid != context.getApplicationInfo().uid, "Probe needs a separately installed host");
-            Method trust = manager.getMethod("g", caller, client, int.class);
-            Method eligible = manager.getMethod("i", client);
-            Method browsable = manager.getMethod("h", client);
+            Method trust = manager.getDeclaredMethod(bindings.getString("trust"), caller, client, int.class);
+            Method eligible = manager.getDeclaredMethod(bindings.getString("eligible"), client);
+            Method browsable = manager.getDeclaredMethod(bindings.getString("browsable"), client);
+
+            trust.setAccessible(true);
+            eligible.setAccessible(true);
+            browsable.setAccessible(true);
 
             // The flag provider and certificate helpers are intentionally unset. Successful
             // execution proves the actual emitted DEX takes its host path before those gates.
@@ -59,16 +67,16 @@ public final class CallerPolicyProbe extends Instrumentation {
             check(Boolean.TRUE.equals(eligible.invoke(policy, hostClient)), "Configured host browser eligibility missing");
             check(Boolean.TRUE.equals(browsable.invoke(policy, hostClient)), "Configured host returned an empty browser root gate");
 
-            Object otherCaller = caller.getConstructor(String.class).newInstance("unrelated.client");
-            Object otherClient = client.getConstructor(String.class).newInstance("unrelated.client");
-            check(Boolean.FALSE.equals(eligible.invoke(policy, otherClient)), "Unrelated client gained eligibility");
-            boolean reachedOriginal = false;
-            try {
-                trust.invoke(policy, otherCaller, otherClient, hostUid);
-            } catch (InvocationTargetException expected) {
-                reachedOriginal = expected.getCause() instanceof NullPointerException;
-            }
-            check(reachedOriginal, "Unrelated caller did not retain original flag-dependent policy");
+            Object otherCaller = callerConstructor.newInstance("unrelated.client");
+            Object otherClient = clientConstructor.newInstance("unrelated.client");
+            Method originalTrust = manager.getDeclaredMethod("morpheOriginalCallerPolicy", caller, client, int.class);
+            Method originalEligible = manager.getDeclaredMethod("morpheOriginalBrowserEligibility", client);
+            originalTrust.setAccessible(true);
+            originalEligible.setAccessible(true);
+            check(sameOutcome(eligible, originalEligible, policy, otherClient),
+                    "Unrelated browser eligibility changed");
+            check(sameOutcome(trust, originalTrust, policy, otherCaller, otherClient, hostUid),
+                    "Unrelated caller did not retain the original policy outcome");
 
             result.putString("result", "PASS " + checks + " actual-DEX caller policy checks; host=" + host + "; UID=" + hostUid);
             result.putString("scope", "Reflective policy execution with real PackageManager ownership. Live Binder browser sessions, content and playback require separate validation.");
@@ -77,6 +85,17 @@ public final class CallerPolicyProbe extends Instrumentation {
             result.putString("result", "FAIL after " + checks + " checks: " + android.util.Log.getStackTraceString(failure));
             finish(1, result);
         }
+    }
+
+    private static boolean sameOutcome(Method wrapper, Method original, Object target, Object... args) throws Exception {
+        Object left = null, right = null;
+        Throwable leftFailure = null, rightFailure = null;
+        try { left = wrapper.invoke(target, args); } catch (InvocationTargetException e) { leftFailure = e.getCause(); }
+        try { right = original.invoke(target, args); } catch (InvocationTargetException e) { rightFailure = e.getCause(); }
+        if (leftFailure != null || rightFailure != null) {
+            return leftFailure != null && rightFailure != null && leftFailure.getClass() == rightFailure.getClass();
+        }
+        return java.util.Objects.equals(left, right);
     }
 
     private static Object allocate(Class<?> type) throws Exception {

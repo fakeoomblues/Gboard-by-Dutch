@@ -6,6 +6,8 @@
 
 Selecteer het volledige originele APKM-bestand. De patch ondersteunt ook 9.30.53, build 93053240, waaronder het geïnstalleerde Morphe-pakket.
 
+De patch accepteert **alle versies** wanneer de benodigde browserstructuur eenduidig wordt herkend. Geteste versies zijn 9.30.53 en 9.44.52; de versie hierboven is een referentiebestand. Bij een gewijzigde of onduidelijke structuur stopt het patchen.
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |

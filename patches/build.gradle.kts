@@ -2,6 +2,11 @@ import java.security.MessageDigest
 
 group = "nl.johninnl.patches"
 
+// Discovery fixtures use the same Java 11 API target as the patch bundle.
+tasks.named<org.gradle.api.tasks.compile.JavaCompile>("compileTestJava") {
+    options.release.set(11)
+}
+
 val mapsKeySource = providers.environmentVariable("SHARED_MAPS_API_KEY")
     .orElse(providers.fileContents(rootProject.layout.projectDirectory.file(".community-maps-api-key")).asText)
 val generatedMapsKey = layout.buildDirectory.dir("generated/maps-key/kotlin")
@@ -81,6 +86,7 @@ val patchListGeneratorClasspath = configurations.create("patchListGeneratorClass
 dependencies {
     compileOnly(libs.gson)
     patchListGeneratorClasspath(libs.gson)
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks {
