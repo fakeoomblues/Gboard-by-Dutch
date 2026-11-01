@@ -124,8 +124,9 @@ public final class TelemetryRuntime {
         return freshNativeSpeed()?fallback:"—";
     }
     public static void bindNavSession(Object session) { navSession=session; }
-    private static boolean nativeGuidance() {
-        if(!navigationActive||navSession==null)return false;
+    private static boolean nativeGuidance() { return nativeSessionGuidance(); }
+    private static boolean nativeSessionGuidance() {
+        if(navSession==null)return false;
         try {
             Object flow=navSession.getClass().getField("f").get(navSession);
             Object state=flow.getClass().getMethod("getValue").invoke(flow);
@@ -134,7 +135,7 @@ public final class TelemetryRuntime {
     }
     /** Reuse Vela's current navigation route; never request another route or position. */
     private static RoadWarningEngine.Route nativeRoute() {
-        if(!nativeGuidance()){routeReference=null;warningRoute=null;return null;}
+        if(!nativeSessionGuidance()){routeReference=null;warningRoute=null;return null;}
         try {
             Object flow=navSession.getClass().getField("f").get(navSession);
             Object state=flow.getClass().getMethod("getValue").invoke(flow);

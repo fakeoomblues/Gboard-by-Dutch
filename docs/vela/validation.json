@@ -19,14 +19,14 @@
   "tests": [
     {
       "suite": "extensions/vela/build/test-results/testDebugUnitTest",
-      "tests": 33,
+      "tests": 34,
       "failures": 0,
       "errors": 0,
       "skipped": 0
     },
     {
       "suite": "extensions/waze/build/test-results/testDebugUnitTest",
-      "tests": 27,
+      "tests": 30,
       "failures": 0,
       "errors": 0,
       "skipped": 0
@@ -60,7 +60,8 @@
     "preentry_speech": "actual native VelaSpeak: Average speed check at approximately 290 ft before entry",
     "music": "real MediaBrowserService/MediaSession rendered by Gearslip, active media controls alongside native map surface",
     "flock": "fresh provider masks runtime flags without changing saved preferences; restoration after both feeds expire; two expiry transitions settled at next one-second sample",
-    "sender_authentication": "API34+ authentic package/UID accepted, structurally valid shell-UID impersonation session rejected"
+    "sender_authentication": "API34+ authentic package/UID accepted, structurally valid shell-UID impersonation session rejected",
+    "car_only_route_regression": "Active native car-session route and advance speech work without a phone Activity, phone navigation service or measured bearing (adapter regression)."
   },
   "boundaries": [
     "No physical driving or physical head-unit test.",

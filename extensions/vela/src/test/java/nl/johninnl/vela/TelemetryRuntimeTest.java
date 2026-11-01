@@ -49,4 +49,23 @@ public class TelemetryRuntimeTest {
   Location poor=location("gps",null,0);poor.setAccuracy(100);TelemetryRuntime.nativeSample(poor);
   assertEquals(accepted,TelemetryRuntime.fixAt());assertEquals(20,TelemetryRuntime.phoneSpeedValue(),0);
  }
+ public static class Voice { public boolean n=false,o=false;public String last="";public void j(String text,boolean interrupt,boolean ignoreMute){last=text;assertFalse(ignoreMute);} }
+ public static class Session { public Flow f=new Flow(); }
+ public static class Flow { public NavState value=new NavState();public Object getValue(){return value;} }
+ public static class NavState { public boolean a=true,b=false,c=false;public Route d=new Route(); }
+ public static class Point { final double lat,lon;Point(double lat,double lon){this.lat=lat;this.lon=lon;}public double getLat(){return lat;}public double getLng(){return lon;} }
+ public static class Route { public java.util.List<Point> getPolyline(){return java.util.Arrays.asList(new Point(38.5449,-121.754),new Point(38.5449,-121.752),new Point(38.5469,-121.752));} }
+ @Test public void coldCarSessionUsesItsRouteWithoutPhoneNavigationServiceOrBearing(){
+  TelemetryRuntime.bindNavSession(new Session());TelemetryRuntime.setNavigationActive(false);
+  Voice voice=new Voice();TelemetryRuntime.bindVoice(voice);TelemetryRuntime.setSpokenEnabled(true);
+  Location own=location("gps",20f,0);own.removeBearing();TelemetryRuntime.nativeSample(own);
+  long at=SystemClock.elapsedRealtime();java.util.Map<String,Object> fields=TelemetryStoreTest.packet("com.waze","car-route",1,at);
+  fields.put("alerts_status","valid");fields.put("alerts_updated_elapsed_ms",at);fields.put("alerts_max_age_ms",30000L);
+  fields.put("alert_ids",new String[]{"bend"});fields.put("alert_kinds",new String[]{"camera"});fields.put("alert_titles",new String[]{""});fields.put("alert_distance_m",new int[]{-1});fields.put("alert_trigger_m",new int[]{600});fields.put("alert_latitude",new double[]{38.546});fields.put("alert_longitude",new double[]{-121.752});fields.put("alert_updated_elapsed_ms",new long[]{at});
+  android.content.Intent intent=new android.content.Intent(TelemetryRuntime.ACTION);android.os.Bundle extras=new android.os.Bundle();
+  for(java.util.Map.Entry<String,Object> e:fields.entrySet())extras.putSerializable(e.getKey(),(java.io.Serializable)e.getValue());
+  intent.putExtras(extras);app.sendBroadcast(intent);org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+  assertTrue("car-only route finds a report around a bend without heading",TelemetryRuntime.warningText().startsWith("Speed camera"));
+  assertTrue("active car navigation speaks while phone UI and service are absent",voice.last.startsWith("Speed camera"));
+ }
 }
