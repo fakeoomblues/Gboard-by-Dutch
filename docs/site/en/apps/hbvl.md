@@ -12,6 +12,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | --- | --- | --- |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide Premium banner** | On | Hides subscription offers and the Abonneer entry. Genuine login remains available. |
+| **Hide newspaper navigation** | On | Removes De krant from the bottom navigation, the newspaper Menu card and the Krant settings section. |
 | **Hide ads** | On | Removes Kaching ads and supported sponsored groups, Shop and publisher promotions. |
 | **Skip consent screens** | On | Skips automatic advertising-consent screens; manual privacy choices remain available. |
 

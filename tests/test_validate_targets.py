@@ -242,7 +242,7 @@ class TargetRoutingTests(unittest.TestCase):
         self.assertEqual(len(validator.patch_selections(validator.APPS['west'], None)), 4)
 
     def test_belgian_news_controls_use_their_own_verifiers(self):
-        for app in ('demorgen', 'humo', 'hln', 'nieuwsblad', 'dsnieuws', 'hbvl'):
+        for app in ('demorgen', 'humo', 'hln', 'nieuwsblad', 'dsnieuws', 'hbvl', 'gva'):
             with self.subTest(app=app):
                 expected = {
                     'Hide ads': [], 'Disable tracking': ['Hide ads'],
@@ -322,6 +322,8 @@ class TargetRoutingTests(unittest.TestCase):
                     expected['Read full articles'] = []
                 if app == 'hln':
                     expected['Hide empty listening carousel'] = []
+                if app in ('hbvl', 'gva'):
+                    expected['Hide newspaper navigation'] = []
                 self.assertEqual(validator.APPS.get(app), expected)
                 self.assertEqual(
                     validator.verifier_command(app, Path('decoded'), {'Hide ads'}),

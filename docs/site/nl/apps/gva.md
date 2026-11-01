@@ -12,6 +12,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | --- | --- | --- |
 | **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
 | **Hide Premium banner** | Aan | Verbergt abonnementsaanbiedingen en de optie Abonneer. Gewoon inloggen blijft beschikbaar. |
+| **Hide newspaper navigation** | Aan | Verwijdert De krant uit de onderbalk, de krantkaart in Menu en de sectie Krant in de instellingen. |
 | **Hide ads** | Aan | Verwijdert Kaching-advertenties en ondersteunde gesponsorde groepen, Shop- en uitgeverspromoties. |
 | **Skip consent screens** | Aan | Slaat automatische toestemmingsschermen voor advertenties over; handmatige privacykeuzes blijven beschikbaar. |
 

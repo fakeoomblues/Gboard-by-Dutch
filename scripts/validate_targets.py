@@ -147,6 +147,9 @@ APPS = {
     },
 }
 
+for _newspaper_app in ("hbvl", "gva"):
+    APPS[_newspaper_app]["Hide newspaper navigation"] = []
+
 
 def prepare_input(original: Path, out: Path) -> tuple[Path, Path]:
     """Stage a whole split set; retain an untouched base for code inspection."""

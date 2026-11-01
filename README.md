@@ -63,8 +63,8 @@ it does not guarantee anonymity or remove all network traffic.
 | [DS Nieuws](https://johninnl.github.io/nl-morphe-patches/apps/dsnieuws/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [ED](https://johninnl.github.io/nl-morphe-patches/apps/ed/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [FTM](https://johninnl.github.io/nl-morphe-patches/apps/ftm/) | Ads · Tracking · Prompts · Articles | 2.6.8 | APKS | 5 |
-| [GVA](https://johninnl.github.io/nl-morphe-patches/apps/gva/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
-| [HBVL](https://johninnl.github.io/nl-morphe-patches/apps/hbvl/) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
+| [GVA](https://johninnl.github.io/nl-morphe-patches/apps/gva/) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
+| [HBVL](https://johninnl.github.io/nl-morphe-patches/apps/hbvl/) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
 | [HLN](https://johninnl.github.io/nl-morphe-patches/apps/hln/) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Humo](https://johninnl.github.io/nl-morphe-patches/apps/humo/) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [Medium](https://johninnl.github.io/nl-morphe-patches/apps/medium/) | Tracking · Prompts · Articles | 4.5.1784911033 | APKS | 3 |

@@ -16,6 +16,7 @@ from mediahuis_sponsored_groups import GROUP_GATE, verify_sponsored_groups
 from mediahuis_nyt_promo import verify_nyt_promo
 from mediahuis_group_promotions import GROUP_COMPONENTS, verify_group_promotions
 from mediahuis_shop_promo import verify_shop_promo
+from mediahuis_newspaper import NEWSPAPER, verify_newspaper_navigation
 
 A = "{http://schemas.android.com/apk/res/android}"
 SNAPSHOTS = json.loads(Path(__file__).with_name("mediahuis_originals.json").read_text())
@@ -24,6 +25,9 @@ SWITCHES = json.loads(Path(__file__).with_name("mediahuis_switches.json").read_t
 
 def verify(root, selected, app):
     assert selected <= NAMES, selected - NAMES
+    assert NEWSPAPER not in selected or app in {"hbvl", "gva"}, "Newspaper navigation control is HBVL/GVA only"
+    if app in {"hbvl", "gva"}:
+        verify_newspaper_navigation(root, NEWSPAPER in selected, app)
     enabled = {
         ADS: bool(selected & {ADS, TRACKING, CONSENT}),
         TRACKING: bool(selected & {TRACKING, CONSENT}),
