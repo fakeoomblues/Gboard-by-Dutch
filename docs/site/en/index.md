@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">47 apps</span> · Patch bundle: 1.17.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">47 apps</span> · Patch bundle: 1.18.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -298,7 +298,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -306,8 +306,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">14.17</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>7 patches</summary>
+<summary>8 patches</summary>
 <ul>
+<li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
 <li>Disable tracking <span class="dap-app-card__target">14.17</span></li>
 <li>Fix PairIP startup <span class="dap-app-card__target">14.17</span></li>

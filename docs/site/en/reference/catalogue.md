@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.17.0**
+**Patch bundle: 1.18.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -174,6 +174,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Broadcast navigation data | On | 14.17 |
 | Disable partner services | On | 14.17 |
 | Disable tracking | On | 14.17 |
 | Fix PairIP startup | On | 14.17 |

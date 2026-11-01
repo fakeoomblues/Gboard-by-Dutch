@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/48bea6ad773f8d7bf5814c2db07ece3650894dfb/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.18.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [48bea6ad773f](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.18.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.17.0...v1.18.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Flitsmeister:** broadcast navigation data to third-party apps ([48bea6a](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb))
+* **Waze:** broadcast navigation data to third-party apps ([48bea6a](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d9b46b3c1df1710afd93f1709ebedbf5f0cad43e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.17.0.**
