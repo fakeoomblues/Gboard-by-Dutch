@@ -160,6 +160,7 @@ nav:
           - apps/flitsmeister.md
           - apps/waze.md
           - apps/gearslip.md
+          - apps/vela.md
           - apps/rollerbank.md
       - Entertainment:
           - apps/entertainment/index.md
