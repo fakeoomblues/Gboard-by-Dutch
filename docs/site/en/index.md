@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">47 apps</span> · Patch bundle: 1.18.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.19.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -342,6 +342,25 @@ hide:
 </details>
 
 [Guide and downloads](apps/ftm.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="gearslip app.seb3thehacker.gearslip 0.3.12-alpha 0.3.31-alpha hide apps from drawer keep music player entries" markdown>
+<p class="dap-app-card__category">Traffic</p>
+
+### [Gearslip](apps/gearslip.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.3.12-alpha, 0.3.31-alpha</span></p>
+<p class="dap-app-card__package">app.seb3thehacker.gearslip</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha · default off</span></li>
+<li>Keep music player entries <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/gearslip.md){ .dap-app-card__link }
 
 </article>
 
@@ -1054,6 +1073,42 @@ hide:
 </details>
 
 [Guide and downloads](apps/wuplay.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="youtube music com.google.android.apps.youtube.music 9.30.53 9.44.52 gearslip music browser support" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [YouTube Music](apps/youtube-music.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">9.30.53, 9.44.52</span></p>
+<p class="dap-app-card__package">com.google.android.apps.youtube.music</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Gearslip music browser support <span class="dap-app-card__target">9.30.53, 9.44.52</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/youtube-music.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="youtube music app.morphe.android.apps.youtube.music 9.30.53 9.44.52 gearslip music browser support" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [YouTube Music](apps/youtube-music-morphe.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">9.30.53, 9.44.52</span></p>
+<p class="dap-app-card__package">app.morphe.android.apps.youtube.music</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Gearslip music browser support <span class="dap-app-card__target">9.30.53, 9.44.52</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/youtube-music-morphe.md){ .dap-app-card__link }
 
 </article>
 

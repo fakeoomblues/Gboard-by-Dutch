@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.18.0**
+**Patchbundel: 1.19.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -196,6 +196,17 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 2.6.8 |
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
+
+## Gearslip
+
+[Wat veranderen de patches?](../apps/gearslip.md)
+
+`app.seb3thehacker.gearslip`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Hide apps from drawer | Uit | 0.3.12-alpha, 0.3.31-alpha |
+| Keep music player entries | Aan | 0.3.12-alpha, 0.3.31-alpha |
 
 ## GVA
 
@@ -644,5 +655,25 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Publish selected catalog channels | Uit | 0.9.4-beta |
+
+## YouTube Music
+
+[Wat veranderen de patches?](../apps/youtube-music.md)
+
+`com.google.android.apps.youtube.music`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Gearslip music browser support | Aan | 9.30.53, 9.44.52 |
+
+## YouTube Music
+
+[Wat veranderen de patches?](../apps/youtube-music-morphe.md)
+
+`app.morphe.android.apps.youtube.music`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Gearslip music browser support | Aan | 9.30.53, 9.44.52 |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)
