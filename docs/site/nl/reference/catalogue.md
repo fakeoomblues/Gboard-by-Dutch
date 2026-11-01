@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.9.0-dev.4**
+**Ontwikkelbundel: 1.9.0-dev.5**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -151,6 +151,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Broadcast navigation data | Aan | 14.17 |
 | Disable partner services | Aan | 14.17 |
 | Disable tracking | Aan | 14.17 |
 | Fix PairIP startup | Aan | 14.17 |

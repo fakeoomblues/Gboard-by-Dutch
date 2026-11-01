@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Development patch bundle: 1.9.0-dev.4</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Development patch bundle: 1.9.0-dev.5</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
@@ -259,7 +259,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 disable partner services disable tracking fix pairip startup hide pro notices hide ads unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup hide pro notices hide ads unlock pro" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -267,8 +267,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">14.17</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>6 patches</summary>
+<summary>7 patches</summary>
 <ul>
+<li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
 <li>Disable tracking <span class="dap-app-card__target">14.17</span></li>
 <li>Fix PairIP startup <span class="dap-app-card__target">14.17</span></li>
