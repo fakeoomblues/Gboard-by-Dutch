@@ -6,7 +6,7 @@ These source changes add three independent Morphe controls. Gearslip's upstream 
 | --- | --- | --- |
 | Gearslip 0.3.12-alpha and 0.3.31-alpha | Keep music player entries | Retains a music-player tile when an app also provides a SETTINGS car service. The Settings entry remains separately labelled. |
 | Gearslip 0.3.12-alpha and 0.3.31-alpha | Hide apps from drawer | Optional comma-separated `hiddenPackages` list. Extends the built-in exclusions without disabling apps. Empty by default; Gearslip's own Settings remains reachable. |
-| YouTube Music 9.30.53 and 9.44.52 | Gearslip music browser support | Accepts configured Gearslip packages only when the original browser callback UID owns that package. Adds browser eligibility for those hosts while retaining unrelated callers' original checks. |
+| YouTube Music Any (structure-checked) | Gearslip music browser support | Accepts configured Gearslip packages only when the original browser callback UID owns that package. Adds browser eligibility for those hosts while retaining unrelated callers' original checks. |
 
 ## Using the panel
 
@@ -15,6 +15,10 @@ Select SoundCloud or YT Music from Gearslip's launcher and start a track. Return
 SoundCloud already connected and displayed its artwork and controls beside Waze in the official 0.3.31-alpha phone preview. The Waze audio patches are not needed to draw that panel. Like, shuffle, repeat and library content depend on what the music app exposes.
 
 Gearslip's stock drawer has pin/unpin, reorder and close actions, plus fixed exclusions. It has no user-controlled per-app visibility setting in these versions. Configure the optional patch's `hiddenPackages`, for example `com.example.unused,org.example.other`, before patching. All discovered tiles from a listed package are hidden. Remove a package from that option and repatch to restore it. This is a patch-time list, not a new in-app settings screen.
+
+## Version compatibility
+
+The YT Music patch declares **Any** version. It finds the original UID-check boundary by its diagnostic and PackageManager lookup, follows its browser call graph, and discovers package/context fields from their use. It has no release table or obfuscated member names. Missing or ambiguous matches abort patching; Any is not a guarantee for every future internal layout. Real builds 9.30.53 and 9.44.52 remain the tested references.
 
 ## Caller identity and signing
 

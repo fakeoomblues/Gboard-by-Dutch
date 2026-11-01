@@ -6,6 +6,8 @@
 
 Select the complete original APKM. The patch also supports 9.30.53, build 93053240, including the installed Morphe package.
 
+The patch accepts **Any** version when the required browser structure is recognized uniquely. Tested versions are 9.30.53 and 9.44.52; the version above is a reference input. A changed or ambiguous layout stops patching.
+
 ## Patches
 
 | Patch | Default | What it does |

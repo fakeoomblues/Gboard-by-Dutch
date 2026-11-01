@@ -6,6 +6,7 @@ no account providers or exported music service, and every input DEX unchanged.
 The companion instrumentation executes the original policy classes on ART.
 """
 import argparse
+import re
 from pathlib import Path
 import subprocess
 import zipfile
@@ -15,13 +16,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('apk', type=Path)
     parser.add_argument('output', type=Path)
-    parser.add_argument('--version', choices=['9.30.53', '9.44.52'], required=True)
+    parser.add_argument('--version', required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     sdk = Path.home() / 'Library/Android/sdk'
     tools = sdk / 'build-tools/36.1.0'
     android = sdk / 'platforms/android-36/android.jar'
-    suffix = '930' if args.version == '9.30.53' else '944'
+    if not re.fullmatch(r'[A-Za-z0-9_.-]+', args.version):
+        parser.error('Invalid fixture version')
+    suffix = args.version.replace('.', '_').replace('-', '_')
     target = 'nl.johninnl.ytmusic.policy.v' + suffix
     probe = 'nl.johninnl.ytmusic.probe.v' + suffix
     manifest = args.output / 'AndroidManifest.xml'
