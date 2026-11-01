@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a0de30f298742f972d0ef91f4df88f48bdc1a446/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.9.0-dev.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [a0de30f29874](https://github.com/johninnl/nl-morphe-patches/commit/a0de30f298742f972d0ef91f4df88f48bdc1a446). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.9.0-dev.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add full patch catalog for 5.26.90.901 ([a0de30f](https://github.com/johninnl/nl-morphe-patches/commit/a0de30f298742f972d0ef91f4df88f48bdc1a446))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4d8ad6d32e674782e324f97a7fa092a64ac8420e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.9.0-dev.1.**

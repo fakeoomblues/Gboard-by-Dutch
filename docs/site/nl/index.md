@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Ontwikkelbundel: 1.9.0-dev.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Ontwikkelbundel: 1.9.0-dev.2</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -890,17 +890,41 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze alle versies soundcloud in waze yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies alert distances all moods average speed zone bar bigger alert pins bigger speedometer change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Waze](reference/catalogue.md#waze)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">5.26.90.901, Alle versies</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>2 patches</summary>
+<summary>26 patches</summary>
 <ul>
+<li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>All moods <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Hide ads <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Map skin <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Navigation distances <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>No AI reporting <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>No Google Assistant <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Open without device location <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Remove permissions <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Remove sign-in prompts <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Remove telemetry <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Report speed limit <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Share alerts with Maps <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Alle versies</span></li>
+<li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>

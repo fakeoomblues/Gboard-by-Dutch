@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.1**
+**Development patch bundle: 1.9.0-dev.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -540,7 +540,31 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Alert distances | On | 5.26.90.901 |
+| All moods | Off | 5.26.90.901 |
+| Average speed zone bar | On | 5.26.90.901 |
+| Bigger alert pins | Off | 5.26.90.901 |
+| Bigger speedometer | On | 5.26.90.901 |
+| Change app name | On | 5.26.90.901 |
+| Flock cameras | On | 5.26.90.901 |
+| Full black | On | 5.26.90.901 |
+| Hide ads | On | 5.26.90.901 |
+| Map skin | On | 5.26.90.901 |
+| Navigation distances | Off | 5.26.90.901 |
+| No AI reporting | Off | 5.26.90.901 |
+| No Google Assistant | Off | 5.26.90.901 |
+| Open without device location | Off | 5.26.90.901 |
+| Remove permissions | On | 5.26.90.901 |
+| Remove sign-in prompts | On | 5.26.90.901 |
+| Remove telemetry | On | 5.26.90.901 |
+| Report speed limit | Off | 5.26.90.901 |
+| Share alerts with Maps | On | 5.26.90.901 |
 | SoundCloud in Waze | On | Any |
+| Speed camera alerts | On | 5.26.90.901 |
+| Speed camera sound at any speed | On | 5.26.90.901 |
+| Speed cameras everywhere | Off | 5.26.90.901 |
+| Speed limit sign | Off | 5.26.90.901 |
+| Stay awake in the background | Off | 5.26.90.901 |
 | YT Music Morphe in Waze | On | Any |
 
 ## Weeronline
