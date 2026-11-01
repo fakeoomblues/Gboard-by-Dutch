@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.9.0-dev.6](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.9.0-dev.6)** · 46 apps · 214 patches
+**Patch bundle [v1.9.0-dev.7](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.9.0-dev.7)** · 46 apps · 214 patches
 
 ### Weather
 
@@ -111,8 +111,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [TVgids.nl](https://johninnl.github.io/nl-morphe-patches/apps/tvgids-nl/) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](https://johninnl.github.io/nl-morphe-patches/apps/videoland/) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](https://johninnl.github.io/nl-morphe-patches/apps/videoland-android-tv/) | Ads · Tracking | 1.117.0 | APKS | 3 |
-| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | 9.30.53, 9.44.52 | APKM | 1 |
-| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music-morphe/) | See guide | 9.30.53, 9.44.52 | APK | 1 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | Any | APKM | 1 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music-morphe/) | See guide | Any | APK | 1 |
 
 ### Other apps
 

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.6**
+**Development patch bundle: 1.9.0-dev.7**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -620,7 +620,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Gearslip music browser support | On | 9.30.53, 9.44.52 |
+| Gearslip music browser support | On | Any |
 
 ## YouTube Music
 
@@ -630,6 +630,6 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Gearslip music browser support | On | 9.30.53, 9.44.52 |
+| Gearslip music browser support | On | Any |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

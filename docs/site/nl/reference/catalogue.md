@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.9.0-dev.6**
+**Ontwikkelbundel: 1.9.0-dev.7**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -620,7 +620,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Gearslip music browser support | Aan | 9.30.53, 9.44.52 |
+| Gearslip music browser support | Aan | Alle versies |
 
 ## YouTube Music
 
@@ -630,6 +630,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Gearslip music browser support | Aan | 9.30.53, 9.44.52 |
+| Gearslip music browser support | Aan | Alle versies |
 
 [Releases](https://github.com/johninnl/nl-morphe-patches/releases)

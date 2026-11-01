@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Ontwikkelbundel: 1.9.0-dev.6</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Ontwikkelbundel: 1.9.0-dev.7</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -1000,17 +1000,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="youtube music com.google.android.apps.youtube.music 9.30.53 9.44.52 gearslip music browser support" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="youtube music com.google.android.apps.youtube.music alle versies gearslip music browser support" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [YouTube Music](apps/youtube-music.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">9.30.53, 9.44.52</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
 <p class="dap-app-card__package">com.google.android.apps.youtube.music</p>
 <details class="dap-app-card__patches">
 <summary>1 patch</summary>
 <ul>
-<li>Gearslip music browser support <span class="dap-app-card__target">9.30.53, 9.44.52</span></li>
+<li>Gearslip music browser support <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>
 
@@ -1018,17 +1018,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="youtube music app.morphe.android.apps.youtube.music 9.30.53 9.44.52 gearslip music browser support" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="youtube music app.morphe.android.apps.youtube.music alle versies gearslip music browser support" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [YouTube Music](apps/youtube-music-morphe.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">9.30.53, 9.44.52</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
 <p class="dap-app-card__package">app.morphe.android.apps.youtube.music</p>
 <details class="dap-app-card__patches">
 <summary>1 patch</summary>
 <ul>
-<li>Gearslip music browser support <span class="dap-app-card__target">9.30.53, 9.44.52</span></li>
+<li>Gearslip music browser support <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>
 
