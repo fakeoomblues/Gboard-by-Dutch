@@ -6,6 +6,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 
 | App | Version / build | Original file |
 | --- | --- | --- |
+| [2dehands](../apps/2dehands.md) | 16.19.0 / 633464 | Use your own complete XAPK |
 | [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |

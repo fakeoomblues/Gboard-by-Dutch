@@ -34,6 +34,7 @@ APP_PAGES = {
     'nl.tvgids': ('tvgids-nl', 'entertainment'),
     'nl.rtl.videoland.v2': ('videoland-android-tv', 'entertainment'),
     'nl.marktplaats.android': ('marktplaats', 'other'),
+    'be.tweedehands.m': ('2dehands', 'other'),
     'nl.negentwee': ('9292', 'mobility'),
     'org.yoki.android.buienalarm': ('buienalarm', 'weather'),
     'com.supportware.Buienradar': ('buienradar', 'weather'),
