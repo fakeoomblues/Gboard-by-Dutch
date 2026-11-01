@@ -12,6 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 APP_PAGES = {
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'com.waze': ('waze', 'mobility'),
+    'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
+    'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
+    'app.morphe.android.apps.youtube.music': ('youtube-music-morphe', 'entertainment'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),

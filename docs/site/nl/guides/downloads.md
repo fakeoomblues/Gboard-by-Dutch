@@ -46,6 +46,9 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.117.0 / 1622 | [APKS](https://buzzheavier.com/56tfd9zgaf6g) |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
+| [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | Eigen bestand gebruiken |
+| [YT Music Morphe](../apps/youtube-music-morphe.md) | 9.30.53 / 93053240 | Eigen bestand gebruiken |
+| [YouTube Music](../apps/youtube-music.md) | 9.44.52 / 94452240 | Eigen bestand gebruiken |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | Eigen bestand gebruiken |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
 | [Weerplaza](../apps/weerplaza.md) | 3.13.1 / 734 | [APKS](https://buzzheavier.com/cr9f6qs8tfsh) |
