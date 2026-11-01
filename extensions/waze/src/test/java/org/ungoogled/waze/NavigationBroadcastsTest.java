@@ -76,4 +76,23 @@ public class NavigationBroadcastsTest {
         assertEquals("unknown", last().getStringExtra("road_speed_limit_status"));
         assertFalse(last().hasExtra("road_speed_limit_kmh"));
     }
+    @Test public void commonContractIncludesCurrentSpeedAndStationaryZero() {
+        NavigationBroadcasts.speed("mph", 65, 0);
+        Intent common = shadowOf(app).getBroadcastIntents().stream()
+            .filter(i -> "nl.johninnl.navigation.NAVIGATION_STATE".equals(i.getAction()))
+            .reduce((a,b) -> b).get();
+        assertEquals(last().getLongExtra("sequence",-1),common.getLongExtra("sequence",-2));
+        assertEquals(app.getPackageName(),common.getStringExtra("source_package"));
+        assertEquals("valid",common.getStringExtra("current_speed_status"));
+        assertEquals(0,common.getDoubleExtra("current_speed_kmh",-1),0);
+        assertEquals(104.60736,common.getDoubleExtra("road_speed_limit_kmh",-1),0.00001);
+        long at=last().getLongExtra("current_speed_updated_elapsed_ms",-1);
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(6));
+        app.sendBroadcast(new Intent("nl.johninnl.navigation.NAVIGATION_STATE_REQUEST"));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("stale",last().getStringExtra("current_speed_status"));
+        assertEquals(at,last().getLongExtra("current_speed_updated_elapsed_ms",-2));
+        assertFalse(last().hasExtra("current_speed_kmh"));
+    }
+
 }

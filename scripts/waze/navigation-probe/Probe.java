@@ -19,6 +19,7 @@ public class Probe extends Instrumentation {
  public void onCreate(Bundle b){super.onCreate(b);start();}
  public void onStart(){Bundle result=new Bundle();try{
   loader=getTargetContext().getClassLoader();startActivitySync(new Intent().setClassName("com.waze","com.waze.FreeMapAppActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+  Field session=c("org.ungoogled.waze.NavigationBroadcasts").getDeclaredField("SESSION");session.setAccessible(true);log.append("PUBLISHER_SESSION ").append(session.get(null)).append('\n');
   Class<?> nm=c("com.waze.NativeManager");long until=SystemClock.elapsedRealtime()+60000;
   while(!(Boolean)nm.getMethod("isAppStarted").invoke(null)){if(SystemClock.elapsedRealtime()>until)throw new AssertionError("native startup timeout");SystemClock.sleep(100);}
   Class<?> location=c("com.waze.location.LocationSensorListener");Field lf=location.getDeclaredField("mInstance");lf.setAccessible(true);Object loc=lf.get(null);
@@ -46,12 +47,12 @@ public class Probe extends Instrumentation {
   main(()->{
    Object timeout=values.getField("CONFIG_VALUE_POWER_BACKGROUND_TIMEOUT_MS").get(null);
    check(((Integer)config.getClass().getMethod("getConfigValueInt",c("com.waze.config.c")).invoke(config,timeout))>=10800000,"native background idle timeout extended to at least three hours");
-   invoke(nativeLoc,location,"updateSpeedometer",new Class[]{int.class,String.class,int.class,double.class},0,"km/h",120,0d);
+   invoke(nativeLoc,location,"updateSpeedometer",new Class[]{int.class,String.class,int.class,double.class},0,"km/h",120,42.5d);
    invoke(nav,navigation,"i",new Class[]{c("com.waze.jni.protos.navigate.AverageSpeedCameraZoneUpdate")},legacy(25,3000));
   });
   SystemClock.sleep(4000);
   main(()->invoke(nav,navigation,"i",new Class[]{c("com.waze.jni.protos.navigate.AverageSpeedCameraZoneUpdate")},legacy(28,2880)));
-  SystemClock.sleep(500);
+  SystemClock.sleep(2200);
   main(()->invoke(nav,navigation,"h",new Class[]{}));
   main(()->{
    invoke(ins,insight,"c",new Class[]{c("com.waze.jni.protos.insights_infra.SegmentInsightUpdate")},insights("probe-a",1000));

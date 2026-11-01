@@ -10,6 +10,7 @@ dependencies {
 
 android {
     namespace = "app.wazeytm.extension.waze"
+    sourceSets.getByName("main").java.srcDir(rootProject.file("support/navigation/src/main/java"))
     defaultConfig { minSdk = 32 }
     testOptions { unitTests.isIncludeAndroidResources = true }
     buildTypes { getByName("release") { proguardFiles("proguard-rules.pro") } }

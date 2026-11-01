@@ -4,6 +4,8 @@
 
 The patch automatically includes the existing **Stay awake in the background** control. While navigation broadcasting is enabled, that keep-alive is effective even if its separate runtime switch was previously off. Its patch option defaults to 180 minutes; choose a longer timeout for longer route-less sessions. This extends Waze's own idle timeout, not Android's process lifetime. The keep-alive is also applied when Waze reports native initialization ready, without requiring a new server sync. Waze must be initialized, its native engine must remain running, and background location must be permitted when required by Android. The broadcaster itself never brings an Activity to the foreground or starts a route. Missing native data expires rather than being repeated as a current observation.
 
+For a receiver compatible with both Waze and Flitsmeister, use the [shared contract](../navigation-broadcasts.md). Both apps publish the common `nl.johninnl.navigation.NAVIGATION_STATE` action; Waze retains the aliases below. The native callback also exports `normalizedSpeedKph` as optional `current_speed_kmh`, with status and a 5000 ms maximum observation age. Zero is valid. The shared source implements both providers' schema and partial-average calculation.
+
 ## Actions and transport
 
 - State: `nl.johninnl.waze.NAVIGATION_STATE`
@@ -68,7 +70,7 @@ It also adds a narrow manifest package-visibility query. It keeps the existing t
 
 ## Verification
 
-The 29-patch catalog passes 30 application/rebuild runs (combined and every patch independently), with fingerprint validation and no force flag. Seventeen extension unit tests cover units, observed averages, source ownership, identity/reroute resets, stale/unknown values, heartbeat/request freshness and switching off.
+The 29-patch catalog passes 30 application/rebuild runs (combined and every patch independently), with fingerprint validation and no force flag. Eighteen Waze extension unit tests cover units, observed averages, source ownership, identity/reroute resets, stale/unknown values, heartbeat/request freshness and switching off.
 
 On an API36 phone emulator, a separately signed receiver in a different UID/process received snapshots while the Waze Activity was backgrounded and the zone overlay was not applied. The native location provider was resolved through Waze's dependency container; callbacks from the live LocationSensorListener implementation, legacy navigation manager and insights manager were exercised. The probe checked the native background timeout, exact Gearslip trust, rejection of an unlisted host and forged UID, and preservation of the original Android Auto hosts. The receiver capture verified framework sender identity, mph and localized-unit conversion, zone progress/average math, ID resets and clearing on disable. Original numeric resource IDs were preserved.
 
