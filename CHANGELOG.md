@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/643e179fd308a1897b46f6afde176e884f7ab529/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.14.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [643e179fd308](https://github.com/johninnl/nl-morphe-patches/commit/643e179fd308a1897b46f6afde176e884f7ab529). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.14.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.13.0...v1.14.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add full patch catalog for 5.26.90.901 ([caba974](https://github.com/johninnl/nl-morphe-patches/commit/caba974ff21504d6411d9e3e1e43da2059eb66ee))
+* **Waze:** answer consent silently and close privacy gaps ([643e179](https://github.com/johninnl/nl-morphe-patches/commit/643e179fd308a1897b46f6afde176e884f7ab529))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d53c6e40d751d30594068142661b4de5ca9f65e3/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.13.0.**

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.13.0**
+**Patchbundel: 1.14.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -560,7 +560,32 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Alert distances | Aan | 5.26.90.901 |
+| All moods | Uit | 5.26.90.901 |
+| Average speed zone bar | Aan | 5.26.90.901 |
+| Bigger alert pins | Uit | 5.26.90.901 |
+| Bigger speedometer | Aan | 5.26.90.901 |
+| Change app name | Aan | 5.26.90.901 |
+| Flock cameras | Aan | 5.26.90.901 |
+| Full black | Aan | 5.26.90.901 |
+| Hide ads | Aan | 5.26.90.901 |
+| Map skin | Aan | 5.26.90.901 |
+| Navigation distances | Uit | 5.26.90.901 |
+| No AI reporting | Uit | 5.26.90.901 |
+| No Google Assistant | Uit | 5.26.90.901 |
+| Open without device location | Uit | 5.26.90.901 |
+| Remove permissions | Aan | 5.26.90.901 |
+| Remove sign-in prompts | Aan | 5.26.90.901 |
+| Remove telemetry | Aan | 5.26.90.901 |
+| Report speed limit | Uit | 5.26.90.901 |
+| Share alerts with Maps | Aan | 5.26.90.901 |
+| Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
+| Speed camera alerts | Aan | 5.26.90.901 |
+| Speed camera sound at any speed | Aan | 5.26.90.901 |
+| Speed cameras everywhere | Uit | 5.26.90.901 |
+| Speed limit sign | Uit | 5.26.90.901 |
+| Stay awake in the background | Uit | 5.26.90.901 |
 | YT Music Morphe in Waze | Aan | Alle versies |
 
 ## Weeronline
