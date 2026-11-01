@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Patchbundel: 1.8.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Ontwikkelbundel: 1.9.0-dev.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -680,7 +680,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="projectivy launcher (tv) com.spocky.projengmenu 4.73 disable tracking" markdown>
+<article class="dap-app-card" data-category="other" data-search="projectivy launcher (tv) com.spocky.projengmenu 4.73 disable tracking unlock premium" markdown>
 <p class="dap-app-card__category">Overige</p>
 
 ### [Projectivy Launcher (TV)](apps/projectivy.md)
@@ -688,9 +688,10 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">4.73</span></p>
 <p class="dap-app-card__package">com.spocky.projengmenu</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>2 patches</summary>
 <ul>
 <li>Disable tracking <span class="dap-app-card__target">4.73</span></li>
+<li>Unlock Premium <span class="dap-app-card__target">4.73</span></li>
 </ul>
 </details>
 

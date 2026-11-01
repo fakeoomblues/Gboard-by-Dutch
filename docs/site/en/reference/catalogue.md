@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.8.0**
+**Development patch bundle: 1.9.0-dev.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -413,6 +413,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Disable tracking | On | 4.73 |
+| Unlock Premium | On | 4.73 |
 
 ## Rollerbank
 
