@@ -2,6 +2,15 @@ import java.security.MessageDigest
 
 group = "nl.johninnl.patches"
 
+// Match the patch bundle's Kotlin JVM 11 target for the checked Java DEX hook helpers.
+tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
+    options.release.set(11)
+}
+tasks.named<org.gradle.api.tasks.javadoc.Javadoc>("javadoc") {
+    // The checked Java hook helper is intentionally package-private.
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PACKAGE
+}
+
 val mapsKeySource = providers.environmentVariable("SHARED_MAPS_API_KEY")
     .orElse(providers.fileContents(rootProject.layout.projectDirectory.file(".community-maps-api-key")).asText)
 val generatedMapsKey = layout.buildDirectory.dir("generated/maps-key/kotlin")
@@ -81,6 +90,7 @@ val patchListGeneratorClasspath = configurations.create("patchListGeneratorClass
 dependencies {
     compileOnly(libs.gson)
     patchListGeneratorClasspath(libs.gson)
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks {

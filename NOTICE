@@ -1,6 +1,15 @@
 Morphe NOTICE
 =============
 
+Monet Wuplay catalog rows
+------------------------
+
+Derived from the Monet catalog integration and runtime fixtures in
+Santodan/santodan-patches, source snapshot
+93f9a743ccd9feb25fbd6461c766a2808fb6d6d4, licensed under GPL-3.0.
+Modified by this project for a dedicated Wuplay publisher boundary, branding,
+and Monet 1.1.0-only integration. The repository LICENSE applies.
+
 7c. Project Name Restriction
 ----------------------------
 

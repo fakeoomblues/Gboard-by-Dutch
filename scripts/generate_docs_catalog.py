@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Editorial destinations only; app names, versions and patches come from metadata.
 APP_PAGES = {
+    'com.klevico.monet': ('monet', 'other'),
     'com.overdevs.at4k': ('at4k', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),

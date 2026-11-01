@@ -123,6 +123,10 @@ limits. Advertising and tracking services are listed where useful.
 
 ## Develop and contribute
 
+The optional [Monet Wuplay catalog rows](docs/site/en/apps/monet.md) patch
+targets Monet 1.1.0 / 134 and adds dedicated Wuplay catalog choices with stable
+saved selections and refresh independent of Recommendations.
+
 The optional [Wuplay catalog publisher](docs/site/en/apps/wuplay.md) targets
 Wuplay Android TV 0.9.4-beta / 49. It adds a separate TV launcher entry for
 selecting default-profile catalogs and publishing Android TV preview channels.
