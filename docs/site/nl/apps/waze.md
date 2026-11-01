@@ -10,7 +10,7 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 
 ## Waar deze patches vandaan komen
 
-24 van deze 35 patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat, waar ze als De-Waze voor Waze 5.24.5.0 worden uitgebracht. Dit project heeft ze overgezet naar 5.26.90.901 en onderhoudt die versie zelf. Vijf aanvullende patches en de uitbreidingen op bearinmind patches komen van dit project, vergeleken met bearinmind patches v2.8.3.
+24 van deze 40 patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat, waar ze als De-Waze voor Waze 5.24.5.0 worden uitgebracht. Dit project heeft ze overgezet naar 5.26.90.901 en onderhoudt die versie zelf. Vijf aanvullende patches en de uitbreidingen op bearinmind patches komen van dit project, vergeleken met bearinmind patches v2.8.3.
 
 | Onderdeel | Toegevoegd door dit project |
 | --- | --- |
@@ -21,7 +21,7 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 | Andere apps | Nieuw: **Broadcast navigation data** deelt snelheids- en trajectgegevens met andere apps en met **Support Gearslip** kan Gearslip Waze draaien, ook een gepatchte Gearslip. |
 | Waarschuwingen delen | **Share alerts with Maps** stopt nu direct als je het uitzet en wist waarschuwingen die al gedeeld waren. |
 
-De zes optionele rijfuncties hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
+De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
 
 ## Patches
 
@@ -69,9 +69,9 @@ De zes optionele rijfuncties hieronder zijn voor deze Waze-versie aangepast uit 
 | **Speed limit sign** | Uit | Gebruikt in elk land dezelfde stijl voor het snelheidslimietbord. |
 | **Stay awake in the background** | Uit | Houdt Waze zonder actieve route op de achtergrond open om waarschuwingen met Maps te delen. Dit gebruikt meer batterij. |
 
-### Rijfuncties aangepast uit Forsigh Waze Patches
+### Optionele functies aangepast uit Forsigh Waze Patches
 
-Alle zes patches staan standaard uit. Selecteer bij het patchen alleen de gewenste functies; hun schakelaars staan daarna aan in Customization.
+Alle elf patches staan standaard uit. Selecteer bij het patchen alleen de gewenste functies; hun schakelaars staan daarna aan in Customization.
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
@@ -81,8 +81,17 @@ Alle zes patches staan standaard uit. Selecteer bij het patchen alleen de gewens
 | **Speed limit controls** | Uit | Voegt aparte schakelaars toe voor een blijvend zichtbare bekende snelheidslimiet en waarschuwingen voor een lagere limiet. De waarschuwingsafstand is instelbaar, aanvankelijk 1.000 m. Rapportage en bordstijl blijven apart. |
 | **Car alerts as notifications** | Uit | Gebruikt automeldingen voor ondersteunde waarschuwingen als de autohost die ondersteunt. |
 | **Car traffic meter** | Uit | Maakt de verkeersmeter beschikbaar op ondersteunde navigatieschermen in de auto. |
+| **Native camera and hazard controls** | Uit | Houdt geselecteerde telefoon-, busstrook-, carpool/HOV- en geluidscamera's en waarschuwingen voor verhoogde oversteekplaatsen en oversteekplaatsen op snelwegen ingeschakeld. Inclusief kaartweergave, meldingen en bijbehorende camerageluiden. Vereist Waze-gegevens. |
+| **Speed bump controls** | Uit | Voegt aparte schakelaars toe om drempels op de kaart te tonen en waarschuwingen onderweg te onderdrukken. |
+| **Car reconnect grace period** | Uit | Houdt Waze gereed bij korte onderbrekingen van Android Auto. Aanvankelijk 2 minuten, instelbaar van 1 tot 10; de achtergrondtijd op de telefoon blijft ongewijzigd. |
+| **Hide recent destinations** | Uit | Verbergt recente bestemmingen zonder opgeslagen geschiedenis te wissen. Favorieten en toekomstige afspraken blijven beschikbaar. Open de lijst opnieuw na het omschakelen. |
+| **Allow high refresh rate** | Uit | Verhoogt de limiet voor de schermmodus op de telefoon aanvankelijk naar 90 Hz, instelbaar van 60 tot 120 Hz. Gebruikt ondersteunde modi; garandeert geen hogere beeldsnelheid en verandert de verversing van het autoscherm niet. |
 
-Stel deze functies op de telefoon in voordat je verbinding maakt. Controleer de twee autofuncties apart in Gearslip of Android Auto; selecteren garandeert niet dat iedere host ze toont.
+Stel deze functies op de telefoon in voordat je verbinding maakt. Controleer autofuncties apart in Gearslip of Android Auto; selecteren garandeert niet dat iedere host ze toont.
+
+Zet je een camera-, oversteekplaats- of drempelschakelaar uit, dan beheert Waze die instelling weer zelf. De Waze-camerafuncties vullen onze OpenStreetMap-waarschuwingen aan; ze voegen geen ontbrekende weggegevens toe. De onderdrukking van drempelwaarschuwingen breidt Forsighs kaartinstelling uit met een aparte waarschuwingsinstelling.
+
+Herstart Waze na het wijzigen van de schermlimiet of herverbindingsperiode en verbind de auto opnieuw. Een herverbindingsperiode kan Waze langer actief houden na het verbreken van de verbinding. Een hogere verversing op de telefoon kan meer batterij gebruiken en warmte veroorzaken; controleer beeldweergave en verbruik op je eigen telefoon.
 
 ## Advertentie- en trackingdiensten
 

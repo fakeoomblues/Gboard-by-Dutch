@@ -105,6 +105,18 @@ public final class Customization {
                 "Uses the car host's notification support for Waze alerts"});
         LABELS.put("carTrafficMeter", new String[]{"Car traffic meter",
                 "Shows traffic on supported car navigation screens"});
+        LABELS.put("phoneCameraAlerts", new String[]{"Phone-use cameras", "Shows and announces cameras where Waze supplies data"});
+        LABELS.put("busCameraAlerts", new String[]{"Bus-lane cameras", "Shows and announces cameras where Waze supplies data"});
+        LABELS.put("carpoolCameraAlerts", new String[]{"Carpool-lane cameras", "Shows and announces cameras where Waze supplies data"});
+        LABELS.put("hovCameraAlerts", new String[]{"HOV-lane cameras", "Shows and announces cameras where Waze supplies data"});
+        LABELS.put("noiseCameraAlerts", new String[]{"Noise cameras", "Shows and announces cameras where Waze supplies data"});
+        LABELS.put("raisedCrosswalkAlerts", new String[]{"Raised crosswalks", "Keeps supported Waze map and on-route alerts enabled"});
+        LABELS.put("highwayCrosswalkAlerts", new String[]{"Highway crosswalks", "Keeps supported Waze map and on-route alerts enabled"});
+        LABELS.put("speedBumpMap", new String[]{"Show speed bumps on map", "Keeps map markers enabled; warnings have their own control"});
+        LABELS.put("silenceSpeedBumps", new String[]{"Silence speed-bump warnings", "Suppresses on-route warnings without hiding map markers"});
+        LABELS.put("carReconnect", new String[]{"Car reconnect grace period", "Defers projection shutdown; restart Waze/reconnect after changes"});
+        LABELS.put("hideRecents", new String[]{"Hide recent destinations", "Hides the recent list; stored history is not deleted. Reopen the list after changing"});
+        LABELS.put("highRefreshRate", new String[]{"Allow high refresh rate", "Phone display ceiling, not guaranteed FPS. Restart Waze after changes"});
         LABELS.put("biggerSpeedometer", new String[]{"Bigger speedometer",
                 "Larger speed and limit digits"});
         LABELS.put("mapSkin", new String[]{"Map skin",
@@ -140,7 +152,7 @@ public final class Customization {
     /** How an adjustable value is shown: its title, its unit, the Waze units per shown unit, its choices. */
     private static final class Label {
         final String title, unit;
-        final int scale, max;
+        final int scale, min, max;
         final String[] choices, choiceNames;
         /** Waze's own value, for values that are not Waze configuration (speedometer, map skin). */
         final Object stock;
@@ -154,12 +166,16 @@ public final class Customization {
         }
 
         Label(String title, String unit, int scale, int max, Object stock) {
-            this.title = title; this.unit = unit; this.scale = scale; this.max = max; this.stock = stock;
+            this(title, unit, scale, 0, max, stock);
+        }
+
+        Label(String title, String unit, int scale, int min, int max, Object stock) {
+            this.title = title; this.unit = unit; this.scale = scale; this.min = min; this.max = max; this.stock = stock;
             this.choices = null; this.choiceNames = null;
         }
 
         Label(String title, String[] choices, String[] choiceNames) {
-            this.title = title; this.unit = ""; this.scale = 1; this.max = 0; this.stock = null;
+            this.title = title; this.unit = ""; this.scale = 1; this.min = 0; this.max = 0; this.stock = null;
             this.choices = choices; this.choiceNames = choiceNames;
         }
 
@@ -207,6 +223,9 @@ public final class Customization {
         VALUE_LABELS.put("CONFIG_VALUE_ALERTS_SPEED_LIMIT_DECREASE_ALERT_DISTANCE_METERS",
                 new Label("Limit-drop warning distance", "m", 1, 20000));
         VALUE_LABELS.put("CONFIG_VALUE_POWER_BACKGROUND_TIMEOUT_MS", new Label("Minutes in the background", "min", 60_000, 1440));
+        VALUE_LABELS.put("CONFIG_VALUE_AAP_SHUTDOWN_DELAY_ON_MAIN_SERVICE_DESTROY_MS",
+                new Label("Reconnect delay", "min", 60_000, 1, 10, null));
+        VALUE_LABELS.put("DISPLAY_REFRESH_RATE", new Label("Refresh rate ceiling", "Hz", 1, 60, 120, 60));
         VALUE_LABELS.put(SPEED, new Label("Speed digits", "dp", 1, 80, 26));
         VALUE_LABELS.put(UNITS, new Label("Unit label", "dp", 1, 40, 12));
         VALUE_LABELS.put(LIMIT, new Label("Speed limit sign digits", "sp", 1, 60, 20));
@@ -541,6 +560,13 @@ public final class Customization {
     }
 
     // ---- features that are code, not configuration --------------------------------------------
+
+    /** Display-mode ceiling; the patch installs this only for the optional display control. */
+    public static double refreshRateCeiling() {
+        if (!on("highRefreshRate")) return 60.0;
+        int rate = number("DISPLAY_REFRESH_RATE", 90);
+        return rate >= 60 && rate <= 120 ? rate : 90.0;
+    }
 
     /** The compass-only visibility decision; leave the other on-tap map controls alone. */
     public static Object compassVisibility(Object stock) {
@@ -1055,7 +1081,7 @@ public final class Customization {
             unit.setTextColor(night ? 0xFF9AA0A6 : 0xFF5F6368);
             String range = label.hex ? "Six hex digits, like EBE7DD"
                     : label.tenths ? String.format(Locale.ROOT, "0–%.1f", label.max / 10.0)
-                    : "0–" + label.max + (label.unit.isEmpty() ? "" : " " + label.unit);
+                    : label.min + "–" + label.max + (label.unit.isEmpty() ? "" : " " + label.unit);
             unit.setText(info + "  ·  " + range);
             box.addView(input);
             box.addView(unit);
@@ -1073,7 +1099,7 @@ public final class Customization {
                         change(v.name, v.patched instanceof Integer && kept == (Integer) v.patched ? null : kept);
                     } else {
                         long n = Long.parseLong(typed);
-                        if (n < 0 || n > label.max) throw new NumberFormatException();
+                        if (n < label.min || n > label.max) throw new NumberFormatException();
                         int kept = (int) (n * label.scale);
                         change(v.name, v.patched instanceof Integer && kept == (Integer) v.patched ? null : kept);
                     }
@@ -1081,7 +1107,7 @@ public final class Customization {
                 } catch (NumberFormatException e) {
                     android.widget.Toast.makeText(a, label.hex ? "Enter six hex digits, like EBE7DD"
                             : label.tenths ? String.format(Locale.ROOT, "Enter a number from 0 to %.1f", label.max / 10.0)
-                            : "Enter a number from 0 to " + label.max, android.widget.Toast.LENGTH_LONG).show();
+                            : "Enter a number from " + label.min + " to " + label.max, android.widget.Toast.LENGTH_LONG).show();
                 }
             });
             b.setNegativeButton("Cancel", null);

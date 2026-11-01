@@ -59,3 +59,42 @@ strict documentation build, candidate app-guide checks and rendered-site checks
 passed. These are build, patch-application, static and simulated UI checks.
 No new device installation, road-alert test, toll-data test, Gearslip session or
 Google Android Auto session was performed for these six controls.
+
+## Phase-two alert, privacy and display controls
+
+On 2026-11-01 all five phase-two patches and the existing catalog passed together
+and independently against the supplied 5.26.90.901 / 1030746 APKM: 40 patches,
+41 patch/rebuild runs with unique fingerprint validation and no forced compatibility.
+[Phase-two evidence](phase2-validation.json) records the candidate/input hashes,
+11 option cases and static verification. Version selection remains automated.
+
+The camera controls write map, notification and sound settings for the selected
+five camera types, plus map/feature/notification settings for two crosswalk types.
+Speed-bump warning suppression writes its own on-route flag false while marker
+visibility stays independent. Projection reconnect delay is bounded to 1–10
+minutes (2 by default) and converted to native milliseconds; phone background
+and Android Automotive keep-alive settings are not changed.
+
+The verifier below compares the original and patched DEX. Exactly one recents
+fetch call changes; every other reader branch and the JNI declaration remain
+intact. It evaluates the injected bridge for enabled and disabled states: hiding
+returns an empty payload without a native fetch, while off returns the original
+native payload. For the display hook it verifies the original wide register pair
+and the unchanged remainder of display selection/control flow, including resolution
+and supported-mode filtering. Its unpatched negative control is rejected.
+
+```sh
+java -cp MORPHE_DESKTOP_JAR scripts/waze/WazePhaseTwoVerifier.java ORIGINAL_BASE_APK PATCHED_APK
+```
+
+Android/release Gradle checks, 26 Waze tests, the 413-test Python suite (45 optional
+fixture skips), 39 release integration tests, candidate app guides, strict MkDocs,
+links and rendered site checks passed. Settings tests cover independent speed-bump
+switches, delay units/bounds without changing phone timeout, and display editing,
+bounds, reset and off=60 Hz. The refresh ceiling defaults to 90 Hz and is editable
+from 60 to 120 Hz; rendering FPS is not guaranteed.
+
+No new road, vehicle, live recents-list or physical-display power/thermal session
+was performed. These results establish patch compatibility, emitted control flow
+and simulated settings behavior; native data coverage and real device behavior
+remain separate acceptance checks.

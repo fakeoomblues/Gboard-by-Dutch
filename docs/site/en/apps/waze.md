@@ -10,7 +10,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 
 ## Where these patches come from
 
-24 of these 35 patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, where they are published as De-Waze for Waze 5.24.5.0. This project ported them to 5.26.90.901 and maintains that port separately. Five additional patches and the extensions to bearinmind patches come from this project, compared with bearinmind patches v2.8.3.
+24 of these 40 patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, where they are published as De-Waze for Waze 5.24.5.0. This project ported them to 5.26.90.901 and maintains that port separately. Five additional patches and the extensions to bearinmind patches come from this project, compared with bearinmind patches v2.8.3.
 
 | Area | Added by this project |
 | --- | --- |
@@ -21,7 +21,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets Gearslip run Waze, including a patched Gearslip. |
 | Alert sharing | **Share alerts with Maps** now stops at once when you switch it off and clears alerts it already shared. |
 
-The six optional driving controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
+The eleven optional controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
 
 ## Patches
 
@@ -69,9 +69,9 @@ The six optional driving controls below are adapted from [Forsigh Waze Patches](
 | **Speed limit sign** | Off | One speed limit sign style in every country. |
 | **Stay awake in the background** | Off | Keeps Waze running without a route so its alerts keep reaching Maps. Uses more battery. |
 
-### Driving controls adapted from Forsigh Waze Patches
+### Optional controls adapted from Forsigh Waze Patches
 
-All six patches are off by default. Select only the controls you want when patching; their switches start on in Customization.
+All eleven patches are off by default. Select only the controls you want when patching; their switches start on in Customization.
 
 | Patch | Default | What it does |
 | --- | --- | --- |
@@ -81,8 +81,17 @@ All six patches are off by default. Select only the controls you want when patch
 | **Speed limit controls** | Off | Adds independent switches for always showing the known road limit and for limit-drop warnings. Warning distance is editable, initially 1,000 m. Reporting and sign style stay separate. |
 | **Car alerts as notifications** | Off | Uses car notifications for supported alerts when the car host supports them. |
 | **Car traffic meter** | Off | Enables the traffic meter on supported car navigation screens. |
+| **Native camera and hazard controls** | Off | Keeps selected phone-use, bus-lane, carpool/HOV and noise cameras, plus raised/highway crosswalk alerts enabled. Includes map, notification and applicable camera-sound settings. Requires Waze data. |
+| **Speed bump controls** | Off | Adds independent switches to show speed bumps on the map and suppress their on-route warnings. |
+| **Car reconnect grace period** | Off | Keeps Waze ready through brief Android Auto disconnections. Initially 2 minutes, adjustable from 1 to 10; the phone background timeout is unchanged. |
+| **Hide recent destinations** | Off | Hides recent destinations without deleting stored history. Favorites and future events stay available. Reopen the list after switching. |
+| **Allow high refresh rate** | Off | Raises the phone display-mode ceiling to 90 Hz initially, adjustable from 60 to 120 Hz. Uses supported modes; does not guarantee rendering FPS or change the car display rate. |
 
-Configure these on the phone before connecting. The two car features need individual checks in Gearslip or Android Auto; selecting them does not establish that every host displays them.
+Configure these on the phone before connecting. Car features need individual checks in Gearslip or Android Auto; selecting them does not establish that every host displays them.
+
+Camera/hazard and speed-bump switches return their settings to Waze when switched off. The native camera controls complement our OpenStreetMap alerts; they cannot add missing road data. Speed-bump warning suppression extends Forsigh's map-visibility control with a separate warning setting.
+
+Restart Waze after changing the refresh ceiling or reconnect delay, then reconnect the car. A grace period can keep Waze active longer after disconnecting. Higher phone refresh rates may use more battery and increase heat; rendering and power behavior need checks on your phone.
 
 ## Advertising and tracking services
 

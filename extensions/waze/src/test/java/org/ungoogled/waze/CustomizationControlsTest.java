@@ -153,4 +153,70 @@ public class CustomizationControlsTest {
             assertFalse("Accepted " + invalid, prefs.contains("value:" + DISTANCE));
         }
     }
+
+    @Test public void speedBumpMapAndWarningSuppressionSwitchesAreIndependent() {
+        Customization.feature("speedBumpMap");
+        Customization.feature("silenceSpeedBumps");
+        Customization.show(activity);
+        Dialog panel = ShadowDialog.getLatestDialog();
+        TextView silence = find(panel.getWindow().getDecorView(), TextView.class, "Silence speed-bump warnings");
+        assertNotNull(silence);
+        ((View) silence.getParent().getParent()).performClick();
+        assertFalse(Customization.on("silenceSpeedBumps"));
+        assertTrue(Customization.on("speedBumpMap"));
+        TextView map = find(panel.getWindow().getDecorView(), TextView.class, "Show speed bumps on map");
+        assertTrue(find((View) map.getParent().getParent(), Switch.class, null).isChecked());
+    }
+
+    @Test public void reconnectMinutesUseNativeMillisecondsWithoutChangingPhoneTimeout() {
+        String delay = "CONFIG_VALUE_AAP_SHUTDOWN_DELAY_ON_MAIN_SERVICE_DESTROY_MS";
+        String phone = "CONFIG_VALUE_POWER_BACKGROUND_TIMEOUT_MS";
+        Customization.feature("carReconnect");
+        Customization.valueInt("carReconnect", delay, 120000);
+        Customization.valueInt("stayAwake", phone, 10800000);
+        Customization.show(activity);
+        Dialog panel = ShadowDialog.getLatestDialog();
+        clickValue(panel, "Reconnect delay");
+        AlertDialog editor = (AlertDialog) ShadowDialog.getLatestDialog();
+        find(editor.getWindow().getDecorView(), EditText.class, null).setText("3");
+        press(editor, AlertDialog.BUTTON_POSITIVE);
+        assertEquals(180000, Customization.number(delay, -1));
+        assertEquals(10800000, Customization.number(phone, -1));
+        for (String invalid : new String[]{"0", "11"}) {
+            clickValue(panel, "Reconnect delay");
+            editor = (AlertDialog) ShadowDialog.getLatestDialog();
+            find(editor.getWindow().getDecorView(), EditText.class, null).setText(invalid);
+            press(editor, AlertDialog.BUTTON_POSITIVE);
+            assertEquals(180000, Customization.number(delay, -1));
+        }
+    }
+
+    @Test public void refreshCeilingHasBoundsAndOffRestoresStockWithoutLosingChoice() {
+        String rate = "DISPLAY_REFRESH_RATE";
+        Customization.feature("highRefreshRate");
+        Customization.valueInt("highRefreshRate", rate, 90);
+        assertEquals(90.0, Customization.refreshRateCeiling(), 0);
+        Customization.show(activity);
+        Dialog panel = ShadowDialog.getLatestDialog();
+        clickValue(panel, "Refresh rate ceiling");
+        AlertDialog editor = (AlertDialog) ShadowDialog.getLatestDialog();
+        find(editor.getWindow().getDecorView(), EditText.class, null).setText("120");
+        press(editor, AlertDialog.BUTTON_POSITIVE);
+        assertEquals(120.0, Customization.refreshRateCeiling(), 0);
+        for (String invalid : new String[]{"59", "121"}) {
+            clickValue(panel, "Refresh rate ceiling");
+            editor = (AlertDialog) ShadowDialog.getLatestDialog();
+            find(editor.getWindow().getDecorView(), EditText.class, null).setText(invalid);
+            press(editor, AlertDialog.BUTTON_POSITIVE);
+            assertEquals(120.0, Customization.refreshRateCeiling(), 0);
+        }
+        prefs.edit().putBoolean("highRefreshRate", false).commit();
+        assertEquals(60.0, Customization.refreshRateCeiling(), 0);
+        prefs.edit().putBoolean("highRefreshRate", true).commit();
+        assertEquals(120.0, Customization.refreshRateCeiling(), 0);
+        clickValue(panel, "Refresh rate ceiling");
+        editor = (AlertDialog) ShadowDialog.getLatestDialog();
+        press(editor, AlertDialog.BUTTON_NEUTRAL);
+        assertEquals(90.0, Customization.refreshRateCeiling(), 0);
+    }
 }
