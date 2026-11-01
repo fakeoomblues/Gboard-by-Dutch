@@ -122,6 +122,11 @@ limits. Advertising and tracking services are listed where useful.
 
 ## Develop and contribute
 
+The optional [Wuplay catalog publisher](docs/site/en/apps/wuplay.md) targets
+Wuplay Android TV 0.9.4-beta / 49. It adds a separate TV launcher entry for
+selecting default-profile catalogs and publishing Android TV preview channels.
+It is disabled by default and does not include Monet changes.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for build requirements, app verification
 and documentation checks. [Report an issue](https://github.com/johninnl/nl-morphe-patches/issues)
 with the app version, selected patches and reproducible steps.

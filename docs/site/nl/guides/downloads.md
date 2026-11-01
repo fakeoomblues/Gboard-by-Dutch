@@ -45,6 +45,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Tubantia](../apps/tubantia.md) | 9.23.2 / 9230200 | [APKS](https://buzzheavier.com/dewwv45bqcl3) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | Gebruik eigen bestand |
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.117.0 / 1622 | [APKS](https://buzzheavier.com/56tfd9zgaf6g) |
+| [Wuplay Android TV](../apps/wuplay.md) | 0.9.4-beta / 49 | [Lokale originele APK](#local-original-inputs) |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
