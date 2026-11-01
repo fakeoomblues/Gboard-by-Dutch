@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Editorial destinations only; app names, versions and patches come from metadata.
 APP_PAGES = {
+    'com.waze': (None, 'mobility'),  # Audio add-on: catalogue entry, no full-app guide.
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
@@ -68,7 +69,7 @@ def _app_groups(data):
 
 def _app_versions(group, dutch):
     return list(dict.fromkeys(
-        str(t['version'])
+        str(t['version']) if t.get('version') is not None else ('Alle versies' if dutch else 'Any')
         for _, package in group['patches'] for t in package.get('targets') or []))
 
 

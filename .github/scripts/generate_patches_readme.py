@@ -7,7 +7,7 @@ import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
-from generate_docs_catalog import _app_groups, app_page, bundle_label
+from generate_docs_catalog import _app_groups, _app_versions, app_page, bundle_label
 
 CATEGORIES = {
     'weather': 'Weather', 'news': 'News and reading', 'mobility': 'Traffic and navigation',
@@ -35,9 +35,8 @@ def render(data, repository):
         for group in sorted(entries, key=lambda g: g['package']['name'].casefold()):
             package = group['package']
             slug, _ = app_page(package)
-            link = f'{site}/apps/{slug}/' if slug else f'{site}/apps/'
-            versions = sorted({str(target['version']) for _, own in group['patches']
-                               for target in own.get('targets', [])})
+            link = f'{site}/apps/{slug}/' if slug else f'{site}/reference/catalogue/#{package["name"].lower()}'
+            versions = sorted(set(_app_versions(group, False)))
             formats = ', '.join(sorted({own.get('apkFileType', '—') for _, own in group['patches']}))
             names = {patch['name'] for patch, _ in group['patches']}
             changes = [label for label, present in [
@@ -49,6 +48,8 @@ def render(data, repository):
                 ('Compatibility', any(name.startswith('Fix ') for name in names)),
                 ('Partner services', 'Disable partner services' in names),
                 ('Newspaper tab', 'Hide newspaper tab' in names),
+                ('Navigation', 'Hide newspaper navigation' in names),
+                ('Home audio', 'YT Music Morphe in Waze' in names),
             ] if present]
             lines.append(f'| [{package["name"]}]({link}) | {" · ".join(changes) or "See guide"} | {", ".join(versions)} | {formats} | {len(group["patches"])} |')
     lines += ['', f'[Patch defaults and supported versions]({site}/reference/catalogue/) · '

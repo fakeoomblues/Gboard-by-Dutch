@@ -24,6 +24,25 @@ def fixture():
 
 
 class ReadmeSummaryTests(unittest.TestCase):
+    def test_newspaper_navigation_control_is_listed_as_navigation(self):
+        data = fixture()
+        data['patches'] = data['patches'][:1]
+        data['patches'][0]['name'] = 'Hide newspaper navigation'
+        text = self.generate(data)
+        self.assertIn('| Navigation |', text)
+
+    def test_any_version_addon_has_no_missing_guide_link(self):
+        data = fixture()
+        data['patches'] = data['patches'][:1]
+        data['patches'][0]['name'] = 'YT Music Morphe in Waze'
+        package = data['patches'][0]['compatiblePackages'][0]
+        package.update(packageName='com.waze', name='Waze', targets=[{'version': None}])
+        text = self.generate(data)
+        self.assertIn('Any', text)
+        self.assertNotIn('| None |', text)
+        self.assertIn('Home audio', text)
+        self.assertIn('/reference/catalogue/#waze', text)
+
     def generate(self, data=None):
         data = fixture() if data is None else data
         with tempfile.TemporaryDirectory() as folder:
@@ -72,6 +91,17 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_any_version_addon_links_to_catalogue_without_app_guide(self):
+        data = fixture()
+        data['patches'] = data['patches'][:1]
+        package = data['patches'][0]['compatiblePackages'][0]
+        package.update(packageName='com.waze', name='Waze', targets=[{'version': None}])
+        for language, label in [('en', 'Any'), ('nl', 'Alle versies')]:
+            text = self.module.render_home_apps(data, language)
+            self.assertIn(label, text)
+            self.assertIn('reference/catalogue.md#waze', text)
+            self.assertNotIn('apps/waze.md', text)
+
     def test_gva_links_to_its_news_guide(self):
         self.assertEqual(self.module.app_page({'packageName': 'be.concentra.gva.MediaApp'}), ('gva', 'news'))
 
@@ -174,11 +204,14 @@ class SiteCatalogueTests(unittest.TestCase):
         targets = {self.module.app_page(package)[0]
                    for patch in data['patches'] for package in patch.get('compatiblePackages') or []}
         self.assertTrue({'podimo', 'bright', 'medium'} <= targets)
-        self.assertNotIn(None, targets)
+        unmapped = {package['packageName'] for patch in data['patches']
+                    for package in patch.get('compatiblePackages') or []
+                    if self.module.app_page(package)[0] is None}
+        self.assertTrue(unmapped <= {'com.waze'}, unmapped)
         for language in ('nl', 'en'):
             text = self.module.render_home_apps(data, language)
             self.assertEqual(text.count('<article '), len(targets))
-            for slug in targets:
+            for slug in targets - {None}:
                 self.assertIn(f'(apps/{slug}.md)', text)
         self.assertEqual(json.dumps(data, sort_keys=True), original)
 
