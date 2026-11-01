@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.5.0**
+**Patchbundel: 1.6.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -183,6 +183,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 22.0.0 |
 | Hide Premium banner | Aan | 22.0.0 |
 | Hide ads | Aan | 22.0.0 |
+| Hide newspaper navigation | Aan | 22.0.0 |
 | Skip consent screens | Aan | 22.0.0 |
 
 ## HBVL
@@ -196,6 +197,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 22.0.0 |
 | Hide Premium banner | Aan | 22.0.0 |
 | Hide ads | Aan | 22.0.0 |
+| Hide newspaper navigation | Aan | 22.0.0 |
 | Skip consent screens | Aan | 22.0.0 |
 
 ## HLN

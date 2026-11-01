@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -4068,6 +4068,74 @@
                 "ARMEABI_V7A": 1784911033,
                 "X86_64": 1784911033,
                 "X86": 1784911033
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide newspaper navigation",
+      "description": "Removes De krant from the bottom navigation and removes the newspaper Menu card and Krant settings section.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.concentra.gva.MediaApp",
+          "name": "GVA",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "97b1b643443572a7830acef8649525aee79fa9a5d882b97fc516f01f7067b749"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide newspaper navigation",
+      "description": "Removes De krant from the bottom navigation and removes the newspaper Menu card and Krant settings section.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.concentra.hbvl.MediaApp",
+          "name": "HBVL",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "d2b08e6b078f3655e3cae936ce3ee4d669615a462b11820e4f36f76324ff8229"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "22.0.0",
+              "versionCodes": {
+                "ARM64_V8A": 2012316104,
+                "ARMEABI_V7A": 2012316104,
+                "X86_64": 2012316104,
+                "X86": 2012316104
               },
               "isExperimental": false,
               "minSdk": 32,

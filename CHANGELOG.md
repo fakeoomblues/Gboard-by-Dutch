@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/af8f6ee0ee8a7585c83f3287ace809d066168c67/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.6.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [af8f6ee0ee8a](https://github.com/johninnl/nl-morphe-patches/commit/af8f6ee0ee8a7585c83f3287ace809d066168c67). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.6.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.5.0...v1.6.0) (2026-11-01)
+
+### ✨ New Features
+
+* **GVA:** remove newspaper navigation ([af8f6ee](https://github.com/johninnl/nl-morphe-patches/commit/af8f6ee0ee8a7585c83f3287ace809d066168c67))
+* **HBVL:** remove newspaper navigation ([af8f6ee](https://github.com/johninnl/nl-morphe-patches/commit/af8f6ee0ee8a7585c83f3287ace809d066168c67))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/e321406a19aa15485c8b8b6c047662aa40c53d5e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.5.0.**

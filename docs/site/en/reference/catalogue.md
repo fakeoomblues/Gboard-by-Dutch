@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.5.0**
+**Patch bundle: 1.6.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -183,6 +183,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 22.0.0 |
 | Hide Premium banner | On | 22.0.0 |
 | Hide ads | On | 22.0.0 |
+| Hide newspaper navigation | On | 22.0.0 |
 | Skip consent screens | On | 22.0.0 |
 
 ## HBVL
@@ -196,6 +197,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 22.0.0 |
 | Hide Premium banner | On | 22.0.0 |
 | Hide ads | On | 22.0.0 |
+| Hide newspaper navigation | On | 22.0.0 |
 | Skip consent screens | On | 22.0.0 |
 
 ## HLN
