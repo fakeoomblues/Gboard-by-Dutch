@@ -4,6 +4,8 @@
 
 [Download original app](https://buzzheavier.com/87mpz44q4p8h){ .md-button .md-button--primary }
 
+[Install Flitsmeister for Android Auto: steps with screenshots](../guides/android-auto.md){ .md-button }
+
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 
 ## Patches

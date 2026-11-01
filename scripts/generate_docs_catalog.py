@@ -14,7 +14,7 @@ APP_PAGES = {
     'com.overdevs.at4k': ('at4k', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),
-    'com.waze': (None, 'mobility'),  # Audio add-on: catalogue entry, no full-app guide.
+    'com.waze': ('waze', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),

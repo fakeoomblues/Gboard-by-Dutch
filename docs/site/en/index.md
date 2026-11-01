@@ -929,7 +929,7 @@ hide:
 <article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods average speed zone bar bigger alert pins bigger speedometer change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
-### [Waze](reference/catalogue.md#waze)
+### [Waze](apps/waze.md)
 
 <p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any</span></p>
 <p class="dap-app-card__package">com.waze</p>
@@ -966,7 +966,7 @@ hide:
 </ul>
 </details>
 
-[Guide and downloads](reference/catalogue.md#waze){ .dap-app-card__link }
+[Guide and downloads](apps/waze.md){ .dap-app-card__link }
 
 </article>
 
