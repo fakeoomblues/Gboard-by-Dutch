@@ -33,12 +33,12 @@ public class Probe extends Instrumentation {
    Class<?> serviceType=c("com.waze.car_lib.WazeCarAppService");Object service=serviceType.getConstructor().newInstance();Method attach=ContextWrapper.class.getDeclaredMethod("attachBaseContext",Context.class);attach.setAccessible(true);attach.invoke(service,getTargetContext());
    Object validator=serviceType.getMethod("createHostValidator").invoke(service);Field allow=validator.getClass().getDeclaredField("mAllowAllHosts");allow.setAccessible(true);check(!allow.getBoolean(validator),"host validation remains enabled");
    Class<?> info=c("androidx.car.app.HostInfo");String gear="app.seb3thehacker.gearslip";int gu=getTargetContext().getPackageManager().getApplicationInfo(gear,0).uid;
-   Object g=info.getConstructor(String.class,int.class).newInstance(gear,gu);Method isValid=validator.getClass().getMethod("isValidHost",info);check((Boolean)isValid.invoke(validator,g),"actual Gearslip package and release certificate admitted");
+   Object g=info.getConstructor(String.class,int.class).newInstance(gear,gu);Method isValid=validator.getClass().getMethod("isValidHost",info);check((Boolean)isValid.invoke(validator,g),"actual Gearslip package admitted");
    String other="com.google.android.gms";Object bad=info.getConstructor(String.class,int.class).newInstance(other,getTargetContext().getPackageManager().getApplicationInfo(other,0).uid);check(!(Boolean)isValid.invoke(validator,bad),"unlisted host package rejected");
    boolean wrongUidRejected=false;
    try{isValid.invoke(validator,info.getConstructor(String.class,int.class).newInstance(gear,0));}catch(InvocationTargetException denied){wrongUidRejected=denied.getCause() instanceof IllegalStateException;}
    check(wrongUidRejected,"trusted package with a forged UID rejected");
-   int id=getTargetContext().getResources().getIdentifier("hosts_allowlist","array","com.waze");String[] hosts=getTargetContext().getResources().getStringArray(id);check(hosts.length==4,"three original Android Auto certificates preserved");
+   int id=getTargetContext().getResources().getIdentifier("hosts_allowlist","array","com.waze");String[] hosts=getTargetContext().getResources().getStringArray(id);check(hosts.length==3,"three original Android Auto certificates preserved");
    sb.invoke(config,validate,previous);feature("zoneBar",false);feature("stayAwake",false);feature("navigationBroadcasts",true);
    check((Boolean)invoke(null,c("org.ungoogled.waze.Customization"),"on",new Class[]{String.class},"stayAwake"),"background keep-alive is effective while exporting");
    check("nl.johninnl.wavereceiver".equals(c("org.ungoogled.waze.NavigationBroadcasts").getMethod("receiverPackage").invoke(null)),"target package option bound");

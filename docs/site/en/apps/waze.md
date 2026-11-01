@@ -18,7 +18,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | Telemetry | **Remove telemetry** also stops advertising ID collection and hides any saved ID, discards usage events already queued for upload, blocks automatic diagnostic log uploads and turns off Firebase Sessions. You can still send logs yourself. |
 | Consent | New: **Skip consent screens** answers privacy and terms prompts without showing them and declines personalized ads. |
 | Music | New: **SoundCloud in Waze** and **YT Music Morphe in Waze** add both services to the built-in audio player. |
-| Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets the official Gearslip host run Waze. |
+| Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets Gearslip run Waze, including a patched Gearslip. |
 | Alert sharing | **Share alerts with Maps** now stops at once when you switch it off and clears alerts it already shared. |
 
 ## Patches
@@ -30,7 +30,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | **Broadcast navigation data** | On | Shares current speed, the native road speed limit and observed average-speed-zone progress/average with other apps, including while Waze is in the background. No overlay required. |
 | **Skip consent screens** | On | Answers privacy and terms consent silently and declines ad personalization without showing a screen. |
 | **SoundCloud in Waze** | On | Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included. |
-| **Support Gearslip** | On | Adds the official Gearslip release package/certificate to the car-host allowlist while preserving Android Auto validation. |
+| **Support Gearslip** | On | Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
 | **YT Music Morphe in Waze** | On | Adds YT Music Morphe to Waze's built-in audio player. Show list displays supported Home recommendations and mixes, not your personal Library. Available shelves depend on the installed client. |
 
 ### From bearinmind patches, extended here

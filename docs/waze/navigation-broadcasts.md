@@ -61,17 +61,19 @@ The average is `(first_remaining - minimum_remaining) * 3600 / (last_observation
 
 ## Gearslip
 
-**Support Gearslip**, independently default-selected, adds the provided release certificate/package to Waze's existing allowlist:
+**Support Gearslip**, independently default-selected, makes Waze's `HostValidator` accept the package `app.seb3thehacker.gearslip` whichever key signed it. Patching Gearslip re-signs it, so a pinned certificate stops matching. On a phone the allowlist is the only route for a third-party host, because `TEMPLATE_RENDERER` only counts on Automotive.
 
-`4cc56ebdd13a54d260eca9b7e2b2ae6b30e2f225bfda8f508f0709edf084948b,app.seb3thehacker.gearslip`
+The check is by package name, not by certificate. Any app installed under that package name is accepted, so install Gearslip only from a source you trust. The validator still requires the caller's UID to own the package, which stops another app from claiming the name.
 
-It also adds a narrow manifest package-visibility query. It keeps the existing three Android Auto certificate entries and does not disable host validation. A self-signed Gearslip build has a different certificate and is not covered. Host admission is separate from head-unit/surface/navigation compatibility.
+The patch also adds a narrow manifest package-visibility query. It keeps the three Android Auto certificate entries and does not disable host validation, so other hosts are still rejected. Host admission is separate from head-unit/surface/navigation compatibility.
 
 
 ## Verification
 
 The 29-patch catalog passes 30 application/rebuild runs (combined and every patch independently), with fingerprint validation and no force flag. Eighteen Waze extension unit tests cover units, observed averages, source ownership, identity/reroute resets, stale/unknown values, heartbeat/request freshness and switching off.
 
-On an API36 phone emulator, a separately signed receiver in a different UID/process received snapshots while the Waze Activity was backgrounded and the zone overlay was not applied. The native location provider was resolved through Waze's dependency container; callbacks from the live LocationSensorListener implementation, legacy navigation manager and insights manager were exercised. The probe checked the native background timeout, exact Gearslip trust, rejection of an unlisted host and forged UID, and preservation of the original Android Auto hosts. The receiver capture verified framework sender identity, mph and localized-unit conversion, zone progress/average math, ID resets and clearing on disable. Original numeric resource IDs were preserved.
+On an API36 phone emulator, a separately signed receiver in a different UID/process received snapshots while the Waze Activity was backgrounded and the zone overlay was not applied. The native location provider was resolved through Waze's dependency container; callbacks from the live LocationSensorListener implementation, legacy navigation manager and insights manager were exercised. The probe checked the native background timeout, Gearslip host admission, rejection of an unlisted host and forged UID, and preservation of the original Android Auto hosts. The receiver capture verified framework sender identity, mph and localized-unit conversion, zone progress/average math, ID resets and clearing on disable. Original numeric resource IDs were preserved.
+
+The package-name host check was validated on the same emulator with Gearslip 0.3.31-alpha signed by an unrelated test key. The previous certificate-pinned patch showed Gearslip's "would not start" screen and logged `Unrecognized host`. With the current patch, Waze's car screen opened in Gearslip's phone preview. This covers the preview only, not a physical head unit.
 
 [Recorded checks and artifact hashes](navigation-validation.json). Test sources are in `scripts/waze/navigation-probe/`; the receiver is a test app, not a Vela integration. `scripts/waze/validate_navigation_events.py` checks its JSONL capture. Physical head-unit rendering, all vehicle/Android power policies and live-road data were not tested.
