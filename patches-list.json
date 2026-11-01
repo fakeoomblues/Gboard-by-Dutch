@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -1045,6 +1045,40 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
+      "description": "Disables analytics and crash reporting.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.spocky.projengmenu",
+          "name": "Projectivy Launcher",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "f6697bf4082ee97511e4de07863193884a015b7ab5860430321bda1042b0aadd"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "4.73",
+              "versionCodes": {
+                "ARM64_V8A": 98,
+                "ARMEABI_V7A": 98,
+                "X86_64": 98,
+                "X86": 98
+              },
+              "isExperimental": false,
+              "minSdk": 23,
               "description": null
             }
           ]

@@ -41,7 +41,7 @@ it does not guarantee anonymity or remove all network traffic.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.7.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.7.0)** · 42 apps · 180 patches
+**Patch bundle [v1.8.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.8.0)** · 43 apps · 181 patches
 
 ### Weather
 
@@ -109,6 +109,7 @@ it does not guarantee anonymity or remove all network traffic.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
+| [Projectivy Launcher](https://johninnl.github.io/nl-morphe-patches/apps/projectivy/) | Tracking | 4.73 | APK | 1 |
 
 [Patch defaults and supported versions](https://johninnl.github.io/nl-morphe-patches/reference/catalogue/) · [English](https://johninnl.github.io/nl-morphe-patches/en/reference/catalogue/)
 
