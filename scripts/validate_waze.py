@@ -13,14 +13,16 @@ import zipfile
 
 
 PATCHES = (
-    'Alert distances', 'All moods', 'Average speed zone bar', 'Bigger alert pins',
-    'Bigger speedometer', 'Broadcast navigation data', 'Change app name', 'Flock cameras', 'Full black',
-    'Hide ads', 'Map skin', 'Navigation distances', 'No AI reporting',
+    'Alert distances', 'All moods', 'Auto zoom', 'Average speed zone bar', 'Bigger alert pins',
+    'Bigger speedometer', 'Broadcast navigation data', 'Car alerts as notifications',
+    'Car traffic meter', 'Change app name', 'Extra map info', 'Flock cameras', 'Full black',
+    'Hide ads', 'Lane guidance', 'Map skin', 'Navigation distances', 'No AI reporting',
     'No Google Assistant', 'Open without device location', 'Remove permissions',
     'Remove sign-in prompts', 'Remove telemetry', 'Report speed limit',
     'Share alerts with Maps', 'Skip consent screens', 'SoundCloud in Waze', 'Speed camera alerts',
     'Speed camera sound at any speed', 'Speed cameras everywhere',
-    'Speed limit sign', 'Stay awake in the background', 'Support Gearslip', 'YT Music Morphe in Waze',
+    'Speed limit controls', 'Speed limit sign', 'Stay awake in the background',
+    'Support Gearslip', 'YT Music Morphe in Waze',
 )
 
 

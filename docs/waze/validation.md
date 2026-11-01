@@ -30,3 +30,32 @@ All 15,077 numeric resource IDs were preserved. The patcher normalized 42 case-c
 These checks establish build compatibility, successful patch application and the runtime behavior explicitly listed above. They do not establish signed-in SoundCloud/YT Music playback, all media shelves, live navigation or road-camera alerts, Android Auto, live companion Maps reception, telemetry traffic suppression, or server-side mood acceptance. Report speed limit retains the upstream unverified label. Camera and zone self-tests use synthetic data and cannot establish road behavior.
 
 The generated release tables and `patches-list.json` remain owned by release automation. The source catalog is documented separately until a bundle containing it is released.
+
+## Phase-one driving controls
+
+On 2026-11-01 the six opt-in driving patches were validated against the same
+5.26.90.901 / 1030746 APKM. The catalog now has 35 patches; all passed together
+and independently (36 patch/rebuild runs with fingerprint uniqueness validation,
+without forced compatibility). [Phase-one evidence](phase1-validation.json)
+records the input and candidate bundle hashes. The local bundle retains the
+checkout's version; release automation assigns the published version.
+
+Inspection of the final combined APK verified the 11 new typed configuration
+writes and their IDs/values. The stock lane-guidance user preference and shared
+on-tap map-control preference are not overridden. A compass-only visibility hook
+handles the additional on-tap gate; its disabled path preserves the stock result.
+The hook is omitted when only toll prices are selected.
+
+Nine option cases passed: nondefault selections, display-only selections,
+zero/20,000 m boundaries, invalid zoom mode, negative/excessive distance and empty
+map/speed-limit selections. Invalid selections fail explicitly. Five new
+Robolectric tests cover choice/reset, independent compass/toll switches,
+warning-distance editing/reset/range and compass visibility with the control on
+for both stock Boolean outcomes and off restoring those outcomes.
+
+The Android build, 23 Waze extension tests, the other release-workflow Gradle
+checks, 413 Python tests (45 optional-fixture skips), 39 release integration tests,
+strict documentation build, candidate app-guide checks and rendered-site checks
+passed. These are build, patch-application, static and simulated UI checks.
+No new device installation, road-alert test, toll-data test, Gearslip session or
+Google Android Auto session was performed for these six controls.

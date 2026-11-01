@@ -1,6 +1,6 @@
 # Waze patch catalog
 
-The source branch provides 29 patches: the two existing audio patches, all 24 Waze patches from deWaze, silent consent completion, native navigation broadcasts and Gearslip host support. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
+The source branch provides 35 patches: the two existing audio patches, all 24 Waze patches from deWaze, silent consent completion, native navigation broadcasts, Gearslip host support and six opt-in driving controls. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
 
 The audio patches remain **Any**: their source was unchanged and both applied with fingerprint validation to this build. This confirms application to this version; signed-in playback, shelves and provider login need live provider testing.
 
@@ -35,10 +35,18 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Stay awake in the background | Off | 5.26.90.901 | [WazeShareAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeShareAlertsPatch.kt) |
 | Support Gearslip | On | 5.26.90.901 | [WazeGearslipPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeGearslipPatch.kt) |
 | YT Music Morphe in Waze | On | Any | [YouTubeMusicMorphePatch.kt](../../patches/src/main/kotlin/patches/waze/YouTubeMusicMorphePatch.kt) |
+| Auto zoom | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
+| Lane guidance | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
+| Extra map info | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
+| Speed limit controls | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
+| Car alerts as notifications | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
+| Car traffic meter | Off | 5.26.90.901 | [WazeDrivingPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeDrivingPatches.kt) |
 
 ## Configuration
 
 Imported patch options and defaults are preserved. The Customization row below Shut off opens switches for applied features and editable sizes, colors and distances. Speed camera alerts, Flock cameras and the average speed zone bar start off inside Waze even when their patches are selected. Change app name defaults to De-Waze. Share alerts with Maps retains the Ungoogled Maps broadcast protocol; a compatible receiver must be installed for Maps to display alerts.
+
+The six driving controls are off by default in Manager. When selected, their switches start on in Customization. Auto zoom offers Off, On and By speed; limit-drop warning distance is editable from 0 to 20,000 m (patch default 1,000 m). Compass/toll prices and limit display/drop warnings have independent switches. The compass-only visibility hook also handles Waze's on-tap controls preference without changing other map buttons. Lane guidance retains Waze's user preference and needs road lane data. Toll prices require route price data. Car notification and traffic-meter presentation depends on the host. These controls add no car settings screen.
 
 The runtime reapplies chosen configuration values after server and preferences sync, using IDs read from this build’s ConfigValues initializer. Turning a feature off unlocks those values and restores Waze defaults. Full black changes APK night surfaces; its optional black map and the Map skin/Bigger alert pins settings change Waze’s writable asset copies. Restart Waze after map/pin changes.
 
@@ -59,12 +67,12 @@ Run the project Android build, then:
 python3 scripts/validate_waze.py ORIGINAL.apkm patches/build/libs/patches-VERSION.mpp morphe-desktop-all.jar --output /tmp/waze-validation
 ```
 
-The validator requires all 29 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
+The validator requires all 35 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
 
 See the [privacy audit and follow-up](privacy-audit.md) and [validation evidence](validation.md) for tested behavior and limits. Patch application and synthetic tests do not establish live road alerts, routing, Android Auto behavior, signed-in media playback, or companion Maps delivery. Report speed limit retains upstream’s unverified status.
 
 ## Source and license
 
-Catalog patches and `org.ungoogled.waze` runtime classes derive from [bearinmindcat/morphe-patches](https://github.com/bearinmindcat/morphe-patches), locally supplied as deWaze. [upstream.json](upstream.json) records the exact commit and hashes of all imported source files. They retain their package namespace and are distributed under the repository’s GPLv3 license and applicable notice. The existing audio integration remains in `app.wazeytm.extension.waze`.
+Catalog patches and `org.ungoogled.waze` runtime classes derive from [bearinmindcat/morphe-patches](https://github.com/bearinmindcat/morphe-patches), locally supplied as deWaze. [upstream.json](upstream.json) records the exact commit and hashes of all imported source files. They retain their package namespace and are distributed under the repository’s GPLv3 license and applicable notice. The six driving controls adapt feature selections/configuration keys from [Forsigh/waze-patches](https://github.com/Forsigh/waze-patches), source commit `9cf1b4b`, using this project's native configuration and Customization helpers. See NOTICE for attribution. The existing audio integration remains in `app.wazeytm.extension.waze`.
 
 [Navigation broadcast contract and Gearslip support](navigation-broadcasts.md).

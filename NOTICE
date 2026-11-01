@@ -52,3 +52,12 @@ Source: bearinmindcat/morphe-patches (bearinmind patches), commit
 32e42e0f757581147307af27196e3aca517d0570.
 Licensed under the GNU General Public License, version 3.
 Adapted for Waze 5.26.90.901 and extended by this project.
+
+
+Waze driving controls
+---------------------
+
+Feature selections and configuration keys adapted from Forsigh/waze-patches,
+commit 9cf1b4b (2026-11-01), licensed under the GNU General Public License,
+version 3. Implemented for Waze 5.26.90.901 using this project's configuration
+locking, native-thread dispatch and editable Customization controls.

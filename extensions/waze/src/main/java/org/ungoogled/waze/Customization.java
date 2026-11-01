@@ -87,6 +87,24 @@ public final class Customization {
                 "How early each alert is announced"});
         LABELS.put("navigationDistances", new String[]{"Navigation distances",
                 "Android Auto heads-up and traffic bar"});
+        LABELS.put("autoZoom", new String[]{"Auto zoom",
+                "Keeps the auto-zoom mode selected below"});
+        LABELS.put("laneGuidance", new String[]{"Lane guidance",
+                "Enables the feature; your Waze lane-guidance preference still applies"});
+        LABELS.put("straightAheadLanes", new String[]{"Straight-ahead lane hints",
+                "Lane guidance while continuing straight, where lane data is available"});
+        LABELS.put("alwaysCompass", new String[]{"Always show compass",
+                "Keeps the compass visible on the map"});
+        LABELS.put("tollPrices", new String[]{"Toll prices",
+                "Shows toll prices when supplied with route data"});
+        LABELS.put("alwaysSpeedLimit", new String[]{"Always show speed limit",
+                "Keeps the road limit visible when Waze knows it"});
+        LABELS.put("speedLimitDrop", new String[]{"Limit-drop warnings",
+                "Warns before a lower road speed limit; choose the distance below"});
+        LABELS.put("carAlertNotifications", new String[]{"Car alerts as notifications",
+                "Uses the car host's notification support for Waze alerts"});
+        LABELS.put("carTrafficMeter", new String[]{"Car traffic meter",
+                "Shows traffic on supported car navigation screens"});
         LABELS.put("biggerSpeedometer", new String[]{"Bigger speedometer",
                 "Larger speed and limit digits"});
         LABELS.put("mapSkin", new String[]{"Map skin",
@@ -184,6 +202,10 @@ public final class Customization {
         VALUE_LABELS.put("CONFIG_VALUE_ANDROID_AUTO_HEADS_UP_DISTANCE_NORMAL", new Label("Android Auto heads-up, normal roads", "m", 1, 20000));
         VALUE_LABELS.put("CONFIG_VALUE_ANDROID_AUTO_HEADS_UP_DISTANCE_FREEWAY", new Label("Android Auto heads-up, freeways", "m", 1, 20000));
         VALUE_LABELS.put("CONFIG_VALUE_TRAFFIC_BAR_MIN_TIME_IN_TRAFFIC_SECONDS", new Label("Traffic bar: time in traffic", "s", 1, 3600));
+        VALUE_LABELS.put("CONFIG_VALUE_ROUTING_AUTO_ZOOM", new Label("Auto-zoom mode",
+                new String[]{"no", "yes", "speed"}, new String[]{"Off", "On", "By speed"}));
+        VALUE_LABELS.put("CONFIG_VALUE_ALERTS_SPEED_LIMIT_DECREASE_ALERT_DISTANCE_METERS",
+                new Label("Limit-drop warning distance", "m", 1, 20000));
         VALUE_LABELS.put("CONFIG_VALUE_POWER_BACKGROUND_TIMEOUT_MS", new Label("Minutes in the background", "min", 60_000, 1440));
         VALUE_LABELS.put(SPEED, new Label("Speed digits", "dp", 1, 80, 26));
         VALUE_LABELS.put(UNITS, new Label("Unit label", "dp", 1, 40, 12));
@@ -519,6 +541,11 @@ public final class Customization {
     }
 
     // ---- features that are code, not configuration --------------------------------------------
+
+    /** The compass-only visibility decision; leave the other on-tap map controls alone. */
+    public static Object compassVisibility(Object stock) {
+        return on("alwaysCompass") ? Boolean.TRUE : stock;
+    }
 
     /** AdvilRequest.getPageUrl: no page for Waze's ad server while Hide ads is on. */
     public static String pageUrl(String url) {

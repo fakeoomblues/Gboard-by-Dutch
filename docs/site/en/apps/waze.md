@@ -10,7 +10,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 
 ## Where these patches come from
 
-24 of these 29 patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, where they are published as De-Waze for Waze 5.24.5.0. This project ported them to 5.26.90.901 and maintains that port separately. The other five patches and the extras below come from this project, compared with bearinmind patches v2.8.3.
+24 of these 35 patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, where they are published as De-Waze for Waze 5.24.5.0. This project ported them to 5.26.90.901 and maintains that port separately. Five additional patches and the extensions to bearinmind patches come from this project, compared with bearinmind patches v2.8.3.
 
 | Area | Added by this project |
 | --- | --- |
@@ -20,6 +20,8 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | Music | New: **SoundCloud in Waze** and **YT Music Morphe in Waze** add both services to the built-in audio player. |
 | Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets Gearslip run Waze, including a patched Gearslip. |
 | Alert sharing | **Share alerts with Maps** now stops at once when you switch it off and clears alerts it already shared. |
+
+The six optional driving controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
 
 ## Patches
 
@@ -66,6 +68,21 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | **Speed cameras everywhere** | Off | Enables camera and police alerts across countries. Check local rules before enabling. |
 | **Speed limit sign** | Off | One speed limit sign style in every country. |
 | **Stay awake in the background** | Off | Keeps Waze running without a route so its alerts keep reaching Maps. Uses more battery. |
+
+### Driving controls adapted from Forsigh Waze Patches
+
+All six patches are off by default. Select only the controls you want when patching; their switches start on in Customization.
+
+| Patch | Default | What it does |
+| --- | --- | --- |
+| **Auto zoom** | Off | Keeps the selected auto-zoom mode: Off, On or By speed. Change the mode later in Customization. |
+| **Lane guidance** | Off | Enables lane guidance and optional straight-ahead hints where lane data is available. Your own Waze lane-guidance setting still applies. |
+| **Extra map info** | Off | Adds independent compass and toll-price switches. Prices appear only when Waze supplies them with route data. |
+| **Speed limit controls** | Off | Adds independent switches for always showing the known road limit and for limit-drop warnings. Warning distance is editable, initially 1,000 m. Reporting and sign style stay separate. |
+| **Car alerts as notifications** | Off | Uses car notifications for supported alerts when the car host supports them. |
+| **Car traffic meter** | Off | Enables the traffic meter on supported car navigation screens. |
+
+Configure these on the phone before connecting. The two car features need individual checks in Gearslip or Android Auto; selecting them does not establish that every host displays them.
 
 ## Advertising and tracking services
 

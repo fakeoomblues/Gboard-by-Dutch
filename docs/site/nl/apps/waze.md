@@ -10,7 +10,7 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 
 ## Waar deze patches vandaan komen
 
-24 van deze 29 patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat, waar ze als De-Waze voor Waze 5.24.5.0 worden uitgebracht. Dit project heeft ze overgezet naar 5.26.90.901 en onderhoudt die versie zelf. De andere vijf patches en de extra's hieronder komen van dit project, vergeleken met bearinmind patches v2.8.3.
+24 van deze 35 patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat, waar ze als De-Waze voor Waze 5.24.5.0 worden uitgebracht. Dit project heeft ze overgezet naar 5.26.90.901 en onderhoudt die versie zelf. Vijf aanvullende patches en de uitbreidingen op bearinmind patches komen van dit project, vergeleken met bearinmind patches v2.8.3.
 
 | Onderdeel | Toegevoegd door dit project |
 | --- | --- |
@@ -20,6 +20,8 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 | Muziek | Nieuw: **SoundCloud in Waze** en **YT Music Morphe in Waze** voegen beide diensten toe aan de ingebouwde audiospeler. |
 | Andere apps | Nieuw: **Broadcast navigation data** deelt snelheids- en trajectgegevens met andere apps en met **Support Gearslip** kan Gearslip Waze draaien, ook een gepatchte Gearslip. |
 | Waarschuwingen delen | **Share alerts with Maps** stopt nu direct als je het uitzet en wist waarschuwingen die al gedeeld waren. |
+
+De zes optionele rijfuncties hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
 
 ## Patches
 
@@ -66,6 +68,21 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 | **Speed cameras everywhere** | Uit | Maakt flitspaal- en politiewaarschuwingen in elk land beschikbaar. Controleer voor vertrek de plaatselijke regels. |
 | **Speed limit sign** | Uit | Gebruikt in elk land dezelfde stijl voor het snelheidslimietbord. |
 | **Stay awake in the background** | Uit | Houdt Waze zonder actieve route op de achtergrond open om waarschuwingen met Maps te delen. Dit gebruikt meer batterij. |
+
+### Rijfuncties aangepast uit Forsigh Waze Patches
+
+Alle zes patches staan standaard uit. Selecteer bij het patchen alleen de gewenste functies; hun schakelaars staan daarna aan in Customization.
+
+| Patch | Standaard | Wat verandert er? |
+| --- | --- | --- |
+| **Auto zoom** | Uit | Bewaart de gekozen automatische zoomstand: uit, aan of op basis van snelheid. De stand blijft instelbaar in Customization. |
+| **Lane guidance** | Uit | Maakt rijstrookadvies en optionele aanwijzingen voor rechtdoor beschikbaar als er rijstrookgegevens zijn. Je eigen rijstrookinstelling in Waze blijft gelden. |
+| **Extra map info** | Uit | Voegt aparte schakelaars voor het kompas en tolprijzen toe. Prijzen verschijnen alleen als Waze die bij de route levert. |
+| **Speed limit controls** | Uit | Voegt aparte schakelaars toe voor een blijvend zichtbare bekende snelheidslimiet en waarschuwingen voor een lagere limiet. De waarschuwingsafstand is instelbaar, aanvankelijk 1.000 m. Rapportage en bordstijl blijven apart. |
+| **Car alerts as notifications** | Uit | Gebruikt automeldingen voor ondersteunde waarschuwingen als de autohost die ondersteunt. |
+| **Car traffic meter** | Uit | Maakt de verkeersmeter beschikbaar op ondersteunde navigatieschermen in de auto. |
+
+Stel deze functies op de telefoon in voordat je verbinding maakt. Controleer de twee autofuncties apart in Gearslip of Android Auto; selecteren garandeert niet dat iedere host ze toont.
 
 ## Advertentie- en trackingdiensten
 
