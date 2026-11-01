@@ -5,7 +5,7 @@ These source changes add three independent Morphe controls. Gearslip's upstream 
 | Target | Patch | Behavior |
 | --- | --- | --- |
 | Gearslip 0.3.12-alpha and 0.3.31-alpha | Keep music player entries | Retains a music-player tile when an app also provides a SETTINGS car service. The Settings entry remains separately labelled. |
-| Gearslip 0.3.12-alpha and 0.3.31-alpha | Hide apps from drawer | Optional comma-separated `hiddenPackages` list. Extends the built-in exclusions without disabling apps. Empty by default; Gearslip's own Settings remains reachable. |
+| Gearslip 0.3.12-alpha and 0.3.31-alpha | Hide apps from drawer | Adds an **Apps** card to Gearslip's phone settings with a checkbox per drawer tile, all ticked by default. Unticking hides that tile from the car drawer without disabling the app. |
 | YouTube Music Any (structure-checked) | Gearslip music browser support | Accepts configured Gearslip packages only when the original browser callback UID owns that package. Adds browser eligibility for those hosts while retaining unrelated callers' original checks. |
 
 ## Using the panel
@@ -14,7 +14,9 @@ Select SoundCloud or YT Music from Gearslip's launcher and start a track. Return
 
 SoundCloud already connected and displayed its artwork and controls beside Waze in the official 0.3.31-alpha phone preview. The Waze audio patches are not needed to draw that panel. Like, shuffle, repeat and library content depend on what the music app exposes.
 
-Gearslip's stock drawer has pin/unpin, reorder and close actions, plus fixed exclusions. It has no user-controlled per-app visibility setting in these versions. Configure the optional patch's `hiddenPackages`, for example `com.example.unused,org.example.other`, before patching. All discovered tiles from a listed package are hidden. Remove a package from that option and repatch to restore it. This is a patch-time list, not a new in-app settings screen.
+Gearslip's stock drawer has pin/unpin, reorder and close actions, plus fixed exclusions, but no setting for which apps it shows. **Hide apps from drawer** adds one on the phone. Open the **Apps** card under **Car** on Gearslip's home screen. Each row is one drawer tile, so a music app with a separate Settings tile has two rows. Untick a row to hide that tile, and tick it to bring it back. The change takes effect when you leave the screen, and it replaces the earlier patch-time `hiddenPackages` option.
+
+The filter only applies to the drawer. Car messages and a tile already pinned to the nav bar are unaffected. Gearslip's own tiles, such as Settings and Exit, are not listed, so they stay reachable.
 
 ## Version compatibility
 
@@ -32,7 +34,7 @@ Patched APKs must be signed again. The installed YT Music certificate does not m
 
 The bundle built with the release workflow's Android build and existing extension test tasks. Strict patch application and APK rebuild passed on all four targets. On the connected CPH2747:
 
-- Both Gearslip versions passed 9 actual-DEX launcher checks and 3 configured-exclusion checks. Original DEX first reproduced the missing player and absent custom exclusion. Adjacent cases cover navigation with incidental audio, media-only, Settings-only, and empty app candidates.
+- Both Gearslip versions passed 9 actual-DEX launcher checks. Original DEX first reproduced the missing player. Adjacent cases cover navigation with incidental audio, media-only, Settings-only, and empty app candidates.
 - Both YT Music versions passed emitted-DEX inspection and 9 actual-DEX caller-policy checks each. These execute the real modified classes on Android with real PackageManager UID ownership. A configured installed host is accepted while server dependencies are deliberately unset; a spoofed package under another UID is rejected. The unrelated-client path still reaches the original implementation. The production Java policy also has 15 JVM assertions.
 
 The YT Music tests use isolated policy fixtures containing the actual patched DEX, byte-for-byte, with a minimal manifest and no account providers or exported music service. They establish policy execution, not a live Binder connection to YT Music's full browser, signed-in catalog delivery, playback, or car projection. Those integration checks remain pending a test installation signed with the installed app's key, or a separate fully configured client. The phone's installed account-bearing YT Music was not modified.
@@ -40,3 +42,5 @@ The YT Music tests use isolated policy fixtures containing the actual patched DE
 Local reports are in `.analysis/gearslip-validation/` and `.analysis/gearslip-ytm-validation/`. Validation harnesses are in `scripts/gearslip/` and `scripts/ytmusic/`. The same launcher, exclusion and both caller-policy probes also passed on a fresh API 36 emulator. Both YT Music policies additionally passed with the official Gearslip host and Android Auto removed for the emulator user. Further testing is restricted to that disposable emulator; signed-in client integration remains unverified.
 
 The full [YT Music caller-validation procedure](../../scripts/ytmusic/README.md) distinguishes structural checks, Android policy execution, and a real browser session.
+
+The Apps card ran on an API 36 emulator with the official 0.3.31-alpha and 0.3.12-alpha builds. Both showed the card and listed every tile. On 0.3.31-alpha, unticking Waze and YouTube Music · Settings removed those tiles from the car preview's drawer, ticking Messages again restored it, and the choices survived a force-stop. This covers the phone preview, not a physical head unit.

@@ -11,7 +11,7 @@ Gebruik de officiële Gearslip-APK. De patches ondersteunen ook 0.3.12-alpha, bu
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Keep music player entries** | Aan | Houdt de audiospeler van een muziekapp beschikbaar naast het aparte auto-instellingenscherm, ook bij YT Music Morphe. |
-| **Hide apps from drawer** | Uit | Verbergt de pakketten uit de optie Packages to hide. Een lege lijst behoudt Gearslips eigen uitsluitingen. Apps blijven geïnstalleerd. |
+| **Hide apps from drawer** | Aan | Voegt een kaart **Apps** toe aan Gearslips instellingen op de telefoon. Alle apps staan standaard aangevinkt; vink er een uit om de tegel uit de autolijst te halen. Apps blijven geïnstalleerd. |
 
 ## Advertenties en trackingdiensten
 
@@ -21,7 +21,7 @@ Deze patches veranderen de applijst en de keuze van de speler. Ze veranderen Gea
 
 Start een nummer in Gearslips muziekscherm, ga terug naar de kaart en gebruik de dockknop in de afspeelbalk om de speler naast de kaart te zetten. SoundCloud gebruikt Gearslips bestaande speler. YT Music heeft daarnaast de patch **Gearslip music browser support** nodig.
 
-Vul voor het filter vóór het patchen pakketnamen in, gescheiden door komma's. Alle gevonden vermeldingen van elk genoemd pakket worden verborgen; Gearslips eigen Settings blijft beschikbaar. Patch opnieuw met een kortere lijst om vermeldingen terug te krijgen. Er komt geen nieuw verbergmenu in de app.
+Kies wat de autolijst toont via de kaart **Apps** op Gearslips startscherm op de telefoon. Elke app met een autoscherm of speler staat aangevinkt. Vink een app uit om de tegel te verbergen en vink hem weer aan om hem terug te krijgen. Een muziekapp met een aparte Settings-tegel heeft voor elke tegel een rij. Een tegel die je aan de navigatiebalk hebt vastgezet blijft daar staan, en Gearslips eigen tegels zoals Settings staan niet in de lijst.
 
 De applijst en de controle van de hostidentiteit zijn op Android getest. Bladeren en afspelen met een ingelogd YT Music-account moeten nog samen worden getest. Een opnieuw ondertekende APK kan een officiële installatie met een andere sleutel niet bijwerken; behoud bij tests de bestaande installatie en gegevens.
 

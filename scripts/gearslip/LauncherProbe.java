@@ -90,11 +90,6 @@ public final class LauncherProbe extends Instrumentation {
         Class<?> known = loader.loadClass("app.seb3thehacker.gearslip.host.KnownApps");
         Set<?> hidden = (Set<?>) known.getField("hidden").get(null);
         require(hidden.contains("com.google.android.dialer"), "Built-in exclusions were lost");
-        String packages = arguments.getString("hiddenPackages", "");
-        for (String name : packages.split(",")) {
-            if (!name.isEmpty()) require(hidden.contains(name), "Configured package is visible: " + name);
-        }
-        require(!hidden.contains("nl.johninnl.fixture.visible"), "Unconfigured package was hidden");
     }
 
     private void require(boolean condition, String message) {
