@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.9.0-dev.4.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [6e660ccf67fe](https://github.com/johninnl/nl-morphe-patches/commit/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.9.0-dev.4](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.3...v1.9.0-dev.4) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** broadcast background navigation data and support Gearslip ([6e660cc](https://github.com/johninnl/nl-morphe-patches/commit/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3601ce5ea1d850c6c654c62a275c42dedd343a54/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.9.0-dev.3.**

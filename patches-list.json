@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.9.0-dev.3",
+  "version": "1.9.0-dev.4",
   "patches": [
     {
       "name": "Alert distances",
@@ -262,6 +262,43 @@
           "required": true,
           "type": "kotlin.Int",
           "default": 16,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Broadcast navigation data",
+      "description": "Broadcasts the road speed limit and average-speed zone observations locally, including in the background. No overlay required.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "receiverPackage",
+          "title": "Receiver package",
+          "description": "Optional target app package. Blank broadcasts to running compatible local receivers.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
           "values": null
         }
       ]
@@ -6946,6 +6983,33 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Support Gearslip",
+      "description": "Allows the official Gearslip release host while retaining Android Auto host validation.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Unlock Plus",

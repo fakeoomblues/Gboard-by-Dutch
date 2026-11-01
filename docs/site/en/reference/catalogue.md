@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.3**
+**Development patch bundle: 1.9.0-dev.4**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -547,6 +547,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Average speed zone bar | On | 5.26.90.901 |
 | Bigger alert pins | Off | 5.26.90.901 |
 | Bigger speedometer | On | 5.26.90.901 |
+| Broadcast navigation data | On | 5.26.90.901 |
 | Change app name | On | 5.26.90.901 |
 | Flock cameras | On | 5.26.90.901 |
 | Full black | On | 5.26.90.901 |
@@ -568,6 +569,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speed cameras everywhere | Off | 5.26.90.901 |
 | Speed limit sign | Off | 5.26.90.901 |
 | Stay awake in the background | Off | 5.26.90.901 |
+| Support Gearslip | On | 5.26.90.901 |
 | YT Music Morphe in Waze | On | Any |
 
 ## Weeronline

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Ontwikkelbundel: 1.9.0-dev.3</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Ontwikkelbundel: 1.9.0-dev.4</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -890,7 +890,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies alert distances all moods average speed zone bar bigger alert pins bigger speedometer change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies alert distances all moods average speed zone bar bigger alert pins bigger speedometer broadcast navigation data change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Waze](apps/waze.md)
@@ -898,13 +898,14 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">5.26.90.901, Alle versies</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>27 patches</summary>
+<summary>29 patches</summary>
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Broadcast navigation data <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
@@ -926,6 +927,7 @@ hide:
 <li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
+<li>Support Gearslip <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>
