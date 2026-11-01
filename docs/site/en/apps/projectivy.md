@@ -9,6 +9,7 @@
 | Patch | Default | What it does |
 | --- | --- | --- |
 | **Disable tracking** | On | Stops the supported analytics events, Firebase Performance configuration and advertising ID connection. Blocks the supported Firebase Installations and Crashlytics settings requests. |
+| **Unlock Premium** | On | Unlocks the supported premium features, including theme import, backgrounds, parental controls and display profiles. Independent of tracking removal. |
 
 ## Advertising and tracking services
 
@@ -16,6 +17,6 @@ The control covers the supported paths in Firebase Analytics, Firebase Performan
 
 ## Before using
 
-Use the publisher-signed 4.73 build 98 APK. Firebase installation registration and crash reporting may be unavailable. This development patch has build and output checks; launcher operation has not been tested on a device or emulator.
+Use the publisher-signed 4.73 build 98 APK. Firebase installation registration and crash reporting may be unavailable. These patches have build and output checks; launcher operation has not been tested on a device or emulator.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)
