@@ -119,6 +119,8 @@ it does not guarantee anonymity or remove all network traffic.
 Targets and defaults vary by patch; the bundle version is separate from each app version.
 <!-- PATCHES_END -->
 
+The source branch also contains the [full Waze 5.26.90.901 catalog](docs/waze/README.md): 24 deWaze controls alongside the two audio patches. The release table above follows published bundle metadata.
+
 App pages describe patch effects, supported versions, defaults and relevant
 limits. Advertising and tracking services are listed where useful.
 
