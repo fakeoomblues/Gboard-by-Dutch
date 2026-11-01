@@ -18,7 +18,7 @@ PATCHES = (
     'Hide ads', 'Map skin', 'Navigation distances', 'No AI reporting',
     'No Google Assistant', 'Open without device location', 'Remove permissions',
     'Remove sign-in prompts', 'Remove telemetry', 'Report speed limit',
-    'Share alerts with Maps', 'SoundCloud in Waze', 'Speed camera alerts',
+    'Share alerts with Maps', 'Skip consent screens', 'SoundCloud in Waze', 'Speed camera alerts',
     'Speed camera sound at any speed', 'Speed cameras everywhere',
     'Speed limit sign', 'Stay awake in the background', 'YT Music Morphe in Waze',
 )

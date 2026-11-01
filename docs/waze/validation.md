@@ -2,6 +2,8 @@
 
 Validation date: 2026-11-01. Input: supplied APKMirror APKM, package `com.waze`, version code `1030746`, minimum SDK 32. The source catalog contains all 24 Waze patches in upstream commit `32e42e0f757581147307af27196e3aca517d0570` plus the existing two audio patches.
 
+This records the initial 26-patch catalog. The subsequent 27-patch privacy follow-up is documented in the [privacy audit](privacy-audit.md).
+
 ## Build and artifact checks
 
 - Original audio bundle: both audio patches applied unchanged with `--validate`, without forced compatibility.
