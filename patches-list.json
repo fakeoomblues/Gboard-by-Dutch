@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -5949,6 +5949,33 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "SoundCloud in Waze",
+      "description": "Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
               "description": null
             }
           ]

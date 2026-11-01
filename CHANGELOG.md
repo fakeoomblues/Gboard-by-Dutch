@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/062679e47e11ad97b7beaba6699367136071d237/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.7.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [062679e47e11](https://github.com/johninnl/nl-morphe-patches/commit/062679e47e11ad97b7beaba6699367136071d237). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.7.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.6.0...v1.7.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add SoundCloud Feed and mixes, not the personal Library ([062679e](https://github.com/johninnl/nl-morphe-patches/commit/062679e47e11ad97b7beaba6699367136071d237))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/af8f6ee0ee8a7585c83f3287ace809d066168c67/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.6.0.**

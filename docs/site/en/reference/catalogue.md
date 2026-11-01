@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.6.0**
+**Patch bundle: 1.7.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -529,6 +529,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| SoundCloud in Waze | On | Any |
 | YT Music Morphe in Waze | On | Any |
 
 ## Weeronline

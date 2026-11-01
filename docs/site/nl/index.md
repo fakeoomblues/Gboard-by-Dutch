@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">42 apps</span> · Patchbundel: 1.6.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">42 apps</span> · Patchbundel: 1.7.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>
@@ -871,7 +871,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze alle versies yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze alle versies soundcloud in waze yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Waze](reference/catalogue.md#waze)
@@ -879,8 +879,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>2 patches</summary>
 <ul>
+<li>SoundCloud in Waze <span class="dap-app-card__target">Alle versies</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>
