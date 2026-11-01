@@ -1,8 +1,21 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.7**
+**Patch bundle: 1.22.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
+
+## 2dehands
+
+[What do the patches change?](../apps/2dehands.md)
+
+`be.tweedehands.m`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable ThreatMetrix | On | 16.19.0 |
+| Disable tracking | On | 16.19.0 |
+| Hide ads | On | 16.19.0 |
+| Skip consent screens | On | 16.19.0 |
 
 ## 9292
 
@@ -30,6 +43,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 9.22.0 |
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
+
+## AT4K Launcher
+
+[What do the patches change?](../apps/at4k.md)
+
+`com.overdevs.at4k`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Unlock Premium | On | 1.2 |
 
 ## Bright
 
@@ -155,6 +178,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable partner services | On | 14.17 |
 | Disable tracking | On | 14.17 |
 | Fix PairIP startup | On | 14.17 |
+| Guest mode | On | 14.17 |
 | Hide Pro notices | On | 14.17 |
 | Hide ads | On | 14.17 |
 | Unlock Pro | On | 14.17 |
@@ -181,7 +205,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Hide apps from drawer | Off | 0.3.12-alpha, 0.3.31-alpha |
+| Hide apps from drawer | On | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | On | 0.3.12-alpha, 0.3.31-alpha |
 
 ## GVA
@@ -290,6 +314,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable optional tracking | On | 4.5.1784911033 |
 | Hide native promotions | On | 4.5.1784911033 |
 | Read full articles natively | On | 4.5.1784911033 |
+
+## Monet Android TV
+
+[What do the patches change?](../apps/monet.md)
+
+`com.klevico.monet`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Individual Wuplay catalog rows | Off | 1.1.0 |
 
 ## Nieuwsblad
 
@@ -556,15 +590,24 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Alert distances | On | 5.26.90.901 |
 | All moods | Off | 5.26.90.901 |
+| Allow high refresh rate | Off | 5.26.90.901 |
+| Auto zoom | Off | 5.26.90.901 |
 | Average speed zone bar | On | 5.26.90.901 |
 | Bigger alert pins | Off | 5.26.90.901 |
 | Bigger speedometer | On | 5.26.90.901 |
 | Broadcast navigation data | On | 5.26.90.901 |
+| Car alerts as notifications | Off | 5.26.90.901 |
+| Car reconnect grace period | Off | 5.26.90.901 |
+| Car traffic meter | Off | 5.26.90.901 |
 | Change app name | On | 5.26.90.901 |
+| Extra map info | Off | 5.26.90.901 |
 | Flock cameras | On | 5.26.90.901 |
 | Full black | On | 5.26.90.901 |
 | Hide ads | On | 5.26.90.901 |
+| Hide recent destinations | Off | 5.26.90.901 |
+| Lane guidance | Off | 5.26.90.901 |
 | Map skin | On | 5.26.90.901 |
+| Native camera and hazard controls | Off | 5.26.90.901 |
 | Navigation distances | Off | 5.26.90.901 |
 | No AI reporting | Off | 5.26.90.901 |
 | No Google Assistant | Off | 5.26.90.901 |
@@ -576,9 +619,11 @@ Check the supported app versions and default setting for each patch. The app pag
 | Share alerts with Maps | On | 5.26.90.901 |
 | Skip consent screens | On | 5.26.90.901 |
 | SoundCloud in Waze | On | Any |
+| Speed bump controls | Off | 5.26.90.901 |
 | Speed camera alerts | On | 5.26.90.901 |
 | Speed camera sound at any speed | On | 5.26.90.901 |
 | Speed cameras everywhere | Off | 5.26.90.901 |
+| Speed limit controls | Off | 5.26.90.901 |
 | Speed limit sign | Off | 5.26.90.901 |
 | Stay awake in the background | Off | 5.26.90.901 |
 | Support Gearslip | On | 5.26.90.901 |
@@ -611,6 +656,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Premium banner | On | 3.13.1 |
 | Hide ads | On | 3.13.1 |
 | Skip consent screens | On | 3.13.1 |
+
+## Wuplay Android TV
+
+[What do the patches change?](../apps/wuplay.md)
+
+`app.wuplay.androidtv`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Publish selected catalog channels | Off | 0.9.4-beta |
 
 ## YouTube Music
 

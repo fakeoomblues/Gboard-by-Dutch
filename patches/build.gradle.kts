@@ -2,9 +2,13 @@ import java.security.MessageDigest
 
 group = "nl.johninnl.patches"
 
-// Discovery fixtures use the same Java 11 API target as the patch bundle.
-tasks.named<org.gradle.api.tasks.compile.JavaCompile>("compileTestJava") {
+// Match the patch bundle's Kotlin JVM 11 target for the checked Java DEX hook helpers.
+tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
     options.release.set(11)
+}
+tasks.named<org.gradle.api.tasks.javadoc.Javadoc>("javadoc") {
+    // The checked Java hook helper is intentionally package-private.
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PACKAGE
 }
 
 val mapsKeySource = providers.environmentVariable("SHARED_MAPS_API_KEY")

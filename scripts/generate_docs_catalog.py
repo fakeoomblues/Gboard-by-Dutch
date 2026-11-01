@@ -10,11 +10,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Editorial destinations only; app names, versions and patches come from metadata.
 APP_PAGES = {
+    'com.klevico.monet': ('monet', 'other'),
+    'com.overdevs.at4k': ('at4k', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
+    'app.wuplay.androidtv': ('wuplay', 'entertainment'),
     'com.waze': ('waze', 'mobility'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music-morphe', 'entertainment'),
+    'app.vela': ('vela', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
@@ -34,6 +38,7 @@ APP_PAGES = {
     'nl.tvgids': ('tvgids-nl', 'entertainment'),
     'nl.rtl.videoland.v2': ('videoland-android-tv', 'entertainment'),
     'nl.marktplaats.android': ('marktplaats', 'other'),
+    'be.tweedehands.m': ('2dehands', 'other'),
     'nl.negentwee': ('9292', 'mobility'),
     'org.yoki.android.buienalarm': ('buienalarm', 'weather'),
     'com.supportware.Buienradar': ('buienradar', 'weather'),

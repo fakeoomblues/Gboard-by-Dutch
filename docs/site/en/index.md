@@ -38,8 +38,29 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Development patch bundle: 1.9.0-dev.7</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.22.0</p>
 <div class="dap-app-grid" markdown>
+<article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [2dehands](apps/2dehands.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">16.19.0</span></p>
+<p class="dap-app-card__package">be.tweedehands.m</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable ThreatMetrix <span class="dap-app-card__target">16.19.0</span></li>
+<li>Disable tracking <span class="dap-app-card__target">16.19.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">16.19.0</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">16.19.0</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/2dehands.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
@@ -80,6 +101,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/ad.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="at4k launcher (tv) com.overdevs.at4k 1.2 unlock premium" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [AT4K Launcher (TV)](apps/at4k.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.2</span></p>
+<p class="dap-app-card__package">com.overdevs.at4k</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Unlock Premium <span class="dap-app-card__target">1.2</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/at4k.md){ .dap-app-card__link }
 
 </article>
 
@@ -259,7 +298,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup hide pro notices hide ads unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -267,12 +306,13 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">14.17</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>7 patches</summary>
+<summary>8 patches</summary>
 <ul>
 <li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
 <li>Disable tracking <span class="dap-app-card__target">14.17</span></li>
 <li>Fix PairIP startup <span class="dap-app-card__target">14.17</span></li>
+<li>Guest mode <span class="dap-app-card__target">14.17</span></li>
 <li>Hide Pro notices <span class="dap-app-card__target">14.17</span></li>
 <li>Hide ads <span class="dap-app-card__target">14.17</span></li>
 <li>Unlock Pro <span class="dap-app-card__target">14.17</span></li>
@@ -315,7 +355,7 @@ hide:
 <details class="dap-app-card__patches">
 <summary>2 patches</summary>
 <ul>
-<li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha · default off</span></li>
+<li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 <li>Keep music player entries <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 </ul>
 </details>
@@ -492,6 +532,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/medium.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.0 individual wuplay catalog rows" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [Monet Android TV](apps/monet.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.1.0</span></p>
+<p class="dap-app-card__package">com.klevico.monet</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Individual Wuplay catalog rows <span class="dap-app-card__target">1.1.0 · default off</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/monet.md){ .dap-app-card__link }
 
 </article>
 
@@ -910,7 +968,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods average speed zone bar bigger alert pins bigger speedometer broadcast navigation data change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](apps/waze.md)
@@ -918,19 +976,28 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>29 patches</summary>
+<summary>40 patches</summary>
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Allow high refresh rate <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Auto zoom <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Broadcast navigation data <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Car reconnect grace period <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Car traffic meter <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Extra map info <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Hide ads <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Hide recent destinations <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Lane guidance <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Map skin <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Native camera and hazard controls <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Navigation distances <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>No AI reporting <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>No Google Assistant <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
@@ -942,9 +1009,11 @@ hide:
 <li>Share alerts with Maps <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Any</span></li>
+<li>Speed bump controls <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
+<li>Speed limit controls <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Support Gearslip <span class="dap-app-card__target">5.26.90.901</span></li>
@@ -997,6 +1066,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/weerplaza.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="wuplay android tv app.wuplay.androidtv 0.9.4-beta publish selected catalog channels" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Wuplay Android TV](apps/wuplay.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.9.4-beta</span></p>
+<p class="dap-app-card__package">app.wuplay.androidtv</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Publish selected catalog channels <span class="dap-app-card__target">0.9.4-beta · default off</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/wuplay.md){ .dap-app-card__link }
 
 </article>
 

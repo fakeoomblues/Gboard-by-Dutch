@@ -1,8 +1,21 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.9.0-dev.7**
+**Patchbundel: 1.22.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
+
+## 2dehands
+
+[Wat veranderen de patches?](../apps/2dehands.md)
+
+`be.tweedehands.m`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable ThreatMetrix | Aan | 16.19.0 |
+| Disable tracking | Aan | 16.19.0 |
+| Hide ads | Aan | 16.19.0 |
+| Skip consent screens | Aan | 16.19.0 |
 
 ## 9292
 
@@ -30,6 +43,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 9.22.0 |
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
+
+## AT4K Launcher
+
+[Wat veranderen de patches?](../apps/at4k.md)
+
+`com.overdevs.at4k`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Unlock Premium | Aan | 1.2 |
 
 ## Bright
 
@@ -155,6 +178,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable partner services | Aan | 14.17 |
 | Disable tracking | Aan | 14.17 |
 | Fix PairIP startup | Aan | 14.17 |
+| Guest mode | Aan | 14.17 |
 | Hide Pro notices | Aan | 14.17 |
 | Hide ads | Aan | 14.17 |
 | Unlock Pro | Aan | 14.17 |
@@ -181,7 +205,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Hide apps from drawer | Uit | 0.3.12-alpha, 0.3.31-alpha |
+| Hide apps from drawer | Aan | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | Aan | 0.3.12-alpha, 0.3.31-alpha |
 
 ## GVA
@@ -290,6 +314,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable optional tracking | Aan | 4.5.1784911033 |
 | Hide native promotions | Aan | 4.5.1784911033 |
 | Read full articles natively | Aan | 4.5.1784911033 |
+
+## Monet Android TV
+
+[Wat veranderen de patches?](../apps/monet.md)
+
+`com.klevico.monet`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Individual Wuplay catalog rows | Uit | 1.1.0 |
 
 ## Nieuwsblad
 
@@ -556,15 +590,24 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Alert distances | Aan | 5.26.90.901 |
 | All moods | Uit | 5.26.90.901 |
+| Allow high refresh rate | Uit | 5.26.90.901 |
+| Auto zoom | Uit | 5.26.90.901 |
 | Average speed zone bar | Aan | 5.26.90.901 |
 | Bigger alert pins | Uit | 5.26.90.901 |
 | Bigger speedometer | Aan | 5.26.90.901 |
 | Broadcast navigation data | Aan | 5.26.90.901 |
+| Car alerts as notifications | Uit | 5.26.90.901 |
+| Car reconnect grace period | Uit | 5.26.90.901 |
+| Car traffic meter | Uit | 5.26.90.901 |
 | Change app name | Aan | 5.26.90.901 |
+| Extra map info | Uit | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
 | Hide ads | Aan | 5.26.90.901 |
+| Hide recent destinations | Uit | 5.26.90.901 |
+| Lane guidance | Uit | 5.26.90.901 |
 | Map skin | Aan | 5.26.90.901 |
+| Native camera and hazard controls | Uit | 5.26.90.901 |
 | Navigation distances | Uit | 5.26.90.901 |
 | No AI reporting | Uit | 5.26.90.901 |
 | No Google Assistant | Uit | 5.26.90.901 |
@@ -576,9 +619,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Share alerts with Maps | Aan | 5.26.90.901 |
 | Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
+| Speed bump controls | Uit | 5.26.90.901 |
 | Speed camera alerts | Aan | 5.26.90.901 |
 | Speed camera sound at any speed | Aan | 5.26.90.901 |
 | Speed cameras everywhere | Uit | 5.26.90.901 |
+| Speed limit controls | Uit | 5.26.90.901 |
 | Speed limit sign | Uit | 5.26.90.901 |
 | Stay awake in the background | Uit | 5.26.90.901 |
 | Support Gearslip | Aan | 5.26.90.901 |
@@ -611,6 +656,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide Premium banner | Aan | 3.13.1 |
 | Hide ads | Aan | 3.13.1 |
 | Skip consent screens | Aan | 3.13.1 |
+
+## Wuplay Android TV
+
+[Wat veranderen de patches?](../apps/wuplay.md)
+
+`app.wuplay.androidtv`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Publish selected catalog channels | Uit | 0.9.4-beta |
 
 ## YouTube Music
 

@@ -30,3 +30,71 @@ All 15,077 numeric resource IDs were preserved. The patcher normalized 42 case-c
 These checks establish build compatibility, successful patch application and the runtime behavior explicitly listed above. They do not establish signed-in SoundCloud/YT Music playback, all media shelves, live navigation or road-camera alerts, Android Auto, live companion Maps reception, telemetry traffic suppression, or server-side mood acceptance. Report speed limit retains the upstream unverified label. Camera and zone self-tests use synthetic data and cannot establish road behavior.
 
 The generated release tables and `patches-list.json` remain owned by release automation. The source catalog is documented separately until a bundle containing it is released.
+
+## Phase-one driving controls
+
+On 2026-11-01 the six opt-in driving patches were validated against the same
+5.26.90.901 / 1030746 APKM. The catalog now has 35 patches; all passed together
+and independently (36 patch/rebuild runs with fingerprint uniqueness validation,
+without forced compatibility). [Phase-one evidence](phase1-validation.json)
+records the input and candidate bundle hashes. The local bundle retains the
+checkout's version; release automation assigns the published version.
+
+Inspection of the final combined APK verified the 11 new typed configuration
+writes and their IDs/values. The stock lane-guidance user preference and shared
+on-tap map-control preference are not overridden. A compass-only visibility hook
+handles the additional on-tap gate; its disabled path preserves the stock result.
+The hook is omitted when only toll prices are selected.
+
+Nine option cases passed: nondefault selections, display-only selections,
+zero/20,000 m boundaries, invalid zoom mode, negative/excessive distance and empty
+map/speed-limit selections. Invalid selections fail explicitly. Five new
+Robolectric tests cover choice/reset, independent compass/toll switches,
+warning-distance editing/reset/range and compass visibility with the control on
+for both stock Boolean outcomes and off restoring those outcomes.
+
+The Android build, 23 Waze extension tests, the other release-workflow Gradle
+checks, 413 Python tests (45 optional-fixture skips), 39 release integration tests,
+strict documentation build, candidate app-guide checks and rendered-site checks
+passed. These are build, patch-application, static and simulated UI checks.
+No new device installation, road-alert test, toll-data test, Gearslip session or
+Google Android Auto session was performed for these six controls.
+
+## Phase-two alert, privacy and display controls
+
+On 2026-11-01 all five phase-two patches and the existing catalog passed together
+and independently against the supplied 5.26.90.901 / 1030746 APKM: 40 patches,
+41 patch/rebuild runs with unique fingerprint validation and no forced compatibility.
+[Phase-two evidence](phase2-validation.json) records the candidate/input hashes,
+11 option cases and static verification. Version selection remains automated.
+
+The camera controls write map, notification and sound settings for the selected
+five camera types, plus map/feature/notification settings for two crosswalk types.
+Speed-bump warning suppression writes its own on-route flag false while marker
+visibility stays independent. Projection reconnect delay is bounded to 1–10
+minutes (2 by default) and converted to native milliseconds; phone background
+and Android Automotive keep-alive settings are not changed.
+
+The verifier below compares the original and patched DEX. Exactly one recents
+fetch call changes; every other reader branch and the JNI declaration remain
+intact. It evaluates the injected bridge for enabled and disabled states: hiding
+returns an empty payload without a native fetch, while off returns the original
+native payload. For the display hook it verifies the original wide register pair
+and the unchanged remainder of display selection/control flow, including resolution
+and supported-mode filtering. Its unpatched negative control is rejected.
+
+```sh
+java -cp MORPHE_DESKTOP_JAR scripts/waze/WazePhaseTwoVerifier.java ORIGINAL_BASE_APK PATCHED_APK
+```
+
+Android/release Gradle checks, 26 Waze tests, the 413-test Python suite (45 optional
+fixture skips), 39 release integration tests, candidate app guides, strict MkDocs,
+links and rendered site checks passed. Settings tests cover independent speed-bump
+switches, delay units/bounds without changing phone timeout, and display editing,
+bounds, reset and off=60 Hz. The refresh ceiling defaults to 90 Hz and is editable
+from 60 to 120 Hz; rendering FPS is not guaranteed.
+
+No new road, vehicle, live recents-list or physical-display power/thermal session
+was performed. These results establish patch compatibility, emitted control flow
+and simulated settings behavior; native data coverage and real device behavior
+remain separate acceptance checks.

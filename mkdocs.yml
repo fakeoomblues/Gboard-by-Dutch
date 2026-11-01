@@ -160,6 +160,7 @@ nav:
           - apps/flitsmeister.md
           - apps/waze.md
           - apps/gearslip.md
+          - apps/vela.md
           - apps/rollerbank.md
       - Entertainment:
           - apps/entertainment/index.md
@@ -174,10 +175,14 @@ nav:
           - apps/npo-start-android-tv.md
           - apps/tvgids-nl.md
           - apps/videoland-android-tv.md
+          - apps/wuplay.md
       - Other apps:
           - apps/other/index.md
+          - apps/2dehands.md
+          - apps/monet.md
           - apps/marktplaats.md
           - apps/projectivy.md
+          - apps/at4k.md
   - Learn about tracking:
       - learn/index.md
       - learn/how-tracking-works.md

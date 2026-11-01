@@ -14,7 +14,7 @@ private const val FEED = "Lnl/johninnl/flitsmeister/NavigationBroadcasts;"
 @Suppress("unused")
 val navigationBroadcastPatch = bytecodePatch(
     name = "Broadcast navigation data",
-    description = "Shares current speed, road limits and observed average-speed zone progress with compatible local apps, also in the background without an overlay.",
+    description = "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay.",
     default = true,
 ) {
     compatibleWith(flitsmeister)
@@ -36,6 +36,12 @@ val navigationBroadcastPatch = bytecodePatch(
     finalize {
         // originalInput enforces publisher/version metadata. Resolve every producer
         // before mutating, and guard its semantic reference independently.
+        // These exact artifact bindings are used reflectively by the background report subscription.
+        exact("Lnl/flitsmeister/fmcore/models/eventbuses/AppNotificationBus;", "getBusAlertedReports", "Lfs7;")
+        exact("Lfs7;", "b", "Lis7;", "Lb49;")
+        exact("Lb49;", "invoke", "Ljava/lang/Object;", "Ljava/lang/Object;")
+        exact("Lnl/flitsmeister/fmcore/models/eventbuses/AlertedReport;", "getReport", "Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;")
+        exact("Lnl/flitsmeister/fmcore/models/eventbuses/AlertedReport;", "isActive", "Z")
         val create = exact("Lnl/flitsmeister/services/base/FlitsmeisterBaseService;", "onCreate").method
         val destroy = exact("Lnl/flitsmeister/services/base/FlitsmeisterBaseService;", "onDestroy").method
         val location = exact("Lab0;", "A", "V", "Landroid/location/Location;").method

@@ -17,12 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / 'docs/site'
 LANG = {
     'en': {
-        'meta': r'\*\*App version:\*\* (?P<version>\S+) · \*\*Build:\*\* (?P<build>\d+) · \*\*Original file:\*\* (?P<input>APKS|APKM|APK)',
+        'meta': r'\*\*App version:\*\* (?P<version>\S+) · \*\*Build:\*\* (?P<build>\d+) · \*\*Original file:\*\* (?P<input>XAPK|APKS|APKM|APK)',
         'table': '| Patch | Default | What it does |',
         'states': {'On': True, 'Off': False},
     },
     'nl': {
-        'meta': r'\*\*Appversie:\*\* (?P<version>\S+) · \*\*Build:\*\* (?P<build>\d+) · \*\*Origineel bestand:\*\* (?P<input>APKS|APKM|APK)',
+        'meta': r'\*\*Appversie:\*\* (?P<version>\S+) · \*\*Build:\*\* (?P<build>\d+) · \*\*Origineel bestand:\*\* (?P<input>XAPK|APKS|APKM|APK)',
         'table': '| Patch | Standaard | Wat verandert er? |',
         'states': {'Aan': True, 'Uit': False},
     },

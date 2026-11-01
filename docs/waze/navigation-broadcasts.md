@@ -15,7 +15,7 @@ Extras use only Android primitive types and strings: no Waze Parcelable or propr
 
 Normal publication is capped at one per second; semantic transitions such as a changed limit, zone identity, clear, or disable may be immediate. Fresh data has a five-second heartbeat when no native change is pending. Stale values are not kept alive as valid values. Switching off sends one clearing snapshot, stops periodic publication and drops queued native updates; enabling starts unknown until new native observations arrive.
 
-On Android 14+, the sender enables framework broadcast identity sharing. A receiver can check `getSentFromPackage()` and `getSentFromUid()` against the installed Waze package/UID. On older Android versions, this open intent protocol does not authenticate the sender. The `source_package` payload alone is not authentication. A target-package option limits recipients but does not authenticate senders. No internet connection, GPS coordinates or account ID is added by this protocol.
+On Android 14+, the sender enables framework broadcast identity sharing. A receiver can check `getSentFromPackage()` and `getSentFromUid()` against the installed Waze package/UID. On older Android versions, this open intent protocol does not authenticate the sender. The `source_package` payload alone is not authentication. A target-package option limits recipients but does not authenticate senders. The transport adds no internet connection, device GPS fix or account ID. Optional road-alert arrays can contain report/camera positions; those are not the device location. The [shared contract](../navigation-broadcasts.md#road-alert-observations) defines those additions and their individual observation ages.
 
 ## Snapshot fields
 
@@ -53,7 +53,7 @@ Unknown/stale/disabled numeric values are **omitted**, never represented as zero
 
 `LocationSensorListener.updateSpeedometer(int, String, int, double)` supplies the native display units and road limit. English unit aliases are recognized; localized unit labels fall back to Waze's own nonlocalized GENERAL_UNITS setting and GENERAL_DEFAULT_UNITS for automatic selection. Unknown settings stay unknown.
 
-Legacy zone updates come from `NavigationInfoNativeManager.i(AverageSpeedCameraZoneUpdate)` and `h()` clear. Modern updates come from `InsightsInfraNativeManager.c(SegmentInsightUpdate)`, selecting average-speed-camera segments (type 7) in WITHIN position (1).
+Legacy zone updates come from `NavigationInfoNativeManager.i(AverageSpeedCameraZoneUpdate)` and `h()` clear. Modern updates come from `InsightsInfraNativeManager.c(SegmentInsightUpdate)`, selecting average-speed-camera segments (type 7) in WITHIN position (1). The exact native enum also defines APPROACHING position (0), exported as separate optional `zone_approach_*` observations before entry. Native `AlerterNativeManager.b(NativeAlertRepositoryUpdate)` supplies the optional common road-alert list independently of Share alerts with Maps. See the [approach](../navigation-broadcasts.md#approaching-an-average-speed-zone) and [road-alert](../navigation-broadcasts.md#road-alert-observations) contracts for distances, estimates, list clears and 30-second observation expiry.
 
 The first active feed owns a zone until clear or expiry, so an unrelated feed's empty update cannot terminate it. A changed/acquired native segment ID, a large remaining-distance jump, or a substantial native-percentage regression starts a new observation session. Delayed samples do not move observation time backward. A native clear/end removes active metrics.
 
@@ -61,17 +61,19 @@ The average is `(first_remaining - minimum_remaining) * 3600 / (last_observation
 
 ## Gearslip
 
-**Support Gearslip**, independently default-selected, adds the provided release certificate/package to Waze's existing allowlist:
+**Support Gearslip**, independently default-selected, makes Waze's `HostValidator` accept the package `app.seb3thehacker.gearslip` whichever key signed it. Patching Gearslip re-signs it, so a pinned certificate stops matching. On a phone the allowlist is the only route for a third-party host, because `TEMPLATE_RENDERER` only counts on Automotive.
 
-`4cc56ebdd13a54d260eca9b7e2b2ae6b30e2f225bfda8f508f0709edf084948b,app.seb3thehacker.gearslip`
+The check is by package name, not by certificate. Any app installed under that package name is accepted, so install Gearslip only from a source you trust. The validator still requires the caller's UID to own the package, which stops another app from claiming the name.
 
-It also adds a narrow manifest package-visibility query. It keeps the existing three Android Auto certificate entries and does not disable host validation. A self-signed Gearslip build has a different certificate and is not covered. Host admission is separate from head-unit/surface/navigation compatibility.
+The patch also adds a narrow manifest package-visibility query. It keeps the three Android Auto certificate entries and does not disable host validation, so other hosts are still rejected. Host admission is separate from head-unit/surface/navigation compatibility.
 
 
 ## Verification
 
-The 29-patch catalog passes 30 application/rebuild runs (combined and every patch independently), with fingerprint validation and no force flag. Seventeen extension unit tests cover units, observed averages, source ownership, identity/reroute resets, stale/unknown values, heartbeat/request freshness and switching off.
+The recorded speed/active-zone baseline below predates the optional approach/road-alert fields. That 29-patch catalog passed 30 application/rebuild runs (combined and every patch independently), with fingerprint validation and no force flag. Its eighteen Waze extension unit tests covered units, observed averages, source ownership, identity/reroute resets, stale/unknown values, heartbeat/request freshness and switching off. Current approach/road-alert producer checks and their evidence boundaries are described in the [shared contract](../navigation-broadcasts.md#app-specific-production-and-lifetime).
 
-On an API36 phone emulator, a separately signed receiver in a different UID/process received snapshots while the Waze Activity was backgrounded and the zone overlay was not applied. The native location provider was resolved through Waze's dependency container; callbacks from the live LocationSensorListener implementation, legacy navigation manager and insights manager were exercised. The probe checked the native background timeout, exact Gearslip trust, rejection of an unlisted host and forged UID, and preservation of the original Android Auto hosts. The receiver capture verified framework sender identity, mph and localized-unit conversion, zone progress/average math, ID resets and clearing on disable. Original numeric resource IDs were preserved.
+On an API36 phone emulator, a separately signed receiver in a different UID/process received snapshots while the Waze Activity was backgrounded and the zone overlay was not applied. The native location provider was resolved through Waze's dependency container; callbacks from the live LocationSensorListener implementation, legacy navigation manager and insights manager were exercised. The probe checked the native background timeout, Gearslip host admission, rejection of an unlisted host and forged UID, and preservation of the original Android Auto hosts. The receiver capture verified framework sender identity, mph and localized-unit conversion, zone progress/average math, ID resets and clearing on disable. Original numeric resource IDs were preserved.
+
+The package-name host check was validated on the same emulator with Gearslip 0.3.31-alpha signed by an unrelated test key. The previous certificate-pinned patch showed Gearslip's "would not start" screen and logged `Unrecognized host`. With the current patch, Waze's car screen opened in Gearslip's phone preview. This covers the preview only, not a physical head unit.
 
 [Recorded checks and artifact hashes](navigation-validation.json). Test sources are in `scripts/waze/navigation-probe/`; the receiver is a test app, not a Vela integration. `scripts/waze/validate_navigation_events.py` checks its JSONL capture. Physical head-unit rendering, all vehicle/Android power policies and live-road data were not tested.

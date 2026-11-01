@@ -41,7 +41,13 @@ public class FlitsmeisterProbe extends Instrumentation {
   });
   SystemClock.sleep(4000);
   main(()->call(location,"A",new Class[]{Location.class},fix(5.0065,20f)));
-  SystemClock.sleep(1100);
+  SystemClock.sleep(2200);
+  main(()->{
+   Class<?> feed=c("nl.johninnl.flitsmeister.NavigationBroadcasts");Field state=feed.getDeclaredField("STATE");state.setAccessible(true);
+   Object snapshot=call(state.get(null),"snapshot",new Class[]{long.class},SystemClock.elapsedRealtime());
+   Field candidate=feed.getDeclaredField("candidate");candidate.setAccessible(true);
+   log.append("STATE_AFTER_MOVE candidate=").append(candidate.get(null)!=null).append(" distance=").append(snapshot.getClass().getField("observedMeters").get(snapshot)).append(" average=").append(snapshot.getClass().getField("averageKmh").get(snapshot)).append('\n');
+  });
   main(()->{
    zone.getClass().getField("d").set(zone,report("probe-zone",2));
    call(zone,"c",new Class[]{Location.class,float.class,String.class},fix(5.007,20f),90f,"A1");

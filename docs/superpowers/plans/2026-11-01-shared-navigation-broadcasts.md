@@ -16,4 +16,4 @@
 
 Delivery: commit with required identity, publish the development prerelease and verify its signed bundle through the same receiver probes. The final Actions run and published artifact provide delivery evidence.
 
-Main promotion of these new Flitsmeister changes requires confirmation under repository instructions; previous approval was for the earlier Waze patches. Prepare concrete tested changes first.
+Promote the completed patches to main under the user’s existing instruction. Preserve main-only controls, validate the isolated candidate and verify the signed stable release after promotion.

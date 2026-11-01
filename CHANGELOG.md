@@ -1,123 +1,299 @@
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/56ef05e67095a28b1b948f34b7594f7c0c1a9ba7/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/e8d866a4c447854d1030c84ab332c00f063aedd5/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.7.**
+**Release · patch bundle v1.22.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [56ef05e67095](https://github.com/johninnl/nl-morphe-patches/commit/56ef05e67095a28b1b948f34b7594f7c0c1a9ba7). Check each app's target versions in the user guide before patching.
+Source: [e8d866a4c447](https://github.com/johninnl/nl-morphe-patches/commit/e8d866a4c447854d1030c84ab332c00f063aedd5). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.7](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.6...v1.9.0-dev.7) (2026-11-01)
+## [1.22.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.21.0...v1.22.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add alert, privacy and display controls ([e8d866a](https://github.com/johninnl/nl-morphe-patches/commit/e8d866a4c447854d1030c84ab332c00f063aedd5))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/dfb458d72dca25332e429af9a352e2469b817aee/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.21.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [dfb458d72dca](https://github.com/johninnl/nl-morphe-patches/commit/dfb458d72dca25332e429af9a352e2469b817aee). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.21.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.20.0...v1.21.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Gearslip:** choose drawer apps from phone settings ([dfb458d](https://github.com/johninnl/nl-morphe-patches/commit/dfb458d72dca25332e429af9a352e2469b817aee))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/1ae705851644e42444d8e45f196d11ffd4c908ff/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.20.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [1ae705851644](https://github.com/johninnl/nl-morphe-patches/commit/1ae705851644e42444d8e45f196d11ffd4c908ff). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.20.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.19.2...v1.20.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add six optional driving controls ([1ae7058](https://github.com/johninnl/nl-morphe-patches/commit/1ae705851644e42444d8e45f196d11ffd4c908ff))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/99cd3e255f5f728f5ac8d162f563233682690014/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.19.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [99cd3e255f5f](https://github.com/johninnl/nl-morphe-patches/commit/99cd3e255f5f728f5ac8d162f563233682690014). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.19.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.19.1...v1.19.2) (2026-11-01)
 
 ### 🐛 Bug Fixes
 
-* **YouTube Music:** discover compatible Gearslip browser layouts across versions ([56ef05e](https://github.com/johninnl/nl-morphe-patches/commit/56ef05e67095a28b1b948f34b7594f7c0c1a9ba7))
+* **Waze:** accept patched Gearslip as a car host ([99cd3e2](https://github.com/johninnl/nl-morphe-patches/commit/99cd3e255f5f728f5ac8d162f563233682690014))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2c920a152821ca4d54561096ad8419f625680a83/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.6.**
+**Release · patch bundle v1.19.1.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [8e2b0b4d4e91](https://github.com/johninnl/nl-morphe-patches/commit/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca). Check each app's target versions in the user guide before patching.
+Source: [2c920a152821](https://github.com/johninnl/nl-morphe-patches/commit/2c920a152821ca4d54561096ad8419f625680a83). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.6](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.5...v1.9.0-dev.6) (2026-11-01)
+## [1.19.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.19.0...v1.19.1) (2026-11-01)
 
-### ✨ New Features
+### 🐛 Bug Fixes
 
-* **Gearslip:** retain music players and filter unwanted drawer apps ([7fcd3a3](https://github.com/johninnl/nl-morphe-patches/commit/7fcd3a3eacfc18933cd6c8c334ff0752e5dd2c33))
-* **YouTube Music:** verify Gearslip callers for music browsing ([8e2b0b4](https://github.com/johninnl/nl-morphe-patches/commit/8e2b0b4d4e9120e1cedb16de1b0091b02b059cca))
+* **YouTube Music:** discover compatible Gearslip browser layouts across versions ([2c920a1](https://github.com/johninnl/nl-morphe-patches/commit/2c920a152821ca4d54561096ad8419f625680a83))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/af580ac0c13727c2d7447499df3a90247c45a2a4/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/1bb6679db1d6161ea28a78228379716bf4f52990/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.5.**
+**Release · patch bundle v1.19.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [af580ac0c137](https://github.com/johninnl/nl-morphe-patches/commit/af580ac0c13727c2d7447499df3a90247c45a2a4). Check each app's target versions in the user guide before patching.
+Source: [1bb6679db1d6](https://github.com/johninnl/nl-morphe-patches/commit/1bb6679db1d6161ea28a78228379716bf4f52990). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.5](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.4...v1.9.0-dev.5) (2026-11-01)
+## [1.19.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.18.0...v1.19.0) (2026-11-01)
 
 ### ✨ New Features
 
-* **Flitsmeister:** share background navigation broadcasts with Waze ([af580ac](https://github.com/johninnl/nl-morphe-patches/commit/af580ac0c13727c2d7447499df3a90247c45a2a4))
-* **Waze:** share background navigation broadcasts with Waze ([af580ac](https://github.com/johninnl/nl-morphe-patches/commit/af580ac0c13727c2d7447499df3a90247c45a2a4))
+* **Gearslip:** retain music players and filter unwanted drawer apps ([4b1720d](https://github.com/johninnl/nl-morphe-patches/commit/4b1720d2b95f3b6e9353b97ddd26d0bfb74027e1))
+* **YouTube Music:** verify Gearslip callers for music browsing ([1bb6679](https://github.com/johninnl/nl-morphe-patches/commit/1bb6679db1d6161ea28a78228379716bf4f52990))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/48bea6ad773f8d7bf5814c2db07ece3650894dfb/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.4.**
+**Release · patch bundle v1.18.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [6e660ccf67fe](https://github.com/johninnl/nl-morphe-patches/commit/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf). Check each app's target versions in the user guide before patching.
+Source: [48bea6ad773f](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.4](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.3...v1.9.0-dev.4) (2026-11-01)
+## [1.18.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.17.0...v1.18.0) (2026-11-01)
 
 ### ✨ New Features
 
-* **Waze:** broadcast background navigation data and support Gearslip ([6e660cc](https://github.com/johninnl/nl-morphe-patches/commit/6e660ccf67fecbfd950bd0e33dfe61ac99a747cf))
+* **Flitsmeister:** broadcast navigation data to third-party apps ([48bea6a](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb))
+* **Waze:** broadcast navigation data to third-party apps ([48bea6a](https://github.com/johninnl/nl-morphe-patches/commit/48bea6ad773f8d7bf5814c2db07ece3650894dfb))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3601ce5ea1d850c6c654c62a275c42dedd343a54/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d9b46b3c1df1710afd93f1709ebedbf5f0cad43e/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.3.**
+**Release · patch bundle v1.17.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [3601ce5ea1d8](https://github.com/johninnl/nl-morphe-patches/commit/3601ce5ea1d850c6c654c62a275c42dedd343a54). Check each app's target versions in the user guide before patching.
+Source: [d9b46b3c1df1](https://github.com/johninnl/nl-morphe-patches/commit/d9b46b3c1df1710afd93f1709ebedbf5f0cad43e). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.3](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.2...v1.9.0-dev.3) (2026-11-01)
+## [1.17.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.16.0...v1.17.0) (2026-11-01)
 
 ### ✨ New Features
 
-* **Waze:** answer consent silently and close privacy gaps ([3601ce5](https://github.com/johninnl/nl-morphe-patches/commit/3601ce5ea1d850c6c654c62a275c42dedd343a54))
+* **Waze:** broadcast background navigation data and support Gearslip ([d9b46b3](https://github.com/johninnl/nl-morphe-patches/commit/d9b46b3c1df1710afd93f1709ebedbf5f0cad43e))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a0de30f298742f972d0ef91f4df88f48bdc1a446/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/828331cdd3b4f7d74c0b1306e2e4134b03b273ec/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.2.**
+**Release · patch bundle v1.16.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [a0de30f29874](https://github.com/johninnl/nl-morphe-patches/commit/a0de30f298742f972d0ef91f4df88f48bdc1a446). Check each app's target versions in the user guide before patching.
+Source: [828331cdd3b4](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-11-01)
+## [1.16.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.15.1...v1.16.0) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **2dehands:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
+* **Marktplaats:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
 
 ### ✨ New Features
 
-* **Waze:** add full patch catalog for 5.26.90.901 ([a0de30f](https://github.com/johninnl/nl-morphe-patches/commit/a0de30f298742f972d0ef91f4df88f48bdc1a446))
+* **2dehands:** add advertising and privacy controls ([2b57f43](https://github.com/johninnl/nl-morphe-patches/commit/2b57f434d3f818bb23a976b15cc6b20847d9bc7f))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4d8ad6d32e674782e324f97a7fa092a64ac8420e/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.9.0-dev.1.**
+**Release · patch bundle v1.15.1.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [4d8ad6d32e67](https://github.com/johninnl/nl-morphe-patches/commit/4d8ad6d32e674782e324f97a7fa092a64ac8420e). Check each app's target versions in the user guide before patching.
+Source: [0906f8bfd4f4](https://github.com/johninnl/nl-morphe-patches/commit/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.9.0-dev.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.8.0...v1.9.0-dev.1) (2026-11-01)
+## [1.15.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.15.0...v1.15.1) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** hide the guest account sign-up card ([0906f8b](https://github.com/johninnl/nl-morphe-patches/commit/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/68b50783fd3d73aaedd4949028dd7269636baad6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.15.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [68b50783fd3d](https://github.com/johninnl/nl-morphe-patches/commit/68b50783fd3d73aaedd4949028dd7269636baad6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.15.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.14.0...v1.15.0) (2026-11-01)
 
 ### ✨ New Features
 
-* **Projectivy Launcher:** add Unlock Premium for 4.73 ([4d8ad6d](https://github.com/johninnl/nl-morphe-patches/commit/4d8ad6d32e674782e324f97a7fa092a64ac8420e))
+* **Flitsmeister:** allow onboarding without an account ([68b5078](https://github.com/johninnl/nl-morphe-patches/commit/68b50783fd3d73aaedd4949028dd7269636baad6))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/643e179fd308a1897b46f6afde176e884f7ab529/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.14.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [643e179fd308](https://github.com/johninnl/nl-morphe-patches/commit/643e179fd308a1897b46f6afde176e884f7ab529). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.14.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.13.0...v1.14.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add full patch catalog for 5.26.90.901 ([caba974](https://github.com/johninnl/nl-morphe-patches/commit/caba974ff21504d6411d9e3e1e43da2059eb66ee))
+* **Waze:** answer consent silently and close privacy gaps ([643e179](https://github.com/johninnl/nl-morphe-patches/commit/643e179fd308a1897b46f6afde176e884f7ab529))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d53c6e40d751d30594068142661b4de5ca9f65e3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.13.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [d53c6e40d751](https://github.com/johninnl/nl-morphe-patches/commit/d53c6e40d751d30594068142661b4de5ca9f65e3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.13.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.12.0...v1.13.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Wuplay Android TV:** choose Home catalog channels inside settings ([d53c6e4](https://github.com/johninnl/nl-morphe-patches/commit/d53c6e40d751d30594068142661b4de5ca9f65e3))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a522a256c65b0c572948006175c26648460084ee/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.12.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [a522a256c65b](https://github.com/johninnl/nl-morphe-patches/commit/a522a256c65b0c572948006175c26648460084ee). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.12.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.11.0...v1.12.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Monet Android TV:** show individual Wuplay catalog rows ([a522a25](https://github.com/johninnl/nl-morphe-patches/commit/a522a256c65b0c572948006175c26648460084ee))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f6d93736e5ed33070f1c58904c029d3a49cd92fc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.11.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f6d93736e5ed](https://github.com/johninnl/nl-morphe-patches/commit/f6d93736e5ed33070f1c58904c029d3a49cd92fc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.11.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.10.0...v1.11.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Wuplay Android TV:** publish selected default-profile catalog channels ([f6d9373](https://github.com/johninnl/nl-morphe-patches/commit/f6d93736e5ed33070f1c58904c029d3a49cd92fc))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/867e14fe0e449eb6dc7938a2caa6524ea37f3a54/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.10.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [867e14fe0e44](https://github.com/johninnl/nl-morphe-patches/commit/867e14fe0e449eb6dc7938a2caa6524ea37f3a54). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.10.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.9.0...v1.10.0) (2026-11-01)
+
+### ✨ New Features
+
+* **AT4K Launcher:** unlock premium on version 1.2 ([d544d2e](https://github.com/johninnl/nl-morphe-patches/commit/d544d2e970cecfdecd1ebe06c4cc3f5c090ddedb))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.9.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [b17fcabce88a](https://github.com/johninnl/nl-morphe-patches/commit/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.9.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.8.0...v1.9.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Projectivy Launcher:** add Unlock Premium for 4.73 ([b17fcab](https://github.com/johninnl/nl-morphe-patches/commit/b17fcabce88a394c5cd72b6a0a58e125f09c2c7c))
 
 <!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ed0e21c82cd14a27d7c52191ad5959b3ed5f8096/docs/site/assets/brand/release-banner.png)

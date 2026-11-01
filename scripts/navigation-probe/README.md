@@ -15,3 +15,5 @@ python3 scripts/navigation-probe/verify_events.py common-events.jsonl --waze-log
 ```
 
 The same receiver listens only to the shared action and records primitive extras plus framework sender UID/package. Verification checks both exact probe sessions, independent authenticated UIDs, current speed including valid zero, mph normalization, observed average formula/partial flag, native segment resets and final clear/disable. Native probes background the Activity with Home before driving actual patched producer methods. Flitsmeister stops the emulator's stationary native GPS provider to avoid nondeterministic races with deterministic test observations; its service/task instances remain real. Flitsmeister's overlay permission is denied. This proves hook wiring and local IPC under those conditions, not live-road accuracy or phone/head-unit compatibility.
+
+Wait more than the one-second publication interval after the average sample before clearing or changing a segment; the probes allow 2.2 seconds for this coalesced event.

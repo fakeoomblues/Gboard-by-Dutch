@@ -1,6 +1,10 @@
 package org.ungoogled.waze;
 
 import nl.johninnl.navigation.NavigationState;
+import nl.johninnl.navigation.NavigationAlerts;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import nl.johninnl.navigation.NavigationProtocol;
 
 import android.app.Application;
@@ -25,6 +29,8 @@ public final class NavigationBroadcasts {
     public static final String REQUEST = "nl.johninnl.waze.NAVIGATION_STATE_REQUEST";
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final NavigationState STATE = new NavigationState();
+    private static final NavigationAlerts ALERTS = new NavigationAlerts();
+    private static final Map<String, List<NavigationAlerts.Alert>> REPORTS = new HashMap<>();
     private static final String SESSION = UUID.randomUUID().toString();
     private static volatile boolean installed;
     private static Application app;
@@ -68,7 +74,7 @@ public final class NavigationBroadcasts {
         main(() -> {
             if (!installed) return;
             MAIN.removeCallbacks(TICK);
-            STATE.reset(on); dirty = true; publish(true); // clearing snapshot is sent even on disable
+            STATE.reset(on); ALERTS.reset(on); REPORTS.clear(); REPORT_TIMES.clear(); dirty = true; publish(true); // clearing snapshot is sent even on disable
             if (on) MAIN.postDelayed(TICK, 1000);
         });
     }
@@ -118,22 +124,69 @@ public final class NavigationBroadcasts {
         main(() -> {
             if (!isEnabled() || update == null) return;
             try {
-                String id = null; int remaining = -1;
+                String id = null, approaching = ""; int remaining = -1, distance = -1;
                 long previousSession = STATE.snapshot(at).zoneSession;
                 Object list = call(update, "getInfoList");
                 if (!(list instanceof List)) return;
                 for (Object info : (List<?>) list) {
                     Object identity = call(info, "getId");
-                    if ((Integer) call(identity, "getSegmentTypeValue") != 7 ||
-                            (Integer) call(info, "getPositionRelativeToSegmentValue") != 1) continue;
-                    id = (String) call(identity, "getSegmentId");
-                    remaining = (Integer) call(info, "getRemainingDistanceMeters"); break;
+                    if ((Integer) call(identity, "getSegmentTypeValue") != 7) continue;
+                    int position=(Integer)call(info,"getPositionRelativeToSegmentValue");
+                    if (position==0 && approaching.isEmpty()) { // Native APPROACHING=0, WITHIN=1 in 5.26.90.901.
+                        approaching=(String)call(identity,"getSegmentId"); distance=(Integer)call(info,"getRemainingDistanceMeters");
+                    } else if(position==1 && id==null) {
+                        id=(String)call(identity,"getSegmentId"); remaining=(Integer)call(info,"getRemainingDistanceMeters");
+                    }
                 }
+                ALERTS.approach(approaching,distance,false,at);
                 if (id == null) STATE.clear("insights", at); else STATE.insights(id, remaining, at);
                 dirty = true; publish(previousSession != STATE.snapshot(at).zoneSession);
             } catch (ReflectiveOperationException | ClassCastException e) { Log.w("UA", "Navigation insights data", e); }
         });
     }
+
+    /** Native repository reports, independently of the legacy Maps sharing toggle. */
+    public static void alerts(Object update) {
+        if(update==null || !isEnabled()) return;
+        final long at=SystemClock.elapsedRealtime();
+        try {
+            List<NavigationAlerts.Alert> reports=new ArrayList<>();
+            for(Object descriptor:(List<?>)call(update,"getDescriptorsList")) {
+                if(reports.size()>=NavigationAlerts.MAX_ALERTS)break;
+                Object info=call(descriptor,"getInfo"), position=call(info,"getPosition"), identity=call(descriptor,"getAlertId");
+                int type=(Integer)call(info,"getTypeValue"); String kind=kind(type);
+                if(kind.isEmpty())continue;
+                String id=String.valueOf(call(identity,"getUniqueId"));
+                if(id.isEmpty())id=String.valueOf(call(identity,"getUuid"));
+                if(id.isEmpty())id=String.valueOf(call(info,"getReportId"));
+                reports.add(new NavigationAlerts.Alert(id,kind,String.valueOf(call(info,"getTitle")),-1,
+                    (Integer)call(descriptor,"getTriggerDistanceMeters"),(Integer)call(position,"getLatitude")/1e6,
+                    (Integer)call(position,"getLongitude")/1e6));
+            }
+            reports("native",reports,at);
+        }catch(ReflectiveOperationException|ClassCastException e){Log.w("UA","Navigation alert source",e);}
+    }
+    static String kind(int type) {
+        switch(type) {
+            case 1:return "police"; case 2:return "crash"; case 3:case 32:return "jam";
+            case 10:return "camera"; case 12:case 19:return "closure";
+            case 4:case 5:case 6:case 7:case 9:case 15:case 16:case 17:case 20:case 21:case 23:case 24:case 25:case 26:return "hazard";
+            default:return "";
+        }
+    }
+    static void reports(String source,List<NavigationAlerts.Alert> reports,long at) {
+        main(()->{if(!isEnabled() || at<0 || at>SystemClock.elapsedRealtime())return; List<NavigationAlerts.Alert> timed=new ArrayList<>();
+            for(NavigationAlerts.Alert a:reports)timed.add(new NavigationAlerts.Alert(a.id,a.kind,a.title,a.distance,a.trigger,a.latitude,a.longitude,at));
+            REPORTS.put(source,timed);
+            // Each source expires independently; replacing one never refreshes another's observations.
+            List<NavigationAlerts.Alert> all=new ArrayList<>();
+            REPORT_TIMES.put(source,at);
+            for(Map.Entry<String,List<NavigationAlerts.Alert>> e:REPORTS.entrySet())
+                if(at-REPORT_TIMES.get(e.getKey())<=NavigationAlerts.TTL_MS)all.addAll(e.getValue());
+            ALERTS.reports(all,at);dirty=true;publish(false);
+        });
+    }
+    private static final Map<String,Long> REPORT_TIMES=new HashMap<>();
 
     private static Object call(Object value, String method) throws ReflectiveOperationException {
         return value.getClass().getMethod(method).invoke(value);
@@ -153,26 +206,27 @@ public final class NavigationBroadcasts {
         @Override public void run() {
             if (!isEnabled()) { switched(false); return; }
             NavigationState.Snapshot n = STATE.snapshot(SystemClock.elapsedRealtime());
-            if (dirty || n.currentStatus.equals("valid") || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") ||
+            if (dirty || n.currentStatus.equals("valid") || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") || ALERTS.fresh(SystemClock.elapsedRealtime()) ||
+                    !ALERTS.status(SystemClock.elapsedRealtime()).equals(lastAlertsStatus) ||
                     !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
                     !n.currentStatus.equals(lastCurrentStatus)) publish(false);
             MAIN.postDelayed(this, 1000);
         }
     };
 
-    private static String lastRoadStatus = "", lastZoneStatus = "", lastCurrentStatus = "";
+    private static String lastRoadStatus = "", lastZoneStatus = "", lastCurrentStatus = "", lastAlertsStatus = "";
     private static void publish(boolean force) {
         if (app == null) return;
         long now = SystemClock.elapsedRealtime();
         NavigationState.Snapshot n = STATE.snapshot(now);
         boolean transition = !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
-                    !n.currentStatus.equals(lastCurrentStatus);
+                    !n.currentStatus.equals(lastCurrentStatus) || !ALERTS.status(now).equals(lastAlertsStatus);
         if (!force && !transition && now - lastSent < (dirty ? 1000 : 5000)) return;
         NavigationProtocol.send(app, snapshot(n, now), receiverPackage());
-        lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; lastCurrentStatus = n.currentStatus; dirty = false;
+        lastAlertsStatus=ALERTS.status(now); lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; lastCurrentStatus = n.currentStatus; dirty = false;
     }
 
     static Intent snapshot(NavigationState.Snapshot n, long now) {
-        return NavigationProtocol.snapshot(ACTION, app == null ? "com.waze" : app.getPackageName(), SESSION, ++sequence, n, now);
+        return ALERTS.append(NavigationProtocol.snapshot(ACTION, app == null ? "com.waze" : app.getPackageName(), SESSION, ++sequence, n, now),now);
     }
 }

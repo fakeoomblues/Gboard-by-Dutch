@@ -9,7 +9,7 @@
 
 ## Global constraints
 
-Preserve primary checkout work and account data; no manual versions, main promotion or phone interaction. A fresh disposable emulator is now explicitly authorized. Only exact verified app versions are compatible. Real UID ownership gates must leave unrelated callers unchanged. Keep drawer filter default empty.
+Preserve primary checkout work and account data; no manual versions or phone interaction. The user approved dev followed by main for these changes. A fresh disposable emulator is now explicitly authorized. Only exact verified app versions are compatible. Real UID ownership gates must leave unrelated callers unchanged. Keep drawer filter default empty.
 
 ## Review focus
 
@@ -36,6 +36,6 @@ SETTINGS without media, navigation with incidental media, caller-package spoofin
 - [x] Run Python suite and Android release-workflow Gradle checks; review patch diff/fingerprints and generated bundle contents.
 - [ ] Update substantive docs and ship a local reviewable bundle; no publication or main promotion without the required confirmation.
 
-Pre-flight: tasks share only bundle/build and final runtime validation; separate patch namespaces prevent shared code edits. User explicitly selected the Morphe implementation and requested the secondary hide-list feature. Work in the current checkout, touching additive task files only; preserve unrelated untracked research. The user subsequently authorized a dev prerelease. Commit only this task's changes, publish through dev, and leave main untouched. All further runtime work uses the disposable emulator.
+Pre-flight: tasks share only bundle/build and final runtime validation; separate patch namespaces prevent shared code edits. User explicitly selected the Morphe implementation and requested the secondary hide-list feature. Work in the current checkout, touching additive task files only; preserve unrelated untracked research. The user subsequently authorized a dev prerelease. Commit only this task's changes, publish through dev, then main as subsequently approved by the user. All further runtime work uses the disposable emulator.
 
 Validation update: Android ART probes passed on both Gearslip targets and both YT Music policy targets. They were rerun on the newly authorized disposable API 36 emulator. No further phone interaction is permitted. Full signed-in browser/catalog/playback acceptance remains unverified and is explicitly deferred to prerelease testing. Independent patch review found no findings.

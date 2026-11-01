@@ -13,7 +13,7 @@ import re
 import xml.etree.ElementTree as ET
 from flitsmeister_contracts import METHOD_HASHES, RESOURCE_HASHES, PROBES, METHOD_SHAPES, ROW_CONTRACTS
 
-NAMES = {'Unlock Pro', 'Hide Pro notices', 'Fix PairIP startup', 'Disable partner services', 'Hide ads', 'Disable tracking', 'Broadcast navigation data'}
+NAMES = {'Unlock Pro', 'Hide Pro notices', 'Fix PairIP startup', 'Disable partner services', 'Hide ads', 'Disable tracking', 'Guest mode', 'Broadcast navigation data'}
 A = '{http://schemas.android.com/apk/res/android}'
 HELPER = 'Lmorphe/flitsmeister/FeatureEligibility;'
 NAVIGATION = 'Lnl/johninnl/flitsmeister/NavigationBroadcasts;'
@@ -562,6 +562,8 @@ def verify(root: Path, selected: set[str]) -> None:
     tracking_disabled = 'Disable tracking' in selected
     verify_tracking(root, tracking_disabled)
     verify_telemetry(root, tracking_disabled)
+    from verify_flitsmeister_guest import verify as verify_guest
+    verify_guest(root, 'Guest mode' in selected)
     profile = int(unlock) + 2 * int(hide)
     # Coverage comes directly from the independent closed role tables, not
     # from production operation lists. Missing FEATURE rows cannot silently

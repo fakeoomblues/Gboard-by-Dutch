@@ -101,4 +101,49 @@ public class NavigationBroadcastsTest {
   assertEquals("zone-b:2",last().getStringExtra("zone_segment_id"));
  }
 
+ @Test public void nativeCandidateApproachPrecedesPartialAverageAndExpires() {
+  Task task=new Task();Location approaching=fix(20);approaching.setLongitude(4.995);
+  NavigationBroadcasts.zone(task,approaching);
+  assertEquals("ahead",last().getStringExtra("zone_approach_status"));
+  assertTrue(last().getIntExtra("zone_approach_distance_m",-1)>300);
+  assertTrue(last().getBooleanExtra("zone_approach_distance_estimated",false));
+  assertEquals("inactive",last().getStringExtra("zone_status"));
+  assertFalse(last().hasExtra("zone_average_speed_kmh"));
+  long at=last().getLongExtra("zone_approach_updated_elapsed_ms",-1);
+  shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));
+  app.sendBroadcast(new Intent("nl.johninnl.navigation.NAVIGATION_STATE_REQUEST"));shadowOf(Looper.getMainLooper()).idle();
+  assertEquals("stale",last().getStringExtra("zone_approach_status"));
+  assertEquals(at,last().getLongExtra("zone_approach_updated_elapsed_ms",-2));
+  NavigationBroadcasts.zoneStopped();assertEquals("inactive",last().getStringExtra("zone_approach_status"));
+ }
+ public static class RoadReport {
+  public String getId(){return "public-report";}
+  public String getReportType(){return "SPEED_TRAP";}
+  public Location getLocation(){Location l=new Location("report");l.setLatitude(38.54);l.setLongitude(-121.74);return l;}
+  public String reportTitleText(android.content.Context c){return "Mobile camera";}
+ }
+ public static class Alerted {
+  final boolean active;Alerted(boolean on){active=on;}
+  public boolean isActive(){return active;}
+  public RoadReport getReport(){return new RoadReport();}
+ }
+ @Test public void backgroundReportListUsesNormalizedKindsAndStopClears() {
+  NavigationBroadcasts.reports(java.util.Arrays.asList(new Alerted(true),new Alerted(false)));
+  assertArrayEquals(new String[]{"mobile_camera"},last().getStringArrayExtra("alert_kinds"));
+  assertArrayEquals(new int[]{-1},last().getIntArrayExtra("alert_distance_m"));
+  assertEquals(38.54,last().getDoubleArrayExtra("alert_latitude")[0],0);
+  NavigationBroadcasts.stopped();assertFalse(last().hasExtra("alert_ids"));
+ }
+
+ @Test public void backgroundBusSubscriptionActuallyDeliversPrimitiveReports() throws Exception {
+  Object callback=Class.forName("fs7").getField("subscriber").get(null);
+  assertNotNull(callback);
+  Object result=Class.forName("b49").getMethod("invoke",Object.class).invoke(callback,java.util.Arrays.asList(new Alerted(true)));
+  assertSame(Class.forName("tvj").getField("a").get(null),result);
+  assertArrayEquals(new String[]{"mobile_camera"},last().getStringArrayExtra("alert_kinds"));
+  NavigationBroadcasts.stopped();
+  Class.forName("b49").getMethod("invoke",Object.class).invoke(callback,java.util.Arrays.asList(new Alerted(true)));
+  assertFalse(last().hasExtra("alert_ids"));
+ }
+
 }
