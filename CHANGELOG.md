@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/cf9acd2fe8597795be9e40409eaf415613ed93e5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.23.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [cf9acd2fe859](https://github.com/johninnl/nl-morphe-patches/commit/cf9acd2fe8597795be9e40409eaf415613ed93e5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.23.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.22.0...v1.23.0) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **Vela Maps:** follow active car routes without the phone service ([cf9acd2](https://github.com/johninnl/nl-morphe-patches/commit/cf9acd2fe8597795be9e40409eaf415613ed93e5))
+
+### ✨ New Features
+
+* **Flitsmeister:** share road alerts and zone approaches with third-party apps ([27f0205](https://github.com/johninnl/nl-morphe-patches/commit/27f0205b3ca015055bc007cafdafe61f6035782e))
+* **Vela Maps:** integrate external speed and road warnings natively ([8e2a2a2](https://github.com/johninnl/nl-morphe-patches/commit/8e2a2a22e0d04049602d96ce1a4de35c7cbe0617))
+* **Waze:** share road alerts and zone approaches with third-party apps ([27f0205](https://github.com/johninnl/nl-morphe-patches/commit/27f0205b3ca015055bc007cafdafe61f6035782e))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/e8d866a4c447854d1030c84ab332c00f063aedd5/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.22.0.**

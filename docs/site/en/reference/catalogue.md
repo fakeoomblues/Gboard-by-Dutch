@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.22.0**
+**Patch bundle: 1.23.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -528,6 +528,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 7.0.16 |
 | Hide ads | On | 7.0.16 |
 | Skip consent screens | On | 7.0.16 |
+
+## Vela Maps
+
+[What do the patches change?](../apps/vela.md)
+
+`app.vela`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| External speed controls | On | 0.5.2621 |
 
 ## Videoland Android
 
