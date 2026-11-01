@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -137,6 +137,43 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Allow high refresh rate",
+      "description": "Lets Waze select supported phone display modes up to an adjustable ceiling. Does not guarantee rendering FPS.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "targetRefreshRate",
+          "title": "Refresh rate ceiling (Hz)",
+          "description": "60 to 120 Hz. Editable in Customization. Restart Waze after changing it; higher rates may use more power.",
+          "required": true,
+          "type": "kotlin.Int",
+          "default": 90,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Auto zoom",
@@ -414,6 +451,43 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Car reconnect grace period",
+      "description": "Defers Android Auto projection shutdown for brief disconnections. Leaves the phone background timeout unchanged.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "minutes",
+          "title": "Reconnect grace period (minutes)",
+          "description": "1 to 10 minutes. Also editable in Customization; restart Waze/reconnect to apply.",
+          "required": true,
+          "type": "kotlin.Int",
+          "default": 2,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Car traffic meter",
@@ -5132,6 +5206,33 @@
       "options": []
     },
     {
+      "name": "Hide recent destinations",
+      "description": "Hides the native recent-destination list. Waze still stores the history; favorites and future events stay available.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Hide unavailable content",
       "description": "Hides subscription-required catalogue entries and action buttons, and removes empty seasons. Preserves content available to the current account and other access checks.",
       "default": true,
@@ -5358,6 +5459,97 @@
           "required": true,
           "type": "kotlin.String",
           "default": "ebe7dd",
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Native camera and hazard controls",
+      "description": "Keeps selected Waze camera and crosswalk alerts enabled, including map and notification gates. Needs Waze data.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "phone",
+          "title": "Phone-use cameras",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "bus",
+          "title": "Bus-lane cameras",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "carpool",
+          "title": "Carpool-lane cameras",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "hov",
+          "title": "HOV-lane cameras",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "noise",
+          "title": "Noise cameras",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "raisedCrosswalks",
+          "title": "Raised crosswalks",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "highwayCrosswalks",
+          "title": "Highway crosswalks",
+          "description": "Adds a separate Customization switch.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]
@@ -7428,6 +7620,52 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Speed bump controls",
+      "description": "Independent controls to show speed bumps on the map and silence their on-route warnings.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.26.90.901",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "map",
+          "title": "Map markers",
+          "description": "Adds Show speed bumps on map in Customization.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        },
+        {
+          "key": "silence",
+          "title": "Silence warnings",
+          "description": "Adds a separate suppression switch; does not hide map markers.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
+          "values": null
+        }
+      ]
     },
     {
       "name": "Speed camera alerts",

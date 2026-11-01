@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.21.0**
+**Patchbundel: 1.22.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -590,20 +590,24 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Alert distances | Aan | 5.26.90.901 |
 | All moods | Uit | 5.26.90.901 |
+| Allow high refresh rate | Uit | 5.26.90.901 |
 | Auto zoom | Uit | 5.26.90.901 |
 | Average speed zone bar | Aan | 5.26.90.901 |
 | Bigger alert pins | Uit | 5.26.90.901 |
 | Bigger speedometer | Aan | 5.26.90.901 |
 | Broadcast navigation data | Aan | 5.26.90.901 |
 | Car alerts as notifications | Uit | 5.26.90.901 |
+| Car reconnect grace period | Uit | 5.26.90.901 |
 | Car traffic meter | Uit | 5.26.90.901 |
 | Change app name | Aan | 5.26.90.901 |
 | Extra map info | Uit | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
 | Hide ads | Aan | 5.26.90.901 |
+| Hide recent destinations | Uit | 5.26.90.901 |
 | Lane guidance | Uit | 5.26.90.901 |
 | Map skin | Aan | 5.26.90.901 |
+| Native camera and hazard controls | Uit | 5.26.90.901 |
 | Navigation distances | Uit | 5.26.90.901 |
 | No AI reporting | Uit | 5.26.90.901 |
 | No Google Assistant | Uit | 5.26.90.901 |
@@ -615,6 +619,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Share alerts with Maps | Aan | 5.26.90.901 |
 | Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
+| Speed bump controls | Uit | 5.26.90.901 |
 | Speed camera alerts | Aan | 5.26.90.901 |
 | Speed camera sound at any speed | Aan | 5.26.90.901 |
 | Speed cameras everywhere | Uit | 5.26.90.901 |

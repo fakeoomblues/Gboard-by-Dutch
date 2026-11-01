@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.21.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.21.0)** · 50 apps · 228 patches
+**Patch bundle [v1.22.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.22.0)** · 50 apps · 233 patches
 
 ### Weather
 
@@ -96,7 +96,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 8 |
 | [Gearslip](https://johninnl.github.io/nl-morphe-patches/apps/gearslip/) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 2 |
 | [Rollerbank](https://johninnl.github.io/nl-morphe-patches/apps/rollerbank/) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
-| [Waze](https://johninnl.github.io/nl-morphe-patches/apps/waze/) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 35 |
+| [Waze](https://johninnl.github.io/nl-morphe-patches/apps/waze/) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 40 |
 
 ### Entertainment
 

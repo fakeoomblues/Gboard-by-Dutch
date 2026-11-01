@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/e8d866a4c447854d1030c84ab332c00f063aedd5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.22.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [e8d866a4c447](https://github.com/johninnl/nl-morphe-patches/commit/e8d866a4c447854d1030c84ab332c00f063aedd5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.22.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.21.0...v1.22.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** add alert, privacy and display controls ([e8d866a](https://github.com/johninnl/nl-morphe-patches/commit/e8d866a4c447854d1030c84ab332c00f063aedd5))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/dfb458d72dca25332e429af9a352e2469b817aee/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.21.0.**
