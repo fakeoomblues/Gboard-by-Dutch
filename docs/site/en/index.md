@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Development patch bundle: 1.9.0-dev.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">43 apps</span> · Development patch bundle: 1.9.0-dev.3</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
@@ -890,7 +890,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods average speed zone bar bigger alert pins bigger speedometer change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods average speed zone bar bigger alert pins bigger speedometer change app name flock cameras full black hide ads map skin navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit sign stay awake in the background yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](reference/catalogue.md#waze)
@@ -898,7 +898,7 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>26 patches</summary>
+<summary>27 patches</summary>
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
@@ -919,6 +919,7 @@ hide:
 <li>Remove telemetry <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Report speed limit <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Share alerts with Maps <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Any</span></li>
 <li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901</span></li>

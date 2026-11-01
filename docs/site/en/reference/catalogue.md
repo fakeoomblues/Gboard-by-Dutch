@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.9.0-dev.2**
+**Development patch bundle: 1.9.0-dev.3**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -559,6 +559,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Remove telemetry | On | 5.26.90.901 |
 | Report speed limit | Off | 5.26.90.901 |
 | Share alerts with Maps | On | 5.26.90.901 |
+| Skip consent screens | On | 5.26.90.901 |
 | SoundCloud in Waze | On | Any |
 | Speed camera alerts | On | 5.26.90.901 |
 | Speed camera sound at any speed | On | 5.26.90.901 |

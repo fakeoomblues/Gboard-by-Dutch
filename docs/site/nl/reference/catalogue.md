@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.9.0-dev.2**
+**Ontwikkelbundel: 1.9.0-dev.3**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -559,6 +559,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Remove telemetry | Aan | 5.26.90.901 |
 | Report speed limit | Uit | 5.26.90.901 |
 | Share alerts with Maps | Aan | 5.26.90.901 |
+| Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
 | Speed camera alerts | Aan | 5.26.90.901 |
 | Speed camera sound at any speed | Aan | 5.26.90.901 |
