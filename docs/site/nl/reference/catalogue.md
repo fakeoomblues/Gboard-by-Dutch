@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.4.0**
+**Patchbundel: 1.5.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -520,6 +520,14 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 7.53.1 |
 | Read full articles | Aan | 7.53.1 |
 | Skip consent screens | Aan | 7.53.1 |
+
+## Waze
+
+`com.waze`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| YT Music Morphe in Waze | Aan | Alle versies |
 
 ## Weeronline
 

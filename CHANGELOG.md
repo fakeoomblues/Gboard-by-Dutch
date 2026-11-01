@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/e321406a19aa15485c8b8b6c047662aa40c53d5e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.5.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [e321406a19aa](https://github.com/johninnl/nl-morphe-patches/commit/e321406a19aa15485c8b8b6c047662aa40c53d5e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.5.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.4.0...v1.5.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Waze:** show YT Music Morphe Home content, not the personal Library ([e321406](https://github.com/johninnl/nl-morphe-patches/commit/e321406a19aa15485c8b8b6c047662aa40c53d5e))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/91739dd5b29f27b925e5a4c6133c41db9e5ad7c1/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.4.0.**

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.4.0**
+**Patch bundle: 1.5.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -520,6 +520,14 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 7.53.1 |
 | Read full articles | On | 7.53.1 |
 | Skip consent screens | On | 7.53.1 |
+
+## Waze
+
+`com.waze`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| YT Music Morphe in Waze | On | Any |
 
 ## Weeronline
 
