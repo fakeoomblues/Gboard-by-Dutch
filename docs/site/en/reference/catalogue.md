@@ -1,8 +1,21 @@
 # Patch catalogue
 
-**Patch bundle: 1.15.1**
+**Patch bundle: 1.16.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
+
+## 2dehands
+
+[What do the patches change?](../apps/2dehands.md)
+
+`be.tweedehands.m`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable ThreatMetrix | On | 16.19.0 |
+| Disable tracking | On | 16.19.0 |
+| Hide ads | On | 16.19.0 |
+| Skip consent screens | On | 16.19.0 |
 
 ## 9292
 

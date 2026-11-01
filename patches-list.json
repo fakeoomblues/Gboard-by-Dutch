@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -400,6 +400,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable ThreatMetrix",
+      "description": "Stops device/security profiling and its session headers.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.tweedehands.m",
+          "name": "2dehands",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": null,
+          "signatures": [
+            "7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -1586,6 +1620,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
+      "description": "Stops optional analytics, marketing, Gemius/CIM and device profiling.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.tweedehands.m",
+          "name": "2dehands",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": null,
+          "signatures": [
+            "7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -4172,6 +4240,40 @@
     },
     {
       "name": "Hide ads",
+      "description": "Removes display/native ads, paid seller placements, promotional search cards and advertising measurements.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.tweedehands.m",
+          "name": "2dehands",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": null,
+          "signatures": [
+            "7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads",
       "description": "Hides native ad placements and publisher marketing cards, and blocks display/video ad activation while preserving articles, content playback and navigation.",
       "default": true,
       "category": null,
@@ -6591,6 +6693,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip consent screens",
+      "description": "Hides startup and manual privacy forms and requests genuine reject-all consent.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.tweedehands.m",
+          "name": "2dehands",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": null,
+          "signatures": [
+            "7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "16.19.0",
+              "versionCodes": {
+                "ARM64_V8A": 633464,
+                "ARMEABI_V7A": 633464,
+                "X86_64": 633464,
+                "X86": 633464
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]

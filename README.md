@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.15.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.15.1)** · 46 apps · 211 patches
+**Patch bundle [v1.16.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.16.0)** · 47 apps · 215 patches
 
 ### Weather
 
@@ -116,6 +116,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
+| [2dehands](https://johninnl.github.io/nl-morphe-patches/apps/2dehands/) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
 | [AT4K Launcher](https://johninnl.github.io/nl-morphe-patches/apps/at4k/) | Plus/Pro | 1.2 | APK | 1 |
 | [Marktplaats](https://johninnl.github.io/nl-morphe-patches/apps/marktplaats/) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](https://johninnl.github.io/nl-morphe-patches/apps/monet/) | See guide | 1.1.0 | APK | 1 |

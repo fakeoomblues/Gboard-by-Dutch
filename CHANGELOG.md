@@ -1,4 +1,26 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/828331cdd3b4f7d74c0b1306e2e4134b03b273ec/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.16.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [828331cdd3b4](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.16.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.15.1...v1.16.0) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **2dehands:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
+* **Marktplaats:** complete 2dehands publication and shared Horizon scoping ([828331c](https://github.com/johninnl/nl-morphe-patches/commit/828331cdd3b4f7d74c0b1306e2e4134b03b273ec))
+
+### ✨ New Features
+
+* **2dehands:** add advertising and privacy controls ([2b57f43](https://github.com/johninnl/nl-morphe-patches/commit/2b57f434d3f818bb23a976b15cc6b20847d9bc7f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.15.1.**

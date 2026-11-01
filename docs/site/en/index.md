@@ -38,8 +38,29 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Patch bundle: 1.15.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">47 apps</span> · Patch bundle: 1.16.0</p>
 <div class="dap-app-grid" markdown>
+<article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [2dehands](apps/2dehands.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">16.19.0</span></p>
+<p class="dap-app-card__package">be.tweedehands.m</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable ThreatMetrix <span class="dap-app-card__target">16.19.0</span></li>
+<li>Disable tracking <span class="dap-app-card__target">16.19.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">16.19.0</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">16.19.0</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/2dehands.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
