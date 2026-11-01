@@ -19,3 +19,18 @@ provided that such references:
 - Are accurate, factual, and non-misleading;
 - Do not suggest authorship by the Morphe project; and
 - Appear only in a secondary or descriptive context, not as part of the product or project name.
+
+
+Projectivy Unlock Premium adaptation
+-----------------------------------
+
+Copyright (C) 2026 Saiesh Nitin Shirodkar.
+Source: saieshshirodkar/saiesh-morphe-patches, commit
+bc8d7d9fb066f6eb5e1095c148b44df9899d381d.
+Licensed under the GNU General Public License, version 3 or later.
+Modified for Projectivy 4.73 by this project.
+
+Additional terms under GPLv3 Section 7 retained from the upstream NOTICE:
+The name "Morphe" and any Morphe branding may not be used to endorse or
+promote products derived from this software without specific prior
+written permission.

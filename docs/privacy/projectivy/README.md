@@ -25,8 +25,30 @@ fingerprint correctly excludes it. This is an inferred suppression of these name
 paths from static code, not evidence of complete network silence or launcher runtime
 behavior. Other Firebase paths, functional network services and cached diagnostics
 are outside the original patch scope. Emulator and device testing were explicitly
-skipped. No paid features or purchase state are changed.
+skipped. The tracking control does not change paid features or purchase state.
 
-Reproduce: build `:patches:buildAndroid`, apply only `Disable tracking` with Morphe
+Reproduce: build `:patches:buildAndroid`, apply `Disable tracking` and `Unlock Premium` with Morphe
 Desktop in FULL mode to the original APK, decode the output with apktool, then run
 `python3 tests/verify_projectivy.py ORIGINAL_DECODED OUTPUT_DECODED`.
+
+
+## Unlock Premium
+
+Adapted from `saieshshirodkar/saiesh-morphe-patches` commit
+`bc8d7d9fb066f6eb5e1095c148b44df9899d381d`, which targets 4.71 (95).
+The patch is separate from Disable tracking; either can be selected alone.
+
+Seen in 4.73: the old native-check wrapper is now `PTApplication.f()Z`, calling
+`vs(Z)Z`. Returning true preserves the upstream bypass. This alone does not
+cover 4.73's premium feature gates: these read the read-only StateFlow `y`,
+backed by `x`, where true means locked. Theme import, backgrounds, parental
+controls and display profiles read that flow. The constructor initializes it
+true, and `d(Z)V` updates it from the billing paths (including the age check).
+
+The port initializes the existing flow false and supplies false to its existing
+setter, preserving the flow objects and downstream observers. Billing services,
+license servers, receipts and persistent purchase records are not modified.
+The native wrapper is also bypassed as in the upstream patch. Static/emitted-code
+validation covers both individual controls and the combined selection, cold-start
+state and repeated paid/unpaid/expired updates. No emulator or device execution
+is claimed.
