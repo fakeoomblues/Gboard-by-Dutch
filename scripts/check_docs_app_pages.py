@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import sys
 
-from generate_docs_catalog import app_page
+from generate_docs_catalog import APP_PAGES, app_page
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / 'docs/site'
@@ -39,6 +39,8 @@ def load_apps(paths):
             for package in patch.get('compatiblePackages') or []:
                 slug, _ = app_page(package)
                 if slug is None:
+                    if package['packageName'] in APP_PAGES and APP_PAGES[package['packageName']][0] is None:
+                        continue  # Explicit catalogue-only add-ons have no full-app guide.
                     raise ValueError(f'No app page mapping for {package["packageName"]} ({package.get("formFactor")})')
                 entry = apps.setdefault(slug, {}).setdefault(path, {
                     'targets': {}, 'package': package['packageName']})

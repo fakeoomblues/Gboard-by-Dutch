@@ -43,6 +43,24 @@ def metadata(path, input_type="APKS"):
 
 
 class AppPageTests(unittest.TestCase):
+    def test_catalogue_only_addon_requires_no_app_guide(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'metadata.json'
+            expected = metadata(path)
+            data = json.loads(path.read_text())
+            data['patches'].append({'name': 'YT Music Morphe in Waze', 'compatiblePackages': [{
+                'packageName': 'com.waze', 'formFactor': 'MOBILE', 'targets': [{'version': None}]}]})
+            path.write_text(json.dumps(data))
+            self.assertEqual(pages.load_apps([path]), expected)
+
+    def test_unknown_package_still_requires_an_app_mapping(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'metadata.json'
+            path.write_text(json.dumps({'patches': [{'name': 'Hide ads', 'compatiblePackages': [{
+                'packageName': 'example.unmapped', 'formFactor': 'MOBILE', 'targets': []}]}]}))
+            with self.assertRaisesRegex(ValueError, 'No app page mapping for example.unmapped'):
+                pages.load_apps([path])
+
     def check(self, language='en', text=None, rows=None, input_type='APKS'):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)
