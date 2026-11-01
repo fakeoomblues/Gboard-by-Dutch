@@ -462,3 +462,32 @@ test("Unchanged-Apps rejects unknown apps and apps also declared as affected", (
     assert.throws(() => plugin().scopeCommits([{hash: head, message}], release(head, bullet("Belgian", head))), error);
   }
 }));
+
+test("a commit editing two apps' folders must declare each of them", () => sharedAdapter(({change, release, bullet}) => {
+  const message = "fix: tune the shared adapter";
+  const head = change(message, "Paper", "Belgian");
+  assert.throws(() => plugin().scopeCommits([{hash: head, message}], release(head, bullet("Belgian", head))),
+    /Declare .*Paper.* in Release-Apps or Unchanged-Apps/);
+}));
+
+test("declaring every edited app satisfies the decision check", () => sharedAdapter(({change, release, bullet}) => {
+  const both = "fix: tune the shared adapter\n\nRelease-Apps: Belgian, Paper";
+  const head = change(both, "Paper", "Belgian");
+  assert.deepEqual(plugin().scopeCommits([{hash: head, message: both}], release(head, bullet("Belgian", head))).map(c => c.message.split("\n")[0]),
+    ["fix(Belgian): tune the shared adapter", "fix(Paper): tune the shared adapter"]);
+  const split = "fix: retune the adapter\n\nRelease-Apps: Belgian\nUnchanged-Apps: Paper";
+  const next = change(split, "Paper", "Belgian");
+  assert.equal(plugin().scopeCommits([{hash: next, message: split}], release(next, bullet("Belgian", next))).length, 1);
+}));
+
+test("two apps sharing one patch folder need no declaration", () => releaseRepository(({dir, git, commit}) => {
+  const file = "patches/src/main/kotlin/patches/npo/Compatibility.kt";
+  const write = text => { fs.mkdirSync(path.dirname(path.join(dir, file)), {recursive: true}); fs.writeFileSync(path.join(dir, file), text); };
+  const apps = 'val a = Compatibility(name = "Phone", packageName = "example.a")\nval b = Compatibility(name = "TV", packageName = "example.b")\n';
+  write(apps); git("add", "."); const base = commit("feat: baseline"); git("tag", "v1.0.0");
+  write(`${apps}// changed\n`); git("add", "."); const message = "fix: repair the player"; const head = commit(message);
+  const ctx = context("1.1.0"); ctx.cwd = dir;
+  ctx.lastRelease = {version: "1.0.0", gitTag: "v1.0.0", gitHead: base}; ctx.nextRelease.gitHead = head;
+  assert.deepEqual(plugin().scopeCommits([{hash: head, message}], ctx).map(c => c.message.split("\n")[0]),
+    ["fix(Phone): repair the player", "fix(TV): repair the player"]);
+}));
