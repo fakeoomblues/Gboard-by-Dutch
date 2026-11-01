@@ -50,6 +50,16 @@ val wazeHideAdsPatch = bytecodePatch(
         keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_FEATURE_ENABLED", false)
         keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_IN_CAR_ENABLED", false)
         keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_DISCOVERY_PINS_ENABLED", false)
+        // Sponsored search has its own gates; the map-pin gates do not cover it.
+        keepWazeConfig("hideAds", "CONFIG_VALUE_SEARCH_ADS_FEATURE_ENABLED", false)
+        keepWazeConfig("hideAds", "CONFIG_VALUE_SEARCH_ADS_IN_CAR_FEATURE_ENABLED", false)
+        keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_TRUSTLESS_TOKEN_ENABLED", false)
+        keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_ADSPAM_ESSENTIAL_COOKIE", "")
+        keepWazeConfig("hideAds", "CONFIG_VALUE_REWIRE_MAIN_MENU_PROMOTIONAL_CHIP_ENABLED", false)
+        // The menu can retain a previously fetched campaign even with its flag disabled.
+        mutableClassDefBy("Lcom/waze/ui/n/ai;").methods.single {
+            it.name == "d" && it.parameterTypes.isEmpty() && it.returnType == "Ljava/util/List;"
+        }.filterWazeObjectReturns("Lorg/ungoogled/waze/PrivacySignals;->menuBanners(Ljava/util/List;)Ljava/util/List;")
         keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_MAX_CONCURRENT_PINS", 0)
         keepWazeConfig("hideAds", "CONFIG_VALUE_GOOGLE_ADS_IN_CAR_MAX_CONCURRENT_PINS", 0)
         // A stopped car is shown a "takeover" ad at most this often: about once a lifetime.

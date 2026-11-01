@@ -95,6 +95,8 @@ public final class Customization {
                 "Pure black night map"});
         LABELS.put("speedLimitSign", new String[]{"Speed limit sign",
                 "One sign style in every country"});
+        LABELS.put("skipConsent", new String[]{"Skip consent screens",
+                "Answers privacy and terms silently; declines personalized ads"});
         LABELS.put("shareAlerts", new String[]{"Share alerts with Maps",
                 "Shows Waze alerts in Ungoogled Maps"});
         LABELS.put("stayAwake", new String[]{"Stay awake in the background",

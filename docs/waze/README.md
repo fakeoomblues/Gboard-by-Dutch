@@ -1,6 +1,6 @@
 # Waze patch catalog
 
-The source branch provides 26 patches: the two existing audio patches and all 24 Waze patches from deWaze. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
+The source branch provides 27 patches: the two existing audio patches, all 24 Waze patches from deWaze, and silent consent completion. Imported patches target **5.26.90.901** (version code **1030746**, Android **12L/API 32+**). Supply the original APKM with its ABI, density and language splits.
 
 The audio patches remain **Any**: their source was unchanged and both applied with fingerprint validation to this build. This confirms application to this version; signed-in playback, shelves and provider login need live provider testing.
 
@@ -25,6 +25,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Remove telemetry | On | 5.26.90.901 | [WazeRemoveTelemetryPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeRemoveTelemetryPatch.kt) |
 | Report speed limit | Off | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
 | Share alerts with Maps | On | 5.26.90.901 | [WazeShareAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeShareAlertsPatch.kt) |
+| Skip consent screens | On | 5.26.90.901 | [WazeConsentScreensPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeConsentScreensPatch.kt) |
 | SoundCloud in Waze | On | Any | [SoundCloudSupportPatch.kt](../../patches/src/main/kotlin/patches/waze/SoundCloudSupportPatch.kt) |
 | Speed camera alerts | On | 5.26.90.901 | [WazeSpeedCameraAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeSpeedCameraAlertsPatch.kt) |
 | Speed camera sound at any speed | On | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
@@ -56,9 +57,9 @@ Run the project Android build, then:
 python3 scripts/validate_waze.py ORIGINAL.apkm patches/build/libs/patches-VERSION.mpp morphe-desktop-all.jar --output /tmp/waze-validation
 ```
 
-The validator requires all 26 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
+The validator requires all 27 patches to pass together and individually, with fingerprint uniqueness validation and no forced compatibility. It rejects partial patch runs even if the CLI reports overall success. Reports/logs remain in the output directory. It does not install apps.
 
-See [validation evidence](validation.md) for tested behavior and limits. Patch application and synthetic tests do not establish live road alerts, routing, Android Auto behavior, signed-in media playback, or companion Maps delivery. Report speed limit retains upstream’s unverified status.
+See the [privacy audit and follow-up](privacy-audit.md) and [validation evidence](validation.md) for tested behavior and limits. Patch application and synthetic tests do not establish live road alerts, routing, Android Auto behavior, signed-in media playback, or companion Maps delivery. Report speed limit retains upstream’s unverified status.
 
 ## Source and license
 
