@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "patches": [
     {
       "name": "Alert distances",
@@ -2230,7 +2230,7 @@
     },
     {
       "name": "Guest mode",
-      "description": "Adds Continue as guest to onboarding and allows reopening the app without an account. Keeps optional login and services that require a genuine account.",
+      "description": "Adds Continue as guest to onboarding, allows reopening without an account and hides the guest sign-up card. Keeps optional login and services that require a genuine account.",
       "default": true,
       "category": null,
       "compatiblePackages": [

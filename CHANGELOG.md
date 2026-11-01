@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.15.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [0906f8bfd4f4](https://github.com/johninnl/nl-morphe-patches/commit/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.15.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.15.0...v1.15.1) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** hide the guest account sign-up card ([0906f8b](https://github.com/johninnl/nl-morphe-patches/commit/0906f8bfd4f4be5d584f82af356c8ac6bfd0c3c4))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/68b50783fd3d73aaedd4949028dd7269636baad6/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.15.0.**
