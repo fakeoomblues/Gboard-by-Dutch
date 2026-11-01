@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Patchbundel: 1.12.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">46 apps</span> · Patchbundel: 1.13.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="mobility" data-search="9292 nl.negentwee 2.48.1 disable tracking fix pairip startup hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Verkeer</p>

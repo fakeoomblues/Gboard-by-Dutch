@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "patches": [
     {
       "name": "Disable Swrve (expert)",
@@ -4352,7 +4352,7 @@
     },
     {
       "name": "Publish selected catalog channels",
-      "description": "Select catalogs from the default profile in the Wuplay TV channels launcher entry. Publishes Android TV preview channels with artwork and Wuplay links; requires Android TV 8 or later.",
+      "description": "Choose which default-profile Home catalogs to publish in Settings > Catalogs > TV channels. Publishes Android TV preview channels with artwork and Wuplay links; requires Android TV 8 or later.",
       "default": false,
       "category": null,
       "compatiblePackages": [

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/d53c6e40d751d30594068142661b4de5ca9f65e3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.13.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [d53c6e40d751](https://github.com/johninnl/nl-morphe-patches/commit/d53c6e40d751d30594068142661b4de5ca9f65e3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.13.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.12.0...v1.13.0) (2026-11-01)
+
+### ✨ New Features
+
+* **Wuplay Android TV:** choose Home catalog channels inside settings ([d53c6e4](https://github.com/johninnl/nl-morphe-patches/commit/d53c6e40d751d30594068142661b4de5ca9f65e3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a522a256c65b0c572948006175c26648460084ee/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.12.0.**
