@@ -12,7 +12,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Broadcast navigation data** | On | Shares current speed, effective road limits and observed zone progress/average through the same local broadcast contract as Waze. No overlay required. |
+| **Broadcast navigation data** | On | Shares current speed, effective limits, road alerts and approaching/active average-speed zones through the same local contract as Waze. No overlay required. |
 | **Disable partner services** | On | Removes Parking, Toll and Carwash entries and related settings. |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Fix PairIP startup** | On | Lets the patched app start and use its supported features after installation. Keep this enabled. |
@@ -29,7 +29,7 @@ Blocking measurement does not block every function from the same provider. Essen
 
 ## Before using
 
-**Broadcast navigation data** works while the driving/location service runs in the background, with location permission. The overlay can stay disabled. Compatible receivers use one common action and schema for Flitsmeister and Waze; averages cover only the observed part, and projected progress is marked as an estimate. [Shared broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
+**Broadcast navigation data** works while the driving/location service runs in the background, with location permission. The overlay can stay disabled. Compatible receivers use one common action and schema for Flitsmeister and Waze. Native candidates supply estimated pre-entry distance, and available camera, mobile-camera, police, hazard, crash, jam and closure reports can be shared. Averages cover only the observed part, and projected progress is marked as an estimate. [Shared broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
 
 Navigation, live traffic/location exchange, accounts and reports still use online services. Unlock Pro does not activate backend services. For Android Auto, follow the [KingInstaller installation steps](../guides/android-auto.md).
 

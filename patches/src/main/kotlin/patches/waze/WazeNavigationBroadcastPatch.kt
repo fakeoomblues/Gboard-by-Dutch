@@ -9,6 +9,10 @@ import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
 
+private object BroadcastAlertsFingerprint : Fingerprint(
+    definingClass = "Lcom/waze/alerters/AlerterNativeManager;", returnType = "V",
+    parameters = listOf("Lcom/waze/jni/protos/alerters/NativeAlertRepositoryUpdate;"),
+)
 private object NativeSpeedLimitFingerprint : Fingerprint(
     definingClass = "Lcom/waze/location/LocationSensorListener;", name = "updateSpeedometer",
     returnType = "V", parameters = listOf("I", "Ljava/lang/String;", "I", "D"),
@@ -29,7 +33,7 @@ private object BroadcastInsightFingerprint : Fingerprint(
 @Suppress("unused")
 val wazeNavigationBroadcastPatch = bytecodePatch(
     name = "Broadcast navigation data",
-    description = "Broadcasts current speed, the road speed limit and average-speed zone observations locally, including in the background. No overlay required.",
+    description = "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. No overlay required.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
     dependsOn(wazeStayAwakePatch)
@@ -52,6 +56,8 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
             "invoke-static/range { p1 .. p1 }, $NAVIGATION_BROADCASTS->legacy(Ljava/lang/Object;)V")
         BroadcastLegacyClearFingerprint.method.addInstruction(0,
             "invoke-static {}, $NAVIGATION_BROADCASTS->legacyClear()V")
+        BroadcastAlertsFingerprint.method.addInstruction(0,
+            "invoke-static/range { p1 .. p1 }, $NAVIGATION_BROADCASTS->alerts(Ljava/lang/Object;)V")
         BroadcastInsightFingerprint.method.addInstruction(0,
             "invoke-static/range { p1 .. p1 }, $NAVIGATION_BROADCASTS->insights(Ljava/lang/Object;)V")
     }

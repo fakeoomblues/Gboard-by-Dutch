@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+import nl.johninnl.navigation.NavigationAlerts;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -187,6 +188,7 @@ final class OsmCameras {
             } else {
                 lm.removeUpdates(passive);
                 previous = null;
+                NavigationBroadcasts.reports(feature,Collections.emptyList(),android.os.SystemClock.elapsedRealtime());
                 Log.i(TAG, name + ": off");
             }
             listening = want;
@@ -227,9 +229,13 @@ final class OsmCameras {
                 previous = l;
             }
         }
-        if (speed < 4f || Float.isNaN(heading)) return;   // about 9 mph: walking, or stopped at the lights
+        if (speed < 4f || Float.isNaN(heading)) {
+            NavigationBroadcasts.reports(feature,Collections.emptyList(),l.getElapsedRealtimeNanos()/1_000_000);
+            return;
+        } //   // about 9 mph: walking, or stopped at the lights
 
         double reach = Math.max(250.0, Math.min(1000.0, speed * 20.0));
+        List<NavigationAlerts.Alert> exported=new ArrayList<>();
         Camera best = null;
         double bestDistance = Double.MAX_VALUE;
         float[] result = new float[2];
@@ -240,11 +246,16 @@ final class OsmCameras {
             double off = Math.abs(((result[1] - heading) % 360 + 540) % 360 - 180);
             if (off > 80) continue;                                  // behind, or off to the side
             if (d * Math.sin(Math.toRadians(off)) > 60) continue;    // not on the line we are driving
+            exported.add(new NavigationAlerts.Alert("osm:"+feature+":"+cam.id,feature.equals("flockCameras")?"flock":"camera",
+                kind.label(cam),(int)Math.round(d),(int)Math.round(reach),cam.lat,cam.lng));
             if (d < bestDistance) {
                 best = cam;
                 bestDistance = d;
             }
         }
+        long observed=l.getElapsedRealtimeNanos()/1_000_000, received=android.os.SystemClock.elapsedRealtime();
+        if(observed>0 && observed<=received && received-observed<=NavigationAlerts.TTL_MS)
+            NavigationBroadcasts.reports(feature,exported,observed);
         if (best == null) return;
         long now = android.os.SystemClock.elapsedRealtime();
         Long at = alerted.get(best.id);
@@ -468,6 +479,7 @@ final class OsmCameras {
                 tiles.put(key, Collections.unmodifiableList(t));
                 alerted.remove(-1L);
                 previous = null;
+                NavigationBroadcasts.reports(feature,Collections.emptyList(),android.os.SystemClock.elapsedRealtime());
                 Log.i(TAG, name + " self-test: camera at " + lat + "," + lng);
                 if (!intent.getBooleanExtra("drive", false)) return;
                 double bearing = intent.getDoubleExtra("bearing", 0);   // the direction driven, towards the camera

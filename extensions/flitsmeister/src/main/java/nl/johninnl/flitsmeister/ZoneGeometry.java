@@ -7,6 +7,12 @@ final class ZoneGeometry {
         final boolean inside; final int remaining, percent;
         Result(boolean inside,int remaining,int percent) { this.inside=inside;this.remaining=remaining;this.percent=percent; }
     }
+    static boolean beforeStart(double[][] path,double latitude,double longitude) {
+        if(path==null || path.length<2)return false;
+        double cos=Math.cos(Math.toRadians(latitude));
+        double dx=(path[1][1]-path[0][1])*cos,dy=path[1][0]-path[0][0];
+        return ((longitude-path[0][1])*cos*dx+(latitude-path[0][0])*dy)<0;
+    }
     static Result project(double[][] path,double latitude,double longitude) {
         Result missing=new Result(false,-1,-1);
         if(path==null || path.length<2 || !Double.isFinite(latitude) || !Double.isFinite(longitude))return missing;

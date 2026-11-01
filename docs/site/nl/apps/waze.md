@@ -29,7 +29,7 @@ De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Fo
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Broadcast navigation data** | Aan | Deelt de actuele snelheid, native snelheidslimiet en waargenomen voortgang/gemiddelde snelheid in een trajectcontrole met andere apps, ook als Waze op de achtergrond draait. Geen overlay nodig. |
+| **Broadcast navigation data** | Aan | Deelt actuele snelheid, snelheidslimieten, wegmeldingen en naderende/actieve trajectcontroles met andere apps terwijl Waze op de achtergrond draait. Geen overlay nodig. |
 | **Skip consent screens** | Aan | Rondt privacy- en voorwaardenkeuzes zonder scherm af en weigert gepersonaliseerde advertenties. Lees de toelichting hieronder. |
 | **SoundCloud in Waze** | Aan | Voegt SoundCloud toe aan de ingebouwde audiospeler. Show list toont de ingelogde Feed en afspeelbare mixes, niet je persoonlijke bibliotheek. |
 | **Support Gearslip** | Aan | Accepteert Gearslip als autohost op pakketnaam, met welke sleutel het ook is ondertekend, zodat een gepatchte Gearslip blijft werken. Andere hosts houden de Android Auto-validatie. |
@@ -101,7 +101,7 @@ Hide ads en Remove telemetry beperken de ondersteunde advertenties, crashrapport
 
 Open na het patchen **Customization** in het zijmenu onder **Shut off**. Daar stel je de toegepaste functies in. Speed camera alerts, Flock cameras en Average speed zone bar staan daar eerst uit, ook als je de patches hebt geselecteerd. Herstart Waze na wijzigingen aan de kaartstijl of waarschuwingspictogrammen.
 
-**Broadcast navigation data** gebruikt Wazes native engine en locatietoegang op de achtergrond, zonder zichtbare telefoonactiviteit. De achtergrondoptie wordt automatisch meegenomen (standaard 180 minuten, instelbaar). Gemiddelden gelden voor het waargenomen deel van een trajectcontrole; geschatte voortgang en ontbrekende/verouderde waarden worden apart aangeduid. [Broadcastprotocol](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md). **Support Gearslip** vertrouwt het gecontroleerde releasecertificaat; weergave in een echte auto moet apart worden getest.
+**Broadcast navigation data** gebruikt Wazes native engine en locatietoegang op de achtergrond, zonder zichtbare telefoonactiviteit. De achtergrondoptie wordt automatisch meegenomen (standaard 180 minuten, instelbaar). Native waarnemingen vóór een traject kunnen een voorwaarschuwing geven. Beschikbare meldingen omvatten camera’s, politie, gevaren, ongevallen, files en afsluitingen, plus ingeschakelde Flock- en flitserlagen. Gemiddelden gelden voor het waargenomen deel van een trajectcontrole; geschatte voortgang en ontbrekende/verouderde waarden worden apart aangeduid. [Broadcastprotocol](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
 
 **Skip consent screens** maakt privacy- en voorwaardenkeuzes zonder die schermen te tonen. Gepersonaliseerde advertenties worden geweigerd; verplichte voorwaarden worden geaccepteerd. Laat deze patch uit als je de keuzes zelf wilt lezen en maken. Remove telemetry en Remove permissions beperken de genoemde gegevens; noodzakelijke navigatiediensten blijven actief.
 

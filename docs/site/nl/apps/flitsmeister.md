@@ -12,7 +12,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Broadcast navigation data** | Aan | Deelt actuele snelheid, geldende snelheidslimieten en waargenomen trajectvoortgang/gemiddelde via hetzelfde lokale broadcastcontract als Waze. Geen overlay nodig. |
+| **Broadcast navigation data** | Aan | Deelt actuele snelheid, geldende limieten, wegmeldingen en naderende/actieve trajectcontroles via hetzelfde lokale contract als Waze. Geen overlay nodig. |
 | **Disable partner services** | Aan | Verwijdert Parkeren, Tol en Carwash en de bijbehorende instellingen. |
 | **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
 | **Fix PairIP startup** | Aan | Laat de gepatchte app na installatie starten en de ondersteunde functies gebruiken. Laat deze patch aan. |
@@ -29,7 +29,7 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-**Broadcast navigation data** werkt zolang de rij-/locatiedienst met locatietoegang op de achtergrond draait. De overlay mag uit blijven. Ontvangende apps gebruiken dezelfde actie en velden voor Flitsmeister en Waze; gemiddelden gaan alleen over het waargenomen deel en berekende voortgang wordt als schatting gemarkeerd. [Gedeeld broadcastcontract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
+**Broadcast navigation data** werkt zolang de rij-/locatiedienst met locatietoegang op de achtergrond draait. De overlay mag uit blijven. Ontvangende apps gebruiken dezelfde actie en velden voor Flitsmeister en Waze. De bron levert geschatte afstand vóór trajectinrit en beschikbare meldingen van vaste/mobiele flitsers, politie, gevaren, ongevallen, files en afsluitingen. Gemiddelden gaan alleen over het waargenomen deel; berekende voortgang wordt als schatting gemarkeerd. [Gedeeld broadcastcontract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
 
 Navigatie, live verkeers-/locatie-uitwisseling, accounts en meldingen gebruiken nog steeds online diensten. Unlock Pro activeert geen serverdiensten. Volg voor Android Auto de [KingInstaller-installatiestappen](../guides/android-auto.md).
 

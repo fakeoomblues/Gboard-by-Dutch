@@ -29,7 +29,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Broadcast navigation data** | On | Shares current speed, the native road speed limit and observed average-speed-zone progress/average with other apps, including while Waze is in the background. No overlay required. |
+| **Broadcast navigation data** | On | Shares current speed, road limits, road alerts and approaching/active average-speed zones with other apps while Waze runs in the background. No overlay required. |
 | **Skip consent screens** | On | Answers privacy and terms consent silently and declines ad personalization without showing a screen. |
 | **SoundCloud in Waze** | On | Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included. |
 | **Support Gearslip** | On | Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
@@ -101,7 +101,7 @@ Hide ads and Remove telemetry reduce the supported advertising, crash reporting 
 
 After patching, open **Customization** in the side menu below **Shut off** to configure the features you applied. Speed camera alerts, Flock cameras and Average speed zone bar start off there even when their patches are selected. Restart Waze after changing map or alert-pin settings.
 
-**Broadcast navigation data** needs Waze’s native engine and background location access, not a foreground phone Activity. It automatically includes the background keep-alive control (180 minutes by default, configurable). Averages cover the observed part of a zone; estimated progress and missing/stale values are identified explicitly. [Broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md). **Support Gearslip** verifies the supplied release signing certificate; physical-car rendering is a separate test.
+**Broadcast navigation data** needs Waze’s native engine and background location access, not a foreground phone Activity. It automatically includes the background keep-alive control (180 minutes by default, configurable). Native approach observations can warn before zone entry. Road reports include available camera, police, hazard, crash, jam and closure alerts, plus enabled Flock/speed-camera layers. Averages cover the observed part of a zone; estimated progress and missing/stale values are identified explicitly. [Broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
 
 **Skip consent screens** makes privacy and terms choices without showing those screens. It declines personalized ads and accepts required terms. Leave this patch off if you want to read and make those choices yourself. Remove telemetry and Remove permissions reduce the listed data access; essential navigation services remain active.
 
