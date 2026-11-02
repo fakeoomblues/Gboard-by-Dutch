@@ -2,6 +2,10 @@
 
 Gebruik Google Maps of Vela Maps voor navigatie terwijl gepatchte Waze of Flitsmeister op de achtergrond snelheid, maximumsnelheden en beschikbare wegmeldingen levert. De apps delen die waarnemingen lokaal op dezelfde telefoon. Zowel de bron als de ontvangende kaartapp moet worden gepatcht.
 
+!!! important "Automatisch starten: zet locatietoegang van de bron op ‘Altijd toestaan’"
+
+    Stel dit in voor **Waze / De-Waze of Flitsmeister zelf**, ook als Maps of Vela al locatietoegang heeft. **‘Alleen toestaan bij gebruik van de app’ is onvoldoende voor betrouwbaar stil starten op de achtergrond.** Volg [stap 2](#2-stel-de-bron-eenmaal-in) vóór je de bron in je kaartapp kiest.
+
 ## Wat de koppeling toevoegt
 
 | Gegeven | Wat de ontvangende kaart kan tonen |
@@ -31,7 +35,16 @@ De bronpatch heeft een optionele instelling **Receiver package**. Laat die leeg 
 
 ## 2. Stel de bron eenmaal in
 
-Open gepatchte Waze of Flitsmeister eenmaal, rond de eerste instellingen af en geef de locatietoegang die de rijdienst nodig heeft. Sta achtergrondlocatie toe wanneer de app daarom vraagt voor dit gebruik. Controleer de batterijbeperkingen als updates stoppen zodra het scherm uitgaat. De overlay mag uit blijven.
+1. Open gepatchte **Waze / De-Waze** of **Flitsmeister** eenmaal en rond de eerste instellingen af. Geef de app locatietoegang.
+2. Houd het pictogram van die **bronapp** ingedrukt en kies **App-info**. Of open Android **Instellingen → Apps → Waze / De-Waze / Flitsmeister**.
+3. Open **Machtigingen → Locatie → Altijd toestaan**. Menunamen kunnen per telefoon verschillen. Kies niet alleen **Alleen toestaan bij gebruik van de app**. Gebruik je beide bronnen, stel dit dan voor elke bron apart in.
+4. Ga terug naar **Google Maps of Vela Maps** en kies **De-Waze** of **Flitsmeister**. Controleer de bronstatus; de kaartapp probeert de bron automatisch opnieuw te starten.
+
+Voor het wijzigen van deze Android-toestemming hoef je de apps niet opnieuw te patchen.
+
+**Zie je ‘Altijd toestaan’ niet?** Geef eerst locatietoegang tijdens gebruik, open de bron eenmaal en kijk daarna opnieuw bij de Android-machtigingen. Vanaf Android 11 staat achtergrondlocatie op deze instellingenpagina, niet in de eerste toestemmingsvraag. Zie de [uitleg van Android](https://developer.android.com/develop/sensors-and-location/location/permissions/background).
+
+Deze toestemming laat de bron locatie gebruiken terwijl je in Maps/Vela zit of het scherm uit staat. Je kunt haar later op dezelfde plek intrekken. Controleer de batterijbeperkingen als updates stoppen zodra het scherm uitgaat. De overlay mag uit blijven.
 
 Met de bijgewerkte patches aan beide kanten start de gekozen rij-engine automatisch zodra je Maps/Vela opent of **De-Waze**/**Flitsmeister** kiest. Het scherm van de bronapp opent niet. Android toont de normale doorlopende melding voor de locatiedienst. Tijdens deze beheerde sessie blijft de bron gedempt: Maps/Vela geeft de gesproken waarschuwingen en geluiden. Opgeslagen geluidsinstellingen en het telefoonvolume blijven ongewijzigd; normaal brongeluid keert terug nadat de deelsessie is verlopen. De kaartapp controleert de eigen motorstatus van de bron tijdens zichtbaar gebruik en actieve navigatie, herstelt de verbinding na een gestopt proces en probeert een gestopte motor opnieuw te starten met tussenpozen. Ontbrekende GPS- of wegwaarnemingen veroorzaken geen herstart en worden niet als verse gegevens behandeld.
 
@@ -73,7 +86,9 @@ Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen ver
 
 | Probleem | Controleer |
 | --- | --- |
-| Bron blijft onbeschikbaar | Beide apps zijn gepatcht, de bron is geopend, zijn rij-/locatiedienst is actief en de juiste bron is gekozen. |
+| **Android blocked background startup** of De-Waze blijft onbeschikbaar | Zet bij **Waze / De-Waze → App-info → Machtigingen → Locatie** de toegang op **Altijd toestaan** en ga terug naar Maps/Vela. Volg [stap 2](#2-stel-de-bron-eenmaal-in). |
+| Flitsmeister werkt, maar De-Waze niet | Locatietoestemming geldt per app. Controleer **Altijd toestaan** ook voor **Waze / De-Waze**; Flitsmeisters toestemming geldt niet voor Waze. |
+| Bron blijft daarna onbeschikbaar | Controleer of beide apps de bijgewerkte patches hebben, de eerste broninstellingen zijn afgerond en de juiste bron is gekozen. Controleer de bronstatus en de batterijbeperkingen van de bronapp. |
 | Eén ontvanger krijgt gegevens, een andere niet | Verwijder of corrigeer de optionele **Receiver package** van de bronpatch en patch de bron opnieuw als je die optie wijzigt. |
 | Snelheid werkt, maar geen gemiddelde | Er is een verse waarneming van een actief traject nodig, gevolgd door voldoende tijd en afstand. Alleen een cameramelding is geen actief traject. |
 | Geen spelden of geluid in Maps | Kies de meldingstypen en zet de kaart-/geluidsschakelaars aan. De bron moet verse meldingen hebben, met posities voor spelden en een bruikbare naderingsafstand voor waarschuwingen. |

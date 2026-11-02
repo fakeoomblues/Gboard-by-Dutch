@@ -101,6 +101,8 @@ Hide ads en Remove telemetry beperken de ondersteunde advertenties, crashrapport
 
 ## Voor gebruik
 
+**Voor automatisch starten vanuit Maps/Vela: zet bij Android App-info → Waze / De-Waze → Machtigingen → Locatie de toegang op ‘Altijd toestaan’. ‘Alleen toestaan bij gebruik van de app’ is onvoldoende voor betrouwbaar stil starten.** Zie de [stappen voor locatietoegang](../guides/navigation-data.md#2-stel-de-bron-eenmaal-in), ook bij **Android blocked background startup**.
+
 Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
 
 Open na het patchen **Customization** in het zijmenu onder **Shut off**. Daar stel je de toegepaste functies in. Speed camera alerts, Flock cameras en Average speed zone bar staan daar eerst uit, ook als je de patches hebt geselecteerd. Herstart Waze na wijzigingen aan de kaartstijl of waarschuwingspictogrammen.

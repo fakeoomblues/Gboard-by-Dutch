@@ -2,6 +2,10 @@
 
 Keep Google Maps or Vela Maps as your navigation app while patched Waze or Flitsmeister supplies speed, road limits and available road warnings in the background. The apps exchange those observations locally on the same phone. You need to patch both the provider and the map app that receives its data.
 
+!!! important "Automatic startup: set the provider's location access to ‘Allow all the time’"
+
+    Set this for **Waze / De-Waze or Flitsmeister itself**, even if Maps or Vela already has location access. **‘Allow only while using the app’ is insufficient for reliable silent background startup.** Follow [step 2](#2-set-up-the-provider-once) before selecting the provider in your map app.
+
 ## What the integration adds
 
 | Data | What the receiving map can show |
@@ -31,7 +35,16 @@ The provider patch has an optional **Receiver package** setting. Leave it blank 
 
 ## 2. Set up the provider once
 
-Open patched Waze or Flitsmeister once, finish onboarding and grant its driving service location access. Allow background location when requested for your use, and check the phone's battery restrictions if updates stop with the screen off. The provider overlay can remain off.
+1. Open patched **Waze / De-Waze** or **Flitsmeister** once, finish onboarding and grant location access.
+2. Long-press that **provider app's** icon and choose **App info**. Alternatively, open Android **Settings → Apps → Waze / De-Waze / Flitsmeister**.
+3. Open **Permissions → Location → Allow all the time**. Menu names vary by phone. Do not select only **Allow only while using the app**. If you use both providers, configure each one separately.
+4. Return to **Google Maps or Vela Maps** and select **De-Waze** or **Flitsmeister**. Check the source status; the map app automatically retries starting the provider.
+
+Changing this Android permission does not require repatching the apps.
+
+**Can't see ‘Allow all the time’?** First allow location while using the app, open the provider once, then check its Android permissions again. On Android 11 and newer, background location is granted on this settings page, rather than in the first permission prompt. See [Android's explanation](https://developer.android.com/develop/sensors-and-location/location/permissions/background).
+
+This permission lets the provider use location while you use Maps/Vela or the screen is off. You can revoke it from the same settings page later. Check the phone's battery restrictions if updates stop with the screen off. The provider overlay can remain off.
 
 With the updated patches on both sides, opening Maps/Vela or choosing **De-Waze**/**Flitsmeister** silently starts the selected provider's driving engine. Neither provider's screen opens. Android shows the normal ongoing location-service notification. During this managed session, the provider stays muted: Maps/Vela supplies the spoken warnings and chimes. Your saved provider sound settings and phone volume stay unchanged; normal provider audio resumes after the sharing lease ends. The receiving map checks native engine health during visible use and active navigation, reconnects after process death, and retries a stopped engine with backoff. Missing GPS or road observations do not trigger a restart or become fresh data.
 
@@ -73,7 +86,9 @@ Changing provider, leaving a zone or losing fresh zone observations clears the p
 
 | Problem | Check |
 | --- | --- |
-| Source stays unavailable | Both apps have the updated patches, the correct source is selected and the provider has location permission. Check the startup status for a blocked start or unavailable API. |
+| **Android blocked background startup** or De-Waze stays unavailable | In **Waze / De-Waze → App info → Permissions → Location**, select **Allow all the time**, then return to Maps/Vela. Follow [step 2](#2-set-up-the-provider-once). |
+| Flitsmeister works but De-Waze does not | Location permission is separate for each app. Check **Allow all the time** for **Waze / De-Waze** too; Flitsmeister's permission does not apply to Waze. |
+| Source still stays unavailable | Check that both apps have the updated patches, provider onboarding is complete and the correct source is selected. Check the startup status and the provider app's battery restrictions. |
 | One receiver gets data but another does not | Remove or correct the provider patch's optional **Receiver package**, then repatch the provider if you change that option. |
 | Speed works but no average appears | A fresh active-zone observation is required, followed by enough observed time and distance. A camera report alone is not an active zone. |
 | No pins or warning sound in Maps | Select the report types and enable the map/chime switches. The provider must have fresh reports, with positions for pins and a usable approach distance for warnings. |
