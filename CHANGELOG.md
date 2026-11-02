@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/57bc14881b26f8c9b21928b47a186eac931eb6d2/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.30.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [57bc14881b26](https://github.com/johninnl/nl-morphe-patches/commit/57bc14881b26f8c9b21928b47a186eac931eb6d2). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.30.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.30.0...v1.30.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** match configured Home and simplify DriveDeck browsing ([f56a768](https://github.com/johninnl/nl-morphe-patches/commit/f56a76876e889849de4539eeb4f654ebb4775b1b))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/03fed3676fb2991d648d992d95d59e40bc4e819e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.30.0.**
