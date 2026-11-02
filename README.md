@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.32.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.32.0)** · 55 apps · 278 patches
+**Patch bundle [v1.33.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.33.0)** · 55 apps · 281 patches
 
 ### Weather
 
@@ -112,7 +112,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [NPO Start](https://johninnl.github.io/nl-morphe-patches/apps/npo-start/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](https://johninnl.github.io/nl-morphe-patches/apps/npo-start-android-tv/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](https://johninnl.github.io/nl-morphe-patches/apps/podimo/) | Plus/Pro | 3.5.1 | APKS | 2 |
-| [SoundCloud](https://johninnl.github.io/nl-morphe-patches/apps/soundcloud/) | See guide | 2026.10.28-release | APKM | 1 |
+| [SoundCloud](https://johninnl.github.io/nl-morphe-patches/apps/soundcloud/) | See guide | 2026.10.28-release | APKM | 4 |
 | [TVgids.nl](https://johninnl.github.io/nl-morphe-patches/apps/tvgids-nl/) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](https://johninnl.github.io/nl-morphe-patches/apps/videoland/) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](https://johninnl.github.io/nl-morphe-patches/apps/videoland-android-tv/) | Ads · Tracking | 1.117.0 | APKS | 3 |

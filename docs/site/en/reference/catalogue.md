@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.32.0**
+**Patch bundle: 1.33.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -567,6 +567,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Disable analytics | On | 2026.10.28-release |
+| Disable consent popup | On | 2026.10.28-release |
+| Enable SoundCloud Go | On | 2026.10.28-release |
 | Home in Android Auto | On | 2026.10.28-release |
 
 ## Trouw

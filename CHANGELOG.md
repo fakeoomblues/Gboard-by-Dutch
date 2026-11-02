@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/002a241d5542c69196cab4173beec64ce80ab048/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [002a241d5542](https://github.com/johninnl/nl-morphe-patches/commit/002a241d5542c69196cab4173beec64ce80ab048). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.32.0...v1.33.0) (2026-11-02)
+
+### ✨ New Features
+
+* **SoundCloud:** port analytics, consent and local Go controls ([002a241](https://github.com/johninnl/nl-morphe-patches/commit/002a241d5542c69196cab4173beec64ce80ab048))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.32.0.**

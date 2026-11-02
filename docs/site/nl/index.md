@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.32.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.33.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -915,7 +915,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.10.28-release home in android auto" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.10.28-release disable analytics disable consent popup enable soundcloud go home in android auto" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [SoundCloud](apps/soundcloud.md)
@@ -923,8 +923,11 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">2026.10.28-release</span></p>
 <p class="dap-app-card__package">com.soundcloud.android</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>4 patches</summary>
 <ul>
+<li>Disable analytics <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Disable consent popup <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Enable SoundCloud Go <span class="dap-app-card__target">2026.10.28-release</span></li>
 <li>Home in Android Auto <span class="dap-app-card__target">2026.10.28-release</span></li>
 </ul>
 </details>

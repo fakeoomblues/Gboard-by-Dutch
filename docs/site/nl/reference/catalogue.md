@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.32.0**
+**Patchbundel: 1.33.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -567,6 +567,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Disable analytics | Aan | 2026.10.28-release |
+| Disable consent popup | Aan | 2026.10.28-release |
+| Enable SoundCloud Go | Aan | 2026.10.28-release |
 | Home in Android Auto | Aan | 2026.10.28-release |
 
 ## Trouw
