@@ -14,6 +14,7 @@ APP_PAGES = {
     'com.overdevs.at4k': ('at4k', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),
+    'app.wuplay.android': ('wuplay-mobile', 'entertainment'),
     'com.waze': ('waze', 'mobility'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),

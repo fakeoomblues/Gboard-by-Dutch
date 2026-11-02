@@ -67,6 +67,40 @@
       "options": []
     },
     {
+      "name": "Add Gearslip car interface",
+      "description": "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Uses native WuPlay add-ons and playback; no root or phone-screen mirroring.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.wuplay.android",
+          "name": "WuPlay Mobile",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "ae406f7d398ae1ae418238f83d07554e6aa6cf5855b66edb9c4c85995d435e7f"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "0.1.9-alpha",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Add microG-RE support",
       "description": "Signs in to your Google account through microG-RE (MicroG-RE or ReVanced GmsCore), keeping the name from Change app name. Not for root installs; for original microG, use Add original microG support.",
       "default": false,

@@ -50,6 +50,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | [APKM](https://buzzheavier.com/nbgqof6ngf98) |
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.117.0 / 1622 | [APKS](https://buzzheavier.com/56tfd9zgaf6g) |
+| [WuPlay Mobile](../apps/wuplay-mobile.md) | 0.1.9-alpha / 9 | [APK](#local-original-inputs) |
 | [Wuplay Android TV](../apps/wuplay.md) | 0.9.4-beta / 49 | [APK](https://buzzheavier.com/03cd7t0bs8qt) |
 | [Monet Android TV](../apps/monet.md) | 1.1.0 / 134 | [APK](https://buzzheavier.com/xk5uwpz9uobd) |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |

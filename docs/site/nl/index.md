@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">53 apps</span> · Patchbundel: 1.27.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">54 apps</span> · Patchbundel: 1.27.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1194,6 +1194,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/wuplay.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="wuplay mobile app.wuplay.android 0.1.9-alpha add gearslip car interface" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [WuPlay Mobile](apps/wuplay-mobile.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">0.1.9-alpha</span></p>
+<p class="dap-app-card__package">app.wuplay.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Add Gearslip car interface <span class="dap-app-card__target">0.1.9-alpha · standaard uit</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/wuplay-mobile.md){ .dap-app-card__link }
 
 </article>
 

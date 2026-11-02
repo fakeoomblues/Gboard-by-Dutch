@@ -745,6 +745,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Publish selected catalog channels | Off | 0.9.4-beta |
 
+## WuPlay Mobile
+
+[What do the patches change?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Add Gearslip car interface | Off | 0.1.9-alpha |
+
 ## YouTube Music
 
 [What do the patches change?](../apps/youtube-music.md)

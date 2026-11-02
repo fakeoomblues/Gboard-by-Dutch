@@ -13,5 +13,6 @@ Kies een app voor de patches, standaardkeuzes en het ondersteunde originele best
 | [TVgids.nl](../tvgids-nl.md) | 7.0.16 | 106691 |
 | [Videoland Android](../videoland.md) | 1.116.4 | 1627 |
 | [Videoland Android TV](../videoland-android-tv.md) | 1.117.0 | 1622 |
+| [WuPlay Mobile](../wuplay-mobile.md) | 0.1.9-alpha | 9 |
 
 [Installatiehandleiding](../../guides/install.md)

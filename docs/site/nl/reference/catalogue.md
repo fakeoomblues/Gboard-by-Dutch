@@ -745,6 +745,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Publish selected catalog channels | Uit | 0.9.4-beta |
 
+## WuPlay Mobile
+
+[Wat veranderen de patches?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Add Gearslip car interface | Uit | 0.1.9-alpha |
+
 ## YouTube Music
 
 [Wat veranderen de patches?](../apps/youtube-music.md)
