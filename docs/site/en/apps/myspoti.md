@@ -20,6 +20,6 @@ This compatibility patch changes browser access. It does not remove online servi
 
 Sign in to Myspoti. The trusted-host option defaults to the official Gearslip package. Add another host package only for a build you intentionally use.
 
-The user confirmed that the patch works with Myspoti 2.2.0 in Gearslip and approved its stable release. The exact publisher 2.3.0 input passes desktop patching; a reported Manager archive-read error remains under investigation. Use 2.2.0 or patch 2.3.0 on desktop if Manager cannot read it. A patched APK must be signed again. The publisher-signed installation cannot be updated using a different signing key. Keep it while testing a separate copy; do not uninstall it just to try this patch.
+The user confirmed that the patch works with Myspoti 2.2.0 in Gearslip and approved its stable release. The exact publisher 2.3.0 input passes desktop patching. A reported Manager archive-read error was traced to a corrupted phone copy; transfer a fresh original APK if this occurs. Version 2.3.0 has not yet received the same signed-in device acceptance. A patched APK must be signed again. The publisher-signed installation cannot be updated using a different signing key. Keep it while testing a separate copy; do not uninstall it just to try this patch.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md)
