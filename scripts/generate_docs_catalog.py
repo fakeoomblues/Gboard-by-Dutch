@@ -17,8 +17,9 @@ APP_PAGES = {
     'com.waze': ('waze', 'mobility'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
-    'app.morphe.android.apps.youtube.music': ('youtube-music-morphe', 'entertainment'),
+    'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.vela': ('vela', 'mobility'),
+    'com.google.android.apps.maps': ('google-maps', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
@@ -42,6 +43,7 @@ APP_PAGES = {
     'nl.negentwee': ('9292', 'mobility'),
     'org.yoki.android.buienalarm': ('buienalarm', 'weather'),
     'com.supportware.Buienradar': ('buienradar', 'weather'),
+    'com.lucky_apps.RainViewer': ('rainviewer', 'weather'),
     'com.xs2theworld.weeronline': ('weeronline', 'weather'),
     'nl.weerplaza.app': ('weerplaza', 'weather'),
     'nl.flitsmeister': ('flitsmeister', 'mobility'),
@@ -71,6 +73,9 @@ def _app_groups(data):
     groups = {}
     for patch in (data or {}).get('patches', []):
         for package in patch.get('compatiblePackages') or []:
+            # YT Music Morphe is the patched installation, not a second original app.
+            if package['packageName'] == 'app.morphe.android.apps.youtube.music':
+                continue
             key = (package['packageName'], package.get('formFactor'))
             groups.setdefault(key, {'package': package, 'patches': []})['patches'].append((patch, package))
     return groups

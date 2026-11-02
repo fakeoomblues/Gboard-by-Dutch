@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.23.0-dev.1**
+**Patchbundel: 1.26.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -205,8 +205,48 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Control car display density | Aan | 0.3.31-alpha |
 | Hide apps from drawer | Aan | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | Aan | 0.3.12-alpha, 0.3.31-alpha |
+
+## Google Maps
+
+[Wat veranderen de patches?](../apps/google-maps.md)
+
+`com.google.android.apps.maps`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| 120 refresh rate | Aan | 26.43.05.1002020710 |
+| Account sheet cleanup | Aan | 26.43.05.1002020710 |
+| Add microG-RE support | Uit | 26.43.05.1002020710 |
+| Add original microG support | Uit | 26.43.05.1002020710 |
+| Any media app | Aan | 26.43.05.1002020710 |
+| Avoid Flock cameras | Aan | 26.43.05.1002020710 |
+| Better offline maps | Aan | 26.43.05.1002020710 |
+| Black theme | Aan | 26.43.05.1002020710 |
+| Blue pin | Aan | 26.43.05.1002020710 |
+| Bypass Play Services checks | Aan | 26.43.05.1002020710 |
+| Change app name | Aan | 26.43.05.1002020710 |
+| Change package name | Aan | 26.43.05.1002020710 |
+| Customization screen | Aan | 26.43.05.1002020710 |
+| Flock cameras | Aan | 26.43.05.1002020710 |
+| Follow playing media | Uit | 26.43.05.1002020710 |
+| Hide ads and clutter | Aan | 26.43.05.1002020710 |
+| Legacy icon | Aan | 26.43.05.1002020710 |
+| Location provider toggle | Aan | 26.43.05.1002020710 |
+| Offline saved places | Aan | 26.43.05.1002020710 |
+| Power saving mode | Aan | 26.43.05.1002020710 |
+| Proxy | Aan | 26.43.05.1002020710 |
+| Rectangle shapes | Aan | 26.43.05.1002020710 |
+| Remove permissions | Aan | 26.43.05.1002020710 |
+| Remove sign-in prompts | Aan | 26.43.05.1002020710 |
+| Remove telemetry | Aan | 26.43.05.1002020710 |
+| Speed cameras | Aan | 26.43.05.1002020710 |
+| Speeding chime | Aan | 26.43.05.1002020710 |
+| Trim account menu | Aan | 26.43.05.1002020710 |
+| Waze alerts | Aan | 26.43.05.1002020710 |
+| Zoom controls in navigation | Aan | 26.43.05.1002020710 |
 
 ## GVA
 
@@ -461,6 +501,24 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 4.73 |
 | Unlock Premium | Aan | 4.73 |
 
+## RainViewer
+
+[Wat veranderen de patches?](../apps/rainviewer.md)
+
+`com.lucky_apps.RainViewer`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 8.4.1 |
+| Enable local Pro features | Aan | 8.4.1 |
+| Fix Google services | Aan | 8.4.1 |
+| Fix integrity | Aan | 8.4.1 |
+| Hide AI insights | Aan | 8.4.1 |
+| Hide ads | Aan | 8.4.1 |
+| Hide weather warnings overlay | Aan | 8.4.1 |
+| Skip consent screens | Aan | 8.4.1 |
+| Skip subscription screens | Aan | 8.4.1 |
+
 ## Rollerbank
 
 [Wat veranderen de patches?](../apps/rollerbank.md)
@@ -682,16 +740,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 [Wat veranderen de patches?](../apps/youtube-music.md)
 
 `com.google.android.apps.youtube.music`
-
-| Patch | Standaard | App-versies |
-| --- | --- | --- |
-| Gearslip music browser support | Aan | Alle versies |
-
-## YouTube Music
-
-[Wat veranderen de patches?](../apps/youtube-music-morphe.md)
-
-`app.morphe.android.apps.youtube.music`
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |

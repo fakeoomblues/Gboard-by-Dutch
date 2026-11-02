@@ -4,7 +4,7 @@
 
 **App version:** 16.19.0 · **Build:** 633464 · **Original file:** XAPK
 
-[Use the complete original file](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download original app](https://buzzheavier.com/p3t8spl0cswx){ .md-button .md-button--primary }
 
 ## Supported original files
 

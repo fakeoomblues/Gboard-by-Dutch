@@ -137,6 +137,8 @@ private val drawerAppsScreen = resourcePatch {
     }
 }
 
+internal val gearslipExtension = bytecodePatch { extendWith("extensions/gearslip.mpe") }
+
 private fun Method.instructionList() = implementation?.instructions?.toList().orEmpty()
 
 private fun Instruction.methodCall() = (this as? ReferenceInstruction)?.reference as? MethodReference
@@ -150,8 +152,7 @@ val gearslipHideApps = bytecodePatch(
         "unticking one hides its tile from the car drawer. Does not disable or uninstall apps.",
 ) {
     compatibleWith(gearslip)
-    dependsOn(drawerAppsScreen)
-    extendWith("extensions/gearslip.mpe")
+    dependsOn(drawerAppsScreen, gearslipExtension)
 
     execute {
         // Checked here so a changed Gearslip fails the patch rather than the phone screen.
@@ -238,6 +239,17 @@ val gearslipHideApps = bytecodePatch(
             it.opcode == Opcode.SGET_OBJECT && it.fieldAccess()?.name == "\$ENTRIES"
         } }
         val lines = loop.instructionList()
+        val entriesAt = lines.indices.single { lines[it].opcode == Opcode.SGET_OBJECT &&
+            lines[it].fieldAccess()?.let { it.definingClass == GROUP && it.name == "\$ENTRIES" } == true }
+        val iteratorAt = entriesAt + 1
+        val iterator = lines.getOrNull(iteratorAt)?.methodCall()
+        val entriesRegister = (lines[entriesAt] as OneRegisterInstruction).registerA
+        if (iterator?.name != "iterator" || iterator.returnType != "Ljava/util/Iterator;") {
+            throw PatchException("Gearslip settings card iteration changed")
+        }
+        // Reorder only this rendered list; enum ordinals and Kotlin entries stay unchanged.
+        loop.replaceInstruction(iteratorAt,
+            "invoke-static/range { v$entriesRegister .. v$entriesRegister }, $DRAWER->orderedCards(Ljava/lang/Iterable;)Ljava/util/Iterator;")
         val ordinals = lines.withIndex().filter { it.value.methodCall()?.name == "ordinal" }
         val joins = lines.withIndex().filter { it.value.methodCall()?.name == "joinToString\$default" }
         if (ordinals.size != 2 || joins.size != 1) throw PatchException("Gearslip card subtitle changed")

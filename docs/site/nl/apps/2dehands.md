@@ -4,7 +4,7 @@
 
 **Appversie:** 16.19.0 · **Build:** 633464 · **Origineel bestand:** XAPK
 
-[Gebruik het complete originele bestand](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/p3t8spl0cswx){ .md-button .md-button--primary }
 
 ## Ondersteunde originele bestanden
 

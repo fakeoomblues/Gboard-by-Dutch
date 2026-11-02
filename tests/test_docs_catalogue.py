@@ -91,6 +91,29 @@ class ReadmeSummaryTests(unittest.TestCase):
 
 
 class SiteCatalogueTests(unittest.TestCase):
+    def test_repackaged_music_is_not_listed_as_a_separate_original(self):
+        data = fixture()
+        data['patches'] = data['patches'][:1]
+        patch = data['patches'][0]
+        patch['name'] = 'Gearslip music browser support'
+        original = patch['compatiblePackages'][0]
+        original.update(packageName='com.google.android.apps.youtube.music',
+                        name='YouTube Music', apkFileType='APKM', targets=[{'version': None}])
+        repackaged = dict(original, packageName='app.morphe.android.apps.youtube.music', apkFileType='APK')
+        patch['compatiblePackages'].append(repackaged)
+        snapshot = json.dumps(data, sort_keys=True)
+        for language in ('en', 'nl'):
+            home = self.module.render_home_apps(data, language)
+            self.assertEqual(home.count('<article '), 1)
+            self.assertEqual(home.count('<li>Gearslip music browser support '), 1)
+            self.assertIn('(apps/youtube-music.md)', home)
+            catalogue = self.module.render(data, language)
+            self.assertEqual(catalogue.count('## YouTube Music'), 1)
+            self.assertIn('`com.google.android.apps.youtube.music`', catalogue)
+            self.assertNotIn('app.morphe.android.apps.youtube.music', home + catalogue)
+            self.assertNotIn('youtube-music-morphe', home + catalogue)
+        self.assertEqual(json.dumps(data, sort_keys=True), snapshot)
+
     def test_any_version_waze_addon_links_to_app_guide(self):
         data = fixture()
         data['patches'] = data['patches'][:1]

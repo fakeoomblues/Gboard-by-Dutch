@@ -1,19 +1,88 @@
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4dc55b1b3f8bf700cd95f905e9929f43adcba872/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.23.0-dev.1.**
+**Release · patch bundle v1.26.0.**
 
 [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
 
-Source: [4dc55b1b3f8b](https://github.com/johninnl/nl-morphe-patches/commit/4dc55b1b3f8bf700cd95f905e9929f43adcba872). Check each app's target versions in the user guide before patching.
+Source: [df28ed2c3b64](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.23.0-dev.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.22.0...v1.23.0-dev.1) (2026-11-01)
+## [1.26.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.25.0...v1.26.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Gearslip:** enlarge car app text with adjustable display density ([df28ed2](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f57abb97c9eb11de5792dc50d66c3bab62d4489a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.25.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f57abb97c9eb](https://github.com/johninnl/nl-morphe-patches/commit/f57abb97c9eb11de5792dc50d66c3bab62d4489a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.25.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.24.1...v1.25.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Google Maps:** add privacy controls and Waze/Flitsmeister road data ([f57abb9](https://github.com/johninnl/nl-morphe-patches/commit/f57abb97c9eb11de5792dc50d66c3bab62d4489a))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/526551952672ca595ac3de4ae0d90d4dc39b62e5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.24.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [526551952672](https://github.com/johninnl/nl-morphe-patches/commit/526551952672ca595ac3de4ae0d90d4dc39b62e5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.24.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.24.0...v1.24.1) (2026-11-02)
 
 ### 🐛 Bug Fixes
 
-* **Vela Maps:** follow active car routes without the phone service ([4dc55b1](https://github.com/johninnl/nl-morphe-patches/commit/4dc55b1b3f8bf700cd95f905e9929f43adcba872))
+* **RainViewer:** accept Android 10 input and enable all defaults ([5265519](https://github.com/johninnl/nl-morphe-patches/commit/526551952672ca595ac3de4ae0d90d4dc39b62e5))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/17b6366b4771c92594665fbd0f596ea33d058c3c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.24.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [17b6366b4771](https://github.com/johninnl/nl-morphe-patches/commit/17b6366b4771c92594665fbd0f596ea33d058c3c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.24.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.23.0...v1.24.0) (2026-11-02)
+
+### ✨ New Features
+
+* **RainViewer:** keep weather access and expose local Pro controls ([17b6366](https://github.com/johninnl/nl-morphe-patches/commit/17b6366b4771c92594665fbd0f596ea33d058c3c))
+* **RainViewer:** remove ads and tracking and skip automatic offers ([a7ea2ca](https://github.com/johninnl/nl-morphe-patches/commit/a7ea2caed876f5f0586ff29021d5b59ec4ccad83))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/cf9acd2fe8597795be9e40409eaf415613ed93e5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.23.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [cf9acd2fe859](https://github.com/johninnl/nl-morphe-patches/commit/cf9acd2fe8597795be9e40409eaf415613ed93e5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.23.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.22.0...v1.23.0) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **Vela Maps:** follow active car routes without the phone service ([cf9acd2](https://github.com/johninnl/nl-morphe-patches/commit/cf9acd2fe8597795be9e40409eaf415613ed93e5))
 
 ### ✨ New Features
 

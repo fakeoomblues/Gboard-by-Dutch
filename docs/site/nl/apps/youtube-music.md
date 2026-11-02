@@ -2,9 +2,9 @@
 
 **Appversie:** 9.44.52 · **Build:** 94452240 · **Origineel bestand:** APKM
 
-[Kies een origineel bestand](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Download originele app](https://buzzheavier.com/olrt69s67h6z){ .md-button .md-button--primary }
 
-Selecteer het volledige originele APKM-bestand. De patch ondersteunt ook 9.30.53, build 93053240, waaronder het geïnstalleerde Morphe-pakket.
+Selecteer het volledige originele YouTube Music-APKM-bestand. Na het patchen met Morphe heet de app **YT Music Morphe**. Dit is de gepatchte app, geen aparte originele app om te downloaden. De patch ondersteunt ook 9.30.53, build 93053240.
 
 De patch accepteert **alle versies** wanneer de benodigde browserstructuur eenduidig wordt herkend. Geteste versies zijn 9.30.53 en 9.44.52; de versie hierboven is een referentiebestand. Bij een gewijzigde of onduidelijke structuur stopt het patchen.
 
