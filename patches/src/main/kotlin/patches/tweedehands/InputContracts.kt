@@ -30,9 +30,15 @@ internal fun ResourcePatchContext.requireCompleteResources() {
     // A device-specific XAPK need not include every density or both ABIs.
     // Split resource paths overlap across densities, so validate the union of
     // complete publisher split profiles. These paths do not occur in the base.
+    // Manager preserves API qualifiers (drawable-xhdpi-v4, anydpi-v21), while
+    // Desktop normalizes them. Compare the same logical paths in both cases;
+    // retain density and layout-direction qualifiers and the native byte pins.
+    val apiQualifier = Regex("-v[0-9]+(?=/)")
+    val resources = entries.filter { it.startsWith("res/") }
+        .map { it.replace(apiQualifier, "") }.toSet()
     val profiles = InputContracts.densities.values
-    val complete = profiles.filter { entries.containsAll(it) }
-    val observed = entries.intersect(profiles.flatten().toSet())
+    val complete = profiles.filter { resources.containsAll(it) }
+    val observed = resources.intersect(profiles.flatten().toSet())
     check(complete.isNotEmpty() && observed == complete.flatten().toSet()) {
         "Incomplete 2dehands density input: include complete density splits from the 16.19.0 XAPK"
     }

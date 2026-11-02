@@ -66,6 +66,13 @@ class TweedehandsSplitRegression extends OriginalInputRegression {
         File merged = new File(scratch, "merged.apk");
         new ApkMerger().merge(new File(args[1]), merged, true, null, true, null, false);
         accept(merged, "genuine-arm64-xhdpi-xxhdpi");
+        // Manager 2.3.0 merges without renaming resource directories. Unlike
+        // Desktop, its APK still uses e.g. drawable-xhdpi-v4 and anydpi-v21.
+        File manager = new File(scratch, "manager.apk");
+        new ApkMerger().merge(new File(args[1]), manager, false, null, false, null, false);
+        accept(manager, "manager-preserved-resource-paths");
+        rejectPayload(manager, "manager-partial-density",
+            n -> n.endsWith("/abc_ab_share_pack_mtrl_alpha.9.png"), false);
         rejectPayload(merged, "no-native", n -> n.startsWith("lib/"), false);
         rejectPayload(merged, "partial-native", n -> n.endsWith("libsigner.so"), false);
         rejectPayload(merged, "changed-native", n -> false, true);
