@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.24.1**
+**Patch bundle: 1.25.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -207,6 +207,45 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Hide apps from drawer | On | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | On | 0.3.12-alpha, 0.3.31-alpha |
+
+## Google Maps
+
+[What do the patches change?](../apps/google-maps.md)
+
+`com.google.android.apps.maps`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| 120 refresh rate | On | 26.43.05.1002020710 |
+| Account sheet cleanup | On | 26.43.05.1002020710 |
+| Add microG-RE support | Off | 26.43.05.1002020710 |
+| Add original microG support | Off | 26.43.05.1002020710 |
+| Any media app | On | 26.43.05.1002020710 |
+| Avoid Flock cameras | On | 26.43.05.1002020710 |
+| Better offline maps | On | 26.43.05.1002020710 |
+| Black theme | On | 26.43.05.1002020710 |
+| Blue pin | On | 26.43.05.1002020710 |
+| Bypass Play Services checks | On | 26.43.05.1002020710 |
+| Change app name | On | 26.43.05.1002020710 |
+| Change package name | On | 26.43.05.1002020710 |
+| Customization screen | On | 26.43.05.1002020710 |
+| Flock cameras | On | 26.43.05.1002020710 |
+| Follow playing media | Off | 26.43.05.1002020710 |
+| Hide ads and clutter | On | 26.43.05.1002020710 |
+| Legacy icon | On | 26.43.05.1002020710 |
+| Location provider toggle | On | 26.43.05.1002020710 |
+| Offline saved places | On | 26.43.05.1002020710 |
+| Power saving mode | On | 26.43.05.1002020710 |
+| Proxy | On | 26.43.05.1002020710 |
+| Rectangle shapes | On | 26.43.05.1002020710 |
+| Remove permissions | On | 26.43.05.1002020710 |
+| Remove sign-in prompts | On | 26.43.05.1002020710 |
+| Remove telemetry | On | 26.43.05.1002020710 |
+| Speed cameras | On | 26.43.05.1002020710 |
+| Speeding chime | On | 26.43.05.1002020710 |
+| Trim account menu | On | 26.43.05.1002020710 |
+| Waze alerts | On | 26.43.05.1002020710 |
+| Zoom controls in navigation | On | 26.43.05.1002020710 |
 
 ## GVA
 

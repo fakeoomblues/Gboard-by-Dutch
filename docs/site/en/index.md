@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">51 apps</span> · Patch bundle: 1.24.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">52 apps</span> · Patch bundle: 1.25.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -361,6 +361,53 @@ hide:
 </details>
 
 [Guide and downloads](apps/gearslip.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
+<p class="dap-app-card__category">Traffic</p>
+
+### [Google Maps](apps/google-maps.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">26.43.05.1002020710</span></p>
+<p class="dap-app-card__package">com.google.android.apps.maps</p>
+<details class="dap-app-card__patches">
+<summary>30 patches</summary>
+<ul>
+<li>120 refresh rate <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Account sheet cleanup <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Add microG-RE support <span class="dap-app-card__target">26.43.05.1002020710 · default off</span></li>
+<li>Add original microG support <span class="dap-app-card__target">26.43.05.1002020710 · default off</span></li>
+<li>Any media app <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Avoid Flock cameras <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Better offline maps <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Black theme <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Blue pin <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Bypass Play Services checks <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Change app name <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Change package name <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Customization screen <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Flock cameras <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Follow playing media <span class="dap-app-card__target">26.43.05.1002020710 · default off</span></li>
+<li>Hide ads and clutter <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Legacy icon <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Location provider toggle <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Offline saved places <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Power saving mode <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Proxy <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Rectangle shapes <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Remove permissions <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Remove sign-in prompts <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Remove telemetry <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Speed cameras <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Speeding chime <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Trim account menu <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Waze alerts <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Zoom controls in navigation <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/google-maps.md){ .dap-app-card__link }
 
 </article>
 

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f57abb97c9eb11de5792dc50d66c3bab62d4489a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.25.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [f57abb97c9eb](https://github.com/johninnl/nl-morphe-patches/commit/f57abb97c9eb11de5792dc50d66c3bab62d4489a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.25.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.24.1...v1.25.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Google Maps:** add privacy controls and Waze/Flitsmeister road data ([f57abb9](https://github.com/johninnl/nl-morphe-patches/commit/f57abb97c9eb11de5792dc50d66c3bab62d4489a))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/526551952672ca595ac3de4ae0d90d4dc39b62e5/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.24.1.**
