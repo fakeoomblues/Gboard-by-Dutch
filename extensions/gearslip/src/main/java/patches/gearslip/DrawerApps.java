@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
@@ -58,6 +59,16 @@ public final class DrawerApps {
         context.startActivity(new Intent(context, DrawerAppsActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         return true;
+    }
+
+    /** Put Apps first in the phone's settings list without modifying enum ordinals or entries. */
+    public static Iterator<?> orderedCards(Iterable<?> entries) {
+        List<Object> ordered = new ArrayList<>();
+        for (Object entry : entries) {
+            if (entry instanceof Enum<?> && GROUP.equals(((Enum<?>) entry).name())) ordered.add(0, entry);
+            else ordered.add(entry);
+        }
+        return ordered.iterator();
     }
 
     /** The drawer's tiles without the unticked ones. Gearslip's own entries and pins are unaffected. */
@@ -136,7 +147,7 @@ public final class DrawerApps {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }
 
-    private static Context context() {
+    static Context context() {
         try {
             return (Application) Class.forName("android.app.ActivityThread")
                     .getMethod("currentApplication").invoke(null);
