@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.28.4",
+  "version": "1.29.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -68,7 +68,7 @@
     },
     {
       "name": "Add Gearslip car interface",
-      "description": "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Works with Morphe-patched Gearslip; uses native WuPlay add-ons and playback without root or phone-screen mirroring.",
+      "description": "Browse Home poster carousels and season/episode shelves in Gearslip, with automatic direct-source selection within 10 Mbps. Uses your WuPlay profile, add-ons and native playback without root or phone-screen mirroring.",
       "default": false,
       "category": null,
       "compatiblePackages": [

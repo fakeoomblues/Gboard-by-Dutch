@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8d0ff1bb142b4bed09396ddb3f0fa140cbc38dfa/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.29.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [8d0ff1bb142b](https://github.com/johninnl/nl-morphe-patches/commit/8d0ff1bb142b4bed09396ddb3f0fa140cbc38dfa). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.29.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.4...v1.29.0) (2026-11-02)
+
+### ✨ New Features
+
+* **WuPlay Mobile:** add Home shelves and capped autoplay ([009a765](https://github.com/johninnl/nl-morphe-patches/commit/009a765aaff2bb7f5c787ab359c30c51f0018617))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/354a820551073f959a36b367a9da1cff5f9a51dc/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.4.**
