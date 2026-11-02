@@ -59,7 +59,7 @@
 - [ ] User acceptance after dev release: produce/install signed APKs using matching keys or separate copies.
 - [ ] User acceptance after dev release: verify personal playlists, liked/saved items, playback, search and reconnect through Gearslip on Android.
 - [x] Record exact artifacts and test limitations.
-- [ ] Review changes, run identity preflight and commit only task-owned files. Do not promote app changes to stable without confirmation.
+- [x] Review changes, run identity preflight and commit only task-owned files. Do not promote app changes to stable without confirmation.
 
 ## Execution ledger
 
@@ -71,3 +71,4 @@
 - Ruling: The user requested release to dev and will test on device afterward. Defer live account and Manager acceptance to that test; publish a development build with these limitations explicit.
 - Verification: 27 Gradle patch tests; buildAndroid and metadata generation pass; Python415 tests pass45skip. Original phone account-bearing APKs were not replaced.
 - Final review: independent read-only reviewer found no code blockers; added explicit repatch selection instructions and a version-specific YT Music patch table in both languages in response to its documentation finding.
+- Task 3 delivery: published `v1.27.0-dev.2`; Release run `41394444912` and safety run `41394444977` passed. Dev discovery verification, downloaded bundle digest/payload comparison and strict published-bundle application to both supplied APKs passed. User-owned signed-in device acceptance remains pending as requested.
