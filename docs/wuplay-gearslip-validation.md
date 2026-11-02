@@ -48,3 +48,26 @@ The implementation plan is in `docs/superpowers/plans/2026-11-02-wuplay-gearslip
 ## Delivered artifact identity
 
 The local Morphe bundle SHA-256 is `5ed73bc1dd42507afbdf9b3776a4a960b7afe4ace79c805ac37a922b83b3ef23`. The signed STRIP_FAST APK SHA-256 is `89cf5bb27657aad7fce819bea60df405155490ec0a814e74f9fe05004d2cef01`; it verifies with APK Signature Schemes v2/v3 and the local Android debug signer `fb872b7bb00c34c5e89d42ab44c824980c0d8110e7cf26bd07da78036479c936`. The APK is a local test delivery, separate from the publisher certificate.
+
+
+## Home poster shelves, season browsing and capped autoplay
+
+Implementation branch: `feat/wuplay-car-home-ready`, prepared on main `f9479e1` after development and runtime validation from baseline `48b8908`. This update extends the existing Mobile patch; the Android TV publisher and Gearslip source are unchanged.
+
+- Home uses the selected profile's Home-enabled catalogs, ordered by the native definitions, with four horizontal catalog shelves per group and twelve preview titles per shelf. More catalogs/titles remain reachable. A series opens episode-thumbnail carousels grouped by season, including Specials and unknown-season handling.
+- Title/episode pages expose **Play · ≤10 Mbps** and secondary eligible sources. Automatic selection honors the preferred add-on among eligible direct streams; unknown and over-limit rates are excluded. Retries use at most three eligible candidates and stop with the owning player page/session.
+- Episode runtime is retained separately from parent-series metadata. File-size/runtime rates are average estimates, not a hard network traffic shaper. The native adaptive selector is configured for 9 Mbps video plus 1 Mbps audio, with both constraint-exceeding fallback flags disabled. This establishes configured limits; it does not establish behavior for every possible adaptive manifest.
+- Artwork travels through a private, read-only URI-grant provider, with a two-download limit, bounded input/decode/disk size and a total fetch deadline. Failed/busy reads return artwork placeholders. Refresh creates fresh artwork URIs as well as fresh shelf identities to avoid Gearslip's process-wide caches retaining stale content.
+- The exact input strips the standard IconCompat wire methods and reverses the retained Kotlin null-parameter helper's argument order. The patch adds four IconCompat bridges and one checked Kotlin overload forwarding to the original implementation. It does not package another Kotlin or AndroidX Core runtime.
+
+Validation uses the dedicated persisted `wuplay-gearslip-test` Android 16 arm64 emulator (`emulator-5680`) and official Gearslip 0.3.31-alpha Preview at 800×480. Only its owned CarValidation profile/add-ons were used. The user's CPH2747 app was pulled read-only for inspection and was not replaced.
+
+- All 423 Python regressions pass (45 skips), including independent JVM assertions for the exact bitrate boundary, invalid/unknown rates, runtime units, header-authenticated size probes, HTTP range totals, HLS metadata, preferred-addon ordering, season ordering/pagination, cache identities, three-candidate retry limits and synchronous preparation failure during retry.
+- Release-workflow Gradle compilation and unit-test tasks pass. Strict patching/rebuilding passes against the exact original Mobile APK.
+- Android instrumentation result −1 verifies a populated GridSection serialization roundtrip, lazy item retrieval across Binder, actual content-URI thumbnail decoding and episode-runtime isolation. This expanded check first reproduced the missing Kotlin overload before its repair; a loading-only template check was insufficient.
+- Android instrumentation result −1 verifies sixteen concurrent slow artwork requests all decode artwork/placeholders and a refresh changes their URI. The regression first reproduced blank tiles and the absent refresh revision.
+- The actual production Play page, using the native enabled-add-on repository, automatically chose an authored 1,335,171-bps source while skipping an over-limit candidate. A second controlled response containing only over-limit sources produced the expected 10 Mbps error and no selected player.
+- Native playback with the selector cap active decoded 158 distinct video frames and 192 audio buffers. The clock advanced 26,625→29,709→32,720 ms across surface replacement/background/screen-off checks; 78 frames rendered with the screen noninteractive. Seek, pause and resume assertions passed.
+- Actual Gearslip UI navigation passed Home posters → Dead-End Job → Season 1 episode thumbnails → episode overview/Play → automatically selected authored video. Safe native diagnostics showed `PlayerPage`, `trackedState=3`, an 800×480 bound surface and active playback; the visible authored video clock read 38.417 seconds. No unexplained stream-list selection was required.
+
+Local evidence is retained in the worktree `.analysis/` directory, including `home-posters.png`, `series-seasons.png`, `episode-detail.png`, `episode-autoplay.png`, probe results, strict patch output and test logs. The authored fixture validates the interface and control flow; no copyrighted episode was played. Physical head-unit transport/acoustic audio and every adaptive format remain outside this emulator evidence.

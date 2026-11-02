@@ -16,6 +16,7 @@ final class NativePlayer implements CarPlayback.Engine<SurfaceHolder> {
     NativePlayer(Context context,NativeData data){this.context=context.getApplicationContext();this.data=data;}
     void selection(NativeData.Item item,NativeData.Choice choice){this.item=item;this.choice=choice;}
     @Override public void prepare(String url,Map<String,String> headers,long resume) {
+        if(choice==null||!choice.direct()||!CarStreamPolicy.eligible(choice.rate))throw new IllegalStateException("No suitable stream within 10 Mbps");
         release();requestedResume=resume;
         try {
             job=NativeCalls.call(Class.forName("kotlinx.coroutines.JobKt"),"SupervisorJob$default");
@@ -64,6 +65,7 @@ final class NativePlayer implements CarPlayback.Engine<SurfaceHolder> {
         Object effectScope=Class.forName("androidx.compose.runtime.Stack").getField("InternalDisposableEffectScope").get(null);
         disposer=NativeCalls.call(effect,"invoke",effectScope);
         key=NativeCalls.call(facade,"getPlayerKey");
+        AdaptiveCap.apply(player);
         if(surface!=null)NativeCalls.call(player,"setVideoSurfaceHolder",surface);
         if(requestedResume>0){NativeCalls.call(player,"seekTo",requestedResume);requestedResume=0;}
     }
@@ -81,6 +83,7 @@ final class NativePlayer implements CarPlayback.Engine<SurfaceHolder> {
             for(int t=0;t<length;t++) {
                 if(!Boolean.TRUE.equals(NativeCalls.call(group,"isTrackSupported",t)))continue;
                 Object format=NativeCalls.call(group,"getTrackFormat",t);
+                Object bitrate=NativeCalls.optional(format,"bitrate");if(bitrate instanceof Number&&((Number)bitrate).longValue()>1_000_000L)continue;
                 String language=NativeCalls.text(format,"language"),label=NativeCalls.text(format,"label");
                 String name=label.isEmpty()?language:label;if(name.isEmpty())name="Audio "+(t+1);
                 result.add(new Track(name,g,t,null,player));
@@ -111,6 +114,7 @@ final class NativePlayer implements CarPlayback.Engine<SurfaceHolder> {
         if(facade!=null&&!((java.util.concurrent.atomic.AtomicBoolean)Class.forName("androidx.compose.ui.platform.GlobalSnapshotManager").getField("started").get(null)).get())
             NativeCalls.call(Class.forName("androidx.compose.runtime.snapshots.SnapshotKt"),"access$advanceGlobalSnapshot");
         if(facade!=null && !Objects.equals(key,NativeCalls.call(facade,"getPlayerKey")))rebuild();
+        if(player!=null)AdaptiveCap.apply(player);
     }
     List<?> cues() {
         if(facade==null)return Collections.emptyList();

@@ -53,22 +53,36 @@ final class NativeData implements AutoCloseable {
     }
     static final class Item {
         final String type,id,title,subtitle,parentId; final Object value;
-        final Integer relative; final List<?> videos;
+        final Integer relative; final List<?> videos; final Object episodeValue;
         Item(String type,String id,String title,String subtitle,String parentId,Integer relative,Object value,List<?> videos) {
-            this.type=type;this.id=id;this.title=title;this.subtitle=subtitle;this.parentId=parentId;this.relative=relative;this.value=value;this.videos=videos;
+            this(type,id,title,subtitle,parentId,relative,value,videos,null);
         }
+        Item(String type,String id,String title,String subtitle,String parentId,Integer relative,Object value,List<?> videos,Object episodeValue) {
+            this.episodeValue=episodeValue;this.type=type;this.id=id;this.title=title;this.subtitle=subtitle;this.parentId=parentId;this.relative=relative;this.value=value;this.videos=videos;
+        }
+        int season(){Object number=NativeCalls.optional(episodeValue,"season");return number instanceof Number?((Number)number).intValue():-1;}
+        int episode(){Object number=NativeCalls.optional(episodeValue,"episode");return number instanceof Number?((Number)number).intValue():Integer.MAX_VALUE;}
+        String displayTitle(){String name=NativeCalls.text(episodeValue,"title");return name.isEmpty()?title:name;}
+        String artwork(){String image=NativeCalls.text(episodeValue,"thumbnail");if(image.isEmpty())image=NativeCalls.text(value,"poster");if(image.isEmpty())image=NativeCalls.text(value,"background");return image;}
+        String overview(){String text=NativeCalls.text(episodeValue,"overview");return text.isEmpty()?subtitle:text;}
+        String byline(){if(parentId!=null)return (season()<0?"Episode":"S"+season())+(episode()==Integer.MAX_VALUE?"":" · E"+episode());String year=NativeCalls.text(value,"releaseInfo"),rating=NativeCalls.text(value,"imdbRating");if(year.length()>12)year=year.substring(0,12);return year+(rating.isEmpty()?"":(year.isEmpty()?"":" · ")+"★ "+rating);}
+        Double seconds(){return CarStreamPolicy.runtimeSeconds(NativeCalls.optional(episodeValue==null?value:episodeValue,"runtime"));}
         static Item preview(Object value) {
             return new Item(NativeCalls.text(value,"type"),NativeCalls.text(value,"id"),NativeCalls.text(value,"name"),NativeCalls.text(value,"description"),null,null,value,Collections.emptyList());
         }
     }
-    static final class Choice {
-        final Object value;final String title,url,addonUrl,addonName;
+    static final class Choice implements CarStreamPolicy.Candidate {
+        final Object value;final String title,url,addonUrl,addonName;Long rate;
         Choice(Object stream,String addonUrl,String addonName) {
             value=stream;url=NativeCalls.text(stream,"url");this.addonUrl=addonUrl;this.addonName=addonName;
             String name=NativeCalls.text(stream,"name"),detail=NativeCalls.text(stream,"title");
             if(detail.isEmpty())detail=NativeCalls.text(stream,"description");
             title=(name.isEmpty()?addonName:name)+(detail.isEmpty()?"":" · "+detail);
         }
+        public Long bitrate(){return rate;}
+        public String addon(){return addonUrl;}
+        public boolean direct(){return CarStreamPolicy.direct(url);}
+        String rateLabel(){return rate==null?"Bitrate unknown":String.format(java.util.Locale.ROOT,"%.1f Mbps · estimated",rate/1000000d);}
         @SuppressWarnings("unchecked") Map<String,String> headers() {
             Object hints=NativeCalls.optional(value,"behaviorHints"),proxy=NativeCalls.optional(hints,"proxyHeaders"),request=NativeCalls.optional(proxy,"request");
             return request instanceof Map ? (Map<String,String>)request : Collections.emptyMap();
@@ -105,6 +119,7 @@ final class NativeData implements AutoCloseable {
         requireProfile(profile);return new CatalogWindow<>(out,next);
     }
     Item details(Item item) throws Exception {
+        if(item.parentId!=null){begin();return item;}
         ProfileStamp profile=begin();Object response=calls.await(metadata,"getMeta-yxL6bBk",item.type,item.parentId==null?item.id:item.parentId,false,null);
         NativeMetadata.Value decoded=NativeMetadata.decode(response);
         Object meta=NativeCalls.call(Class.forName("androidx.core.math.MathUtils"),"withNormalizedId",decoded.meta);
@@ -118,9 +133,13 @@ final class NativeData implements AutoCloseable {
         for(Object video:detail.videos) {
             Object season=NativeCalls.optional(video,"season"),episode=NativeCalls.optional(video,"episode");
             String label=(season==null?"":"S"+season)+(episode==null?"":" E"+episode)+" · "+NativeCalls.text(video,"title");
-            out.add(new Item("series",NativeCalls.text(video,"id"),item.title,label,detail.id,(Integer)NativeCalls.optional(video,"seasonRelativeEpisode"),detail.value,detail.videos));
+            out.add(new Item("series",NativeCalls.text(video,"id"),item.title,label,detail.id,(Integer)NativeCalls.optional(video,"seasonRelativeEpisode"),detail.value,detail.videos,video));
         }
         return out;
+    }
+    String preferredAddon() throws Exception {
+        Object profile=calls.first(NativeCalls.field(settings,"activeProfile"));
+        return NativeCalls.text(NativeCalls.optional(profile,"settings"),"preferredAutoplayAddon");
     }
     List<Choice> streams(Item item) throws Exception {
         ProfileStamp profile=begin();List<Choice> out=new ArrayList<>();int failures=0,queried=0;
@@ -137,6 +156,17 @@ final class NativeData implements AutoCloseable {
             requireProfile(profile);
         }
         if(out.isEmpty()&&queried>0&&failures==queried)throw new IllegalStateException("The enabled add-ons could not load streams. Retry or check WuPlay on your phone.");
+        int probes=0;long deadline=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);
+        for(Choice choice:out){
+            if(Thread.currentThread().isInterrupted())throw new InterruptedException();
+            Object size=NativeCalls.optional(NativeCalls.optional(choice.value,"behaviorHints"),"videoSize");
+            Long bytes=size instanceof Number?((Number)size).longValue():null;
+            boolean manifest=choice.url.toLowerCase(java.util.Locale.ROOT).matches(".*\\.(m3u8?|mpd)(?:[?#].*)?$");
+            if(!choice.direct())continue;
+            if(!manifest&&bytes!=null&&bytes>0)choice.rate=CarStreamPolicy.bitrate(bytes,item.seconds());
+            else if(probes<8&&System.nanoTime()<deadline){probes++;choice.rate=StreamRateProbe.rate(choice.url,choice.headers(),item.seconds(),bytes);}
+            requireProfile(profile);
+        }
         requireProfile(profile);return out;
     }
     @Override public void close(){access.clear();calls.close();if(observer!=null)observer.interrupt();}
