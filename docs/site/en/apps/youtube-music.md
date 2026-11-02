@@ -24,7 +24,7 @@ This compatibility patch does not remove advertising, tracking, account requirem
 
 Select the original app and enable **Android Auto** from Morphe Patches together with **Gearslip music browser support** from Dutch App Patches. The Gearslip patch includes the personal-library integration; there is no second library patch to select. Use the original input when repatching an existing installation.
 
-Apply **Keep music player entries** to Gearslip so the player tile is retained. Trusted Gearslip packages defaults to the Gearslip and DriveDeck packages, including their `.dev` builds; add another package only for a build you intentionally use.
+Apply **Keep music player entries** to Gearslip so the player tile is retained. **Trusted Gearslip and DriveDeck packages** defaults to the Gearslip and DriveDeck packages, including their `.dev` builds; add another package only for a build you intentionally use.
 
 Automated tests cover host admission, real root and library-folder construction, and the combined original-app patching workflow. Catalogue contents and playback depend on the signed-in account and available content.
 

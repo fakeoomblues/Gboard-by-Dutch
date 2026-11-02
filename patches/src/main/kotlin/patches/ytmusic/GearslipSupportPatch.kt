@@ -38,7 +38,7 @@ val gearslipMusicSupport = bytecodePatch(
     extendWith("extensions/gearslip-ytm.mpe")
 
     val packageNames by stringOption(
-        key = "packageNames", default = HOST, title = "Trusted Gearslip packages",
+        key = "packageNames", default = HOST, title = "Trusted Gearslip and DriveDeck packages",
         description = "Comma-separated installed Gearslip or DriveDeck host package names. Each caller must own its package under its actual callback UID.",
         required = true,
     ) { value ->

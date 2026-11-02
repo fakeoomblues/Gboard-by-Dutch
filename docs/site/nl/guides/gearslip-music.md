@@ -25,7 +25,7 @@ De muziek- en appkiezerpatches ondersteunen Gearslip 0.3.12-alpha en 0.3.31-alph
 
 Kies voor YouTube Music de originele `com.google.android.apps.youtube.music`-APK in Morphe. Combineer de twee bovenstaande patches in één poging; gebruik geen al hernoemde YT Music Morphe-APK als invoer. Kies voor Myspoti de originele APK van de uitgever en pas de ene Gearslip-patch toe.
 
-De optie **Trusted Gearslip packages** bevat standaard de officiële host, `app.seb3thehacker.gearslip`. Gepatchte Gearslip met dezelfde pakketnaam gebruikt diezelfde instelling. Voeg alleen een andere pakketnaam toe als je bewust een hernoemde host gebruikt. De muziekpatches controleren of de werkelijke Android-aanroeper bij het ingestelde pakket hoort.
+De optie **Trusted Gearslip and DriveDeck packages** bevat standaard Gearslip en DriveDeck, inclusief hun ontwikkelversies: `app.seb3thehacker.gearslip`, `app.seb3thehacker.gearslip.dev`, `app.johninnl.drivedeck` en `app.johninnl.drivedeck.dev`. Gepatchte Gearslip met dezelfde pakketnaam gebruikt diezelfde instelling. Toont Manager alleen `app.seb3thehacker.gearslip`, zet de optie dan vóór het patchen terug naar de standaard. Voeg alleen een andere pakketnaam toe als je bewust een hernoemde host gebruikt. De muziekpatches controleren of de werkelijke Android-aanroeper bij het ingestelde pakket hoort.
 
 Gebruik bij bijwerken dezelfde ondertekeningssleutel als voor de bestaande gepatchte versie. Een installatie met de sleutel van de uitgever accepteert geen update met een andere sleutel. Bewaar het account en de gegevens; volg de [handleiding voor installeren en ondertekenen](install.md#4-installeer-en-werk-bij) voordat je iets vervangt.
 

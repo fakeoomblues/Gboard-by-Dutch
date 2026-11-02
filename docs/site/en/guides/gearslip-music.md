@@ -25,7 +25,7 @@ The music and drawer patches support Gearslip 0.3.12-alpha and 0.3.31-alpha. Use
 
 For YouTube Music, select the original `com.google.android.apps.youtube.music` APK in Morphe. Combine the two patches listed above in one attempt; do not use an already renamed YT Music Morphe APK as the input. For Myspoti, select the publisher-signed original and apply its one Gearslip patch.
 
-The **Trusted Gearslip packages** option defaults to the official host, `app.seb3thehacker.gearslip`. A patched Gearslip that keeps that package uses the same setting. Add a different package only if you intentionally use a renamed host. The music patches check that the actual Android caller owns the configured package.
+The **Trusted Gearslip and DriveDeck packages** option defaults to Gearslip and DriveDeck, including their development builds: `app.seb3thehacker.gearslip`, `app.seb3thehacker.gearslip.dev`, `app.johninnl.drivedeck` and `app.johninnl.drivedeck.dev`. A patched Gearslip that keeps its package uses the same setting. If Manager shows only `app.seb3thehacker.gearslip`, reset the option to its default before patching. Add a different package only if you intentionally use a renamed host. The music patches check that the actual Android caller owns the configured package.
 
 Install your result with the same signing key as the existing patched copy when updating. A publisher-signed installation cannot accept an update signed with a different key. Preserve its account and data; follow the [installation and signing guide](install.md#4-install-and-update) before replacing anything.
 
