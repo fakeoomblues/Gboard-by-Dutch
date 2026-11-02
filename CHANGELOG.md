@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4c9028dc425ffe7cc9c141a5d263ef6996cdae13/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.35.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [4c9028dc425f](https://github.com/johninnl/nl-morphe-patches/commit/4c9028dc425ffe7cc9c141a5d263ef6996cdae13). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.35.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.35.0...v1.35.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** keep custom icons visible at small sizes ([4c9028d](https://github.com/johninnl/nl-morphe-patches/commit/4c9028dc425ffe7cc9c141a5d263ef6996cdae13))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ea77d2ac29498a959da2168f85527f5367ff9205/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.35.0.**
