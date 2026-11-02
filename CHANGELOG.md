@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/46992eee656ccf621bdb1a9685520297738f6dda/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.31.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [46992eee656c](https://github.com/johninnl/nl-morphe-patches/commit/46992eee656ccf621bdb1a9685520297738f6dda). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.31.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.31.0...v1.31.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **General:** name DriveDeck in the trusted music host option ([46992ee](https://github.com/johninnl/nl-morphe-patches/commit/46992eee656ccf621bdb1a9685520297738f6dda))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c49d2b4569742d7048b16b014b4309c5f98a7e6a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.31.0.**
