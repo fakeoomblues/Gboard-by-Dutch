@@ -2,6 +2,11 @@ package patches.wuplaymobile
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.*
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import org.w3c.dom.Element
 import patches.shared.originalInput
 import patches.shared.uniqueMatch
@@ -49,6 +54,12 @@ private val carInterfaceResources = resourcePatch {
             val action = xml.createElement("action"); action.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.CarAppService")
             val category = xml.createElement("category"); category.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.category.NAVIGATION")
             filter.appendChild(action); filter.appendChild(category); service.appendChild(filter); application.appendChild(service)
+            val artwork = xml.createElement("provider")
+            artwork.setAttributeNS(ANDROID_NS,"android:name","nl.johninnl.wuplaycar.ArtworkProvider")
+            artwork.setAttributeNS(ANDROID_NS,"android:authorities","app.wuplay.android.morphe.car.art")
+            artwork.setAttributeNS(ANDROID_NS,"android:exported","false")
+            artwork.setAttributeNS(ANDROID_NS,"android:grantUriPermissions","true")
+            application.appendChild(artwork)
             val api = xml.createElement("meta-data")
             api.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.minCarApiLevel"); api.setAttributeNS(ANDROID_NS,"android:value","5")
             application.appendChild(api)
@@ -67,7 +78,7 @@ private val carInterfaceResources = resourcePatch {
 @Suppress("unused")
 val wuplayGearslip = bytecodePatch(
     name = "Add Gearslip car interface",
-    description = "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Works with Morphe-patched Gearslip; uses native WuPlay add-ons and playback without root or phone-screen mirroring.",
+    description = "Browse Home poster carousels and season/episode shelves in Gearslip, with automatic direct-source selection within 10 Mbps. Uses your WuPlay profile, add-ons and native playback without root or phone-screen mirroring.",
     default = false,
 ) {
     compatibleWith(wuplayMobile)
@@ -77,12 +88,54 @@ val wuplayGearslip = bytecodePatch(
         val container = Fingerprint(definingClass = "Lapp/wuplay/androidtv/AppContainer;", name = "<init>",
             parameters = listOf("Lapp/wuplay/android/MobileApplication;", "Ljava/lang/Integer;"), returnType = "V").uniqueMatch().method
         MobileIdentity.retain(container)
+        // R8 stripped the unused public IconCompat wire API from this exact input.
+        // Add it to the existing class; never replace or duplicate AndroidX Core.
+        val iconType = "Landroidx/core/graphics/drawable/IconCompat;"
+        val icon = mutableClassDefBy(iconType)
+        check(icon.fields.any { it.name == "mType" && it.type == "I" } &&
+            icon.fields.any { it.name == "mObj1" && it.type == "Ljava/lang/Object;" }) { "WuPlay artwork icon ABI changed" }
+        for ((name, result, helper) in listOf(
+            Triple("getType", "I", "type"), Triple("getUri", "Landroid/net/Uri;", "uri"),
+            Triple("toBundle", "Landroid/os/Bundle;", "bundle"),
+            Triple("createFromBundle", iconType, "fromBundle")
+        )) {
+            val isStatic = name == "createFromBundle"
+            val argument = if (isStatic) "Landroid/os/Bundle;" else iconType
+            check(icon.methods.none { it.name == name }) { "WuPlay artwork icon method already present: $name" }
+            val method = MutableMethod(ImmutableMethod(iconType, name,
+                if (isStatic) listOf(ImmutableMethodParameter(argument, emptySet(), null)) else emptyList(),
+                result, if (isStatic) 9 else 1, emptySet(), emptySet(),
+                ImmutableMethodImplementation(2, emptyList(), emptyList(), emptyList())))
+            val objectResult = result != "I"
+            method.addInstructions(0, """
+                invoke-static/range { p0 .. p0 }, Lnl/johninnl/wuplaycar/ArtworkIcons;->$helper($argument)$result
+                ${if (objectResult) "move-result-object" else "move-result"} v0
+                ${if (objectResult) "return-object" else "return"} v0
+            """)
+            icon.methods.add(method)
+        }
+        val intrinsicsType = "Lkotlin/jvm/internal/Intrinsics;"
+        Fingerprint(definingClass = intrinsicsType, name = "checkNotNullParameter",
+            parameters = listOf("Ljava/lang/String;", "Ljava/lang/Object;"), returnType = "V").uniqueMatch()
+        val intrinsics = mutableClassDefBy(intrinsicsType)
+        check(intrinsics.methods.none { it.name == "checkNotNullParameter" && it.parameterTypes.toList() == listOf("Ljava/lang/Object;", "Ljava/lang/String;") }) { "WuPlay Kotlin ABI already has the car SDK overload" }
+        val nullCheck = MutableMethod(ImmutableMethod(intrinsicsType, "checkNotNullParameter",
+            listOf(ImmutableMethodParameter("Ljava/lang/Object;", emptySet(), null), ImmutableMethodParameter("Ljava/lang/String;", emptySet(), null)),
+            "V", 9, emptySet(), emptySet(), ImmutableMethodImplementation(2, emptyList(), emptyList(), emptyList())))
+        nullCheck.addInstructions(0, """
+            invoke-static { p1, p0 }, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/String;Ljava/lang/Object;)V
+            return-void
+        """)
+        intrinsics.methods.add(nullCheck)
         val continuation = "Lkotlin/coroutines/jvm/internal/ContinuationImpl;"
         val classes = mapOf(
             "Lapp/wuplay/android/MobileApplication;" to mapOf("container" to "Lapp/wuplay/androidtv/AppContainer;"),
             "Lapp/wuplay/androidtv/AppContainer;" to mapOf("catalogRepository" to "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;", "addonRepository" to "Lapp/wuplay/androidtv/data/AddonRepository;"),
             "Lapp/wuplay/androidtv/domain/stremio/MetaResponse;" to mapOf("meta" to "Lapp/wuplay/androidtv/domain/stremio/Meta;"),
             "Lapp/wuplay/androidtv/domain/stremio/Meta;" to mapOf("videos" to "Ljava/util/List;", "description" to "Ljava/lang/String;"),
+            "Lapp/wuplay/androidtv/domain/stremio/Video;" to mapOf("season" to "Ljava/lang/Integer;", "episode" to "Ljava/lang/Integer;", "runtime" to "Ljava/lang/Integer;", "thumbnail" to "Ljava/lang/String;"),
+            "Landroidx/media3/common/TrackSelectionParameters${'$'}Builder;" to mapOf("maxVideoBitrate" to "I", "maxAudioBitrate" to "I"),
+            "Landroidx/media3/exoplayer/trackselection/DefaultTrackSelector${'$'}Parameters${'$'}Builder;" to mapOf("exceedVideoConstraintsIfNecessary" to "Z", "exceedAudioConstraintsIfNecessary" to "Z"),
             "Lapp/wuplay/androidtv/domain/model/Profile;" to mapOf("profileKey" to "Ljava/lang/String;", "hasPinSet" to "Z"),
             "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;" to mapOf("definitions" to "Lkotlinx/coroutines/flow/Flow;"),
             "Lapp/wuplay/androidtv/data/UserSettingsRepositoryImpl;" to mapOf("activeProfileId" to "Lkotlinx/coroutines/flow/Flow;", "activeProfile" to "Lkotlinx/coroutines/flow/Flow;"),
