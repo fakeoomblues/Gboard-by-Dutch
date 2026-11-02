@@ -6,6 +6,8 @@
 
 Use the official Gearslip APK. **Keep music player entries** and **Hide apps from drawer** also support 0.3.12-alpha, build 12. **Control car display density** requires 0.3.31-alpha, build 13.
 
+[Set up music players and personal libraries in Gearslip](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |

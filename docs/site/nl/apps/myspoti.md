@@ -6,6 +6,8 @@
 
 Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **Alle versies** wanneer de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. Het patchen en opnieuw bouwen is getest met echte APK-bestanden van 2.2.0 / 1116 en 2.3.0 / 1121. De versie hierboven is het referentiebestand. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
 
+[Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |

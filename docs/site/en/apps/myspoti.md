@@ -6,6 +6,8 @@
 
 Select the publisher-signed Myspoti APK. Compatibility is **Any** version when the existing browser access structure is uniquely recognized; an unsupported or ambiguous structure stops patching. Actual APK patching and rebuilds have been tested with 2.2.0 / 1116 and 2.3.0 / 1121. The version above is the reference input. Myspoti is developed by [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
 
+[Set up music players and personal libraries in Gearslip](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |

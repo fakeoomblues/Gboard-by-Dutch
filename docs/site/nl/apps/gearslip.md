@@ -6,6 +6,8 @@
 
 Gebruik de officiële Gearslip-APK. **Keep music player entries** en **Hide apps from drawer** ondersteunen ook 0.3.12-alpha, build 12. **Control car display density** vereist 0.3.31-alpha, build 13.
 
+[Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |

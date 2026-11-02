@@ -119,6 +119,8 @@ nav:
       - guides/shizuku.md
       - guides/shizuku-tv.md
       - guides/android-auto.md
+      - guides/navigation-data.md
+      - guides/gearslip-music.md
       - guides/troubleshooting.md
   - Apps:
       - apps/index.md

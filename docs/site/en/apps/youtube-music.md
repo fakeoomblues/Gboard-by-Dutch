@@ -8,6 +8,8 @@ Select the original YouTube Music APK. Morphe may rename the installed result to
 
 Compatibility is **Any** when the browser and Morphe library structures are recognized uniquely. The complete combined workflow is tested with 9.30.53 and Morphe Patches 2.0.0. Changed structures or missing required hooks stop patching. Morphe's own Android Auto patch must also support the app version selected.
 
+[Set up music players and personal libraries in Gearslip](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |

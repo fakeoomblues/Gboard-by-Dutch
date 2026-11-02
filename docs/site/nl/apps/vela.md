@@ -6,6 +6,10 @@
 
 Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager.
 
+Gebruik gepatchte Waze of Flitsmeister als lokale bron voor actuele snelheid, limieten en beschikbare wegwaarschuwingen terwijl Vela je route verzorgt. De bron kan op de achtergrond draaien met de overlay uit.
+
+[Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |

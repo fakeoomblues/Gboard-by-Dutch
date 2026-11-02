@@ -23,6 +23,8 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 
 De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
 
+[Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 ### Toegevoegd door dit project

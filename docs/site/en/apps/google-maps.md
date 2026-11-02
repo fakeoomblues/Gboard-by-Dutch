@@ -6,9 +6,55 @@
 
 Select the complete original APK for this exact version in Morphe Manager. Android 10 or newer is required.
 
-The original Maps patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, adapted here for this Maps version. This project adds native car navigation and extends **Waze alerts** with Flitsmeister and the navigation data already supported in Vela Maps.
+## Native Maps in Gearslip and Android Auto
+
+Our **Native navigation for Gearslip and Android Auto** patch runs the patched app's original car map and navigation interface in both hosts. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. Search uses the host's keyboard, and the native Maps screen handles results, route previews and turn-by-turn guidance.
+
+![Ungoogled Maps running its native map in the official Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
+
+*The renamed patched app in Google's Android Auto Desktop Head Unit, using a test location in Amsterdam.*
+
+[Set up Ungoogled Maps for Android Auto](../guides/android-auto.md){ .md-button }
+
+### Why Maps needed a different approach
+
+Waze exposes a standard Android for Cars navigation service that car hosts can discover. The examined Maps version uses Google's private projection service instead. After renaming, Gearslip could mistake its notification capability for a messaging app and open an empty messages screen. Adding a navigation label would not make those two interfaces communicate.
+
+We built a navigation adapter that connects Gearslip and Android Auto to the patched copy's own projection service and original car renderer. Maps also loads part of its car interface from the full Android Auto installation, which is why that app must be installed even when using Gearslip.
+
+Signing the patched APK creates another problem: Google's optional private vehicle-data client rejects the new signing certificate. We isolated that client so it cannot crash the map, while retaining GPS navigation. Search needed a separate bridge between the host's keyboard and Maps' native editor. The map and editor also have to survive display resizing, keyboard changes and reconnects.
+
+Native search, route start, guidance and reconnect were checked in Gearslip and Google's official Android Auto Desktop Head Unit. Those checks do not establish every phone, car or live-road setup. The [engineering report](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/research/2026-11-02-maps-native-car-ui.md) records the implementation and test limits.
+
+## Waze and Flitsmeister data inside Maps
+
+Our extension to **Waze alerts** lets you choose patched Waze or Flitsmeister as a local navigation-data source. Alongside road-alert pins, it can show current speed, the road limit and an observed average through an average-speed zone, with progress and remaining distance. Available reports can also produce advance warnings.
+
+This uses our **Broadcast navigation data** patch in the provider app. Installing ordinary Waze or Flitsmeister is not enough. The original Waze **Share alerts with Maps** mode remains available as a separate alert-sharing choice.
+
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
+
+## Where these patches come from
+
+The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.43.05.1002020710, extended **Waze alerts** with our shared navigation-data integration and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
+
+Select Maps patches from **Dutch App Patches only** for a patching attempt. Our bundle already contains the adapted upstream controls. Selecting overlapping Maps patches from bearinmind patches as well can run incompatible versions of the same shared hooks.
 
 ## Patches
+
+### Added by this project
+
+| Patch | Default | What it does |
+| --- | --- | --- |
+| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. Requires the full Android Auto app for its car UI resources. |
+
+### Extended by this project
+
+| Patch | Default | What it does |
+| --- | --- | --- |
+| **Waze alerts** | On | Adds Waze and Flitsmeister as local sources for road-alert pins, approach chimes, speed, limits and observed average-speed zones. Starts off. |
+
+### Adapted from bearinmind patches
 
 | Patch | Default | What it does |
 | --- | --- | --- |
@@ -30,7 +76,6 @@ The original Maps patches come from [bearinmind patches](https://github.com/bear
 | **Hide ads and clutter** | On | Hides promoted pins, sponsored results, AI summaries, place-sheet business rows and the Explore feed and bottom tabs. |
 | **Legacy icon** | On | Restores the flat multicolour Maps pin used before the gradient icon. |
 | **Location provider toggle** | On | Adds a choice of Android, Google Play services or microG-RE location, with network-location fallback. |
-| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. Requires the full Android Auto app for its car UI resources. |
 | **Offline saved places** | On | Saves local places and lists, imports and exports backups, and adds an optional local Timeline recorder. |
 | **Power saving mode** | On | Adds a black navigation screen and settings for its button, idle activation, speedometer and frame rate. |
 | **Proxy** | On | Adds an HTTP proxy setting for Maps traffic; map loading stops if the configured proxy is unavailable. |
@@ -41,7 +86,6 @@ The original Maps patches come from [bearinmind patches](https://github.com/bear
 | **Speed cameras** | On | Shows OpenStreetMap speed and red-light cameras with approach notes and chimes. Starts off. |
 | **Speeding chime** | On | Adds a chime when speed exceeds the known road limit; configure the threshold in the external-data settings. |
 | **Trim account menu** | On | Removes Timeline, Location sharing, Your data in Maps and Help & feedback from the account menu. |
-| **Waze alerts** | On | Adds Waze and Flitsmeister as local sources for road-alert pins, approach chimes, speed, limits and observed average-speed zones. Starts off. |
 | **Zoom controls in navigation** | On | Adds zoom-in, zoom-out and reset buttons while the navigation camera keeps following. |
 
 ## Advertising and tracking services
@@ -58,13 +102,7 @@ For native car navigation, keep **Native navigation for Gearslip and Android Aut
 
 Open the account menu’s **Customization** and **Waze & external data source** rows to configure the selected patches. A patch marked **On** above is selected by default when patching; camera layers and external sources still require enabling in the app. **120 refresh rate** also starts off in Customization.
 
-For extended data, patch [Waze 5.26.90.901](waze.md) or [Flitsmeister 14.17](flitsmeister.md) with **Broadcast navigation data**, open the provider once and allow its background driving/location service to run. Its overlay can stay off. In Maps’ external-data settings, open **Navigation data source** and choose **De-Waze · navigation data** or **Flitsmeister · navigation data**. **Off · Google Maps** restores Maps’ own data. If using the provider patch’s optional **Receiver package**, enter the package name of your patched Maps installation. Android 14 and newer can verify the sender through Android; older versions lack that sender verification.
-
-Choose **Waze · Share alerts with Maps** for the original alert-sharing mode, using Waze patched with **Share alerts with Maps**, signed in and running. Extended navigation data adds current speed, road limits, available road reports and average-speed-zone observations. Coverage depends on what the provider observes; an average covers only the observed part of the zone. It must not be read as the official average for the whole controlled section.
-
-Enable **Compact speed and average-speed control** to show current speed beside a speed-limit sign and, during an observed zone, the partial average, progress and remaining distance. **Road alert types** controls which reports can produce pins and approach warnings; only police reports start selected. Pins and approach chimes have separate switches. Approach distances use the provider’s available distance or an explicitly estimated distance from position and heading; they are not proof that a report is on your chosen route.
-
-Selecting a provider does not create missing road data. Stale or missing external values fall back to fresh Maps values where available; unknown values remain unknown. A provider change, zone exit or expired observation clears its partial average. While a modern external feed supplies usable fresh data, Maps’ own Flock pins and chimes pause to avoid duplicate alerts; your saved Flock settings remain intact. Flock route avoidance keeps its own camera data because external reports do not provide a route-search dataset.
+Follow the [navigation-data setup guide](../guides/navigation-data.md) to patch a provider, select it in Maps and configure the compact speed display, map pins and advance chimes. It also explains the separate legacy Waze mode, partial averages and fallback when data expires.
 
 **Remove permissions** disables voice search, Lens and Live View through its microphone/camera changes. The microG-RE account build leaves account-related permissions and services in place. **Proxy** needs a supported network engine; follow its in-app availability message. **Follow playing media** needs notification access and is not intended for root mount installs. YouTube Music and Spotify’s direct media integration still depends on Google’s own Maps; use the available notification-based option where supported.
 

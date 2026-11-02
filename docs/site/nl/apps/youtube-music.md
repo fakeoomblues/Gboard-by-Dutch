@@ -8,6 +8,8 @@ Selecteer de originele YouTube Music-APK. Morphe kan de geïnstalleerde versie *
 
 De compatibiliteit is **Any** wanneer de browserstructuur en Morphe's bibliotheekstructuur eenduidig worden herkend. De volledige gecombineerde werkwijze is getest met 9.30.53 en Morphe Patches 2.0.0. Bij gewijzigde structuren of ontbrekende vereiste onderdelen stopt het patchen. Morphe's eigen Android Auto-patch moet de gekozen appversie ook ondersteunen.
 
+[Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |
