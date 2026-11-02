@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.25.0**
+**Patch bundle: 1.26.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -205,6 +205,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Control car display density | On | 0.3.31-alpha |
 | Hide apps from drawer | On | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | On | 0.3.12-alpha, 0.3.31-alpha |
 

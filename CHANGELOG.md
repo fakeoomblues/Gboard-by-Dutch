@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.26.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [df28ed2c3b64](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.26.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.25.0...v1.26.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Gearslip:** enlarge car app text with adjustable display density ([df28ed2](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f57abb97c9eb11de5792dc50d66c3bab62d4489a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.25.0.**

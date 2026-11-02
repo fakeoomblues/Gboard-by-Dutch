@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.25.0",
+  "version": "1.26.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -956,6 +956,38 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Control car display density",
+      "description": "Adds a density submenu under Screen for larger text and controls, including hosted navigation apps. Choose the car's density or 160–240 DPI. Keeps resolution unchanged; reconnect to apply.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.seb3thehacker.gearslip",
+          "name": "Gearslip",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#7C95D6",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "0.3.31-alpha",
+              "versionCodes": {
+                "ARM64_V8A": 13,
+                "ARMEABI_V7A": 13,
+                "X86_64": 13,
+                "X86": 13
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Customization screen",
