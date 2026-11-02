@@ -14,7 +14,7 @@ These 30 Maps patches come from [bearinmind patches](https://github.com/bearinmi
 | --- | --- | --- |
 | **120 refresh rate** | On | Lets Maps use the screen’s supported refresh rate. Enable it in Customization; it can use more battery. |
 | **Account sheet cleanup** | On | Removes the extra account-menu heading and keeps the menu open when returning from Settings or Customization. |
-| **Add microG-RE support** | Off | Builds a separate microG Maps app with Google sign-in through microG-RE or ReVanced GmsCore. |
+| **Add microG-RE support** | Off | Adds Google sign-in through microG-RE or ReVanced GmsCore while keeping the name from Change app name. |
 | **Add original microG support** | Off | Uses original microG for Google sign-in on a ROM with signature spoofing; keeps the stock package name. |
 | **Any media app** | On | Adds compatible Android Auto music and podcast apps to Navigation’s Default media app choices. |
 | **Avoid Flock cameras** | On | Offers driving detours around mapped Flock cameras using BRouter. Starts off; routes with stops are unchanged. |
@@ -51,7 +51,7 @@ External navigation data is received locally from the selected app on the same p
 
 ## Before using
 
-Keep **Change package name** selected to install beside stock Maps; the default package is `org.ungoogled.android.apps.maps`. **Change app name** uses **Ungoogled Maps** by default. With **Add microG-RE support**, the defaults become `org.ungoogled.android.apps.maps.microg` and **microG Maps**. The two microG support patches are alternatives: choose only the one matching your setup. Original microG needs a ROM with signature spoofing and keeps the stock Maps package.
+Keep **Change package name** selected to install beside stock Maps; the default package is `org.ungoogled.android.apps.maps`. **Change app name** uses **Ungoogled Maps** by default and always keeps your chosen name with either microG support patch. **Add microG-RE support** changes the default package to `org.ungoogled.android.apps.maps.microg`. The two microG support patches are alternatives: choose only the one matching your setup. Original microG needs a ROM with signature spoofing and keeps the stock Maps package.
 
 Open the account menu’s **Customization** and **Waze & external data source** rows to configure the selected patches. A patch marked **On** above is selected by default when patching; camera layers and external sources still require enabling in the app. **120 refresh rate** also starts off in Customization.
 
