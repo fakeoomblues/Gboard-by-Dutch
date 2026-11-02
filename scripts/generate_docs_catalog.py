@@ -19,6 +19,7 @@ APP_PAGES = {
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.vela': ('vela', 'mobility'),
+    'com.google.android.apps.maps': ('google-maps', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
