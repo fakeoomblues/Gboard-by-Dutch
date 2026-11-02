@@ -26,6 +26,20 @@ Superseded UPSERTs are coalesced before exhausting history capacity. Valid ANNOU
 
 Replay candidates are **not playback grants**. Before output, the future authenticated BEGIN_ATTEMPT implementation must call `announcement(warningId, phase, index, now)` against current source state and apply ownership/capability/durable-grant checks. This rejects CLEAR/expiry even when a consumer missed a cancellation. Receiving acceptance cursors, scheduling, passage checks and persisted uncertainty dispositions remain separate work.
 
+## Ownership and durable grants
+
+`WarningAudioOwner` coordinates one ready audio owner with a six-second lease and a two-second renewal interval. Silent mode intentionally retains ownership without a voice engine. Source coverage, the negotiated capability digest, all enabled semantics, supported output mode and current readiness are separate checks. An unavailable repeated claim/renewal removes readiness without extending the old lease. A second receiver cannot steal an active lease.
+
+At most one output grant is outstanding globally. `begin` queries current source announcement authority, checks its payload revision and owner binding, and persists the grant before returning `GRANTED`. Idempotent nonce retries return the same attempt; they never authorize a second local speaker start. A changed revision or output mode refuses the old permission while retaining its uncertainty fence. After known STARTED, retrying BEGIN returns `ALREADY_HANDLED`. Receiving code still needs a local one-shot attempt fence and final generation/lease/mute checks.
+
+Each attempt binds UID, live-process consumer nonce, provider session, owner token/epoch, semantic-key hash, payload revision and attempt nonce. Receiver restart must generate a new consumer nonce; do not persist/reuse it. A granted record means output **may** have played, not that it started or completed. Native adapter callbacks supply those observations. The 128-entry in-memory disposition bound reports overload explicitly rather than evicting active uncertainty.
+
+Death/restart/lease expiry never proves output stopped. Pending grants fence failover as `AUDIO_UNCERTAIN`; stale STARTED is rejected, but authenticated terminal/quiescent old-grant reports remain acceptable. NOT_STARTED requires positive quiescence from the same live consumer and is invalid after known STARTED. Unknown-but-quiescent output permits future warnings while suppressing replay of that uncertain event. Intentionally muted/filtered decisions can be recorded without issuing playback grants; decisions for other warnings do not alter an active output grant.
+
+`AtomicPlaybackStore` holds an exclusive writer lock for the provider actor lifetime and writes a checksummed, bounded binary file in provider-private no-backup storage. It syncs file content, atomically renames, then syncs the parent directory. Explicit descriptor closure is required for Android's non-owning `FileOutputStream(FileDescriptor)` wrapper. All file operations require the dedicated worker, never the native/main thread. Only opaque grant identities/hashes, boot identity and disposition/started state are stored; there is no warning ID, message, coordinate or replayable prompt. Boot identity comes from Android boot count, not wall-clock estimates.
+
+Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. Binder authentication/registration binding, token redaction, scheduler/native integration and user-facing recovery controls remain pending work.
+
 ## Verification
 
 Shared codec/journal regression tests live in the FM extension's `nl.johninnl.navigation.alerts` test package. Run the FM, Maps-extension and Vela unit tasks plus Waze compatibility checks. The full patch build verifies source-set integration; it does not prove the unimplemented event endpoint or complete spoken warnings.

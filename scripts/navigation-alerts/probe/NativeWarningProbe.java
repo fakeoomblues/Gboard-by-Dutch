@@ -21,7 +21,9 @@ public final class NativeWarningProbe extends Instrumentation {
         try {
             String target = getTargetContext().getPackageName();
             String probeClass;
-            if (arguments.getString("scenario", "").equals("codec")
+            if (arguments.getString("scenario", "").startsWith("ledger_")
+                    && (target.equals("app.vela") || target.equals("com.google.android.apps.maps"))) probeClass = "PlaybackLedgerProbe";
+            else if (arguments.getString("scenario", "").equals("codec")
                     && (target.equals("app.vela") || target.equals("com.google.android.apps.maps"))) probeClass = "WarningCodecProbe";
             else if (target.equals("app.vela")) probeClass = "VelaVoiceProbe";
             else if (target.equals("com.google.android.apps.maps")) probeClass = "MapsVoiceProbe";

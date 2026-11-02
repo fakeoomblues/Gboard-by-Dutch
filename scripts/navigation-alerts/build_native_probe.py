@@ -30,7 +30,7 @@ def main():
         subprocess.run([str(item) for item in command], check=True)
 
     run('javac', '--release', '8', '-cp', android, '-d', classes,
-        source / 'NativeWarningProbe.java', source / 'WarningCodecProbe.java', target_source, *shared)
+        source / 'NativeWarningProbe.java', source / 'WarningCodecProbe.java', source / 'PlaybackLedgerProbe.java', target_source, *shared)
     run(tools / 'd8', '--min-api', '29', '--lib', android, '--output', dex,
         *sorted(classes.rglob('*.class')))
     package = 'nl.johninnl.warningprobe.' + args.target
