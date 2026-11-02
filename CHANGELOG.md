@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3cb2a2d1fa27a92ed25da59567731fb87b59ce00/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [3cb2a2d1fa27](https://github.com/johninnl/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.3](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.2...v1.28.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** accept re-signed Gearslip hosts ([3cb2a2d](https://github.com/johninnl/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.2.**
