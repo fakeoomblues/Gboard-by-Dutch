@@ -24,20 +24,17 @@ private const val ORIGINAL_ELIGIBILITY = "morpheOriginalBrowserEligibility"
 private val packageNamePattern = Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$")
 
 private val packages = setOf("com.google.android.apps.youtube.music", "app.morphe.android.apps.youtube.music")
-private val compatibility = packages.map { name ->
-    Compatibility(
-        name = "YouTube Music", packageName = name,
-        apkFileType = if (name == "com.google.android.apps.youtube.music") ApkFileType.APKM else ApkFileType.APK,
-        targets = listOf(AppTarget(version = null)),
-    )
-}
+private val compatibility = Compatibility(
+    name = "YouTube Music", packageName = "com.google.android.apps.youtube.music",
+    apkFileType = ApkFileType.APK, targets = listOf(AppTarget(version = null)),
+)
 
 @Suppress("unused")
 val gearslipMusicSupport = bytecodePatch(
     name = "Gearslip music browser support",
-    description = "Allows installed Gearslip hosts to browse YouTube Music using their actual Android caller UID, without Google Android Auto.",
+    description = "Adds Gearslip access to personal Home and Library using the app's existing account. Enable Morphe's Android Auto patch alongside it. Verifies the real Android caller identity.",
 ) {
-    compatibleWith(*compatibility.toTypedArray())
+    compatibleWith(compatibility)
     extendWith("extensions/gearslip-ytm.mpe")
 
     val packageNames by stringOption(
@@ -65,7 +62,7 @@ val gearslipMusicSupport = bytecodePatch(
             }
         }
     }
-    dependsOn(visibility)
+    dependsOn(visibility, gearslipPersonalLibrary)
 
     execute {
         check(packageMetadata.packageName in packages) { "Unsupported YouTube Music package" }
@@ -79,10 +76,12 @@ val gearslipMusicSupport = bytecodePatch(
         check(owner.methods.none { it.name in setOf(originalTrust, ORIGINAL_ELIGIBILITY) }) {
             "Gearslip browser support is already applied"
         }
-        val configured = mutableClassDefBy(SUPPORT).methods.single {
-            it.name == "getConfiguredPackageNames" && it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/String;"
+        for (helper in listOf(SUPPORT, "Lpatches/ytmusic/GearslipLibrarySupport;")) {
+            val configured = mutableClassDefBy(helper).methods.single {
+                it.name == "getConfiguredPackageNames" && it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/String;"
+            }
+            configured.addInstructions(0, "const-string v0, \"${packageNames!!.split(',').joinToString(",") { it.trim() }}\"\nreturn-object v0")
         }
-        configured.addInstructions(0, "const-string v0, \"${packageNames!!.split(',').joinToString(",") { it.trim() }}\"\nreturn-object v0")
 
         // Preserve both original implementations verbatim. Wrappers own their locals, so
         // changing R8 register allocations cannot shift parameters in the original code.

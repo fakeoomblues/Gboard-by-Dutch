@@ -73,6 +73,31 @@ public final class InspectBrowser {
         for (MethodReference r : calls(root)) if (r.getDefiningClass().equals(owner.getType()) && r.getReturnType().equals("Z") &&
                 r.getParameterTypes().size()==1 && r.getParameterTypes().get(0).toString().equals(client)) browseRefs.put(r.toString(),r);
         MethodReference browse = one(new ArrayList<>(browseRefs.values()), "browser eligibility entry");
+        if (args.length > 1 && args[1].equals("--require-library")) {
+            String adapterType = "Lapp/morphe/extension/music/patches/AndroidAutoPatch;";
+            String requestInterface = "Lpatches/ytmusic/GearslipLibrarySupport$Request;";
+            ClassDef adapter = classes.get(adapterType);
+            if (adapter == null || !classes.containsKey("Lpatches/ytmusic/GearslipLibrarySupport;"))
+                throw new AssertionError("Personal library integration missing: host admission alone does not expose the library");
+            Method handler = null, bridge = null;
+            for (Method method : adapter.getMethods()) {
+                if (method.getName().equals("handleBrowseRequest")) handler = method;
+                if (method.getName().equals("morpheHandleGearslipRequest")) bridge = method;
+            }
+            final Method libraryBridge = bridge;
+            if (handler == null || libraryBridge == null || calls(handler).stream().noneMatch(r -> r.toString().equals(libraryBridge.toString())))
+                throw new AssertionError("Personal library entry hook missing");
+            List<Method> captures = new ArrayList<>();
+            for (ClassDef cls : classes.values()) if (cls.getInterfaces().contains(requestInterface))
+                for (Method method : cls.getMethods()) if (method.getName().equals("morphe_getCallerPackage")) captures.add(method);
+            Method capture = one(captures, "captured browser package bridge");
+            MethodReference packageGetter = one(calls(capture), "RemoteUserInfo package getter");
+            if (!packageGetter.getParameterTypes().isEmpty() || !packageGetter.getReturnType().equals("Ljava/lang/String;"))
+                throw new AssertionError("Captured browser package getter changed");
+            value("requestClass", javaName(capture.getDefiningClass()));
+            value("infoClass", javaName(packageGetter.getDefiningClass()));
+            value("library", "present");
+        }
         value("manager",javaName(owner.getType())); value("caller",javaName(trust.getParameterTypes().get(0).toString())); value("client",javaName(client));
         value("trust",trust.getName()); value("eligible",eligible.getName()); value("browsable",browse.getName());
         value("context",field(trust,"Landroid/content/Context;").getName()); value("callerField",field(trust,"Ljava/lang/String;").getName());
