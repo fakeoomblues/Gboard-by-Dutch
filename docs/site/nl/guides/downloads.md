@@ -56,6 +56,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
 | [YouTube Music](../apps/youtube-music.md) | 9.44.52 / 94452240 | [APKM](https://buzzheavier.com/olrt69s67h6z) |
+| [Myspoti](../apps/myspoti.md) | 2.3.0 / 1121 | [APK](#local-original-inputs) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
 | [Weerplaza](../apps/weerplaza.md) | 3.13.1 / 734 | [APKS](https://buzzheavier.com/cr9f6qs8tfsh) |
