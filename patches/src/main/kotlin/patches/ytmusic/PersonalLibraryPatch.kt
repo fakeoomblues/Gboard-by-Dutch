@@ -2,11 +2,7 @@ package patches.ytmusic
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.patch.ApkFileType
-import app.morphe.patcher.patch.AppTarget
-import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.patch.stringOption
 import app.morphe.patcher.string
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -24,25 +20,22 @@ private const val LIBRARY_SUPPORT = "Lpatches/ytmusic/GearslipLibrarySupport;"
 private const val CAPTURED_REQUEST = "Lpatches/ytmusic/GearslipLibrarySupport\$Request;"
 private const val STRING = "Ljava/lang/String;"
 
-/** Reuse the input APK's existing Morphe phone-session content loaders and playback IDs. */
-@Suppress("unused")
-val gearslipPersonalLibrary = bytecodePatch(
-    name = "Gearslip personal library",
-    description = "Adds personal Home and Library browsing for Gearslip using the installed Morphe Android Auto library enhancements and the app's existing account session.",
-) {
-    compatibleWith(Compatibility(name = "YouTube Music", packageName = "app.morphe.android.apps.youtube.music",
-        apkFileType = ApkFileType.APK, targets = listOf(AppTarget(version = "9.30.53", versionCode = 93053240))))
+/** Link Morphe's phone-session loaders after all selected source bundles install their hooks. */
+internal val gearslipPersonalLibrary = bytecodePatch(default = false) {
     extendWith("extensions/gearslip-ytm-library.mpe")
-    val packageNames by stringOption(
-        key = "packageNames", default = "app.seb3thehacker.gearslip", title = "Trusted Gearslip packages",
-        description = "Use the same installed host packages as Gearslip music browser support. Content routing uses the captured browser identity.",
-        required = true,
-    ) { value -> value != null && value.length <= 2000 && value.split(',').all {
-        Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$").matches(it.trim())
-    } }
 
-    execute {
-        val adapter = mutableClassDefBy(ADAPTER)
+    finalize {
+        // Manager filters against the original package before GmsCore renames it. Other
+        // sources create BrowseRequest bridges during execute, so resolve them only now.
+        val policy = Fingerprint(returnType = "Z", filters = listOf(string(BrowserDiscovery.UID_DIAGNOSTIC)))
+            .matchAll().map { it.method }.toList()
+        check(policy.size == 1 && policy.single().name == "morpheOriginalCallerPolicy") {
+            "Enable Gearslip music browser support with this patch (or use an APK that already contains it)"
+        }
+        val adapters = mutableListOf<com.android.tools.smali.dexlib2.iface.ClassDef>()
+        classDefForEach { cls -> if (cls.type == ADAPTER) adapters.add(cls) }
+        check(adapters.size == 1) { "Enable Morphe's Android Auto patch with Gearslip personal library" }
+        val adapter = mutableClassDefBy(adapters.single())
         check(adapter.methods.none { it.name == "morpheHandleGearslipRequest" }) { "Gearslip personal library is already applied" }
         fun method(type: String, name: String, params: List<String>, result: String) = classDefBy(type).methods.singleOrNull {
             it.name == name && it.parameterTypes.map(CharSequence::toString) == params && it.returnType == result && it.implementation != null
@@ -89,8 +82,6 @@ val gearslipPersonalLibrary = bytecodePatch(
             return-object v0
         """)
         request.methods.add(captured)
-        mutableClassDefBy(LIBRARY_SUPPORT).methods.single { it.name == "getConfiguredPackageNames" }.addInstructions(0,
-            "const-string v0, \"${packageNames!!.split(',').joinToString(",") { it.trim() }}\"\nreturn-object v0")
         val bridge = ImmutableMethod(ADAPTER, "morpheHandleGearslipRequest",
             listOf(com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter(REQUEST, emptySet(), null)), "Z",
             AccessFlags.PUBLIC.value or AccessFlags.STATIC.value, emptySet(), emptySet(), MutableMethodImplementation(9)).toMutable()

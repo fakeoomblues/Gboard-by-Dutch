@@ -45,9 +45,10 @@ public final class BrowseProbe extends Instrumentation {
         ClassLoader loader = context.getClassLoader();
         Class<?> utils = loader.loadClass("app.morphe.extension.shared.Utils");
         Field stored = utils.getDeclaredField("context"); stored.setAccessible(true);
+        final String resourcePackage = arguments.getString("resourcePackage", "app.morphe.android.apps.youtube.music");
         // Resources are byte-for-byte from the input APK; only the fixture manifest is renamed.
         stored.set(null, new ContextWrapper(context) {
-            @Override public String getPackageName() { return "app.morphe.android.apps.youtube.music"; }
+            @Override public String getPackageName() { return resourcePackage; }
         });
         Class<?> request = loader.loadClass("app.morphe.extension.music.patches.AndroidAutoPatch$BrowseRequest");
         Class<?> captured = loader.loadClass("patches.ytmusic.GearslipLibrarySupport$Request");
