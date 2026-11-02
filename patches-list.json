@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.28.1",
+  "version": "1.28.2",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -6191,7 +6191,7 @@
     },
     {
       "name": "Keep music player entries",
-      "description": "Keeps a music app's player available when it also provides a car Settings screen, including YT Music Morphe. Uses Gearslip's existing docked player.",
+      "description": "Shows only the music player when an app also provides a car Settings service, including YT Music Morphe. Uses Gearslip's existing docked player.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -6516,6 +6516,38 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Native navigation for Gearslip and Android Auto",
+      "description": "Shows this patched Maps app's original Android Auto map and navigation UI through a native navigation service. Requires the full Android Auto app for its car UI resources.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.maps",
+          "name": "Google Maps",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#FFFFFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "26.43.05.1002020710",
+              "versionCodes": {
+                "ARM64_V8A": 1068844719,
+                "ARMEABI_V7A": 1068844719,
+                "X86_64": 1068844719,
+                "X86": 1068844719
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Navigation distances",

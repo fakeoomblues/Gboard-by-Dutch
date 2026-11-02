@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.28.1**
+**Patch bundle: 1.28.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -235,6 +235,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads and clutter | On | 26.43.05.1002020710 |
 | Legacy icon | On | 26.43.05.1002020710 |
 | Location provider toggle | On | 26.43.05.1002020710 |
+| Native navigation for Gearslip and Android Auto | On | 26.43.05.1002020710 |
 | Offline saved places | On | 26.43.05.1002020710 |
 | Power saving mode | On | 26.43.05.1002020710 |
 | Proxy | On | 26.43.05.1002020710 |
