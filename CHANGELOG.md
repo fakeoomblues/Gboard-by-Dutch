@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/5b333f79e55763aac4ad2d3c9d4feae68550ef70/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.0-dev.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [5b333f79e557](https://github.com/johninnl/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.0-dev.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.0-dev.1...v1.27.0-dev.2) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** add personal music browsing for Gearslip ([5b333f7](https://github.com/johninnl/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70))
+* **YouTube Music:** add personal music browsing for Gearslip ([5b333f7](https://github.com/johninnl/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8293a67ea45e27051ed35ab3b3caea1c44c6f11f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.27.0-dev.1.**
