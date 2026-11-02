@@ -36,7 +36,7 @@ This uses our **Broadcast navigation data** patch in the provider app. Installin
 
 ## Where these patches come from
 
-The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.43.05.1002020710, extended **Waze alerts** with our shared navigation-data integration and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
+The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.43.05.1002020710, extended **Waze alerts** with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
 
 Select Maps patches from **Dutch App Patches only** for a patching attempt. Our bundle already contains the adapted upstream controls. Selecting overlapping Maps patches from bearinmind patches as well can run incompatible versions of the same shared hooks.
 
@@ -53,6 +53,7 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 | Patch | Default | What it does |
 | --- | --- | --- |
 | **Waze alerts** | On | Adds Waze and Flitsmeister as local sources for road-alert pins, approach chimes, speed, limits and observed average-speed zones. Starts off. |
+| **Change app name** | On | Sets the launcher and app-switcher name (default: Ungoogled Maps) and offers six supplied icon styles on light or dark backgrounds. |
 
 ### Adapted from bearinmind patches
 
@@ -68,13 +69,12 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 | **Black theme** | On | Uses black surfaces in dark mode, including navigation. |
 | **Blue pin** | On | Uses a flat blue pin for Maps product logos and the search icon. |
 | **Bypass Play Services checks** | On | Lets the patched app run with unavailable or disabled Play services and preserves map, search and routing access. |
-| **Change app name** | On | Sets the launcher and app-switcher name; the default is Ungoogled Maps. |
 | **Change package name** | On | Installs alongside stock Maps under a separate package name. |
 | **Customization screen** | On | Adds Customization to the account menu for the available in-app patch switches. |
 | **Flock cameras** | On | Shows mapped number-plate reader cameras with approach notes and chimes. Starts off; uses OpenStreetMap data. |
 | **Follow playing media** | Off | Shows media from apps that do not connect directly to Maps. Requires notification access. |
 | **Hide ads and clutter** | On | Hides promoted pins, sponsored results, AI summaries, place-sheet business rows and the Explore feed and bottom tabs. |
-| **Legacy icon** | On | Restores the flat multicolour Maps pin used before the gradient icon. |
+| **Legacy icon** | On | Restores the flat multicolour Maps pin used before the gradient icon, unless an explicit App icon is selected in Change app name. |
 | **Location provider toggle** | On | Adds a choice of Android, Google Play services or microG-RE location, with network-location fallback. |
 | **Offline saved places** | On | Saves local places and lists, imports and exports backups, and adds an optional local Timeline recorder. |
 | **Power saving mode** | On | Adds a black navigation screen and settings for its button, idle activation, speedometer and frame rate. |
@@ -99,6 +99,8 @@ External navigation data is received locally from the selected app on the same p
 Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).
 
 Keep **Change package name** selected to install beside stock Maps; the default package is `org.ungoogled.android.apps.maps`. **Change app name** uses **Ungoogled Maps** by default and always keeps your chosen name with either microG support patch. **Add microG-RE support** changes the default package to `org.ungoogled.android.apps.maps.microg`. The two microG support patches are alternatives: choose only the one matching your setup. Original microG needs a ROM with signature spoofing and keeps the stock Maps package.
+
+In **Change app name**, use **App icon** to choose Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin, or Folded map, each on a light or dark background. **Automatic** follows the **Legacy icon** patch; **Original Google Maps** keeps Google’s original launcher icon. An explicit choice takes precedence over Legacy icon. These choices apply to the regular and round launcher icons. Explicit choices leave the stock splash screen in place; in-app artwork still follows your other selected patches, such as Blue pin. With Automatic, Legacy icon keeps its existing splash-screen behavior. Name and icon can be configured independently, and changing them requires patching again.
 
 For native car navigation, keep **Native navigation for Gearslip and Android Auto** selected, install the full Android Auto app and grant the patched Maps app precise location access. Gearslip then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
 

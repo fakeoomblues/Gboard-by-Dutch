@@ -65,3 +65,28 @@ All 184 Maps/shared compiled class and extension entries in the downloaded relea
 Keep generated versions and release metadata under semantic-release. Before committing or pushing, run the repository's required login/effective-author/effective-committer/history identity checks. Only the `johninnl` identity is permitted.
 
 The release must contain the Maps extension and 30 Maps controls in the same published bundle as existing app patches. A source copy, successful compilation, a generated catalogue, or a green documentation job alone does not prove that delivery.
+
+## Launcher branding
+
+**Change app name** retains its existing name option and now provides **App icon**.
+The dropdown contains Automatic, Original Google Maps, and twelve supplied-artwork
+variants: Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin,
+and Folded map, each on light or dark backgrounds. Automatic preserves the prior
+Legacy icon behavior. Explicit Original or supplied artwork takes precedence over
+Legacy icon for that patching run. Explicit styles affect the regular and round
+launcher icons; they leave the stock splash in place, while in-app artwork follows other selected patches.
+
+All six transparent PNGs are bundled unchanged. Android drawable layers provide
+#FAFAFA or #171A21 backgrounds and a 28dp inset in the 108dp adaptive canvas.
+The target requires Android 10+, so no legacy-icon rendering path is needed.
+Selections are scoped to each ResourcePatchContext using synchronized weak keys,
+matching the per-run approach of the existing microG selection helper.
+
+Run `scripts/maps/verify_branding.py` against the original supported APK to check
+all variants, Original, Automatic with Legacy icon enabled/disabled, resolved
+labels, compiled resources and unchanged DEX. It removes validated intermediate
+APKs by default to keep disk usage bounded; reports retain their SHA-256 hashes.
+Use `scripts/maps/validate.py --app-icon STYLE --app-name NAME` with each full
+Maps profile to check combined patching, APK signing and Android references.
+`tests/MapsBrandingSelectionRegression.java` checks successive Manager-style
+runs with one loaded bundle, including return to Automatic after explicit choices.

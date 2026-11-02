@@ -36,7 +36,7 @@ Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen
 
 ## Waar komen deze patches vandaan?
 
-De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.43.05.1002020710, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
+De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.43.05.1002020710, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
 
 Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bundel bevat de aangepaste oorspronkelijke opties al. Ook overlappende Maps-patches uit bearinmind patches kiezen kan verschillende versies van dezelfde gedeelde koppelingen uitvoeren.
 
@@ -53,6 +53,7 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Waze alerts** | Aan | Voegt Waze en Flitsmeister toe als lokale bronnen voor wegmeldingen, voorwaarschuwingen, snelheid, limieten en waargenomen trajectcontroles. Begint uit. |
+| **Change app name** | Aan | Stelt de naam in de launcher en appkiezer in (standaard: Ungoogled Maps) en biedt zes meegeleverde icoonstijlen met een lichte of donkere achtergrond. |
 
 ### Aangepast vanuit bearinmind patches
 
@@ -68,13 +69,12 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 | **Black theme** | Aan | Gebruikt zwarte vlakken in donkere modus, ook tijdens navigatie. |
 | **Blue pin** | Aan | Gebruikt een platte blauwe speld voor Maps-logo’s en het zoekpictogram. |
 | **Bypass Play Services checks** | Aan | Laat de gepatchte app werken met ontbrekende of uitgeschakelde Play services en behoudt toegang tot kaarten, zoeken en routes. |
-| **Change app name** | Aan | Stelt de naam in de launcher en appkiezer in; standaard is dit Ungoogled Maps. |
 | **Change package name** | Aan | Installeert naast de oorspronkelijke Maps-app onder een andere pakketnaam. |
 | **Customization screen** | Aan | Voegt Customization toe aan het accountmenu voor de beschikbare patchschakelaars. |
 | **Flock cameras** | Aan | Toont bekende kentekencamera’s met een melding en geluid bij nadering. Begint uit; gebruikt OpenStreetMap-gegevens. |
 | **Follow playing media** | Uit | Toont media van apps die niet rechtstreeks met Maps verbinden. Vereist meldingstoegang. |
 | **Hide ads and clutter** | Aan | Verbergt gesponsorde spelden en zoekresultaten, AI-samenvattingen, bedrijfsrijen, de Explore-feed en onderste tabbladen. |
-| **Legacy icon** | Aan | Herstelt de platte meerkleurige Maps-speld van vóór het verloopicoon. |
+| **Legacy icon** | Aan | Herstelt de platte meerkleurige Maps-speld van vóór het verloopicoon, tenzij een expliciet App icon is gekozen in Change app name. |
 | **Location provider toggle** | Aan | Voegt een keuze toe tussen locatie via Android, Google Play services of microG-RE, met terugval op netwerklocatie. |
 | **Offline saved places** | Aan | Bewaart plaatsen en lijsten lokaal, importeert en exporteert back-ups en voegt een optionele lokale Timeline-opname toe. |
 | **Power saving mode** | Aan | Voegt een zwart navigatiescherm toe en instellingen voor de knop, automatisch openen, snelheidsmeter en beeldsnelheid. |
@@ -99,6 +99,8 @@ Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde
 Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
 
 Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps** en behoudt je gekozen naam bij beide microG-patches. **Add microG-RE support** wijzigt de standaardpakketnaam naar `org.ungoogled.android.apps.maps.microg`. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
+
+Kies bij **App icon** in **Change app name** uit Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin of Folded map, elk met een lichte of donkere achtergrond. **Automatic** volgt de patch **Legacy icon**; **Original Google Maps** behoudt Googles oorspronkelijke launchericoon. Een expliciete keuze gaat vóór Legacy icon. De keuzes gelden voor het gewone en ronde launchericoon. Een expliciete keuze behoudt het oorspronkelijke opstartscherm; afbeeldingen in de app volgen je overige gekozen patches, zoals Blue pin. Bij Automatic behoudt Legacy icon zijn bestaande wijziging van het opstartscherm. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht.
 
 Laat voor native autonavigatie **Native navigation for Gearslip and Android Auto** geselecteerd, installeer de volledige Android Auto-app en geef de gepatchte Maps-app toegang tot de exacte locatie. Gearslip vindt dan één navigatietegel in plaats van Maps als berichtenapp te behandelen. Installeer de gepatchte APK voor Android Auto via KingInstaller en controleer het installatieresultaat; gebruik de Shizuku-modus als de normale methode niet de verwachte installer vastlegt. Kies **Ungoogled Maps** of je eigen appnaam in de autolauncher, zodat de sessie de gepatchte versie gebruikt.
 

@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--android-jar", type=Path, help="Check emitted references against this Android SDK boot API")
     parser.add_argument("--profile", choices=PROFILES, default="defaults")
     parser.add_argument("--app-name", help="Override Change app name to verify a custom launcher label")
+    parser.add_argument("--app-icon", help="Override the launcher style in Change app name")
     parser.add_argument("--continue-on-error", action="store_true", help="Diagnostic inventory only; failures still fail validation")
     args = parser.parse_args()
     if hashlib.sha256(args.apk.read_bytes()).hexdigest() != TARGET_SHA256:
@@ -39,8 +40,12 @@ def main():
                "-o", str(output.resolve()), "-r", str(report.resolve())]
     if args.continue_on_error:
         command.append("--continue-on-error")
+    if args.app_name is not None or args.app_icon is not None:
+        command += ["-e", "Change app name"]
     if args.app_name is not None:
-        command += ["-e", "Change app name", "-O", f"appName={args.app_name}"]
+        command += ["-O", f"appName={args.app_name}"]
+    if args.app_icon is not None:
+        command += ["-O", f"appIcon={args.app_icon}"]
     for patch in PROFILES[name]:
         command += ["-e", patch]
     command.append(str(args.apk.resolve()))
@@ -66,6 +71,7 @@ def main():
         "output_sha256": hashlib.sha256(output.read_bytes()).hexdigest(),
         "applied": data["appliedPatches"], "failed": [],
         "signature_verified": True, "references_verified": bool(args.android_jar),
+        "app_name": args.app_name, "app_icon": args.app_icon,
     }, indent=2) + "\n")
 
 
