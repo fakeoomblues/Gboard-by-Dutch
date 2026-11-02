@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.28.0",
+  "version": "1.28.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -3296,30 +3296,12 @@
     },
     {
       "name": "Gearslip music browser support",
-      "description": "Allows installed Gearslip hosts to browse YouTube Music using their actual Android caller UID, without Google Android Auto.",
+      "description": "Adds Gearslip access to personal Home and Library using the app's existing account. Enable Morphe's Android Auto patch alongside it. Verifies the real Android caller identity.",
       "default": true,
       "category": null,
       "compatiblePackages": [
         {
           "packageName": "com.google.android.apps.youtube.music",
-          "name": "YouTube Music",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": null,
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": null,
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "app.morphe.android.apps.youtube.music",
           "name": "YouTube Music",
           "description": null,
           "apkFileType": "APK",

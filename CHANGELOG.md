@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2869b936cd8c0dad3645df3a21485c8f246b855b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [2869b936cd8c](https://github.com/johninnl/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.0...v1.28.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **YouTube Music:** include personal Home and Library in the Any-version browser patch ([2869b93](https://github.com/johninnl/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.0.**

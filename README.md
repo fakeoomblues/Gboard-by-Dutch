@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.28.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.28.0)** · 54 apps · 275 patches
+**Patch bundle [v1.28.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.28.1)** · 54 apps · 275 patches
 
 ### Weather
 
@@ -117,7 +117,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Videoland Android TV](https://johninnl.github.io/nl-morphe-patches/apps/videoland-android-tv/) | Ads · Tracking | 1.117.0 | APKS | 3 |
 | [Wuplay Android TV](https://johninnl.github.io/nl-morphe-patches/apps/wuplay/) | See guide | 0.9.4-beta | APK | 1 |
 | [WuPlay Mobile](https://johninnl.github.io/nl-morphe-patches/apps/wuplay-mobile/) | See guide | 0.1.9-alpha | APK | 1 |
-| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | Any | APKM | 1 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | Any | APK | 1 |
 
 ### Other apps
 
