@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.23.0**
+**Patch bundle: 1.24.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -460,6 +460,24 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Disable tracking | On | 4.73 |
 | Unlock Premium | On | 4.73 |
+
+## RainViewer
+
+[What do the patches change?](../apps/rainviewer.md)
+
+`com.lucky_apps.RainViewer`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 8.4.1 |
+| Enable local Pro features | Off | 8.4.1 |
+| Fix Google services | On | 8.4.1 |
+| Fix integrity | On | 8.4.1 |
+| Hide AI insights | On | 8.4.1 |
+| Hide ads | On | 8.4.1 |
+| Hide weather warnings overlay | Off | 8.4.1 |
+| Skip consent screens | On | 8.4.1 |
+| Skip subscription screens | On | 8.4.1 |
 
 ## Rollerbank
 

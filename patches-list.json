@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "patches": [
     {
       "name": "Alert distances",
@@ -1673,6 +1673,40 @@
     },
     {
       "name": "Disable tracking",
+      "description": "Disables Firebase analytics, performance and crash uploads, Clarity recording, advertising identifiers and publisher session/paywall/open-notification events while retaining weather requests and notification delivery.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
       "description": "Includes ad removal. Disables optional Analytics, Crashlytics identifiers and reports, queued Google SDK diagnostics and Firebase Sessions. Retains functional push, authentication and report submission.",
       "default": true,
       "category": null,
@@ -2219,6 +2253,40 @@
       "options": []
     },
     {
+      "name": "Enable local Pro features",
+      "description": "Uses Pro client controls while keeping map and forecast requests within Free limits. Includes Disable tracking and Hide AI insights. Purchases and server entitlements remain unchanged; paid data may be unavailable.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "External speed controls",
       "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback and provider settings.",
       "default": true,
@@ -2360,6 +2428,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix Google services",
+      "description": "Reports RainViewer's original certificate digest to Firebase/Google API package restrictions after re-signing. Does not forge Google Play Integrity tokens or suppress publisher server rejection.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -2521,6 +2623,40 @@
               },
               "isExperimental": false,
               "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Fix integrity",
+      "description": "Uses RainViewer's no-attestation fallback and renews its anonymous app session once, preserving settings and purchase records. Includes original-certificate compatibility for Google services. Does not forge signed Google verdicts or hide publisher errors.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -2742,6 +2878,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide AI insights",
+      "description": "Removes the forecast AI tab and summary panel, retaining the normal temperature forecast. Stops automatic assistant requests.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -4453,6 +4623,40 @@
     },
     {
       "name": "Hide ads",
+      "description": "Disables map, forecast, sharing, post-play and post-premium advertising, in-house promotions and chart promo blocks, including cached and remotely enabled placements.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads",
       "description": "Removes banner and native advertising and their list placements. Stops the app's Google Mobile Ads initialization and requests. Preserves reports, maps, location and purchases.",
       "default": true,
       "category": null,
@@ -5293,6 +5497,40 @@
               },
               "isExperimental": false,
               "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide weather warnings overlay",
+      "description": "Removes the Weather Warnings map-layer control and stops its overlay downloads. Keeps weather warnings delivered as part of ordinary forecasts.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -7158,6 +7396,40 @@
     },
     {
       "name": "Skip consent screens",
+      "description": "Skips the automatic Google UMP consent request and banner after disabling ads and tracking. Does not record or grant consent.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip consent screens",
       "description": "Removes mandatory advertising consent from Home setup and allows completion without granting advertising consent. Includes ad and tracking controls; retains optional location and notification setup.",
       "default": true,
       "category": null,
@@ -7621,6 +7893,40 @@
               },
               "isExperimental": false,
               "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip subscription screens",
+      "description": "Skips subscription onboarding, automatic startup/web promotions, recurring purchase offers and Settings offer cards. Hides the Settings plan Manage link while retaining the plan badge and premium access state.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.lucky_apps.RainViewer",
+          "name": "RainViewer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.4.1",
+              "versionCodes": {
+                "ARM64_V8A": 44084,
+                "ARMEABI_V7A": 44084,
+                "X86_64": 44084,
+                "X86": 44084
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]

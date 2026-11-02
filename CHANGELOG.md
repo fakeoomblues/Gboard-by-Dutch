@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/17b6366b4771c92594665fbd0f596ea33d058c3c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.24.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [17b6366b4771](https://github.com/johninnl/nl-morphe-patches/commit/17b6366b4771c92594665fbd0f596ea33d058c3c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.24.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.23.0...v1.24.0) (2026-11-02)
+
+### ✨ New Features
+
+* **RainViewer:** keep weather access and expose local Pro controls ([17b6366](https://github.com/johninnl/nl-morphe-patches/commit/17b6366b4771c92594665fbd0f596ea33d058c3c))
+* **RainViewer:** remove ads and tracking and skip automatic offers ([a7ea2ca](https://github.com/johninnl/nl-morphe-patches/commit/a7ea2caed876f5f0586ff29021d5b59ec4ccad83))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/cf9acd2fe8597795be9e40409eaf415613ed93e5/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.23.0.**

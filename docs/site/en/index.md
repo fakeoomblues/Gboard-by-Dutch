@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">50 apps</span> · Patch bundle: 1.23.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">51 apps</span> · Patch bundle: 1.24.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -774,6 +774,32 @@ hide:
 </details>
 
 [Guide and downloads](apps/projectivy.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="weather" data-search="rainviewer com.lucky_apps.rainviewer 8.4.1 disable tracking enable local pro features fix google services fix integrity hide ai insights hide ads hide weather warnings overlay skip consent screens skip subscription screens" markdown>
+<p class="dap-app-card__category">Weather</p>
+
+### [RainViewer](apps/rainviewer.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">8.4.1</span></p>
+<p class="dap-app-card__package">com.lucky_apps.RainViewer</p>
+<details class="dap-app-card__patches">
+<summary>9 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">8.4.1</span></li>
+<li>Enable local Pro features <span class="dap-app-card__target">8.4.1 · default off</span></li>
+<li>Fix Google services <span class="dap-app-card__target">8.4.1</span></li>
+<li>Fix integrity <span class="dap-app-card__target">8.4.1</span></li>
+<li>Hide AI insights <span class="dap-app-card__target">8.4.1</span></li>
+<li>Hide ads <span class="dap-app-card__target">8.4.1</span></li>
+<li>Hide weather warnings overlay <span class="dap-app-card__target">8.4.1 · default off</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">8.4.1</span></li>
+<li>Skip subscription screens <span class="dap-app-card__target">8.4.1</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/rainviewer.md){ .dap-app-card__link }
 
 </article>
 

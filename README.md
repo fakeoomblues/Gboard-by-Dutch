@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.23.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.23.0)** · 50 apps · 233 patches
+**Patch bundle [v1.24.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.24.0)** · 51 apps · 242 patches
 
 ### Weather
 
@@ -56,6 +56,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [Buienalarm](https://johninnl.github.io/nl-morphe-patches/apps/buienalarm/) | Ads · Tracking · Prompts · Compatibility | 4.32.0 | APKS | 5 |
 | [Buienradar](https://johninnl.github.io/nl-morphe-patches/apps/buienradar/) | Ads · Tracking · Prompts | 7.4.8 | APKM | 5 |
+| [RainViewer](https://johninnl.github.io/nl-morphe-patches/apps/rainviewer/) | Ads · Tracking · Prompts · Compatibility | 8.4.1 | APKM | 9 |
 | [Weeronline](https://johninnl.github.io/nl-morphe-patches/apps/weeronline/) | Ads · Tracking · Prompts · Plus/Pro | 3.61.0 | APKS | 5 |
 | [Weerplaza](https://johninnl.github.io/nl-morphe-patches/apps/weerplaza/) | Ads · Tracking · Prompts · Compatibility | 3.13.1 | APKS | 5 |
 
