@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/07967a2b26f03d82afe3fcf6c6ca7fbf7336749f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [07967a2b26f0](https://github.com/johninnl/nl-morphe-patches/commit/07967a2b26f03d82afe3fcf6c6ca7fbf7336749f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.3](https://github.com/johninnl/nl-morphe-patches/compare/v1.33.2...v1.33.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** keep video full width beneath floating audio panels ([508eaad](https://github.com/johninnl/nl-morphe-patches/commit/508eaad873dc172e4c334fc4dde6c0e01ecd7ef9))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/63d986f85170e51d511e3cc296880c4b46bcdf69/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.33.2.**
