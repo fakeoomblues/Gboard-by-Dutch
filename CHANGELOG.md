@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/63d986f85170e51d511e3cc296880c4b46bcdf69/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [63d986f85170](https://github.com/johninnl/nl-morphe-patches/commit/63d986f85170e51d511e3cc296880c4b46bcdf69). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.33.1...v1.33.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **2dehands:** accept Manager resource API qualifiers ([63d986f](https://github.com/johninnl/nl-morphe-patches/commit/63d986f85170e51d511e3cc296880c4b46bcdf69))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/efbe2d6c3d64d63a7424753c46233a5ad99ca44d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.33.1.**
