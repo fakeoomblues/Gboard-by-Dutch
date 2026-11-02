@@ -161,6 +161,10 @@ public class ViewportProbe {
  public static void main(String[] args){
   VideoViewport v=VideoViewport.fit(800,480,0,0,800,424,16f/9f);
   check(Arrays.equals(new int[]{v.left,v.top,v.width,v.height},new int[]{23,0,754,424}));
+  VideoViewport rightPanel=VideoViewport.fit(800,480,0,0,520,424,16f/9f);
+  check(Arrays.equals(new int[]{rightPanel.left,rightPanel.top,rightPanel.width,rightPanel.height},new int[]{23,0,754,424}));
+  VideoViewport leftPanel=VideoViewport.fit(800,480,280,0,800,424,16f/9f);
+  check(Arrays.equals(new int[]{leftPanel.left,leftPanel.top,leftPanel.width,leftPanel.height},new int[]{23,0,754,424}));
   check(v.captionBottomMargin==91);check(480-v.captionBottomMargin<424);
   v=VideoViewport.fit(800,480,100,20,700,420,1f);check(v.left==200&&v.top==20&&v.width==400&&v.height==400);
  }
