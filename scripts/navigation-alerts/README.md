@@ -39,3 +39,5 @@ Exact matching does not prove insertion safety, warning eligibility, playback, r
 `build_fenced_vela.py` produces a private candidate for the specific delayed system-TTS closure race, with exact three-hook verification. `probe/TaggedSpeechFence.java` is a test prototype; it is not part of any extension or release. The native probe's `scenario=fenced` compares tagged cancellation with retained untagged synthetic speech.
 
 See [runtime evidence and reproduction](../../docs/research/2026-11-02-native-warning-runtime-spikes.md). Native model capture, real route regeneration, neural outcomes, audio ownership/replay, full phone/car coordination and complete-warning acceptance remain separate requirements.
+
+`scenario=codec` compiles the production [shared protocol core](../../support/navigation-alerts/README.md) into instrumentation and verifies immutable round trips, native Parcel sizing, UTF-8 rejection and bounded batch splitting without speaking. It does not fabricate native FM capture or prove Binder authentication. The component verification snapshot is in `tests/fixtures/navigation-warnings/warning-core-verification.json` from the repository root.

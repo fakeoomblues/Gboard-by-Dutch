@@ -1,0 +1,72 @@
+# Shared warning contract and transport implementation plan
+
+> Execute inline using `superpowers:executing-plans` and test-driven implementation. Continue under the user's existing implementation authorization.
+
+**Goal:** Carry complete native semantic warnings through a bounded authenticated event channel, alongside existing schema-1 telemetry.
+
+**Spec:** [Native warnings design](../specs/2026-11-02-flitsmeister-native-warnings-design.md), sections 6–9, 12–14.
+
+**Architecture:** Share immutable primitive warning values and state machines between FM, Maps and Vela. Keep Android Bundle/Binder adaptation separate from plain Java policy. Preserve STARTUP_V1 and schema 1; expose only optional capability discovery until provider and receiver integration passes the native gates.
+
+## Constraints and rulings
+
+- Preserve native type/subtype, original text/language/origin, native phases/repeats, optional geometry and separate state/announcement deadlines.
+- Enforce 4 KiB UTF-8 messages, 24 KiB encoded events, eight events/128 KiB per batch, 128 events/thirty seconds per journal, four authenticated registrations, sixteen pending announcements.
+- Keep plain Java policy free of host classes. Include the new source set only in FM, Maps and Vela.
+- Treat missing geometry as unknown. Never add speed/distance/cooldown gates to native ANNOUNCE.
+- Authenticate every Binder request and callback; do not substitute registration tokens for UID authentication.
+- Persist grants before replying; retain uncertain-output fencing across process death. Never persist replayable warning messages/coordinates in the durable grant ledger.
+- Keep provider audio silent during the existing managed lease. Do not claim engine readiness, event readiness and playback completion are equivalent.
+- Native capture/speech acceptance remains open in the [binding plan](2026-11-02-native-warning-bindings.md). Shared protocol implementation can proceed independently; rollout remains gated on all native and end-to-end tests.
+- Ruling: use exact Bundle scalar types (Integer/Long/Double/Boolean/String), preserve unknown scalar fields for minor-compatible round trips, and reject custom Parcelable/nested event fields. Measure actual Parcel size, including unknown fields, rather than character count or estimates.
+- Ruling: do not couple state expiry to announcement expiry. CLEAR needs identity/clock fields but must not invent a spoken payload. Expired but structurally valid events retain their original clocks so policy can report EXPIRED.
+
+## Task 1: Immutable event codec and bounded batching
+
+Files: `support/navigation-alerts/src/main/java/nl/johninnl/navigation/alerts/WarningEvent.java`, `WarningCodec.java`; the three extension source sets; shared JUnit tests hosted by the FM extension.
+
+Interfaces: `WarningCodec.decode(Bundle,long) -> WarningEvent`, `encode(WarningEvent) -> Bundle`, `encodeBatch(List<WarningEvent>) -> Bundle`, `decodeBatch(Bundle,long) -> List<WarningEvent>`, `splitBatches(List<WarningEvent>) -> List<Bundle>`.
+
+- [x] Write failing tests for native emergency-behind text without geometry/speed; strict types and clocks; UTF-8/binary limits; immutable copies; unknown primitive fields and protocol versions; independent deadlines; minimal CLEAR; ordered, bounded batching.
+- [x] Implement the codec and event values; run the FM unit task and verify real Parcel round trips.
+- [x] Compile/test the shared source set in Maps and Vela; run Waze compatibility checks and required repository checks.
+
+## Task 2: Journal, cancellation and explicit recovery
+
+Files: shared `WarningJournal.java` and policy tests.
+
+Interfaces: process-session-bound append, immutable current-state snapshot and resume result with head/retained range, explicit RESYNC_REQUIRED/OVERFLOW, expired/cancelled announcements filtered without inventing new warning identity or observation clocks.
+
+Ruling: retain original transport records while either their state or announcement is valid (CLEAR tombstones last thirty seconds). Resume declares any sequence gap explicitly and returns a data-only current-state snapshot plus still-eligible native authorities. A replay candidate pairs its original ANNOUNCE authority/deadline with a later same-phase/index state revision; it never rewrites the original transport record or grants playback. Source BEGIN_ATTEMPT must query this authority lookup, so CLEAR/expiry can reject playback even if a receiver missed the cancellation. Bound both retained history and latest warning/tombstone state to 128 records; report overflow explicitly and latch degraded status rather than evicting a valid ANNOUNCE/CLEAR silently.
+
+- [x] Test native ordering, duplicates, conflicts, deliberate repeats, revisions, CLEAR, expiry, bounded retention/overflow and session restart.
+- [x] Define explicit recovery across coalesced/expired sequence gaps; a cursor may advance only through validated contiguous acceptance or a declared state-resynchronization boundary.
+- [x] Implement and verify the journal without treating replay as permission to play.
+
+## Task 3: Durable grants and audio ownership
+
+- [ ] Implement first-ready ownership, two-second renewals/six-second lease, epochs, readiness/capability checks and conservative UNCERTAIN fencing.
+- [ ] Test lost grant replies, owner death, provider restart, old authenticated terminal reports, nonce idempotency, NOT_STARTED evidence, stale callbacks and boot identity.
+- [ ] Persist only the small opaque uncertainty ledger atomically before grants; fail closed on persistence failures.
+
+## Task 4: Authenticated Binder transport and startup discovery
+
+- [ ] Add optional authenticated STATUS discovery with an unchanged default for Waze.
+- [ ] Add endpoint/client, four-registration bound, callback UID/descriptor validation, death handling and bounded dedicated delivery workers.
+- [ ] Establish callback/cursor before cold startup and inspect capabilities before the existing running-state return.
+- [ ] Test caller mismatch, partial capability clients, hung receiver isolation, replay gaps, source switches and legacy compatibility publication policy.
+
+## Task 5: Integration and full goal acceptance
+
+- [ ] Wire native FM capture and both receivers/schedulers/adapters/settings/UI to this channel.
+- [ ] Preserve existing telemetry/source choices and independent Flock behavior.
+- [ ] Complete original-artifact rebuild/install, source-to-output timing, physical phone/car acceptance, bilingual documentation, review and CI. Stable promotion requires separate authorization.
+
+## Execution record
+
+- Starting state: clean isolated design worktree at `8c33424`. Previous goal turn made progress through native runtime evidence and a private selective pending-speech fence.
+- No event implementation, journal, owner ledger or Binder event endpoint existed at task start. This plan preserves the full three-app objective; codec tests alone do not establish complete delivery or spoken warning support.
+- Tasks 1–2: implemented `WarningEvent`, `WarningCodec` and `WarningJournal`; 25 shared regression tests (12 codec, 13 journal) cover the specified core boundaries. Actual API-34 Parcel instrumentation preserved eight large events in 121,940-byte and 40,708-byte batches. Shared classes are defined in all three rebuilt MPE payloads and absent from Waze's payload.
+- Review fixes: cancellation sequence floors persist across later state/repeats and overflow; revision floors outlive expired display state while old records remain; accepted unsaid text revisions remain attached to their original live authority through display expiry/new repeats. Original transport records/deadlines are immutable. Each defect had observed red/green regression coverage and reviewer recheck.
+- Ruling: source emission time is nondecreasing in sequence order, preventing a CLEAR tombstone from expiring before an earlier authority. Original native observation time may be older and is never refreshed. Each retained authority may reference one accepted payload revision (at most 128), pruned on cancellation/authority expiry separately from visible state.
+- Build verification uses the existing johninnl credential only in the Gradle process environment; no credential or generated version/catalog was changed. The patch Android build, patch tests and FM/Maps/Vela/Waze unit tasks passed. Remaining Tasks 3–5 and the native binding/phone/car acceptance gates are not complete.

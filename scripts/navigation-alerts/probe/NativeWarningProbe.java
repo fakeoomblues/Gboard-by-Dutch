@@ -21,7 +21,9 @@ public final class NativeWarningProbe extends Instrumentation {
         try {
             String target = getTargetContext().getPackageName();
             String probeClass;
-            if (target.equals("app.vela")) probeClass = "VelaVoiceProbe";
+            if (arguments.getString("scenario", "").equals("codec")
+                    && (target.equals("app.vela") || target.equals("com.google.android.apps.maps"))) probeClass = "WarningCodecProbe";
+            else if (target.equals("app.vela")) probeClass = "VelaVoiceProbe";
             else if (target.equals("com.google.android.apps.maps")) probeClass = "MapsVoiceProbe";
             else throw new IllegalArgumentException("Unexpected native spike target: " + target);
             JSONObject report = (JSONObject) Class.forName("nl.johninnl.warningprobe." + probeClass)

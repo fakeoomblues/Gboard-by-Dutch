@@ -24,12 +24,13 @@ def main():
     classes.mkdir(parents=True, exist_ok=True)
     dex.mkdir(parents=True, exist_ok=True)
     target_source = source / ('VelaVoiceProbe.java' if args.target == 'vela' else 'MapsVoiceProbe.java')
+    shared = sorted((Path(__file__).resolve().parents[2] / 'support/navigation-alerts/src/main/java').rglob('*.java'))
 
     def run(*command):
         subprocess.run([str(item) for item in command], check=True)
 
     run('javac', '--release', '8', '-cp', android, '-d', classes,
-        source / 'NativeWarningProbe.java', target_source)
+        source / 'NativeWarningProbe.java', source / 'WarningCodecProbe.java', target_source, *shared)
     run(tools / 'd8', '--min-api', '29', '--lib', android, '--output', dex,
         *sorted(classes.rglob('*.class')))
     package = 'nl.johninnl.warningprobe.' + args.target
