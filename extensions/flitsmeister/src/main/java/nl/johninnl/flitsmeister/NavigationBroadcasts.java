@@ -31,6 +31,8 @@ public final class NavigationBroadcasts {
     private static final String SESSION = UUID.randomUUID().toString();
     private static Context app;
     private static boolean active, dirty;
+    private static volatile boolean drivingEngine;
+    public static boolean engineRunning() { return drivingEngine; }
     private static volatile long generation;
     private static long sequence, lastSent = -5000, lastRequest = -1000;
     private static String lastStatus = "";
@@ -43,6 +45,7 @@ public final class NavigationBroadcasts {
         if (Looper.myLooper() == Looper.getMainLooper()) action.run(); else MAIN.post(action);
     }
     public static void init(Context context) {
+        nl.johninnl.navigation.startup.ProviderAudio.init(context);
         Context application = context.getApplicationContext();
         main(() -> {
             if (app != null) return;
@@ -61,6 +64,7 @@ public final class NavigationBroadcasts {
         });
     }
     public static void started() {
+        drivingEngine = true;
         main(() -> { if (app == null || active) return; active = true; STATE.reset(true); ALERTS.reset(true); dirty = true;
             publish(true); MAIN.removeCallbacks(TICK); MAIN.postDelayed(TICK,1000); });
     }
@@ -69,6 +73,7 @@ public final class NavigationBroadcasts {
         main(() -> { if (at<candidateAt) return; candidateAt=at; candidate=null; ALERTS.approach("",-1,false,at); STATE.clear("flitsmeister",at); dirty=true; publish(true); });
     }
     public static void stopped() {
+        drivingEngine = false;
         generation++;
         main(() -> { active = false; candidate = null; candidateAt=SystemClock.elapsedRealtime(); STATE.reset(true); ALERTS.reset(true); STATE.clear("flitsmeister",SystemClock.elapsedRealtime());
             dirty = true; MAIN.removeCallbacks(TICK); publish(true); });
@@ -228,6 +233,7 @@ public final class NavigationBroadcasts {
         }
     };
     static void resetForTest() {
+        drivingEngine = false;
         MAIN.removeCallbacksAndMessages(null);
         // Robolectric resets receiver registrations between tests.
         app=null; requests=null; ALERTS.reset(true); reportSubscription=null; active=false; candidate=null; candidateAt=-1; generation++; lastSent=-5000; lastRequest=-1000; lastStatus="";

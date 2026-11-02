@@ -32,7 +32,9 @@ final class Chime {
 
     /** [notes] in Hz, each [noteMs] long with [gapMs] of silence after it. */
     private static void play(float[] notes, int noteMs, int gapMs) {
+        if (nl.johninnl.navigation.startup.ProviderAudio.muted()) return;
         AUDIO.execute(() -> {
+            if (nl.johninnl.navigation.startup.ProviderAudio.muted()) return;
             Context c = Customization.appContext();
             if (c == null) return;
             AudioManager am = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
@@ -58,6 +60,7 @@ final class Chime {
                         .setTransferMode(AudioTrack.MODE_STATIC)
                         .build();
                 track.write(pcm, 0, pcm.length);
+                nl.johninnl.navigation.startup.ProviderAudio.volume(track, 1f);
                 track.play();
                 Thread.sleep(pcm.length * 1000L / RATE + 60);
             } catch (Throwable t) {

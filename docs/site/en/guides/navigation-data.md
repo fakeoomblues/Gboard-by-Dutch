@@ -29,11 +29,15 @@ Apply these patches from Dutch App Patches in Morphe Manager. For Maps, select i
 
 The provider patch has an optional **Receiver package** setting. Leave it blank if you want either supported map app to receive updates while it runs. To target one app, enter `app.vela` for Vela, or the actual package of your patched Maps copy, normally `org.ungoogled.android.apps.maps`. A custom package or the microG-RE variant needs its own package name. One targeted package will not deliver updates to a different receiver.
 
-## 2. Keep the provider running
+## 2. Set up the provider once
 
-Open the patched Waze or Flitsmeister once, finish onboarding and grant the location access its driving service needs. Allow background location when requested for this use. The provider must keep its navigation engine or driving/location service running while the other map app is in front. Its overlay can stay off.
+Open patched Waze or Flitsmeister once, finish onboarding and grant its driving service location access. Allow background location when requested for your use, and check the phone's battery restrictions if updates stop with the screen off. The provider overlay can remain off.
 
-Waze's broadcast patch includes the background keep-alive control, initially 180 minutes and configurable. Flitsmeister publishes while its driving/location service runs. Closing or force-stopping the provider stops fresh observations. If updates disappear after the screen turns off, check the provider's background battery restrictions on your phone.
+With the updated patches on both sides, opening Maps/Vela or choosing **De-Waze**/**Flitsmeister** silently starts the selected provider's driving engine. Neither provider's screen opens. Android shows the normal ongoing location-service notification. During this managed session, the provider stays muted: Maps/Vela supplies the spoken warnings and chimes. Your saved provider sound settings and phone volume stay unchanged; normal provider audio resumes after the sharing lease ends. The receiving map checks native engine health during visible use and active navigation, reconnects after process death, and retries a stopped engine with backoff. Missing GPS or road observations do not trigger a restart or become fresh data.
+
+The source status distinguishes startup, a running engine, missing location permission and an unavailable startup API. If the API is unavailable, repatch both apps; older provider patches can still supply broadcasts when opened manually. If Android refuses a background restart, the map reports it without opening the provider. Returning to the map allows another silent attempt. No root or Shizuku is used by the integration.
+
+Selecting native data or ending the receiving session releases its startup connection. Its extra sharing service expires after 45 seconds without a consumer; independently running provider navigation is left alone. Waze's existing configurable keep-alive still controls its native idle timeout (initially 180 minutes).
 
 ## 3. Choose the source in your map app
 
@@ -44,7 +48,7 @@ Waze's broadcast patch includes the background keep-alive control, initially 180
 3. Enable **Compact speed and average-speed control** if you want the speed, limit and active-zone details together.
 4. Open **Road alert types** and select the categories you want. Only police reports start selected.
 5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Only reports with known positions become map pins.
-6. Check **Source now** for the provider status. Tap it to request an available snapshot; this cannot start a stopped provider or make an old observation fresh.
+6. Check **Source now** for the provider status. Tap it to request an available snapshot. Automatic startup uses the separate provider API; a snapshot request never makes an old observation fresh.
 
 **Off · Google Maps** restores Maps' own data. The alternative **Waze · Share alerts with Maps** uses the older Waze alert bridge: Waze needs **Share alerts with Maps**, must be signed in and must remain running. That mode does not provide the extended speed/limit/zone feed. Select the navigation-data option for this guide.
 
@@ -63,18 +67,20 @@ With an external source selected, Vela pauses its own Flock display and alerts w
 
 ## 4. Check reception before relying on it
 
-While parked, open the provider and then the receiving map app. Check that the chosen source is listed and that it reports fresh data when observations are available. Leave the provider in the background and confirm reception continues. A stationary speed of zero is valid; a missing speed or limit must remain unknown or use the map's native fallback.
+After one-time provider setup, while parked, open the receiving map app with an external source selected. Check that the chosen source is listed and that it reports fresh data when observations are available. Leave the provider in the background and confirm reception continues. A stationary speed of zero is valid; a missing speed or limit must remain unknown or use the map's native fallback.
 
 Changing provider, leaving a zone or losing fresh zone observations clears the partial average. The two providers' values are kept separate. Android 14 and newer let the receiving app verify which installed provider sent an update; older versions lack that Android sender verification.
 
 | Problem | Check |
 | --- | --- |
-| Source stays unavailable | Both apps were patched, the provider was opened, its driving/location service is active and the correct source is selected. |
+| Source stays unavailable | Both apps have the updated patches, the correct source is selected and the provider has location permission. Check the startup status for a blocked start or unavailable API. |
 | One receiver gets data but another does not | Remove or correct the provider patch's optional **Receiver package**, then repatch the provider if you change that option. |
 | Speed works but no average appears | A fresh active-zone observation is required, followed by enough observed time and distance. A camera report alone is not an active zone. |
 | No pins or warning sound in Maps | Select the report types and enable the map/chime switches. The provider must have fresh reports, with positions for pins and a usable approach distance for warnings. |
-| Data stops when the screen locks | Check background location, the provider service and phone battery restrictions. Reopen a stopped provider. |
+| Data stops when the screen locks | Check background location and phone battery restrictions. Return to the receiving map to retry a blocked silent start. |
 
 Google Maps' consumer display and fallback were checked with controlled provider replays. Vela's background reception, phone/car display and advance speech were checked on an Android 16 emulator with Gearslip. Native Maps navigation has separate Gearslip and official Android Auto Desktop Head Unit checks. These results do not establish every combination of provider, phone, physical car display or live-road accuracy.
 
 For developers, the [shared navigation broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md) documents the data and freshness rules. Other receiving apps need an implementation of that contract; installing the provider patch alone does not add support to an arbitrary app.
+
+Silent cold startup was also checked for all four Maps/Vela × Waze/Flitsmeister pairs on an Android 16 emulator, using the supplied originals and native engine health. This does not establish all manufacturer power policies or physical car behavior.

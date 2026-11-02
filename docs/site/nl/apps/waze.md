@@ -101,6 +101,8 @@ Hide ads en Remove telemetry beperken de ondersteunde advertenties, crashrapport
 
 ## Voor gebruik
 
+Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
+
 Open na het patchen **Customization** in het zijmenu onder **Shut off**. Daar stel je de toegepaste functies in. Speed camera alerts, Flock cameras en Average speed zone bar staan daar eerst uit, ook als je de patches hebt geselecteerd. Herstart Waze na wijzigingen aan de kaartstijl of waarschuwingspictogrammen.
 
 **Broadcast navigation data** gebruikt Wazes native engine en locatietoegang op de achtergrond, zonder zichtbare telefoonactiviteit. De achtergrondoptie wordt automatisch meegenomen (standaard 180 minuten, instelbaar). Native waarnemingen vóór een traject kunnen een voorwaarschuwing geven. Beschikbare meldingen omvatten camera’s, politie, gevaren, ongevallen, files en afsluitingen, plus ingeschakelde Flock- en flitserlagen. Gemiddelden gelden voor het waargenomen deel van een trajectcontrole; geschatte voortgang en ontbrekende/verouderde waarden worden apart aangeduid. [Broadcastprotocol](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).

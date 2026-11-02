@@ -26,6 +26,7 @@ import java.util.Map;
 
 /** Local navigation observations shared with De-Waze and Flitsmeister, serialized on the UI thread. */
 public final class ExternalTelemetry {
+    private static nl.johninnl.navigation.startup.NavigationClient startup;
     private ExternalTelemetry() {}
     static final String ACTION="nl.johninnl.navigation.NAVIGATION_STATE";
     static final String REQUEST="nl.johninnl.navigation.NAVIGATION_STATE_REQUEST";
@@ -62,10 +63,13 @@ public final class ExternalTelemetry {
         refresh(c);WazeAlerts.refresh(c);SavedOnMap.refresh();
     }
     static void refresh(Context context){
+        if(app!=context.getApplicationContext()&&startup!=null){startup.close();startup=null;}
         app=context.getApplicationContext();
         String next=source(context);
         boolean changed=!next.equals(source);
         if(changed){source=next;store=new TelemetryStore();store.select(source);publisherSession="";warnings.reset();warning="";WazeAlerts.resetSource();}
+        if(startup==null)startup=new nl.johninnl.navigation.startup.NavigationClient(app);
+        startup.select(source,navigating);
         if(modern()&&!registered){
             IntentFilter filter=new IntentFilter(ACTION);
             if(Build.VERSION.SDK_INT>=33)app.registerReceiver(RECEIVER,filter,Context.RECEIVER_EXPORTED);else app.registerReceiver(RECEIVER,filter);
@@ -116,12 +120,13 @@ public final class ExternalTelemetry {
         if(value.hasSpeed()&&Float.isFinite(value.getSpeed())&&value.getSpeed()>=0&&value.getSpeed()*3.6<=500){nativeSpeed=value.getSpeed()*3.6;nativeSpeedAt=at;}
         update();
     }
-    static void navigating(boolean active){navigating=active;update();}
+    static void navigating(boolean active){navigating=active;if(startup!=null)startup.select(source,active);update();}
     static String provider(){return TelemetryStore.FLITSMEISTER.equals(source)?"Flitsmeister":TelemetryStore.WAZE.equals(source)?"De-Waze":LEGACY.equals(source)?"Waze":"Google Maps";}
     static String status(){
         if(!modern())return LEGACY.equals(source)?WazeAlerts.legacyStatus():"Off · Google Maps";
         TelemetryStore.View v=view();
         String out=provider()+(v.external?" · connected":" unavailable · Google Maps fallback");
+        if(startup!=null)out+=" · "+startup.statusLabel(false);
         if(v.external&&(v.currentKmh==null||v.limitKmh==null))out+=" · Maps where needed";
         if(v.zoneActive)out+="\n"+(v.averageKmh==null?"Observed partial average pending":String.format(Locale.getDefault(),"Observed partial average %.0f km/h",v.averageKmh))+String.format(Locale.getDefault()," · %s%.0f%% · %s remaining",v.progressEstimated?"≈":"",v.progressPercent,distance(v.remainingMeters,PowerSaving.miles()));
         else if(v.approachDistanceMeters!=null)out+="\nAverage-speed zone "+(v.approachEstimated?"≈":"")+distance(v.approachDistanceMeters,PowerSaving.miles())+" ahead";
@@ -142,6 +147,7 @@ public final class ExternalTelemetry {
     }
     private static void update(){
         if(!modern())return;
+        if(startup!=null)startup.select(source,navigating);
         TelemetryStore.View v=view();RoadWarningEngine.Fix position=fix==null?null:new RoadWarningEngine.Fix(fix.getLatitude(),fix.getLongitude(),fix.hasBearing()?fix.getBearing():Double.NaN,fix.hasSpeed()?fix.getSpeed():Double.NaN,fixAt);
         // A kind disabled for map pins is disabled for warnings too.
         RoadWarningEngine.Warning ahead=warnings.update(filteredView(v),position,SystemClock.elapsedRealtime());
@@ -161,9 +167,10 @@ public final class ExternalTelemetry {
     private static String warningLabel(String kind){switch(kind){case "average_speed_zone":return "Average-speed zone";case "mobile_camera":return "Mobile camera";case "camera":return "Speed camera";case "police":return "Police";case "closure":return "Road closure";case "jam":return "Traffic jam";case "flock":return "Flock camera";case "crash":return "Crash";default:return "Hazard";}}
     private static final Runnable TICK=new Runnable(){public void run(){if(!registered)return;update();MAIN.postDelayed(this,1000);}};
     static void resume(Activity activity){
+        if(startup!=null)startup.onActivityResumed(activity);
         if(activity.getClass().getName().equals("com.google.android.maps.MapsActivity")){foreground=new WeakReference<>(activity);request();render();}
     }
-    static void pause(Activity activity){if(foreground.get()==activity){foreground.clear();removeWidget();}}
+    static void pause(Activity activity){if(startup!=null)startup.onActivityPaused(activity);if(foreground.get()==activity){foreground.clear();removeWidget();}}
     private static void removeWidget(){
         if(widget!=null&&widget.getParent() instanceof ViewGroup)((ViewGroup)widget.getParent()).removeView(widget);
         widget=null;if(hiddenBadge!=null){hiddenBadge.setAlpha(1f);hiddenBadge=null;}

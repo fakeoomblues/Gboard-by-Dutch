@@ -24,7 +24,9 @@ Road-warning reports can include camera/incident positions. The integration rece
 
 ## Before using
 
-Patch [Waze 5.26.90.901](waze.md) or [Flitsmeister 14.17](flitsmeister.md) with **Broadcast navigation data**, open it once and allow its background location/driving service to remain running. Its overlay can stay off. The provider patch's optional **Receiver package** can be set to `app.vela`. Android 14 and newer allow Vela to verify the sending provider through Android; older versions lack that sender verification.
+Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).
+
+Patch [Waze 5.26.90.901](waze.md) or [Flitsmeister 14.17](flitsmeister.md) with **Broadcast navigation data**, complete its first-run setup and grant its driving service location access once. Updated patches start its engine automatically when Vela needs it. Its overlay can stay off. The provider patch's optional **Receiver package** can be set to `app.vela`. Android 14 and newer allow Vela to verify the sending provider through Android; older versions lack that sender verification.
 
 In Vela's navigation settings, open **Speed and road alerts** and choose **Vela (native data)**, **De-Waze** or **Flitsmeister**. The choice is saved. The same choice is available under **Navigation provider** in Android Auto settings. **Spoken road warnings** follows Vela's voice/mute settings; car details have their own switch.
 

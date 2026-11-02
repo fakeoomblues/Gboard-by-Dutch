@@ -29,7 +29,7 @@ class VelaHookGuardTest {
         assumeNotNull(path)
         val container = DexFileFactory.loadDexContainer(File(path!!), Opcodes.forApi(26))
         val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }.toList()
-        assertEquals(28, validateVelaContracts(classes).size)
+        assertEquals(29, validateVelaContracts(classes).size)
         validateVelaHostAbi(classes)
 
         // A same-width field substitution in giant MapScreen must invalidate the original guard.

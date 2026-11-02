@@ -47,6 +47,7 @@ public final class NavigationBroadcasts {
     }
 
     public static void init(Application application) {
+        nl.johninnl.navigation.startup.ProviderAudio.init(application);
         main(() -> {
             if (installed) return;
             app = application; installed = true;

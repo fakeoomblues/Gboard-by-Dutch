@@ -24,6 +24,8 @@ Wegmeldingen kunnen posities van camera's of incidenten bevatten. De integratie 
 
 ## Voor gebruik
 
+Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
+
 Patch [Waze 5.26.90.901](waze.md) of [Flitsmeister 14.17](flitsmeister.md) met **Broadcast navigation data**, open de app eenmaal en laat de achtergrondlocatie- of rijdienst draaien. De overlay mag uit blijven. De optionele **Receiver package** van de bronpatch kan op `app.vela` worden gezet. Vanaf Android 14 kan Vela via Android controleren welke bron de gegevens verstuurt; oudere versies bieden die afzendercontrole niet.
 
 Open **Snelheid en wegwaarschuwingen** in de navigatie-instellingen van Vela en kies **Vela (eigen gegevens)**, **De-Waze** of **Flitsmeister**. De keuze wordt opgeslagen. Dezelfde keuze staat onder **Navigatieprovider** in de instellingen van Android Auto. **Gesproken wegwaarschuwingen** volgt de stem- en dempinstellingen van Vela; de autodetails hebben een eigen schakelaar.

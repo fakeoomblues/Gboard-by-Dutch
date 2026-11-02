@@ -14,9 +14,15 @@ import android.os.SystemClock;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.Collections;
+import java.util.WeakHashMap;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Proxy;
 
 /** One process-wide consumer shared by the native phone and car UI. No network or GPS requests. */
 public final class TelemetryRuntime {
+    private static nl.johninnl.navigation.startup.NavigationClient startup;
     private TelemetryRuntime() {}
     public static final String ACTION="nl.johninnl.navigation.NAVIGATION_STATE";
     public static final String REQUEST="nl.johninnl.navigation.NAVIGATION_STATE_REQUEST";
@@ -42,12 +48,15 @@ public final class TelemetryRuntime {
     private static volatile Double phoneNativeLimit;
     private static volatile RoadWarningEngine.Warning currentWarning;
     private static boolean carActive,navigationActive;
+    private static final Map<Object,Object> carObservers=new WeakHashMap<>();
+    private static final Set<Object> visibleCarSessions=Collections.newSetFromMap(new WeakHashMap<>());
     private static void main(Runnable action) { if(Looper.myLooper()==Looper.getMainLooper())action.run();else MAIN.post(action); }
 
     public static void init(Context context,Runnable onChanged) {
         main(()->{
             if(app!=null)return;
             app=context.getApplicationContext();prefs=app.getSharedPreferences("vela_settings",Context.MODE_PRIVATE);changed=onChanged;
+            startup=new nl.johninnl.navigation.startup.NavigationClient(app);
             store.select(prefs.getString("morphe_telemetry_provider",""));
             preferenceListener=(p,key)->{if(key!=null&&(key.startsWith("morphe_")||key.startsWith("flock_")||key.equals("car_speed_on")||key.equals("speed_cam_warn")))main(()->{store.select(prefs.getString("morphe_telemetry_provider",""));publish(true);});};
             prefs.registerOnSharedPreferenceChangeListener(preferenceListener);
@@ -152,7 +161,7 @@ public final class TelemetryRuntime {
             return warningRoute;
         }catch(ReflectiveOperationException|RuntimeException e){routeReference=null;warningRoute=null;return null;}
     }
-    public static void setNavigationActive(boolean active) { navigationActive=active; }
+    public static void setNavigationActive(boolean active) { navigationActive=active;if(startup!=null)startup.select(selected(),active||carActive()); }
     private static boolean voiceAvailable() {
         if(!spokenEnabled()||voice==null)return false;
         try{return !voice.getClass().getField("n").getBoolean(voice)||voice.getClass().getField("o").getBoolean(voice);}catch(ReflectiveOperationException e){return false;}
@@ -161,7 +170,7 @@ public final class TelemetryRuntime {
     public static String statusText() {
         if(selected().isEmpty())return "Vela";
         TelemetryStore.View v=view();
-        if(!v.external)return providerName()+(dutch()?" niet beschikbaar · Vela-gegevens":" unavailable · Vela data");
+        if(!v.external)return providerName()+(dutch()?" niet beschikbaar · Vela-gegevens":" unavailable · Vela data")+(startup==null?"":" · "+startup.statusLabel(dutch()));
         return providerName()+((v.currentKmh==null||v.limitKmh==null)?(dutch()?" · Vela waar nodig":" · Vela fallback where needed"):"");
     }
     public static String zoneText() {
@@ -219,7 +228,39 @@ public final class TelemetryRuntime {
     public static long fixAt() { return fixAt; }
     public static void bindVoice(Object guide) { voice=guide; }
     public static void setCarActive(boolean value) { carActive=value;carAt=value?SystemClock.elapsedRealtime():-10000; }
-    public static boolean carActive() { return carActive&&SystemClock.elapsedRealtime()-carAt<=5000; }
+    public static boolean carActive() { return !visibleCarSessions.isEmpty()||(carActive&&SystemClock.elapsedRealtime()-carAt<=5000); }
+    public static void setCarSessionVisible(Object session,boolean visible) {
+        main(()->{if(visible)visibleCarSessions.add(session);else visibleCarSessions.remove(session);publish(true);});
+    }
+    /** Observe the native car Session independently of map snapshots or the speed overlay. */
+    public static void bindCarSession(Object session) {
+        main(()->{
+            if(carObservers.containsKey(session))return;
+            try {
+                Class<?> observerType=Class.forName("ze0");
+                WeakReference<Object> owner=new WeakReference<>(session);
+                Object observer=Proxy.newProxyInstance(observerType.getClassLoader(),new Class<?>[]{observerType},(proxy,method,args)->{
+                    switch(method.getName()) {
+                        case "hashCode":return System.identityHashCode(proxy);
+                        case "equals":return proxy==args[0];
+                        case "toString":return "NavigationProviderCarSession";
+                        default:
+                            Object current=owner.get();if(current==null)return null;
+                            // The guarded DefaultLifecycleObserver ABI: c=START, m=RESUME, b=STOP, l=DESTROY.
+                            if(method.getName().equals("c")||method.getName().equals("m"))setCarSessionVisible(current,true);
+                            else if(method.getName().equals("b")||method.getName().equals("l")) {
+                                setCarSessionVisible(current,false);
+                                if(method.getName().equals("l"))carObservers.remove(current);
+                            }
+                            return null;
+                    }
+                });
+                Object lifecycle=session.getClass().getMethod("g").invoke(session);
+                carObservers.put(session,observer);
+                lifecycle.getClass().getMethod("a",Class.forName("ut1")).invoke(lifecycle,observer);
+            }catch(ReflectiveOperationException error){android.util.Log.w("NavigationStartup","Car session lifecycle unavailable",error);}
+        });
+    }
     public static void speakWarning(String text) {
         if(!spokenEnabled()||voice==null||text==null||text.isEmpty())return;
         try {
@@ -235,6 +276,7 @@ public final class TelemetryRuntime {
     }
     private static void request(String provider) { if(app!=null)app.sendBroadcast(new Intent(REQUEST).setPackage(provider)); }
     private static void publish(boolean force) {
+        if(startup!=null)startup.select(selected(),navigationActive||carActive()||nativeGuidance());
         TelemetryStore.View v=view();
         long now=SystemClock.elapsedRealtime();Location own=lastFix;
         RoadWarningEngine.Fix fix=own!=null?new RoadWarningEngine.Fix(own.getLatitude(),own.getLongitude(),own.hasBearing()?own.getBearing():Double.NaN,own.hasSpeed()?own.getSpeed():0,fixAt):null;
@@ -242,7 +284,7 @@ public final class TelemetryRuntime {
         currentWarning=ahead;
         warning=ahead==null?"":warningLabel(ahead);
         if(voiceAvailable()&&(nativeGuidance()||carActive()||now-phoneAt<=5000)&&ahead!=null&&WARNINGS.shouldSpeak(ahead,now))speakWarning(warning);
-        String key=selected()+":"+v.currentKmh+":"+v.limitKmh+":"+v.zoneId+":"+v.zoneSession+":"+v.averageKmh+":"+v.progressPercent+":"+v.remainingMeters+":"+v.external+":"+suppressNativeFlock()+":"+carEnabled()+":"+spokenEnabled()+":"+warning+":"+freshNativeSpeed()+":"+(freshNativeSpeed()&&own!=null?own.getSpeed():null)+":"+phoneNativeLimit;
+        String key=(startup==null?"":startup.state())+":"+selected()+":"+v.currentKmh+":"+v.limitKmh+":"+v.zoneId+":"+v.zoneSession+":"+v.averageKmh+":"+v.progressPercent+":"+v.remainingMeters+":"+v.external+":"+suppressNativeFlock()+":"+carEnabled()+":"+spokenEnabled()+":"+warning+":"+freshNativeSpeed()+":"+(freshNativeSpeed()&&own!=null?own.getSpeed():null)+":"+phoneNativeLimit;
         if(force||!key.equals(lastKey)){lastKey=key;changed.run();CarUi.changed();}
     }
     private static boolean dutch() { return app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl"); }
@@ -263,6 +305,8 @@ public final class TelemetryRuntime {
     }
     private static final Runnable TICK=new Runnable(){public void run(){if(app==null)return;publish(false);MAIN.postDelayed(this,1000);}};
     static void resetForTest() {
+        carObservers.clear();visibleCarSessions.clear();
+        if(startup!=null){startup.close();startup=null;}
         MAIN.removeCallbacksAndMessages(null);
         if(app!=null&&receiver!=null)try{app.unregisterReceiver(receiver);}catch(IllegalArgumentException ignored){}
         if(prefs!=null&&preferenceListener!=null)prefs.unregisterOnSharedPreferenceChangeListener(preferenceListener);
