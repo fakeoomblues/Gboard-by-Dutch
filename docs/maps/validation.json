@@ -185,6 +185,31 @@
     "waze_zone_to_clear_same_process_verified": true,
     "total_replay_checks": 9,
     "test_publishers_and_probe_uninstalled": true,
-    "settings_restored_source": "off"
+    "settings_restored_source": "off",
+    "tested_patched_apk_sha256": "2e82bda76f047ab2066fbb6d2a71cc48f2d72affe1512fa4ed732c7e78d189fc",
+    "validated_patched_apk_sha256": "f14323d8973d5d3b2e4473ddcbcc6fc73b595c9ef58b56aa36c6d9a78745df10",
+    "all_9299_zip_entries_byte_identical": true,
+    "canonical_zip_payload_sha256": "3a0ca90dfb6253595fabd352789af103f46beb31798c68ecf148ff1fbe25855c",
+    "signing_certificate_sha256": "b16b4097649da960b9788350f1b7ef394cf23b37795659782a4b29913918f212"
+  },
+  "publication": {
+    "version": "1.25.0",
+    "release_url": "https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.25.0",
+    "source_commit": "f57abb97c9eb11de5792dc50d66c3bab62d4489a",
+    "release_commit": "9d2aa53eb8ec8e78e3e1ed47d31f5ceebaf6075f",
+    "release_workflow": "https://github.com/johninnl/nl-morphe-patches/actions/runs/41380498959",
+    "release_workflow_conclusion": "success",
+    "morphe_discovery_verified": true,
+    "trusted_ed25519_signature_verified": true,
+    "release_bundle_sha256": "92263759a8a6694409cff395098d78a04e70da1091e3cc073bfb8f7841af9ee7",
+    "maps_compiled_entries_compared": 184,
+    "changed_entries": [],
+    "maps_extension_sha256": "23eaf042c209ad4d532a2a489f5c045db39ac6959bf9d1c33ff9977029bcf801",
+    "tested_bundle_sha256": "7a2854111d1f7196c0ab16e8f4124ebccd72d961b034bcdc2e105af827dfd661",
+    "published_default_application_passed": true,
+    "published_default_applied": 27,
+    "published_default_apk_sha256": "858190598b592cbde0363a93727fb6bea1198fc87e927b2830d14a5ff7e668dc",
+    "runtime_tested_and_published_patched_apk_entry_names_identical": true,
+    "runtime_tested_and_published_patched_apk_changed_entries": []
   }
 }

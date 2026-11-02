@@ -13,7 +13,7 @@
 - [x] Extend Waze bridge with both navigation producers, provider settings, fresh native fallback, warnings/pins and average-speed UI. Exercise protocol edge cases and UI with meaningful tests.
 - [x] Run project regression/build checks and APK runtime smoke tests; inspect screens and logcat.
 - [x] Review complete diff, fix findings, update bilingual app documentation and catalog discovery.
-- [ ] Verify required identity, commit and publish release through existing automation; inspect published bundle, discovery and release checks.
+- [x] Verify required identity, commit and publish release through existing automation; inspect published bundle, discovery and release checks.
 
 ## Evidence ledger
 
@@ -47,3 +47,5 @@
 
 - Finalaccess-fixed4profile matrix passed (defaults27/microG-RE28/originalmicroG28/media28), signed v2, all emitted native references resolve and are accessible. Validatedbundle7a2854111d1f7196c0ab16e8f4124ebccd72d961b034bcdc2e105af827dfd661.
 - ActualMapspolice/camera pins visibly render after generatorclassaccess fix; nativeworker consumes2items. Eightconsumercasespassed and a ninthsameprocessWazezone-to-clear transition passed. Nativepins/zone/average clear tozero; allstrictfatallogchecks clean. Submittednormalsearch/place details/Save-Unsave/routepreview passed. Testpublishers/instrumentationremoved and source restoredOff.
+
+- Published v1.25.0 through automated release workflow41380498959 (success), sourcef57abb97c9eb11de5792dc50d66c3bab62d4489a, generatedreleasecommit9d2aa53. Stable Morphe discovery verified; downloadedMPP Ed25519 signature verified, SHA25692263759a8a6694409cff395098d78a04e70da1091e3cc073bfb8f7841af9ee7. All184 Maps/shared compiled entries byte-identical to the validated bundle. Publication proof is retained in docs/maps/validation.json.
