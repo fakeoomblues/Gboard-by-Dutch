@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 
@@ -88,7 +89,7 @@ public final class WarningEndpoint implements Closeable {
             int uid=caller.getAsInt();String packageName=access.authorize(uid);
             if(packageName==null)throw new SecurityException("WARNING_CALLER");
             if(code==IBinder.INTERFACE_TRANSACTION) { reply.writeString(WarningWire.DESCRIPTOR);return true; }
-            if(code<WarningWire.REGISTER || code>WarningWire.PING)return super.onTransact(code,data,reply,flags);
+            if(code<WarningWire.REGISTER || code>WarningWire.PREVIEW)return super.onTransact(code,data,reply,flags);
             data.enforceInterface(WarningWire.DESCRIPTOR);
             if(data.dataAvail()>WarningWire.MAX_FRAME)throw new IllegalArgumentException("FRAME_SIZE");
             Bundle request=data.readBundle(null);
@@ -102,6 +103,20 @@ public final class WarningEndpoint implements Closeable {
     public String sourceSession() { return session; }
     public boolean exclusiveAudio() { return exclusive; }
     public String audioStatus(){return audioStatus;}
+    /** Source-process UI only. Never exposed as a receiver-controlled Binder reset flag. */
+    public CompletableFuture<String> recoverAfterParkedStop(){
+        if(Process.myUid()!=sourceUid)throw new SecurityException("RECOVERY_SOURCE_UID");
+        CompletableFuture<String> result=new CompletableFuture<>();
+        try{actor.execute(()->{
+            if(audio==null){result.complete("STORAGE_FAILED");return;}
+            WarningAudioOwner.Snapshot snapshot=audio.snapshot(clock.getAsLong());
+            if(snapshot.owner!=null&&snapshot.owner.ready){result.complete("OUTPUT_ACTIVE");return;}
+            String status=audio.resetAfterVerifiedParkedStop().name();
+            if(status.equals("OK"))for(Registration r:registrations.values()){r.synced=false;r.view=null;r.deliveryGeneration++;if(!r.slot.busy){Bundle b=base(r);b.putBoolean("resync_required",true);send(r,WarningWire.STATE_INVALIDATED,b,null);}}
+            refresh();result.complete(status);
+        });}catch(RejectedExecutionException error){result.complete("OVERLOADED");}
+        return result;
+    }
     public Set<String> capablePackages() { return capable; }
     public void controlClient(int uid,boolean warningAware){
         if(uid==sourceUid || access.authorize(uid)==null)return;
@@ -152,6 +167,19 @@ public final class WarningEndpoint implements Closeable {
         Bundle result;
         switch(code) {
             case WarningWire.PING:return metadata(WarningWire.status("OK"));
+            case WarningWire.PREVIEW:
+                if(audio==null)return WarningWire.status("STORAGE_FAILED");
+                WarningAudioOwner.Snapshot current=audio.snapshot(clock.getAsLong());
+                if(!ownLease(r,current.owner)||!current.owner.token.equals(WarningWire.text(q,"owner_token"))||current.owner.epoch!=WarningWire.number(q,"owner_epoch"))return WarningWire.status("STALE_OWNER");
+                if(current.code!=WarningAudioOwner.Code.OK)return WarningWire.status(current.code.name());
+                if(current.pending!=null)return WarningWire.status("OUTPUT_ACTIVE");
+                String previewNonce=WarningWire.text(q,"preview_nonce");if(!PlaybackGrant.uuid(previewNonce))throw new IllegalArgumentException("PREVIEW_NONCE");
+                boolean dutch=WarningWire.text(q,"language").toLowerCase(java.util.Locale.ROOT).startsWith("nl");
+                long at=clock.getAsLong();Bundle example=new Bundle();example.putString("operation","ANNOUNCE");example.putString("warning_id","synthetic-preview-"+previewNonce);example.putLong("revision",1);example.putLong("announcement_index",1);example.putString("phase","notice");example.putString("native_type","SYNTHETIC_PREVIEW");example.putString("native_subtype","EXAMPLE");example.putString("category","preview");example.putInt("priority",2);
+                example.putString("message",dutch?"Synthetisch voorbeeld. Een hulpdienst nadert van achteren.":"Synthetic preview. An emergency vehicle is approaching from behind.");example.putString("language_tag",dutch?"nl":"en");example.putString("message_origin","template");example.putString("relevance","notice");example.putString("relationship","behind");example.putLong("observed_elapsed_ms",at);example.putLong("state_until_elapsed_ms",at+10000);example.putLong("announce_until_elapsed_ms",at+10000);example.putBoolean("is_preview",true);example.putString("preview_nonce",previewNonce);
+                append(example,at);WarningJournal.Announcement synthetic=journal.announcement("synthetic-preview-"+previewNonce,WarningEvent.Phase.NOTICE,1,clock.getAsLong());
+                if(synthetic==null)return WarningWire.status("OVERFLOW");
+                Bundle preview=WarningWire.status("OK");preview.putBundle("authority",WarningCodec.encode(synthetic.authority));preview.putBundle("payload",WarningCodec.encode(synthetic.payload));return preview;
             case WarningWire.GET_STATE:
             case WarningWire.RESUME: return view(r,q);
             case WarningWire.ACK:
@@ -231,7 +259,7 @@ public final class WarningEndpoint implements Closeable {
     private Bundle metadata(Bundle b) {
         b.putInt("protocol_version",1);b.putInt("source_uid",sourceUid);b.putString("provider_session",session);b.putLong("head_sequence",head);
         b.putString("manifest_digest",profile.manifestDigest);b.putString("capability_digest",profile.digest);b.putBoolean("capture_complete",profile.complete && !captureFault);
-        b.putStringArrayList("required_capabilities",new ArrayList<>(profile.required));return b;
+        b.putStringArrayList("required_capabilities",new ArrayList<>(profile.required));b.putBoolean("preview_supported",true);return b;
     }
     private Bundle base(Registration r) { Bundle b=new Bundle();b.putString("registration_token",r.client.registration);b.putString("provider_session",session);b.putString("consumer_nonce",r.client.consumerNonce);return b; }
 

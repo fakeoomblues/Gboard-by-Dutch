@@ -71,6 +71,17 @@ public class WarningSchedulerTest {
         time.now+=6001;scheduler.refresh();assertEquals(1,speaker.cancels);assertNotNull(source.pending);assertEquals(1,speaker.calls);
         speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.INTERRUPTED,true);assertNull(source.pending);
     }
+    @Test public void explicitPreviewUsesTheSourceGrantAndIsNotAnActualWarning(){
+        policy.enabled=false;CompletableFuture<String> result=scheduler.preview("en");
+        assertEquals(1,speaker.calls);assertTrue(Boolean.TRUE.equals(speaker.event.fields().get("is_preview")));assertNotNull(source.pending);assertFalse(result.isDone());
+        scheduler.refresh();assertEquals(0,speaker.cancels);
+        speaker.callback.started(speaker.grant);speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);
+        assertEquals("COMPLETED",result.join());assertNull(source.pending);
+        WarningView view=new WarningView();view.events(Arrays.asList(speaker.event));assertEquals("",view.messages(time.now,e->true));
+    }
+    @Test public void mutedPreviewDoesNotCreateAnAuthorityOrInitializeOutput(){
+        policy.mode=WarningAudioOwner.Mode.SILENT;assertEquals("USER_MUTED",scheduler.preview("nl").join());assertEquals(0,speaker.calls);assertEquals(0,sequence);
+    }
     WarningConnection.Snapshot snapshot(List<WarningConnection.Candidate> candidates){return new WarningConnection.Snapshot(session,sequence,false,true,"UNOWNED",new ArrayList<>(),new ArrayList<>(),candidates,new ArrayList<>());}
     WarningEvent event(String id,int priority,long revision,WarningEvent.Operation operation){
         Bundle b=new Bundle();b.putInt("protocol_version",1);b.putString("provider_session",session);b.putLong("sequence",++sequence);b.putString("operation",operation.name());b.putString("warning_id",id);b.putLong("revision",revision);b.putLong("announcement_index",1);b.putString("phase","notice");b.putString("native_type","Incident");b.putString("category","road_danger");b.putInt("priority",priority);b.putString("message","Native "+id+" revision "+revision);b.putString("language_tag","en");b.putString("message_origin","native_text");b.putString("relevance","notice");b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",time.now);b.putLong("issued_elapsed_ms",time.now);b.putLong("state_until_elapsed_ms",time.now+30000);if(operation==WarningEvent.Operation.ANNOUNCE)b.putLong("announce_until_elapsed_ms",time.now+(priority==0?5000:10000));return WarningCodec.decode(b,time.now);
@@ -93,6 +104,9 @@ public class WarningSchedulerTest {
         WarningConnection.Attempt attempt(WarningAudioOwner.GrantResult r){Bundle b=WarningWire.status(r.code.name());if(r.grant!=null)b.putBundle("grant",WarningWire.grant(r.grant));if(r.announcement!=null){b.putBundle("authority",WarningCodec.encode(r.announcement.authority));b.putBundle("payload",WarningCodec.encode(r.announcement.payload));}return new WarningConnection.Attempt(b,time.now);}
         public CompletableFuture<String> outcome(PlaybackGrant g,PlaybackGrant.Outcome o,boolean quiet){return CompletableFuture.completedFuture(owner.outcome(10001,client.consumerNonce,g,o,quiet,time.now).name());}
         public CompletableFuture<String> release(WarningConnection.Lease lease){return CompletableFuture.completedFuture(lease==null?"OK":owner.release(10001,client,lease.token,lease.epoch,time.now).name());}
+        public CompletableFuture<WarningConnection.Candidate> preview(WarningConnection.Lease lease,String language,String nonce){
+            Bundle b=WarningCodec.encode(event("preview",2,1,WarningEvent.Operation.ANNOUNCE));b.putString("category","preview");b.putBoolean("is_preview",true);b.putString("preview_nonce",nonce);b.putString("message","Synthetic preview. Emergency vehicle behind.");WarningEvent e=WarningCodec.decode(b,time.now);add(e);return CompletableFuture.completedFuture(new WarningConnection.Candidate(e,e));
+        }
     }
     static String repeat(char c,int count){char[] v=new char[count];Arrays.fill(v,c);return new String(v);}
 }

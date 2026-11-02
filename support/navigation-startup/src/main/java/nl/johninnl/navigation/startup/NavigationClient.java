@@ -54,6 +54,8 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
         app.registerActivityLifecycleCallbacks(this);
     }
     public String state() { return state; }
+    public boolean activeSession(){return active();}
+    public Activity foregroundActivity(){return visible.isEmpty()?null:visible.iterator().next();}
     public String statusLabel(boolean dutch) {
         switch (state) {
             case "running": return dutch ? "motor actief" + (providerMuted ? " · bron gedempt" : "") : "engine running" + (providerMuted ? " · provider muted" : "");

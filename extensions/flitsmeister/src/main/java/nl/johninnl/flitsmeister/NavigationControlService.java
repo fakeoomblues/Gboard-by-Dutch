@@ -8,6 +8,7 @@ public final class NavigationControlService extends ProviderControlService {
     @Override protected void appendWarningCapabilities(android.os.Bundle response,int uid) {
         response.putBinder("warning_api",NativeWarnings.init(this).binder());
         response.putIntArray("warning_protocols",new int[]{1});
+        response.putParcelable("warning_recovery",android.app.PendingIntent.getActivity(this,29173,new android.content.Intent(this,WarningRecoveryActivity.class),android.app.PendingIntent.FLAG_IMMUTABLE|android.app.PendingIntent.FLAG_UPDATE_CURRENT));
     }
     @Override protected boolean enabled() { return true; }
     @Override protected boolean engineRunning() { return NavigationBroadcasts.engineRunning(); }

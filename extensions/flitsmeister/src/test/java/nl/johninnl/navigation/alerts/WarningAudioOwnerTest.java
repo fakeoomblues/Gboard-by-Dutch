@@ -167,6 +167,13 @@ public class WarningAudioOwnerTest {
         s.failLoad=false;assertEquals(WarningAudioOwner.Code.OK,a.resetAfterVerifiedParkedStop());
         assertEquals(WarningAudioOwner.Code.OK,a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).code);
     }
+    @Test public void explicitParkedRecoveryNeverReplaysAnOldPossiblyPlayedAuthority(){
+        WarningCapabilities p=profile(true);MemoryStore store=new MemoryStore();WarningAudioOwner a=owner(store,journal(),p);WarningAudioOwner.Client c=client(10001,p);
+        WarningAudioOwner.Lease lease=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;begin(a,c,lease,20,NOW);
+        assertEquals(WarningAudioOwner.Code.OK,a.resetAfterVerifiedParkedStop());assertNull(store.value);
+        lease=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;
+        assertEquals(WarningAudioOwner.Code.EVENT_UNAVAILABLE,begin(a,c,lease,21,NOW).code);
+    }
 
     @Test public void uncertainButQuiescentAllowsFutureWarningsWithoutReplayingThatEvent() {
         WarningCapabilities p=profile(true);MemoryStore s=new MemoryStore();WarningAudioOwner a=owner(s,journal(),p);WarningAudioOwner.Client c=client(10001,p);

@@ -20,6 +20,7 @@ public final class WarningStatus {
             case "USER_MUTED":return nl?"Waarschuwingsaudio gedempt":"Warning audio muted";
             case "COVERAGE_INCOMPLETE":return nl?"Bronwaarschuwingen nog onvolledig":"Provider warning coverage incomplete";
             case "SPEAKER_UNAVAILABLE":return nl?"Waarschuwingsaudio niet beschikbaar":"Warning audio unavailable";
+            case "INCOMPATIBLE":return nl?"Werk de bronpatch bij voor deze functie":"Update the provider patch for this feature";
             case "BUSY":return nl?"Audio bij een andere kaartapp":"Audio handled by another map";
             case "AUDIO_UNCERTAIN":case "OUTPUT_ACTIVE":return nl?"Wacht op bevestiging dat vorige audio is gestopt":"Waiting for previous audio to stop";
             case "STORAGE_FAILED":return nl?"Audiostatus kon niet veilig worden opgeslagen":"Audio state could not be saved";

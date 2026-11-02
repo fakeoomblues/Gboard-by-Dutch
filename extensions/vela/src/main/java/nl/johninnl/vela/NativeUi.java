@@ -131,6 +131,8 @@ public final class NativeUi {
                             row(text("warning_confirm","Use these warning choices"),false,action("warning_confirm",()->{choices.confirm();TelemetryRuntime.warningChoicesChanged();}),composer);
                         }
                         hint(TelemetryRuntime.warningAudioStatus(),composer);
+                        row(text("warning_preview","Parked audio preview"),false,action("warning_preview",TelemetryRuntime::previewWarning),composer);
+                        row(text("warning_recovery","Recover warning audio while parked"),false,action("warning_recovery",TelemetryRuntime::recoverWarningAudio),composer);
                     }
                 }
                 toggle(text("car","Show details on Android Auto"),TelemetryRuntime.carEnabled(),toggleAction("car",TelemetryRuntime::setCarEnabled),null,composer);

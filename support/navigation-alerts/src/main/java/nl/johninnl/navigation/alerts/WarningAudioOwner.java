@@ -277,7 +277,7 @@ public final class WarningAudioOwner {
     public synchronized Code resetAfterVerifiedParkedStop() {
         try { store.save(null); }
         catch(IOException error) { storageFault=true;return Code.STORAGE_FAILED; }
-        pending=null;pendingRevoked=false;storageFault=false;owner=null;consumerDead=false;attempts.clear();return Code.OK;
+        journal.revokeAnnouncements();pending=null;pendingRevoked=false;storageFault=false;owner=null;consumerDead=false;attempts.clear();return Code.OK;
     }
 
     private Code blocked() {

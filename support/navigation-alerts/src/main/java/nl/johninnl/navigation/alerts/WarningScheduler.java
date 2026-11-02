@@ -45,6 +45,7 @@ public final class WarningScheduler {
         CompletableFuture<String> outcome(PlaybackGrant grant,PlaybackGrant.Outcome outcome,boolean quiescent);
         CompletableFuture<String> release(WarningConnection.Lease lease);
         default CompletableFuture<Boolean> resync(){return CompletableFuture.completedFuture(false);}
+        default CompletableFuture<WarningConnection.Candidate> preview(WarningConnection.Lease lease,String language,String nonce){return CompletableFuture.completedFuture(null);}
     }
     private static final Comparator<Pending> ORDER=Comparator.comparingInt((Pending p)->p.authority.priority.ordinal())
             .thenComparingLong(p->p.authority.announceUntil).thenComparingLong(p->p.authority.issuedAt).thenComparingLong(p->p.authority.sequence);
@@ -61,12 +62,28 @@ public final class WarningScheduler {
     private long generation,cursor,nextClaim,nextRenew,ticker,nextResync;
     private int grantRequests;
     private boolean coverage,controlBusy,pumping,again,unknownOutput;
+    private CompletableFuture<String> previewResult;
+    private String previewLanguage,previewNonce;
+    private long previewDeadline;
+    private boolean previewRequested;
     private volatile String status="OFF";
     public WarningScheduler(Policy policy,Speaker speaker,Observer observer) { this(new MainTime(),policy,speaker,observer); }
     WarningScheduler(Time time,Policy policy,Speaker speaker,Observer observer) {
         this.time=time;this.policy=policy;this.speaker=speaker;this.observer=observer;
     }
     public String status(){return status;}
+    /** Explicit parked user action. The source creates a labelled local example, never a road report. */
+    public CompletableFuture<String> preview(String language){
+        CompletableFuture<String> result=new CompletableFuture<>();time.execute(()->{
+            if(transport==null){result.complete("DISCONNECTED");return;}
+            if(previewResult!=null||active!=null||grantRequests>0||!queue.isEmpty()){result.complete("BUSY");return;}
+            if(!policy.active()){result.complete("PAUSED");return;}
+            if(unknownOutput){result.complete("AUDIO_UNCERTAIN");return;}
+            if(!coverage){result.complete("COVERAGE_INCOMPLETE");return;}
+            if(speaker.effective(policy.mode())==WarningAudioOwner.Mode.SILENT){result.complete("USER_MUTED");return;}
+            previewResult=result;previewLanguage=language!=null&&language.startsWith("nl")?"nl":"en";previewNonce=UUID.randomUUID().toString();previewDeadline=time.now()+8000;previewRequested=true;nextClaim=0;pump();
+        });return result;
+    }
     public void connected(Transport source,WarningConnection.Snapshot snapshot){time.execute(()->connect(source,snapshot));}
     private void connect(Transport source,WarningConnection.Snapshot snapshot) {
         if(transport==source && session.equals(snapshot.providerSession) && snapshot.headSequence<cursor)return;
@@ -114,11 +131,18 @@ public final class WarningScheduler {
     public void refresh(){time.execute(()-> { nextClaim=0;pump(); });}
     public void revoked(long epoch){time.execute(()-> {if(lease!=null && lease.epoch==epoch){lease=null;if(active!=null)cancel(active,false);setStatus("OWNER_REVOKED");}pump();});}
     public void disconnected(){time.execute(()-> {
+        endPreview("DISCONNECTED");
         generation++;ticker++;transport=null;session="";lease=null;coverage=false;queue.clear();handled.clear();controlBusy=false;
         if(active!=null)cancel(active,false);setStatus("DISCONNECTED");
     });}
     private void tick(long token){if(token!=ticker || transport==null)return;pump();time.after(()->tick(token),100);}
     private void enqueue(WarningEvent authority,WarningEvent payload,boolean replay) {
+        boolean example=Boolean.TRUE.equals(payload.fields().get("is_preview"));
+        if(example&&(replay||previewResult==null||!previewNonce.equals(payload.fields().get("preview_nonce"))))return;
+        if(!example&&previewResult!=null){
+            if(active!=null&&Boolean.TRUE.equals(active.pending.payload.fields().get("is_preview")))cancel(active,false);
+            else endPreview("INTERRUPTED");
+        }
         String key=PlaybackGrant.key(authority);
         if(handled.containsKey(key) || active!=null && active.pending.key.equals(key))return;
         Pending old=queue.get(key);
@@ -155,21 +179,22 @@ public final class WarningScheduler {
     }
     private void pumpOne(){
         prune();long now=time.now();
+        if(previewRequested&&now>=previewDeadline)endPreview("SPEAKER_UNAVAILABLE");
         if(active!=null && active.terminal!=null){ack(active);return;}
         if(transport==null)return;
-        if(!policy.active()){if(active!=null)cancel(active,false);setStatus("PAUSED");return;}
+        if(!policy.active()){endPreview("PAUSED");if(active!=null)cancel(active,false);setStatus("PAUSED");return;}
         WarningAudioOwner.Mode mode=speaker.effective(policy.mode());
         Pending next=queue.values().stream().min(ORDER).orElse(null);
         if(active!=null) {
             if(active.generation!=generation || !session.equals(active.grant.providerSession) || mode!=active.grant.mode
-                    || lease==null || now>=lease.until || !policy.enabled(active.pending.payload)
+                    || lease==null || now>=lease.until || !Boolean.TRUE.equals(active.pending.payload.fields().get("is_preview"))&&!policy.enabled(active.pending.payload)
                     || !active.started && now>=active.pending.authority.announceUntil)cancel(active,false);
             else if(next!=null && next.authority.priority==WarningEvent.Priority.P0 && active.pending.authority.priority!=WarningEvent.Priority.P0)cancel(active,true);
         }
-        if(!coverage){setStatus("COVERAGE_INCOMPLETE");return;}
+        if(!coverage){endPreview("COVERAGE_INCOMPLETE");setStatus("COVERAGE_INCOMPLETE");return;}
         if(unknownOutput){setStatus("AUDIO_UNCERTAIN");return;}
         if(controlBusy)return;
-        String language=next!=null?next.payload.languageTag:active!=null?active.pending.payload.languageTag:preparedLanguage;
+        String language=next!=null?next.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
         if(!language.equals(preparedLanguage) || preparedMode!=mode){preparedLanguage=language;preparedMode=mode;speaker.prepare(language,mode);}
         boolean ready=mode==WarningAudioOwner.Mode.SILENT || active!=null && active.accepted && !active.cancelled ||
                 (next==null?speaker.ready(language,mode):speaker.ready(next.payload,mode));
@@ -183,12 +208,21 @@ public final class WarningScheduler {
                 if(version!=generation || source!=transport)return;controlBusy=false;
                 if(error!=null){lease=null;setStatus("DELIVERY_INTERRUPTED");return;}
                 if("OK".equals(reply.status) && reply.lease!=null){lease=reply.lease;nextRenew=time.now()+WarningAudioOwner.RENEW_INTERVAL_MS;setStatus(mode==WarningAudioOwner.Mode.SILENT?"USER_MUTED":"READY");}
-                else {lease=null;setStatus(reply.status.equals("BUSY")&&!reply.ownerPackage.isEmpty()?"BUSY:"+reply.ownerPackage:reply.status);if(active!=null)cancel(active,false);}
+                else {lease=null;setStatus(reply.status.equals("BUSY")&&!reply.ownerPackage.isEmpty()?"BUSY:"+reply.ownerPackage:reply.status);if(!reply.status.equals("SPEAKER_UNAVAILABLE"))endPreview(status);if(active!=null)cancel(active,false);}
                 pump();
             }));return;
         }
+        if(previewRequested&&next==null&&active==null&&ready){
+            Transport source=transport;long version=generation;controlBusy=true;previewRequested=false;
+            source.preview(lease,previewLanguage,previewNonce).whenComplete((candidate,error)->time.execute(()->{
+                if(source!=transport||version!=generation)return;controlBusy=false;
+                if(error!=null||candidate==null){endPreview("INCOMPATIBLE");setStatus("INCOMPATIBLE");return;}
+                enqueue(candidate.authority,candidate.payload,false);pump();
+            }));return;
+        }
         if(next==null || active!=null || grantRequests>0 || now<next.retryAt)return;
-        PlaybackGrant.Outcome decision=!policy.enabled(next.payload)?PlaybackGrant.Outcome.USER_FILTERED:
+        boolean example=Boolean.TRUE.equals(next.payload.fields().get("is_preview"));
+        PlaybackGrant.Outcome decision=!example&&!policy.enabled(next.payload)?PlaybackGrant.Outcome.USER_FILTERED:
                 mode==WarningAudioOwner.Mode.SILENT?PlaybackGrant.Outcome.USER_MUTED:
                 (next.replay || now-next.authority.issuedAt>1000) && policy.passed(next.payload,now)?PlaybackGrant.Outcome.REJECTED:null;
         if(decision!=null){queue.remove(next.key);terminal(next,decision);recordDecision(next,decision);return;}
@@ -211,7 +245,7 @@ public final class WarningScheduler {
                 queue.remove(p.key);if(!superseded)p.payload=reply.candidate.payload;Active attempt=new Active(p,reply.grant,source,permission,version);active=attempt;
                 if(superseded){attempt.retry=true;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                 if(version!=generation || source!=transport || lease==null || !lease.token.equals(permission.token) || lease.epoch!=permission.epoch
-                        || !policy.active() || !policy.enabled(p.payload) || speaker.effective(policy.mode())!=reply.grant.mode || time.now()>=p.authority.announceUntil){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
+                        || !policy.active() || !Boolean.TRUE.equals(p.payload.fields().get("is_preview"))&&!policy.enabled(p.payload) || speaker.effective(policy.mode())!=reply.grant.mode || time.now()>=p.authority.announceUntil){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                 unsubmitted.remove(nonce);unknownReplies.remove(nonce);p.attempts++;
                 boolean accepted=speaker.speak(p.payload,reply.grant,p.authority.announceUntil,new Callback(){
                     public void started(PlaybackGrant grant){time.execute(()->onStarted(attempt,grant));}
@@ -258,6 +292,7 @@ public final class WarningScheduler {
         if(active!=attempt || !PlaybackGrant.terminal(outcome) || attempt.terminal!=null && attempt.quiet)return;
         if(outcome==PlaybackGrant.Outcome.NOT_STARTED && attempt.started){outcome=PlaybackGrant.Outcome.UNCERTAIN;quiet=false;}
         attempt.terminal=outcome;attempt.quiet=quiet;attempt.retryAt=0;observer.outcome(attempt.pending.authority,outcome);setStatus(quiet?outcome.name():"AUDIO_UNCERTAIN");ack(attempt);
+        if(!quiet&&previewResult!=null&&Boolean.TRUE.equals(attempt.pending.payload.fields().get("is_preview")))previewResult.complete("AUDIO_UNCERTAIN");
     }
     private void ack(Active attempt){
         if(active!=attempt || attempt.terminal==null || attempt.acknowledging || time.now()<attempt.retryAt)return;
@@ -270,9 +305,11 @@ public final class WarningScheduler {
             if(!quiet){attempt.retryAt=Long.MAX_VALUE;return;}
             unsubmitted.remove(attempt.grant.attemptNonce);unknownReplies.remove(attempt.grant.attemptNonce);
             active=null;
+            boolean example=Boolean.TRUE.equals(attempt.pending.payload.fields().get("is_preview"));
+            if(example)endPreview(sent.name());
             boolean retry=(attempt.retry || !attempt.cancelled&&!attempt.started&&(sent==PlaybackGrant.Outcome.NOT_STARTED||sent==PlaybackGrant.Outcome.FAILED))
                     && (sent==PlaybackGrant.Outcome.INTERRUPTED || sent==PlaybackGrant.Outcome.NOT_STARTED || sent==PlaybackGrant.Outcome.CANCELLED || sent==PlaybackGrant.Outcome.FAILED)
-                    && attempt.pending.attempts<MAX_ATTEMPTS && attempt.generation==generation && transport!=null && time.now()<attempt.pending.authority.announceUntil;
+                    && !example && attempt.pending.attempts<MAX_ATTEMPTS && attempt.generation==generation && transport!=null && time.now()<attempt.pending.authority.announceUntil;
             if(retry){attempt.pending.nonce=null;attempt.pending.retryAt=time.now()+250;queue.put(attempt.pending.key,attempt.pending);}
             else remember(attempt.pending);
             if(attempt.generation!=generation || transport==null || attempt.source!=transport)attempt.source.release(attempt.lease);
@@ -291,6 +328,7 @@ public final class WarningScheduler {
     private void terminal(Pending p,PlaybackGrant.Outcome outcome){remember(p);observer.outcome(p.authority,outcome);}
     private void remember(Pending p){if(handled.size()<MAX_HANDLED || handled.containsKey(p.key))handled.put(p.key,p.authority.issuedAt+WarningJournal.RETENTION_MS);}
     private void setStatus(String value){if(!value.equals(status)){status=value;observer.changed(value);}}
+    private void endPreview(String outcome){if(previewResult!=null)previewResult.complete(outcome);previewResult=null;previewRequested=false;}
     private static final class Pending {
         final WarningEvent authority;WarningEvent payload,requested;final String key;boolean replay;int attempts;String nonce;long retryAt;
         Pending(WarningEvent authority,WarningEvent payload,boolean replay){this.authority=authority;this.payload=payload;this.replay=replay;key=PlaybackGrant.key(authority);}

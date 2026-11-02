@@ -12,7 +12,7 @@ public final class WarningWire {
     public static final String DESCRIPTOR="nl.johninnl.navigation.WARNINGS_V1";
     public static final String CALLBACK="nl.johninnl.navigation.WARNINGS_CALLBACK_V1";
     public static final int REGISTER=1,CONFIRM=2,GET_STATE=3,CLAIM_AUDIO=4,RENEW_AUDIO=5,RESUME=6,
-            BEGIN_ATTEMPT=7,OUTCOME=8,RELEASE=9,ACK=10,PING=11;
+            BEGIN_ATTEMPT=7,OUTCOME=8,RELEASE=9,ACK=10,PING=11,PREVIEW=12;
     public static final int VERIFY=1,EVENTS=2,STATE_INVALIDATED=3,OWNER_REVOKED=4;
     public static final int MAX_FRAME=256*1024;
     private WarningWire() { }

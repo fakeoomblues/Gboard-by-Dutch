@@ -144,6 +144,11 @@ public final class WarningJournal {
         }
         return null;
     }
+    /** Explicit parked recovery keeps visual state but retires every earlier playback authority. */
+    synchronized void revokeAnnouncements(){
+        for(WarningRecord record:latest.values())record.cancelledThrough=head;
+        announcementPayloads.clear();
+    }
 
     private Announcement eligible(WarningEvent authority, long now) {
         if (!authority.announcementValid(now)) return null;

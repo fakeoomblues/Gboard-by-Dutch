@@ -417,6 +417,10 @@ public final class CustomizationActivity extends Activity {
             LinearLayout audioTypes=rowBase("Flitsmeister warning categories","Choose audible warnings independently of map pins");
             audioTypes.setOnClickListener(v->chooseMany("Flitsmeister warning categories",nl.johninnl.navigation.alerts.WarningPreferences.LABELS,nativeChoices.categories(),mask->{nativeChoices.categories(mask);ExternalTelemetry.warningChoicesChanged();}));
             body.addView(audioTypes);
+            LinearLayout previewRow=rowBase("Parked audio preview","Play a labelled synthetic example using your current output and native mute settings");
+            previewRow.setOnClickListener(v->ExternalTelemetry.previewWarning(this));body.addView(previewRow);
+            LinearLayout recoveryRow=rowBase("Recover warning audio while parked","Open Flitsmeister's confirmation after stopping the previous receiver and speech engine");
+            recoveryRow.setOnClickListener(v->ExternalTelemetry.recoverWarningAudio(this));body.addView(recoveryRow);
             if(!nativeChoices.reviewed()){
                 LinearLayout review=rowBase("Review Flitsmeister warnings","Your previous explicit mute and alert choices are preserved. Choose categories and output, then enable these choices.");
                 review.setOnClickListener(v->new android.app.AlertDialog.Builder(this).setTitle("Use these warning choices?")

@@ -43,6 +43,10 @@ public class WarningConnectionTest {
         WarningConnection.Attempt muted=client.decide(claim.lease,pushed.get(0),UUID.randomUUID().toString(),PlaybackGrant.Outcome.USER_MUTED).get(3,TimeUnit.SECONDS);
         assertEquals("OK",muted.status);assertEquals(PlaybackGrant.Outcome.USER_MUTED,muted.grant.outcome);
         WarningConnection.Claim voiced=client.claim(WarningAudioOwner.Mode.VOICE,true).get(3,TimeUnit.SECONDS);
+        assertTrue(client.supportsPreview());
+        WarningConnection.Candidate preview=client.preview(voiced.lease,"nl",UUID.randomUUID().toString()).get(3,TimeUnit.SECONDS);
+        assertTrue(Boolean.TRUE.equals(preview.payload.fields().get("is_preview")));assertTrue(preview.payload.message.startsWith("Synthetisch voorbeeld"));
+        List<WarningEvent> previewDelivery=deliveries.poll(3,TimeUnit.SECONDS);assertNotNull(previewDelivery);assertEquals(preview.authority.warningId,previewDelivery.get(0).warningId);
         e.putString("warning_id","road-b");e.putLong("observed_elapsed_ms",SystemClock.elapsedRealtime());assertTrue(source.emit(e));
         List<WarningEvent> second=deliveries.poll(3,TimeUnit.SECONDS);assertNotNull(second);
         WarningConnection.Attempt granted=client.begin(voiced.lease,second.get(0),UUID.randomUUID().toString()).get(3,TimeUnit.SECONDS);

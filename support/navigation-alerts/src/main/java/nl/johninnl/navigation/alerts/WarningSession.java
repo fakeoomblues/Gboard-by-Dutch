@@ -3,6 +3,7 @@ package nl.johninnl.navigation.alerts;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.app.PendingIntent;
 import java.io.Closeable;
 import java.util.EnumSet;
 import java.util.List;
@@ -24,12 +25,14 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
     private volatile String state="off";
     private volatile boolean captureComplete;
     private volatile String eventSource="";
+    private volatile PendingIntent recovery;
     public WarningSession(Context context,WarningConnection.Listener listener) { app=context.getApplicationContext();this.listener=listener; }
     public String state() { return state; }
     public boolean captureComplete() { return captureComplete; }
     public boolean advertisesEvents(String source){return source!=null&&source.equals(eventSource);}
     /** Only an explicit source change permits returning to deliberately selected legacy behavior. */
-    public void resetEventNegotiation(){eventSource="";}
+    public void resetEventNegotiation(){eventSource="";recovery=null;}
+    public PendingIntent recoveryAction(){return recovery;}
     public synchronized WarningConnection connection() { return connection; }
     /** Recheck after posting a callback to an app UI queue, where a source switch may intervene. */
     public synchronized boolean accepts(String providerSession) {
@@ -52,6 +55,10 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
             }
             if(!v1) { state="incompatible";return false; }
             eventSource=source;
+            PendingIntent action=status.getParcelable("warning_recovery");
+            if(action!=null&&source.equals(action.getCreatorPackage())&&action.getCreatorUid()==app.getPackageManager().getApplicationInfo(source,0).uid
+                    &&(android.os.Build.VERSION.SDK_INT<31||action.isImmutable()))recovery=action;
+            else recovery=null;
             reuse=connection!=null && binder==api && generation==ticket && "ready".equals(state);
             if(reuse)selected=connection;
             else {

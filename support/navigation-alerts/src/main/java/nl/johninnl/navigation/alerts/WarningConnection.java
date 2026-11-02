@@ -90,7 +90,7 @@ public final class WarningConnection implements Closeable,WarningScheduler.Trans
     private volatile IBinder endpoint;
     private volatile int providerUid=-1;
     private volatile String registration,session,providerPackage;
-    private volatile boolean closed,confirmed,retiring,outputOutstanding,grantRequestPending;
+    private volatile boolean closed,confirmed,retiring,outputOutstanding,grantRequestPending,previewSupported;
     private volatile Lease knownLease;
     private long cursor;
     private int acceptedCount;
@@ -123,6 +123,7 @@ public final class WarningConnection implements Closeable,WarningScheduler.Trans
             if(!"VERIFYING".equals(WarningWire.text(reply,"status")))throw new IllegalStateException(WarningWire.text(reply,"status"));
             if(WarningWire.integer(reply,"source_uid")!=providerUid)throw new SecurityException("SOURCE_UID");
             registration=WarningWire.text(reply,"registration_token");session=WarningWire.text(reply,"provider_session");
+            previewSupported=reply.getBoolean("preview_supported",false);
             if(!PlaybackGrant.uuid(registration) || !PlaybackGrant.uuid(session))throw new IllegalArgumentException("SOURCE_IDENTITY");
             return null;
         });
@@ -130,10 +131,15 @@ public final class WarningConnection implements Closeable,WarningScheduler.Trans
     }
     public String providerSession() { return session; }
     public String identity() { return providerPackage; }
+    public boolean supportsPreview(){return previewSupported;}
     public CompletableFuture<Boolean> ping() {
         return submit(()-> { Bundle reply=transact(WarningWire.PING,request());requireOk(reply);return session.equals(WarningWire.text(reply,"provider_session")); });
     }
     public CompletableFuture<Boolean> resync(){return submit(()->{synchronized(incoming){resyncScheduled=true;}resynchronize();return true;});}
+    public CompletableFuture<Candidate> preview(Lease lease,String language,String nonce){return submit(()->{
+        Bundle q=owned(lease);q.putString("language",language);q.putString("preview_nonce",nonce);Bundle reply=transact(WarningWire.PREVIEW,q);requireOk(reply);
+        return candidate(reply.getBundle("authority"),reply.getBundle("payload"),SystemClock.elapsedRealtime());
+    });}
     private final Binder callback=new Binder() {
         { attachInterface(null,WarningWire.CALLBACK); }
         @Override protected boolean onTransact(int code,Parcel in,Parcel out,int flags) throws RemoteException {

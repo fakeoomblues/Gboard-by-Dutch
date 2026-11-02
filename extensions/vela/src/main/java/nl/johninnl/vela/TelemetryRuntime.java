@@ -73,7 +73,7 @@ public final class TelemetryRuntime {
             app=context.getApplicationContext();prefs=app.getSharedPreferences("vela_settings",Context.MODE_PRIVATE);changed=onChanged;
             warningPreferences=new WarningPreferences(prefs,false);
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
-                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(selected())&&(nativeGuidance()||carActive()||SystemClock.elapsedRealtime()-phoneAt<=5000);}
+                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(selected())&&(nativeGuidance()||carActive()||SystemClock.elapsedRealtime()-phoneAt<=5000||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){
@@ -359,6 +359,20 @@ public final class TelemetryRuntime {
     private static final Runnable TICK=new Runnable(){public void run(){if(app==null)return;publish(false);MAIN.postDelayed(this,1000);}};
     public static WarningPreferences warningPreferences(){return warningPreferences;}
     public static void warningChoicesChanged(){if(scheduler!=null)scheduler.refresh();publish(true);}
+    public static void previewWarning(){
+        android.app.Activity activity=startup==null?null:startup.foregroundActivity();
+        boolean parked=!nativeGuidance()&&!(freshNativeSpeed()&&lastFix!=null&&lastFix.hasSpeed()&&lastFix.getSpeed()>.3);
+        nl.johninnl.navigation.alerts.WarningPreviewDialog.show(activity,parked,dutch(),()->{
+            if(scheduler==null||semantic==null||semantic.connection()==null||!semantic.connection().supportsPreview())return java.util.concurrent.CompletableFuture.completedFuture("INCOMPATIBLE");
+            return scheduler.preview(dutch()?"nl":"en");
+        });
+    }
+    public static void recoverWarningAudio(){
+        android.app.Activity activity=startup==null?null:startup.foregroundActivity();android.app.PendingIntent action=semantic==null?null:semantic.recoveryAction();
+        if(activity==null)return;
+        if(action==null){android.widget.Toast.makeText(activity,dutch()?"Verbind eerst een bijgewerkte Flitsmeister-patch":"Connect an updated Flitsmeister patch first",android.widget.Toast.LENGTH_LONG).show();return;}
+        try{action.send();}catch(android.app.PendingIntent.CanceledException error){android.widget.Toast.makeText(activity,dutch()?"Herstel niet beschikbaar; verbind Flitsmeister opnieuw":"Recovery unavailable; reconnect Flitsmeister",android.widget.Toast.LENGTH_LONG).show();}
+    }
     public static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return dutch()?"Waarschuwingskeuzes controleren":"Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker.effectiveMode(requested),"Vela",dutch())+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),dutch());}
     static void resetForTest() {
         carObservers.clear();visibleCarSessions.clear();

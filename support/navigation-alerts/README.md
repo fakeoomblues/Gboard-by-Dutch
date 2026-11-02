@@ -38,7 +38,7 @@ Death/restart/lease expiry never proves output stopped. Pending grants fence fai
 
 `AtomicPlaybackStore` holds an exclusive writer lock for the provider actor lifetime and writes a checksummed, bounded binary file in provider-private no-backup storage. It syncs file content, atomically renames, then syncs the parent directory. Explicit descriptor closure is required for Android's non-owning `FileOutputStream(FileDescriptor)` wrapper. All file operations require the dedicated worker, never the native/main thread. Only opaque grant identities/hashes, boot identity and disposition/started state are stored; there is no warning ID, message, coordinate or replayable prompt. Boot identity comes from Android boot count, not wall-clock estimates.
 
-Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. User-facing parked recovery controls and full runtime acceptance remain pending work.
+Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. Phone parked preview/recovery controls are implemented; their UI/runtime acceptance remains pending. Preview is synthetic and grant-backed. Source-owned manual recovery revokes previous announcement authority so a reset cannot replay it.
 
 ## Binder and startup integration
 

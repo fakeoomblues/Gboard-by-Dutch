@@ -10,7 +10,7 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 
 private const val FEED = "Lnl/johninnl/flitsmeister/NavigationBroadcasts;"
-private val startupResources = patches.shared.navigationStartupResources("nl.johninnl.flitsmeister")
+private val startupResources = patches.shared.navigationStartupResources("nl.johninnl.flitsmeister",warningRecovery=true)
 
 @Suppress("unused")
 val navigationBroadcastPatch = bytecodePatch(

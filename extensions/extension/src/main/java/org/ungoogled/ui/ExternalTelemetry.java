@@ -88,7 +88,7 @@ public final class ExternalTelemetry {
             warningPreferences=new WarningPreferences(prefs(app),true);
             final MapsWarningSpeaker speaker=nativeSpeaker;
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
-                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||foreground.get()!=null);}
+                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||foreground.get()!=null||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){return WarningPassage.passed(event,fix,now);}
@@ -215,6 +215,19 @@ public final class ExternalTelemetry {
     }
     static WarningPreferences warningPreferences(Context context){return warningPreferences!=null?warningPreferences:new WarningPreferences(prefs(context),true);}
     static void warningChoicesChanged(){if(scheduler!=null)scheduler.refresh();update();}
+    static void previewWarning(Activity activity){
+        boolean dutch=activity.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
+        boolean parked=!navigating&&!(freshNative(nativeSpeedAt,5000)&&nativeSpeed!=null&&nativeSpeed>1);
+        nl.johninnl.navigation.alerts.WarningPreviewDialog.show(activity,parked,dutch,()->{
+            if(scheduler==null||semantic==null||semantic.connection()==null||!semantic.connection().supportsPreview())return java.util.concurrent.CompletableFuture.completedFuture("INCOMPATIBLE");
+            return scheduler.preview(dutch?"nl":"en");
+        });
+    }
+    static void recoverWarningAudio(Activity activity){
+        android.app.PendingIntent action=semantic==null?null:semantic.recoveryAction();
+        if(action==null){Toast.makeText(activity,"Connect an updated Flitsmeister patch first",Toast.LENGTH_LONG).show();return;}
+        try{action.send();}catch(android.app.PendingIntent.CanceledException error){Toast.makeText(activity,"Recovery is unavailable; reconnect Flitsmeister",Toast.LENGTH_LONG).show();}
+    }
     static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return "Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker==null?requested:nativeSpeaker.effectiveMode(requested),"Google Maps",false)+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),false);}
     private static String warningLabel(String kind){switch(kind){case "average_speed_zone":return "Average-speed zone";case "mobile_camera":return "Mobile camera";case "camera":return "Speed camera";case "police":return "Police";case "closure":return "Road closure";case "jam":return "Traffic jam";case "flock":return "Flock camera";case "crash":return "Crash";default:return "Hazard";}}
     private static final Runnable TICK=new Runnable(){public void run(){if(!registered)return;update();MAIN.postDelayed(this,1000);}};
