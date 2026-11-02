@@ -29,11 +29,15 @@ Pas deze patches uit Dutch App Patches toe in Morphe Manager. Kies voor Maps all
 
 De bronpatch heeft een optionele instelling **Receiver package**. Laat die leeg als beide ondersteunde kaartapps updates mogen ontvangen terwijl ze draaien. Vul voor één ontvanger `app.vela` in voor Vela, of de werkelijke pakketnaam van je gepatchte Maps, meestal `org.ungoogled.android.apps.maps`. Een eigen pakketnaam of de microG-RE-variant vereist zijn eigen naam. Een gerichte pakketnaam levert geen updates aan een andere ontvanger.
 
-## 2. Laat de bron draaien
+## 2. Stel de bron eenmaal in
 
-Open gepatchte Waze of Flitsmeister eenmaal, rond de eerste instellingen af en geef de locatietoegang die de rijdienst nodig heeft. Sta achtergrondlocatie toe wanneer de app daarom vraagt voor dit gebruik. De navigatie-engine of rij-/locatiedienst moet blijven draaien terwijl de andere kaartapp op de voorgrond staat. De overlay mag uit blijven.
+Open gepatchte Waze of Flitsmeister eenmaal, rond de eerste instellingen af en geef de locatietoegang die de rijdienst nodig heeft. Sta achtergrondlocatie toe wanneer de app daarom vraagt voor dit gebruik. Controleer de batterijbeperkingen als updates stoppen zodra het scherm uitgaat. De overlay mag uit blijven.
 
-De Waze-broadcastpatch bevat de instelling om op de achtergrond actief te blijven, aanvankelijk 180 minuten en aanpasbaar. Flitsmeister verstuurt gegevens zolang de rij-/locatiedienst draait. Afsluiten of geforceerd stoppen beëindigt verse waarnemingen. Vallen updates weg zodra het scherm uitgaat, controleer dan de batterijbeperkingen voor de bronapp.
+Met de bijgewerkte patches aan beide kanten start de gekozen rij-engine automatisch zodra je Maps/Vela opent of **De-Waze**/**Flitsmeister** kiest. Het scherm van de bronapp opent niet. Android toont de normale doorlopende melding voor de locatiedienst. Tijdens deze beheerde sessie blijft de bron gedempt: Maps/Vela geeft de gesproken waarschuwingen en geluiden. Opgeslagen geluidsinstellingen en het telefoonvolume blijven ongewijzigd; normaal brongeluid keert terug nadat de deelsessie is verlopen. De kaartapp controleert de eigen motorstatus van de bron tijdens zichtbaar gebruik en actieve navigatie, herstelt de verbinding na een gestopt proces en probeert een gestopte motor opnieuw te starten met tussenpozen. Ontbrekende GPS- of wegwaarnemingen veroorzaken geen herstart en worden niet als verse gegevens behandeld.
+
+De bronstatus maakt onderscheid tussen starten, een actieve motor, ontbrekende locatietoegang en een ontbrekende start-API. Patch beide apps opnieuw als de API ontbreekt; oudere bronpatches kunnen nog steeds gegevens leveren nadat je de bron handmatig opent. Blokkeert Android een herstart op de achtergrond, dan meldt de kaartapp dit zonder de bron te openen. Bij terugkeer naar de kaart volgt een nieuwe stille poging. De koppeling gebruikt geen root of Shizuku.
+
+Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreekt de startverbinding. De extra deeldienst verloopt na 45 seconden zonder ontvanger; zelfstandig draaiende bronnavigatie blijft ongemoeid. Waze behoudt zijn bestaande instelbare inactiviteitstime-out, aanvankelijk 180 minuten.
 
 ## 3. Kies de bron in je kaartapp
 
@@ -44,7 +48,7 @@ De Waze-broadcastpatch bevat de instelling om op de achtergrond actief te blijve
 3. Zet **Compact speed and average-speed control** aan als je snelheid, limiet en actieve trajectgegevens samen wilt zien.
 4. Kies de gewenste categorieën onder **Road alert types**. Alleen politie staat standaard geselecteerd.
 5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Alleen meldingen met bekende posities krijgen kaartspelden.
-6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen; dit start geen gestopte bron en maakt oude waarnemingen niet vers.
+6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen. Automatisch starten gebruikt de aparte bron-API; een momentopname maakt oude waarnemingen nooit vers.
 
 **Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share alerts with Maps** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
 
@@ -63,7 +67,7 @@ Met een externe bron gekozen pauzeert Vela zijn eigen Flock-weergave en waarschu
 
 ## 4. Controleer de ontvangst
 
-Open, terwijl je geparkeerd staat, eerst de bron en daarna de ontvangende kaartapp. Controleer of de gekozen bron wordt vermeld en verse gegevens meldt wanneer er waarnemingen zijn. Laat de bron op de achtergrond en controleer of de ontvangst doorgaat. Stilstand met snelheid nul is geldig; een ontbrekende snelheid of limiet moet onbekend blijven of terugvallen op de eigen kaartgegevens.
+Open na de eenmalige broninstellingen, terwijl je geparkeerd staat, de ontvangende kaartapp met een externe bron geselecteerd. Controleer of de gekozen bron wordt vermeld en verse gegevens meldt wanneer er waarnemingen zijn. Laat de bron op de achtergrond en controleer of de ontvangst doorgaat. Stilstand met snelheid nul is geldig; een ontbrekende snelheid of limiet moet onbekend blijven of terugvallen op de eigen kaartgegevens.
 
 Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen verwijdert het gedeeltelijke gemiddelde. De waarden van beide bronnen blijven gescheiden. Vanaf Android 14 kan de ontvanger via Android controleren welke geïnstalleerde bron een update verstuurde; oudere versies hebben die afzendercontrole niet.
 
@@ -78,3 +82,5 @@ Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen ver
 De weergave en terugval in Google Maps zijn gecontroleerd met gestuurde bronherhalingen. Ontvangst op de achtergrond, telefoon-/autoweergave en gesproken voorwaarschuwingen in Vela zijn gecontroleerd op een Android 16-emulator met Gearslip. Native Maps-navigatie heeft aparte controles in Gearslip en de officiële Android Auto Desktop Head Unit. Deze resultaten bewijzen niet iedere combinatie van bron, telefoon, fysiek autoscherm of nauwkeurigheid op de weg.
 
 Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
+
+Stil koud starten is ook gecontroleerd voor alle vier combinaties van Maps/Vela en Waze/Flitsmeister op een Android 16-emulator, met de aangeleverde originelen en de eigen motorstatus van de bron. Dit bewijst niet alle energieregels van fabrikanten of gedrag in een fysieke auto.

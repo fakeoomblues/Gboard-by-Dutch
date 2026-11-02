@@ -10,15 +10,16 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 
 private const val FEED = "Lnl/johninnl/flitsmeister/NavigationBroadcasts;"
+private val startupResources = patches.shared.navigationStartupResources("nl.johninnl.flitsmeister")
 
 @Suppress("unused")
 val navigationBroadcastPatch = bytecodePatch(
     name = "Broadcast navigation data",
-    description = "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay.",
+    description = "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay, with a silent startup and health API for Maps/Vela.",
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(startupCompatibility)
+    dependsOn(startupCompatibility, startupResources)
     extendWith("extensions/flitsmeister.mpe")
     val receiverPackage by stringOption(
         key = "receiverPackage", default = "", title = "Receiver package",
@@ -34,6 +35,7 @@ val navigationBroadcastPatch = bytecodePatch(
     // Other Flitsmeister controls validate fixed instruction layouts in execute.
     // Add hooks only after those guarded edits have completed.
     finalize {
+        bindFlitsmeisterNavigationAudio()
         // originalInput enforces publisher/version metadata. Resolve every producer
         // before mutating, and guard its semantic reference independently.
         // These exact artifact bindings are used reflectively by the background report subscription.

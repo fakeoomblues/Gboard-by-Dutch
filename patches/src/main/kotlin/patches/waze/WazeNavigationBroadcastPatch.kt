@@ -2,12 +2,31 @@ package patches.waze
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction30t
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.stringOption
 import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
+private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze")
+
+/** Application startup also runs for a cold service bind. Old tasks must not force a UI restart. */
+internal fun suppressTaskRelaunch(method: MutableMethod) {
+    val body = method.instructions
+    val field = "Landroid/app/ActivityManager\$RecentTaskInfo;->numActivities:I"
+    val reads = body.indices.filter { body[it].opcode == Opcode.IGET && (body[it] as? ReferenceInstruction)?.reference.toString() == field }
+    check(reads.size == 2 && body[reads.last() + 1].opcode == Opcode.IF_LE) { "Changed Waze task relaunch guard" }
+    check(body.count { (it as? ReferenceInstruction)?.reference.toString() == "Ljava/lang/System;->exit(I)V" } == 1)
+    check(body.count { (it as? ReferenceInstruction)?.reference.toString() == "Landroid/content/Context;->startActivity(Landroid/content/Intent;)V" } == 1)
+    val branch = body[reads.last() + 1] as BuilderOffsetInstruction
+    method.implementation!!.replaceInstruction(reads.last() + 1, BuilderInstruction30t(Opcode.GOTO_32, branch.target))
+}
 
 private object BroadcastAlertsFingerprint : Fingerprint(
     definingClass = "Lcom/waze/alerters/AlerterNativeManager;", returnType = "V",
@@ -33,15 +52,22 @@ private object BroadcastInsightFingerprint : Fingerprint(
 @Suppress("unused")
 val wazeNavigationBroadcastPatch = bytecodePatch(
     name = "Broadcast navigation data",
-    description = "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. No overlay required.",
+    description = "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. Includes a silent startup and health API for patched Maps/Vela; no overlay required.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
-    dependsOn(wazeStayAwakePatch)
+    dependsOn(wazeStayAwakePatch, startupResources)
     val receiverPackage by stringOption(
         key = "receiverPackage", default = "", title = "Receiver package",
         description = "Optional target app package. Blank broadcasts to running compatible local receivers.",
     )
     execute {
+        // Resolve the exact native startup/health ABI before injecting the API.
+        Fingerprint(definingClass = "Lcom/waze/ls;", name = "d", parameters = listOf("Lg/d/e;"), returnType = "Ljava/lang/Object;").method
+        Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "isAppStarted", parameters = emptyList(), returnType = "Z").method
+        Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "getInitializedStatus", parameters = emptyList(), returnType = "Z").method
+        check(mutableClassDefBy("Lg/d/k;").fields.any { it.name == "a" && it.type == "Lg/d/k;" })
+        suppressTaskRelaunch(Fingerprint(definingClass = "Lcom/waze/ls;", name = "onCreate", parameters = emptyList(), returnType = "V").method)
+        bindWazeNavigationAudio()
         val target = receiverPackage.orEmpty().trim()
         if (target.isNotEmpty() && !Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+").matches(target)) {
             throw PatchException("Receiver package is not an Android package name")

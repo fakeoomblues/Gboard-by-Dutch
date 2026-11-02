@@ -68,4 +68,15 @@ public class TelemetryRuntimeTest {
   assertTrue("car-only route finds a report around a bend without heading",TelemetryRuntime.warningText().startsWith("Speed camera"));
   assertTrue("active car navigation speaks while phone UI and service are absent",voice.last.startsWith("Speed camera"));
  }
+ @Test public void selectedProviderStartupFollowsNavigationAndNativeSourceStopsIt(){
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(true);
+  assertFalse(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(false);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
+ }
+ @Test public void visibleCarSessionStartsProviderWithoutPhoneActivityOrMapFrame() throws Exception {
+  Object session=new Object();java.lang.reflect.Method visible=TelemetryRuntime.class.getMethod("setCarSessionVisible",Object.class,boolean.class);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,true);
+  assertFalse(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,false);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));
+ }
 }

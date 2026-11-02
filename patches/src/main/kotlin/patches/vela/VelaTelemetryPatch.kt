@@ -24,6 +24,7 @@ internal data class Contract(val registers: Int, val count: Int, val flags: Int,
 
 /** Captured from the supplied publisher-signed 0.5.2621 DEX, not the unobfuscated source. */
 internal val velaContracts = mapOf(
+    "Lxt4;-><init>(Lsv;)V" to Contract(3, 15, 65537, "8aba31a1ee0b44642b059a63ebb277c51021fa6dd54428f3140355d08a972e83"),
     "Ldl2;->g(Lapp/vela/core/model/LatLng;Ljava/lang/Double;)V" to Contract(19, 159, 17, "656d43af1ac1cc295cf1e431fac83c16df85b74578d276b99f1c8a0483e205eb"),
     "Ldl2;->j()V" to Contract(14, 117, 17, "58e5a81d7d6a98874edbb2196727b2c68be099e16c589949f361b006b499b2a8"),
     "Ldl2;->p(Lapp/vela/core/model/Route;)V" to Contract(15, 79, 17, "f07645f1e390d061738d398cee894bf07c73a918342f6a85e33ee917afce3f1c"),
@@ -146,6 +147,8 @@ internal fun validateVelaHostAbi(classes: Iterable<ClassDef>) {
         }
     }
     listOf(
+        "Lty3;->g()Lpt1;", "Lpt1;->a(Lut1;)V",
+        "Lze0;->c(Lvt1;)V", "Lze0;->m(Lvt1;)V", "Lze0;->b(Lvt1;)V", "Lze0;->l(Lvt1;)V",
         "Landroidx/compose/ui/layout/a;->d(Llg2;Lkotlin/jvm/functions/Function1;)Llg2;",
         "Lq72;->y0(Ljava/lang/String;Le50;I)V",
         "Landroidx/compose/ui/viewinterop/a;->a(Lkotlin/jvm/functions/Function1;Llg2;Lkotlin/jvm/functions/Function1;Le50;II)V",
@@ -386,7 +389,7 @@ internal fun bindVelaLocationProvider(constructor: MutableMethod) {
 @Suppress("unused")
 val externalSpeedControlsPatch = bytecodePatch(
     name = "External speed controls",
-    description = "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback and provider settings.",
+    description = "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback, silent provider startup and automatic engine recovery.",
     default = true,
 ) {
     compatibleWith(vela)
@@ -407,6 +410,7 @@ val externalSpeedControlsPatch = bytecodePatch(
         val locationProvider = pick("Lyw1;", "<init>")
         val rawCollectors = listOf("Ltd2;", "Lal2;", "Lvk2;").map { pick(it, "e") } + pick("Lz4;", "a")
         val session = pick("Lxo2;", "<init>")
+        val carSession = pick("Lxt4;", "<init>")
         val app = pick("Lapp/vela/VelaApp;", "onCreate")
         val speed = pick("Lq72;", "x0")
         val corner = pick("Lq72;", "Q")
@@ -417,6 +421,7 @@ val externalSpeedControlsPatch = bytecodePatch(
         val voice = pick("Lwy4;", "<init>")
         val speeding = pick("Ldl2;", "j")
         val fix = pick("Lvw1;", "onLocationChanged")
+        guardRef(carSession, 0, Opcode.INVOKE_DIRECT, "Lty3;-><init>()V")
         rawCollectors.filter { it.parameterTypes.first() == "Ljava/lang/Object;" }.forEach {
             guardRef(it, 2, Opcode.CHECK_CAST, "Landroid/location/Location;")
             check(it.getInstruction<OneRegisterInstruction>(2).registerA == 1)
@@ -488,6 +493,7 @@ val externalSpeedControlsPatch = bytecodePatch(
         bindVelaSpeedingInputs(speeding)
         bindVelaNavigationService(serviceCreate, serviceDestroy)
         bindVelaNavSession(session)
+        carSession.addInstructions(1, "invoke-static/range {p0 .. p0}, $RUNTIME->bindCarSession(Ljava/lang/Object;)V")
         bindVelaLocationProvider(locationProvider)
         rawCollectors.forEach(::bindVelaRawLocation)
         fix.addInstructions(0, "invoke-static/range {p1 .. p1}, $RUNTIME->fix(Landroid/location/Location;)V")

@@ -408,7 +408,7 @@ public final class CustomizationActivity extends Activity {
             TextView sourceSub=(TextView)((LinearLayout)sourceRow.getChildAt(0)).getChildAt(1);
             sourceRow.setOnClickListener(v->choose("Navigation data source",ExternalTelemetry.LABELS,ExternalTelemetry.sourceIndex(this),which->{ExternalTelemetry.select(this,ExternalTelemetry.SOURCES[which]);sourceSub.setText(ExternalTelemetry.LABELS[which]);}));
             body.addView(sourceRow);
-            body.addView(rowBase("Keep the source running", "Waze bridge needs Share alerts with Maps. De-Waze and Flitsmeister need Broadcast navigation data. Keep the chosen app open with its driving/location service active; background is enough."));
+            body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
             LinearLayout kindsRow = rowBase("Road alert types", WazeAlerts.kindsSummary(this));
             TextView kindsSub = (TextView) ((LinearLayout) kindsRow.getChildAt(0)).getChildAt(1);
             kindsRow.setOnClickListener(v -> chooseMany("Road alert types", WazeAlerts.KIND_LABELS, WazeAlerts.kinds(this), mask -> {

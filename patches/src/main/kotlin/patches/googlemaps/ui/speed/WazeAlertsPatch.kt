@@ -14,7 +14,7 @@ val wazeAlertsPatch = bytecodePatch(
     description = "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. " +
         "Supports our navigation broadcasts for current speed, speed limits and average-speed zones, " +
         "plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; " +
-        "external data is off by default. The selected source must be patched, enabled and running.",
+        "external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
