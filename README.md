@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.27.0-dev.3](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.0-dev.3)** · 53 apps · 275 patches
+**Patch bundle [v1.28.0-dev.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.28.0-dev.1)** · 53 apps · 275 patches
 
 ### Weather
 
@@ -108,7 +108,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Dumpert](https://johninnl.github.io/nl-morphe-patches/apps/dumpert/) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](https://johninnl.github.io/nl-morphe-patches/apps/kijk/) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](https://johninnl.github.io/nl-morphe-patches/apps/kijk-android-tv/) | Ads · Tracking | 7.2.7 | APKS | 3 |
-| [Myspoti](https://johninnl.github.io/nl-morphe-patches/apps/myspoti/) | See guide | 2.2.0, 2.3.0 | APK | 1 |
+| [Myspoti](https://johninnl.github.io/nl-morphe-patches/apps/myspoti/) | See guide | Any | APK | 1 |
 | [NPO Start](https://johninnl.github.io/nl-morphe-patches/apps/npo-start/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](https://johninnl.github.io/nl-morphe-patches/apps/npo-start-android-tv/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](https://johninnl.github.io/nl-morphe-patches/apps/podimo/) | Plus/Pro | 3.5.1 | APKS | 2 |
@@ -116,7 +116,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Videoland Android](https://johninnl.github.io/nl-morphe-patches/apps/videoland/) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](https://johninnl.github.io/nl-morphe-patches/apps/videoland-android-tv/) | Ads · Tracking | 1.117.0 | APKS | 3 |
 | [Wuplay Android TV](https://johninnl.github.io/nl-morphe-patches/apps/wuplay/) | See guide | 0.9.4-beta | APK | 1 |
-| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | Any | APKM | 1 |
+| [YouTube Music](https://johninnl.github.io/nl-morphe-patches/apps/youtube-music/) | See guide | Any | APK | 1 |
 
 ### Other apps
 

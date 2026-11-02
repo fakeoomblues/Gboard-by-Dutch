@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c2cd274d52659ec34924d27c37f7ac5de66ed584/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0-dev.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [c2cd274d5265](https://github.com/johninnl/nl-morphe-patches/commit/c2cd274d52659ec34924d27c37f7ac5de66ed584). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0-dev.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.1...v1.28.0-dev.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **YouTube Music:** include personal library in one Any-version Gearslip patch ([dc8ce86](https://github.com/johninnl/nl-morphe-patches/commit/dc8ce86fb149c04a415032aa66b8e7b1d298019c))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6f52bfabce541f237ba817c460e24b8d5de016f3/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.27.0-dev.3.**
