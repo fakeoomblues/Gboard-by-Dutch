@@ -67,7 +67,7 @@ private val carInterfaceResources = resourcePatch {
 @Suppress("unused")
 val wuplayGearslip = bytecodePatch(
     name = "Add Gearslip car interface",
-    description = "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Uses native WuPlay add-ons and playback; no root or phone-screen mirroring.",
+    description = "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Works with Morphe-patched Gearslip; uses native WuPlay add-ons and playback without root or phone-screen mirroring.",
     default = false,
 ) {
     compatibleWith(wuplayMobile)

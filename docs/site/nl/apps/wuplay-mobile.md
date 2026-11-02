@@ -24,6 +24,8 @@ Video verschijnt op een apart autoscherm; de telefoon hoeft de video niet te ton
 
 Vereist Android 12 of nieuwer en Gearslip; de validatie gebruikt Gearslip **0.3.31-alpha**. Deze interface voegt geen video-ondersteuning toe aan Android Auto van Google. Gebruik video als de auto geparkeerd staat. Directe videostreams en tekstondertiteling gebruiken de bestaande speler en add-ons van WuPlay; vermeldingen voor een externe speler blijven extern.
 
+Gearslip wordt herkend aan de geïnstalleerde pakketnaam, ook als Morphe de app met een andere sleutel heeft ondertekend.
+
 Bewaar je profielherstelcode voordat je van installatie wisselt. Bij een andere ondertekening kan het nodig zijn de originele app te verwijderen; importeer je profiel daarna opnieuw indien nodig. De Android TV-APK is een afzonderlijk doel en werkt niet met deze patch.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardkeuzes](../reference/catalogue.md)

@@ -21,7 +21,7 @@ def verify(original,patched,original_apk,patched_apk):
     added=set(new)-set(old)
     allowed=('Lnl/johninnl/wuplaycar/','Landroidx/car/app/','Landroidx/core/app/Person')
     assert added and all(name.startswith(allowed) for name in added),f'Unexpected dependency classes: {sorted(name for name in added if not name.startswith(allowed))}'
-    for name in ('WuplayCarService','NativePlayer','NativeData','CarVideoRenderer','ProfileAccess','CatalogWindow','NavigationStack','VideoViewport'):
+    for name in ('WuplayCarService','NativePlayer','NativeData','CarVideoRenderer','ProfileAccess','CatalogWindow','NavigationStack','VideoViewport','HostPackages'):
         assert f'Lnl/johninnl/wuplaycar/{name};' in added,name
     with zipfile.ZipFile(original_apk) as a,zipfile.ZipFile(patched_apk) as b:
         native=[name for name in a.namelist() if name.startswith('lib/')]

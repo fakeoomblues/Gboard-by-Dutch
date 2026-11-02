@@ -24,6 +24,8 @@ Video uses a separate car display; the phone does not need to show the video. Ro
 
 Requires Android 12 or later and Gearslip; validation uses Gearslip **0.3.31-alpha**. This interface does not add video support to Google's Android Auto. Use video while parked. Direct video streams and text captions use WuPlay's existing player and add-ons; external-player entries remain external.
 
+Gearslip is recognized by its installed package name, including Morphe-patched builds with a different signing key.
+
 Keep your profile recovery key before changing installations. Installing with a different signature can require removing the original app; import your profile again if needed. The Android TV APK is a separate target and cannot be used for this patch.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

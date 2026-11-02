@@ -2,7 +2,6 @@ package nl.johninnl.wuplaycar;
 
 import android.app.*;
 import android.content.*;
-import android.content.pm.*;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.*;
@@ -12,14 +11,11 @@ import androidx.car.app.model.*;
 import androidx.car.app.model.signin.*;
 import androidx.car.app.navigation.model.NavigationTemplate;
 import androidx.car.app.serialization.Bundleable;
-import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.*;
 
 /** Gearslip car protocol endpoint. Android services own lifecycle; WuPlay owns playback. */
 public final class WuplayCarService extends Service {
-    private static final String HOST="app.seb3thehacker.gearslip";
-    private static final String HOST_CERT="4cc56ebdd13a54d260eca9b7e2b2ae6b30e2f225bfda8f508f0709edf084948b";
     private final Handler main=new Handler(Looper.getMainLooper());
     private ExecutorService worker;
     private NativeData data;private NativePlayer engine;private CarPlayback<SurfaceHolder> playback;private CarVideoRenderer renderer;
@@ -46,18 +42,8 @@ public final class WuplayCarService extends Service {
     @Override public void onDestroy(){finishSession();super.onDestroy();}
     private void trusted() {
         int uid=Binder.getCallingUid();if(uid==android.os.Process.myUid())return;
-        String[] names=getPackageManager().getPackagesForUid(uid);
-        if(names!=null)for(String name:names)if(name.equals(HOST)||name.equals(HOST+".dev")) {
-            try {
-                PackageInfo info=getPackageManager().getPackageInfo(name,PackageManager.GET_SIGNING_CERTIFICATES);
-                for(android.content.pm.Signature s:info.signingInfo.getApkContentsSigners()) {
-                    byte[] digest=MessageDigest.getInstance("SHA-256").digest(s.toByteArray());StringBuilder hex=new StringBuilder();
-                    for(byte b:digest)hex.append(String.format(Locale.ROOT,"%02x",b&255));
-                    if(hex.toString().equals(HOST_CERT))return;
-                }
-            }catch(Exception e){throw new SecurityException("Unable to validate Gearslip",e);}
-        }
-        throw new SecurityException("This interface accepts the signed Gearslip host");
+        if(HostPackages.allowed(getPackageManager().getPackagesForUid(uid)))return;
+        throw new SecurityException("This interface accepts the Gearslip host package");
     }
     private interface Operation {Object run() throws Exception;}
     private void respond(IOnDoneCallback callback,Operation operation) {

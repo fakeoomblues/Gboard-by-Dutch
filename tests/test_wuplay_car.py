@@ -169,3 +169,28 @@ public class ViewportProbe {
             self.assertEqual(result.returncode,0,result.stderr)
             result=subprocess.run(["java","-cp",str(root),"ViewportProbe"],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stderr)
+
+
+class WuplayCarHostTests(unittest.TestCase):
+    def test_gearslip_package_names_accept_resigned_hosts_and_reject_other_packages(self):
+        source=ROOT / "extensions/wuplay-gearslip/src/main/java/nl/johninnl/wuplaycar/HostPackages.java"
+        self.assertTrue(source.is_file(), "Package-based Gearslip host policy is missing")
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);probe=root / "HostProbe.java"
+            probe.write_text(r'''import nl.johninnl.wuplaycar.HostPackages;
+public class HostProbe {
+ static void check(boolean value){if(!value)throw new AssertionError();}
+ public static void main(String[] args){
+  check(HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip"}));
+  check(HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip.dev"}));
+  check(HostPackages.allowed(new String[]{"another.package","app.seb3thehacker.gearslip"}));
+  check(!HostPackages.allowed(null));check(!HostPackages.allowed(new String[]{}));
+  check(!HostPackages.allowed(new String[]{null,"another.package"}));
+  check(!HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip.evil"}));
+  check(!HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip.dev.evil"}));
+ }
+}''')
+            result=subprocess.run(["javac","-d",str(root),str(source),str(probe)],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            result=subprocess.run(["java","-cp",str(root),"HostProbe"],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
