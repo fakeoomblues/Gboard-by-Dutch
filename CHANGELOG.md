@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/03fed3676fb2991d648d992d95d59e40bc4e819e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.30.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [03fed3676fb2](https://github.com/johninnl/nl-morphe-patches/commit/03fed3676fb2991d648d992d95d59e40bc4e819e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.30.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.29.0...v1.30.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Flitsmeister:** start navigation providers silently with managed audio ([0df2912](https://github.com/johninnl/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Google Maps:** start navigation providers silently with managed audio ([0df2912](https://github.com/johninnl/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Vela Maps:** start navigation providers silently with managed audio ([0df2912](https://github.com/johninnl/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Waze:** start navigation providers silently with managed audio ([0df2912](https://github.com/johninnl/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8d0ff1bb142b4bed09396ddb3f0fa140cbc38dfa/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.29.0.**

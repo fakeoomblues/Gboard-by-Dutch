@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -668,7 +668,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay.",
+      "description": "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay, with a silent startup and health API for Maps/Vela.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -712,7 +712,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. No overlay required.",
+      "description": "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. Includes a silent startup and health API for patched Maps/Vela; no overlay required.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -2790,7 +2790,7 @@
     },
     {
       "name": "External speed controls",
-      "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback and provider settings.",
+      "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback, silent provider startup and automatic engine recovery.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -9462,7 +9462,7 @@
     },
     {
       "name": "Waze alerts",
-      "description": "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. Supports our navigation broadcasts for current speed, speed limits and average-speed zones, plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; external data is off by default. The selected source must be patched, enabled and running.",
+      "description": "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. Supports our navigation broadcasts for current speed, speed limits and average-speed zones, plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
       "default": true,
       "category": null,
       "compatiblePackages": [
