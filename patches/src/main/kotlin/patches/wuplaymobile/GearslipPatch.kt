@@ -41,7 +41,7 @@ private val carInterfaceResources = resourcePatch {
             }
             val queries = (xml.getElementsByTagName("queries").item(0) as? Element)
                 ?: xml.createElement("queries").also { root.appendChild(it) }
-            for (host in listOf("app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev")) {
+            for (host in listOf("app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev")) {
                 val node = xml.createElement("package")
                 node.setAttributeNS(ANDROID_NS,"android:name",host); queries.appendChild(node)
             }
@@ -137,7 +137,9 @@ val wuplayGearslip = bytecodePatch(
             "Landroidx/media3/common/TrackSelectionParameters${'$'}Builder;" to mapOf("maxVideoBitrate" to "I", "maxAudioBitrate" to "I"),
             "Landroidx/media3/exoplayer/trackselection/DefaultTrackSelector${'$'}Parameters${'$'}Builder;" to mapOf("exceedVideoConstraintsIfNecessary" to "Z", "exceedAudioConstraintsIfNecessary" to "Z"),
             "Lapp/wuplay/androidtv/domain/model/Profile;" to mapOf("profileKey" to "Ljava/lang/String;", "hasPinSet" to "Z"),
-            "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;" to mapOf("definitions" to "Lkotlinx/coroutines/flow/Flow;"),
+            "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;" to mapOf("definitions" to "Lkotlinx/coroutines/flow/Flow;", "screens" to "Lkotlinx/coroutines/flow/Flow;"),
+            "Lapp/wuplay/androidtv/domain/model/SidebarScreen;" to mapOf("systemKey" to "Ljava/lang/String;", "rowCatalogIds" to "Ljava/util/List;"),
+            "Lapp/wuplay/androidtv/domain/model/CatalogDefinition;" to mapOf("id" to "I", "showHome" to "Z", "homeOrder" to "I", "source" to "Ljava/lang/String;"),
             "Lapp/wuplay/androidtv/data/UserSettingsRepositoryImpl;" to mapOf("activeProfileId" to "Lkotlinx/coroutines/flow/Flow;", "activeProfile" to "Lkotlinx/coroutines/flow/Flow;"),
             "Lapp/wuplay/androidtv/data/AddonRepository;" to mapOf("enabledAddons" to "Lkotlinx/coroutines/flow/Flow;"),
         )
