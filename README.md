@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.27.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.0)** · 53 apps · 274 patches
+**Patch bundle [v1.27.1](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.1)** · 53 apps · 274 patches
 
 ### Weather
 
@@ -108,7 +108,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Dumpert](https://johninnl.github.io/nl-morphe-patches/apps/dumpert/) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](https://johninnl.github.io/nl-morphe-patches/apps/kijk/) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](https://johninnl.github.io/nl-morphe-patches/apps/kijk-android-tv/) | Ads · Tracking | 7.2.7 | APKS | 3 |
-| [Myspoti](https://johninnl.github.io/nl-morphe-patches/apps/myspoti/) | See guide | 2.2.0, 2.3.0 | APK | 1 |
+| [Myspoti](https://johninnl.github.io/nl-morphe-patches/apps/myspoti/) | See guide | Any | APK | 1 |
 | [NPO Start](https://johninnl.github.io/nl-morphe-patches/apps/npo-start/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](https://johninnl.github.io/nl-morphe-patches/apps/npo-start-android-tv/) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](https://johninnl.github.io/nl-morphe-patches/apps/podimo/) | Plus/Pro | 3.5.1 | APKS | 2 |

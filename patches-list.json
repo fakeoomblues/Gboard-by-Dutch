@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -3331,25 +3331,8 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "2.2.0",
-              "versionCodes": {
-                "ARM64_V8A": 1116,
-                "ARMEABI_V7A": 1116,
-                "X86_64": 1116,
-                "X86": 1116
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": "2.3.0",
-              "versionCodes": {
-                "ARM64_V8A": 1121,
-                "ARMEABI_V7A": 1121,
-                "X86_64": 1121,
-                "X86": 1121
-              },
+              "version": null,
+              "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": null
