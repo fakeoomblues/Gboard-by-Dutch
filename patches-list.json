@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.31.1",
+  "version": "1.32.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -6148,6 +6148,40 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Home in Android Auto",
+      "description": "Fills the car Home tab with the same Home sections as the phone app, grouped by section title, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.10.28-release",
+              "versionCodes": {
+                "ARM64_V8A": 379050,
+                "ARMEABI_V7A": 379050,
+                "X86_64": 379050,
+                "X86": 379050
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]

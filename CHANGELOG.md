@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.32.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [ec8f3f6e43f2](https://github.com/johninnl/nl-morphe-patches/commit/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.32.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.31.1...v1.32.0) (2026-11-02)
+
+### ✨ New Features
+
+* **SoundCloud:** show the phone Home in Android Auto ([ec8f3f6](https://github.com/johninnl/nl-morphe-patches/commit/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/46992eee656ccf621bdb1a9685520297738f6dda/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.31.1.**
