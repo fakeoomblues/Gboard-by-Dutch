@@ -12,6 +12,7 @@ Select the publisher-signed Myspoti APK. Compatibility is **Any** version when t
 
 | Patch | Default | What it does |
 | --- | --- | --- |
+| **Custom branding** | Off | Sets a custom app name and selects one of six bundled Spotify-style launcher icons, or keeps the original icon. |
 | **Gearslip personal library** | On | Lets the configured Gearslip host browse Myspoti's existing Home, Library and Downloads, use search and select music for playback. |
 
 ## Advertising and tracking services
@@ -19,6 +20,8 @@ Select the publisher-signed Myspoti APK. Compatibility is **Any** version when t
 This compatibility patch changes browser access. It does not remove online services, supply an account or change subscription access.
 
 ## Before using
+
+Enable **Custom branding** to use its **App name** field and **App icon** dropdown. The choices are Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal, and Black Spotify on warm white. An empty name keeps Myspoti. Name and icon can be changed independently; changing them requires patching again. Branding can be selected together with **Gearslip personal library** from the same bundle. It changes the Android app label and launcher icon; in-app logos, the splash screen, notification artwork and account access stay as provided by Myspoti.
 
 Sign in to Myspoti. The trusted-host option defaults to the Gearslip and DriveDeck packages, including their `.dev` builds. Add another host package only for a build you intentionally use.
 
