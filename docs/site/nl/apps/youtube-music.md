@@ -14,11 +14,23 @@ De patch accepteert **alle versies** wanneer de benodigde browserstructuur eendu
 | --- | --- | --- |
 | **Gearslip music browser support** | Aan | Laat de ingestelde, geïnstalleerde Gearslip-host bladeren met zijn gecontroleerde Android-identiteit, zonder Googles Android Auto-app te vereisen. |
 
+Voor een al gepatchte YT Music Morphe 9.30.53-APK:
+
+| Patch | Standaard | Vereiste invoer | Wat verandert er? |
+| --- | --- | --- | --- |
+| **Gearslip personal library** | Aan | Gepatchte APK, 9.30.53 / 93053240 | Voegt Home en Bibliotheek toe via het bestaande account en Morphe's bibliotheekuitbreidingen. |
+
 ## Advertenties en trackingdiensten
 
 Deze compatibiliteitspatch verwijdert geen advertenties, tracking, accountvereisten of abonnementen. YouTube Musics bestaande online diensten blijven actief.
 
 ## Voor gebruik
+
+Voor de al gepatchte **YT Music Morphe 9.30.53**-APK voegt de aanvullende patch **Gearslip personal library** Home en Bibliotheek toe via het bestaande account. Deze patch vereist Morphe's Android Auto-bibliotheekuitbreidingen en de bestaande Gearslip music browser support in die APK. Selecteer de gepatchte APK als invoer. De patch geldt niet voor een ongepatcht origineel of voor 9.44.52.
+
+Selecteer bij het patchen van die APK alleen **Gearslip personal library** en schakel **Gearslip music browser support** uit. De browserondersteuning is al aanwezig en stopt het patchen als je deze opnieuw selecteert.
+
+Gebruik voor beide patches dezelfde vertrouwde Gearslip-pakketten. Persoonlijke afspeellijsten, opgeslagen items en afspelen moeten voor deze ontwikkelversie nog op een toestel worden getest.
 
 Pas op Gearslip ook **Keep music player entries** toe, zodat de speler naast YT Musics aparte auto-instellingen beschikbaar blijft. De optie Trusted Gearslip packages verwijst standaard naar het officiële Gearslip-pakket. Voeg alleen een ander pakket toe als je bewust die hostversie gebruikt.
 

@@ -14,11 +14,23 @@ The patch accepts **Any** version when the required browser structure is recogni
 | --- | --- | --- |
 | **Gearslip music browser support** | On | Allows the configured installed Gearslip host to browse using its verified Android identity, without requiring Google's Android Auto app. |
 
+For an already patched YT Music Morphe 9.30.53 APK:
+
+| Patch | Default | Required input | What it does |
+| --- | --- | --- | --- |
+| **Gearslip personal library** | On | Patched APK, 9.30.53 / 93053240 | Adds Home and Library using the app's existing account and Morphe library enhancements. |
+
 ## Advertising and tracking services
 
 This compatibility patch does not remove advertising, tracking, account requirements or subscriptions. YouTube Music's existing online services remain active.
 
 ## Before using
+
+For the already patched **YT Music Morphe 9.30.53** APK, the additional **Gearslip personal library** patch adds Home and Library through the existing account. This patch requires Morphe's Android Auto library enhancements and the existing Gearslip music browser support in that APK. Select the patched APK as its input. It does not apply to an unpatched original or to 9.44.52.
+
+When patching that APK, select **Gearslip personal library** alone and deselect **Gearslip music browser support**. Browser support is already present and stops patching if selected again.
+
+Use the same trusted Gearslip packages for both patches. Personal playlists, saved items and playback remain pending device acceptance testing for this development release.
 
 Apply **Keep music player entries** to Gearslip as well, so the player remains available alongside YT Music's car Settings entry. In YT Music's patch options, Trusted Gearslip packages defaults to the official Gearslip package. Only add another package when you intentionally use that host build.
 

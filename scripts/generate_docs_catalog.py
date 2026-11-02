@@ -18,6 +18,7 @@ APP_PAGES = {
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
+    'app.myspoti.stable': ('myspoti', 'entertainment'),
     'app.vela': ('vela', 'mobility'),
     'com.google.android.apps.maps': ('google-maps', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
