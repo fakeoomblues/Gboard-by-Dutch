@@ -32,6 +32,8 @@ Blocking measurement does not block every function from the same provider. Essen
 
 ## Before using
 
+The native FM event/speech upgrade is still under validation and full event-owned audio remains gated. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
+
 Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).
 
 **Broadcast navigation data** works while the driving/location service runs in the background, with location permission. The overlay can stay disabled. Compatible receivers use one common action and schema for Flitsmeister and Waze. Native candidates supply estimated pre-entry distance, and available camera, mobile-camera, police, hazard, crash, jam and closure reports can be shared. Averages cover only the observed part, and projected progress is marked as an estimate. [Shared broadcast contract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).

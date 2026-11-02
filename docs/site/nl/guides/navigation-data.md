@@ -65,7 +65,7 @@ Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreek
 
 **Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share alerts with Maps** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
 
-Maps pauzeert zijn eigen Flock-spelden en geluiden zolang de gekozen moderne bron bruikbare verse gegevens levert. Je Flock-voorkeuren blijven bewaard en Flock-routevermijding houdt zijn aparte cameragegevens.
+Flitsmeister laat Maps' onafhankelijke Flock-keuzes actief. Alleen een verse geselecteerde De-Waze-bron houdt de eerdere overname van eigen Flock aan; routevermijding houdt zijn aparte cameragegevens.
 
 ### Vela Maps
 
@@ -76,7 +76,19 @@ Maps pauzeert zijn eigen Flock-spelden en geluiden zolang de gekozen moderne bro
 
 De compacte weergave toont snelheid naast de limiet. Een actief traject voegt het waargenomen gemiddelde, de voortgang en resterende afstand toe; geschatte voortgang krijgt ≈. Het gemiddelde blijft onbekend totdat voldoende afstand en tijd zijn waargenomen.
 
-Met een externe bron gekozen pauzeert Vela zijn eigen Flock-weergave en waarschuwingen zolang een van beide ondersteunde bronnen bruikbare verse gegevens levert. De pauze kan doorgaan als de gekozen bron wegvalt terwijl de andere nog verstuurt. Opgeslagen voorkeuren hervatten zodra beide bronnen onbruikbaar zijn, of als je **Vela (eigen gegevens)** kiest.
+Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en omrijden actief. Alleen een verse geselecteerde De-Waze-bron houdt de eerdere overname van eigen Flock aan; een niet-geselecteerde bron pauzeert die functies niet.
+
+## Native waarschuwingsaudio van Flitsmeister
+
+De uitbreiding met native gebeurtenissen en spraak wordt nog gevalideerd. Huidige ontwikkelbuilds melden onvolledige brondekking en houden volledige gebeurtenisgestuurde audio uitgeschakeld tot de native opname is bewezen. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
+
+Kies met compatibele gebeurtenisbuilds aan beide kanten **Flitsmeister** en controleer eenmaal **Flitsmeister-waarschuwingsaudio** en de waarschuwingscategorieën. Bevestig **Deze waarschuwingskeuzes gebruiken**. Eerdere expliciete demp- en typekeuzes blijven geselecteerd; een expliciete Maps-geluidskeuze wordt Toon. Kaartspelden staan los van hoorbare categorieën. Werk iedere actief ontvangende kaartapp bij of schakel daar de FM-bron uit voordat je de volledige gebeurtenismodus gebruikt.
+
+Kies Spraak, Toon of Stil. De eigen dempstand van Maps/Vela begrenst die keuze: alleen meldingen gebruikt Toon en volledig gedempt blijft Stil. Spraak gebruikt een beschikbare geïnstalleerde offline stem. Native meldingen wachten niet op de oude camera-afstand of algemene afkoelperiode. Een ontbrekende afstand blijft onbekend; een naderende hulpdienst wordt niet weggefilterd omdat de auto stilstaat of de gebeurtenis geen puntcoördinaten heeft.
+
+Slechts één kaartapp bezit de waarschuwingsaudio. Een tweede ontvanger kan actuele waarschuwingen tonen en aangeven welke kaart de audio afhandelt. Ontvangst, wachtrij, audiostart en voltooiing zijn verschillende toestanden. Een ontbrekende engine, geweigerde audiofocus of onderbroken levering zet FM tijdens de beheerde sessie niet automatisch weer hoorbaar. Als eerdere audio mogelijk nog speelt, blijft de volgende kaart stil tot stoppen of voltooien positief is bevestigd.
+
+Gebruik **Audiovoorbeeld terwijl u geparkeerd staat** alleen terwijl je geparkeerd staat en navigatie is gestopt. Dit vraagt via de normale audiotoestemming een duidelijk gemarkeerd lokaal synthetisch voorbeeld aan en maakt geen openbare verkeersmelding. De eigen dempstand blijft gelden. Blijft waarschuwingsaudio geblokkeerd, dan opent de hersteloptie FM's eigen bevestigingsscherm. Stop beide ontvangende kaartapps en hun spraakengine, controleer dat niets speelt of wacht, en bevestig het geparkeerde herstel. Oude aankondigingstoestemming vervalt; de eerdere waarschuwing wordt niet opnieuw afgespeeld.
 
 ## 4. Controleer de ontvangst
 

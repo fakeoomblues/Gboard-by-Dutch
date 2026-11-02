@@ -65,7 +65,7 @@ Selecting native data or ending the receiving session releases its startup conne
 
 **Off · Google Maps** restores Maps' own data. The alternative **Waze · Share alerts with Maps** uses the older Waze alert bridge: Waze needs **Share alerts with Maps**, must be signed in and must remain running. That mode does not provide the extended speed/limit/zone feed. Select the navigation-data option for this guide.
 
-Maps pauses its own Flock pins and chimes while the selected modern feed supplies usable fresh data. Saved Flock preferences remain, and Flock route avoidance keeps its separate camera dataset.
+Flitsmeister keeps Maps' independent Flock choices active. Only a fresh selected De-Waze feed retains the earlier native-Flock handoff; route avoidance keeps its separate camera dataset.
 
 ### Vela Maps
 
@@ -76,7 +76,19 @@ Maps pauses its own Flock pins and chimes while the selected modern feed supplie
 
 The compact display shows speed beside the limit. An active zone adds the observed average, progress and remaining distance; estimated progress is marked with ≈. The average stays unknown until enough distance and time have been observed.
 
-With an external source selected, Vela pauses its own Flock display and alerts while either supported provider supplies fresh usable data. The pause can continue if the selected source drops out while the other still publishes. Saved preferences resume when neither feed is usable, or when you select **Vela (native data)**.
+Flitsmeister keeps Vela's independent Flock display, voice and detour choices active. Only a fresh selected De-Waze feed retains the earlier native-Flock handoff; an unselected feed does not pause those features.
+
+## Native Flitsmeister warning audio
+
+The native-event speech upgrade is still under validation. Current development builds report incomplete source coverage and keep full event-owned playback disabled until native capture acceptance is proved. A running provider or successful preview is not a complete-warning guarantee.
+
+With compatible event-enabled builds on both sides, choose **Flitsmeister** and review **Flitsmeister warning audio** and **Flitsmeister warning categories** once. Confirm **Use these warning choices**. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories. Keep every actively receiving map updated or disable its FM source before using the complete event mode.
+
+Choose Voice, Tone or Silent. Native Maps/Vela mute still caps that choice: alerts-only mode uses Tone, and full native mute stays Silent. Voice uses an available installed offline-capable voice. Native announcements do not wait for the old camera-distance or global cooldown heuristic. Missing distance stays unknown, and a moving emergency is not discarded because the car is stationary or the event has no point coordinates.
+
+Only one receiving map owns warning audio. Another receiver can show current warnings while reporting which map handles audio. Reception, queue acceptance, audio start and audio completion are different states. A missing engine, denied focus or interrupted delivery does not automatically unmute FM during the managed session. If previous output might still be playing, the next map remains silent until stop/completion is positively acknowledged.
+
+Use **Parked audio preview** only while parked with navigation stopped. It requests a clearly labelled local synthetic example through the normal audio grant and creates no public road report. It respects native mute. If warning audio remains fenced, **Recover warning audio while parked** opens FM's own confirmation screen. Stop both receiving maps and their speech engine, verify no warning is playing or queued, then confirm the parked reset. Recovery revokes old announcement authority; it does not replay the earlier warning.
 
 ## 4. Check reception before relying on it
 
