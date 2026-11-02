@@ -7,7 +7,7 @@ import app.morphe.patcher.patch.bytecodePatch
 val hideWeatherWarnings = bytecodePatch(
     name = "Hide weather warnings overlay",
     description = "Removes the Weather Warnings map-layer control and stops its overlay downloads. Keeps weather warnings delivered as part of ordinary forecasts.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(rainviewer)
     dependsOn(originalInput, startupCompatibility)

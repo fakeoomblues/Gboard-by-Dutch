@@ -7,7 +7,7 @@ import app.morphe.patcher.patch.bytecodePatch
 val localPro = bytecodePatch(
     name = "Enable local Pro features",
     description = "Uses Pro client controls while keeping map and forecast requests within Free limits. Includes Disable tracking and Hide AI insights. Purchases and server entitlements remain unchanged; paid data may be unavailable.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(rainviewer)
     dependsOn(originalInput, startupCompatibility, disableTracking, hideAiInsights)

@@ -1,6 +1,6 @@
 # RainViewer validation
 
-Target: **8.4.1 / 44084**, Android API 32 minimum. Privacy baseline validated on 2026-11-01; compatibility/local Pro follow-up on 2026-11-02.
+Target: **8.4.1 / 44084**, publisher minSdk29 and minSdk32 variants. Privacy baseline validated on the API32 variant on 2026-11-01; compatibility/local Pro and API29 follow-up on 2026-11-02.
 
 - Original APKM SHA-256: `b38cf76df9235a277b8ec8fba064f67e24820ba2b962b12741986bcfdb89e91b`.
 - Original base APK SHA-256: `f0449a4c5deae2273088259243a90bae9dc40842136415d99b5b1469792276c4`.
@@ -36,6 +36,14 @@ Target: **8.4.1 / 44084**, Android API 32 minimum. Privacy baseline validated on
 - Installed UI cleanup was inspected without Frida: AI controls absent, normal temperature forecast/Coastal Flood Statement retained, map warnings control absent and other overlays retained. The subsequent installed Manage cleanup also retained Pro while removing the action and chevron; its emitted constructor verifier covers both initial Manage values.
 
 See [local Pro research](local-pro-research.md) and [integrity investigation](integrity-investigation.md) for the exact original code locations, request fields, scope and limitations.
+
+## Android 10+ variant and default-selection fix
+
+The additional supplied APKM has SHA-256 `b85094cea1dda691a560d6615074f897730f23b9c96292e04e7460c9c631323f`, version 8.4.1/build 44084, minSdk29, arm64-v8a and 480–640dpi. Its original signer matches the pinned publisher certificate and all three DEX files are byte-for-byte identical to the original minSdk32 input.
+
+The published 1.24.0 bundle reproduced the reported `Unsupported RainViewer manifest minSdk` failure on this input. The corrected app-scoped guard accepts exactly 29 and 32. The shared validator, signer, package and build checks remain unchanged. The production-guard regression passed 73 assertions, including invalid metadata, foreign/mixed signers, unsupported SDKs and missing/ambiguous declarations.
+
+All nine RainViewer controls are now enabled by default. Patching both supplied original APKMs without explicit patch selection applied all nine and completed successfully. The emitted API29 output passed the privacy, certificate, migration, local Pro, AI and warnings verifiers; output manifests preserve the respective minimum SDKs. This verifies patching of the new input; it does not constitute a physical OnePlus runtime test.
 
 ## Evidence locations
 

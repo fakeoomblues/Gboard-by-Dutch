@@ -27,7 +27,7 @@ Original source references below are relative to the retained primary-checkout a
 | Audience telemetry | `defpackage/cx7.java:56`, variant0 -> `nr2.a` | Local Pro depends on Disable tracking, preventing the substituted tier from being reported as paid analytics. |
 | Error enforcement | `defpackage/sl.java:84`, `e(String,String)` | Unmodified. Publisher code81 still becomes an authentic blocked error. |
 
-The Kotlin implementation is `patches/src/main/kotlin/patches/rainviewer/LocalProPatch.kt`, with `AiInsightsPatch.kt` and `WeatherWarningsPatch.kt` for the requested UI controls. Local Pro is disabled by default and includes Hide AI insights. Hiding the warnings overlay is independently selectable and disabled by default. `Fix integrity` and `Fix Google services` implement the independent compatibility work described in [integrity investigation](integrity-investigation.md).
+The Kotlin implementation is `patches/src/main/kotlin/patches/rainviewer/LocalProPatch.kt`, with `AiInsightsPatch.kt` and `WeatherWarningsPatch.kt` for the requested UI controls. All nine patches are now enabled by default, including Local Pro and hiding the warnings overlay. Each remains selectable; Local Pro includes Hide AI insights. `Fix integrity` and `Fix Google services` implement the independent compatibility work described in [integrity investigation](integrity-investigation.md).
 
 The map ceilings deliberately preserve the accepted Free request shape. They are conservative delivery choices, not proof that the server would reject larger individual values. The earlier broad Pro experiment changed multiple fields simultaneously and later received code81; causation between each field and the rejection was not isolated.
 

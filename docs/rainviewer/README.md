@@ -1,14 +1,14 @@
 # RainViewer
 
-Support for **RainViewer 8.4.1 / 44084**, package `com.lucky_apps.RainViewer`, Android 12L/API 32 or later. Select the complete original APKM, including its ABI and resource splits. Published in stable patch bundle 1.24.0.
+Support for **RainViewer 8.4.1 / 44084**, package `com.lucky_apps.RainViewer`, Android 10/API 29 or later; the publisher minSdk29 and minSdk32 variants are supported. Select the complete original APKM, including its ABI and resource splits. Published in stable patch bundle 1.24.0.
 
 ## Download and use
 
 Use the supplied [RainViewer 8.4.1 download link](https://buzzheavier.com/ai8s8yfupvev). The audited local APKM has SHA-256 `b38cf76df9235a277b8ec8fba064f67e24820ba2b962b12741986bcfdb89e91b`; the mirror link is user-provided.
 
-1. Import the development patch bundle into Morphe and select the complete original 8.4.1 APKM.
-2. Select the privacy controls and Fix integrity. Enable local Pro features is optional; it exposes local controls while the server account remains Free.
-3. Keep Hide AI insights selected. Select Hide weather warnings overlay for the tested setup, where its map overlay is unavailable. Ordinary forecast warnings remain visible.
+1. Import the latest stable patch bundle into Morphe and select the complete original 8.4.1 APKM.
+2. All nine patches are enabled by default. Local Pro exposes client controls while the server account remains Free; deselect controls you do not want.
+3. Hide AI insights and Hide weather warnings overlay are enabled by default. Ordinary forecast warnings remain visible.
 4. Apply and install the patched app. Skip subscription screens also removes the unavailable Manage/Subscription details action from the plan card while preserving the plan badge.
 
 Local Pro does not guarantee every advertised paid dataset. The tested build retains Free map/forecast request limits; the 72h label does not establish 72h of downloaded frames.
@@ -23,9 +23,9 @@ Local Pro does not guarantee every advertised paid dataset. The tested build ret
 | Skip subscription screens | Finishes policy/purchase onboarding through the normal completion path; suppresses recurring/startup offers and Settings offer cards. Removes the plan card's Manage link and subscription-details navigation while retaining the plan status and feature information. |
 | Fix Google services | Supplies the pinned original self-certificate SHA1 to the Google/Firebase metadata helper after re-signing; preserves other-package lookups. |
 | Fix integrity | Includes Fix Google services. Uses the app's null-attestation fallback and renews only its anonymous app credential once, retaining settings and purchases. Verified against the supplied rooted emulator and publisher responses. |
-| Enable local Pro features | Opt-in, disabled by default. Uses the Pro tier for local capability/UI computation while keeping map and forecast requests within conservative Free limits. Includes Disable tracking and Hide AI insights. Does not alter billing, purchase responses or server errors. |
+| Enable local Pro features | Enabled by default. Uses the Pro tier for local capability/UI computation while keeping map and forecast requests within conservative Free limits. Includes Disable tracking and Hide AI insights. Does not alter billing, purchase responses or server errors. |
 | Hide AI insights | Removes the forecast AI tab/panel while retaining normal temperature content. Stops automatic assistant requests. The tested Free session received code210 from the AI endpoint. |
-| Hide weather warnings overlay | Opt-in, disabled by default. Removes the map-layer warnings control and stops its overlay requests. Ordinary forecast warnings remain available. The supplied emulator showed a persistent error badge and rejected overlay requests. |
+| Hide weather warnings overlay | Enabled by default. Removes the map-layer warnings control and stops its overlay requests. Ordinary forecast warnings remain available. The supplied emulator showed a persistent error badge and rejected overlay requests. |
 
 All patches include a minimal local Play-licensing compatibility change for re-signed builds. This APK has a licensing wrapper; it does not contain the virtualized callback system seen in some other PairIP apps.
 

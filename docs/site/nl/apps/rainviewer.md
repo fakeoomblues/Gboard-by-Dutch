@@ -4,19 +4,19 @@
 
 [Download originele app](https://buzzheavier.com/ai8s8yfupvev){ .md-button .md-button--primary }
 
-Selecteer het volledige originele APKM-archief in Morphe Manager, inclusief de taal-, scherm- en apparaatbestanden.
+Selecteer het volledige originele APKM-archief in Morphe Manager, inclusief de taal-, scherm- en apparaatbestanden. Zowel de Android 10+- als Android 12L+-variant van deze build wordt ondersteund. Alle negen patches staan standaard aan; deselecteer wat je niet wilt.
 
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Disable tracking** | Aan | Inclusief Hide ads. Stopt de ondersteunde gebruiksmetingen, sessieopnames, advertentie-ID's en optionele diagnostiek. |
-| **Enable local Pro features** | Uit | Toont Pro en opent lokale bediening. Houdt kaart- en weersaanvragen binnen de Free-limieten; maakt geen betaald abonnement aan. Inclusief Disable tracking en Hide AI insights. |
+| **Enable local Pro features** | Aan | Toont Pro en opent lokale bediening. Houdt kaart- en weersaanvragen binnen de Free-limieten; maakt geen betaald abonnement aan. Inclusief Disable tracking en Hide AI insights. |
 | **Fix Google services** | Aan | Houdt de ondersteunde Google- en Firebase-diensten werkend na het patchen. |
 | **Fix integrity** | Aan | Herstelt de geteste toegang tot weergegevens op deze appversie. Vernieuwt de anonieme appsessie eenmaal en bewaart instellingen en aankoopgegevens. |
 | **Hide AI insights** | Aan | Verwijdert het AI-tabblad en de AI-samenvatting uit de weersverwachting. Normale temperatuur- en weergegevens blijven zichtbaar. |
 | **Hide ads** | Aan | Verwijdert ondersteunde banners, schermvullende advertenties, eigen promoties en aankoophints op de kaart. |
-| **Hide weather warnings overlay** | Uit | Verwijdert de niet-beschikbare kaartknop Weather Warnings en stopt de bijbehorende downloads. Waarschuwingen in de normale weersverwachting blijven zichtbaar. |
+| **Hide weather warnings overlay** | Aan | Verwijdert de niet-beschikbare kaartknop Weather Warnings en stopt de bijbehorende downloads. Waarschuwingen in de normale weersverwachting blijven zichtbaar. |
 | **Skip consent screens** | Aan | Inclusief Disable tracking. Slaat de automatische advertentietoestemming over zonder toestemming te verlenen. |
 | **Skip subscription screens** | Aan | Slaat abonnementsintroducties en automatische aanbiedingen over, verbergt aanbiedingen in Instellingen en verwijdert Manage bij het abonnement. De abonnementsbadge blijft zichtbaar. |
 
