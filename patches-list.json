@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.24.0",
+  "version": "1.24.1",
   "patches": [
     {
       "name": "Alert distances",
@@ -1697,7 +1697,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2255,7 +2255,7 @@
     {
       "name": "Enable local Pro features",
       "description": "Uses Pro client controls while keeping map and forecast requests within Free limits. Includes Disable tracking and Hide AI insights. Purchases and server entitlements remain unchanged; paid data may be unavailable.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -2278,7 +2278,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2461,7 +2461,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2656,7 +2656,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2911,7 +2911,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -4647,7 +4647,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -5507,7 +5507,7 @@
     {
       "name": "Hide weather warnings overlay",
       "description": "Removes the Weather Warnings map-layer control and stops its overlay downloads. Keeps weather warnings delivered as part of ordinary forecasts.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -5530,7 +5530,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -7420,7 +7420,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -7926,7 +7926,7 @@
                 "X86": 44084
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]

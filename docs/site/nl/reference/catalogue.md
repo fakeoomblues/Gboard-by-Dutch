@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.24.0**
+**Patchbundel: 1.24.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -470,12 +470,12 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Disable tracking | Aan | 8.4.1 |
-| Enable local Pro features | Uit | 8.4.1 |
+| Enable local Pro features | Aan | 8.4.1 |
 | Fix Google services | Aan | 8.4.1 |
 | Fix integrity | Aan | 8.4.1 |
 | Hide AI insights | Aan | 8.4.1 |
 | Hide ads | Aan | 8.4.1 |
-| Hide weather warnings overlay | Uit | 8.4.1 |
+| Hide weather warnings overlay | Aan | 8.4.1 |
 | Skip consent screens | Aan | 8.4.1 |
 | Skip subscription screens | Aan | 8.4.1 |
 
