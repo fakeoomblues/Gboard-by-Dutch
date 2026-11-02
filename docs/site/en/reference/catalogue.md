@@ -559,6 +559,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 12.7.1 |
 | Skip consent screens | On | 12.7.1 |
 
+## SoundCloud
+
+[What do the patches change?](../apps/soundcloud.md)
+
+`com.soundcloud.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Home in Android Auto | On | 2026.10.28-release |
+
 ## Trouw
 
 [What do the patches change?](../apps/trouw.md)

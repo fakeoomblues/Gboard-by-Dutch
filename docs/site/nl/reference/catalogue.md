@@ -559,6 +559,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 12.7.1 |
 | Skip consent screens | Aan | 12.7.1 |
 
+## SoundCloud
+
+[Wat veranderen de patches?](../apps/soundcloud.md)
+
+`com.soundcloud.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Home in Android Auto | Aan | 2026.10.28-release |
+
 ## Trouw
 
 [Wat veranderen de patches?](../apps/trouw.md)

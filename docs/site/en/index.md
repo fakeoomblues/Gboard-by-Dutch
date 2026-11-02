@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">54 apps</span> · Patch bundle: 1.31.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patch bundle: 1.31.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -912,6 +912,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/rtl-nieuws.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.10.28-release home in android auto" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [SoundCloud](apps/soundcloud.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.10.28-release</span></p>
+<p class="dap-app-card__package">com.soundcloud.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Home in Android Auto <span class="dap-app-card__target">2026.10.28-release</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/soundcloud.md){ .dap-app-card__link }
 
 </article>
 
