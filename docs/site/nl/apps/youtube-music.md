@@ -24,7 +24,7 @@ Deze compatibiliteitspatch verwijdert geen advertenties, tracking, accountvereis
 
 Selecteer de originele app en schakel **Android Auto** uit Morphe Patches samen met **Gearslip music browser support** uit Dutch App Patches in. De Gearslip-patch bevat de persoonlijke bibliotheekintegratie; er is geen tweede bibliotheekpatch om te selecteren. Gebruik de originele invoer ook bij het opnieuw patchen van een bestaande installatie.
 
-Pas op Gearslip **Keep music player entries** toe zodat de spelertegel behouden blijft. Trusted Gearslip packages gebruikt standaard de officiële host; voeg alleen een ander pakket toe voor een versie die je bewust gebruikt.
+Pas op Gearslip **Keep music player entries** toe zodat de spelertegel behouden blijft. Trusted Gearslip packages gebruikt standaard de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies; voeg alleen een ander pakket toe voor een versie die je bewust gebruikt.
 
 Automatische tests controleren de hosttoegang, het opbouwen van de hoofd- en bibliotheekmappen en het gecombineerd patchen van de originele app. De bibliotheekinhoud en het afspelen hangen af van het ingelogde account en de beschikbare inhoud.
 

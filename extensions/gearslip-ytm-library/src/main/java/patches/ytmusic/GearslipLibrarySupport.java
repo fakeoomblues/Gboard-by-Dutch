@@ -10,7 +10,7 @@ public final class GearslipLibrarySupport {
     }
 
     public static String getConfiguredPackageNames() {
-        return "app.seb3thehacker.gearslip";
+        return "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev";
     }
 
     /** 0 delegates unchanged; 1 root, 2 personal Home, 3 personal Library. */

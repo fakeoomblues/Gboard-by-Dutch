@@ -21,6 +21,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | **Guest mode** | Aan | Voegt Doorgaan als gast toe, laat de app zonder inloggen openen en verbergt het grote accountaanmaakblok. |
 | **Hide Pro notices** | Aan | Verbergt automatische Pro/Plus-aanbiedingen, badges en Android Auto-upgradeberichten. |
 | **Hide ads** | Aan | Verwijdert commerciële locatiepromoties, hun afbeeldingen en reclamemeldingen. Verkeerswaarschuwingen blijven. |
+| **Support Gearslip and DriveDeck** | Aan | Accepteert Gearslip en DriveDeck als autohost op pakketnaam, met welke sleutel ze ook zijn ondertekend, zodat DriveDeck werkt zonder dat de originele Gearslip is geïnstalleerd. Andere hosts houden de Android Auto-validatie. |
 | **Unlock Pro** | Aan | Schakelt lokaal geregelde Pro-opties in. Functies waarvoor accountactivering nodig is blijven afhankelijk van de dienst. |
 
 ## Advertentie- en trackingdiensten

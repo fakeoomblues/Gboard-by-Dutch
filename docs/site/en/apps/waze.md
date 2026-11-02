@@ -34,7 +34,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 | **Broadcast navigation data** | On | Shares current speed, road limits, road alerts and approaching/active average-speed zones with other apps while Waze runs in the background. No overlay required. |
 | **Skip consent screens** | On | Answers privacy and terms consent silently and declines ad personalization without showing a screen. |
 | **SoundCloud in Waze** | On | Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included. |
-| **Support Gearslip** | On | Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
+| **Support Gearslip** | On | Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
 | **YT Music Morphe in Waze** | On | Adds YT Music Morphe to Waze's built-in audio player. Show list displays supported Home recommendations and mixes, not your personal Library. Available shelves depend on the installed client. |
 
 ### From bearinmind patches, extended here

@@ -21,6 +21,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Guest mode** | On | Adds Continue as guest, lets you reopen without signing in, and hides the large account sign-up card. |
 | **Hide Pro notices** | On | Hides automatic Pro/Plus offers, badges and Android Auto upgrade notices. |
 | **Hide ads** | On | Removes commercial location-based promotions, their images and advertising notifications. Traffic warnings remain. |
+| **Support Gearslip and DriveDeck** | On | Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so DriveDeck works without the original Gearslip installed. Other hosts keep Android Auto validation. |
 | **Unlock Pro** | On | Enables locally controlled Pro options. Features requiring account activation still depend on the service. |
 
 ## Advertising and tracking services

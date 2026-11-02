@@ -77,7 +77,7 @@ private val nativeNavigationResources = resourcePatch {
                     setAttributeNS(ANDROID, "android:value", "5")
                 })
             val queries = elements("queries").firstOrNull() ?: doc.createElement("queries").also(root::appendChild)
-            for (host in listOf("app.seb3thehacker.gearslip", "com.google.android.projection.gearhead")) {
+            for (host in listOf("app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev", "com.google.android.projection.gearhead")) {
                 if (elements("package").none { it.parentNode == queries && it.getAttributeNS(ANDROID, "name") == host })
                     queries.appendChild(doc.createElement("package").apply { setAttributeNS(ANDROID, "android:name", host) })
             }

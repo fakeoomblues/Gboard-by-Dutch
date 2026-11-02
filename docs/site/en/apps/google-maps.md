@@ -8,7 +8,7 @@ Select the complete original APK for this exact version in Morphe Manager. Andro
 
 ## Native Maps in Gearslip and Android Auto
 
-Our **Native navigation for Gearslip and Android Auto** patch runs the patched app's original car map and navigation interface in both hosts. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. Search uses the host's keyboard, and the native Maps screen handles results, route previews and turn-by-turn guidance.
+Our **Native navigation for Gearslip and Android Auto** patch runs the patched app's original car map and navigation interface in both hosts. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. DriveDeck is accepted like Gearslip. Search uses the host's keyboard, and the native Maps screen handles results, route previews and turn-by-turn guidance.
 
 ![Ungoogled Maps running its native map in the official Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
 

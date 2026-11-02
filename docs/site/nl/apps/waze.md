@@ -34,7 +34,7 @@ De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Fo
 | **Broadcast navigation data** | Aan | Deelt actuele snelheid, snelheidslimieten, wegmeldingen en naderende/actieve trajectcontroles met andere apps terwijl Waze op de achtergrond draait. Geen overlay nodig. |
 | **Skip consent screens** | Aan | Rondt privacy- en voorwaardenkeuzes zonder scherm af en weigert gepersonaliseerde advertenties. Lees de toelichting hieronder. |
 | **SoundCloud in Waze** | Aan | Voegt SoundCloud toe aan de ingebouwde audiospeler. Show list toont de ingelogde Feed en afspeelbare mixes, niet je persoonlijke bibliotheek. |
-| **Support Gearslip** | Aan | Accepteert Gearslip als autohost op pakketnaam, met welke sleutel het ook is ondertekend, zodat een gepatchte Gearslip blijft werken. Andere hosts houden de Android Auto-validatie. |
+| **Support Gearslip** | Aan | Accepteert Gearslip en DriveDeck als autohost op pakketnaam, met welke sleutel ze ook zijn ondertekend, zodat een gepatchte Gearslip blijft werken. Andere hosts houden de Android Auto-validatie. |
 | **YT Music Morphe in Waze** | Aan | Voegt YT Music Morphe toe aan de ingebouwde audiospeler. Show list toont ondersteunde Home-aanbevelingen en mixes, niet je persoonlijke bibliotheek. |
 
 ### Uit bearinmind patches, hier uitgebreid

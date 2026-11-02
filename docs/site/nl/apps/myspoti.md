@@ -20,7 +20,7 @@ Deze compatibiliteitspatch verandert de toegang tot de muziekbrowser. De patch v
 
 ## Voor gebruik
 
-Log in bij Myspoti. De optie voor vertrouwde hosts gebruikt standaard het officiële Gearslip-pakket. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
+Log in bij Myspoti. De optie voor vertrouwde hosts gebruikt standaard de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
 
 De gebruiker heeft bevestigd dat de patch met Myspoti 2.2.0 in Gearslip werkt en heeft de stabiele release goedgekeurd. Het exacte originele 2.3.0-bestand kan op de desktop worden gepatcht. Een gemelde archiefleesfout in Manager kwam door een beschadigde kopie op de telefoon; zet bij deze fout een nieuw origineel APK-bestand over. Versie 2.3.0 heeft nog niet dezelfde toesteltest met een ingelogd account doorlopen. Een gepatchte APK moet opnieuw worden ondertekend. De door de uitgever ondertekende installatie kan niet met een andere sleutel worden bijgewerkt. Bewaar deze tijdens het testen van een aparte kopie; verwijder de installatie niet alleen om deze patch te proberen.
 

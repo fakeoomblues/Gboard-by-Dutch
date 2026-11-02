@@ -43,7 +43,13 @@ public final class CallerPolicyTest {
     check(!GearslipSupport.isConfiguredPackage("unrelated.client"),"unrelated browser eligibility unchanged");
     check(!GearslipSupport.isConfiguredPackage(HOST+".spoof"),"no prefix matching");
     check(!GearslipSupport.isConfiguredPackage(null),"null is not a host");
-    System.out.println("PASS 15 production caller-policy checks");
+    String deck="app.johninnl.drivedeck";
+    check(GearslipSupport.decision(context(deck),deck,12345)==1,"DriveDeck callback UID accepted");
+    check(GearslipSupport.decision(context(HOST),deck,12345)==0,"DriveDeck claim from another UID rejected");
+    check(GearslipSupport.isConfiguredPackage(deck+".dev"),"DriveDeck development build eligible");
+    check(GearslipSupport.isConfiguredPackage(HOST+".dev"),"Gearslip development build eligible");
+    check(!GearslipSupport.isConfiguredPackage(deck+".fake"),"no DriveDeck prefix matching");
+    System.out.println("PASS 20 production caller-policy checks");
   }
 }''',
             }
@@ -57,7 +63,7 @@ public final class CallerPolicyTest {
             self.assertEqual(compiled.returncode, 0, compiled.stderr)
             ran = subprocess.run(['java', '-cp', str(out), 'CallerPolicyTest'], capture_output=True, text=True)
             self.assertEqual(ran.returncode, 0, ran.stderr)
-            self.assertIn('PASS 15', ran.stdout)
+            self.assertIn('PASS 20', ran.stdout)
 
 
 if __name__ == '__main__':

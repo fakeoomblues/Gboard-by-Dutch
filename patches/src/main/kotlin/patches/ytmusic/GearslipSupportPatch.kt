@@ -18,7 +18,7 @@ import org.w3c.dom.Element
 
 private const val SUPPORT = "Lpatches/ytmusic/GearslipSupport;"
 private const val BROWSER = "Lcom/google/android/apps/youtube/music/mediabrowser/MusicBrowserService;"
-private const val HOST = "app.seb3thehacker.gearslip"
+private const val HOST = "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev"
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
 private const val ORIGINAL_ELIGIBILITY = "morpheOriginalBrowserEligibility"
 private val packageNamePattern = Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$")
@@ -39,7 +39,7 @@ val gearslipMusicSupport = bytecodePatch(
 
     val packageNames by stringOption(
         key = "packageNames", default = HOST, title = "Trusted Gearslip packages",
-        description = "Comma-separated installed Gearslip host package names. Each caller must own its package under its actual callback UID.",
+        description = "Comma-separated installed Gearslip or DriveDeck host package names. Each caller must own its package under its actual callback UID.",
         required = true,
     ) { value ->
         value != null && value.length <= 2000 && value.split(',').all { packageNamePattern.matches(it.trim()) }

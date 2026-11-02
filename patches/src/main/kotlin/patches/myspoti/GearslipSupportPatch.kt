@@ -26,8 +26,8 @@ val gearslipMyspotiSupport = bytecodePatch(
         targets = listOf(AppTarget(version = null))))
     extendWith("extensions/gearslip-myspoti.mpe")
     val packageNames by stringOption(
-        key = "packageNames", default = "app.seb3thehacker.gearslip", title = "Trusted Gearslip packages",
-        description = "Comma-separated Gearslip host packages. Myspoti retains its UID ownership checks for browsing and search.",
+        key = "packageNames", default = "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev", title = "Trusted Gearslip packages",
+        description = "Comma-separated Gearslip or DriveDeck host packages. Myspoti retains its UID ownership checks for browsing and search.",
         required = true,
     ) { value -> value != null && value.length <= 2000 && value.split(',').all {
         Regex("^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+$").matches(it.trim())

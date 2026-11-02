@@ -13,6 +13,13 @@ public final class HostPolicyTest {
     @Test public void installedGearslipWorksWithAnySigningKey() {
         assertTrue(HostPolicy.permits(GEARSLIP, 10042, new String[]{"another.app", GEARSLIP}, null, null));
     }
+    @Test public void driveDeckAndDevelopmentBuildsWorkWithAnySigningKey() {
+        for (String host : new String[]{GEARSLIP + ".dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev"}) {
+            assertTrue(host, HostPolicy.permits(host, 10042, new String[]{host}, null, null));
+            assertFalse(host, HostPolicy.permits(host, 10042, new String[]{"another.app"}, null, null));
+        }
+        assertFalse(HostPolicy.permits("app.johninnl.drivedeck.fake", 10042, new String[]{"app.johninnl.drivedeck.fake"}, null, null));
+    }
     @Test public void claimedGearslipUnderAnotherUidCannotAuthenticate() {
         assertFalse(HostPolicy.permits(GEARSLIP, 10042, new String[]{"another.app"}, null, null));
         assertFalse(HostPolicy.permits(GEARSLIP, -1, new String[]{GEARSLIP}, null, null));
