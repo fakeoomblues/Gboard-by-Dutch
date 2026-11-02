@@ -14,6 +14,6 @@ Goal: trace certificate/installer/attestation acquisition, local decisions, seri
 - [x] Inspect map-warning error/code81; add separately selectable control/fetch suppression, retaining forecast warnings.
 - [x] Remove unavailable Settings Manage/subscription-details action while preserving local plan badge.
 - [x] Build, validate all selected combinations, review and save the signed development bundle plus detailed findings in Downloads.
-- [ ] Promote the approved RainViewer changes to main, verify stable release publication and documentation. The user approved main promotion on2026-11-02.
+- [x] Promoted through PR #9 to main after user approval. Stable v1.24.0 published; release workflow, signed artifact and Morphe discovery verified. English/Dutch guides include the supplied download link.
 
 Known boundaries: original RainViewer 8.4.1/44084 signer SHA256 is pinned. Current emulator APK is signed by the local Android debug key. Firebase rejects it with API_KEY_ANDROID_APP_BLOCKED. The app uses Standard Play Integrity, not identified local SafetyNet basicIntegrity/ctsProfileMatch booleans. A forged local flag is not a genuine Google token.

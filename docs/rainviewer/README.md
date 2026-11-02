@@ -1,6 +1,6 @@
 # RainViewer
 
-Source-branch support for **RainViewer 8.4.1 / 44084**, package `com.lucky_apps.RainViewer`, Android 12L/API 32 or later. Select the complete original APKM, including its ABI and resource splits. These changes have not been promoted to a stable release.
+Support for **RainViewer 8.4.1 / 44084**, package `com.lucky_apps.RainViewer`, Android 12L/API 32 or later. Select the complete original APKM, including its ABI and resource splits. Published in stable patch bundle 1.24.0.
 
 ## Download and use
 
