@@ -18,7 +18,7 @@ class VelaWarningVoiceTest {
         val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(26))
         val classes=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }
         val originals=validateVelaWarningVoice(classes)
-        assertEquals(12,originals.size)
+        assertEquals(23,originals.size)
         val methods=originals.mapValues { MutableMethod(it.value) }
         bindVelaWarningVoice(methods)
         val speaker="Lnl/johninnl/vela/VelaWarningSpeaker;"

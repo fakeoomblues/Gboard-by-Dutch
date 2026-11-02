@@ -1,6 +1,6 @@
 # Flitsmeister 14.17 native warning bindings
 
-Static discovery for design sections 5 and 14/WP1. Semantic export, native hook probes and physical-device acceptance remain unimplemented/unverified. No product code or device state was changed by this investigation.
+Artifact-backed bindings and capture implementation for design sections 5 and 14/WP1. Native upstream callback probes and physical-device acceptance remain pending. The initial discovery changed no product code or device state; the subsequent capture implementation is recorded below.
 
 ## Artifact and evidence
 
@@ -115,3 +115,64 @@ Proposed insertion safeguards, not demonstrated patched behavior:
 - Distinguish `fc0.J/O` state from ANNOUNCE. Handle native disappearance/null removal and deduplicate overlapping EarlyWarningReport/notification/bus/AA observations. A genuine repeat decision needs its own announcement index.
 
 Outstanding blockers: no instrumented acceptance/capture traces, no original-resource language/text extraction for all 159 variants, unresolved nonroad-family producer audit, the slow-helper native flag's product meaning, complete CITS source/path coverage, no proof of immutable event identity/deduplication under concurrent callbacks, and no receiver delivery/audio timing proof. Static DEX equivalence and valid fingerprints establish discovery reproducibility, not semantic or runtime completeness.
+
+
+## Capture implementation and model-text acceptance work
+
+The frozen original contract now selects 70 methods and 15 native entry points. All original 31 method bodies remain byte-identical to the earlier contract. Added selections freeze native camera TTS resources/formatting, incident TTS, all six service-vehicle titles, early notification/report text conversion, the CITS mapper and the additional update/removal paths. This expands source evidence; it does not itself establish a runtime feature pass.
+
+`NativeWarnings` captures the original accepted text before `s6i` local audio decisions. `NativeWarningText` uses `SpeedCamType.getLocalizedTTS(Context)` for all 82 camera variants, `ServiceVehicle.reportTitleText(Context)` for all six service types, and native incident/early model formatters when an accepted call has no supplied words. It preserves native free text, tags unknown free-text language `und`, and reads the actual supplied resource context instead of guessing a locale from warning type. Empty native text is an explicit state/diagnostic, never invented hazard speech.
+
+The canonical hooks now include:
+
+- `nh7$c`'s two actual early-notification bus publications: nonnull accepted state and null removal. These observe the decisions after native category filtering; they do not announce. Notification/report identities share the native name/ID, and an observed removal fences a late old report callback until a new accepted notification appears.
+- `vz2.J/L`'s original CITS conversion, UI projection and update. The original converter runs once. Scalar source identity and aliases link the actual native report and its nested notification before speech. This matters because `l71.c` overwrites the report ID with `gmp_<eventID>`, while notification name is only a vehicle label. Two native ambulance events with the same label must stay distinct, and deleting one must clear its own announcement. Incoming versus stationary emergency source types survive the conversion; no ahead/behind relationship is inferred.
+- `vz2$c`'s resumed accepted early-report removal. Its native optional delay remains unchanged.
+- `cz2.a/e/b`'s accepted ImpactAttenuator creation/update/removal. The producer owns the announcement before publishing its native projection. Both the asynchronous bus redispatch and direct `xl.k` projection reuse the same identity and cannot create another announcement.
+- The three accepted VRI speed-advice publications. They export `UPSERT`/`CLEAR`, native advice km/h and native text. This native producer has no speech authority, so these publications never manufacture `ANNOUNCE`.
+
+`fs7.a` uses `LiveData.postValue` plus an asynchronous flow emission. Therefore a one-second thread-local suppression guess was insufficient for duplicate prevention. Production correlation uses the actual converted object and bounded identity metadata for the transport retention window. The old one-shot suppression helper remains only for the earlier focused unit fixture.
+
+For audited fixed camera/control/point-report geometry whose native model has no elapsed clock, the position timestamp denotes observation of that unmodified static target at the native decision. `position_clock_origin=native_decision` makes that boundary explicit; `position_estimated=false` describes the coordinates, not a GPS measurement time. Moving emergency geometry without its own clock stays absent. Camera/control targets use `point_ahead` relevance, average-speed zones use `zone`, and moving emergency notices retain `moving_emergency` with relationship `unknown`. A stationary emergency source is a notice, not an inferred approaching vehicle.
+
+Native EXIT without words never reuses an entry warning. Average-speed completion uses the native `tts_end_of_avg_speed_check` resource. The accepted traffic-jam/roadworks/closure EXIT paths have small audited Dutch/English completion templates; other source locales receive the English template explicitly tagged `en`. Supplied native completion text always wins. No recorded voice asset is copied.
+
+### Predicate classification boundary
+
+| Predicate location | Classification | Export behavior |
+| --- | --- | --- |
+| `fc0.J` enabled/category/ID exclusions, native speed/repeat/path checks | Native warning feature/relevance | Observe the accepted branch; preserve it |
+| `fc0.A` native trajectory repeat accounting | Native repeat decision, bounded by native history | No additional exporter cooldown |
+| `nh7$c` / `qh7.a` native country/provider/category checks | Early-warning eligibility | Capture only its accepted publication/announcement |
+| `m71.a` and service/slow helper coroutines | Native CITS feature eligibility | Do not start another coroutine or reread these choices |
+| `s6i.l` first sound-selection result, `s6i.b/c`, `q6i/p6i`, `g()`, BLE/FM Dot and `t50` output branches | Local sound/text/output routing | Cannot veto an already accepted exported decision |
+| `cz2.a` ImpactAttenuator `p61.O` | Native source availability: nonempty `pref_cits_base_url`, not a guessed premium entitlement | Keep the original branch |
+| VRI `p61.P` | Native source availability/custom URL or native VRI settings | Export the accepted display state only |
+| GhostDriver `m71.a -> gm8.c0` and fallback `p61.S` | Native approach-warning selection (`pref_signal_on_approach`) before accepted report creation | Preserve the native selection; do not classify by the word signal alone |
+
+The same preference key may appear in an upstream feature filter and a later tone branch. Classification follows its actual call site, not its spelling. Ordinary category/ID exclusions are never globally bypassed to force speech.
+
+### Validation boundary
+
+The adapter matrix exercises all 159 frozen enum names and exact accepted text, with separate regressions for early removal, two distinct CITS ambulances, stationary/incoming semantics, fixed-target observation clocks, Impact duplicate projections, VRI state-only output and native exit wording. SDK compilation validates reflection-free Android API use; the guarded original-artifact patch application and actual model/resource probe are separate checks.
+
+`build_fm_model_probe.py` builds same-signer instrumentation containing no app-model stubs. `run_fm_model_probe.py` pins installed target/probe bytes and FM 14.17/1287, validates the owned AVD before each batch, then checks native models/resources and the installed extension under requested English/Dutch resource contexts. It deliberately does not call detection, category coroutines or native audio. A successful run will establish that bounded model/text scope, not upstream eligibility timing, complete warning delivery, speech or car acceptance.
+
+The seven nonwarning/reserved BaseReportType members are now explicitly excluded from native road-warning announcement completeness, with bounded evidence in `tests/fixtures/navigation-warnings/flitsmeister-nonwarning-scope.json`: exact original DEX field references, positive placeholder/office/parking/toll classes and DB fallbacks, the separate LBA end-of-trip model, and the closed native announcement dispatch. Their accepted native bus state remains available with `display_only` category. This is narrower than claiming no serialized or reflective use can exist. Empty resources alone were not used as exclusion proof. The source capability remains incomplete while the remaining native capture/runtime gates are open. Do not turn the all-159 adapter test or the added contracts into a complete native capture claim.
+
+Native `FreeTextWhere.language` is available on CITS events before `l71.c` drops it. The adapter captures bounded language/text-hash pairs around that original conversion and matches the actual selected native free text. An unambiguous exact message retains its declared native language through subsequent projection updates. Duplicate text declared under different languages, a mixed resource/free-text sentence, or absent language stays `und`; neither vehicle type nor the app locale is a language detector. Relative direction remains unknown because the native `direction` field describes road direction and is not an audited ahead/behind relationship.
+
+The lane-closure adapter additionally preserves all three native `LaneClosedType.name()` values, the separate native serialized lane code (`left_close`/`middle_close`/`right_close`), zero-based native `lane_index` when present, and native `number_of_lanes_closed`. Its fallback uses the native `getLaneClosedTitle(Context)` formatter without reading GPS. CitsRoadWorks remains raw `INCIDENT` with concrete family and roadworks category/priority; it never masquerades as ordinary Incident or calls an absent incident-subtype getter. Its audited fallback selects the app's native roadworks label resource.
+
+
+## Native model/resource verification on the owned AVD
+
+The actual FM 14.17/1287 test-signed APK passed the native model probe under English and Dutch contexts on Android 34 (`native_warnings_api34`, target/probe UID 10204). Each language executed 161 synthetic accepted adapter calls: 82 camera types, 35 incident types, both object variants for 17 early-warning types, six service types, three lane subtypes and CitsRoadWorks. The probe additionally read all 19 native BaseReportType resources. That is the original 159-member inventory plus three additional lane subtype members, not 159 upstream native detections. All 35 incident fallbacks matched the native TTS formatting in both contexts. CitsRoadWorks preserved raw INCIDENT/concrete family and the app's actual Road works/Werkzaamheden resources.
+
+The initial instrumentation-only run failed at the native BaseReport constructor because its genuine configuration manager had not yet been initialized. That failure is retained under the local run's previous-runs directory. The successful probe used the exact concrete initializer already present in native entrypoints: the original `z80` singleton and `t25.i`, obtaining actual Hilt feature preferences. No proxy configuration interface, model stub, provider UI, native detector or audio call was substituted. This initialization is a model-probe prerequisite and is not silent provider startup acceptance.
+
+The installed candidate SHA-256 was `07da10106ad703e3b898f743c6b1e3500ffa78f86eb51144d4fa63cee46232a9`. Exact candidate/probe/installed/result hashes and scope are retained in `tests/fixtures/navigation-warnings/flitsmeister-model-verification.json`; full synthetic/native public-resource outputs remain under `.analysis/native-warning-bindings/fm-model-runtime/`. The candidate used the earlier manifest metadata digest; subsequent proof-status updates change that digest without changing the tested adapter behavior.
+
+The VRI hook now follows the actual bus result register through native wrapper allocation/construction to its unique matching publication. A getter-plus-two guess would select NEW_INSTANCE and is invalid. Whole-body/access/register/count guards cover all 15 original roots before mutation. The only additional accepted body is the exact pre-existing Unlock Pro FeatureUi insertion in `nh7$c`, with its own complete fingerprint; a changed constant or reapplication is rejected. Three original-APK tests passed with zero skips, including all-root transformation, original native-reference preservation and DEX encoding/decoding with invocation word/register checks. Real APKM application also passed for the eight default patches plus Broadcast and for the nine-patch combination including Unlock Pro; both output signatures verified.
+
+The manifest now distinguishes the 140 native subtype adapters verified at this model/text boundary and the additional three lane variants from the still-pending base-family/upstream callback gates. `capture_complete` remains false. None of these results proves actual detector eligibility, native callback capture timing, receiver playback, heard audio or car routing.

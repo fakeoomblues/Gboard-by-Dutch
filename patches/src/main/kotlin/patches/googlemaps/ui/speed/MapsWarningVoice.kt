@@ -2,10 +2,13 @@ package org.ungoogled.patches.maps.ui.speed
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.util.smali.ExternalLabel
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -16,6 +19,9 @@ import java.security.MessageDigest
 private const val COORDINATOR="Lorg/ungoogled/ui/MapsGuidanceCoordinator;"
 internal data class MapsVoiceContract(val registers:Int,val count:Int,val flags:Int,val hash:String)
 internal val mapsVoiceContracts=mapOf(
+    "Lbmrq;->g(Lbmuk;I)Z" to MapsVoiceContract(7, 66, 17, "b398d5071ccefea508c0cc6b32b93b01a22e86f70cea02e4666783726567ba02"),
+    "Lbmrc;->q(Lbmug;Lbmub;)V" to MapsVoiceContract(3, 5, 8, "ad2ab4bd67b399136a4576e64a4e9c9745cc8cc2a078dd1d95fc0e252e5bcbb0"),
+    "Lbmtl;->e(Lbmuc;)V" to MapsVoiceContract(3, 5, 17, "e1f9b5a8933e5f0fdd9f66bc20b3772d9f77e10c25f87dec0fa917453303ef42"),
     "Lbmrb;->b(Ljava/lang/Object;)V" to MapsVoiceContract(3, 30, 4177, "d90d8826de779635d40508a241d6f101fada464e8e7cf6b8e4f70a8a600747d9"),
     "Lbmrc;->B()Z" to MapsVoiceContract(2, 8, 17, "2996c1f3322a46e2ce6d3f9385af948d81f8a414e1f6ed7c9f8cb60d4ba33b4b"),
     "Lbmrc;->k(Lbmvk;Lbmuk;Lbmuc;Lbmug;)Lcom/google/common/util/concurrent/ListenableFuture;" to MapsVoiceContract(26, 123, 17, "f50ec1112a1c4045b47e486f69180497999c075e4a84d85afddaa2de09098304"),
@@ -107,7 +113,7 @@ internal fun bindMapsWarningVoice() {
     val originals=validateMapsWarningVoice(classes)
     val methods=originals.keys.associateWith { descriptor -> context.mutableClassDefBy(descriptor.substringBefore("->")).methods.single { it.toString()==descriptor } }
     val extension=context.mutableClassDefBy(COORDINATOR)
-    listOf("dispatch(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", "terminal(Ljava/lang/Object;Ljava/lang/Object;)V", "captureRoute(Ljava/lang/Object;)V", "routeEnded(Ljava/lang/Object;)V", "hooksInstalled()Z").forEach { signature ->
+    listOf("dispatch(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", "terminal(Ljava/lang/Object;Ljava/lang/Object;)V", "captureRoute(Ljava/lang/Object;)V", "routeEnded(Ljava/lang/Object;)V", "hooksInstalled()Z", "requestNativeFocus(Landroid/media/AudioManager;Landroid/media/AudioFocusRequest;)I", "cancelPreparedCallback(Ljava/lang/Object;)Z").forEach { signature ->
         check(extension.methods.count { it.toString()=="$COORDINATOR->$signature" }==1) { "Missing Maps warning extension $signature" }
     }
     bindMapsNativeVoice(methods)
@@ -126,6 +132,18 @@ internal fun bindMapsNativeVoice(methods:Map<String,MutableMethod>) {
     check((dispatch.instructions[at-1] as TwoRegisterInstruction).registerB==15)
     // Replace the existing invoke so all incoming branches run the final asynchronous fence.
     dispatch.replaceInstruction(at,"invoke-static {v15, v14, v1}, $COORDINATOR->dispatch(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V")
+    dispatch.addInstructionsWithLabels(0,"""
+        invoke-static/range {p0 .. p0}, $COORDINATOR->cancelPreparedCallback(Ljava/lang/Object;)Z
+        move-result v0
+        if-eqz v0, :maps_native_ready_callback
+        return-void
+    """,ExternalLabel("maps_native_ready_callback",dispatch.getInstruction(0)))
+    val focus=pick("Lbmrq;","g")
+    val outline="Laq\$\$ExternalSyntheticApiModelOutline0;->m\$1(Landroid/media/AudioManager;Landroid/media/AudioFocusRequest;)I"
+    val focusAt=focus.instructions.withIndex().filter { (it.value as? ReferenceInstruction)?.reference?.toString()==outline }.single().index
+    val focusCall=focus.instructions[focusAt] as FiveRegisterInstruction
+    check(focusCall.registerCount==2 && focus.instructions[focusAt].opcode==Opcode.INVOKE_STATIC)
+    focus.replaceInstruction(focusAt,"invoke-static {v${focusCall.registerC}, v${focusCall.registerD}}, $COORDINATOR->requestNativeFocus(Landroid/media/AudioManager;Landroid/media/AudioFocusRequest;)I")
     pick("Lbmth;","a").addInstruction(0,"invoke-static/range {p0 .. p1}, $COORDINATOR->terminal(Ljava/lang/Object;Ljava/lang/Object;)V")
     val route=pick("Lbmia;","<init>")
     route.instructions.withIndex().filter { it.value.opcode==Opcode.RETURN_VOID }.map { it.index }.reversed().forEach { route.addInstruction(it,"invoke-static/range {p0 .. p0}, $COORDINATOR->captureRoute(Ljava/lang/Object;)V") }

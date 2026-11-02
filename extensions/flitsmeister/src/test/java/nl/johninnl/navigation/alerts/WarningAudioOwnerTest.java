@@ -83,6 +83,14 @@ public class WarningAudioOwnerTest {
         assertNotNull(second);assertTrue(second.epoch>first.epoch);
         assertEquals(WarningAudioOwner.Code.STALE_OWNER,a.renew(c.uid,c,first.token,first.epoch,WarningAudioOwner.Mode.VOICE,true,NOW+6000).code);
     }
+    @Test public void newLegacyControlClientRevokesPendingOutputWithoutPretendingItStopped(){
+        WarningCapabilities p=profile(true);MemoryStore store=new MemoryStore();WarningAudioOwner a=owner(store,journal(),p);WarningAudioOwner.Client c=client(10001,p);
+        WarningAudioOwner.Lease lease=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;PlaybackGrant grant=begin(a,c,lease,20,NOW).grant;
+        a.legacyReceiverActive(true);assertFalse(a.snapshot(NOW).owner.ready);assertNotNull(store.value);
+        assertEquals(WarningAudioOwner.Code.STALE_OWNER,a.outcome(c.uid,c.consumerNonce,grant,PlaybackGrant.Outcome.STARTED,false,NOW));
+        assertEquals(WarningAudioOwner.Code.OK,a.outcome(c.uid,c.consumerNonce,grant,PlaybackGrant.Outcome.NOT_STARTED,true,NOW));assertNull(store.value);
+        assertEquals(WarningAudioOwner.Code.LEGACY_RECEIVER_ACTIVE,a.renew(c.uid,c,lease.token,lease.epoch,WarningAudioOwner.Mode.VOICE,true,NOW).code);
+    }
 
     @Test public void durableGrantPrecedesReplyAndSameNonceIsIdempotent() {
         WarningCapabilities p=profile(true);MemoryStore s=new MemoryStore();WarningAudioOwner a=owner(s,journal(),p);WarningAudioOwner.Client c=client(10001,p);

@@ -56,8 +56,10 @@ public final class WarningEndpoint implements Closeable {
     private final Slot[] slots=new Slot[MAX_CLIENTS];
     private final Object ingress=new Object();
     private volatile boolean closed,captureFault,exclusive;
+    private volatile String audioStatus="UNOWNED";
     private volatile Set<String> capable=Collections.emptySet();
     private WarningAudioOwner audio;
+    private final WarningLegacyClients legacyClients=new WarningLegacyClients();
     private Storage storage;
     private long head;
     private WarningAudioOwner.Lease lastOwner;
@@ -75,7 +77,7 @@ public final class WarningEndpoint implements Closeable {
         for(int i=0;i<slots.length;i++)slots[i]=new Slot(i);
         actor.execute(()-> {
             try { storage=factory.open();audio=new WarningAudioOwner(storage.boot,session,journal,storage.store,profile); }
-            catch(IOException | RuntimeException error) { exclusive=true; }
+            catch(IOException | RuntimeException error) { exclusive=true;audioStatus="STORAGE_FAILED"; }
         });
         timer.scheduleAtFixedRate(()->post(this::maintenance),1,1,TimeUnit.SECONDS);
     }
@@ -99,7 +101,12 @@ public final class WarningEndpoint implements Closeable {
     public IBinder binder() { return endpoint; }
     public String sourceSession() { return session; }
     public boolean exclusiveAudio() { return exclusive; }
+    public String audioStatus(){return audioStatus;}
     public Set<String> capablePackages() { return capable; }
+    public void controlClient(int uid,boolean warningAware){
+        if(uid==sourceUid || access.authorize(uid)==null)return;
+        post(()->{legacyClients.observe(uid,warningAware,clock.getAsLong());refresh();});
+    }
     /** Losing a native record must be visible and must prevent new exclusive playback grants. */
     public void captureOverflow() { captureFault=true;post(()-> { for(Registration r:new ArrayList<>(registrations.values()))deliver(r);refresh(); }); }
 
@@ -133,6 +140,7 @@ public final class WarningEndpoint implements Closeable {
     }
     private Bundle handle(int code,int uid,String packageName,Bundle q) {
         if(closed)return WarningWire.status("CLOSED");
+        if(audio!=null)audio.legacyReceiverActive(legacyClients.legacyActive(clock.getAsLong()));
         if(code==WarningWire.REGISTER)return register(uid,packageName,q);
         Registration r=registration(uid,q);
         r.touched=clock.getAsLong();
@@ -162,6 +170,7 @@ public final class WarningEndpoint implements Closeable {
                         audio.claim(uid,r.client,mode,ready,clock.getAsLong()):
                         audio.renew(uid,r.client,WarningWire.text(q,"owner_token"),WarningWire.number(q,"owner_epoch"),mode,ready,clock.getAsLong());
                 result=WarningWire.status(claim.code.name());
+                if(claim.lease!=null)result.putString("owner_package",claim.lease.packageName);
                 if(ownLease(r,claim.lease))result.putBundle("lease",lease(claim.lease));
                 break;
             case WarningWire.BEGIN_ATTEMPT:
@@ -176,7 +185,10 @@ public final class WarningEndpoint implements Closeable {
                 else grant=audio.begin(uid,r.client,WarningWire.text(q,"owner_token"),WarningWire.number(q,"owner_epoch"),
                         WarningWire.text(q,"warning_id"),phase,WarningWire.number(q,"announcement_index"),WarningWire.number(q,"revision"),WarningWire.text(q,"attempt_nonce"),clock.getAsLong());
                 result=WarningWire.status(grant.code.name());
-                if(grant.grant!=null)result.putBundle("grant",WarningWire.grant(grant.grant));
+                if(grant.grant!=null && grant.grant.ownerUid==uid && grant.grant.consumerNonce.equals(r.client.consumerNonce)
+                        && grant.grant.attemptNonce.equals(WarningWire.text(q,"attempt_nonce"))
+                        && grant.grant.ownerToken.equals(WarningWire.text(q,"owner_token"))
+                        && grant.grant.ownerEpoch==WarningWire.number(q,"owner_epoch"))result.putBundle("grant",WarningWire.grant(grant.grant));
                 if(grant.announcement!=null) { result.putBundle("authority",WarningCodec.encode(grant.announcement.authority));result.putBundle("payload",WarningCodec.encode(grant.announcement.payload)); }
                 break;
             case WarningWire.OUTCOME:
@@ -333,8 +345,10 @@ public final class WarningEndpoint implements Closeable {
     private void refresh() {
         HashSet<String> packages=new HashSet<>();for(Registration r:registrations.values())if(r.confirmed)packages.add(r.client.packageName);
         capable=Collections.unmodifiableSet(packages);
-        if(audio==null) { exclusive=true;return; }
+        if(audio==null) { exclusive=true;audioStatus="STORAGE_FAILED";return; }
+        audio.legacyReceiverActive(legacyClients.legacyActive(clock.getAsLong()));
         WarningAudioOwner.Snapshot snapshot=audio.snapshot(clock.getAsLong());exclusive=snapshot.exclusive;
+        audioStatus=snapshot.code==WarningAudioOwner.Code.STORAGE_FAILED||snapshot.code==WarningAudioOwner.Code.AUDIO_UNCERTAIN?snapshot.code.name():captureFault?"OVERFLOW":!profile.complete?"COVERAGE_INCOMPLETE":snapshot.owner!=null&&snapshot.owner.ready&&snapshot.owner.mode==WarningAudioOwner.Mode.SILENT?"USER_MUTED":snapshot.owner!=null&&snapshot.owner.ready?"BUSY:"+snapshot.owner.packageName:snapshot.code.name();
         if(lastOwner!=null && (snapshot.owner==null || lastOwner.epoch!=snapshot.owner.epoch || !snapshot.owner.ready)) {
             for(Registration r:registrations.values())if(ownLease(r,lastOwner) && !r.slot.busy) {
                 Bundle b=base(r);b.putLong("owner_epoch",lastOwner.epoch);send(r,WarningWire.OWNER_REVOKED,b,null);

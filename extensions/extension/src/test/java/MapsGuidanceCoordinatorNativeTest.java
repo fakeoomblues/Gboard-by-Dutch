@@ -1,5 +1,6 @@
 import static org.junit.Assert.*;
 import android.content.Context;
+import android.media.AudioManager;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,16 +43,55 @@ public class MapsGuidanceCoordinatorNativeTest {
         MapsGuidanceCoordinator.terminal(new bmth(first),a);assertSame(a,players().get(first));
         a.l();MapsGuidanceCoordinator.terminal(new bmth(first),a);assertFalse(players().containsKey(first));assertSame(b,players().get(second));assertEquals(0,first.neverPlayed);assertEquals(0,second.neverPlayed);
     }
+    @Test public void nativeFocusCannotStealTheOwnedWarningHold()throws Exception{
+        field(MapsGuidanceCoordinator.class,"holding").setBoolean(coordinator,true);
+        // Null would throw if the guarded native focus API were actually called.
+        assertEquals(AudioManager.AUDIOFOCUS_REQUEST_FAILED,MapsGuidanceCoordinator.requestNativeFocus(null,null));
+        assertTrue(field(MapsGuidanceCoordinator.class,"regenerate").getBoolean(coordinator));
+        assertEquals(0,field(MapsGuidanceCoordinator.class,"nativeFocusInFlight").getInt(null));
+    }
+    @Test public void originalFocusExceptionDoesNotLeaveAnInFlightHoldFence()throws Exception{
+        try{MapsGuidanceCoordinator.requestNativeFocus(null,null);fail("Original null manager");}catch(NullPointerException expected){}
+        assertEquals(0,field(MapsGuidanceCoordinator.class,"nativeFocusInFlight").getInt(null));
+    }
+    @Test public void deniedFocusCallbackReleasesPreparedPlayerAndCompletesNativeQueueOnce()throws Exception{
+        field(MapsGuidanceCoordinator.class,"holding").setBoolean(coordinator,true);bmtl job=new bmtl();bmsk player=new bmsk();job.player=player;
+        assertTrue(MapsGuidanceCoordinator.cancelPreparedCallback(new bmtf(new bmtg(job),player,0)));
+        assertEquals(0,player.plays);assertEquals(1,player.stops);assertEquals(1,player.releases);assertEquals(1,job.neverPlayed);assertTrue(job.releasedWhenCompleted);
+        assertEquals(java.util.Arrays.asList("stop","release","native_complete"),player.lifecycle);
+        assertFalse(MapsGuidanceCoordinator.cancelPreparedCallback(new bmtf(new Object(),new Object(),4)));
+    }
+    @Test public void routeRegenerationUsesGuardedBaseFieldsDespiteObfuscatedSubclassShadowing()throws Exception{
+        anys owner=new anys();bmia base=owner;base.o=new ybc();base.e=new blot();base.c=new RouteController();
+        field(MapsGuidanceCoordinator.class,"route").set(null,new java.lang.ref.WeakReference<>(owner));
+        java.lang.reflect.Method regenerate=MapsGuidanceCoordinator.class.getDeclaredMethod("regenerateCurrent");regenerate.setAccessible(true);regenerate.invoke(coordinator);
+        assertSame(base.o,base.lastPull);assertTrue(owner.o);assertFalse(field(MapsGuidanceCoordinator.class,"fault").getBoolean(coordinator));
+    }
 }
 interface bmua{}
 interface bmuc{void d(bmua callback);void l();}
 final class bmsk implements bmuc {
-    Object a=new Object();int plays,stops;boolean fail;bmua callback;
+    final java.util.List<String> lifecycle=new java.util.ArrayList<>();
+    final PreparedMedia resource=new PreparedMedia(lifecycle);Object a=resource;int plays,stops,releases;boolean fail;bmua callback;
     public void d(bmua callback){plays++;this.callback=callback;if(fail)throw new IllegalStateException("native failure");}
-    public void l(){stops++;a=null;}
+    public void l(){if(a!=null){resource.stop();stops++;resource.release();releases++;a=null;}}
+}
+final class PreparedMedia {
+    final java.util.List<String> lifecycle;boolean stopped,released;
+    PreparedMedia(java.util.List<String> lifecycle){this.lifecycle=lifecycle;}
+    void stop(){stopped=true;lifecycle.add("stop");}
+    void release(){if(!stopped)throw new IllegalStateException("release before stop");released=true;lifecycle.add("release");}
 }
 final class bmtl {
     final AtomicBoolean s=new AtomicBoolean();int neverPlayed;boolean releasedWhenCompleted;bmsk player;
-    public void e(bmuc ignored){neverPlayed++;releasedWhenCompleted=player==null||player.a==null;}
+    public void e(bmuc ignored){neverPlayed++;releasedWhenCompleted=player==null||player.a==null&&player.resource.released;if(player!=null)player.lifecycle.add("native_complete");}
 }
 final class bmth {final bmtl a;bmth(bmtl job){a=job;}}
+final class bmtg {final bmtl a;bmtg(bmtl job){a=job;}}
+final class bmtf {final Object b,a;final int $cid;bmtf(Object parent,Object player,int selector){b=parent;a=player;$cid=selector;}}
+class bmia {ybc o;blot e;bmhh c;ybc lastPull;public void u(ybc step){lastPull=step;}}
+final class anys extends bmia {final boolean o=true;}
+final class ybc{}
+final class blot{}
+interface bmhh {boolean bv();}
+final class RouteController implements bmhh {public boolean bv(){return true;}}

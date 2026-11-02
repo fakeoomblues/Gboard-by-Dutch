@@ -30,6 +30,39 @@ These are real original manager operations with synthetic prompts. They do not p
 
 Static continuation anchors: `bmtf.b` selector 0 dispatches through `bmuc.d(job.w)` after asynchronous readiness/focus work without checking `job.s`; `bmsh`/`bmsg` handle chained media separately. Fresh guidance can originate through `bmia.u(current ybc)` → `bmvg.d(current blot,null)` → native PULL_GUIDANCE, but that path needs a real current route model. No saved turn text is a valid substitute.
 
+### Production Maps adapter observations
+
+The first production candidate applies **Waze alerts** and its dependencies to the pinned Maps original. Its APK SHA-256 is `a0ada4f3201ab919f076d9922fcd626e8357452b0b438322ee4f233b7d99bbce`. Same-signer instrumentation invokes the actual candidate's `MapsGuidanceCoordinator`, original application DI manager and original native players. Candidate signing preserves its non-signing ZIP payloads; installed target/probe hashes and the target UID are checked. This is a selected-patch candidate, not a full default/optional-profile or car acceptance result.
+
+Five cases passed in `.analysis/native-warning-bindings/maps-production-runtime/result.json`:
+
+| Case | Actual observation |
+| --- | --- |
+| Unheld synthetic native job | One real media start, stop/release and original FINISHED_AUDIO/LOCAL terminal |
+| Idle production guidance hold | QUIESCENT callback from the production coordinator |
+| Native job arriving during the hold | Final production dispatch fence; zero media starts, one stop/release, cancellation flag set, one native NEVER_PLAYED/LOCAL terminal, manager subsequently idle |
+| Prepared original `bmsh` automatic chain arriving during the hold | Both original child media released, zero starts and one native NEVER_PLAYED terminal |
+| P0 while a synthetic job plays and no current native route exists | GUIDANCE_BUSY; active media retained, with no preemption invented from missing route state |
+
+The fence's `bmtl.e` → `bmrc.q` completion path returns **NEVER_PLAYED**, while original pending-manager cancellation returns CANCELLED_NEVER_PLAYED. The original failure was retained as an inconclusive run before correcting the test expectation. Two additional exact original-body guards now cover these completion operations. A callback alone does not remove a composite from the coordinator's tracking: every supported leaf must be released first.
+
+The actual production `MapsWarningSpeaker` also completed a private synthetic voice fixture in `.analysis/native-warning-bindings/maps-production-speech/result.json`. A real `WarningAudioOwner` journal/client/grant and `AtomicPlaybackStore` run inside the target UID; the grant was loaded back from disk before calling the speaker. Actual Google TTS selected the offline `en-in-x-cxx-local` voice for the fixture's `en` text. One engine onStart and one onDone were forwarded to the production listener with zero forwarding failures. STARTED and COMPLETED were accepted by the source owner, and its ledger cleared after positive completion.
+
+The ready-idle source ANNOUNCE → production speaker start interval was **279 ms in this single sample**, including grant persistence. This is not a p95 measurement. The observer captured only this owned synthetic utterance's engine PCM: 149,044 bytes of nonempty 24 kHz mono 16-bit audio, exported as a 3.105-second WAV with SHA-256 `66cc35f4e71f12ca3e49e3b31c11def2d1da95e01d0172181222d135b7314ebc`. The fixture says “Test warning. Person on road. End of test.” No microphone or other application audio was captured.
+
+This private source fixture is **not FM detection or a cross-UID FM → Maps acceptance test**. The forwarded engine callbacks and nonzero PCM establish synthesis/lifecycle, not acoustic output, automatic semantic transcription, car routing or interruption of real navigation guidance. The original current-route regeneration path, active/chained preemption, mute/focus cases and physical phone/car acceptance remain open. The source's complete-coverage flag remains false.
+
+The supported-combination candidate `c4ba6b5b9230939abce392f8e866536b70ef4a92a0f0da6fe70f86d590fc1045` additionally applies **Bypass Play Services checks** (including re-signed map-data restoration) and **Native navigation for Gearslip and Android Auto**. The production-only probe contains no alert, owner or speaker class definitions; these implementations therefore load from the candidate rather than duplicate instrumentation classes. Its separate ready-idle Voice and Tone cases passed, including verified native full-mute capping and a deliberately injected local binding failure retaining the requested mode with readiness false.
+
+The Tone case created no TTS instance. Its actual static AudioTrack head advanced to 1,999 frames at the start observation, reached all 22,491 submitted frames, and was released to STATE_UNINITIALIZED before positive completion. The durable owner accepted STARTED/COMPLETED and cleared its grant. ANNOUNCE → start was **61 ms for this single sample**, not a percentile. The PCM is the existing three-note alert melody; native head/drain observations establish the track lifecycle, not physical-car output.
+
+Two additional cases exposed real defects; their instrumentation is retained as **inconclusive**, not accepted rollout evidence:
+
+- A native job arriving after owned warning speech began was prevented from starting media, but its earlier native focus request still interrupted the warning. The new guarded focus wrapper refuses that native request during the hold and waits for previously in-flight native focus calls before acknowledging quiescence. An earlier prepared-callback fence also releases media on the native NEVER_PLAY branch.
+- With map-data restoration present, Maps created a real active route and the controlled active native job cancelled cleanly. Regeneration failed because the concrete mobile header subclass `anys` shadows base `bmia.o` with a boolean. Route lookup now uses the guarded base declaration and exact field types, and also requires native navigation-active state. The route probe now applies the same qualified lookup; a subclass boolean cannot stand in for a current `ybc` step.
+
+Both fixes require a refreshed candidate and successful reruns before the corresponding gates close. Applying the car patch establishes its presence in that APK, not acceptance on an actual head unit.
+
 ## Vela: original race and selective private candidate
 
 The original probe constructs a disposable native `wy4(Context)`, calls original system-engine initialization and original `j(text,false,false)`, and observes real system TTS callbacks. All phrases are clearly synthetic. The emulator default engine is Google TTS with usable English voice data; neural voices are not covered.

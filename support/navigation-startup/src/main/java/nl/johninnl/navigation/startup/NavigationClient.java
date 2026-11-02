@@ -136,6 +136,7 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
             Parcel input = Parcel.obtain(), output = Parcel.obtain();
             try {
                 input.writeInterfaceToken(StartupProtocol.DESCRIPTOR);
+                if(capabilities!=null)input.writeInt(1);
                 if (!service.transact(StartupProtocol.STATUS, input, output, 0)) failure = "incompatible";
                 else {
                     output.readException(); response = output.readBundle(PendingIntent.class.getClassLoader());

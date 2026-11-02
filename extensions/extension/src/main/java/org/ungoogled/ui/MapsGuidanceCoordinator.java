@@ -1,6 +1,8 @@
 package org.ungoogled.ui;
 
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.AudioFocusRequest;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -23,6 +25,7 @@ public final class MapsGuidanceCoordinator {
     private static final Map<Object,Object> PLAYERS=new IdentityHashMap<>();
     private static WeakReference<Object> route=new WeakReference<>(null);
     private static MapsGuidanceCoordinator current;
+    private static int nativeFocusInFlight;
     private final Handler main=new Handler(Looper.getMainLooper());
     private final Context app;
     private Object manager;
@@ -49,23 +52,26 @@ public final class MapsGuidanceCoordinator {
     public boolean isReady(){return hooksInstalled()&&bound&&!fault;}
     public WarningAudioOwner.Mode effectiveMode(WarningAudioOwner.Mode requested) {
         if(requested==WarningAudioOwner.Mode.SILENT)return requested;
-        if(!isReady())return WarningAudioOwner.Mode.SILENT;
+        if(!isReady())return requested;
         try {
             Object mute=field(manager.getClass(),"f").get(manager);
             Object value=method(mute.getClass(),"c").invoke(mute);
             String nativeMode=((Enum<?>)value).name();
-            if(nativeMode.equals("MUTED"))return WarningAudioOwner.Mode.SILENT;
-            // MINIMAL tone routing has not been proven; do not promote it to semantic Voice.
-            if(nativeMode.equals("MINIMAL"))return requested==WarningAudioOwner.Mode.VOICE?WarningAudioOwner.Mode.TONE:requested;
-            return requested;
-        }catch(ReflectiveOperationException | RuntimeException error){fault=true;return WarningAudioOwner.Mode.SILENT;}
+            WarningAudioOwner.Mode capped=capNativeMode(requested,nativeMode);
+            if(capped==null){fault=true;return requested;}return capped;
+        }catch(ReflectiveOperationException | RuntimeException error){fault=true;return requested;}
+    }
+    static WarningAudioOwner.Mode capNativeMode(WarningAudioOwner.Mode requested,String verifiedNativeMode) {
+        if("MUTED".equals(verifiedNativeMode))return WarningAudioOwner.Mode.SILENT;
+        if("MINIMAL".equals(verifiedNativeMode))return requested==WarningAudioOwner.Mode.VOICE?WarningAudioOwner.Mode.TONE:requested;
+        return "UNMUTED".equals(verifiedNativeMode)?requested:null;
     }
     public void acquire(String token,WarningEvent.Priority priority,long deadline,Ready callback) {
         main.post(()->acquireMain(token,priority,deadline,callback));
     }
     private void acquireMain(String token,WarningEvent.Priority priority,long deadline,Ready callback) {
         if(!isReady() || holding || SystemClock.elapsedRealtime()>=deadline){callback.complete(false,"GUIDANCE_UNAVAILABLE");return;}
-        holding=true;holdToken=token;regenerate=false;long version=++generation;
+        synchronized(LOCK){holding=true;}holdToken=token;regenerate=false;long version=++generation;
         try {
             Executor serial=(Executor)field(manager.getClass(),"j").get(manager);
             serial.execute(()-> {
@@ -95,6 +101,7 @@ public final class MapsGuidanceCoordinator {
         if(version!=generation || !holding)return;
         boolean quiet=true;
         synchronized(LOCK) {
+            if(nativeFocusInFlight!=0)quiet=false;
             for(Object player:PLAYERS.values())try { if(!released(player,0))quiet=false; }
             catch(ReflectiveOperationException | RuntimeException error){fault=true;abandon(version,callback,"GUIDANCE_PLAYER_UNSUPPORTED");return;}
         }
@@ -108,22 +115,66 @@ public final class MapsGuidanceCoordinator {
     public void release(String token){main.post(()->releaseMain(token));}
     private void releaseMain(String token) {
         if(!holding || token==null || !token.equals(holdToken))return;
-        holding=false;holdToken=null;generation++;
+        synchronized(LOCK){holding=false;}holdToken=null;generation++;
         boolean restore=regenerate;regenerate=false;
         if(restore)regenerateCurrent();
     }
-    private boolean canRegenerate(){synchronized(LOCK){Object owner=route.get();if(owner==null)return false;try{return field(owner.getClass(),"o").get(owner)!=null&&field(owner.getClass(),"e").get(owner)!=null;}catch(ReflectiveOperationException error){return false;}}}
+    private boolean canRegenerate(){synchronized(LOCK){Object owner=route.get();if(owner==null)return false;try{return routeField(owner,"o").get(owner)!=null&&routeField(owner,"e").get(owner)!=null&&navigationActive(owner);}catch(ReflectiveOperationException | RuntimeException error){return false;}}}
     /** Read current route and step at release. No captured turn text or stale ybc is replayed. */
     private void regenerateCurrent() {
         Object owner;synchronized(LOCK){owner=route.get();}if(owner==null)return;
         try {
-            Object step=field(owner.getClass(),"o").get(owner),model=field(owner.getClass(),"e").get(owner);
-            if(step!=null && model!=null)method(owner.getClass(),"u",Class.forName("ybc",false,app.getClassLoader())).invoke(owner,step);
+            Object step=routeField(owner,"o").get(owner),model=routeField(owner,"e").get(owner);
+            if(step!=null && model!=null && navigationActive(owner))method(routeBase(owner),"u",Class.forName("ybc",false,app.getClassLoader())).invoke(owner,step);
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }
     public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;}});}
     public static void captureRoute(Object owner){synchronized(LOCK){route=new WeakReference<>(owner);}}
     public static void routeEnded(Object owner){synchronized(LOCK){if(route.get()==owner)route.clear();}}
+    private static Class<?> routeBase(Object owner)throws ClassNotFoundException {
+        Class<?> base=Class.forName("bmia",false,owner.getClass().getClassLoader());
+        if(!base.isInstance(owner))throw new IllegalArgumentException("ROUTE_OWNER");return base;
+    }
+    /** Obfuscated subclasses reuse member names; use the guarded base declaration, not a name walk. */
+    private static Field routeField(Object owner,String name)throws ReflectiveOperationException {
+        Field value=routeBase(owner).getDeclaredField(name);value.setAccessible(true);
+        String expected="o".equals(name)?"ybc":"e".equals(name)?"blot":"bmhh";
+        if(!value.getType().getName().equals(expected))throw new NoSuchFieldException("ROUTE_FIELD_TYPE");return value;
+    }
+    private static boolean navigationActive(Object owner)throws ReflectiveOperationException {
+        Object controller=routeField(owner,"c").get(owner);return controller!=null&&(Boolean)method(controller.getClass(),"bv").invoke(controller);
+    }
+
+    /** Intercept only the native Maps navigation manager's focus call, never another app or stream. */
+    public static int requestNativeFocus(AudioManager audio,AudioFocusRequest request) {
+        synchronized(LOCK) {
+            if(current!=null && current.holding){current.regenerate=true;return AudioManager.AUDIOFOCUS_REQUEST_FAILED;}
+            nativeFocusInFlight++;
+        }
+        // No Binder call is made while holding LOCK. Acquiring a hold waits for earlier calls to return.
+        try{return audio.requestAudioFocus(request);}
+        finally{synchronized(LOCK){nativeFocusInFlight--;}}
+    }
+    /** Focus-denied callbacks take an earlier native return than bmuc.d; release their prepared media too. */
+    public static boolean cancelPreparedCallback(Object callback) {
+        MapsGuidanceCoordinator coordinator;synchronized(LOCK){coordinator=current;}
+        if(coordinator==null || !coordinator.holding)return false;
+        try {
+            if(field(callback.getClass(),"$cid").getInt(callback)!=0)return false;
+            Object parent=field(callback.getClass(),"b").get(callback),job=field(parent.getClass(),"a").get(parent),player=field(callback.getClass(),"a").get(callback);
+            reject(coordinator,job,player);return true;
+        }catch(InvocationTargetException error){Throwable cause=error.getCause();if(cause instanceof RuntimeException)throw (RuntimeException)cause;if(cause instanceof Error)throw (Error)cause;throw new IllegalStateException(cause);}
+        catch(ReflectiveOperationException error){coordinator.fault=true;throw new IllegalStateException("Maps prepared callback ABI",error);}
+    }
+    private static void reject(MapsGuidanceCoordinator coordinator,Object job,Object player)throws ReflectiveOperationException {
+        coordinator.regenerate=true;((AtomicBoolean)field(job.getClass(),"s").get(job)).set(true);
+        method(player.getClass(),"l").invoke(player);
+        method(job.getClass(),"e",Class.forName("bmuc",false,job.getClass().getClassLoader())).invoke(job,player);
+        synchronized(LOCK) {
+            try{if(released(player,0))PLAYERS.remove(job);}
+            catch(ReflectiveOperationException | RuntimeException error){coordinator.fault=true;}
+        }
+    }
 
     /** Exact final bmuc.d boundary after asynchronous focus/readiness. Native unheld behavior stays intact. */
     public static void dispatch(Object job,Object player,Object callback) {
@@ -135,17 +186,9 @@ public final class MapsGuidanceCoordinator {
         }
         try {
             if(coordinator!=null && coordinator.holding) {
-                coordinator.regenerate=true;
-                ((AtomicBoolean)field(job.getClass(),"s").get(job)).set(true);
                 // A not-yet-dispatched prepared player has no native completion listener installed.
                 // Release its resources, then use the original never-played queue completion path.
-                method(player.getClass(),"l").invoke(player);
-                method(job.getClass(),"e",Class.forName("bmuc",false,job.getClass().getClassLoader())).invoke(job,player);
-                synchronized(LOCK) {
-                    try { if(released(player,0))PLAYERS.remove(job); }
-                    catch(ReflectiveOperationException | RuntimeException error){coordinator.fault=true;}
-                }
-                return;
+                reject(coordinator,job,player);return;
             }
             method(player.getClass(),"d",Class.forName("bmua",false,player.getClass().getClassLoader())).invoke(player,callback);
         }catch(InvocationTargetException error) {

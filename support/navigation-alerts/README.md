@@ -1,6 +1,6 @@
 # Native warning protocol core
 
-This source set implements the event codec/journal, authenticated Binder transport and durable ownership core for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). FM, Maps and Vela compile these sources. Native capture and receiver display integrations exist; scheduling and complete native speech/phone/car acceptance remain pending. FM source coverage stays incomplete, so these changes do not enable exclusive warning playback.
+This source set implements the event codec/journal, authenticated Binder transport, receiving scheduler and durable ownership core for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). FM, Maps and Vela compile these sources. Native capture, receiver display, settings and speech integrations exist; complete native capture/speech/phone/car acceptance remains pending. FM source coverage stays incomplete, so these changes do not enable exclusive warning playback.
 
 ## Codec
 
@@ -38,7 +38,7 @@ Death/restart/lease expiry never proves output stopped. Pending grants fence fai
 
 `AtomicPlaybackStore` holds an exclusive writer lock for the provider actor lifetime and writes a checksummed, bounded binary file in provider-private no-backup storage. It syncs file content, atomically renames, then syncs the parent directory. Explicit descriptor closure is required for Android's non-owning `FileOutputStream(FileDescriptor)` wrapper. All file operations require the dedicated worker, never the native/main thread. Only opaque grant identities/hashes, boot identity and disposition/started state are stored; there is no warning ID, message, coordinate or replayable prompt. Boot identity comes from Android boot count, not wall-clock estimates.
 
-Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. Scheduler/native integration and user-facing recovery controls remain pending work.
+Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. User-facing parked recovery controls and full runtime acceptance remain pending work.
 
 ## Binder and startup integration
 

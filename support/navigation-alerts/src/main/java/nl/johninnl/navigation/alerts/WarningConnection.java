@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.os.Handler;
+import android.os.Looper;
 import java.io.Closeable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /** One bounded control worker per provider. Listener calls run on that worker, never the UI. */
-public final class WarningConnection implements Closeable {
+public final class WarningConnection implements Closeable,WarningScheduler.Transport {
     public interface Listener {
         void snapshot(Snapshot value);
         void events(List<WarningEvent> values);
@@ -56,9 +58,9 @@ public final class WarningConnection implements Closeable {
         Lease(Bundle b) { token=WarningWire.text(b,"owner_token");epoch=WarningWire.number(b,"owner_epoch");until=WarningWire.number(b,"until_elapsed_ms");mode=WarningAudioOwner.Mode.valueOf(WarningWire.text(b,"mode"));ready=WarningWire.flag(b,"ready"); }
     }
     public static final class Claim {
-        public final String status;
+        public final String status,ownerPackage;
         public final Lease lease;
-        Claim(Bundle b) { status=WarningWire.text(b,"status");Bundle value=b.getBundle("lease");lease=value==null?null:new Lease(value); }
+        Claim(Bundle b) { status=WarningWire.text(b,"status");ownerPackage=b.getString("owner_package","");Bundle value=b.getBundle("lease");lease=value==null?null:new Lease(value); }
     }
     public static final class Attempt {
         public final String status;
@@ -87,8 +89,9 @@ public final class WarningConnection implements Closeable {
     private final String nonce=PROCESS_NONCE;
     private volatile IBinder endpoint;
     private volatile int providerUid=-1;
-    private volatile String registration,session;
-    private volatile boolean closed,confirmed;
+    private volatile String registration,session,providerPackage;
+    private volatile boolean closed,confirmed,retiring,outputOutstanding,grantRequestPending;
+    private volatile Lease knownLease;
     private long cursor;
     private int acceptedCount;
     private boolean drainScheduled,resyncScheduled;
@@ -106,6 +109,7 @@ public final class WarningConnection implements Closeable {
     /** The returned barrier completes after callback authentication, snapshot validation and ACK. */
     public CompletableFuture<Boolean> open(String providerPackage,IBinder source) {
         if(endpoint!=null)throw new IllegalStateException("CONNECTION_ALREADY_OPEN");
+        this.providerPackage=providerPackage;
         endpoint=source;
         submit(()-> {
             if(source==null)throw new IllegalArgumentException("ENDPOINT_REQUIRED");
@@ -125,9 +129,11 @@ public final class WarningConnection implements Closeable {
         return established;
     }
     public String providerSession() { return session; }
+    public String identity() { return providerPackage; }
     public CompletableFuture<Boolean> ping() {
         return submit(()-> { Bundle reply=transact(WarningWire.PING,request());requireOk(reply);return session.equals(WarningWire.text(reply,"provider_session")); });
     }
+    public CompletableFuture<Boolean> resync(){return submit(()->{synchronized(incoming){resyncScheduled=true;}resynchronize();return true;});}
     private final Binder callback=new Binder() {
         { attachInterface(null,WarningWire.CALLBACK); }
         @Override protected boolean onTransact(int code,Parcel in,Parcel out,int flags) throws RemoteException {
@@ -149,8 +155,8 @@ public final class WarningConnection implements Closeable {
                 });
             }else {
                 authenticate(b);
-                if(code==WarningWire.EVENTS)accept(b,reply);
-                else if(code==WarningWire.STATE_INVALIDATED)scheduleResync();
+                if(code==WarningWire.EVENTS) { if(retiring){synchronized(incoming){reply.putLong("accepted_sequence",cursor);}}else accept(b,reply); }
+                else if(code==WarningWire.STATE_INVALIDATED) { if(!retiring)scheduleResync(); }
                 else if(code==WarningWire.OWNER_REVOKED) {
                     long epoch=WarningWire.number(b,"owner_epoch");submit(()-> { listener.ownerRevoked(epoch);return null; });
                 }else throw new IllegalArgumentException("CALLBACK_TRANSACTION");
@@ -249,19 +255,25 @@ public final class WarningConnection implements Closeable {
         return new Candidate(authority,payload);
     }
     public CompletableFuture<Claim> claim(WarningAudioOwner.Mode mode,boolean ready) {
-        return submit(()-> { Bundle q=request();q.putString("mode",mode.name());q.putBoolean("ready",ready);return new Claim(transact(WarningWire.CLAIM_AUDIO,q)); });
+        return submit(()-> { Bundle q=request();q.putString("mode",mode.name());q.putBoolean("ready",ready);Claim reply=new Claim(transact(WarningWire.CLAIM_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
     }
     public CompletableFuture<Claim> renew(Lease lease,WarningAudioOwner.Mode mode,boolean ready) {
-        return submit(()-> { Bundle q=owned(lease);q.putString("mode",mode.name());q.putBoolean("ready",ready);return new Claim(transact(WarningWire.RENEW_AUDIO,q)); });
+        return submit(()-> { Bundle q=owned(lease);q.putString("mode",mode.name());q.putBoolean("ready",ready);Claim reply=new Claim(transact(WarningWire.RENEW_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
     }
     public CompletableFuture<Attempt> begin(Lease lease,WarningEvent event,String attemptNonce) { return attempt(lease,event,attemptNonce,null); }
     public CompletableFuture<Attempt> decide(Lease lease,WarningEvent event,String attemptNonce,PlaybackGrant.Outcome decision) { return attempt(lease,event,attemptNonce,decision); }
     private CompletableFuture<Attempt> attempt(Lease lease,WarningEvent event,String attemptNonce,PlaybackGrant.Outcome decision) {
+        if(decision==null)grantRequestPending=true;
         return submit(()-> {
             Bundle q=owned(lease);q.putString("warning_id",event.warningId);q.putString("phase",event.phase.name().toLowerCase(java.util.Locale.ROOT));
             q.putLong("announcement_index",event.announcementIndex);q.putLong("revision",event.revision);q.putString("attempt_nonce",attemptNonce);
             if(decision!=null)q.putString("decision",decision.name());
             Attempt result=new Attempt(transact(WarningWire.BEGIN_ATTEMPT,q),SystemClock.elapsedRealtime());
+            if(decision==null) {
+                outputOutstanding="GRANTED".equals(result.status) || "TIMEOUT".equals(result.status) || "STORAGE_FAILED".equals(result.status)
+                        || result.grant!=null && result.grant.granted;
+                grantRequestPending=false;
+            }
             if(result.grant!=null && (result.grant.ownerUid!=android.os.Process.myUid() || !result.grant.consumerNonce.equals(nonce)
                     || !result.grant.attemptNonce.equals(attemptNonce) || !result.grant.ownerToken.equals(lease.token) || result.grant.ownerEpoch!=lease.epoch))
                 throw new SecurityException("GRANT_IDENTITY");
@@ -273,10 +285,16 @@ public final class WarningConnection implements Closeable {
         });
     }
     public CompletableFuture<String> outcome(PlaybackGrant grant,PlaybackGrant.Outcome outcome,boolean quiescent) {
-        return submit(()-> { Bundle q=request();q.putBundle("grant",WarningWire.grant(grant));q.putString("outcome",outcome.name());q.putBoolean("quiescent",quiescent);return WarningWire.text(transact(WarningWire.OUTCOME,q),"status"); });
+        return submit(()-> { Bundle q=request();q.putBundle("grant",WarningWire.grant(grant));q.putString("outcome",outcome.name());q.putBoolean("quiescent",quiescent);
+            String result=WarningWire.text(transact(WarningWire.OUTCOME,q),"status");
+            if("OK".equals(result) && quiescent && PlaybackGrant.terminal(outcome))outputOutstanding=false;return result; });
     }
     public CompletableFuture<String> release(Lease lease) {
-        return submit(()->WarningWire.text(transact(WarningWire.RELEASE,owned(lease)),"status"));
+        return submit(()-> {
+            String result=WarningWire.text(transact(WarningWire.RELEASE,lease==null?request():owned(lease)),"status");
+            if(retiring && "STALE_OWNER".equals(result))result=WarningWire.text(transact(WarningWire.RELEASE,request()),"status");
+            if("OK".equals(result)){knownLease=null;if(retiring)close();}return result;
+        });
     }
     private Bundle owned(Lease lease) { Bundle q=request();q.putString("owner_token",lease.token);q.putLong("owner_epoch",lease.epoch);return q; }
     private Bundle request() {
@@ -285,6 +303,7 @@ public final class WarningConnection implements Closeable {
     }
     private Bundle transact(int code,Bundle q) throws RemoteException {
         if(closed)throw new IllegalStateException("CLOSED");
+        if(retiring && code!=WarningWire.OUTCOME && code!=WarningWire.RELEASE)throw new IllegalStateException("RETIRED");
         Parcel in=Parcel.obtain(),out=Parcel.obtain();
         try {
             in.writeInterfaceToken(WarningWire.DESCRIPTOR);in.writeBundle(WarningWire.checked(q));
@@ -300,7 +319,7 @@ public final class WarningConnection implements Closeable {
         if(closed) { result.completeExceptionally(new IllegalStateException("CLOSED"));return result; }
         try { control.execute(()-> {
             try { if(closed)throw new IllegalStateException("CLOSED");result.complete(task.run()); }
-            catch(Exception error) { result.completeExceptionally(error);fail(error instanceof SecurityException?"NOT_AUTHORIZED":"CONNECTION_FAILED"); }
+            catch(Exception error) { result.completeExceptionally(error);if(!retiring)fail(error instanceof SecurityException?"NOT_AUTHORIZED":"CONNECTION_FAILED"); }
         }); }catch(RejectedExecutionException error) { result.completeExceptionally(error);fail("RECEIVER_OVERLOADED"); }
         return result;
     }
@@ -311,4 +330,12 @@ public final class WarningConnection implements Closeable {
         if(ownsWorker)control.shutdown();listener.disconnected(reason);
     }
     @Override public void close() { fail("CLOSED"); }
+    /** Keep only terminal/release IPC briefly available while local output is being cancelled. */
+    public void retire() {
+        if(closed || retiring)return;
+        if(!confirmed){close();return;}
+        retiring=true;listener.disconnected("RETIRED");
+        if(!outputOutstanding && !grantRequestPending)release(knownLease).whenComplete((result,error)->close());
+        new Handler(Looper.getMainLooper()).postDelayed(this::close,40000);
+    }
 }

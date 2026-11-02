@@ -23,12 +23,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import nl.johninnl.navigation.alerts.WarningScheduler;
+import nl.johninnl.navigation.alerts.WarningPreferences;
+import nl.johninnl.navigation.alerts.WarningPassage;
+import nl.johninnl.navigation.alerts.WarningEvent;
+import nl.johninnl.navigation.alerts.PlaybackGrant;
+import nl.johninnl.navigation.alerts.WarningAudioOwner;
+import nl.johninnl.navigation.alerts.WarningStatus;
 
 /** Local navigation observations shared with De-Waze and Flitsmeister, serialized on the UI thread. */
 public final class ExternalTelemetry {
     private static nl.johninnl.navigation.startup.NavigationClient startup;
     private static nl.johninnl.navigation.alerts.WarningSession semantic;
     private static MapsWarningSpeaker nativeSpeaker;
+    private static WarningScheduler scheduler;
+    private static WarningPreferences warningPreferences;
+    private static boolean eventAudioManaged;
     private static final nl.johninnl.navigation.alerts.WarningView nativeWarnings=new nl.johninnl.navigation.alerts.WarningView();
     private static final Runnable SEMANTIC_RENDER=ExternalTelemetry::update;
     private static void semanticRender(){MAIN.removeCallbacks(SEMANTIC_RENDER);MAIN.post(SEMANTIC_RENDER);}
@@ -72,14 +82,32 @@ public final class ExternalTelemetry {
         app=context.getApplicationContext();
         String next=source(context);
         boolean changed=!next.equals(source);
-        if(changed){source=next;store=new TelemetryStore();store.select(source);publisherSession="";warnings.reset();nativeWarnings.clear();warning="";WazeAlerts.resetSource();}
+        if(changed){source=next;store=new TelemetryStore();store.select(source);publisherSession="";warnings.reset();nativeWarnings.clear();eventAudioManaged=false;if(semantic!=null)semantic.resetEventNegotiation();warning="";WazeAlerts.resetSource();}
         if(startup==null){
             nativeSpeaker=new MapsWarningSpeaker(app);
+            warningPreferences=new WarningPreferences(prefs(app),true);
+            final MapsWarningSpeaker speaker=nativeSpeaker;
+            scheduler=new WarningScheduler(new WarningScheduler.Policy(){
+                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||foreground.get()!=null);}
+                public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
+                public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
+                public boolean passed(WarningEvent event,long now){return WarningPassage.passed(event,fix,now);}
+            },new WarningScheduler.Speaker(){
+                public void prepare(String language){speaker.prepare(language);}
+                public void prepare(String language,WarningAudioOwner.Mode mode){speaker.prepare(language,mode);}
+                public boolean ready(String language,WarningAudioOwner.Mode mode){return speaker.isReady(language,mode);}
+                public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return speaker.effectiveMode(mode);}
+                public boolean speak(WarningEvent event,PlaybackGrant grant,long deadline,WarningScheduler.Callback callback){return speaker.speak(event,grant,deadline,new MapsWarningSpeaker.Listener(){public void started(PlaybackGrant value){callback.started(value);}public void finished(PlaybackGrant value,PlaybackGrant.Outcome outcome,boolean quiet){callback.finished(value,outcome,quiet);}});}
+                public void cancel(PlaybackGrant grant){speaker.cancel(grant);}
+            },new WarningScheduler.Observer(){
+                public void changed(String value){if(value.equals("READY")||value.equals("USER_MUTED")||value.equals("STARTED"))eventAudioManaged=true;semanticRender();}
+                public void outcome(WarningEvent event,PlaybackGrant.Outcome value){}
+            });
             semantic=new nl.johninnl.navigation.alerts.WarningSession(app,new nl.johninnl.navigation.alerts.WarningConnection.Listener(){
-                public void snapshot(nl.johninnl.navigation.alerts.WarningConnection.Snapshot value){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(current!=null&&current.consume(value.providerSession,()->nativeWarnings.snapshot(value)))semanticRender();}
-                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->nativeWarnings.events(values)))semanticRender();}
-                public void ownerRevoked(long epoch){}
-                public void disconnected(String reason){nativeWarnings.clear();semanticRender();}
+                public void snapshot(nl.johninnl.navigation.alerts.WarningConnection.Snapshot value){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(current!=null&&current.consume(value.providerSession,()->{nativeWarnings.snapshot(value);scheduler.connected(current.connection(),value);}))semanticRender();}
+                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->{nativeWarnings.events(values);scheduler.events(current.connection(),values);}))semanticRender();}
+                public void ownerRevoked(long epoch){scheduler.revoked(epoch);}
+                public void disconnected(String reason){nativeWarnings.clear();scheduler.disconnected();semanticRender();}
             });
             startup=new nl.johninnl.navigation.startup.NavigationClient(app,semantic);
         }
@@ -143,6 +171,7 @@ public final class ExternalTelemetry {
         if(startup!=null)out+=" · "+startup.statusLabel(false);
         if(semantic!=null&&TelemetryStore.FLITSMEISTER.equals(source)&&"ready".equals(semantic.state()))
             out+=semantic.captureComplete()?" · warnings connected":" · warning coverage incomplete";
+        if(TelemetryStore.FLITSMEISTER.equals(source)&&warningPreferences!=null)out+=" · "+warningAudioStatus();
         if(v.external&&(v.currentKmh==null||v.limitKmh==null))out+=" · Maps where needed";
         if(v.zoneActive)out+="\n"+(v.averageKmh==null?"Observed partial average pending":String.format(Locale.getDefault(),"Observed partial average %.0f km/h",v.averageKmh))+String.format(Locale.getDefault()," · %s%.0f%% · %s remaining",v.progressEstimated?"≈":"",v.progressPercent,distance(v.remainingMeters,PowerSaving.miles()));
         else if(v.approachDistanceMeters!=null)out+="\nAverage-speed zone "+(v.approachEstimated?"≈":"")+distance(v.approachDistanceMeters,PowerSaving.miles())+" ahead";
@@ -168,9 +197,11 @@ public final class ExternalTelemetry {
         // A kind disabled for map pins is disabled for warnings too.
         RoadWarningEngine.Warning ahead=warnings.update(filteredView(v),position,SystemClock.elapsedRealtime());
         warning=ahead==null?"":(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" · "+warningLabel(ahead.kind);
-        nl.johninnl.navigation.alerts.WarningEvent nativeWarning=nativeWarnings.current(SystemClock.elapsedRealtime());
-        if(nativeWarning!=null&&nativeCategoryEnabled(nativeWarning))warning=nativeWarning.message;
-        if(ahead!=null&&WazeAlerts.CHIME&&(navigating||foreground.get()!=null)&&warnings.shouldSpeak(ahead,SystemClock.elapsedRealtime())){
+        nl.johninnl.navigation.alerts.WarningEvent nativeWarning=nativeWarnings.current(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        if(nativeWarning!=null)warning="Flitsmeister\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        if(semantic!=null&&semantic.advertisesEvents(source))eventAudioManaged=true;
+        boolean legacyAudio=!TelemetryStore.FLITSMEISTER.equals(source)||!eventAudioManaged;
+        if(ahead!=null&&legacyAudio&&WazeAlerts.CHIME&&(navigating||foreground.get()!=null)&&warnings.shouldSpeak(ahead,SystemClock.elapsedRealtime())){
             Chime.alert();if(app!=null)Toast.makeText(app,warningLabel(ahead.kind)+" "+(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" ahead",Toast.LENGTH_LONG).show();
         }
         if(navigating||foreground.get()!=null)SpeedAlerts.onTelemetry();
@@ -182,11 +213,9 @@ public final class ExternalTelemetry {
     private static TelemetryStore.View filteredView(TelemetryStore.View original){
         return original.withAlerts(alert->(WazeAlerts.KINDS&(1<<kind(alert.kind)))!=0,(WazeAlerts.KINDS&(1<<WazeAlerts.ZONE))!=0);
     }
-    private static boolean nativeCategoryEnabled(nl.johninnl.navigation.alerts.WarningEvent event){
-        int kind=event.category.equals("speed_control")?WazeAlerts.CAMERA:event.category.equals("traffic")?WazeAlerts.JAM:
-                event.category.equals("road_danger")?WazeAlerts.HAZARD:WazeAlerts.OTHER;
-        return (WazeAlerts.KINDS&(1<<kind))!=0;
-    }
+    static WarningPreferences warningPreferences(Context context){return warningPreferences!=null?warningPreferences:new WarningPreferences(prefs(context),true);}
+    static void warningChoicesChanged(){if(scheduler!=null)scheduler.refresh();update();}
+    static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return "Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker==null?requested:nativeSpeaker.effectiveMode(requested),"Google Maps",false)+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),false);}
     private static String warningLabel(String kind){switch(kind){case "average_speed_zone":return "Average-speed zone";case "mobile_camera":return "Mobile camera";case "camera":return "Speed camera";case "police":return "Police";case "closure":return "Road closure";case "jam":return "Traffic jam";case "flock":return "Flock camera";case "crash":return "Crash";default:return "Hazard";}}
     private static final Runnable TICK=new Runnable(){public void run(){if(!registered)return;update();MAIN.postDelayed(this,1000);}};
     static void resume(Activity activity){

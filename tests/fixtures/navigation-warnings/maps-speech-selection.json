@@ -1,18 +1,1 @@
-{
-  "methods": {
-    "Lbmia;": [
-      "<init>",
-      "u",
-      "v"
-    ],
-    "Lbmsh;": [
-      "d",
-      "l"
-    ],
-    "Lbmtu;": [
-      "d",
-      "l"
-    ]
-  },
-  "enums": []
-}
+{"methods": {"Lbmia;": ["<init>", "u", "v"], "Lbmsh;": ["d", "l"], "Lbmtu;": ["d", "l"], "Lbmtl;": ["e"], "Lbmrc;": ["q"], "Lbmrq;": ["g"]}, "enums": []}

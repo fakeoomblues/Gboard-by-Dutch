@@ -47,7 +47,8 @@
     ],
     "Lcz2;": [
       "a",
-      "b"
+      "b",
+      "e"
     ],
     "Ldz2;": [
       "invokeSuspend"
@@ -65,7 +66,67 @@
       "a"
     ],
     "Lnl/flitsmeister/fmcore/data/model/reports/SpeedCamType;": [
-      "isSpeedCamTypeMutedFromCategory"
+      "isSpeedCamTypeMutedFromCategory",
+      "<clinit>",
+      "getLocalizedTTS",
+      "getLocalizedName",
+      "shouldPrefixTTSWithSpeedcam"
+    ],
+    "Lvz2$c;": [
+      "invokeSuspend"
+    ],
+    "Ll71;": [
+      "c"
+    ],
+    "Lp71;": [
+      "c"
+    ],
+    "Lnl/flitsmeister/fmcore/data/model/reports/IncidentType;": [
+      "getTTSString",
+      "getLocalizedName"
+    ],
+    "Lnl/flitsmeister/fmcore/data/model/reports/ServiceVehicle;": [
+      "getShortDescription",
+      "reportTitleText",
+      "getType"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/reports/EarlyWarningReport;": [
+      "<init>",
+      "getShortDescription",
+      "getTitle",
+      "reportTitleText",
+      "getFreeText",
+      "getNotification"
+    ],
+    "Lnl/flitsmeister/earlywarning/model/EarlyWarningNotification;": [
+      "getNotificationTitle",
+      "getLocation",
+      "getFreetext"
+    ],
+    "Lnl/flitsmeister/fmcore/models/eventbuses/cits/CitsSpeedAdviceWrapper;": [
+      "getSpeedAdvice",
+      "getAdded"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsSpeedAdvice;": [
+      "getAdviceKph",
+      "getShortDescription",
+      "getTitle"
+    ],
+    "Lnl/flitsmeister/fmcore/data/model/reports/BaseReportType;": [
+      "getTypeString"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsLaneClosed;": [
+      "getLaneClosedType",
+      "getLaneIndex",
+      "getNumberOfLanesClosed",
+      "getLaneClosedTitle"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsRoadWorks;": [
+      "getReportType",
+      "getShortDescription"
+    ],
+    "Lnl/flitsmeister/fmcore/models/enums/LaneClosedType;": [
+      "<clinit>"
     ]
   },
   "enums": [
@@ -87,6 +148,9 @@
     "Lvz2;->K(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
     "Lvz2;->L(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
     "Lxl$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;",
-    "Lxl;->k(Landroid/content/Context;Lnl/flitsmeister/fmcore/models/data/earlywarnings/EarlyWarning;Z)V"
+    "Lxl;->k(Landroid/content/Context;Lnl/flitsmeister/fmcore/models/data/earlywarnings/EarlyWarning;Z)V",
+    "Lcz2;->b(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+    "Lcz2;->e(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+    "Lvz2$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;"
   ]
 }

@@ -148,7 +148,7 @@ public final class CarUi {
             String warning = TelemetryRuntime.compactWarningText();
             float radius = Math.max(22f, Math.min(46f,
                     Math.min(((Number)field(renderer,"h")).intValue(), ((Number)field(renderer,"i")).intValue()) / 18f));
-            Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), view.zoneActive, !warning.isEmpty());
+            Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), view.zoneActive, warning.isEmpty()?0:Math.min(4,warning.split("\n").length));
             if (layout == null) return true;
             renderCompact(canvas, layout, current, limit, view, warning, imperial, dark,
                     (Paint)field(renderer,"l0"), (Paint)field(renderer,"m0"), (Paint)field(renderer,"p0"),
@@ -161,22 +161,26 @@ public final class CarUi {
     static final class Layout {
         final RectF bounds, pair, bar;
         final float scale, rowTop;
-        Layout(RectF bounds, float scale, boolean zone, boolean warning) {
+        Layout(RectF bounds, float scale, boolean zone, int warningLines) {
             this.bounds = bounds; this.scale = scale;
-            rowTop = bounds.top + (warning ? 22f * scale : 0f);
+            rowTop = bounds.top + warningLines * 22f * scale;
             pair = new RectF(bounds.left, rowTop, bounds.right, rowTop + 68f * scale);
             bar = zone ? new RectF(pair.left, rowTop + 97f * scale, pair.right, rowTop + 101f * scale) : null;
         }
     }
     static Layout compactLayout(Rect safe, float requestedScale, boolean zone, boolean warning) {
-        float height = (zone ? 128f : 68f) + (warning ? 22f : 0f);
+        return compactLayout(safe,requestedScale,zone,warning?1:0);
+    }
+    static Layout compactLayout(Rect safe, float requestedScale, boolean zone, int warningLines) {
+        warningLines=Math.max(0,Math.min(4,warningLines));
+        float height = (zone ? 128f : 68f) + warningLines * 22f;
         float scale = Math.min(1f, requestedScale);
         scale = Math.min(scale, Math.min((safe.width()-16f)/156f, (safe.height()-16f)/height));
         if (scale < .5f) return null;
         float margin = 8f;
         RectF bounds = new RectF(safe.right-margin-156f*scale, safe.bottom-margin-height*scale,
                 safe.right-margin, safe.bottom-margin);
-        return new Layout(bounds, scale, zone, warning);
+        return new Layout(bounds, scale, zone, warningLines);
     }
 
     static void renderCompact(Canvas canvas, Layout layout, String current, Double limitKmh,
@@ -212,7 +216,8 @@ public final class CarUi {
             canvas.drawText(max,limitX,top+46f*k,limit);
             if(!warning.isEmpty()) {
                 unit.setTextAlign(Paint.Align.LEFT); unit.setTextSize(18f*k);
-                canvas.drawText(ellipsize(warning,unit,layout.bounds.width()),left,layout.bounds.top+17f*k,unit);
+                String[] lines=warning.split("\n",4);
+                for(int i=0;i<lines.length;i++)canvas.drawText(ellipsize(lines[i],unit,layout.bounds.width()),left,layout.bounds.top+(17f+22f*i)*k,unit);
             }
             if(view.zoneActive) {
                 unit.setTextAlign(Paint.Align.LEFT); unit.setTextSize(20f*k);

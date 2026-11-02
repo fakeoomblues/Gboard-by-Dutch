@@ -1,5 +1,6 @@
 package nl.johninnl.vela;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.AudioAttributes;
@@ -17,6 +18,8 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +30,7 @@ import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.WarningEvent;
 
 /** Uses the selected, initialized native system engine and its ORIGINAL listener/focus owner.
- * Neural speech remains unavailable until its output/drain hooks are implemented.
+ * Neural jobs retain the selected native model/executor and own only their external output track.
  * Untagged route guidance keeps its native listener path. No text or coordinates enter IDs/logs.
  */
 public final class VelaWarningSpeaker {
@@ -38,11 +41,16 @@ public final class VelaWarningSpeaker {
     private static final Object LOCK = new Object();
     private static final Map<Object, WeakReference<VelaWarningSpeaker>> GUIDES = new WeakHashMap<>();
     private static final Map<Object, Attempt> CLOSURES = new WeakHashMap<>();
+    private static final Map<Object, NativeClosure> NATIVE_CLOSURES = new WeakHashMap<>();
     private static final Map<String, Attempt> UTTERANCES = new HashMap<>();
     private static final ThreadLocal<Attempt> SCOPE = new ThreadLocal<>();
     private final Handler callbacks = new Handler(Looper.getMainLooper());
-    private final ExecutorService tones=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"VelaWarningTone");t.setDaemon(true);return t;});
+    private final ExecutorService tones;
+    public VelaWarningSpeaker(){this(Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"VelaWarningOutput");t.setDaemon(true);return t;}));}
+    VelaWarningSpeaker(ExecutorService output){if(output==null)throw new IllegalArgumentException("Output executor");tones=output;}
     private Object guide;
+    private WeakReference<Object> session=new WeakReference<>(null);
+    private boolean regenerateRequested;
     private Attempt active;
     private final Map<String,Long> used = new HashMap<>();
     private long generation;
@@ -53,23 +61,90 @@ public final class VelaWarningSpeaker {
         synchronized (LOCK) {
             if (guide == actualGuide && !closed) return;
             close();
-            guide = actualGuide; closed = false; generation++;
+            guide = actualGuide; session=new WeakReference<>(null);regenerateRequested=false; closed = false; generation++;
             if (guide != null) GUIDES.put(guide, new WeakReference<>(this));
+        }
+    }
+    public void bindSession(Object actualSession) {
+        synchronized(LOCK) {
+            try { if(actualSession==null || read(actualSession,"b")==guide)session=new WeakReference<>(actualSession); }
+            catch(ReflectiveOperationException failure){session=new WeakReference<>(null);}
+        }
+    }
+    /** Only the native location update invokes this hook. Regenerate through its CURRENT route
+     * projection and prompt bands, preserving every other immutable navigation-state field.
+     */
+    public static Object regenerateInput(Object route,Object state) {
+        synchronized(LOCK) {
+            for(WeakReference<VelaWarningSpeaker> ref:GUIDES.values()) {
+                VelaWarningSpeaker owner=ref.get();
+                if(owner==null || !owner.regenerateRequested || owner.active!=null || owner.closed)continue;
+                try {
+                    Object navSession=owner.session.get();if(navSession==null || flag(owner.guide,"n"))continue;
+                    Object flow=read(navSession,"f");Object snapshot=method(flow,"getValue").invoke(flow);
+                    if(read(snapshot,"d")!=route || !flag(snapshot,"a") || flag(snapshot,"b") || flag(snapshot,"c"))continue;
+                    if(flag(state,"e") || flag(state,"g"))continue;
+                    Constructor<?> copy=state.getClass().getDeclaredConstructor(int.class,double.class,double.class,double.class,
+                            boolean.class,int.class,boolean.class,Set.class,double.class,int.class,int.class,boolean.class,double.class,int.class);
+                    copy.setAccessible(true);
+                    Object regenerated=copy.newInstance(read(state,"a"),read(state,"b"),read(state,"c"),read(state,"d"),read(state,"e"),read(state,"f"),
+                            read(state,"g"),Collections.emptySet(),read(state,"i"),read(state,"j"),read(state,"k"),read(state,"l"),read(state,"m"),read(state,"n"));
+                    owner.regenerateRequested=false;return regenerated;
+                } catch(ReflectiveOperationException|RuntimeException failure) { return state; }
+            }
+            return state;
         }
     }
     /** Never initialize an unrelated/default engine or alter the application's language. */
     public void prepare(String language) { /* Readiness is polled against the real selected engine. */ }
     public boolean isReady(String language) {
-        synchronized (LOCK) {
-            try {
-                if (closed || guide == null || active != null || flag(guide, "m") || !flag(guide, "e")
-                        || !flag(guide, "h") || flag(guide, "i") || integer(guide, "s") != 0
-                        || !((Collection<?>) read(guide, "g")).isEmpty()) return false;
-                TextToSpeech engine = (TextToSpeech) read(guide, "b");
-                Locale locale = locale(language);
-                return engine != null && locale != null && !engine.isSpeaking()
-                        && engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE && installedVoice(engine,locale)!=null;
-            } catch (ReflectiveOperationException | RuntimeException failure) { return false; }
+        synchronized(LOCK) { return active==null && (systemReady(language,true)||neuralReady(language,true)); }
+    }
+    private boolean nativeIdle() throws ReflectiveOperationException {
+        if(integer(guide,"s")!=0 || !((Collection<?>)read(guide,"g")).isEmpty())return false;
+        TextToSpeech system=(TextToSpeech)read(guide,"b");if(system!=null && system.isSpeaking())return false;
+        Object backend=read(guide,"l");AudioTrack nativeTrack=backend==null?null:(AudioTrack)read(backend,"e");
+        return nativeTrack==null || nativeTrack.getPlayState()!=AudioTrack.PLAYSTATE_PLAYING;
+    }
+    private boolean canStopNative() {
+        try{return read(guide,"b")!=null || read(guide,"l")!=null;}catch(ReflectiveOperationException|RuntimeException failure){return false;}
+    }
+    private boolean stopNativeForWarning(Attempt attempt) throws ReflectiveOperationException {
+        boolean stopped=false;TextToSpeech system=(TextToSpeech)read(guide,"b");
+        if(system!=null){if(system.stop()!=TextToSpeech.SUCCESS)return false;stopped=true;}
+        Object backend=read(guide,"l");if(backend!=null){method(backend,"h").invoke(backend);stopped=true;}
+        return stopped;
+    }
+    private boolean systemReady(String language,boolean idle) {
+        try {
+            if(closed || guide==null || flag(guide,"m") || !flag(guide,"e") || !flag(guide,"h") || flag(guide,"i")
+                    || !((Collection<?>)read(guide,"g")).isEmpty())return false;
+            TextToSpeech engine=(TextToSpeech)read(guide,"b");Locale locale=locale(language);
+            return engine!=null && locale!=null && (!idle || nativeIdle())
+                    && engine.isLanguageAvailable(locale)>=TextToSpeech.LANG_AVAILABLE && installedVoice(engine,locale)!=null;
+        } catch(ReflectiveOperationException|RuntimeException failure){return false;}
+    }
+    private boolean neuralReady(String language,boolean idle) {
+        try {
+            if(closed || guide==null || !flag(guide,"m") || !flag(guide,"e") || !((Collection<?>)read(guide,"g")).isEmpty())return false;
+            Object backend=read(guide,"l");Locale wanted=locale(language);
+            if(backend==null || wanted==null || flag(backend,"f") || read(backend,"d")==null || !(read(backend,"c") instanceof ExecutorService))return false;
+            Object id=read(backend,"h");if(!(id instanceof String) || ((String)id).isEmpty())return false;
+            String nativeLanguage=(String)method(backend,"b").invoke(backend);
+            if(nativeLanguage==null || !wanted.getLanguage().equals(locale(nativeLanguage).getLanguage()))return false;
+            return !idle || nativeIdle();
+        } catch(ReflectiveOperationException|RuntimeException failure){return false;}
+    }
+    /** Urgent warnings may interrupt native system guidance, then wait for its real queue to drain.
+     * A bound native session is required so held guidance can regenerate from the next current fix.
+     */
+    public boolean canSpeak(WarningEvent event,WarningAudioOwner.Mode mode) {
+        synchronized(LOCK) {
+            if(event==null || active!=null || effectiveMode(mode)!=mode)return false;
+            if(isReady(event.languageTag,mode))return true;
+            return event.priority==WarningEvent.Priority.P0 && session.get()!=null && canStopNative()
+                    && (mode==WarningAudioOwner.Mode.TONE || mode==WarningAudioOwner.Mode.VOICE
+                    && (systemReady(event.languageTag,false)||neuralReady(event.languageTag,false)));
         }
     }
     /** Tones do not initialize or depend on either speech engine. */
@@ -77,8 +152,7 @@ public final class VelaWarningSpeaker {
         if(mode==WarningAudioOwner.Mode.SILENT)return true;
         if(mode==WarningAudioOwner.Mode.VOICE)return isReady(language);
         synchronized(LOCK) {
-            try { return !closed && guide!=null && active==null && integer(guide,"s")==0
-                    && ((Collection<?>)read(guide,"g")).isEmpty() && read(guide,"p")!=null
+            try { return !closed && guide!=null && active==null && nativeIdle() && read(guide,"p")!=null
                     && effectiveMode(mode)==mode; }
             catch(ReflectiveOperationException|RuntimeException failure){return false;}
         }
@@ -86,11 +160,11 @@ public final class VelaWarningSpeaker {
     public WarningAudioOwner.Mode effectiveMode(WarningAudioOwner.Mode requested) {
         synchronized (LOCK) {
             try {
-                if (guide == null || closed || requested == null) return WarningAudioOwner.Mode.SILENT;
+                if (requested == null || guide == null || closed) return requested;
                 if (!flag(guide, "n")) return requested;
                 return flag(guide, "o") && requested != WarningAudioOwner.Mode.SILENT
                         ? WarningAudioOwner.Mode.TONE : WarningAudioOwner.Mode.SILENT;
-            } catch (ReflectiveOperationException | RuntimeException failure) { return WarningAudioOwner.Mode.SILENT; }
+            } catch (ReflectiveOperationException | RuntimeException failure) { return requested; }
         }
     }
     public boolean speak(WarningEvent payload, PlaybackGrant grant, Listener listener) {
@@ -108,26 +182,43 @@ public final class VelaWarningSpeaker {
                     || used.containsKey(grant.attemptId) || used.size()>=128
                     || grant.mode == WarningAudioOwner.Mode.SILENT
                     || effectiveMode(grant.mode) != grant.mode
-                    || now>=originalAnnounceUntil || originalAnnounceUntil<=0 || !isReady(payload.languageTag,grant.mode)
+                    || now>=originalAnnounceUntil || originalAnnounceUntil<=0 || !canSpeak(payload,grant.mode)
                     || SCOPE.get() != null || UTTERANCES.size() >= 128) return false;
+            boolean interruptNative=!isReady(payload.languageTag,grant.mode);
             Attempt attempt = new Attempt(this, payload, grant, listener, generation,originalAnnounceUntil);
             used.put(grant.attemptId,Math.max(originalAnnounceUntil,now+30000));
-            active = attempt;
-            if(grant.mode==WarningAudioOwner.Mode.TONE)return submitTone(attempt);
-            UTTERANCES.put("vela-"+attempt.id,attempt); SCOPE.set(attempt);
-            try {
-                // Existing recorder/prompt callbacks, native language checks and focus acquisition survive.
-                method(guide, "j", String.class, boolean.class, boolean.class).invoke(guide, payload.message, false, false);
-                if (!attempt.captured) {
-                    finish(attempt, PlaybackGrant.Outcome.NOT_STARTED, true);
-                    return false;
-                }
-                return true; // Accepted is deliberately distinct from STARTED.
-            } catch (ReflectiveOperationException | RuntimeException failure) {
-                finish(attempt, attempt.submitted ? PlaybackGrant.Outcome.UNCERTAIN : PlaybackGrant.Outcome.FAILED,
-                        !attempt.submitted);
-                return attempt.submitted;
-            } finally { SCOPE.remove(); }
+            active = attempt;attempt.holding=true;
+            if(grant.mode!=WarningAudioOwner.Mode.TONE)UTTERANCES.put("vela-"+attempt.id,attempt);
+            if(interruptNative) {
+                attempt.heldNative=true;regenerateRequested=true;
+                try {
+                    if(!stopNativeForWarning(attempt)){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return false;}
+                    callbacks.post(()->awaitNative(attempt));return true;
+                } catch(ReflectiveOperationException|RuntimeException failure){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return false;}
+            }
+            return grant.mode==WarningAudioOwner.Mode.TONE?submitTone(attempt):submitSystem(attempt);
+        }
+    }
+    private boolean submitSystem(Attempt attempt) {
+        SCOPE.set(attempt);
+        try {
+            method(guide,"j",String.class,boolean.class,boolean.class).invoke(guide,attempt.event.message,false,false);
+            if(!attempt.captured){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return false;}
+            return true;
+        } catch(ReflectiveOperationException|RuntimeException failure) {
+            finish(attempt,attempt.submitted?PlaybackGrant.Outcome.UNCERTAIN:PlaybackGrant.Outcome.FAILED,!attempt.submitted);
+            return attempt.submitted;
+        } finally {SCOPE.remove();}
+    }
+    private void awaitNative(Attempt attempt) {
+        synchronized(LOCK) {
+            if(active!=attempt)return;
+            PlaybackGrant.Outcome blocked=eligibility(attempt,false);
+            if(blocked!=null){finish(attempt,blocked,true);return;}
+            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE) {
+                try {if(nativeIdle()){submitTone(attempt);return;}}catch(ReflectiveOperationException|RuntimeException failure){finish(attempt,PlaybackGrant.Outcome.FAILED,true);return;}
+            } else if(systemReady(attempt.event.languageTag,true)||neuralReady(attempt.event.languageTag,true)){submitSystem(attempt);return;}
+            callbacks.postDelayed(()->awaitNative(attempt),20);
         }
     }
     public void cancel(PlaybackGrant grant) {
@@ -135,14 +226,19 @@ public final class VelaWarningSpeaker {
             Attempt attempt = active;
             if (attempt == null || !same(attempt.grant, grant)) return;
             attempt.cancelled = true;
-            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE) {
+            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.neural!=null) {
                 boolean quiet=stopTone(attempt);releaseRejected(attempt);
                 finish(attempt,quiet?PlaybackGrant.Outcome.CANCELLED:PlaybackGrant.Outcome.UNCERTAIN,quiet);return;
             }
-            // Shared TextToSpeech.stop would destroy unrelated route prompts. Until native
-            // regeneration is verified, retain the ownership fence through the actual terminal callback.
-            finish(attempt, attempt.submitted ? PlaybackGrant.Outcome.UNCERTAIN : PlaybackGrant.Outcome.CANCELLED,
-                    !attempt.submitted);
+            // Native dispatch is held while our attempt is active. Its fresh route prompt is
+            // regenerated on the next native fix, never by replaying held text.
+            if(attempt.heldNative)regenerateRequested=true;
+            attempt.holding=false;
+            if(attempt.submitted && attempt.engine!=null) {
+                try { if(attempt.engine.stop()==TextToSpeech.SUCCESS)releaseRejected(attempt); }
+                catch(RuntimeException failure){ /* Outcome remains fenced until an actual terminal callback. */ }
+            }
+            finish(attempt, attempt.submitted ? PlaybackGrant.Outcome.UNCERTAIN : PlaybackGrant.Outcome.CANCELLED,!attempt.submitted);
         }
     }
     public void close() {
@@ -164,9 +260,15 @@ public final class VelaWarningSpeaker {
     public static void capture(Object closure) {
         synchronized (LOCK) {
             Attempt attempt = SCOPE.get();
-            if (attempt == null) return;
             try {
-                if (((Number)read(closure,"f")).byteValue() == 0 || read(closure,"h") != attempt.owner.guide) return;
+                if (((Number)read(closure,"f")).byteValue() == 0)return;
+                Object nativeGuide=read(closure,"h");
+                if(attempt==null) {
+                    VelaWarningSpeaker owner=owner(nativeGuide);
+                    if(owner!=null && NATIVE_CLOSURES.size()<4096)NATIVE_CLOSURES.put(closure,new NativeClosure(owner,nativeGuide,owner.generation));
+                    return;
+                }
+                if(nativeGuide != attempt.owner.guide)return;
                 if (CLOSURES.containsKey(closure)) return;
                 if (CLOSURES.size() >= 4096) throw new IllegalStateException("Vela warning closure bound");
                 attempt.engine = (TextToSpeech) read(closure,"i");
@@ -175,11 +277,20 @@ public final class VelaWarningSpeaker {
             } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Vela warning closure ABI",failure); }
         }
     }
-    /** True consumes ONLY a tagged branch. Untagged pn1/UI behavior executes verbatim. */
+    /** External interruption holds native pending closures for fresh-route regeneration. */
     public static boolean dispatch(Object closure) {
         synchronized (LOCK) {
             Attempt attempt = CLOSURES.get(closure);
-            if (attempt == null) return false;
+            if (attempt == null) {
+                NativeClosure nativeClosure=NATIVE_CLOSURES.get(closure);
+                if(nativeClosure==null)return false;
+                if(nativeClosure.consumed)return true;
+                VelaWarningSpeaker owner=nativeClosure.owner;Attempt current=owner.active;
+                if(current==null || !current.holding || current.cancelled)return false;
+                nativeClosure.consumed=true;current.heldNative=true;owner.regenerateRequested=true;
+                if(nativeClosure.generation==owner.generation)try{method(nativeClosure.guide,"f").invoke(nativeClosure.guide);}catch(ReflectiveOperationException ignored){}
+                return true;
+            }
             if (attempt.dispatched) return true;
             attempt.dispatched = true;
             VelaWarningSpeaker owner = attempt.owner;
@@ -236,17 +347,30 @@ public final class VelaWarningSpeaker {
             owner.generation++; owner.focusResult = 0;
             if (owner.active != null) {
                 Attempt attempt=owner.active; attempt.nativeStopped=true; attempt.cancelled=true;
-                boolean quiet=attempt.grant.mode==WarningAudioOwner.Mode.TONE?stopTone(attempt):!attempt.submitted;
+                boolean quiet=attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.neural!=null?stopTone(attempt):!attempt.submitted;
                 finish(attempt,quiet?PlaybackGrant.Outcome.CANCELLED:PlaybackGrant.Outcome.UNCERTAIN,quiet);
             }
+        }
+    }
+    /** Hold newly requested native guidance while the external system utterance owns the queue.
+     * An interrupting native prompt wins immediately; it is submitted after stop on the same engine.
+     */
+    public static boolean beforeSpeech(Object nativeGuide,boolean interrupt) {
+        synchronized(LOCK) {
+            VelaWarningSpeaker owner=owner(nativeGuide);if(owner==null)return false;
+            Attempt attempt=owner.active;
+            if(attempt==null || SCOPE.get()==attempt || !attempt.holding || attempt.cancelled)return false;
+            attempt.heldNative=true;owner.regenerateRequested=true;
+            if(interrupt){owner.cancel(attempt.grant);return false;}
+            return true;
         }
     }
     /** Native route speech wins over an external tone; stop only the extension's track. */
     public static void nativeSpeech(Object nativeGuide) {
         synchronized(LOCK) {
             VelaWarningSpeaker owner=owner(nativeGuide);
-            if(owner!=null && owner.active!=null && owner.active.grant.mode==WarningAudioOwner.Mode.TONE)
-                owner.cancel(owner.active.grant);
+            if(owner!=null && owner.active!=null && owner.active.grant.mode==WarningAudioOwner.Mode.TONE
+                    && owner.active.event.priority!=WarningEvent.Priority.P0)owner.cancel(owner.active.grant);
         }
     }
     public static void focusChanged(Object nativeListener,int change) {
@@ -289,15 +413,16 @@ public final class VelaWarningSpeaker {
             return true;
         }
     }
-    private static PlaybackGrant.Outcome rejection(Attempt a) {
+    private static PlaybackGrant.Outcome rejection(Attempt a) { return eligibility(a,true); }
+    private static PlaybackGrant.Outcome eligibility(Attempt a,boolean focus) {
         if (a.cancelled || a.owner.closed || a.generation != a.owner.generation) return PlaybackGrant.Outcome.CANCELLED;
-        if (SystemClock.elapsedRealtime()>=a.announceUntil) return PlaybackGrant.Outcome.EXPIRED;
+        if (!a.started && SystemClock.elapsedRealtime()>=a.announceUntil) return PlaybackGrant.Outcome.EXPIRED;
         if (a.owner.effectiveMode(a.grant.mode) != a.grant.mode) return PlaybackGrant.Outcome.USER_MUTED;
-        if (a.owner.focusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) return PlaybackGrant.Outcome.NOT_STARTED;
+        if (focus && a.owner.focusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) return PlaybackGrant.Outcome.NOT_STARTED;
         return null;
     }
     private static void releaseRejected(Attempt attempt) {
-        if (attempt.released || attempt.nativeStopped || attempt.generation != attempt.owner.generation) return;
+        if (!attempt.captured || attempt.released || attempt.nativeStopped || attempt.generation != attempt.owner.generation) return;
         attempt.released=true;
         try { method(attempt.nativeGuide,"f").invoke(attempt.nativeGuide); }
         catch (ReflectiveOperationException | RuntimeException failure) { attempt.releaseFailed=true; }
@@ -308,6 +433,7 @@ public final class VelaWarningSpeaker {
         if(quiescent && attempt.releaseFailed)outcome=PlaybackGrant.Outcome.FAILED;
         final PlaybackGrant.Outcome reported=outcome;
         if (quiescent) {
+            attempt.holding=false;
             UTTERANCES.remove("vela-"+attempt.id);
             if (attempt.owner.active==attempt) attempt.owner.active=null;
         }
@@ -320,6 +446,119 @@ public final class VelaWarningSpeaker {
         if (tag==null || tag.isEmpty()) return null;
         try { Locale locale=new Locale.Builder().setLanguageTag(tag).build(); return locale.getLanguage().isEmpty()?null:locale; }
         catch (RuntimeException failure) { return null; }
+    }
+    /** Intercept only scoped external speech; native trip/prompt callbacks have already run. */
+    public static boolean neuralSpeech(Object nativeGuide) {
+        synchronized(LOCK) {
+            Attempt attempt=SCOPE.get();if(attempt==null || attempt.nativeGuide!=nativeGuide)return false;
+            try {
+                if(!flag(nativeGuide,"m"))return false;
+                Object backend=read(nativeGuide,"l");
+                if(!attempt.owner.neuralReady(attempt.event.languageTag,true)) {
+                    attempt.captured=true;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return true;
+                }
+                NeuralJob job=new NeuralJob(attempt,backend,read(backend,"d"),(String)read(backend,"h"),integer(backend,"g"));
+                attempt.neural=job;attempt.captured=true;method(nativeGuide,"b").invoke(nativeGuide);
+                PlaybackGrant.Outcome blocked=neuralEligibility(job);
+                if(blocked!=null){releaseRejected(attempt);finish(attempt,blocked,true);return true;}
+                ((ExecutorService)read(backend,"c")).execute(()->renderNeural(job));
+            } catch(ReflectiveOperationException|RuntimeException failure) {
+                attempt.captured=true;releaseRejected(attempt);finish(attempt,PlaybackGrant.Outcome.FAILED,true);
+            }
+            return true;
+        }
+    }
+    private static PlaybackGrant.Outcome neuralEligibility(NeuralJob job) {
+        PlaybackGrant.Outcome blocked=rejection(job.attempt);if(blocked!=null)return blocked;
+        try {
+            if(!flag(job.attempt.nativeGuide,"m") || read(job.attempt.nativeGuide,"l")!=job.backend
+                    || read(job.backend,"d")!=job.model || !job.modelId.equals(read(job.backend,"h"))
+                    || integer(job.backend,"g")!=job.nativeGeneration || flag(job.backend,"f"))
+                return job.attempt.started?PlaybackGrant.Outcome.INTERRUPTED:job.attempt.submitted?PlaybackGrant.Outcome.UNCERTAIN:PlaybackGrant.Outcome.NOT_STARTED;
+        } catch(ReflectiveOperationException|RuntimeException failure){return PlaybackGrant.Outcome.FAILED;}
+        return null;
+    }
+    private static void renderNeural(NeuralJob job) {
+        Attempt attempt=job.attempt;
+        try {
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){releaseRejected(attempt);finish(attempt,blocked,true);return;}}
+            // a() validates the current selected model on its ORIGINAL serialized synthesis worker.
+            Object selected=method(job.backend,"a").invoke(job.backend);
+            synchronized(LOCK){if(selected!=job.model || neuralEligibility(job)!=null){releaseRejected(attempt);finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}}
+            Context context=(Context)read(job.backend,"a");int speaker=((Number)method(job.backend,"g").invoke(job.backend)).intValue();
+            float fallback=((Number)read(attempt.nativeGuide,"c")).floatValue();
+            float speed=Math.max(.5f,Math.min(2f,context.getSharedPreferences("vela_settings",0).getFloat("voice_speed",fallback)));
+            Method synthesis=job.backend.getClass().getDeclaredMethod("e",job.model.getClass(),String.class,int.class,float.class);synthesis.setAccessible(true);
+            Object audio=synthesis.invoke(null,job.model,attempt.event.message,speaker,speed);
+            float[] samples=(float[])read(audio,"f");int rate=((Number)read(audio,"g")).intValue();
+            if(samples.length==0 || samples.length>8000000 || rate<8000 || rate>192000)throw new IllegalStateException("Vela neural audio size");
+            float volume=Math.max(.2f,Math.min(3f,context.getSharedPreferences("vela_settings",0).getFloat("voice_volume",1f)));
+            Object level=method(job.backend,"c",String.class).invoke(job.backend,job.modelId+"|"+speaker);
+            normalizeNeural(samples,volume,level);
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){releaseRejected(attempt);finish(attempt,blocked,true);return;}}
+            attempt.owner.tones.execute(()->playNeural(job,samples,rate));
+        } catch(ReflectiveOperationException|RuntimeException failure) {
+            synchronized(LOCK){releaseRejected(attempt);finish(attempt,PlaybackGrant.Outcome.FAILED,true);}
+        }
+    }
+    /** Same native accumulated RMS target, volume cap and soft limiter; never normalize silence into speech. */
+    private static void normalizeNeural(float[] samples,float volume,Object level) throws ReflectiveOperationException {
+        double energy=0;float peak=0;for(float value:samples){if(!Float.isFinite(value))throw new IllegalArgumentException("Vela neural PCM");energy+=(double)value*value;peak=Math.max(peak,Math.abs(value));}
+        if(peak<.000001f)throw new IllegalArgumentException("Vela neural silence");
+        float gain;
+        synchronized(level) {
+            double sum=((Number)read(level,"a")).doubleValue();long frames=((Number)read(level,"b")).longValue();
+            if(peak>=.02f){sum+=energy;frames+=samples.length;field(level,"a").setDouble(level,sum);field(level,"b").setLong(level,frames);}
+            double rms=frames>0?Math.sqrt(sum/frames):0;gain=(rms>0?(float)Math.max(1d,Math.min(4d,.13d/rms)):1f)*volume;
+        }
+        for(int i=0;i<samples.length;i++){float value=samples[i]*gain,abs=Math.abs(value);if(abs>.8f)value=Math.copySign(.8f+(float)Math.tanh((abs-.8f)/.19999999f)*.19999999f,value);samples[i]=value;}
+    }
+    private static void playNeural(NeuralJob job,float[] samples,int rate) {
+        Attempt attempt=job.attempt;AudioTrack track=null;PlaybackGrant.Outcome outcome=PlaybackGrant.Outcome.FAILED;
+        try {
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){outcome=blocked;return;}}
+            track=new AudioTrack.Builder().setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build()).setAudioFormat(new AudioFormat.Builder().setSampleRate(rate)
+                    .setEncoding(AudioFormat.ENCODING_PCM_FLOAT).setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
+                    .setTransferMode(AudioTrack.MODE_STREAM).setBufferSizeInBytes(Math.max(AudioTrack.getMinBufferSize(rate,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_FLOAT),rate*4)).build();
+            int lead=rate*300/1000,first=0;while(first<samples.length && Math.abs(samples[first])<.000001f)first++;
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){outcome=blocked;return;}
+                attempt.ownedTrack=track;if(track.getState()!=AudioTrack.STATE_INITIALIZED)return;attempt.submitted=true;track.play();}
+            long written=writeNeural(job,track,new float[lead],0,0);if(written!=lead){outcome=attempt.outputRejected==null?PlaybackGrant.Outcome.FAILED:attempt.outputRejected;return;}
+            long content=writeNeural(job,track,samples,lead,lead+first);if(content!=samples.length){outcome=attempt.outputRejected==null?PlaybackGrant.Outcome.FAILED:attempt.outputRejected;return;}
+            long deadline=System.nanoTime()+((long)samples.length*1000/rate+1500)*1000000L;
+            while(System.nanoTime()<deadline) {
+                synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){outcome=blocked;return;}
+                    long played=Integer.toUnsignedLong(track.getPlaybackHeadPosition());notifyNeuralStart(attempt,track,played,lead+first);
+                    if(played>=written+content){outcome=PlaybackGrant.Outcome.COMPLETED;return;}}
+                Thread.sleep(10);
+            }
+        } catch(InterruptedException interrupted){Thread.currentThread().interrupt();outcome=PlaybackGrant.Outcome.INTERRUPTED;}
+        catch(RuntimeException failure){outcome=PlaybackGrant.Outcome.FAILED;}
+        finally {
+            synchronized(LOCK){boolean published=attempt.ownedTrack==track,quiet=stopTone(attempt);
+                if(track!=null && !published && !attempt.ownedReleased)try{track.release();attempt.ownedReleased=true;}catch(RuntimeException ignored){}
+                releaseRejected(attempt);if(attempt.submitted && !attempt.started && outcome==PlaybackGrant.Outcome.FAILED)outcome=PlaybackGrant.Outcome.UNCERTAIN;
+                finish(attempt,quiet?outcome:PlaybackGrant.Outcome.UNCERTAIN,quiet);}
+        }
+    }
+    private static long writeNeural(NeuralJob job,AudioTrack track,float[] samples,long base,long contentStart) throws InterruptedException {
+        int offset=0;long progress=System.nanoTime();
+        while(offset<samples.length) {
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=neuralEligibility(job);if(blocked!=null){job.attempt.outputRejected=blocked;return -1;}
+                int count=track.write(samples,offset,Math.min(1024,samples.length-offset),AudioTrack.WRITE_NON_BLOCKING);
+                if(count<0 || count>Math.min(1024,samples.length-offset))return -1;if(count>0){offset+=count;progress=System.nanoTime();}
+                if(base>0)notifyNeuralStart(job.attempt,track,Integer.toUnsignedLong(track.getPlaybackHeadPosition()),contentStart);
+            }
+            if(System.nanoTime()-progress>250000000L)return -1;
+            if(offset<samples.length)Thread.sleep(5);
+        }
+        return offset;
+    }
+    private static void notifyNeuralStart(Attempt attempt,AudioTrack track,long played,long contentStart) {
+        if(!attempt.started && played>contentStart && track.getPlayState()==AudioTrack.PLAYSTATE_PLAYING) {
+            attempt.started=true;attempt.owner.callbacks.post(()->attempt.listener.started(attempt.grant));
+        }
     }
     private boolean submitTone(Attempt attempt) {
         try {
@@ -343,6 +582,7 @@ public final class VelaWarningSpeaker {
     private static void runTone(Attempt attempt) {
         AudioTrack track=null;PlaybackGrant.Outcome outcome=PlaybackGrant.Outcome.FAILED;
         try {
+            synchronized(LOCK){PlaybackGrant.Outcome blocked=rejection(attempt);if(blocked!=null){outcome=blocked;return;}}
             short[] pcm=tonePcm();
             track=new AudioTrack.Builder().setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
@@ -352,7 +592,7 @@ public final class VelaWarningSpeaker {
             synchronized(LOCK) {
                 PlaybackGrant.Outcome blocked=rejection(attempt);
                 if(blocked!=null){outcome=blocked;return;}
-                attempt.toneTrack=track;
+                attempt.ownedTrack=track;
                 if(track.getState()!=AudioTrack.STATE_INITIALIZED || track.write(pcm,0,pcm.length)!=pcm.length)return;
                 blocked=rejection(attempt);if(blocked!=null){outcome=blocked;return;}
                 attempt.submitted=true;track.play();
@@ -373,21 +613,21 @@ public final class VelaWarningSpeaker {
         catch(RuntimeException failure){outcome=PlaybackGrant.Outcome.FAILED;}
         finally {
             synchronized(LOCK) {
-                boolean published=attempt.toneTrack==track;
+                boolean published=attempt.ownedTrack==track;
                 boolean quiet=stopTone(attempt);
                 // A track constructed after a pending cancellation was never published or played.
-                if(track!=null && !published && !attempt.toneReleased)try{track.release();attempt.toneReleased=true;}catch(RuntimeException ignored){}
+                if(track!=null && !published && !attempt.ownedReleased)try{track.release();attempt.ownedReleased=true;}catch(RuntimeException ignored){}
                 releaseRejected(attempt);
                 finish(attempt,quiet?outcome:PlaybackGrant.Outcome.UNCERTAIN,quiet);
             }
         }
     }
     private static boolean stopTone(Attempt attempt) {
-        AudioTrack track=attempt.toneTrack;
-        if(track==null)return attempt.toneReleased || !attempt.submitted || attempt.quiescent;
+        AudioTrack track=attempt.ownedTrack;
+        if(track==null)return attempt.ownedReleased || !attempt.submitted || attempt.quiescent;
         try {
-            if(track.getPlayState()!=AudioTrack.PLAYSTATE_STOPPED)track.stop();
-            track.release();attempt.toneReleased=true;attempt.toneTrack=null;return true;
+            if(track.getPlayState()!=AudioTrack.PLAYSTATE_STOPPED){track.pause();track.flush();track.stop();}
+            track.release();attempt.ownedReleased=true;attempt.ownedTrack=null;return true;
         } catch(RuntimeException failure) { return false; }
     }
     private static Voice installedVoice(TextToSpeech engine,Locale locale) {
@@ -417,7 +657,18 @@ public final class VelaWarningSpeaker {
     private static boolean flag(Object target,String name) throws ReflectiveOperationException { return field(target,name).getBoolean(target); }
     private static int integer(Object target,String name) throws ReflectiveOperationException { return field(target,name).getInt(target); }
     private static Method method(Object target,String name,Class<?>... types) throws NoSuchMethodException {
-        Method method=target.getClass().getDeclaredMethod(name,types); method.setAccessible(true); return method;
+        Method method;
+        try {method=target.getClass().getMethod(name,types);}
+        catch(NoSuchMethodException missing){method=target.getClass().getDeclaredMethod(name,types);}
+        method.setAccessible(true);return method;
+    }
+    private static final class NeuralJob {
+        final Attempt attempt;final Object backend,model;final String modelId;final int nativeGeneration;
+        NeuralJob(Attempt attempt,Object backend,Object model,String modelId,int generation){this.attempt=attempt;this.backend=backend;this.model=model;this.modelId=modelId;this.nativeGeneration=generation;}
+    }
+    private static final class NativeClosure {
+        final VelaWarningSpeaker owner;final Object guide;final long generation;boolean consumed;
+        NativeClosure(VelaWarningSpeaker owner,Object guide,long generation){this.owner=owner;this.guide=guide;this.generation=generation;}
     }
     private static final class Attempt {
         final VelaWarningSpeaker owner;
@@ -428,8 +679,10 @@ public final class VelaWarningSpeaker {
         final long generation,announceUntil;
         final String id="warning-"+UUID.randomUUID();
         TextToSpeech engine;
-        AudioTrack toneTrack;
-        boolean captured,dispatched,submitted,started,cancelled,nativeStopped,released,terminal,quiescent,toneReleased,releaseFailed;
+        AudioTrack ownedTrack;
+        NeuralJob neural;
+        PlaybackGrant.Outcome outputRejected;
+        boolean captured,dispatched,submitted,started,cancelled,nativeStopped,released,terminal,quiescent,ownedReleased,releaseFailed,holding,heldNative;
         Attempt(VelaWarningSpeaker owner,WarningEvent event,PlaybackGrant grant,Listener listener,long generation,long announceUntil) {
             this.owner=owner;this.nativeGuide=owner.guide;this.event=event;this.grant=grant;this.listener=listener;this.generation=generation;this.announceUntil=announceUntil;
         }

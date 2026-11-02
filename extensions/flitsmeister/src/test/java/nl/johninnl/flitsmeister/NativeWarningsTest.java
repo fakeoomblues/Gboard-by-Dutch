@@ -76,6 +76,7 @@ public class NativeWarningsTest {
         NativeWarnings.regular(null,new CitsRoadWorks(),true,false,"Werkzaamheden",null);
         assertEquals("CitsRoadWorks",last().getString("native_family"));
         assertEquals("INCIDENT",last().getString("native_type"));
+        assertEquals("roadworks",last().getString("category"));assertEquals(1,last().getInt("priority"));assertFalse(last().containsKey("native_subtype"));
     }
     @Test public void trueNativeRepeatsIncrementButBusUpdatesNeverAnnounce() {
         Incident report=new Incident();
@@ -93,7 +94,7 @@ public class NativeWarningsTest {
     @Test public void serviceSubtypeAndAuditedNativeResourceFallbackSurvive() {
         NativeWarnings.regular(null,new ServiceVehicle(),true,false,null,null);
         assertEquals("TOW_SERVICE",last().getString("native_subtype"));
-        assertEquals("Native description",last().getString("message"));
+        assertEquals("Native title",last().getString("message"));
         assertEquals("native_resource",last().getString("message_origin"));
     }
     public static class EmptyReport extends BaseReport {
@@ -155,5 +156,124 @@ public class NativeWarningsTest {
         Incident report=new Incident();NativeWarnings.regular(null,report,true,false,"Danger",null);NativeWarnings.stopped();int count=events.size();
         NativeWarnings.regular(null,report,true,false,"Late callback",null);assertEquals(count,events.size());
         NativeWarnings.started();NativeWarnings.regular(null,report,true,false,"Fresh decision",null);assertEquals(count+1,events.size());
+    }
+    public static class EarlyWarningNotification {
+        public String getType(){return "AMBULANCE";}
+        public String getName(){return "danger-7";}
+        public String getCode(){return "emergency-7";}
+        public String getFreetext(){return "Ambulance behind you";}
+        public Location getLocation(){return null;}
+    }
+    public static class Info {String id="impact-7";Info(){}Info(String value){id=value;}public String getEventID(){return id;}}
+    public static class ImpactAttenuator {public Info info=new Info();}
+    @Test public void independentEarlyBusUpdatesAndNullRemovalShareNativeSpeechIdentity() {
+        EarlyWarningNotification notification=new EarlyWarningNotification();NativeWarnings.notificationState(notification);
+        String id=last().getString("warning_id");assertEquals("UPSERT",last().getString("operation"));assertEquals(0,last().getLong("announcement_index"));
+        NativeWarnings.early(null,"AMBULANCE",new EarlyWarningReport(),null,"Ambulance behind you",false,null);
+        assertEquals(id,last().getString("warning_id"));assertEquals("ANNOUNCE",last().getString("operation"));assertEquals("moving_emergency",last().getString("relevance"));
+        NativeWarnings.notificationState(null);assertEquals(id,last().getString("warning_id"));assertEquals("CLEAR",last().getString("operation"));
+        int count=events.size();NativeWarnings.early(null,"AMBULANCE",new EarlyWarningReport(),null,"Late old warning",false,null);assertEquals(count,events.size());
+    }
+    @Test public void impactProducerOwnsOneAnnouncementAndBothUiProjectionsStayDisplayOnly() {
+        ImpactAttenuator event=new ImpactAttenuator();EarlyWarning projection=new EarlyWarning();NativeWarnings.impact(event,projection,app);
+        String id=last().getString("warning_id");assertEquals("ANNOUNCE",last().getString("operation"));assertEquals("IMPACT_ATTENUATOR",last().getString("native_subtype"));int count=events.size();
+        NativeWarnings.presentation(app,projection,true);NativeWarnings.presentation(app,projection,true);assertEquals(count,events.size());
+        NativeWarnings.impactUpdate(event,new EarlyWarning(),app);assertEquals(id,last().getString("warning_id"));assertEquals("UPSERT",last().getString("operation"));
+        NativeWarnings.impactRemoved(event);assertEquals(id,last().getString("warning_id"));assertEquals("CLEAR",last().getString("operation"));
+    }
+    public static class TrafficJam extends BaseReport {@Override public String getReportType(){return "TRAFFIC_JAM";}}
+    @Test public void exitWithNoNativeWordsUsesAnAuditedExitTemplateRatherThanTheEntryDescription() {
+        NativeWarnings.regular(null,new TrafficJam(),false,false,null,null);
+        assertEquals("ANNOUNCE",last().getString("operation"));assertEquals("template",last().getString("message_origin"));assertEquals("fm_native_exit_v1",last().getString("template_id"));assertEquals("exit",last().getString("phase"));
+        assertNotEquals("Native description",last().getString("message"));
+    }
+    public static class SpeedCam extends BaseReport {
+        String type="DUMMY";
+        @Override public String getReportType(){return "SPEED_CAM";}
+        public String getSpeedCamType(){return type;}
+    }
+    public static class MatrixIncident extends Incident {String type;@Override public String getIncidentType(){return type;}}
+    public static class MatrixService extends ServiceVehicle {String type;@Override public String getType(){return type;}}
+    public static class MatrixNotification extends EarlyWarningNotification {String type;@Override public String getType(){return type;}}
+    public static class MatrixReport extends BaseReport {String type;@Override public String getReportType(){return type;}}
+    @Test public void all159FrozenNativeEnumMembersPreserveRawIdentityAndExactAcceptedText() {
+        int total=0;
+        for(String capability:nl.johninnl.navigation.alerts.FlitsmeisterWarningTypes.required()){
+            if(!capability.startsWith("fm/"))continue;String[] parts=capability.split("/",3);String family=parts[1],member=parts[2],text="Native accepted "+member;
+            if(family.equals("EarlyWarningTypeEnum")){MatrixNotification n=new MatrixNotification();n.type=member;NativeWarnings.early(null,member,null,n,text,false,null);}
+            else{
+                BaseReport model;
+                if(family.equals("SpeedCamType")){SpeedCam cam=new SpeedCam();cam.type=member;model=cam;}
+                else if(family.equals("IncidentType")){MatrixIncident incident=new MatrixIncident();incident.type=member;model=incident;}
+                else if(family.equals("ServiceVehicle.Type")){MatrixService service=new MatrixService();service.type=member;model=service;}
+                else{MatrixReport report=new MatrixReport();report.type=member;model=report;}
+                NativeWarnings.regular(null,model,true,false,text,null);
+            }
+            assertEquals(capability,"ANNOUNCE",last().getString("operation"));assertEquals(capability,text,last().getString("message"));
+            if(!family.equals("BaseReportType"))assertEquals(capability,member,last().getString("native_subtype"));
+            else assertEquals(capability,member,last().getString("native_type"));
+            total++;
+        }
+        assertEquals(159,total);
+    }
+    public static class IncomingEmergencyVehicle {public Info info;public List<FreeTextWhere> freeTextsWhere=Collections.emptyList();IncomingEmergencyVehicle(String id){info=new Info(id);}}
+    public static class StationaryEmergencyVehicle extends IncomingEmergencyVehicle {StationaryEmergencyVehicle(String id){super(id);}}
+    public static class AliasedEarlyReport extends EarlyWarningReport {
+        String id;EarlyWarningNotification notification;
+        AliasedEarlyReport(String id,EarlyWarningNotification n){this.id="gmp_"+id;notification=n;}
+        @Override public String getId(){return id;}
+        @Override public String getFreeText(){return notification.getFreetext();}
+        public EarlyWarningNotification getNotification(){return notification;}
+    }
+    @Test public void citsNotificationsWithTheSameVehicleLabelKeepDistinctActualEventIdentities() {
+        EarlyWarningNotification a=new EarlyWarningNotification(),b=new EarlyWarningNotification();
+        AliasedEarlyReport reportA=new AliasedEarlyReport("a",a),reportB=new AliasedEarlyReport("b",b);
+        NativeWarnings.citsSource(new IncomingEmergencyVehicle("a"));NativeWarnings.citsModel(reportA);NativeWarnings.early(null,"AMBULANCE",null,a,"First ambulance",true,null);
+        String idA=last().getString("warning_id");assertEquals("early/AMBULANCE:gmp_a",idA);assertEquals("incoming",last().getString("native_source_motion"));assertEquals("unknown",last().getString("relationship"));
+        NativeWarnings.citsSource(new IncomingEmergencyVehicle("b"));NativeWarnings.citsModel(reportB);NativeWarnings.early(null,"AMBULANCE",null,b,"Second ambulance",true,null);
+        String idB=last().getString("warning_id");assertNotEquals(idA,idB);
+        NativeWarnings.bindProjection(new EarlyWarning(),reportB);assertEquals(idB,last().getString("warning_id"));assertEquals("Second ambulance",last().getString("message"));assertEquals("UPSERT",last().getString("operation"));
+        NativeWarnings.earlyRemoved(reportA);assertEquals(idA,last().getString("warning_id"));assertEquals("CLEAR",last().getString("operation"));
+    }
+    @Test public void nativeStationaryEmergencyIsNotInferredToBeApproaching() {
+        EarlyWarningNotification n=new EarlyWarningNotification();AliasedEarlyReport report=new AliasedEarlyReport("stationary",n);
+        NativeWarnings.citsSource(new StationaryEmergencyVehicle("stationary"));NativeWarnings.citsModel(report);NativeWarnings.early(null,"AMBULANCE",null,n,"Stationary ambulance",false,null);
+        assertEquals(1,last().getInt("priority"));assertEquals("notice",last().getString("relevance"));assertEquals("unknown",last().getString("relationship"));
+    }
+    public static class CitsSpeedAdvice extends CitsBaseReport {@Override public String getReportType(){return "CITS_SPEED_ADVICE";}public int getAdviceKph(){return 40;}}
+    public static class AdviceWrapper {boolean added;AdviceWrapper(boolean value){added=value;}public CitsSpeedAdvice getSpeedAdvice(){return new CitsSpeedAdvice();}public boolean getAdded(){return added;}}
+    @Test public void nativeTrafficLightAdviceIsStateAndRemovalWithoutSpeechAuthority() {
+        NativeWarnings.vriState(new AdviceWrapper(true));String id=last().getString("warning_id");assertEquals("UPSERT",last().getString("operation"));assertEquals(40,last().getInt("native_advice_kmh"));assertEquals(0,last().getLong("announcement_index"));
+        NativeWarnings.vriState(new AdviceWrapper(false));assertEquals(id,last().getString("warning_id"));assertEquals("CLEAR",last().getString("operation"));
+    }
+    public static class FixedCamera extends SpeedCam {@Override public Location getLocation(){Location l=new Location("native-model");l.setLatitude(52);l.setLongitude(5);return l;}}
+    @Test public void fixedNativeTargetCoordinatesUseDecisionObservationWithoutPretendingToBeGpsMeasurement() {
+        NativeWarnings.regular(null,new FixedCamera(),true,false,"Camera",null);
+        assertEquals(52,last().getDouble("latitude"),0);assertEquals("native_decision",last().getString("position_clock_origin"));assertFalse(last().getBoolean("position_estimated"));assertEquals("point_ahead",last().getString("relevance"));
+    }
+    @Test public void nonWarningOrReservedModelsRemainDisplayStateAndNeverBecomeAnnouncements() {
+        for(String type:new String[]{"BASEREPORT","LBA","CITS_PARKING","FM_OFFICE","PARKED_LOCATION","TOLLING","ENVIRONMENTAL_ZONE"}){
+            MatrixReport report=new MatrixReport();report.type=type;NativeWarnings.reports(Arrays.asList(new Alerted(report)));
+            assertEquals(type,"UPSERT",last().getString("operation"));assertEquals(type,"display_only",last().getString("category"));assertEquals(0,last().getLong("announcement_index"));
+        }
+    }
+    public static class FreeTextWhere {public String freeText,language;FreeTextWhere(String text,String language){freeText=text;this.language=language;}}
+    @Test public void explicitNativeCitsFreeTextLanguageSurvivesTheLossyReportConversion() {
+        EarlyWarningNotification n=new EarlyWarningNotification(){@Override public String getFreetext(){return "Krankenwagen hinter Ihnen";}};
+        AliasedEarlyReport report=new AliasedEarlyReport("german",n);IncomingEmergencyVehicle event=new IncomingEmergencyVehicle("german");event.freeTextsWhere=Arrays.asList(new FreeTextWhere(n.getFreetext(),"de"));
+        NativeWarnings.citsSource(event);NativeWarnings.citsModel(report);NativeWarnings.early(null,"AMBULANCE",null,n,n.getFreetext(),true,null);
+        assertEquals(n.getFreetext(),last().getString("message"));assertEquals("de",last().getString("language_tag"));
+        NativeWarnings.bindProjection(new EarlyWarning(),report);assertEquals("de",last().getString("language_tag"));assertEquals("native_free_text_where",last().getString("language_origin"));
+    }
+    public static class CitsLaneClosed extends BaseReport {
+        @Override public String getReportType(){return "CITS_LANE_CLOSED";}
+        public String getLaneClosedType(){return "RIGHT_LANE";}
+        public int getLaneIndex(){return 0;}
+        public int getNumberOfLanesClosed(){return 2;}
+        public String getLaneClosedTitle(Context context){return "Two lanes closed";}
+    }
+    @Test public void laneClosurePreservesNativeSubtypeLaneIndexAndClosedCount(){
+        NativeWarnings.regular(null,new CitsLaneClosed(),true,false,null,null);
+        assertEquals("RIGHT_LANE",last().getString("native_subtype"));assertEquals(0,last().getInt("lane_index"));assertEquals(2,last().getInt("number_of_lanes_closed"));assertEquals("Two lanes closed",last().getString("message"));
     }
 }

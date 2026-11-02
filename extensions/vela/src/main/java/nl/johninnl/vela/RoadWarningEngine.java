@@ -47,6 +47,10 @@ public final class RoadWarningEngine {
             // Cache off-route misses too: unchanged reports must not repeatedly scan a long route.
             targets.put(key,result);return result;
         }
+        public Double signedDistance(double ownLatitude,double ownLongitude,double targetLatitude,double targetLongitude){
+            Projection own=project(ownLatitude,ownLongitude),next=target(targetLatitude,targetLongitude);
+            return own==null||next==null?null:next.along-own.along;
+        }
     }
     private static final class Coordinate {
         final long latitude,longitude;

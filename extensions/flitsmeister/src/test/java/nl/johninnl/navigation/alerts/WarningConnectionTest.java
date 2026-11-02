@@ -42,5 +42,13 @@ public class WarningConnectionTest {
         WarningConnection.Claim claim=client.claim(WarningAudioOwner.Mode.SILENT,false).get(3,TimeUnit.SECONDS);assertEquals("OK",claim.status);assertNotNull(claim.lease);
         WarningConnection.Attempt muted=client.decide(claim.lease,pushed.get(0),UUID.randomUUID().toString(),PlaybackGrant.Outcome.USER_MUTED).get(3,TimeUnit.SECONDS);
         assertEquals("OK",muted.status);assertEquals(PlaybackGrant.Outcome.USER_MUTED,muted.grant.outcome);
+        WarningConnection.Claim voiced=client.claim(WarningAudioOwner.Mode.VOICE,true).get(3,TimeUnit.SECONDS);
+        e.putString("warning_id","road-b");e.putLong("observed_elapsed_ms",SystemClock.elapsedRealtime());assertTrue(source.emit(e));
+        List<WarningEvent> second=deliveries.poll(3,TimeUnit.SECONDS);assertNotNull(second);
+        WarningConnection.Attempt granted=client.begin(voiced.lease,second.get(0),UUID.randomUUID().toString()).get(3,TimeUnit.SECONDS);
+        assertEquals("GRANTED",granted.status);
+        client.retire();
+        assertEquals("OK",client.outcome(granted.grant,PlaybackGrant.Outcome.NOT_STARTED,true).get(3,TimeUnit.SECONDS));
+        assertEquals("OK",client.release(voiced.lease).get(3,TimeUnit.SECONDS));
     }
 }

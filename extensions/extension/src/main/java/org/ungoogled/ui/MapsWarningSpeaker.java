@@ -28,18 +28,24 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private final Handler main=new Handler(Looper.getMainLooper());
     private final MapsGuidanceCoordinator guidance;
     private final AudioManager audio;
+    private final MapsWarningTone tone=new MapsWarningTone(main);
     private TextToSpeech tts;
     private AudioFocusRequest focus;
     private volatile boolean initialized,closed;
     private volatile String preparedLanguage="";
     private Attempt active;
     private final AudioAttributes attributes=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
+    private final AudioAttributes toneAttributes=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
 
     public MapsWarningSpeaker(Context context) {
         app=context.getApplicationContext();audio=(AudioManager)app.getSystemService(Context.AUDIO_SERVICE);
         guidance=new MapsGuidanceCoordinator(app);
     }
     public void prepare(String language) {
+        prepare(language,WarningAudioOwner.Mode.VOICE);
+    }
+    public void prepare(String language,WarningAudioOwner.Mode mode) {
+        if(mode!=WarningAudioOwner.Mode.VOICE)return;
         main.post(()-> {
             if(closed)return;
             if(tts==null) {
@@ -67,7 +73,10 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     public boolean isReady(String language){return isReady(language,WarningAudioOwner.Mode.VOICE);}
     public boolean isReady(String language,WarningAudioOwner.Mode mode) {
         if(mode==WarningAudioOwner.Mode.SILENT)return true;
-        return !closed && mode==WarningAudioOwner.Mode.VOICE && initialized && language!=null && language.equals(preparedLanguage) && guidance.isReady() && effectiveMode(mode)==mode;
+        WarningAudioOwner.Mode effective=effectiveMode(mode);
+        if(closed || !guidance.isReady() || effective!=mode)return false;
+        if(mode==WarningAudioOwner.Mode.TONE)return audio!=null&&tone.ready();
+        return mode==WarningAudioOwner.Mode.VOICE && initialized && language!=null && language.equals(preparedLanguage);
     }
     /** Updated UPSERT payloads must use the original ANNOUNCE deadline through the overload below. */
     public boolean speak(WarningEvent payload,PlaybackGrant grant,Listener listener) {
@@ -75,20 +84,26 @@ public final class MapsWarningSpeaker implements AutoCloseable {
         return speak(payload,grant,payload.announceUntil,listener);
     }
     public synchronized boolean speak(WarningEvent payload,PlaybackGrant grant,long announceUntil,Listener listener) {
-        if(payload==null || grant==null || listener==null || closed || active!=null || !grant.granted || grant.mode!=WarningAudioOwner.Mode.VOICE
-                || !isReady(payload.languageTag) || SystemClock.elapsedRealtime()>=announceUntil)return false;
+        if(payload==null || grant==null || listener==null || closed || active!=null || !grant.granted || grant.mode==WarningAudioOwner.Mode.SILENT
+                || !isReady(payload.languageTag,grant.mode) || SystemClock.elapsedRealtime()>=announceUntil)return false;
         Attempt attempt=new Attempt(payload,grant,announceUntil,listener);active=attempt;main.post(()->begin(attempt));return true;
     }
     private void begin(Attempt attempt) {
         if(active!=attempt)return;
-        if(closed || attempt.cancelled || effectiveMode(attempt.grant.mode)!=attempt.grant.mode || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+        if(closed || attempt.cancelled || !isReady(attempt.payload.languageTag,attempt.grant.mode) || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
         guidance.acquire(attempt.id,attempt.payload.priority,attempt.until,(quiet,reason)-> {
             if(active!=attempt)return;
-            if(!quiet || closed || attempt.cancelled || effectiveMode(attempt.grant.mode)!=attempt.grant.mode || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+            if(!quiet || closed || attempt.cancelled || !isReady(attempt.payload.languageTag,attempt.grant.mode) || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
             if(audio==null) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
-            focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT).setAudioAttributes(attributes).setAcceptsDelayedFocusGain(false)
+            focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT).setAudioAttributes(attempt.grant.mode==WarningAudioOwner.Mode.TONE?toneAttributes:attributes).setAcceptsDelayedFocusGain(false)
                     .setOnAudioFocusChangeListener(change->{if(change!=AudioManager.AUDIOFOCUS_GAIN && active==attempt)cancel(attempt.grant);},main).build();
             if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE) {
+                attempt.submitted=true;tone.play(attempt.until,toneAttributes,new MapsWarningTone.Events(){
+                    public void started(){if(active==attempt&&!attempt.started){attempt.started=true;attempt.listener.started(attempt.grant);}}
+                    public void finished(PlaybackGrant.Outcome outcome,boolean quiescent){if(active!=attempt)return;if(quiescent)finish(attempt,outcome,true);else if(!attempt.uncertain){attempt.uncertain=true;attempt.listener.finished(attempt.grant,outcome,false);}}
+                });return;
+            }
             if(!selectVoice(attempt.payload.languageTag)) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
             int result=tts.speak(attempt.payload.message,TextToSpeech.QUEUE_ADD,new Bundle(),attempt.id);
             if(result!=TextToSpeech.SUCCESS) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
@@ -99,7 +114,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private final UtteranceProgressListener progress=new UtteranceProgressListener() {
         @Override public void onStart(String id){main.post(()-> {
             Attempt attempt=matching(id);if(attempt==null || attempt.started)return;attempt.started=true;attempt.listener.started(attempt.grant);
-            if(attempt.cancelled || closed || SystemClock.elapsedRealtime()>=attempt.until || effectiveMode(attempt.grant.mode)!=attempt.grant.mode){attempt.cancelled=true;stop(attempt);}
+            if(attempt.cancelled || closed || SystemClock.elapsedRealtime()>=attempt.until || !isReady(attempt.payload.languageTag,attempt.grant.mode)){attempt.cancelled=true;stop(attempt);}
         });}
         @Override public void onDone(String id){main.post(()->{Attempt attempt=matching(id);if(attempt!=null)finish(attempt,attempt.cancelled?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.COMPLETED,true);});}
         @Override public void onError(String id){main.post(()->{Attempt attempt=matching(id);if(attempt!=null)finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);});}
@@ -114,6 +129,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     }
     private void stop(Attempt attempt) {
         if(active!=attempt)return;
+        if(attempt.grant.mode==WarningAudioOwner.Mode.TONE){tone.cancel();return;}
         try { tts.stop(); }catch(RuntimeException ignored) { }
         // stop() success is an enqueue/engine API result; only the utterance callback proves quiescence.
         main.postDelayed(()-> {
@@ -124,7 +140,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
         if(active!=attempt)return;
         active=null;if(focus!=null && audio!=null)audio.abandonAudioFocusRequest(focus);focus=null;
         guidance.release(attempt.id);attempt.listener.finished(attempt.grant,outcome,quiescent);
-        if(closed && tts!=null){tts.shutdown();tts=null;guidance.close();}
+        if(closed){if(tts!=null)tts.shutdown();tts=null;guidance.close();}
     }
     @Override public void close() {
         closed=true;main.post(()-> {

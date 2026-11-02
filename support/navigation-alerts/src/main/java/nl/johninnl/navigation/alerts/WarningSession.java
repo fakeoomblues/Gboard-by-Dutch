@@ -23,9 +23,13 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
     private boolean closed;
     private volatile String state="off";
     private volatile boolean captureComplete;
+    private volatile String eventSource="";
     public WarningSession(Context context,WarningConnection.Listener listener) { app=context.getApplicationContext();this.listener=listener; }
     public String state() { return state; }
     public boolean captureComplete() { return captureComplete; }
+    public boolean advertisesEvents(String source){return source!=null&&source.equals(eventSource);}
+    /** Only an explicit source change permits returning to deliberately selected legacy behavior. */
+    public void resetEventNegotiation(){eventSource="";}
     public synchronized WarningConnection connection() { return connection; }
     /** Recheck after posting a callback to an app UI queue, where a source switch may intervene. */
     public synchronized boolean accepts(String providerSession) {
@@ -47,6 +51,7 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
                 detach();state="legacy";generation=ticket;return true;
             }
             if(!v1) { state="incompatible";return false; }
+            eventSource=source;
             reuse=connection!=null && binder==api && generation==ticket && "ready".equals(state);
             if(reuse)selected=connection;
             else {
@@ -77,6 +82,6 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
         minimumGeneration=Math.max(minimumGeneration,nextGeneration);generation=-1;detach();state="off";
         if(active)listener.disconnected("SOURCE_DISCONNECTED");
     }
-    private void detach() { captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;if(previous!=null)previous.close(); }
+    private void detach() { captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;if(previous!=null)previous.retire(); }
     @Override public synchronized void close() { closed=true;generation=-1;detach();state="off";for(ThreadPoolExecutor worker:workers.values())worker.shutdown(); }
 }

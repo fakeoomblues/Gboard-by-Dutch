@@ -100,6 +100,44 @@
       ],
       "register_count": 2
     },
+    "Lbmrc;->q(Lbmug;Lbmub;)V": {
+      "access_flags": 8,
+      "body_sha256": "ad2ab4bd67b399136a4576e64a4e9c9745cc8cc2a078dd1d95fc0e252e5bcbb0",
+      "code_units": 11,
+      "dex": "classes2.dex",
+      "instruction_count": 5,
+      "references": [
+        "Lbmuf;->a:Lbmuf;",
+        "Lbmug;->a(Lbmuf;Lbmub;)V",
+        "Lbzyn;->az()V"
+      ],
+      "register_count": 3
+    },
+    "Lbmrq;->g(Lbmuk;I)Z": {
+      "access_flags": 17,
+      "body_sha256": "b398d5071ccefea508c0cc6b32b93b01a22e86f70cea02e4666783726567ba02",
+      "code_units": 127,
+      "dex": "classes2.dex",
+      "instruction_count": 66,
+      "references": [
+        "Landroid/media/AudioAttributes$Builder;",
+        "Landroid/media/AudioAttributes$Builder;-><init>()V",
+        "Landroid/media/AudioAttributes$Builder;->build()Landroid/media/AudioAttributes;",
+        "Landroid/media/AudioAttributes$Builder;->setContentType(I)Landroid/media/AudioAttributes$Builder;",
+        "Landroid/media/AudioAttributes$Builder;->setUsage(I)Landroid/media/AudioAttributes$Builder;",
+        "Landroid/media/AudioFocusRequest$Builder;",
+        "Landroid/media/AudioFocusRequest$Builder;-><init>(I)V",
+        "Laq$$ExternalSyntheticApiModelOutline0;->m$1(Landroid/media/AudioManager;Landroid/media/AudioFocusRequest;)I",
+        "Laq$$ExternalSyntheticApiModelOutline0;->m(Landroid/media/AudioFocusRequest$Builder;)Landroid/media/AudioFocusRequest;",
+        "Laq$$ExternalSyntheticApiModelOutline0;->m(Landroid/media/AudioFocusRequest$Builder;Landroid/media/AudioAttributes;)Landroid/media/AudioFocusRequest$Builder;",
+        "Laq$$ExternalSyntheticApiModelOutline0;->m(Landroid/media/AudioFocusRequest$Builder;Landroid/media/AudioManager$OnAudioFocusChangeListener;)Landroid/media/AudioFocusRequest$Builder;",
+        "Lbmrq;->d:Landroid/media/AudioManager;",
+        "Lbmrq;->y:Landroid/media/AudioFocusRequest;",
+        "Lbmuj;->j:I",
+        "Lbmuk;->q:Lbmuj;"
+      ],
+      "register_count": 7
+    },
     "Lbmsh;->d(Lbmua;)V": {
       "access_flags": 17,
       "body_sha256": "2bb8c1eea71d44dbac55f41b79c136efaf25fe1e6ba583f410ee6dc4f1d7bf88",
@@ -128,6 +166,20 @@
         "Lbmuc;->l()V"
       ],
       "register_count": 4
+    },
+    "Lbmtl;->e(Lbmuc;)V": {
+      "access_flags": 17,
+      "body_sha256": "e1f9b5a8933e5f0fdd9f66bc20b3772d9f77e10c25f87dec0fa917453303ef42",
+      "code_units": 11,
+      "dex": "classes7.dex",
+      "instruction_count": 5,
+      "references": [
+        "Lbmsx;",
+        "Lbmsx;-><init>(Lbmtl;Lbmuc;)V",
+        "Lbmtl;->b:Ljava/util/concurrent/Executor;",
+        "Ljava/util/concurrent/Executor;->execute(Ljava/lang/Runnable;)V"
+      ],
+      "register_count": 3
     },
     "Lbmtu;->d(Lbmua;)V": {
       "access_flags": 17,

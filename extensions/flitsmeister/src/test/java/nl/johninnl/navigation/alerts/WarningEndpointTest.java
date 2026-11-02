@@ -71,6 +71,13 @@ public class WarningEndpointTest {
         clock.set(146000);Thread.sleep(1100);
         assertEquals("OK",call(WarningWire.GET_STATE,q).getString("status"));
     }
+    @Test public void legacyControlClientsBlockAudioUntilTheirOwnSessionExpires() throws Exception {
+        Callback callback=new Callback();Bundle r=confirmed(callback),q=new Bundle();q.putString("registration_token",r.getString("registration_token"));q.putString("mode","VOICE");q.putBoolean("ready",true);
+        source.controlClient(10002,false);assertEquals("LEGACY_RECEIVER_ACTIVE",call(WarningWire.CLAIM_AUDIO,q).getString("status"));
+        source.controlClient(10001,true);assertEquals("LEGACY_RECEIVER_ACTIVE",call(WarningWire.CLAIM_AUDIO,q).getString("status"));
+        clock.set(142000);assertEquals("OK",call(WarningWire.PING,q).getString("status"));
+        clock.set(145000);assertEquals("OK",call(WarningWire.CLAIM_AUDIO,q).getString("status"));
+    }
     private Bundle event(){Bundle b=new Bundle();b.putString("operation","ANNOUNCE");b.putString("warning_id","a");b.putLong("revision",1);b.putLong("announcement_index",1);b.putString("phase","notice");b.putString("native_type","Incident");b.putString("category","road_danger");b.putInt("priority",0);b.putString("message","Actual native text");b.putString("language_tag","en");b.putString("message_origin","native_text");b.putString("relevance","notice");b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",clock.get());return b;}
     private static String repeat(char c,int n){char[] a=new char[n];Arrays.fill(a,c);return new String(a);}
 }

@@ -145,3 +145,7 @@ python3 scripts/navigation-alerts/inspect_bindings.py --artifact ~/Downloads/vel
 ```
 
 This checks pinned static identity/ABI/bodies. It deliberately reports `runtime_acceptance: not_tested`.
+
+## Implementation follow-up
+
+The [production adapter follow-up](2026-11-02-vela-warning-adapter.md) records the guarded system/neural/tone implementation, fresh native route regeneration mechanism and remaining patched-artifact acceptance gates. The static findings above describe the original artifact.

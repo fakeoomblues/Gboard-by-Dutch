@@ -108,7 +108,13 @@ public final class WarningAudioOwner {
     public synchronized void requireCapabilities(WarningCapabilities value) {
         if(value==null)throw new IllegalArgumentException("CAPABILITIES_REQUIRED");profile=value;
     }
-    public synchronized void legacyReceiverActive(boolean active) { legacy=active; }
+    public synchronized void legacyReceiverActive(boolean active) {
+        if(active&&!legacy&&owner!=null){
+            owner=new Lease(owner.client,owner.token,owner.epoch,owner.until,owner.mode,false);
+            if(pending!=null)pendingRevoked=true;
+        }
+        legacy=active;
+    }
 
     /** Transport redaction must also match the registration and process nonce, not UID alone. */
     synchronized boolean leaseBelongsTo(Lease lease,Client client) {
