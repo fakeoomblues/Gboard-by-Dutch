@@ -8,6 +8,8 @@
 
 Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
 
+[Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |

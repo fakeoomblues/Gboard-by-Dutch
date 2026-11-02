@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">52 apps</span> · Patchbundel: 1.25.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">54 apps</span> · Patchbundel: 1.28.3</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -345,16 +345,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="gearslip app.seb3thehacker.gearslip 0.3.12-alpha 0.3.31-alpha hide apps from drawer keep music player entries" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="gearslip app.seb3thehacker.gearslip 0.3.31-alpha 0.3.12-alpha control car display density hide apps from drawer keep music player entries" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Gearslip](apps/gearslip.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">0.3.12-alpha, 0.3.31-alpha</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">0.3.31-alpha, 0.3.12-alpha</span></p>
 <p class="dap-app-card__package">app.seb3thehacker.gearslip</p>
 <details class="dap-app-card__patches">
-<summary>2 patches</summary>
+<summary>3 patches</summary>
 <ul>
+<li>Control car display density <span class="dap-app-card__target">0.3.31-alpha</span></li>
 <li>Hide apps from drawer <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 <li>Keep music player entries <span class="dap-app-card__target">0.3.12-alpha, 0.3.31-alpha</span></li>
 </ul>
@@ -364,7 +365,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for gearslip and android auto offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Google Maps](apps/google-maps.md)
@@ -372,7 +373,7 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">26.43.05.1002020710</span></p>
 <p class="dap-app-card__package">com.google.android.apps.maps</p>
 <details class="dap-app-card__patches">
-<summary>30 patches</summary>
+<summary>31 patches</summary>
 <ul>
 <li>120 refresh rate <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Account sheet cleanup <span class="dap-app-card__target">26.43.05.1002020710</span></li>
@@ -392,6 +393,7 @@ hide:
 <li>Hide ads and clutter <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Legacy icon <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Location provider toggle <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Native navigation for Gearslip and Android Auto <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Offline saved places <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Power saving mode <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Proxy <span class="dap-app-card__target">26.43.05.1002020710</span></li>
@@ -597,6 +599,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/monet.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable alle versies gearslip personal library" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Myspoti](apps/myspoti.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
+<p class="dap-app-card__package">app.myspoti.stable</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Gearslip personal library <span class="dap-app-card__target">Alle versies</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/myspoti.md){ .dap-app-card__link }
 
 </article>
 
@@ -1175,6 +1195,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/wuplay.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="wuplay mobile app.wuplay.android 0.1.9-alpha add gearslip car interface" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [WuPlay Mobile](apps/wuplay-mobile.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">0.1.9-alpha</span></p>
+<p class="dap-app-card__package">app.wuplay.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Add Gearslip car interface <span class="dap-app-card__target">0.1.9-alpha · standaard uit</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/wuplay-mobile.md){ .dap-app-card__link }
 
 </article>
 

@@ -10,3 +10,5 @@ Evidence: The original APK resolves the Home SidebarScreen.rowCatalogIds before 
 - [x] Replace actions with Cancel and Done; retain draft selection until Done, publish then run Android approval queue, use clear focus styling and deterministic D-pad navigation.
 - [x] Run JVM/Python regressions and release Gradle checks, apply the built bundle to the original APK, verify DEX and signature, exercise actual Home order, save/cancel/approvals, focus and poster provider data on an isolated TV install.
 - [x] Update bilingual user docs and record bounded runtime evidence. Keep main and unrelated work untouched; no stable release without confirmation.
+
+The user approved promotion to main and publication of the updated user guides on 2026-11-02. Release version selection remains automated.

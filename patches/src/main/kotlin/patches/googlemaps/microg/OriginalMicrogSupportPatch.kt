@@ -79,7 +79,6 @@ val originalMicrogSupportPatch = bytecodePatch(
     default = false,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
-    category("microG")
     // A mount install keeps stock Maps and its real signature, which original microG already accepts.
     availability(AvailabilityResolver { installer, _ ->
         if (installer == InstallerType.MOUNT) PatchAvailability.UNAVAILABLE else PatchAvailability.DISABLED

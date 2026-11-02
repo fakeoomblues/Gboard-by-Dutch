@@ -1,4 +1,141 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3cb2a2d1fa27a92ed25da59567731fb87b59ce00/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [3cb2a2d1fa27](https://github.com/johninnl/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.3](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.2...v1.28.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** accept re-signed Gearslip hosts ([3cb2a2d](https://github.com/johninnl/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [ac5a2f89a2f9](https://github.com/johninnl/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.2](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.1...v1.28.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Gearslip:** enable native navigation in Gearslip and Android Auto ([ac5a2f8](https://github.com/johninnl/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5))
+* **Google Maps:** enable native navigation in Gearslip and Android Auto ([ac5a2f8](https://github.com/johninnl/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2869b936cd8c0dad3645df3a21485c8f246b855b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [2869b936cd8c](https://github.com/johninnl/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.0...v1.28.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **YouTube Music:** include personal Home and Library in the Any-version browser patch ([2869b93](https://github.com/johninnl/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [b0d9dd619b90](https://github.com/johninnl/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.1...v1.28.0) (2026-11-02)
+
+### ✨ New Features
+
+* **WuPlay Mobile:** add native Gearslip video interface ([b0d9dd6](https://github.com/johninnl/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [6705d1e9f2a3](https://github.com/johninnl/nl-morphe-patches/commit/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.0...v1.27.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Myspoti:** allow any structurally compatible app version ([6705d1e](https://github.com/johninnl/nl-morphe-patches/commit/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/bfdc032e1ee71fc160fc208d48f6aa96f4568e02/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [bfdc032e1ee7](https://github.com/johninnl/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.26.1...v1.27.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** enable personal libraries in Gearslip ([bfdc032](https://github.com/johninnl/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c50dcd8cdd23df060acba8e214d505b65d452eb6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.26.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [c50dcd8cdd23](https://github.com/johninnl/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.26.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.26.0...v1.26.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** retain the chosen app name with microG support ([c50dcd8](https://github.com/johninnl/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.26.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [df28ed2c3b64](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.26.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.25.0...v1.26.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Gearslip:** enlarge car app text with adjustable display density ([df28ed2](https://github.com/johninnl/nl-morphe-patches/commit/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/f57abb97c9eb11de5792dc50d66c3bab62d4489a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.25.0.**

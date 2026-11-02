@@ -23,6 +23,8 @@ Select the complete original APKM archive for this version in Morphe Manager.
 
 The eleven optional controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
 
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 ### Added by this project

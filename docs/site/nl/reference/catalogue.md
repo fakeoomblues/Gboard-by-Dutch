@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.25.0**
+**Patchbundel: 1.28.3**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -205,6 +205,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Control car display density | Aan | 0.3.31-alpha |
 | Hide apps from drawer | Aan | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | Aan | 0.3.12-alpha, 0.3.31-alpha |
 
@@ -234,6 +235,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads and clutter | Aan | 26.43.05.1002020710 |
 | Legacy icon | Aan | 26.43.05.1002020710 |
 | Location provider toggle | Aan | 26.43.05.1002020710 |
+| Native navigation for Gearslip and Android Auto | Aan | 26.43.05.1002020710 |
 | Offline saved places | Aan | 26.43.05.1002020710 |
 | Power saving mode | Aan | 26.43.05.1002020710 |
 | Proxy | Aan | 26.43.05.1002020710 |
@@ -363,6 +365,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Individual Wuplay catalog rows | Uit | 1.1.0 |
+
+## Myspoti
+
+[Wat veranderen de patches?](../apps/myspoti.md)
+
+`app.myspoti.stable`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Gearslip personal library | Aan | Alle versies |
 
 ## Nieuwsblad
 
@@ -733,6 +745,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Publish selected catalog channels | Uit | 0.9.4-beta |
+
+## WuPlay Mobile
+
+[Wat veranderen de patches?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Add Gearslip car interface | Uit | 0.1.9-alpha |
 
 ## YouTube Music
 

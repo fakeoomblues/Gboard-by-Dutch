@@ -146,17 +146,16 @@ private val microgManifestPatch = resourcePatch(
 /**
  * Builds microG Maps instead of Ungoogled Maps. Its name sorts it ahead of every patch it
  * replaces, which Morphe runs in name order: those see the choice ([MicrogSelection]) and
- * leave the account in, and the package and app name default to microG Maps' own.
+ * leave the account in, and the package defaults to microG Maps' own.
  */
 @Suppress("unused")
 val microgSupportPatch = bytecodePatch(
     name = "Add microG-RE support",
-    description = "Builds microG Maps, a separate app that signs in to your Google account through microG-RE " +
-        "(MicroG-RE or ReVanced GmsCore). Not for root installs; for original microG, use Add original microG support.",
+    description = "Signs in to your Google account through microG-RE (MicroG-RE or ReVanced GmsCore), " +
+        "keeping the name from Change app name. Not for root installs; for original microG, use Add original microG support.",
     default = false,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
-    category("microG-RE")
     // A mount install keeps stock Maps' manifest, so microG never learns whom to vouch for.
     availability(AvailabilityResolver { installer, _ ->
         if (installer == InstallerType.MOUNT) PatchAvailability.UNAVAILABLE else PatchAvailability.DISABLED

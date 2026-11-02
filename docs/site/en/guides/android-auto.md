@@ -1,6 +1,6 @@
-# Get Waze and Flitsmeister into Android Auto
+# Get Waze, Flitsmeister and Ungoogled Maps into Android Auto
 
-Does the patched app work on your phone but never show up on your car screen? Follow the steps below for [Waze](../apps/waze.md) or [Flitsmeister](../apps/flitsmeister.md). You do this on your phone, before connecting to the car.
+Does the patched app work on your phone but never show up on your car screen? Follow the steps below for [Waze](../apps/waze.md), [Flitsmeister](../apps/flitsmeister.md) or [Ungoogled Maps](../apps/google-maps.md). You do this on your phone, before connecting to the car.
 
 You will patch the app in Morphe Manager, start Shizuku-Next, then install the result through KingInstaller. Root is not needed for this route. Phone manufacturers can restrict it; see [troubleshooting](#if-you-get-stuck) if installation fails.
 
@@ -10,16 +10,28 @@ Android Auto checks where an app was installed from. An app can run perfectly we
 
 KingInstaller installs the patched APK with Google Play Store recorded as its installation source. Shizuku gives KingInstaller the extra Android access it needs to do that. The APK is still your patched app; Google has not reviewed or signed that file.
 
-Music apps can behave differently. Android Auto has an **Unknown sources** developer setting for media apps, messaging notifications and parked apps. Google's [documentation](https://developer.android.com/training/cars/testing#unknown-sources) says this exception does not apply to apps built with the Android for Cars App Library. Switching it on is therefore not a general fix for navigation apps. For patched Waze and Flitsmeister, use the installation route below.
+Music apps can behave differently. Android Auto has an **Unknown sources** developer setting for media apps, messaging notifications and parked apps. Google's [documentation](https://developer.android.com/training/cars/testing#unknown-sources) says this exception does not apply to apps built with the Android for Cars App Library. Switching it on is therefore not a general fix for navigation apps. For patched Waze, Flitsmeister and Ungoogled Maps, use the installation route below.
 
 ## 1. Get the apps and patch your original file
 
 1. Install [Morphe Manager](https://morphe.software/) if you have not already.
 2. Download [Shizuku-Next](https://github.com/rushiranpise/Shizuku-Next/releases/latest) and [KingInstaller](https://github.com/fcaronte/KingInstaller/releases/latest). On each release page, expand **Assets** and download the `.apk` file, not **Source code**. Open each download to install it. If Android asks, allow the browser or file manager to install this file.
-3. Use the original version linked on the [Waze](../apps/waze.md) or [Flitsmeister](../apps/flitsmeister.md) page. Select the complete original APKS/APKM archive in Morphe and apply your patches. For Flitsmeister, keep **Fix PairIP startup** enabled.
+3. Select the supported original file in Morphe and apply the required patches listed below.
 4. When patching finishes, keep the result screen open. You will install from there in step 4.
 
+| App | Original input and required patches |
+| --- | --- |
+| [Waze](../apps/waze.md) | Complete supported APKM archive. |
+| [Flitsmeister](../apps/flitsmeister.md) | Complete supported APKS archive; keep **Fix PairIP startup** enabled. |
+| [Ungoogled Maps](../apps/google-maps.md) | Complete original Maps **26.43.05.1002020710** APK; select **Native navigation for Gearslip and Android Auto** and keep **Change package name** enabled to install beside stock Maps. |
+
+Select Maps patches from **Dutch App Patches only**. Its adapted upstream controls are included; combining them with overlapping bearinmind Maps patches can fail.
+
 Already have a working Shizuku installation? Keep it. You do not need to replace it with Next. Different Shizuku builds can use different signing keys; read the [Shizuku guide](shizuku.md) before switching.
+
+### Extra requirements for Ungoogled Maps
+
+Keep the **full Android Auto app** installed and enabled. Maps loads part of its native car interface from it; a stub package alone is insufficient. This requirement also applies when Gearslip is your car host. KingInstaller fixes installation attribution, while the Maps patch provides the navigation service and native UI integration. Both are needed for this setup.
 
 ## 2. Start Shizuku-Next
 
@@ -72,9 +84,9 @@ If Android reports a signature conflict or says the package conflicts with an ex
 
 ## 5. Check Android Auto's app list
 
-1. Open Waze or Flitsmeister on your phone once. Complete its first-run setup and give the permissions it needs for navigation.
+1. Open your patched navigation app on the phone once. Complete its first-run setup and give the permissions it needs for navigation. Ungoogled Maps needs precise location access.
 2. Open your phone's **Settings** and search for **Android Auto**. Open the Android Auto settings result.
-3. Tap **Customize launcher** (or **Customise Launcher**). Find **Flitsmeister** or **Waze** and tick its box. If you applied Waze's **Change app name** patch, look for your chosen name; its default is **De-Waze**.
+3. Tap **Customize launcher** (or **Customise Launcher**). Find your patched app and tick its box. The default renamed entries are **De-Waze** and **Ungoogled Maps**; **Change app name** may give them another name. Stock **Maps** is a separate entry, so select the patched copy.
 4. Reconnect your phone to the car and check the car's app launcher. Complete this setup while parked.
 
 ![Android Auto settings with Customize launcher](../../assets/images/android-auto/android-auto-settings.webp){ .aa-screenshot loading=lazy }
@@ -82,6 +94,10 @@ If Android reports a signature conflict or says the package conflicts with an ex
 ![Android Auto Customize launcher list with the navigation app enabled](../../assets/images/android-auto/android-auto-launcher.webp){ .aa-screenshot loading=lazy }
 
 *If the app is absent from this list altogether, go back to steps 2 to 4. There is no box to tick until Android Auto accepts the installation.*
+
+![Android Auto launcher customization with Ungoogled Maps enabled beside stock Maps](../../assets/images/maps/android-auto-launcher.jpg){ .aa-screenshot loading=lazy }
+
+*User-supplied Android 16 screenshot: Ungoogled Maps is enabled separately from stock Maps. A launcher entry confirms discovery; open it to check native rendering, search and navigation too.*
 
 ## Updates and phone restarts
 
@@ -97,10 +113,12 @@ After restarting the phone, check Shizuku before the next KingInstaller installa
 | Shizuku is installed but does not say Running | Finish pairing and tap Start. Check Wi-Fi and Wireless debugging. See the [Shizuku guide](shizuku.md). |
 | KingInstaller cannot use Shizuku | Start Shizuku first. In Shizuku's Apps screen, check KingInstaller's access, then reopen KingInstaller and enable Shizuku. |
 | The app works on the phone but is absent from Customize launcher | Repeat the installation through KingInstaller with Shizuku enabled. Check that you selected the patched APK and completed the Android installation confirmation. |
-| The app is listed but hidden in the car | Tick it in Customize launcher and reconnect the phone to the car. Check for a renamed Waze entry too. |
+| The app is listed but hidden in the car | Tick it in Customize launcher and reconnect the phone to the car. Look for **De-Waze**, **Ungoogled Maps** or your chosen name. |
 | Installation fails on Xiaomi, POCO or Redmi | KingInstaller's [compatibility notes](https://github.com/fcaronte/KingInstaller) describe manufacturer restrictions on MIUI/HyperOS. The no-root Shizuku route may fail there. Follow its device-specific advice; do not keep uninstalling the navigation app. |
 | The app appears but crashes, cannot log in or has no map | That is a separate app problem. Check the app page and [report the issue](troubleshooting.md#report-a-problem). Appearing in the launcher does not prove every car feature works. |
 
 For a missing-app report, include your phone model, Android and Android Auto versions, app version, KingInstaller version, whether Shizuku said Running and which installer you selected in Morphe. Do not clear Android Auto or navigation-app data just to refresh the list.
 
 Screenshots use an English-language Android 16 phone. Menu names and appearance can differ on your phone. KingInstaller 2.4, Shizuku-Next 14.0.30-next and Morphe Manager 2.3.0 are shown.
+
+To add provider road warnings inside your map, follow [Waze and Flitsmeister data in other map apps](navigation-data.md). For music alongside the map, see [music players in Gearslip](gearslip-music.md).

@@ -1,0 +1,381 @@
+package patches.maps.gearslip;
+
+import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.Process;
+import android.os.RemoteException;
+import android.os.SystemClock;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
+
+/** Runs the patched app's original Android Auto activity on the host's surface. */
+public final class ProjectionRenderer {
+    private static final String ORIGINAL = "com.google.android.apps.gmm.car.GmmCarProjectionService";
+    private static final String PROJECTION = "com.google.android.gms.car.ICarProjection";
+    private static final String CAR = "com.google.android.gms.car.ICar";
+    private static final String DISPLAY_MANAGER = "com.google.android.gms.car.display.manager.ICarDisplayManager";
+    private static final String DISPLAY = "com.google.android.gms.car.display.manager.ICarDisplay";
+    private static final String CALLBACK = "com.google.android.gms.car.ICarProjectionCallback";
+    private final Service service;
+    private final Consumer<Throwable> onFailure;
+    private final Handler main = new Handler(Looper.getMainLooper());
+    private final HostBinder car = new HostBinder(CAR);
+    private final HostBinder callback = new HostBinder(CALLBACK);
+    private Object controller;
+    private Intent intent;
+    private Configuration configuration;
+    private Surface surface;
+    private int width, height, dpi;
+    private int nativeWidth, nativeHeight, nativeDpi;
+    private boolean bound, created, resumed, closed, failed;
+    private volatile boolean keyboardRequested;
+    private KeyboardListener keyboardListener;
+    private long downTime;
+    private float touchX, touchY;
+    private final Runnable endScroll = () -> guard(this::finishTouch);
+    private final Runnable bindTimeout = () -> fail(new IllegalStateException("Maps' native car service did not connect"));
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override public void onServiceConnected(ComponentName name, IBinder binder) {
+            if (closed) return;
+            main.removeCallbacks(bindTimeout);
+            guard(() -> {
+                if (!PROJECTION.equals(binder.getInterfaceDescriptor())) throw new IllegalStateException("Maps projection protocol changed");
+                Object reference = field(binder, "a");
+                if (!(reference instanceof WeakReference)) throw new IllegalStateException("Maps native service must run in the adapter process");
+                controller = ((WeakReference<?>) reference).get();
+                if (controller == null) throw new IllegalStateException("Maps native projection controller is unavailable");
+                // This private connection is entirely inside Maps. The exported adapter validates
+                // the external host first; the original service remains restricted to our own UID.
+                controller.getClass().getField("H").setInt(controller, Process.myUid());
+                Parcel request = Parcel.obtain(), reply = Parcel.obtain();
+                try {
+                    request.writeInterfaceToken(PROJECTION);
+                    request.writeStrongBinder(callback);
+                    request.writeStrongBinder(car);
+                    if (!binder.transact(1, request, reply, 0)) throw new RemoteException("Maps native initialization is unavailable");
+                    reply.readException();
+                } finally { reply.recycle(); request.recycle(); }
+                showSurface();
+            });
+        }
+        @Override public void onServiceDisconnected(ComponentName name) { fail(new IllegalStateException("Maps' native car service disconnected")); }
+        @Override public void onBindingDied(ComponentName name) { fail(new IllegalStateException("Maps' native car service died")); }
+        @Override public void onNullBinding(ComponentName name) { fail(new IllegalStateException("Maps refused its native car connection")); }
+    };
+
+    public ProjectionRenderer(Service service, Consumer<Throwable> onFailure) {
+        this.service = service;
+        this.onFailure = onFailure;
+    }
+
+    /** The car host supplies its keyboard; the original Maps editor owns query handling. */
+    public interface KeyboardListener {
+        void show(IBinder connection, EditorInfo editor);
+        void hide();
+    }
+
+    public void setKeyboardListener(KeyboardListener listener) { keyboardListener = listener; }
+
+    public void create(Intent value, Configuration config) {
+        guard(() -> {
+            intent = nativeIntent(value);
+            configuration = config == null ? new Configuration(service.getResources().getConfiguration()) : new Configuration(config);
+            if (!bound) {
+                bound = service.bindService(new Intent(Intent.ACTION_MAIN).setComponent(originalComponent()), connection, Context.BIND_AUTO_CREATE);
+                if (!bound) throw new IllegalStateException("Cannot bind Maps' original Android Auto service");
+                main.postDelayed(bindTimeout, 15000);
+            }
+        });
+    }
+    public void start() {}
+    public void resume() { resumed = true; guard(() -> { if (created) lifecycle(5); }); }
+    public void pause() { resumed = false; guard(() -> { finishTouch(); if (created) lifecycle(3); }); }
+    public void stop() { resumed = false; guard(() -> { finishTouch(); if (created) lifecycle(2); }); }
+    public void close() {
+        if (closed) return;
+        closed = true;
+        main.removeCallbacks(bindTimeout);
+        main.removeCallbacks(endScroll);
+        try { destroySurface(); } catch (Exception error) { Log.w("MapsNativeCar", "Native car cleanup failed", error); }
+        if (bound) {
+            try { service.unbindService(connection); } catch (IllegalArgumentException ignored) {}
+        }
+        bound = false;
+        controller = null;
+        keyboardListener = null;
+    }
+    public void newIntent(Intent value) {
+        guard(() -> {
+            intent = nativeIntent(value);
+            if (created) call(field(controller, "J"), "B", new Class<?>[]{Intent.class}, intent);
+        });
+    }
+    public void configurationChanged(Configuration value) {
+        if (value == null) return;
+        configuration = new Configuration(value);
+        guard(() -> {
+            if (created) {
+                controller.getClass().getField("o").set(controller, configuration);
+                call(controller, "v", new Class<?>[0]);
+                call(controller, "t", new Class<?>[]{android.content.res.Resources.class}, service.getResources());
+                Object activity = field(controller, "J");
+                if (activity != null) call(activity, "b", new Class<?>[]{Configuration.class}, configuration);
+            }
+        });
+    }
+    public void surfaceAvailable(Surface value, int w, int h, int density) {
+        guard(() -> {
+            if (value == null || !value.isValid() || w <= 0 || h <= 0 || density <= 0) throw new IllegalArgumentException("Invalid car surface");
+            // A host can replace/hide its surface just to display its keyboard. The Maps
+            // activity and native editor must survive that target change.
+            boolean sameCanvas = nativeWidth == w && nativeHeight == h && nativeDpi == density;
+            if (created && !sameCanvas && !keyboardRequested) destroySurface();
+            else if (surface != null && surface != value) detachSurface();
+            surface = value; width = w; height = h; dpi = density;
+            showSurface();
+        });
+    }
+    public void surfaceDestroyed() { guard(this::detachSurface); }
+    public void visibleArea(Rect area) {}
+    public void stableArea(Rect area) {}
+    public void back() {
+        guard(() -> {
+            finishTouch();
+            View view = decor();
+            if (view != null) {
+                view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+            }
+        });
+    }
+    public void click(float x, float y) {
+        guard(() -> {
+            finishTouch();
+            downTime = SystemClock.uptimeMillis();
+            touchX = x; touchY = y;
+            touch(MotionEvent.ACTION_DOWN, x, y);
+            touch(MotionEvent.ACTION_UP, x, y);
+            downTime = 0;
+        });
+    }
+    public void scroll(float distanceX, float distanceY) {
+        guard(() -> {
+            if (downTime == 0) {
+                downTime = SystemClock.uptimeMillis();
+                touchX = width / 2f; touchY = height / 2f;
+                touch(MotionEvent.ACTION_DOWN, touchX, touchY);
+            }
+            touchX = Math.max(1, Math.min(width - 1, touchX - distanceX));
+            touchY = Math.max(1, Math.min(height - 1, touchY - distanceY));
+            touch(MotionEvent.ACTION_MOVE, touchX, touchY);
+            main.removeCallbacks(endScroll);
+            main.postDelayed(endScroll, 100);
+        });
+    }
+    public void fling(float velocityX, float velocityY) {
+        scroll(-velocityX / 15f, -velocityY / 15f);
+        guard(this::finishTouch);
+    }
+    public void scale(float focusX, float focusY, float factor) {
+        guard(() -> {
+            if (!Float.isFinite(factor) || factor <= 0) return;
+            finishTouch();
+            downTime = SystemClock.uptimeMillis();
+            float radius = Math.min(width, height) / 8f;
+            twoPointers(MotionEvent.ACTION_DOWN, focusX, focusY, radius, 1);
+            twoPointers(MotionEvent.ACTION_POINTER_DOWN | (1 << MotionEvent.ACTION_POINTER_INDEX_SHIFT), focusX, focusY, radius, 2);
+            twoPointers(MotionEvent.ACTION_MOVE, focusX, focusY, radius * factor, 2);
+            twoPointers(MotionEvent.ACTION_POINTER_UP | (1 << MotionEvent.ACTION_POINTER_INDEX_SHIFT), focusX, focusY, radius * factor, 2);
+            twoPointers(MotionEvent.ACTION_UP, focusX, focusY, radius * factor, 1);
+            downTime = 0;
+        });
+    }
+
+    private ComponentName originalComponent() { return new ComponentName(service.getPackageName(), ORIGINAL); }
+    private Intent nativeIntent(Intent value) {
+        Intent result = value == null ? new Intent(Intent.ACTION_MAIN) : new Intent(value);
+        if ("androidx.car.app.action.NAVIGATE".equals(result.getAction())) result.setAction(Intent.ACTION_VIEW);
+        return result.setComponent(originalComponent()).setPackage(service.getPackageName());
+    }
+    private void showSurface() throws Exception {
+        if (controller == null || surface == null || !surface.isValid() || intent == null) return;
+        if (created) {
+            Object holder = field(field(controller, "k"), "h");
+            call(holder, "f", new Class<?>[]{Surface.class}, surface);
+            controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+            return;
+        }
+        Object drawing = drawing(width, height, dpi);
+        Object display = type("com.google.android.gms.car.display.CarDisplayId").getConstructor(int.class).newInstance(0);
+        Object region = type("com.google.android.gms.car.display.CarRegionId").getConstructor(int.class, display.getClass()).newInstance(0, display);
+        call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, new Bundle());
+        nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
+        created = true;
+        if (resumed) lifecycle(5);
+    }
+    private Object drawing(int w, int h, int density) throws Exception {
+        return type("com.google.android.gms.car.DrawingSpec").getConstructor(int.class, int.class, int.class, Surface.class, Rect.class, int.class, int.class, Bundle.class)
+                .newInstance(w, h, density, surface, new Rect(), 0, 0, new Bundle());
+    }
+    private void lifecycle(int state) throws Exception { call(controller, "m", new Class<?>[]{int.class, boolean.class}, state, false); }
+    private void detachSurface() throws Exception {
+        finishTouch();
+        if (controller != null && created) {
+            // Maps' original VirtualDisplay holder can change its output without destroying
+            // the Presentation/window. Destroying it here invalidates IProxyInputConnection.
+            Object holder = field(field(controller, "k"), "h");
+            call(holder, "f", new Class<?>[]{Surface.class}, new Object[]{null});
+        }
+        if (surface != null) surface.release();
+        surface = null;
+    }
+    private void destroySurface() throws Exception {
+        finishTouch();
+        if (controller != null && created) {
+            lifecycle(0);
+            call(controller, "k", new Class<?>[0]);
+        }
+        created = false;
+        nativeWidth = nativeHeight = nativeDpi = 0;
+        keyboardRequested = false;
+        if (surface != null) surface.release();
+        surface = null;
+    }
+    private View decor() throws Exception {
+        if (!created || controller == null) return null;
+        Object presentation = field(controller, "k");
+        if (presentation == null) return null;
+        Method method = presentation.getClass().getMethod("f");
+        Window window = (Window) method.invoke(presentation);
+        return window == null ? null : window.getDecorView();
+    }
+    private void finishTouch() throws Exception {
+        main.removeCallbacks(endScroll);
+        if (downTime != 0) { touch(MotionEvent.ACTION_UP, touchX, touchY); downTime = 0; }
+    }
+    private void touch(int action, float x, float y) throws Exception {
+        View view = decor();
+        if (view == null) return;
+        MotionEvent event = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, x, y, 0);
+        event.setSource(0x1002);
+        try { view.dispatchTouchEvent(event); } finally { event.recycle(); }
+    }
+    private void twoPointers(int action, float x, float y, float radius, int count) throws Exception {
+        View view = decor();
+        if (view == null) return;
+        MotionEvent.PointerProperties[] properties = new MotionEvent.PointerProperties[count];
+        MotionEvent.PointerCoords[] coordinates = new MotionEvent.PointerCoords[count];
+        for (int i = 0; i < count; i++) {
+            properties[i] = new MotionEvent.PointerProperties(); properties[i].id = i; properties[i].toolType = MotionEvent.TOOL_TYPE_FINGER;
+            coordinates[i] = new MotionEvent.PointerCoords(); coordinates[i].x = x + (i == 0 ? -radius : radius); coordinates[i].y = y; coordinates[i].pressure = 1; coordinates[i].size = 1;
+        }
+        MotionEvent event = MotionEvent.obtain(downTime, SystemClock.uptimeMillis(), action, count, properties, coordinates, 0, 0, 1, 1, 0, 0, 0x1002, 0);
+        try { view.dispatchTouchEvent(event); } finally { event.recycle(); }
+    }
+    private Class<?> type(String name) throws ClassNotFoundException { return service.getClassLoader().loadClass(name); }
+    private static Object field(Object target, String name) throws Exception {
+        Field member = target.getClass().getDeclaredField(name); member.setAccessible(true); return member.get(target);
+    }
+    private static Object call(Object target, String name, Class<?>[] parameters, Object... values) throws Exception {
+        try { return target.getClass().getMethod(name, parameters).invoke(target, values); }
+        catch (InvocationTargetException error) {
+            Throwable cause = error.getCause();
+            if (cause instanceof Exception) throw (Exception) cause;
+            throw error;
+        }
+    }
+    private interface Work { void run() throws Exception; }
+    private void guard(Work work) {
+        if (closed || failed) return;
+        try { work.run(); } catch (Exception error) { fail(error); }
+    }
+    private void fail(Throwable error) {
+        if (closed || failed) return;
+        failed = true;
+        Log.e("MapsNativeCar", "Original Maps car renderer failed", error);
+        onFailure.accept(error);
+    }
+    private Parcelable ui() throws Exception {
+        return (Parcelable) type("com.google.android.gms.car.CarUiInfo").getConstructor(boolean.class, boolean.class, boolean.class, boolean.class, int[].class, boolean.class, int.class, boolean.class, int.class, int.class)
+                .newInstance(false, true, false, false, null, false, 1, false, 0, 0);
+    }
+
+    /** Minimum native host services. No speed, gear, fuel or driving-state samples are invented. */
+    private final class HostBinder extends Binder {
+        private final String descriptor;
+        HostBinder(String descriptor) { this.descriptor = descriptor; attachInterface(null, descriptor); }
+        @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+            if (code == INTERFACE_TRANSACTION) { reply.writeString(descriptor); return true; }
+            data.enforceInterface(descriptor);
+            if (Binder.getCallingUid() != Process.myUid()) throw new SecurityException("Maps internal projection only");
+            try {
+                if (CAR.equals(descriptor)) {
+                    switch (code) {
+                        case 5: case 6: data.readStrongBinder(); reply.writeNoException(); return true;
+                        case 55:
+                            data.readString(); data.createStringArrayList(); reply.writeNoException(); reply.writeStringList(new ArrayList<String>()); return true;
+                        case 19: case 71:
+                            data.readString(); int bool = data.readInt(); reply.writeNoException(); reply.writeInt(bool); return true;
+                        case 68:
+                            data.readString(); int value = data.readInt(); reply.writeNoException(); reply.writeInt(value); return true;
+                        case 1:
+                            reply.writeNoException(); reply.writeInt(1); ((Parcelable) type("com.google.android.gms.car.CarInfo").getConstructor().newInstance()).writeToParcel(reply, 0); return true;
+                        case 2: reply.writeNoException(); reply.writeInt(1); ui().writeToParcel(reply, 0); return true;
+                        case 77: reply.writeNoException(); reply.writeStrongBinder(new HostBinder(DISPLAY_MANAGER)); return true;
+                    }
+                } else if (DISPLAY_MANAGER.equals(descriptor)) {
+                    if (code == 3) { reply.writeNoException(); reply.writeStrongBinder(new HostBinder(DISPLAY)); return true; }
+                } else if (DISPLAY.equals(descriptor)) {
+                    if (code == 3) { reply.writeNoException(); reply.writeInt(1); ui().writeToParcel(reply, 0); return true; }
+                    if (Arrays.asList(4, 5, 7, 8, 10, 11, 13, 14).contains(code)) { reply.writeNoException(); return true; }
+                } else if (CALLBACK.equals(descriptor)) {
+                    if (code == 16) {
+                        IBinder input = data.readStrongBinder();
+                        EditorInfo editor = data.readInt() == 0 ? null : EditorInfo.CREATOR.createFromParcel(data);
+                        if (input == null || editor == null) throw new IllegalArgumentException("Maps supplied no native editor");
+                        keyboardRequested = true;
+                        main.post(() -> {
+                            if (!closed && !failed && keyboardListener != null) keyboardListener.show(input, editor);
+                        });
+                    } else if (code == 17) {
+                        keyboardRequested = false;
+                        main.post(() -> {
+                            if (!closed && keyboardListener != null) keyboardListener.hide();
+                        });
+                    }
+                    reply.writeNoException(); if (code == 24) reply.writeInt(0); return true;
+                }
+                Log.w("MapsNativeCar", "Unsupported native host request " + descriptor + " transaction " + code);
+                return false;
+            } catch (Exception error) {
+                reply.writeException(new IllegalStateException("Native Maps host request failed", error));
+                main.post(() -> fail(error));
+                return true;
+            }
+        }
+    }
+}

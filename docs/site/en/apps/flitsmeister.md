@@ -8,6 +8,8 @@
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |

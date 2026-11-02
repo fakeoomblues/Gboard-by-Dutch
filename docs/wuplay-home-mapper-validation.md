@@ -37,4 +37,4 @@ The old publisher explicitly preferred background images and declared a landscap
 
 The stock Android TV test launcher visibly renders separate Wuplay Trending Movies and Trending Shows rows with portrait posters matching the native Home rows. Opening Verity from the published row reaches Wuplay's populated native details screen for Verity; playback itself was not tested.
 
-The physical TV installation has not been replaced. No stable release or promotion to main has been performed. Physical-launcher acceptance remains separate from emulator and provider evidence.
+These runtime checks preceded promotion to main. The physical TV installation was not replaced; physical-launcher acceptance remains separate from emulator and provider evidence. The user authorized main publication and user-guide updates on 2026-11-02.

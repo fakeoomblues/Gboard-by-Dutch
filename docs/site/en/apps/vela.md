@@ -6,6 +6,10 @@
 
 Select the complete original APK for this exact version in Morphe Manager.
 
+Use patched Waze or Flitsmeister as a local source for current speed, limits and available road warnings while Vela handles your route. The provider can remain in the background with its overlay off.
+
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |

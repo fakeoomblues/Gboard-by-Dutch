@@ -6,15 +6,61 @@
 
 Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager. Android 10 of nieuwer is vereist.
 
-Deze 30 Maps-patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat en zijn hier aangepast voor deze Maps-versie. Dit project breidt **Waze alerts** uit met Flitsmeister en de navigatiegegevens die Vela Maps al ondersteunt.
+## Native Maps in Gearslip en Android Auto
+
+Onze patch **Native navigation for Gearslip and Android Auto** gebruikt in beide hosts de oorspronkelijke autokaart en navigatie-interface van de gepatchte app. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. Zoeken gebruikt het toetsenbord van de host. Het native Maps-scherm verzorgt resultaten, routevoorbeelden en navigatie-instructies.
+
+![Ungoogled Maps met de native kaart in de officiële Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
+
+*De hernoemde gepatchte app in Googles Android Auto Desktop Head Unit, met een testlocatie in Amsterdam.*
+
+[Ungoogled Maps instellen voor Android Auto](../guides/android-auto.md){ .md-button }
+
+### Waarom Maps een andere aanpak nodig had
+
+Waze heeft een standaard navigatiedienst voor Android for Cars die autohosts kunnen vinden. De onderzochte Maps-versie gebruikt daarentegen Googles eigen projectiedienst. Na het hernoemen kon Gearslip de meldingsfunctie als berichtenapp herkennen en een leeg berichtenscherm openen. Alleen een navigatielabel toevoegen laat die twee interfaces nog niet met elkaar communiceren.
+
+We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eigen projectiedienst en oorspronkelijke autoweergave van de gepatchte versie. Maps laadt ook een deel van de auto-interface uit de volledige Android Auto-installatie. Daarom moet die app ook aanwezig zijn als je Gearslip gebruikt.
+
+Het ondertekenen van de gepatchte APK veroorzaakt nog een probleem: Googles optionele privéclient voor voertuiggegevens weigert het nieuwe ondertekeningscertificaat. We hebben die client geïsoleerd zodat hij de kaart niet laat crashen, terwijl GPS-navigatie blijft werken. Zoeken vroeg om een aparte koppeling tussen het toetsenbord van de host en het native zoekveld van Maps. De kaart en het zoekveld moeten bovendien behouden blijven bij schermwijzigingen, het openen van het toetsenbord en opnieuw verbinden.
+
+Native zoeken, een route starten, navigeren en opnieuw verbinden zijn gecontroleerd in Gearslip en Googles officiële Android Auto Desktop Head Unit. Daarmee is niet iedere telefoon, auto of rit op de weg getest. Het [technische verslag](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/research/2026-11-02-maps-native-car-ui.md) beschrijft de uitvoering en testgrenzen.
+
+## Gegevens van Waze en Flitsmeister in Maps
+
+Onze uitbreiding op **Waze alerts** laat je gepatchte Waze of Flitsmeister kiezen als lokale bron van navigatiegegevens. Naast wegmeldingen op de kaart kan deze koppeling actuele snelheid, de maximumsnelheid en een waargenomen gemiddelde tijdens een trajectcontrole tonen, met voortgang en resterende afstand. Beschikbare meldingen kunnen ook voorwaarschuwingen geven.
+
+Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen de gewone Waze of Flitsmeister installeren is niet voldoende. De oorspronkelijke Waze-modus **Share alerts with Maps** blijft als aparte keuze voor het delen van meldingen beschikbaar.
+
+[Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
+
+## Waar komen deze patches vandaan?
+
+De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.43.05.1002020710, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
+
+Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bundel bevat de aangepaste oorspronkelijke opties al. Ook overlappende Maps-patches uit bearinmind patches kiezen kan verschillende versies van dezelfde gedeelde koppelingen uitvoeren.
 
 ## Patches
+
+### Toegevoegd door dit project
+
+| Patch | Standaard | Wat verandert er? |
+| --- | --- | --- |
+| **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. Vereist de volledige Android Auto-app voor de auto-interface. |
+
+### Uitgebreid door dit project
+
+| Patch | Standaard | Wat verandert er? |
+| --- | --- | --- |
+| **Waze alerts** | Aan | Voegt Waze en Flitsmeister toe als lokale bronnen voor wegmeldingen, voorwaarschuwingen, snelheid, limieten en waargenomen trajectcontroles. Begint uit. |
+
+### Aangepast vanuit bearinmind patches
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **120 refresh rate** | Aan | Laat Maps de ondersteunde verversingssnelheid van het scherm gebruiken. Zet dit aan in Customization; het kan meer batterij verbruiken. |
 | **Account sheet cleanup** | Aan | Verwijdert de extra kop in het accountmenu en houdt het menu open bij terugkeer uit Settings of Customization. |
-| **Add microG-RE support** | Uit | Maakt een aparte microG Maps-app met Google-aanmelding via microG-RE of ReVanced GmsCore. |
+| **Add microG-RE support** | Uit | Voegt Google-aanmelding via microG-RE of ReVanced GmsCore toe en behoudt de naam uit Change app name. |
 | **Add original microG support** | Uit | Gebruikt originele microG voor Google-aanmelding op een ROM met signature spoofing; behoudt de oorspronkelijke pakketnaam. |
 | **Any media app** | Aan | Voegt geschikte muziek- en podcastapps voor Android Auto toe aan de keuze Default media app in Navigation. |
 | **Avoid Flock cameras** | Aan | Biedt autoroutes om bekende Flock-camera’s heen via BRouter. Begint uit; routes met tussenstops blijven gelijk. |
@@ -40,7 +86,6 @@ Deze 30 Maps-patches komen uit [bearinmind patches](https://github.com/bearinmin
 | **Speed cameras** | Aan | Toont flitsers en roodlichtcamera’s uit OpenStreetMap met een melding en geluid bij nadering. Begint uit. |
 | **Speeding chime** | Aan | Voegt een geluid toe wanneer de snelheid de bekende limiet overschrijdt; stel de drempel in bij de externe gegevens. |
 | **Trim account menu** | Aan | Verwijdert Timeline, Location sharing, Your data in Maps en Help & feedback uit het accountmenu. |
-| **Waze alerts** | Aan | Voegt Waze en Flitsmeister toe als lokale bronnen voor wegmeldingen, voorwaarschuwingen, snelheid, limieten en waargenomen trajectcontroles. Begint uit. |
 | **Zoom controls in navigation** | Aan | Voegt knoppen voor inzoomen, uitzoomen en herstellen toe terwijl de navigatiecamera blijft volgen. |
 
 ## Advertentie- en trackingdiensten
@@ -51,17 +96,13 @@ Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde
 
 ## Voor gebruik
 
-Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps**. Met **Add microG-RE support** worden de standaardwaarden `org.ungoogled.android.apps.maps.microg` en **microG Maps**. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
+Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps** en behoudt je gekozen naam bij beide microG-patches. **Add microG-RE support** wijzigt de standaardpakketnaam naar `org.ungoogled.android.apps.maps.microg`. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
+
+Laat voor native autonavigatie **Native navigation for Gearslip and Android Auto** geselecteerd, installeer de volledige Android Auto-app en geef de gepatchte Maps-app toegang tot de exacte locatie. Gearslip vindt dan één navigatietegel in plaats van Maps als berichtenapp te behandelen. Installeer de gepatchte APK voor Android Auto via KingInstaller en controleer het installatieresultaat; gebruik de Shizuku-modus als de normale methode niet de verwachte installer vastlegt. Kies **Ungoogled Maps** of je eigen appnaam in de autolauncher, zodat de sessie de gepatchte versie gebruikt.
 
 Open **Customization** en **Waze & external data source** in het accountmenu om de gekozen patches in te stellen. **Aan** in de tabel betekent dat de patch standaard geselecteerd is tijdens het patchen; cameralagen en externe bronnen moeten daarnaast in de app worden aangezet. **120 refresh rate** begint ook uit in Customization.
 
-Patch voor uitgebreide gegevens [Waze 5.26.90.901](waze.md) of [Flitsmeister 14.17](flitsmeister.md) met **Broadcast navigation data**, open de bron eenmaal en laat de rij- of locatiedienst op de achtergrond draaien. De overlay mag uit blijven. Open **Navigation data source** in de instellingen voor externe gegevens van Maps en kies **De-Waze · navigation data** of **Flitsmeister · navigation data**. **Off · Google Maps** herstelt de eigen gegevens van Maps. Gebruik je de optionele **Receiver package** van de bronpatch, vul dan de pakketnaam van je gepatchte Maps-installatie in. Vanaf Android 14 kan Android de afzender controleren; oudere versies bieden die afzendercontrole niet.
-
-Kies **Waze · Share alerts with Maps** voor de oorspronkelijke meldingsmodus, met Waze gepatcht met **Share alerts with Maps**, aangemeld en draaiend. Uitgebreide navigatiegegevens voegen actuele snelheid, wegbeperkingen, beschikbare wegmeldingen en trajectwaarnemingen toe. De dekking hangt af van wat de bron waarneemt; een gemiddelde gaat alleen over het waargenomen deel van het traject. Het is geen officieel gemiddelde voor de hele trajectcontrole.
-
-Zet **Compact speed and average-speed control** aan voor actuele snelheid naast een snelheidsbord en, tijdens een waargenomen traject, het gedeeltelijke gemiddelde, de voortgang en resterende afstand. **Road alert types** bepaalt welke meldingen spelden en voorwaarschuwingen kunnen geven; alleen politie staat standaard geselecteerd. Spelden en geluid bij nadering hebben aparte schakelaars. De afstand komt van de bron of wordt uit positie en rijrichting geschat en als schatting aangeduid; dit bewijst niet dat de melding op je gekozen route ligt.
-
-Een bron kiezen vult ontbrekende weggegevens niet aan. Verlopen of ontbrekende externe waarden vallen waar mogelijk terug op verse Maps-gegevens; onbekende waarden blijven onbekend. Een bronwissel, het verlaten van een traject of verlopen waarnemingen verwijdert het gedeeltelijke gemiddelde. Zolang een moderne externe bron bruikbare verse gegevens levert, pauzeren de eigen Flock-spelden en geluiden van Maps om dubbele meldingen te voorkomen; je opgeslagen Flock-instellingen blijven behouden. Flock-routevermijding blijft zijn eigen cameragegevens gebruiken, omdat externe meldingen geen gegevensverzameling voor routeberekening leveren.
+Volg de [handleiding voor navigatiegegevens](../guides/navigation-data.md) om een bron te patchen, die in Maps te kiezen en de compacte snelheidsweergave, kaartspelden en voorwaarschuwingen in te stellen. Daar staan ook de aparte oude Waze-modus, gedeeltelijke gemiddelden en terugval bij verlopen gegevens uitgelegd.
 
 **Remove permissions** schakelt spraakzoeken, Lens en Live View uit door de wijzigingen aan microfoon- en cameratoegang. De microG-RE-accountversie behoudt de bijbehorende accountrechten en -diensten. **Proxy** heeft een ondersteunde netwerkengine nodig; volg de beschikbaarheidsmelding in de app. **Follow playing media** vereist meldingstoegang en is niet bedoeld voor root mount-installaties. De rechtstreekse media-integratie van YouTube Music en Spotify blijft afhankelijk van Google’s eigen Maps; gebruik waar mogelijk de optie via meldingen.
 

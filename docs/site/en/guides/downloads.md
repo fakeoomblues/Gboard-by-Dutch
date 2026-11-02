@@ -50,12 +50,14 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | [APKM](https://buzzheavier.com/nbgqof6ngf98) |
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.117.0 / 1622 | [APKS](https://buzzheavier.com/56tfd9zgaf6g) |
+| [WuPlay Mobile](../apps/wuplay-mobile.md) | 0.1.9-alpha / 9 | [APK](#local-original-inputs) |
 | [Wuplay Android TV](../apps/wuplay.md) | 0.9.4-beta / 49 | [APK](https://buzzheavier.com/03cd7t0bs8qt) |
 | [Monet Android TV](../apps/monet.md) | 1.1.0 / 134 | [APK](https://buzzheavier.com/xk5uwpz9uobd) |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
-| [YouTube Music](../apps/youtube-music.md) | 9.44.52 / 94452240 | [APKM](https://buzzheavier.com/olrt69s67h6z) |
+| [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
+| [Myspoti](../apps/myspoti.md) | 2.3.0 / 1121 | [APK](#local-original-inputs) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
 | [Weerplaza](../apps/weerplaza.md) | 3.13.1 / 734 | [APKS](https://buzzheavier.com/cr9f6qs8tfsh) |

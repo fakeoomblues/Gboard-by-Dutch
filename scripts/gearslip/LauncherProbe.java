@@ -43,13 +43,8 @@ public final class LauncherProbe extends Instrumentation {
             tiles.setAccessible(true);
             List<?> settingsPlayer = call("SETTINGS", true);
             require(count(settingsPlayer, "$Player") == 1, "SETTINGS service suppressed its player's tile");
-            require(count(settingsPlayer, "$Screen") == 1, "Separate settings entry was lost");
-            for (Object tile : settingsPlayer) {
-                if (tile.getClass().getName().endsWith("$Screen")) {
-                    String label = (String) tile.getClass().getField("label").get(tile);
-                    require(label.endsWith(" · Settings"), "Settings entry is not clearly labelled: " + label);
-                }
-            }
+            require(settingsPlayer.size() == 1 && count(settingsPlayer, "$Screen") == 0,
+                    "SETTINGS service created an unusable second tile");
             require(count(call("SETTINGS", false), "$Screen") == 1, "Settings-only app changed");
             List<?> navigation = call("NAVIGATION", true);
             require(count(navigation, "$Screen") == 1 && count(navigation, "$Player") == 0,
@@ -90,6 +85,11 @@ public final class LauncherProbe extends Instrumentation {
         Class<?> known = loader.loadClass("app.seb3thehacker.gearslip.host.KnownApps");
         Set<?> hidden = (Set<?>) known.getField("hidden").get(null);
         require(hidden.contains("com.google.android.dialer"), "Built-in exclusions were lost");
+        String packages = arguments.getString("hiddenPackages", "");
+        for (String name : packages.split(",")) {
+            if (!name.isEmpty()) require(hidden.contains(name), "Configured package is visible: " + name);
+        }
+        require(!hidden.contains("nl.johninnl.fixture.visible"), "Unconfigured package was hidden");
     }
 
     private void require(boolean condition, String message) {

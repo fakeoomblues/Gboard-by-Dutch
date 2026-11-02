@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.25.0**
+**Patch bundle: 1.28.3**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -205,6 +205,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Control car display density | On | 0.3.31-alpha |
 | Hide apps from drawer | On | 0.3.12-alpha, 0.3.31-alpha |
 | Keep music player entries | On | 0.3.12-alpha, 0.3.31-alpha |
 
@@ -234,6 +235,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads and clutter | On | 26.43.05.1002020710 |
 | Legacy icon | On | 26.43.05.1002020710 |
 | Location provider toggle | On | 26.43.05.1002020710 |
+| Native navigation for Gearslip and Android Auto | On | 26.43.05.1002020710 |
 | Offline saved places | On | 26.43.05.1002020710 |
 | Power saving mode | On | 26.43.05.1002020710 |
 | Proxy | On | 26.43.05.1002020710 |
@@ -363,6 +365,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Individual Wuplay catalog rows | Off | 1.1.0 |
+
+## Myspoti
+
+[What do the patches change?](../apps/myspoti.md)
+
+`app.myspoti.stable`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Gearslip personal library | On | Any |
 
 ## Nieuwsblad
 
@@ -733,6 +745,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Publish selected catalog channels | Off | 0.9.4-beta |
+
+## WuPlay Mobile
+
+[What do the patches change?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Add Gearslip car interface | Off | 0.1.9-alpha |
 
 ## YouTube Music
 
