@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ea77d2ac29498a959da2168f85527f5367ff9205/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.35.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [ea77d2ac2949](https://github.com/johninnl/nl-morphe-patches/commit/ea77d2ac29498a959da2168f85527f5367ff9205). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.35.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.34.0...v1.35.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Google Maps:** add light and dark launcher branding ([ea77d2a](https://github.com/johninnl/nl-morphe-patches/commit/ea77d2ac29498a959da2168f85527f5367ff9205))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.34.0.**
