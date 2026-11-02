@@ -1,0 +1,33 @@
+# Native warning artifact contracts
+
+Inspect the exact original APKs before adding semantic warning or speech hooks. This tool reads DEX with dexlib2; it never starts an app or modifies an APK. The `selection.json` lists raw DEX owners and method names. Every overload of a selected name is included. Missing methods/enums fail inspection.
+
+Requirements: JDK 17+, the project's Gradle-resolved dexlib2/Guava/Gson jars. Use `--classpath` to select explicit jar paths; otherwise the tool selects matching jars from the local Gradle cache. No tools or dependencies are installed automatically.
+
+From the repository root:
+
+```bash
+python3 scripts/navigation-alerts/inspect_bindings.py --artifact /absolute/path/to/original.apk --selection tests/fixtures/navigation-warnings/maps-selection.json --expect tests/fixtures/navigation-warnings/maps-contract.json
+```
+
+Use `flitsmeister` or `vela` selection/contract pairs for those artifacts. Extract FM's `base.apk` from the supplied APKM first. Input identities are recorded in [the binding report](../../docs/research/2026-11-02-native-warning-bindings.md).
+
+FM additionally has an exhaustive coverage inventory:
+
+```bash
+python3 scripts/navigation-alerts/inspect_bindings.py --artifact /absolute/path/to/flitsmeister-base.apk --selection tests/fixtures/navigation-warnings/flitsmeister-selection.json --expect tests/fixtures/navigation-warnings/flitsmeister-contract.json --coverage tests/fixtures/navigation-warnings/flitsmeister-coverage.json
+```
+
+Add `--require-complete` to reject unsupported categories or entry points. This currently fails intentionally: capture and playback integration are pending. Required native entry points are frozen separately in the contract; deleting a manifest row fails validation. An exported row must reference evidence; an excluded/unsupported row must state its reason. The checker validates disposition shape, and cannot establish runtime truth from an evidence string.
+
+`--output` writes a fresh inventory for review. Do not automatically overwrite the frozen oracle to accommodate an incompatible target. The method hash includes opcodes, widths, register operands, literals, references, branch/switch/array payloads and typed catch ranges, excluding debug metadata. Enum inventories contain raw ACC_ENUM field names; they may differ from runtime `Enum.name()` or JADX aliases. Initializer contracts retain those semantic mappings for Maps.
+
+For private control-flow inspection, add `"include_instructions": true` to a copy of the selection. Keep resulting instruction dumps in ignored `.analysis/`, and use the ordinary selection when comparing frozen contracts. Offsets are obtained by summing instruction code-unit widths; catch rows are not instructions.
+
+Tests:
+
+```bash
+python3 -m unittest discover -s tests -p test_navigation_warning_bindings.py
+```
+
+Exact matching does not prove insertion safety, warning eligibility, playback, routing, timing or compatibility after patching. Those gates remain in the reviewed design.
