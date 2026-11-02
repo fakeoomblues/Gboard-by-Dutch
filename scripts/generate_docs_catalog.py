@@ -42,6 +42,7 @@ APP_PAGES = {
     'nl.negentwee': ('9292', 'mobility'),
     'org.yoki.android.buienalarm': ('buienalarm', 'weather'),
     'com.supportware.Buienradar': ('buienradar', 'weather'),
+    'com.lucky_apps.RainViewer': ('rainviewer', 'weather'),
     'com.xs2theworld.weeronline': ('weeronline', 'weather'),
     'nl.weerplaza.app': ('weerplaza', 'weather'),
     'nl.flitsmeister': ('flitsmeister', 'mobility'),

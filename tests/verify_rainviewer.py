@@ -9,7 +9,7 @@ REMOTE = "Lcom/lucky_apps/data/settings/entity/remote/"
 A = "{http://schemas.android.com/apk/res/android}"
 
 
-def verify(root: Path, original: Path):
+def verify(root: Path, original: Path, local_pro=False):
     actual, before = Smali(root), Smali(original)
     def starts(owner, signature, instructions):
         body = actual.body(owner, signature)
@@ -36,7 +36,7 @@ def verify(root: Path, original: Path):
             "invoke-virtual {p0}, Landroidx/fragment/app/b;->l()Landroidx/fragment/app/FragmentActivity;", "move-result-object v0"])
     hint = canonicalize(actual.body("Lpu2;", "<init>(ZLou2;)V"))
     assert any("instance-of p1, p2, Lmu2;" == line for line in hint), "Purchase map hint is still visible"
-    starts("Lph5;", "<init>(ILsh5;ZLjava/util/List;ILjava/util/List;I)V", ["or-int/lit8 p7, p7, 0x40"])
+    starts("Lph5;", "<init>(ILsh5;ZLjava/util/List;ILjava/util/List;I)V", ["or-int/lit8 p7, p7, 0x40", "const/4 p3, 0x0"])
     starts("Ls47;", "f(Lcom/lucky_apps/data/startupscreen/entity/StartupScreenModel;Lft0;)Ljava/lang/Object;", ["const/4 p1, 0x0"])
     starts("Lqb9;", "<init>(I)V", ["const/16 v0, 0xf"])
     for context in ("Landroid/content/Context;", "Landroid/app/Activity;"):
@@ -47,6 +47,10 @@ def verify(root: Path, original: Path):
     # Entitlement state and billing verification must not be forged by privacy patches.
     for owner in ("Leh5;", "Lcom/lucky_apps/rainviewer/common/user/worker/PremiumWorker;"):
         for signature in re.findall(r"^\.method[^\n]* (\S+\([^\n]+)", before.text(owner), re.M):
+            if local_pro and owner == "Leh5;" and signature == "j(Lft0;Lhw7;Z)Ljava/lang/Object;":
+                from verify_rainviewer_local_pro import verify as verify_local_pro
+                verify_local_pro(root, original)
+                continue
             assert canonicalize(actual.body(owner, signature)) == canonicalize(before.body(owner, signature)), "Entitlement method changed: " + owner + signature
     verify_executed_effects(actual)
     manifest = ET.parse(root / "AndroidManifest.xml").getroot()
@@ -66,6 +70,22 @@ def verify(root: Path, original: Path):
 def verify_executed_effects(smali):
     """Execute emitted control bodies with explicit Android/library boundaries."""
     from rtl_vm import Memory, Reference, execute, parse
+
+    # The plan badge and feature data stay authentic to their local UI model;
+    # the Manage navigation and offers are hidden, including subsequent refreshes.
+    empty=Reference([],"Lyj1;")
+    def ui_init(method,args):
+        assert method in ["Ljava/lang/Object;->getClass()Ljava/lang/Class;","Ljava/lang/Object;-><init>()V"],method
+    for manage in (0,1):
+        for mask in (0,32,64,96):
+            section=Reference({},"Lph5;");features=Reference(["feature"],"Ljava/util/List;")
+            execute(parse(smali.body("Lph5;","<init>(ILsh5;ZLjava/util/List;ILjava/util/List;I)V")),
+                    {"p0":section,"p1":123,"p2":0,"p3":manage,"p4":features,"p5":16,"p6":Reference(["offer"],"Ljava/util/List;"),"p7":mask},
+                    ui_init,memory=Memory(statics={"Lyj1;->a:Lyj1;":empty}))
+            assert section.value["Lph5;->a:I"]==123
+            assert section.value["Lph5;->c:Z"]==0
+            assert section.value["Lph5;->d:Ljava/util/List;"] is features
+            assert section.value["Lph5;->g:Ljava/util/List;"] is empty
 
     def no_calls(method, args):
         raise AssertionError("Unexpected SDK/network call: " + method)
@@ -139,5 +159,6 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("decoded", type=Path)
     p.add_argument("original", type=Path)
+    p.add_argument("--local-pro", action="store_true")
     a = p.parse_args()
-    verify(a.decoded, a.original)
+    verify(a.decoded, a.original, a.local_pro)

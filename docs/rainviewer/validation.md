@@ -1,6 +1,6 @@
 # RainViewer validation
 
-Target: **8.4.1 / 44084**, Android API 32 minimum. Validation performed on 2026-11-01.
+Target: **8.4.1 / 44084**, Android API 32 minimum. Privacy baseline validated on 2026-11-01; compatibility/local Pro follow-up on 2026-11-02.
 
 - Original APKM SHA-256: `b38cf76df9235a277b8ec8fba064f67e24820ba2b962b12741986bcfdb89e91b`.
 - Original base APK SHA-256: `f0449a4c5deae2273088259243a90bae9dc40842136415d99b5b1469792276c4`.
@@ -21,10 +21,26 @@ Target: **8.4.1 / 44084**, Android API 32 minimum. Validation performed on 2026-
 - The final fresh-start log has no AndroidRuntime, VerifyError, Crashlytics startup or Clarity entries. The error-free process trace observed weather/search/forecast, notification settings and Firebase Installations requests; it did not observe the removed optional sender endpoints in those exercised paths.
 - Original comparison screen was inspected across all 19 feature rows. No paid features were unlocked for the audit.
 
+## 2026-11-02 compatibility and local Pro follow-up
+
+- `:patches:buildAndroid :patches:test` passed after the compatibility and UI additions. Python regression suite again passed413 tests with45 existing skips.
+- The signed MPP's Ed25519 signature was verified against the repository public key. Development APK signatures verified and updates installed while retaining app settings and purchase records.
+- Certificate-helper emitted-code execution confirmed the original self-SHA1 and genuine other-package fallback. Google Remote Config returned HTTP200 after certificate metadata compatibility.
+- No-attestation entry and one-time anonymous credential migration were executed from emitted smali. Tests include each commit failure and persisted-state second launches. Genuine provider/token methods, billing, request signing and publisher response enforcement remain intact.
+- Independent static review checked register use, coroutine resumptions, migration ordering, request limits and UI boundaries. All nine controls applied independently and both privacy-only and all-control combinations passed on the final source bundle. Bilingual app guides matched all candidate patch names/defaults.
+- An initial unbounded Pro input changed map requests and later failed. The final request-model separation retained Free limits while Settings showed Pro. On the same working Free credential, the final data capture recorded34 code0 responses before the explicit AI experiment, including fresh map/forecast data and radar product metadata.
+- The server purchase response remained `purchased=false`, `type=0`, no products and no trial. KMUX DBZH and VRAD0.0° images downloaded and rendered despite catalogue lock metadata. This is runtime evidence for those tested product paths, not every premium endpoint.
+- Actual cached map models had24 future hourly frames per model, not72h. Ordinary Free forecast had24 hourly and8 daily points. The72h UI label alone does not establish72h payload availability.
+- A separate temporary APK restored only the original AI dispatch. `/mobile/forecast/assistant` returned code210 Not allowed and no summary; later warnings/maps returned code81. The AI-enabled test APK is not the delivery build.
+- Weather Warnings overlay showed an error badge and `/mobile/alerts/` returned code81. The requested cleanup removes its map control/dispatch while retaining ordinary forecast alerts. AI cleanup uses the original Gone UI state, including cached AI selection.
+- Installed UI cleanup was inspected without Frida: AI controls absent, normal temperature forecast/Coastal Flood Statement retained, map warnings control absent and other overlays retained. The subsequent installed Manage cleanup also retained Pro while removing the action and chevron; its emitted constructor verifier covers both initial Manage values.
+
+See [local Pro research](local-pro-research.md) and [integrity investigation](integrity-investigation.md) for the exact original code locations, request fields, scope and limitations.
+
 ## Evidence locations
 
 Local analysis is retained under the primary checkout's `.analysis/rainviewer-8.4.1/`: original APKs, JADX and smali, patch reports/logs, build/test logs, comparison-screen layouts, emulator screenshots and process request trace. Proprietary decompiled source is not committed.
 
 ## Limits
 
-The physical phone supplied a baseline screenshot of the original app. Its installed app/data were not replaced. Runtime acceptance applies to the dedicated emulator and the paths exercised, not every device, account or weather service. Firebase Messaging registration fails on this unsigned/unregistered emulator setup, so push delivery has not been verified. Manual premium purchase flows and paid API entitlement enforcement have not been tested. Stable publication requires the repository's app-approval workflow.
+The physical phone supplied a baseline screenshot of the original app. Its installed app/data were not replaced. Runtime acceptance applies to the dedicated emulator and the paths exercised, not every device, account or weather service. Push delivery and manual premium purchase flows remain unverified. Endpoint entitlement findings are limited to the explicit requests above. Stable publication requires the repository's app-approval workflow.

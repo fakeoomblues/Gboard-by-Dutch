@@ -126,6 +126,7 @@ nav:
           - apps/weather/index.md
           - apps/buienalarm.md
           - apps/buienradar.md
+          - apps/rainviewer.md
           - apps/weeronline.md
           - apps/weerplaza.md
       - News and reading:

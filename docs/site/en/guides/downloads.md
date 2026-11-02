@@ -40,6 +40,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
 | [AT4K Launcher](../apps/at4k.md) | 1.2 / 19 | [APK](https://buzzheavier.com/qalqg672rt8k) |
 | [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | [APK](https://buzzheavier.com/brg76oa9losi) |
+| [RainViewer](../apps/rainviewer.md) | 8.4.1 / 44084 | [APKM](https://buzzheavier.com/ai8s8yfupvev) |
 | [Rollerbank](../apps/rollerbank.md) | 4.5.3.1 / 4531 | [APKS](https://buzzheavier.com/k9v1po19ewp9) |
 | [RTL Nieuws](../apps/rtl-nieuws.md) | 12.7.1 / 1558 | [APKS](https://buzzheavier.com/lvklis48sf8r) |
 | [TVgids.nl](../apps/tvgids-nl.md) | 7.0.16 / 106691 | [APK](https://buzzheavier.com/tgxpzbzghwec) |

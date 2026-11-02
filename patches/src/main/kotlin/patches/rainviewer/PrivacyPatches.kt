@@ -22,7 +22,7 @@ private val adResources = resourcePatch {
     }
 }
 
-private val startupCompatibility = bytecodePatch {
+internal val startupCompatibility = bytecodePatch {
     dependsOn(originalInput)
     execute {
         // This build has a licensing wrapper, not virtualized application callbacks.
@@ -195,7 +195,7 @@ val skipConsentScreens = bytecodePatch(
 @Suppress("unused")
 val skipSubscriptionScreens = bytecodePatch(
     name = "Skip subscription screens",
-    description = "Skips subscription onboarding, automatic startup/web promotions, recurring purchase offers and Settings offer cards without changing premium access or user-initiated purchases.",
+    description = "Skips subscription onboarding, automatic startup/web promotions, recurring purchase offers and Settings offer cards. Hides the Settings plan Manage link while retaining the plan badge and premium access state.",
 ) {
     compatibleWith(rainviewer)
     dependsOn(originalInput, startupCompatibility)
@@ -219,9 +219,10 @@ val skipSubscriptionScreens = bytecodePatch(
         // original null-offer branch emits the normal completion event and closes it.
         exact("Ls47;", "f", "Ljava/lang/Object;", "Lcom/lucky_apps/data/startupscreen/entity/StartupScreenModel;", "Lft0;")
             .addInstructions(0, "const/4 p1, 0x0")
-        // Set the Kotlin default-argument mask for offers only. Keep plan status and Manage.
+        // Keep plan status/features, but remove offers and the Manage navigation
+        // that opens unavailable Subscription details in the local Pro setup.
         exact("Lph5;", "<init>", "V", "I", "Lsh5;", "Z", "Ljava/util/List;", "I", "Ljava/util/List;", "I")
-            .addInstructions(0, "or-int/lit8 p7, p7, 0x40")
+            .addInstructions(0, "or-int/lit8 p7, p7, 0x40\nconst/4 p3, 0x0")
         listOf("a", "b").forEach {
             exact("Lha6;", it, "Ljava/lang/Object;", "Lil4;", "Lft0;")
                 .addInstructions(0, "sget-object v0, Les7;->a:Les7;\nreturn-object v0")

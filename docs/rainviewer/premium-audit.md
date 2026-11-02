@@ -40,4 +40,4 @@ The `oz1` enum also retains legacy sale points for alerts and update timing. The
 
 ## Evidence limits
 
-The table identifies every row displayed by this version's built-in comparison and the additional watermark restriction found during sharing-code analysis. It establishes local implementation and network dependencies. It does not establish offline availability, server entitlement enforcement, current subscription pricing, success of an unlocked paid API call, or functionality of a purchased account. Locks and premium state are retained for this audit.
+The table identifies every row displayed by this version's built-in comparison and the additional watermark restriction found during sharing-code analysis. It establishes local implementation and network dependencies. The original privacy-only audit retained locks and premium state. The subsequent opt-in local Pro experiment and its server-response evidence are documented in [local Pro research](local-pro-research.md); those findings supersede the original untested-server status only for the specific paths exercised.

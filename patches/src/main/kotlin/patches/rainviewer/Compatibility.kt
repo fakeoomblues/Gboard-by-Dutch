@@ -8,7 +8,7 @@ import patches.shared.uniqueMatch
 
 internal const val REMOTE = "Lcom/lucky_apps/data/settings/entity/remote/"
 internal val rainviewer = Compatibility(
-    name = "RainViewer", packageName = "com.lucky_apps.RainViewer", apkFileType = ApkFileType.APKS,
+    name = "RainViewer", packageName = "com.lucky_apps.RainViewer", apkFileType = ApkFileType.APKM,
     signatures = setOf("1ee1224e4ec7aa2214ae60f92f7e53fa2de148b12f7e9fa3e9c97b87844f4bcc"),
     targets = listOf(AppTarget(version = "8.4.1", versionCode = 44084, minSdk = 32)),
 )
