@@ -26,6 +26,7 @@ The user selected existing Gearslip carousels over a separately drawn TV interfa
 - Keep all eligible Home catalogs reachable. Fetch a bounded initial group and provide further groups and **More titles** within catalogs; choose concrete batch sizes during implementation based on real host limits and measured responsiveness.
 - Load network data and resized artwork off the main thread with bounded concurrency, timeouts and memory/disk cache limits. Do not fetch full-size artwork for every catalog title.
 - Make loading, unavailable rows, empty catalogs and retry states readable. One failed catalog must not prevent the remaining Home from appearing.
+- Series detail opens season shelves: one horizontal thumbnail carousel per season, sorted by season/episode, with episode number/title and an episode detail/play action; Back retains the selected season and episode. Missing season metadata gets an explicit Episodes group, and season 0 is Specials.
 - Selecting a poster opens a detail page with artwork, title information, a short synopsis and a prominent **Play · ≤10 Mbps** action. Series expose episode selection with the same play action for each selected episode.
 - Preserve the relevant Home/catalog page when returning from details or playback. Keep Now playing reachable while browsing.
 - Keep alternate sources, audio tracks and subtitles accessible as secondary controls. Do not require a source-list visit before normal playback.
@@ -55,4 +56,4 @@ The user selected existing Gearslip carousels over a separately drawn TV interfa
 
 Choose concrete shelf limits, artwork dimensions, cache implementation, class boundaries, retry timeouts and concise copy within these contracts. Reuse existing runtime dependencies. Keep implementation and tests proportional; do not add another login client, a Gearslip fork or a second Compose/Media3 runtime.
 
-Status: independent builder review found no important unanswered questions. Awaiting user approval; product implementation has not started. The seven existing car-interface regression tests pass on this baseline.
+Status: independent builder review found no important unanswered questions. Approved by the user; implementation authorized, including season/episode carousels. The seven existing car-interface regression tests pass on this baseline.
