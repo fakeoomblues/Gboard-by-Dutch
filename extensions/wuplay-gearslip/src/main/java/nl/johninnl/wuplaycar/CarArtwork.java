@@ -15,11 +15,12 @@ import java.util.concurrent.*;
 final class CarArtwork implements AutoCloseable {
  static final Map<String,String[]> entries=Collections.synchronizedMap(new LinkedHashMap<String,String[]>(512,.75f,true){protected boolean removeEldestEntry(Map.Entry<String,String[]> e){return size()>512;}});
  private static final Semaphore downloads=new Semaphore(2);
- private final Context context;private final String session=UUID.randomUUID().toString();private boolean closed;private final Set<String> keys=ConcurrentHashMap.newKeySet();
+ private final Context context;private final String session=UUID.randomUUID().toString();private boolean closed;private int revision;private final Set<String> keys=ConcurrentHashMap.newKeySet();
  CarArtwork(Context context){this.context=context.getApplicationContext();}
+ void refresh(){revision++;}
  CarIcon icon(String url,String label){
   try{
-   String key=hex(MessageDigest.getInstance("SHA-256").digest((session+"/"+url+"/"+label).getBytes("UTF-8")));
+   String key=hex(MessageDigest.getInstance("SHA-256").digest((session+"/"+revision+"/"+url+"/"+label).getBytes("UTF-8")));
    if(!closed){entries.put(key,new String[]{url,label});keys.add(key);}
    Uri uri=Uri.parse("content://"+context.getPackageName()+".morphe.car.art/"+key);
    for(String host:new String[]{"app.seb3thehacker.gearslip","app.seb3thehacker.gearslip.dev"})try{context.grantUriPermission(host,uri,Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(RuntimeException ignored){}
@@ -33,9 +34,9 @@ final class CarArtwork implements AutoCloseable {
   String[] entry=entries.get(key);if(entry==null)throw new FileNotFoundException("Artwork expired");
   boolean acquired=false;
   try{
-   acquired=downloads.tryAcquire(5,TimeUnit.SECONDS);if(!acquired)throw new IOException("Artwork busy");
+   acquired=downloads.tryAcquire(5,TimeUnit.SECONDS);if(!acquired)return placeholder(folder,key,entry[1]);
    if(output.isFile())return output;
-   Bitmap image=fetch(entry[0]);Bitmap tile=Bitmap.createBitmap(240,240,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(tile);
+   Bitmap image=fetch(entry[0]);if(image==null)return placeholder(folder,key,entry[1]);Bitmap tile=Bitmap.createBitmap(240,240,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(tile);
    Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);paint.setShader(new LinearGradient(0,0,240,240,0xff1c283a,0xff0a101a,Shader.TileMode.CLAMP));canvas.drawRect(0,0,240,240,paint);paint.setShader(null);
    if(image!=null){float scale=Math.min(240f/image.getWidth(),240f/image.getHeight());float w=image.getWidth()*scale,h=image.getHeight()*scale;canvas.drawBitmap(image,null,new RectF((240-w)/2,(240-h)/2,(240+w)/2,(240+h)/2),paint);image.recycle();}
    else {paint.setColor(0xff8bbce0);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));paint.setTextSize(52);String label=entry[1].trim();canvas.drawText(label.isEmpty()?"W":label.substring(0,Math.min(2,label.length())).toUpperCase(Locale.ROOT),120,138,paint);}
@@ -45,12 +46,26 @@ final class CarArtwork implements AutoCloseable {
    trim(folder,output);return output;
   }catch(InterruptedException e){Thread.currentThread().interrupt();throw new IOException("Artwork cancelled",e);}finally{if(acquired)downloads.release();}
  }
+ private static File placeholder(File folder,String key,String label)throws IOException {
+  File output=new File(folder,key+".fallback.jpg");if(output.isFile())return output;
+  Bitmap tile=Bitmap.createBitmap(240,240,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(tile);Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
+  paint.setShader(new LinearGradient(0,0,240,240,0xff1c283a,0xff0a101a,Shader.TileMode.CLAMP));canvas.drawRect(0,0,240,240,paint);paint.setShader(null);
+  paint.setColor(0xff8bbce0);paint.setTextAlign(Paint.Align.CENTER);paint.setTextSize(52);paint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));String text=label.trim();canvas.drawText(text.isEmpty()?"W":text.substring(0,Math.min(2,text.length())).toUpperCase(Locale.ROOT),120,138,paint);
+  File temporary=File.createTempFile("placeholder-",".tmp",folder);try(FileOutputStream stream=new FileOutputStream(temporary)){tile.compress(Bitmap.CompressFormat.JPEG,88,stream);}finally{tile.recycle();}
+  if(!temporary.renameTo(output)){temporary.delete();if(!output.isFile())throw new IOException("Placeholder unavailable");}trim(folder,output);return output;
+ }
+ private static int remaining(long deadline)throws java.io.InterruptedIOException {long millis=TimeUnit.NANOSECONDS.toMillis(deadline-System.nanoTime());if(millis<=0)throw new java.io.InterruptedIOException("Artwork deadline");return (int)Math.min(2000,millis);}
  private static Bitmap fetch(String url){
-  if(!CarStreamPolicy.direct(url))return null;HttpURLConnection connection=null;
+  if(!CarStreamPolicy.direct(url))return null;HttpURLConnection connection=null;long deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(6);
   try{
-   connection=(HttpURLConnection)new URL(url).openConnection();connection.setConnectTimeout(2000);connection.setReadTimeout(2000);connection.setInstanceFollowRedirects(true);
-   if(connection.getResponseCode()!=200)return null;ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-   try(InputStream in=connection.getInputStream()){byte[] buffer=new byte[8192];int n;while((n=in.read(buffer))!=-1){if(Thread.currentThread().isInterrupted()||bytes.size()+n>3*1024*1024)return null;bytes.write(buffer,0,n);}}
+   for(int redirects=0;redirects<=3;redirects++){
+    connection=(HttpURLConnection)new URL(url).openConnection();connection.setConnectTimeout(remaining(deadline));connection.setReadTimeout(remaining(deadline));connection.setInstanceFollowRedirects(false);
+    int status=connection.getResponseCode();
+    if(status>=300&&status<400){String location=connection.getHeaderField("Location");if(location==null||redirects==3)return null;url=new URL(new URL(url),location).toString();connection.disconnect();connection=null;if(!CarStreamPolicy.direct(url))return null;continue;}
+    if(status!=200)return null;break;
+   }
+   if(connection==null)return null;ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+   try(InputStream in=connection.getInputStream()){byte[] buffer=new byte[8192];int n;while(true){connection.setReadTimeout(remaining(deadline));n=in.read(buffer);if(n==-1)break;if(Thread.currentThread().isInterrupted()||bytes.size()+n>3*1024*1024)return null;bytes.write(buffer,0,n);}}
    byte[] encoded=bytes.toByteArray();BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(encoded,0,encoded.length,options);
    if(options.outWidth<=0||options.outHeight<=0||options.outWidth>20000||options.outHeight>20000)return null;
    options.inSampleSize=1;while(Math.max(options.outWidth,options.outHeight)/options.inSampleSize>480)options.inSampleSize*=2;options.inJustDecodeBounds=false;return BitmapFactory.decodeByteArray(encoded,0,encoded.length,options);

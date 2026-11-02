@@ -52,7 +52,7 @@ public final class Probe extends Instrumentation {
   request(car,"onAppStart");request(car,"onAppResume");
   Object managerBinder=request(car,"getManager","app");Object manager=((IBinder)managerBinder).queryLocalInterface("androidx.car.app.IAppManager");
   Object wrapper=request(manager,"getTemplate");Object template=invoke(wrapper,"getTemplate");
-  if(!template.getClass().getName().endsWith("ListTemplate"))throw new IllegalStateException("Wrong car root template");
+  if(!template.getClass().getName().endsWith("TabTemplate"))throw new IllegalStateException("Wrong car root template");
  }
  private Object field(Object value,String name)throws Exception {
   for(Class<?> c=value.getClass();c!=null;c=c.getSuperclass())try{Field f=c.getDeclaredField(name);f.setAccessible(true);return f.get(value);}catch(NoSuchFieldException ignored){}
@@ -66,7 +66,7 @@ public final class Probe extends Instrumentation {
   Object calls=make("nl.johninnl.wuplaycar.NativeCalls"),container=field(target.getApplicationContext(),"container"),settings=field(container,"userSettingsRepository"),repo=field(container,"addonRepository");
   Object profile=invoke(calls,"first",field(settings,"activeProfile"));
   if(profile==null||!"CarValidation".equals(field(profile,"name")))throw new IllegalStateException("Select the owned CarValidation test profile first");
-  String url="http://10.0.2.2:8769/addon/manifest.json";
+  String url=args.getString("addon","http://10.0.2.2:8769/addon/manifest.json");
   Object candidate=make("app.wuplay.androidtv.domain.model.Addon",url,true,"","","",Collections.emptyList());
   Object manifest=await(calls,repo,"getManifest-gIAlu-s",candidate);List<String> resources=new ArrayList<>();
   for(Object resource:(List<?>)field(manifest,"resources"))resources.add((String)field(resource,"name"));
@@ -97,16 +97,72 @@ public final class Probe extends Instrumentation {
    pictures.add(hash);if(visible)colored.incrementAndGet();
   }},main);return reader;
  }
+ public static final class EpisodeFixture {public Integer season=2,episode=1,runtime=24;public String title="Episode One",thumbnail="",overview="Episode description";}
+ public static final class ParentFixture {public String runtime="1000 min",poster="",description="Series description";}
+ private void artworkBurst(Bundle result)throws Exception {
+  Object art=make("nl.johninnl.wuplaycar.CarArtwork",target);ExecutorService pool=Executors.newFixedThreadPool(16);List<Future<Boolean>> images=new ArrayList<>();
+  try{
+   for(int i=0;i<16;i++){Object icon=invoke(art,"icon","http://10.0.2.2:8799/slow-poster.png?i="+i,"Poster "+i);android.net.Uri uri=(android.net.Uri)invoke(invoke(icon,"getIcon"),"getUri");images.add(pool.submit(()->{try(java.io.InputStream in=target.getContentResolver().openInputStream(uri)){android.graphics.Bitmap bitmap=android.graphics.BitmapFactory.decodeStream(in);if(bitmap==null)return false;bitmap.recycle();return true;}}));}
+   int decoded=0;for(Future<Boolean> future:images)if(future.get(15,TimeUnit.SECONDS))decoded++;
+   if(decoded!=16)throw new IllegalStateException("Slow artwork left blank tiles");
+   Object before=invoke(invoke(invoke(art,"icon","","Same poster"),"getIcon"),"getUri");invoke(art,"refresh");Object after=invoke(invoke(invoke(art,"icon","","Same poster"),"getIcon"),"getUri");
+   if(before.equals(after))throw new IllegalStateException("Artwork refresh retained host cache URI");
+   result.putInt("decodedSlowArtwork",decoded);result.putString("artworkBurst","all slow requests delivered artwork/placeholders and refresh changed URI");
+  }finally{pool.shutdownNow();invoke(art,"close");}
+ }
+ private void autoplayContract(Bundle result)throws Exception {
+  Object service=field(car,"this$0"),nativeData=field(service,"data"),settings=field(nativeData,"settings"),calls=make("nl.johninnl.wuplaycar.NativeCalls");
+  try{
+   Object profile=invoke(calls,"first",field(settings,"activeProfile"));
+   if(!"CarValidation".equals(field(profile,"name")))throw new IllegalStateException("Autoplay validation is restricted to the emulator fixture profile");
+   if(Boolean.TRUE.equals(field(profile,"hasPinSet"))&&!Boolean.TRUE.equals(invoke(nativeData,"verifyPin",args.getString("pin",""))))throw new IllegalStateException("Unlock fixture profile with its test PIN");
+   ParentFixture metadata=new ParentFixture();metadata.runtime="2.5 min";
+   Object item=make("nl.johninnl.wuplaycar.NativeData$Item","movie","tt99999999","Generated validation clip","",null,null,metadata,Collections.emptyList());
+   onMain(()->{invoke(service,"push",make("nl.johninnl.wuplaycar.WuplayCarService$PlayPage",service,item));return null;});
+   long deadline=SystemClock.uptimeMillis()+45000;Object page=null;
+   while(SystemClock.uptimeMillis()<deadline){page=onMain(()->((Deque<?>)field(service,"pages")).peekLast());if(page.getClass().getSimpleName().equals("PlayerPage")||field(page,"error")!=null)break;Thread.sleep(150);}
+   Object choice=onMain(()->field(service,"playingChoice"));
+   if("blocked".equals(args.getString("expect"))){if(choice!=null||page==null||!String.valueOf(field(page,"error")).contains("10 Mbps"))throw new IllegalStateException("Over-limit sources were not rejected");result.putString("autoplay","all-over-limit native add-on response rejected by actual Play page");}
+   else{if(choice==null||!"Car validation".equals(field(field(choice,"value"),"name")))throw new IllegalStateException("Actual Play page did not choose the eligible source");long rate=(Long)field(choice,"rate");if(rate<=0||rate>10000000)throw new IllegalStateException("Wrong autoplay rate");result.putLong("selectedBitrateBps",rate);result.putString("autoplay","actual Play page automatically selected eligible source, skipping over-limit candidate");}
+  }finally{invoke(calls,"close");}
+ }
+ private void homeContract(Bundle result)throws Exception {
+  Object artwork=make("nl.johninnl.wuplaycar.CarArtwork",target);
+  try{
+   Object icon=invoke(artwork,"icon","","Demo title");
+   Object roundtrip=invoke(bundle(icon),"get");Object compat=invoke(roundtrip,"getIcon");
+   if(!Integer.valueOf(4).equals(invoke(compat,"getType")))throw new IllegalStateException("Icon wire type changed");
+   android.net.Uri uri=(android.net.Uri)invoke(compat,"getUri");
+   try(java.io.InputStream in=target.getContentResolver().openInputStream(uri)){android.graphics.Bitmap bitmap=android.graphics.BitmapFactory.decodeStream(in);if(bitmap==null||bitmap.getWidth()!=240||bitmap.getHeight()!=240)throw new IllegalStateException("Artwork provider failed");bitmap.recycle();}
+   Object grid=invoke(invoke(invoke(make("androidx.car.app.model.GridItem$Builder"),"setTitle","Demo title"),"setImage",icon),"build");
+   Object section=invoke(invoke(invoke(make("androidx.car.app.model.GridSection$Builder"),"setTitle","Demo shelf"),"addItem",grid),"build");
+   Object restored=invoke(bundle(section),"get");Object delegate=invoke(restored,"getItemsDelegate");
+   if(!Integer.valueOf(1).equals(invoke(delegate,"getSize")))throw new IllegalStateException("Populated shelf size changed");
+   CountDownLatch loaded=new CountDownLatch(1);AtomicReference<Object> list=new AtomicReference<>();
+   Object callback=proxy("androidx.car.app.OnDoneCallback",(p,m,a)->{if(m.getName().equals("onSuccess")){list.set(invoke(a[0],"get"));loaded.countDown();}if(m.getName().equals("onFailure"))loaded.countDown();return null;});
+   onMain(()->{invoke(delegate,"requestItemRange",0,0,callback);return null;});
+   if(!loaded.await(5,TimeUnit.SECONDS)||!(list.get() instanceof List)||((List<?>)list.get()).size()!=1)throw new IllegalStateException("Lazy shelf items did not cross Binder");
+   result.putString("artwork","content URI, populated shelf serialization/lazy Binder items and 240px provider decode passed");
+  }finally{invoke(artwork,"close");}
+  Object item=make("nl.johninnl.wuplaycar.NativeData$Item","series","test:2:1","Series","S2 E1","test",1,new ParentFixture(),Collections.emptyList(),new EpisodeFixture());
+  if(!Double.valueOf(1440).equals(invoke(item,"seconds")))throw new IllegalStateException("Series runtime leaked into episode rate");
+  if(!"Episode One".equals(invoke(item,"displayTitle")))throw new IllegalStateException("Episode title lost");
+  result.putString("episodes","episode runtime, title and metadata remain separate from parent series");
+ }
  @Override public void onStart(){Bundle result=new Bundle();Object owner=null,renderer=null,data=null;ImageReader reader=null,second=null;int outcome=Activity.RESULT_CANCELED;
   try{
    target=getTargetContext();loader=target.getClassLoader();onMain(()->null);result.putInt("appUid",android.os.Process.myUid());
    if("install-addon".equals(args.getString("mode"))){installAddon(result);outcome=Activity.RESULT_OK;return;}
-   connect();result.putString("protocol","handshake and root template passed");
+   if("artwork-burst".equals(args.getString("mode"))){artworkBurst(result);outcome=Activity.RESULT_OK;return;}
+   connect();result.putString("protocol","handshake and sectioned Home template passed");
+   if("home-contract".equals(args.getString("mode"))){homeContract(result);outcome=Activity.RESULT_OK;return;}
+   if("autoplay-contract".equals(args.getString("mode"))){autoplayContract(result);outcome=Activity.RESULT_OK;return;}
    data=make("nl.johninnl.wuplaycar.NativeData",target);Object nativeData=data;
    Object[] init=(Object[])onMain(()->{
     Object nativeStream=make("app.wuplay.androidtv.domain.stremio.Stream",args.getString("url","http://10.0.2.2:8769/plain-test.mp4"),null,128);
     Object item=make("nl.johninnl.wuplaycar.NativeData$Item","movie","tt99999999","Generated validation clip","",null,null,new Object(),Collections.emptyList());
     Object choice=make("nl.johninnl.wuplaycar.NativeData$Choice",nativeStream,"validation://local","Validation clip");
+    Field rate=choice.getClass().getDeclaredField("rate");rate.setAccessible(true);rate.set(choice,1200000L);
     Object engine=make("nl.johninnl.wuplaycar.NativePlayer",target,nativeData);invoke(engine,"selection",item,choice);
     Object playback=make("nl.johninnl.wuplaycar.CarPlayback",engine);Object render=make("nl.johninnl.wuplaycar.CarVideoRenderer",playback,engine);
     return new Object[]{engine,playback,render};
@@ -116,7 +172,10 @@ public final class Probe extends Instrumentation {
    result.putLong("positionBeforePhoneStopMs",before);result.putInt("framesBeforePhoneStop",frames.get());
    int audioTracks=((List<?>)onMain(()->invoke(engine,"audioTracks"))).size();result.putInt("audioTracks",audioTracks);
    if(audioTracks<1)throw new IllegalStateException("Native audio track enumeration failed");
-   Object nativePlayer=field(engine,"player");int audioBuffers=0;
+   Object nativePlayer=field(engine,"player");
+   Object limits=onMain(()->invoke(nativePlayer,"getTrackSelectionParameters"));
+   if(!Integer.valueOf(9000000).equals(field(limits,"maxVideoBitrate"))||!Integer.valueOf(1000000).equals(field(limits,"maxAudioBitrate"))||!Boolean.FALSE.equals(field(limits,"exceedVideoConstraintsIfNecessary"))||!Boolean.FALSE.equals(field(limits,"exceedAudioConstraintsIfNecessary")))throw new IllegalStateException("Adaptive cap not enforced");
+   result.putString("adaptiveCap","9 Mbps video + 1 Mbps audio, no constraint-exceeding fallback");int audioBuffers=0;
    for(Object render:(Object[])field(nativePlayer,"renderers"))if(Integer.valueOf(1).equals(field(render,"trackType"))) {
     try{Object counters=field(render,"decoderCounters");if(counters!=null)audioBuffers+=(Integer)field(counters,"renderedOutputBufferCount");}catch(NoSuchFieldException ignored){}
    }

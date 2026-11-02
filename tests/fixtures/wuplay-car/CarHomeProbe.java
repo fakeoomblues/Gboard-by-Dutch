@@ -39,6 +39,12 @@ public final class CarHomeProbe {
   check(queue.next()!=null&&queue.next()==null,"autoplay retried beyond three candidates");
   queue=new AutoplayQueue<>(List.of(first,preferred),"");queue.cancel();check(queue.next()==null,"cancelled autoplay restarted");
   queue=new AutoplayQueue<>(List.of(over,unknown),"");check(queue.next()==null,"autoplay queue accepted unsafe candidates");
+  Source second=new Source("second","other",5000000L),third=new Source("third","other",6000000L);
+  AutoplayQueue<Source> recovery=new AutoplayQueue<>(List.of(first,second,third),"");
+  check(recovery.next()==first,"initial selection missing");List<String> tried=new ArrayList<>();
+  Source recovered=recovery.prepareNext(source->{tried.add(source.name);if(source==second)throw new IllegalStateException("native preparation failed");return true;});
+  check(recovered==third&&tried.equals(List.of("second","third")),"synchronous retry failure stranded automatic playback");
+  check(recovery.next()==null,"recovery escaped attempt limit");
   System.out.println("PASS: bitrate boundary, invalid/unknown sources, runtime, URL and preferred-addon ordering");
  }
 }

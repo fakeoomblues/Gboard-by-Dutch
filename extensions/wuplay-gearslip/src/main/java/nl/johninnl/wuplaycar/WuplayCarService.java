@@ -194,6 +194,7 @@ public final class WuplayCarService extends Service {
     private void openTitle(NativeData.Item item){push(item.parentId==null&&item.type.equals("series")?new EpisodesPage(item,0):new DetailsPage(item));}
     private Template shelves(Page page,List<Section<?>> sections){
         Header.Builder header=new Header.Builder().setTitle(page.title).setStartHeaderAction(pages.size()>1?Action.BACK:Action.APP_ICON);
+        if(page instanceof HomePage)header.addEndHeaderAction(action(page,"Refresh",page::load));
         if(playingChoice!=null)header.addEndHeaderAction(action(page,"Playing",()->push(new PlayerPage())));
         SectionedItemTemplate content=new SectionedItemTemplate.Builder().setHeader(header.build()).setLoading(page.loading).setSections(sections).build();
         String identity=ShelfGroups.identity(browseSession,page.contentRevision,page.id),home=identity+"/home",catalogs=identity+"/catalogs";
@@ -212,7 +213,7 @@ public final class WuplayCarService extends Service {
     private final class HomePage extends Page {
         final int offset;List<NativeData.Catalog> catalogs=Collections.emptyList();List<Shelf> values=Collections.emptyList();
         HomePage(int offset){this.offset=offset;}
-        void load(){contentRevision++;async(()->{
+        void load(){contentRevision++;artwork.refresh();async(()->{
             String profile=data.profileName();List<NativeData.Catalog> all=data.catalogs();List<Future<Shelf>> pending=new ArrayList<>();
             List<NativeData.Catalog> group=ShelfGroups.window(all,offset,4);List<Shelf> shelves=new ArrayList<>();
             try{
@@ -230,7 +231,6 @@ public final class WuplayCarService extends Service {
         Template content(){
             List<Section<?>> sections=new ArrayList<>();
             if(!loading){
-                sections.add(new RowSection.Builder().addItem(row("Refresh Home","Your profile’s catalogs · autoplay up to 10 Mbps",this::load)).build());
                 for(Shelf shelf:values){GridSection.Builder row=new GridSection.Builder().setTitle(shelf.catalog.title).setItemSize(GridSection.ITEM_SIZE_LARGE);
                     for(NativeData.Item item:shelf.items)row.addItem(tile(this,item));
                     row.addItem(moreTile(this,shelf.items.isEmpty()?"Open catalog":"More titles",()->push(new ItemsPage(shelf.catalog,0))));
@@ -366,10 +366,10 @@ public final class WuplayCarService extends Service {
             if(attempts==null||retryFinished||ended||pages.peekLast()!=this)return;
             String status=engine.status();long elapsed=SystemClock.uptimeMillis()-attemptStarted;
             if(!(status.startsWith("Playback failed")||(elapsed>8000&&status.startsWith("Playback stopped"))||(elapsed>30000&&status.equals("Buffering…"))))return;
-            NativeData.Choice next=attempts.next();if(next==null){retryFinished=true;attempts.cancel();engine.release();error="No working stream within 10 Mbps. Return to the title and retry.";if(renderer!=null)renderer.close();invalidate();return;}
-            attemptStarted=SystemClock.uptimeMillis();
-            try{long position=Math.max(0,engine.position());long token=playback.beginSelection();engine.selection(playingItem,next);if(playback.select(token,next.url,next.headers(),position)){playingChoice=next;openVideo();}}
-            catch(Exception e){attemptStarted=0;}
+            long position=Math.max(0,engine.position());
+            NativeData.Choice next=attempts.prepareNext(candidate->{long token=playback.beginSelection();engine.selection(playingItem,candidate);return playback.select(token,candidate.url,candidate.headers(),position);});
+            if(next==null){retryFinished=true;attempts.cancel();engine.release();error="No working stream within 10 Mbps. Return to the title and retry.";if(renderer!=null)renderer.close();invalidate();return;}
+            attemptStarted=SystemClock.uptimeMillis();playingChoice=next;openVideo();
         }
         Template content(){return new NavigationTemplate.Builder().setActionStrip(new ActionStrip.Builder()
             .addAction(action(this,"−30s",()->playback.seekBy(-30000)))

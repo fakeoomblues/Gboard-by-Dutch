@@ -10,7 +10,7 @@ Selecteer de originele WuPlay Mobile-APK in Morphe Manager en schakel **Add Gear
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Add Gearslip car interface** | Uit | Voegt een aparte Gearslip-interface toe voor catalogi, films, afleveringen en video van het actieve profiel, met spoelen, audiotracks en ondertiteling. |
+| **Add Gearslip car interface** | Uit | Voegt Home-carrousels met posters, seizoensrijen met afleveringen en automatische bronkeuze tot 10 Mbps toe, met je actieve profiel en de bestaande afspeelbediening. |
 
 ## Advertentie- en trackingdiensten
 
@@ -18,7 +18,13 @@ WuPlay gebruikt zijn eigen diensten en je ingestelde add-ons. Deze patch voegt g
 
 ## Voor gebruik
 
-Stel je WuPlay-profiel en add-ons eerst op de telefoon in of importeer je bestaande profiel. Open **Wuplay** in Gearslip, kies een catalogus en titel en selecteer een stream. Beveiligde profielen vragen om hun normale pincode. Bij een ander profiel of het verbreken van de autoverbinding stopt de afspeelsessie in de auto.
+Stel je WuPlay-profiel en add-ons eerst op de telefoon in of importeer je bestaande profiel. Open **Wuplay** in Gearslip om je Home-catalogi als horizontale rijen met posters te bekijken. Bij een film zie je de afbeelding, beschrijving en **Play · ≤10 Mbps**. Een serie opent rijen per seizoen met afleveringsafbeeldingen en titels; kies een aflevering om deze af te spelen. Via **Sources** kies je een andere geschikte bron. Beveiligde profielen vragen om hun normale pincode. Bij een ander profiel of het verbreken van de autoverbinding stopt de afspeelsessie in de auto.
+
+**Play** kiest automatisch een directe stream uit je ingeschakelde add-ons. Je ingestelde autoplay-add-on krijgt voorrang binnen de geschikte bronnen. Als afspelen mislukt, probeert de speler maximaal drie geschikte bronnen zolang de afspeelpagina openstaat. Het openen van Home start geen video; automatisch doorgaan naar de volgende aflevering is niet inbegrepen.
+
+De auto-interface sluit bronnen boven 10 Mbps en bronnen met een onbekende bitrate uit. Een bitrate op basis van bestandsgrootte en speelduur is een schatting van het gemiddelde, geen harde limiet op kortstondig netwerkverkeer. De adaptieve speler begrenst ook zijn video- en audiotracks. Zonder geschikte bron verschijnt **No suitable stream within 10 Mbps**; de speler kiest dan niet stilzwijgend een zwaardere bron. Voor een aflevering gebruikt de schatting de speelduur van die aflevering. Ontbrekende speelduurgegevens kunnen dus het aantal beschikbare bronnen beperken.
+
+Home laadt vier catalogusrijen tegelijk, met twaalf postervertoningen per rij. Via **More catalogs**, **More titles** en **More episodes** bereik je de overige inhoud. Vernieuw Home om de catalogusinhoud opnieuw te laden. Bij ontbrekende afbeeldingen verschijnt een vervangende tegel; oudere hosts houden lijstnavigatie.
 
 Video verschijnt op een apart autoscherm; de telefoon hoeft de video niet te tonen. Root, Shizuku en schermdelen zijn niet nodig. Gearslip verzorgt de autoverbinding en het geluid. Gebruik Bluetooth-audio of de gewone optie voor audiodeling van Gearslip.
 

@@ -78,7 +78,7 @@ private val carInterfaceResources = resourcePatch {
 @Suppress("unused")
 val wuplayGearslip = bytecodePatch(
     name = "Add Gearslip car interface",
-    description = "Browse the selected WuPlay profile and play videos with a separate Gearslip car interface. Works with Morphe-patched Gearslip; uses native WuPlay add-ons and playback without root or phone-screen mirroring.",
+    description = "Browse Home poster carousels and season/episode shelves in Gearslip, with automatic direct-source selection within 10 Mbps. Uses your WuPlay profile, add-ons and native playback without root or phone-screen mirroring.",
     default = false,
 ) {
     compatibleWith(wuplayMobile)
@@ -114,6 +114,19 @@ val wuplayGearslip = bytecodePatch(
             """)
             icon.methods.add(method)
         }
+        val intrinsicsType = "Lkotlin/jvm/internal/Intrinsics;"
+        Fingerprint(definingClass = intrinsicsType, name = "checkNotNullParameter",
+            parameters = listOf("Ljava/lang/String;", "Ljava/lang/Object;"), returnType = "V").uniqueMatch()
+        val intrinsics = mutableClassDefBy(intrinsicsType)
+        check(intrinsics.methods.none { it.name == "checkNotNullParameter" && it.parameterTypes.toList() == listOf("Ljava/lang/Object;", "Ljava/lang/String;") }) { "WuPlay Kotlin ABI already has the car SDK overload" }
+        val nullCheck = MutableMethod(ImmutableMethod(intrinsicsType, "checkNotNullParameter",
+            listOf(ImmutableMethodParameter("Ljava/lang/Object;", emptySet(), null), ImmutableMethodParameter("Ljava/lang/String;", emptySet(), null)),
+            "V", 9, emptySet(), emptySet(), ImmutableMethodImplementation(2, emptyList(), emptyList(), emptyList())))
+        nullCheck.addInstructions(0, """
+            invoke-static { p1, p0 }, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/String;Ljava/lang/Object;)V
+            return-void
+        """)
+        intrinsics.methods.add(nullCheck)
         val continuation = "Lkotlin/coroutines/jvm/internal/ContinuationImpl;"
         val classes = mapOf(
             "Lapp/wuplay/android/MobileApplication;" to mapOf("container" to "Lapp/wuplay/androidtv/AppContainer;"),

@@ -13,6 +13,15 @@ def verify(original,patched,original_apk,patched_apk):
     old,new=classes(original),classes(patched)
     assert set(old)<=set(new),'Original classes removed'
     assert set(before)<=set(after),'Original methods removed'
+    native_additions={key for key in set(after)-set(before) if key.split('->',1)[0] in old}
+    expected_additions={
+        'Landroidx/core/graphics/drawable/IconCompat;->getType()I',
+        'Landroidx/core/graphics/drawable/IconCompat;->getUri()Landroid/net/Uri;',
+        'Landroidx/core/graphics/drawable/IconCompat;->toBundle()Landroid/os/Bundle;',
+        'Landroidx/core/graphics/drawable/IconCompat;->createFromBundle(Landroid/os/Bundle;)Landroidx/core/graphics/drawable/IconCompat;',
+        'Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V',
+    }
+    assert native_additions==expected_additions,f'Unexpected native ABI additions: {native_additions ^ expected_additions}'
     changed=[key for key,value in before.items() if after[key]!=value]
     assert changed==[OWNER],f'Unexpected native method changes: {changed}'
     body=after[OWNER]
@@ -30,7 +39,7 @@ def verify(original,patched,original_apk,patched_apk):
             if name.endswith('.dex'):assert b.read(name)[:8]==b'dex\n037\x00','DEX version changed'
         for name in ('NOTICE.txt','Apache-2.0.txt'):
             assert b.getinfo('assets/morphe-wuplay-car/'+name).file_size>100,'Missing license asset'
-    print(f'PASS: {len(old)} original classes, {len(before)} original methods preserved; one scoped metadata constant; {len(added)} allowed extension/Car/Person classes; native libraries and DEX037 preserved')
+    print(f'PASS: {len(old)} original classes, {len(before)} original methods preserved; one scoped metadata constant and five additive ABI bridges; {len(added)} allowed extension/Car/Person classes; native libraries and DEX037 preserved')
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
