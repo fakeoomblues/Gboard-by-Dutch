@@ -401,8 +401,11 @@ val externalSpeedControlsPatch = bytecodePatch(
         classDefForEach { classes.add(it) }
         validateVelaContracts(classes)
         validateVelaHostAbi(classes)
+        validateVelaWarningVoice(classes)
+        validateVelaWarningExtension()
         guardNativeAbi()
         // Resolve the full cohort before changing a field, register, instruction or template.
+        val warningVoice = velaWarningVoiceContracts.keys.associateWith { method(it) }
         val resolved = velaContracts.keys.associateWith { method(it) }
         fun pick(owner: String, name: String) = resolved.values.single { it.definingClass == owner && it.name == name }
         val serviceCreate = pick("Lapp/vela/service/NavigationService;", "onCreate")
@@ -459,6 +462,7 @@ val externalSpeedControlsPatch = bytecodePatch(
             m.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }.also { check(it.isNotEmpty()) }
         }
         // All guards passed. Retype only descriptor-only extension fields, then apply bounded edits.
+        bindVelaWarningVoice(warningVoice)
         val ui = mutableClassDefBy(UI)
         effectiveFields.forEach { name ->
             val field = ui.fields.single { it.name == name }

@@ -16,6 +16,8 @@ public abstract class ProviderControlService extends Service {
     protected abstract boolean engineRunning();
     protected abstract String receiverPackage();
     protected abstract Class<? extends ProviderEngineService> engineService();
+    /** Optional semantic warning API. Called only after the startup caller has been authorized. */
+    protected void appendWarningCapabilities(Bundle response, int uid) { }
 
     private final Binder api = new Binder() {
         @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
@@ -48,6 +50,7 @@ public abstract class ProviderControlService extends Service {
             response.putString("state", state);
             response.putBoolean("audio_muted", ProviderAudio.muted());
             response.putString("engine_state", ProviderEngineService.lastState());
+            appendWarningCapabilities(response, uid);
             reply.writeNoException(); reply.writeBundle(response); return true;
         }
     };

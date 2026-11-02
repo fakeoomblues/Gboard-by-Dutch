@@ -43,3 +43,15 @@ See [runtime evidence and reproduction](../../docs/research/2026-11-02-native-wa
 `scenario=codec` compiles the production [shared protocol core](../../support/navigation-alerts/README.md) into instrumentation and verifies immutable round trips, native Parcel sizing, UTF-8 rejection and bounded batch splitting without speaking. It does not fabricate native FM capture or prove Binder authentication. The component verification snapshot is in `tests/fixtures/navigation-warnings/warning-core-verification.json` from the repository root.
 
 `scenario=ledger_io` checks the real app-private writer lock, file permissions, 100 fsync/rename commits and descriptor counts. Run `ledger_write` then `ledger_recover` in separate instrumentation processes to check reload/failover fencing, new-consumer rejection and revoked STARTED handling. These fixtures never invoke an audio adapter. Recovery performs explicit provider-internal test cleanup because no real player was created; it does not prove quiescence of a production receiver. The ownership component snapshot is `tests/fixtures/navigation-warnings/ownership-verification.json`.
+
+## Separate-UID Binder fixture
+
+Build three disposable APKs without contacting a device:
+
+```bash
+python3 scripts/navigation-alerts/build_binder_probe.py --sdk "$ANDROID_HOME" --output .analysis/native-warning-bindings/binder-probe --key /path/to/private-test.p12
+```
+
+The source service permits the actual PackageManager UID of the allowed client; the stranger APK is denied. The client instrumentation checks the remote Binder descriptor, source callback UID, callback challenge, initial snapshot/live ordering, authenticated health PING and grant bookkeeping. Readiness is explicitly simulated and no speaker is created. The synthetic event's NOT_STARTED/quiescent report is justified by that absence of output.
+
+Run only on the designated disposable `native_warnings_api34` AVD, verifying both its name and `ro.kernel.qemu=1` before installing. Each client APK supplies `nl.johninnl.warningprobe.BinderClientProbe` instrumentation targeting itself. Pass `-e unauthorized true` for the stranger. Retain source/build hashes, independently verified installed APK hashes and both instrumentation results. The observed component record is `tests/fixtures/navigation-warnings/binder-verification.json`; it does not establish FM capture, native speech or phone/car acceptance.

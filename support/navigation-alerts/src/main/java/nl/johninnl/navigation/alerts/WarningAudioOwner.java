@@ -110,6 +110,11 @@ public final class WarningAudioOwner {
     }
     public synchronized void legacyReceiverActive(boolean active) { legacy=active; }
 
+    /** Transport redaction must also match the registration and process nonce, not UID alone. */
+    synchronized boolean leaseBelongsTo(Lease lease,Client client) {
+        return lease!=null && sameClient(lease.client,client);
+    }
+
     public synchronized Claim claim(int uid,Client client,Mode mode,boolean ready,long now) {
         checkClient(uid,client);advance(now);
         Code blocked=blocked();if(blocked!=null)return new Claim(blocked,null);

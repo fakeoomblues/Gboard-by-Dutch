@@ -25,6 +25,7 @@ def main():
     dex.mkdir(parents=True, exist_ok=True)
     target_source = source / ('VelaVoiceProbe.java' if args.target == 'vela' else 'MapsVoiceProbe.java')
     shared = sorted((Path(__file__).resolve().parents[2] / 'support/navigation-alerts/src/main/java').rglob('*.java'))
+    shared += sorted((Path(__file__).resolve().parents[2] / 'support/navigation-startup/src/main/java').rglob('*.java'))
 
     def run(*command):
         subprocess.run([str(item) for item in command], check=True)

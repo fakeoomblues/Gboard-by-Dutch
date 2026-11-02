@@ -1,6 +1,6 @@
 # Native warning protocol core
 
-This source set supplies the first shared implementation pieces for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md): immutable event values, the primitive Bundle codec, bounded batches and the process-local journal. FM, Maps and Vela compile these sources. Provider capture, Binder transport, durable playback grants, receiving scheduling/UI and production speech adapters remain pending; no warning endpoint or voice-readiness claim is enabled by these classes alone.
+This source set implements the event codec/journal, authenticated Binder transport and durable ownership core for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). FM, Maps and Vela compile these sources. Native capture and receiver display integrations exist; scheduling and complete native speech/phone/car acceptance remain pending. FM source coverage stays incomplete, so these changes do not enable exclusive warning playback.
 
 ## Codec
 
@@ -24,7 +24,7 @@ Superseded UPSERTs are coalesced before exhausting history capacity. Valid ANNOU
 
 `resume(session, afterSequence, now)` returns original retained records, data-only current state, eligible native announcement candidates, head sequence, overflow and explicit resynchronization status. Any missing sequence—including coalescing/expiry/overflow—is a declared resynchronization boundary. A current-state snapshot is authoritative at that head: older replay records must not overwrite it as newer display state. A different session invalidates the old cursor; an impossible future cursor in the same session is rejected.
 
-Replay candidates are **not playback grants**. Before output, the future authenticated BEGIN_ATTEMPT implementation must call `announcement(warningId, phase, index, now)` against current source state and apply ownership/capability/durable-grant checks. This rejects CLEAR/expiry even when a consumer missed a cancellation. Receiving acceptance cursors, scheduling, passage checks and persisted uncertainty dispositions remain separate work.
+Replay candidates are **not playback grants**. Authenticated BEGIN_ATTEMPT calls `announcement(warningId, phase, index, now)` against current source state and applies ownership/capability/durable-grant checks. This rejects CLEAR/expiry even when a consumer missed a cancellation. Scheduling and passage checks remain separate work.
 
 ## Ownership and durable grants
 
@@ -38,10 +38,18 @@ Death/restart/lease expiry never proves output stopped. Pending grants fence fai
 
 `AtomicPlaybackStore` holds an exclusive writer lock for the provider actor lifetime and writes a checksummed, bounded binary file in provider-private no-backup storage. It syncs file content, atomically renames, then syncs the parent directory. Explicit descriptor closure is required for Android's non-owning `FileOutputStream(FileDescriptor)` wrapper. All file operations require the dedicated worker, never the native/main thread. Only opaque grant identities/hashes, boot identity and disposition/started state are stored; there is no warning ID, message, coordinate or replayable prompt. Boot identity comes from Android boot count, not wall-clock estimates.
 
-Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. Binder authentication/registration binding, token redaction, scheduler/native integration and user-facing recovery controls remain pending work.
+Load corruption, ambiguous writes and failed clears stay fenced. A different verified boot clears old output uncertainty; arbitrary receiver-supplied reset flags must not. Provider-internal parked recovery is permitted only after verifying previous output stopped. Scheduler/native integration and user-facing recovery controls remain pending work.
+
+## Binder and startup integration
+
+`WarningEndpoint` authenticates the UID before decoding every request. Registration binds the verified package/UID, consumer process nonce and callback binder through a reverse challenge. Four registrations use separate fixed delivery workers; remote callbacks never run on the source actor or UI. Token redaction includes the registration/consumer identity. Native capture enqueues with its original observation/deadlines and an ingress emission time; actor backlog cannot refresh a warning.
+
+`WarningConnection` checks the actual source callback UID and validates events before advancing its bounded acceptance cursor. Frozen snapshot pages keep one head and require an explicit ACK before live delivery. `WarningSession` runs that handshake on the existing startup health path before cold engine startup and before the running-state early return. Later authenticated health PINGs retain quiet registrations without renewing audio-owner leases. Provider changes fence old connections; Maps/Vela keep bounded semantic display state and one coalesced UI render. Source capture overflow blocks new exclusive grants and requires resynchronization.
+
+The owned API-34 fixture exercised actual distinct source/client/unauthorized UIDs, remote descriptor discovery, callback authentication, snapshot-before-live ordering, a durable grant and a no-output NOT_STARTED/release. Speaker readiness was simulated, and no speaker was constructed. The fixture does not establish native FM capture or audible playback.
 
 ## Verification
 
-Shared codec/journal regression tests live in the FM extension's `nl.johninnl.navigation.alerts` test package. Run the FM, Maps-extension and Vela unit tasks plus Waze compatibility checks. The full patch build verifies source-set integration; it does not prove the unimplemented event endpoint or complete spoken warnings.
+Shared protocol regression tests live in the FM extension's `nl.johninnl.navigation.alerts` test package. Run the FM, Maps-extension and Vela unit tasks plus Waze compatibility checks. The full patch build verifies source-set integration; it does not prove complete spoken warnings.
 
 The test-only native probe's `scenario=codec` compiles these production sources into instrumentation and exercises the codec against real Android Parcel. It preserves eight large synthetic events by splitting them into 121,940-byte and 40,708-byte batches on the controlled API-34 emulator. This is codec evidence, not proof of native FM capture, cross-UID event authentication, audio or car routing. See the active [transport implementation plan](../../docs/superpowers/plans/2026-11-02-warning-contract-transport.md) for remaining work.
