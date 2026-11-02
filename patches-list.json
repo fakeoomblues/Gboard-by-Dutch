@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.30.1",
+  "version": "1.31.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -3323,10 +3323,10 @@
         {
           "key": "packageNames",
           "title": "Trusted Gearslip packages",
-          "description": "Comma-separated installed Gearslip host package names. Each caller must own its package under its actual callback UID.",
+          "description": "Comma-separated installed Gearslip or DriveDeck host package names. Each caller must own its package under its actual callback UID.",
           "required": true,
           "type": "kotlin.String",
-          "default": "app.seb3thehacker.gearslip",
+          "default": "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev",
           "values": null
         }
       ]
@@ -3360,10 +3360,10 @@
         {
           "key": "packageNames",
           "title": "Trusted Gearslip packages",
-          "description": "Comma-separated Gearslip host packages. Myspoti retains its UID ownership checks for browsing and search.",
+          "description": "Comma-separated Gearslip or DriveDeck host packages. Myspoti retains its UID ownership checks for browsing and search.",
           "required": true,
           "type": "kotlin.String",
-          "default": "app.seb3thehacker.gearslip",
+          "default": "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev",
           "values": null
         }
       ]
@@ -9233,7 +9233,7 @@
     },
     {
       "name": "Support Gearslip",
-      "description": "Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto host validation.",
+      "description": "Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so a patched Gearslip keeps working. Other hosts keep Android Auto host validation.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -9251,6 +9251,40 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Support Gearslip and DriveDeck",
+      "description": "Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so DriveDeck works without the original Gearslip installed. Other hosts keep Android Auto host validation.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.flitsmeister",
+          "name": "Flitsmeister",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "ba4fdde5ed7d1082f6ba1af87df2ca39c81b094af20d36ff55b583aa3e3353e6"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "14.17",
+              "versionCodes": {
+                "ARM64_V8A": 1287,
+                "ARMEABI_V7A": 1287,
+                "X86_64": 1287,
+                "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
               "description": null
             }
           ]

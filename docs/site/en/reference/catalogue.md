@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.30.1**
+**Patch bundle: 1.31.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -181,6 +181,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Guest mode | On | 14.17 |
 | Hide Pro notices | On | 14.17 |
 | Hide ads | On | 14.17 |
+| Support Gearslip and DriveDeck | On | 14.17 |
 | Unlock Pro | On | 14.17 |
 
 ## FTM

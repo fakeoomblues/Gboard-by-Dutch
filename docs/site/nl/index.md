@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">54 apps</span> · Patchbundel: 1.30.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">54 apps</span> · Patchbundel: 1.31.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -298,7 +298,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -306,7 +306,7 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">14.17</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>8 patches</summary>
+<summary>9 patches</summary>
 <ul>
 <li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
@@ -315,6 +315,7 @@ hide:
 <li>Guest mode <span class="dap-app-card__target">14.17</span></li>
 <li>Hide Pro notices <span class="dap-app-card__target">14.17</span></li>
 <li>Hide ads <span class="dap-app-card__target">14.17</span></li>
+<li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17</span></li>
 <li>Unlock Pro <span class="dap-app-card__target">14.17</span></li>
 </ul>
 </details>

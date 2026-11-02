@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.30.1**
+**Patchbundel: 1.31.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -181,6 +181,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Guest mode | Aan | 14.17 |
 | Hide Pro notices | Aan | 14.17 |
 | Hide ads | Aan | 14.17 |
+| Support Gearslip and DriveDeck | Aan | 14.17 |
 | Unlock Pro | Aan | 14.17 |
 
 ## FTM

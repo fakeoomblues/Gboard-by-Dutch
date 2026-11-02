@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c49d2b4569742d7048b16b014b4309c5f98a7e6a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.31.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [c49d2b456974](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.31.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.30.1...v1.31.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Flitsmeister:** accept DriveDeck as a car and music host ([c49d2b4](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Google Maps:** accept DriveDeck as a car and music host ([c49d2b4](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Myspoti:** accept DriveDeck as a car and music host ([c49d2b4](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Waze:** accept DriveDeck as a car and music host ([c49d2b4](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **YouTube Music:** accept DriveDeck as a car and music host ([c49d2b4](https://github.com/johninnl/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/57bc14881b26f8c9b21928b47a186eac931eb6d2/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.30.1.**
