@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [b0d9dd619b90](https://github.com/johninnl/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.1...v1.28.0) (2026-11-02)
+
+### ✨ New Features
+
+* **WuPlay Mobile:** add native Gearslip video interface ([b0d9dd6](https://github.com/johninnl/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.27.1.**
