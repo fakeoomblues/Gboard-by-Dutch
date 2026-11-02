@@ -32,6 +32,7 @@ public final class WuplayCarService extends Service {
         try {
             diagnostic="refreshing";if(engine!=null)engine.refresh();if(renderer!=null)renderer.refresh();
             diagnostic=engine==null?"no engine":engine.diagnostics();tickAt=SystemClock.uptimeMillis();
+            if(pages.peekLast() instanceof PlayerPage)((PlayerPage)pages.peekLast()).retryIfNeeded();
             boolean active=engine!=null&&engine.playing()&&!engine.status().equals("Finished");
             if(wake!=null){if(active&&!wake.isHeld())wake.acquire();else if(!active&&wake.isHeld())wake.release();}
         }catch(Exception e){showError("WuPlay playback needs another stream.");}
@@ -278,7 +279,9 @@ public final class WuplayCarService extends Service {
                 String description=detail.overview();
                 if(description.length()>600)description=description.substring(0,600)+"…";
                 pane.setImage(artwork.icon(detail.artwork(),detail.displayTitle()));Row.Builder row=new Row.Builder().setTitle(detail.displayTitle());if(!detail.byline().isEmpty())row.addText(detail.byline());if(!description.isEmpty())row.addText(description);
-                pane.addRow(row.build()).addAction(action(this,item.type.equals("series")?"Episodes":"Streams",()->push(item.type.equals("series")?new EpisodesPage(detail,0):new StreamsPage(detail))));
+                pane.addRow(row.build());
+                if(item.parentId==null&&item.type.equals("series"))pane.addAction(action(this,"Seasons",()->push(new EpisodesPage(detail,0))));
+                else pane.addAction(action(this,"Play · ≤10 Mbps",()->push(new PlayPage(detail)))).addAction(action(this,"Sources",()->push(new StreamsPage(detail))));
             }
             return new PaneTemplate.Builder(pane.build()).setTitle(title).setHeaderAction(Action.BACK).build();
         }
@@ -306,16 +309,30 @@ public final class WuplayCarService extends Service {
             rows.setNoItemsMessage("No episodes available.");return b.setSingleList(rows.build()).build();
         }
     }
+    private final class PlayPage extends Page {
+        final NativeData.Item item;PlayPage(NativeData.Item item){this.item=item;title="Play · "+item.displayTitle();}
+        void load(){async(()->new Object[]{data.streams(item),data.preferredAddon()},result->{
+            AutoplayQueue<NativeData.Choice> queue=new AutoplayQueue<>((List<NativeData.Choice>)result[0],(String)result[1]);
+            NativeData.Choice first=queue.next();
+            if(first==null){error="No suitable stream within 10 Mbps. Your add-ons returned no direct source with a known or verifiable bitrate within the limit.";return;}
+            pages.removeLast().cancel();startPlayback(item,first,queue);
+        });}
+        Template content(){return new MessageTemplate.Builder("Choosing a stream within 10 Mbps…").setTitle(item.displayTitle()).setHeaderAction(Action.BACK).setLoading(loading).build();}
+    }
+    private void startPlayback(NativeData.Item item,NativeData.Choice choice,AutoplayQueue<NativeData.Choice> queue){
+        try{
+            if(!choice.direct()||!CarStreamPolicy.eligible(choice.rate))throw new IllegalStateException("No suitable stream within 10 Mbps");
+            long token=playback.beginSelection();engine.selection(item,choice);
+            if(playback.select(token,choice.url,choice.headers(),0)){playingItem=item;playingChoice=choice;push(new PlayerPage(queue));}
+        }catch(Exception e){NativeData.Choice next=queue==null?null:queue.next();if(next!=null)startPlayback(item,next,queue);else showError("Wuplay could not start a stream within 10 Mbps. Retry or choose another eligible source.");}
+    }
     private final class StreamsPage extends Page {
         final NativeData.Item item;NativeData.Item detail;List<NativeData.Choice> values=Collections.emptyList();
-        StreamsPage(NativeData.Item item){this.item=item;title=item.parentId==null?item.title:item.subtitle;}
-        void load(){async(()->{detail=item.parentId==null?data.details(item):item;return data.streams(detail);},v->values=v);}
+        StreamsPage(NativeData.Item item){this.item=item;title="Sources · ≤10 Mbps";}
+        void load(){async(()->{detail=item.parentId==null?data.details(item):item;return CarStreamPolicy.ranked(data.streams(detail),data.preferredAddon());},v->values=v);}
         Template content(){ListTemplate.Builder b=list();if(loading)return b.build();ItemList.Builder rows=new ItemList.Builder();
-            for(NativeData.Choice choice:values)rows.addItem(row(choice.title,choice.addonName,()->{
-                if(choice.url.isEmpty()){error="This stream requires its external player. Choose a direct stream.";invalidate();return;}
-                try {long token=playback.beginSelection();engine.selection(detail,choice);if(playback.select(token,choice.url,choice.headers(),0)){playingItem=detail;playingChoice=choice;push(new PlayerPage());}}
-                catch(Exception e){error="WuPlay could not start this stream. Choose another stream.";invalidate();}
-            }));rows.setNoItemsMessage("No streams returned by your enabled add-ons.");return b.setSingleList(rows.build()).build();}
+            for(NativeData.Choice choice:values.subList(0,Math.min(30,values.size())))rows.addItem(row(choice.title,choice.addonName+" · "+choice.rateLabel(),()->startPlayback(detail,choice,null)));
+            rows.setNoItemsMessage("No suitable stream within 10 Mbps. Unknown and higher bitrates are excluded.");return b.setSingleList(rows.build()).build();}
     }
     private boolean sameTitle(NativeData.Item first,NativeData.Item second){return first!=null&&second!=null&&first.type.equals(second.type)&&first.id.equals(second.id);}
     private final class TracksMenuPage extends Page {
@@ -340,8 +357,20 @@ public final class WuplayCarService extends Service {
             rows.setNoItemsMessage("No alternate tracks in this stream.");return list().setSingleList(rows.build()).build();}
     }
     private final class PlayerPage extends Page {
-        PlayerPage(){title=playingItem==null?"WuPlay":playingItem.title;}
-        void load(){openVideo();}
+        final AutoplayQueue<NativeData.Choice> attempts;boolean retryFinished;long attemptStarted=SystemClock.uptimeMillis();
+        PlayerPage(){this(null);}
+        PlayerPage(AutoplayQueue<NativeData.Choice> attempts){this.attempts=attempts;title=playingItem==null?"Wuplay":playingItem.title;}
+        void load(){if(error!=null&&playingItem!=null){error=null;push(new PlayPage(playingItem));}else openVideo();}
+        @Override void cancel(){super.cancel();if(attempts!=null)attempts.cancel();}
+        void retryIfNeeded(){
+            if(attempts==null||retryFinished||ended||pages.peekLast()!=this)return;
+            String status=engine.status();long elapsed=SystemClock.uptimeMillis()-attemptStarted;
+            if(!(status.startsWith("Playback failed")||(elapsed>8000&&status.startsWith("Playback stopped"))||(elapsed>30000&&status.equals("Buffering…"))))return;
+            NativeData.Choice next=attempts.next();if(next==null){retryFinished=true;attempts.cancel();engine.release();error="No working stream within 10 Mbps. Return to the title and retry.";if(renderer!=null)renderer.close();invalidate();return;}
+            attemptStarted=SystemClock.uptimeMillis();
+            try{long position=Math.max(0,engine.position());long token=playback.beginSelection();engine.selection(playingItem,next);if(playback.select(token,next.url,next.headers(),position)){playingChoice=next;openVideo();}}
+            catch(Exception e){attemptStarted=0;}
+        }
         Template content(){return new NavigationTemplate.Builder().setActionStrip(new ActionStrip.Builder()
             .addAction(action(this,"−30s",()->playback.seekBy(-30000)))
             .addAction(action(this,engine.playing()?"Pause":"Play",()->{playback.toggle();invalidate();}))
