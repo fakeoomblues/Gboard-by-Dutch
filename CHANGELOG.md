@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/354a820551073f959a36b367a9da1cff5f9a51dc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.4.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [354a82055107](https://github.com/johninnl/nl-morphe-patches/commit/354a820551073f959a36b367a9da1cff5f9a51dc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.4](https://github.com/johninnl/nl-morphe-patches/compare/v1.28.3...v1.28.4) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Wuplay Android TV:** map configured Home rows and simplify channel setup ([aaecd95](https://github.com/johninnl/nl-morphe-patches/commit/aaecd95c5a00d008a61d9e29b564c78943c13755))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3cb2a2d1fa27a92ed25da59567731fb87b59ce00/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.3.**
