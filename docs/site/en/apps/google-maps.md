@@ -6,7 +6,7 @@
 
 Select the complete original APK for this exact version in Morphe Manager. Android 10 or newer is required.
 
-These 30 Maps patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, adapted here for this Maps version. This project extends **Waze alerts** with Flitsmeister and the navigation data already supported in Vela Maps.
+The original Maps patches come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat, adapted here for this Maps version. This project adds native car navigation and extends **Waze alerts** with Flitsmeister and the navigation data already supported in Vela Maps.
 
 ## Patches
 
@@ -30,6 +30,7 @@ These 30 Maps patches come from [bearinmind patches](https://github.com/bearinmi
 | **Hide ads and clutter** | On | Hides promoted pins, sponsored results, AI summaries, place-sheet business rows and the Explore feed and bottom tabs. |
 | **Legacy icon** | On | Restores the flat multicolour Maps pin used before the gradient icon. |
 | **Location provider toggle** | On | Adds a choice of Android, Google Play services or microG-RE location, with network-location fallback. |
+| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. Requires the full Android Auto app for its car UI resources. |
 | **Offline saved places** | On | Saves local places and lists, imports and exports backups, and adds an optional local Timeline recorder. |
 | **Power saving mode** | On | Adds a black navigation screen and settings for its button, idle activation, speedometer and frame rate. |
 | **Proxy** | On | Adds an HTTP proxy setting for Maps traffic; map loading stops if the configured proxy is unavailable. |
@@ -52,6 +53,8 @@ External navigation data is received locally from the selected app on the same p
 ## Before using
 
 Keep **Change package name** selected to install beside stock Maps; the default package is `org.ungoogled.android.apps.maps`. **Change app name** uses **Ungoogled Maps** by default and always keeps your chosen name with either microG support patch. **Add microG-RE support** changes the default package to `org.ungoogled.android.apps.maps.microg`. The two microG support patches are alternatives: choose only the one matching your setup. Original microG needs a ROM with signature spoofing and keeps the stock Maps package.
+
+For native car navigation, keep **Native navigation for Gearslip and Android Auto** selected, install the full Android Auto app and grant the patched Maps app precise location access. Gearslip then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
 
 Open the account menu’s **Customization** and **Waze & external data source** rows to configure the selected patches. A patch marked **On** above is selected by default when patching; camera layers and external sources still require enabling in the app. **120 refresh rate** also starts off in Customization.
 

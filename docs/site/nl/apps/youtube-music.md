@@ -32,7 +32,7 @@ Selecteer bij het patchen van die APK alleen **Gearslip personal library** en sc
 
 Gebruik voor beide patches dezelfde vertrouwde Gearslip-pakketten. Persoonlijke afspeellijsten, opgeslagen items en afspelen moeten voor deze ontwikkelversie nog op een toestel worden getest.
 
-Pas op Gearslip ook **Keep music player entries** toe, zodat de speler naast YT Musics aparte auto-instellingen beschikbaar blijft. De optie Trusted Gearslip packages verwijst standaard naar het officiële Gearslip-pakket. Voeg alleen een ander pakket toe als je bewust die hostversie gebruikt.
+Pas op Gearslip ook **Keep music player entries** toe, zodat YT Music alleen de werkende spelertegel toont en de onbruikbare auto-instellingentegel wegblijft. De optie Trusted Gearslip packages verwijst standaard naar het officiële Gearslip-pakket. Voeg alleen een ander pakket toe als je bewust die hostversie gebruikt.
 
 Beide ondersteunde versies slagen voor de controle van de hostidentiteit op Android. Bladeren, beschikbare inhoud en afspelen met een ingelogd account moeten nog samen worden getest; deze ontwikkelpatch belooft geen volledige bibliotheektoegang. De patch maakt geen abonnement aan en verandert geen accountrechten.
 

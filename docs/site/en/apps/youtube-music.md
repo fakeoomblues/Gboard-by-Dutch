@@ -32,7 +32,7 @@ When patching that APK, select **Gearslip personal library** alone and deselect 
 
 Use the same trusted Gearslip packages for both patches. Personal playlists, saved items and playback remain pending device acceptance testing for this development release.
 
-Apply **Keep music player entries** to Gearslip as well, so the player remains available alongside YT Music's car Settings entry. In YT Music's patch options, Trusted Gearslip packages defaults to the official Gearslip package. Only add another package when you intentionally use that host build.
+Apply **Keep music player entries** to Gearslip as well, so YT Music shows one working player tile and its unusable car Settings tile is omitted. In YT Music's patch options, Trusted Gearslip packages defaults to the official Gearslip package. Only add another package when you intentionally use that host build.
 
 Both supported versions pass the Android host-identity checks. Signed-in browsing, content availability and playback still need integration testing; this development patch does not promise complete library access. It does not create a subscription or change account access.
 

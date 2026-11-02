@@ -10,7 +10,7 @@ Use the official Gearslip APK. **Keep music player entries** and **Hide apps fro
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Keep music player entries** | On | Keeps a music app's player available alongside its separate car Settings screen, including YT Music Morphe. |
+| **Keep music player entries** | On | Shows only the music player when an app also provides a car Settings service, including YT Music Morphe. |
 | **Hide apps from drawer** | On | Places an **Apps** card first under **Car** in Gearslip's phone settings. Every app is ticked by default; untick one to hide its tile from the car drawer. Apps remain installed. |
 | **Control car display density** | On | Adds **Car display density** under **Car → Screen**, immediately after **Size**, on the phone. Adjusts text and controls in Gearslip and hosted car apps. **From car** is selected initially, preserving the car's density. |
 
@@ -22,7 +22,7 @@ These patches change the app drawer, player selection and car display density. T
 
 Start a track in Gearslip's music screen, return to the map, then use the dock button in the now-playing bar to place the player beside the map. SoundCloud uses Gearslip's existing player. YT Music also needs its separate **Gearslip music browser support** patch.
 
-To choose what the car drawer shows, open the **Apps** card, shown first under **Car** on Gearslip's home screen on your phone. Every app with a car screen or player is ticked. Untick one to hide its tile, and tick it again to bring it back. A music app with a separate Settings tile has a row for each. A tile you pinned to the nav bar stays there, and Gearslip's own tiles such as Settings aren't listed.
+To choose what the car drawer shows, open the **Apps** card, shown first under **Car** on Gearslip's home screen on your phone. Every app with a car screen or player is ticked. Untick one to hide its tile, and tick it again to bring it back. With **Keep music player entries**, a music app that also provides a Settings service has only its player row. A tile you pinned to the nav bar stays there, and Gearslip's own tiles such as Settings aren't listed.
 
 For larger text and controls, open **Car → Screen → Car display density** on the phone. The density row is immediately after **Size**. Choose **From car**, **160**, **180**, **200**, **220** or **240 DPI**. Start with **Size → Normal** and **200 DPI**, then try **240 DPI** if needed. The existing **Large** size setting multiplies Gearslip's own scaling. Return to **From car** if controls clip. Reconnect the car or reopen the preview to apply the selection; the preview caption shows the effective density.
 
