@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.27.0-dev.2**
+**Patch bundle: 1.27.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -373,7 +373,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Gearslip personal library | On | 2.2.0, 2.3.0 |
+| Gearslip personal library | On | Any |
 
 ## Nieuwsblad
 
