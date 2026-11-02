@@ -11,6 +11,7 @@ private object InputContracts {
         reader.readLines().filter(String::isNotBlank).map { it.split('\t') }
     }
     val payloads by lazy { rows("input-payloads").associate { it[0] to it[1] } }
+    val densities by lazy { rows("density-payloads").groupBy({ it[0] }, { it[1] }).mapValues { it.value.toSet() } }
     val feature by lazy { rows("feature") }
 }
 
@@ -18,14 +19,25 @@ internal fun ResourcePatchContext.requireCompleteResources() {
     val entries = listApkEntries("").toSet()
     val expected = InputContracts.payloads
     val native = entries.filter { it.startsWith("lib/") && it.endsWith(".so") }.toSet()
-    check(native == expected.keys.filter { it.startsWith("lib/") }.toSet() &&
-        entries.containsAll(expected.keys)) {
-        "Incomplete 2dehands input: select all native, density and feature splits from the complete 16.19.0 XAPK"
+    val architectures = native.map { it.split('/')[1] }.toSet()
+    val requiredNative = expected.keys.filter {
+        it.startsWith("lib/") && it.split('/')[1] in architectures
+    }.toSet()
+    check(native.isNotEmpty() && native == requiredNative) {
+        "Incomplete or unsupported 2dehands native input: include a complete ARM64 or ARMv7 split"
     }
-    for ((name, digest) in expected) {
-        // Binary XML is decoded by the resource coder. Density resources use
-        // presence contracts; native library bytes are checked exactly.
-        if (digest == "-") continue
+
+    // A device-specific XAPK need not include every density or both ABIs.
+    // Split resource paths overlap across densities, so validate the union of
+    // complete publisher split profiles. These paths do not occur in the base.
+    val profiles = InputContracts.densities.values
+    val complete = profiles.filter { entries.containsAll(it) }
+    val observed = entries.intersect(profiles.flatten().toSet())
+    check(complete.isNotEmpty() && observed == complete.flatten().toSet()) {
+        "Incomplete 2dehands density input: include complete density splits from the 16.19.0 XAPK"
+    }
+    for (name in requiredNative) {
+        val digest = expected.getValue(name)
         val actual = MessageDigest.getInstance("SHA-256").digest(get(name).readBytes())
             .joinToString("") { "%02x".format(it.toInt() and 0xff) }
         check(actual == digest) { "2dehands original resource changed: $name" }

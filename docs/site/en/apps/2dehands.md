@@ -8,8 +8,11 @@
 
 ## Supported original files
 
-Use the complete supplied `2dehands-be-16-19-0.xapk`, package `be.tweedehands.m`.
-It contains the base, Notifications feature, ARM64/ARMv7 and density splits.
+Use a complete 16.19.0 XAPK, package `be.tweedehands.m`, including the base,
+Notifications feature, and its applicable native and density splits.
+ARM64-only bundles are supported; ARMv7 and every density are not required.
+Included native libraries must match the publisher originals, and included
+density resources must form complete supported split profiles.
 The inspected variant requires Android 12L or later. Other builds are rejected.
 
 ## Patches

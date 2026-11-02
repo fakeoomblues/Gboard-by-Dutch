@@ -28,7 +28,9 @@ class TweedehandsInputRegression extends OriginalInputRegression {
         var patches = new PatchLoader.Jar(Set.of(new File(args[0])));
         Field execution = Patch.class.getDeclaredField("executeBlock");
         execution.setAccessible(true);
-        ClassLoader loader = execution.get(patches.stream().filter(p -> p.getName() != null)
+        ClassLoader loader = execution.get(patches.stream().filter(p -> p.getName() != null &&
+            p.getCompatibility() != null && p.getCompatibility().stream()
+                .anyMatch(c -> c.getPackageName().equals("be.tweedehands.m")))
             .findFirst().orElseThrow()).getClass().getClassLoader();
         Class<?> app = null;
         try { app = loader.loadClass("patches.tweedehands.CompatibilityKt"); }
@@ -89,9 +91,8 @@ class TweedehandsInputRegression extends OriginalInputRegression {
                 check(Files.readString(manifest).equals(bad), "rejected manifest unchanged");
             }
         }
-        // Simulate a split merger that retains trusted base metadata while an
-        // ABI/density payload is omitted or changed. The actual resource guard
-        // must reject the payload before touching the manifest.
+        // Device-specific split sets may omit entire ABIs or densities. The
+        // retained ABI payloads must still be byte-for-byte publisher originals.
         for (String fixture : List.of("missing-arm64.apk", "missing-armv7.apk",
                                       "missing-density.apk", "changed-native.apk")) {
             File bad = new File(args[6], fixture);
@@ -106,7 +107,8 @@ class TweedehandsInputRegression extends OriginalInputRegression {
                 Files.writeString(manifest, xml);
                 boolean refused = false;
                 try { guard.execute(context); } catch (IllegalStateException expected) { refused = true; }
-                check(refused, "production rejects incomplete or changed payload: " + fixture);
+                check(refused == fixture.equals("changed-native.apk"),
+                    "production admits applicable splits and rejects changed bytes: " + fixture);
                 check(Files.readString(manifest).equals(xml), "payload rejection leaves manifest unchanged");
             }
         }

@@ -8,8 +8,11 @@
 
 ## Ondersteunde originele bestanden
 
-Gebruik de complete aangeleverde `2dehands-be-16-19-0.xapk`, pakket `be.tweedehands.m`.
-Deze bevat de basis, de module Meldingen, ARM64/ARMv7 en schermdichtheidssplits.
+Gebruik een complete 16.19.0-XAPK, pakket `be.tweedehands.m`, inclusief de basis,
+de module Meldingen en de bijbehorende native- en schermdichtheidssplits.
+Een bundel met alleen ARM64 wordt ondersteund; ARMv7 en alle schermdichtheden
+zijn niet verplicht. Meegeleverde native-bibliotheken moeten overeenkomen met
+de originelen en schermdichtheidsbestanden moeten complete ondersteunde splits vormen.
 De onderzochte variant vereist Android 12L of nieuwer. Andere builds worden geweigerd.
 
 ## Patches

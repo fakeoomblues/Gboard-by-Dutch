@@ -223,6 +223,9 @@ class TargetRoutingTests(unittest.TestCase):
                          {'Hide ads'}, apk=Path('rebuilt.apk')),
                          [sys.executable, 'tests/verify_tweedehands.py', 'decoded',
                           '--apk', 'rebuilt.apk', '-e', 'Hide ads'])
+        self.assertIn('--original-apks', validator.verifier_command(
+            '2dehands', Path('decoded'), {'Hide ads'}, apk=Path('rebuilt.apk'),
+            original_input=Path('selected.apks')))
 
     def test_gva_uses_mediahuis_controls_and_its_own_verifier(self):
         self.assertEqual(validator.APPS.get('gva'), validator.APPS['hbvl'])

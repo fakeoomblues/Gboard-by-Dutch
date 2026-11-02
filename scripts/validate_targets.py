@@ -353,6 +353,8 @@ def verifier_command(app: str, destination: Path, effective: set[str], apk: Path
         command = [sys.executable, "tests/verify_rollerbank.py", str(destination), "--original-root", str(original_reference)]
     elif app == "2dehands":
         command = [sys.executable, "tests/verify_tweedehands.py", str(destination)]
+        if original_input is not None:
+            command += ["--original-apks", str(original_input)]
     elif app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "gva", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "ed", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
         command = [sys.executable, f"tests/verify_{app}.py", str(destination)]
     else:
@@ -494,7 +496,8 @@ def main() -> None:
         run(["apksigner", "verify", str(output)], out / f"signature-{name}.log")
         effective = set(selection) | {dependency for patch in selection for dependency in patches[patch]}
         decode_and_verify(out, args.app, output, name, effective, args.compact,
-                          trusted_decoded or reference, patch_input if trusted_decoded else None)
+                          trusted_decoded or reference,
+                          patch_input if trusted_decoded or args.app == "2dehands" else None)
         print(f"PASS: {args.app} {name}; patch report, signature and decoded effects", flush=True)
         if args.compact and name != "all":
             output.unlink()
