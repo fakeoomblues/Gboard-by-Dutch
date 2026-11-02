@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.26.0",
+  "version": "1.26.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -68,9 +68,9 @@
     },
     {
       "name": "Add microG-RE support",
-      "description": "Builds microG Maps, a separate app that signs in to your Google account through microG-RE (MicroG-RE or ReVanced GmsCore). Not for root installs; for original microG, use Add original microG support.",
+      "description": "Signs in to your Google account through microG-RE (MicroG-RE or ReVanced GmsCore), keeping the name from Change app name. Not for root installs; for original microG, use Add original microG support.",
       "default": false,
-      "category": "microG-RE",
+      "category": null,
       "compatiblePackages": [
         {
           "packageName": "com.google.android.apps.maps",
@@ -102,7 +102,7 @@
       "name": "Add original microG support",
       "description": "Signs in through original microG on ROMs with signature spoofing. Keeps Maps' own package name; allow signature spoofing for it.",
       "default": false,
-      "category": "microG",
+      "category": null,
       "compatiblePackages": [
         {
           "packageName": "com.google.android.apps.maps",
@@ -870,7 +870,7 @@
         {
           "key": "appName",
           "title": "App name",
-          "description": "The name shown under the launcher icon and in the app switcher. Left at Ungoogled Maps, Add microG-RE support names the app microG Maps instead.",
+          "description": "The name shown under the launcher icon and in the app switcher, including with either microG support patch.",
           "required": true,
           "type": "kotlin.String",
           "default": "Ungoogled Maps",

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c50dcd8cdd23df060acba8e214d505b65d452eb6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.26.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [c50dcd8cdd23](https://github.com/johninnl/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.26.1](https://github.com/johninnl/nl-morphe-patches/compare/v1.26.0...v1.26.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** retain the chosen app name with microG support ([c50dcd8](https://github.com/johninnl/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.26.0.**
