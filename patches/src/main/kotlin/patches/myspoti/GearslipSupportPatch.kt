@@ -23,7 +23,7 @@ val gearslipMyspotiSupport = bytecodePatch(
     description = "Allows the configured Gearslip host to use Myspoti's signed-in library, search and playback while retaining Android caller verification.",
 ) {
     compatibleWith(Compatibility(name = "Myspoti", packageName = "app.myspoti.stable", apkFileType = ApkFileType.APK,
-        targets = listOf(AppTarget(version = "2.2.0", versionCode = 1116), AppTarget(version = "2.3.0", versionCode = 1121))))
+        targets = listOf(AppTarget(version = null))))
     extendWith("extensions/gearslip-myspoti.mpe")
     val packageNames by stringOption(
         key = "packageNames", default = "app.seb3thehacker.gearslip", title = "Trusted Gearslip packages",

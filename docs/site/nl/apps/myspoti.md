@@ -4,7 +4,7 @@
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer de door de uitgever ondertekende Myspoti-APK. Versie 2.2.0, build 1116, wordt ook ondersteund. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
+Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **Alle versies** wanneer de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. Het patchen en opnieuw bouwen is getest met echte APK-bestanden van 2.2.0 / 1116 en 2.3.0 / 1121. De versie hierboven is het referentiebestand. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
 
 ## Patches
 

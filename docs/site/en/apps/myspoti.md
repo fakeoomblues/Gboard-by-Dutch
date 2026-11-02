@@ -4,7 +4,7 @@
 
 [Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select the publisher-signed Myspoti APK. Version 2.2.0, build 1116, is also supported. Myspoti is developed by [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
+Select the publisher-signed Myspoti APK. Compatibility is **Any** version when the existing browser access structure is uniquely recognized; an unsupported or ambiguous structure stops patching. Actual APK patching and rebuilds have been tested with 2.2.0 / 1116 and 2.3.0 / 1121. The version above is the reference input. Myspoti is developed by [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
 
 ## Patches
 
