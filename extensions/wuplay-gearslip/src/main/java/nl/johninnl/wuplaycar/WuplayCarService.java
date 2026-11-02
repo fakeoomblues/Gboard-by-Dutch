@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 public final class WuplayCarService extends Service {
     private final Handler main=new Handler(Looper.getMainLooper());
     private ExecutorService worker;
+    private CarArtwork artwork;private int hostApi=5;private String browseSession=UUID.randomUUID().toString();private int browseRevision;
     private NativeData data;private NativePlayer engine;private CarPlayback<SurfaceHolder> playback;private CarVideoRenderer renderer;
     private PowerManager.WakeLock wake;private IAppHost host;private final Deque<Page> pages=new ArrayDeque<>();private boolean ended;
     private Rect visibleArea;private NativeData.Item playingItem;private NativeData.Choice playingChoice;private SurfaceContainer currentSurface;
@@ -36,7 +37,7 @@ public final class WuplayCarService extends Service {
         }catch(Exception e){showError("WuPlay playback needs another stream.");}
         main.postDelayed(this,500);
     }};
-    @Override public void onCreate(){super.onCreate();worker=Executors.newSingleThreadExecutor();}
+    @Override public void onCreate(){super.onCreate();worker=Executors.newFixedThreadPool(4);}
     @Override public IBinder onBind(Intent intent){return car;}
     @Override public boolean onUnbind(Intent intent){finishSession();return false;}
     @Override public void onDestroy(){finishSession();super.onDestroy();}
@@ -69,11 +70,12 @@ public final class WuplayCarService extends Service {
         public void onHandshakeCompleted(Bundleable info,IOnDoneCallback cb){int caller=Binder.getCallingUid();respond(cb,()->{
             HandshakeInfo handshake=(HandshakeInfo)info.get();
             if(getPackageManager().getPackageUid(handshake.getHostPackageName(),0)!=caller)throw new SecurityException("Handshake package does not match caller UID");
-            if(handshake.getHostCarAppApiLevel()<5)throw new IllegalArgumentException("Car API 5 is required");return null;
+            hostApi=handshake.getHostCarAppApiLevel();
+            if(hostApi<5)throw new IllegalArgumentException("Car API 5 is required");return null;
         });}
         public void onAppCreate(ICarHost carHost,Intent intent,Configuration config,IOnDoneCallback cb){respond(cb,()->{
             startSession();host=IAppHost.Stub.asInterface(carHost.getHost("app"));host.setSurfaceCallback(surface);
-            pages.clear();push(new CatalogPage());return null;
+            pages.clear();push(rootPage());return null;
         });}
         public void onAppStart(IOnDoneCallback cb){respond(cb,()->null);}
         public void onAppResume(IOnDoneCallback cb){respond(cb,()->null);}
@@ -114,9 +116,9 @@ public final class WuplayCarService extends Service {
         public void onScale(float x,float y,float scale){trusted();}
     };
     private void startSession() throws Exception {
-        ended=false;if(worker==null||worker.isShutdown())worker=Executors.newSingleThreadExecutor();
+        ended=false;if(worker==null||worker.isShutdown())worker=Executors.newFixedThreadPool(4);
         if(data==null){
-            data=new NativeData(this);engine=new NativePlayer(this,data);playback=new CarPlayback<>(engine);renderer=new CarVideoRenderer(playback,engine);
+            artwork=new CarArtwork(this);data=new NativeData(this);engine=new NativePlayer(this,data);playback=new CarPlayback<>(engine);renderer=new CarVideoRenderer(playback,engine);
             NativeData observed=data;data.watchProfiles(()->main.post(()->{if(!ended&&data==observed)profileChanged();}));
         }
         if(wake==null){wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,getPackageName()+":WuPlayCar");wake.setReferenceCounted(false);}
@@ -131,15 +133,16 @@ public final class WuplayCarService extends Service {
     }
     private void profileChanged() {
         for(Page page:pages)page.cancel();pages.clear();
+        if(artwork!=null)artwork.close();artwork=new CarArtwork(this);browseSession=UUID.randomUUID().toString();browseRevision++;
         if(engine!=null)engine.profileChanged();renderer.close();playback.close();
         engine=new NativePlayer(this,data);playback=new CarPlayback<>(engine);renderer=new CarVideoRenderer(playback,engine);
         if(wake!=null&&wake.isHeld())wake.release();
-        playingItem=null;playingChoice=null;push(new CatalogPage());
+        playingItem=null;playingChoice=null;push(rootPage());
     }
     private void finishSession() {
         if(ended)return;ended=true;main.removeCallbacks(tick);
         for(Page page:pages)page.cancel();pages.clear();
-        if(renderer!=null)renderer.close();if(playback!=null)playback.close();if(data!=null)data.close();
+        if(renderer!=null)renderer.close();if(playback!=null)playback.close();if(data!=null)data.close();if(artwork!=null)artwork.close();artwork=null;
         if(worker!=null)worker.shutdownNow();
         host=null;renderer=null;playback=null;engine=null;data=null;playingItem=null;playingChoice=null;currentSurface=null;
         if(wake!=null&&wake.isHeld())wake.release();wake=null;
@@ -154,7 +157,7 @@ public final class WuplayCarService extends Service {
     private interface Load<T>{T run() throws Exception;}
     private interface Receive<T>{void accept(T value);}
     private abstract class Page {
-        final String id=UUID.randomUUID().toString();String title="WuPlay",error;boolean loading,sent;int request;Future<?> pending;
+        final String id=UUID.randomUUID().toString();String title="WuPlay",error;boolean loading,sent;int request,contentRevision;Future<?> pending;
         void cancel(){request++;if(pending!=null)pending.cancel(true);pending=null;}
         void load(){}
         <T> void async(Load<T> operation,Receive<T> receive){
@@ -186,6 +189,57 @@ public final class WuplayCarService extends Service {
         }
         Template content(){return template();}
     }
+    private Page rootPage(){return hostApi>=8?new HomePage(0):new CatalogPage();}
+    private void openTitle(NativeData.Item item){push(item.parentId==null&&item.type.equals("series")?new EpisodesPage(item,0):new DetailsPage(item));}
+    private Template shelves(Page page,List<Section<?>> sections){
+        Header.Builder header=new Header.Builder().setTitle(page.title).setStartHeaderAction(pages.size()>1?Action.BACK:Action.APP_ICON);
+        if(playingChoice!=null)header.addEndHeaderAction(action(page,"Playing",()->push(new PlayerPage())));
+        SectionedItemTemplate content=new SectionedItemTemplate.Builder().setHeader(header.build()).setLoading(page.loading).setSections(sections).build();
+        String identity=ShelfGroups.identity(browseSession,page.contentRevision,page.id),home=identity+"/home",catalogs=identity+"/catalogs";
+        return new TabTemplate.Builder(new TabTemplate.TabCallback(){public void onTabSelected(String selected){if(NavigationStack.current(pages,page,ended)&&selected.equals(catalogs))push(new CatalogPage());}})
+            .setHeaderAction(Action.APP_ICON).addTab(new Tab.Builder().setTitle("Home").setIcon(CarIcon.APP_ICON).setContentId(home).build())
+            .addTab(new Tab.Builder().setTitle("Catalogs").setIcon(CarIcon.MEDIA_PLAYBACK).setContentId(catalogs).build())
+            .setActiveTabContentId(home).setTabContents(new TabContents.Builder(content).build()).build();
+    }
+    private GridItem tile(Page owner,NativeData.Item item){return new GridItem.Builder().setTitle(item.displayTitle()).setText(item.byline())
+        .setImage(artwork.icon(item.artwork(),item.displayTitle())).setOnClickListener(()->{if(NavigationStack.current(pages,owner,ended))openTitle(item);}).build();}
+    private GridItem moreTile(Page owner,String label,Runnable run){return new GridItem.Builder().setTitle(label).setImage(CarIcon.PAN).setOnClickListener(()->{if(NavigationStack.current(pages,owner,ended))run.run();}).build();}
+    private final class Shelf {
+        final NativeData.Catalog catalog;final List<NativeData.Item> items;final String error;
+        Shelf(NativeData.Catalog catalog,List<NativeData.Item> items,String error){this.catalog=catalog;this.items=items;this.error=error;}
+    }
+    private final class HomePage extends Page {
+        final int offset;List<NativeData.Catalog> catalogs=Collections.emptyList();List<Shelf> values=Collections.emptyList();
+        HomePage(int offset){this.offset=offset;}
+        void load(){contentRevision++;async(()->{
+            String profile=data.profileName();List<NativeData.Catalog> all=data.catalogs();List<Future<Shelf>> pending=new ArrayList<>();
+            List<NativeData.Catalog> group=ShelfGroups.window(all,offset,4);List<Shelf> shelves=new ArrayList<>();
+            try{
+                for(NativeData.Catalog catalog:group)pending.add(worker.submit(()->{
+                    try{return new Shelf(catalog,ShelfGroups.window(data.items(catalog,0).items(),0,12),null);}
+                    catch(NativeData.PinRequired e){throw e;}catch(InterruptedException|CancellationException e){throw e;}
+                    catch(Exception e){return new Shelf(catalog,Collections.emptyList(),"Could not load. Open catalog to retry.");}
+                }));
+                for(int i=0;i<pending.size();i++)try{shelves.add(pending.get(i).get(15,TimeUnit.SECONDS));}
+                catch(ExecutionException e){if(e.getCause() instanceof NativeData.PinRequired)throw (NativeData.PinRequired)e.getCause();throw e;}
+                catch(TimeoutException e){pending.get(i).cancel(true);shelves.add(new Shelf(group.get(i),Collections.emptyList(),"Catalog timed out. Open it to retry."));}
+            }finally{for(Future<?> job:pending)if(!job.isDone())job.cancel(true);}
+            return new Object[]{profile,all,shelves};
+        },result->{title="Wuplay · "+result[0];catalogs=(List<NativeData.Catalog>)result[1];values=(List<Shelf>)result[2];});}
+        Template content(){
+            List<Section<?>> sections=new ArrayList<>();
+            if(!loading){
+                sections.add(new RowSection.Builder().addItem(row("Refresh Home","Your profile’s catalogs · autoplay up to 10 Mbps",this::load)).build());
+                for(Shelf shelf:values){GridSection.Builder row=new GridSection.Builder().setTitle(shelf.catalog.title).setItemSize(GridSection.ITEM_SIZE_LARGE);
+                    for(NativeData.Item item:shelf.items)row.addItem(tile(this,item));
+                    row.addItem(moreTile(this,shelf.items.isEmpty()?"Open catalog":"More titles",()->push(new ItemsPage(shelf.catalog,0))));
+                    if(shelf.error!=null)row.setNoItemsMessage(shelf.error);sections.add(row.build());}
+                if(catalogs.size()>offset+4)sections.add(new RowSection.Builder().addItem(row("More catalogs","",()->push(new HomePage(offset+4)))).build());
+                if(values.isEmpty())sections.add(new RowSection.Builder().setNoItemsMessage("Choose a profile and enable Home catalogs in Wuplay on your phone.").build());
+            }
+            return shelves(this,sections);
+        }
+    }
     private final class CatalogPage extends Page {
         List<NativeData.Catalog> values=Collections.emptyList();
         void load(){async(()->new Object[]{data.profileName(),data.catalogs()},v->{title="WuPlay · "+v[0];values=(List<NativeData.Catalog>)v[1];});}
@@ -200,8 +254,15 @@ public final class WuplayCarService extends Service {
         ItemsPage(NativeData.Catalog catalog,int cursor){this.catalog=catalog;this.cursor=cursor;title=catalog.title;}
         ItemsPage(NativeData.Catalog catalog,CatalogWindow<NativeData.Item> window){this(catalog,0);this.window=window;}
         void load(){if(window==null)async(()->data.items(catalog,cursor),v->window=v);}
-        Template content(){ListTemplate.Builder b=list();if(loading)return b.build();ItemList.Builder rows=new ItemList.Builder();
-            for(NativeData.Item item:window.items())rows.addItem(row(item.title,item.subtitle,()->push(new DetailsPage(item))));
+        Template content(){
+            if(hostApi>=8){List<Section<?>> sections=new ArrayList<>();if(!loading){GridSection.Builder grid=new GridSection.Builder().setTitle(title).setItemSize(GridSection.ITEM_SIZE_LARGE);
+                for(NativeData.Item item:window.items())grid.addItem(tile(this,item));
+                CatalogWindow<NativeData.Item> local=window.nextLocal();int next=window.remoteCursor();
+                if(local!=null)grid.addItem(moreTile(this,"More titles",()->push(new ItemsPage(catalog,local))));
+                else if(next>=0)grid.addItem(moreTile(this,"More titles",()->push(new ItemsPage(catalog,next))));
+                grid.setNoItemsMessage("No titles in this catalog.");sections.add(grid.build());}return shelves(this,sections);}
+            ListTemplate.Builder b=list();if(loading)return b.build();ItemList.Builder rows=new ItemList.Builder();
+            for(NativeData.Item item:window.items())rows.addItem(new Row.Builder().setTitle(item.title).addText(item.byline()).setImage(artwork.icon(item.artwork(),item.title),Row.IMAGE_TYPE_LARGE).setOnClickListener(()->{if(NavigationStack.current(pages,this,ended))openTitle(item);}).build());
             CatalogWindow<NativeData.Item> local=window.nextLocal();int next=window.remoteCursor();
             if(local!=null)rows.addItem(row("More titles","",()->push(new ItemsPage(catalog,local))));
             else if(next>=0)rows.addItem(row("More titles","",()->push(new ItemsPage(catalog,next))));
@@ -209,27 +270,41 @@ public final class WuplayCarService extends Service {
     }
     private final class DetailsPage extends Page {
         final NativeData.Item item;NativeData.Item detail;
-        DetailsPage(NativeData.Item item){this.item=item;title=item.title;}
+        DetailsPage(NativeData.Item item){this.item=item;title=item.parentId==null?item.title:item.displayTitle();}
         void load(){async(()->data.details(item),v->detail=v);}
         Template content(){
             Pane.Builder pane=new Pane.Builder().setLoading(loading);
             if(!loading){
-                String description=NativeCalls.text(detail.value,"description");
+                String description=detail.overview();
                 if(description.length()>600)description=description.substring(0,600)+"…";
-                Row.Builder row=new Row.Builder().setTitle(detail.title);if(!description.isEmpty())row.addText(description);
+                pane.setImage(artwork.icon(detail.artwork(),detail.displayTitle()));Row.Builder row=new Row.Builder().setTitle(detail.displayTitle());if(!detail.byline().isEmpty())row.addText(detail.byline());if(!description.isEmpty())row.addText(description);
                 pane.addRow(row.build()).addAction(action(this,item.type.equals("series")?"Episodes":"Streams",()->push(item.type.equals("series")?new EpisodesPage(detail,0):new StreamsPage(detail))));
             }
             return new PaneTemplate.Builder(pane.build()).setTitle(title).setHeaderAction(Action.BACK).build();
         }
     }
     private final class EpisodesPage extends Page {
-        final NativeData.Item item;final int offset;List<NativeData.Item> values=Collections.emptyList();
-        EpisodesPage(NativeData.Item item,int offset){this.item=item;this.offset=offset;title=item.title;}
+        final NativeData.Item item;final int offset;final Integer onlySeason;List<NativeData.Item> values=Collections.emptyList();
+        EpisodesPage(NativeData.Item item,int offset){this(item,offset,null);}
+        EpisodesPage(NativeData.Item item,int offset,Integer onlySeason){this.item=item;this.offset=offset;this.onlySeason=onlySeason;title=item.title;}
         void load(){async(()->data.episodes(item),v->values=v);}
-        Template content(){ListTemplate.Builder b=list();if(loading)return b.build();ItemList.Builder rows=new ItemList.Builder();
-            for(int i=offset;i<Math.min(offset+30,values.size());i++){NativeData.Item episode=values.get(i);rows.addItem(row(episode.subtitle,"",()->push(new StreamsPage(episode))));}
+        Template content(){
+            if(hostApi>=8){List<Section<?>> sections=new ArrayList<>();if(!loading){
+                Map<Integer,List<NativeData.Item>> grouped=ShelfGroups.seasons(values,NativeData.Item::season,Comparator.comparingInt(NativeData.Item::episode));
+                List<Integer> seasons=new ArrayList<>(grouped.keySet());List<Integer> visible=onlySeason==null?ShelfGroups.window(seasons,offset,4):Collections.singletonList(onlySeason);
+                for(Integer season:visible){List<NativeData.Item> episodes=grouped.getOrDefault(season,Collections.emptyList());int from=onlySeason==null?0:offset;
+                    GridSection.Builder row=new GridSection.Builder().setTitle(season>0?"Season "+season:season==0?"Specials":"Episodes").setItemSize(GridSection.ITEM_SIZE_LARGE);
+                    for(NativeData.Item episode:ShelfGroups.window(episodes,from,12))row.addItem(tile(this,episode));
+                    if(episodes.size()>from+12)row.addItem(moreTile(this,"More episodes",()->push(new EpisodesPage(item,from+12,season))));
+                    sections.add(row.build());}
+                if(onlySeason==null&&seasons.size()>offset+4)sections.add(new RowSection.Builder().addItem(row("More seasons","",()->push(new EpisodesPage(item,offset+4)))).build());
+                if(values.isEmpty())sections.add(new RowSection.Builder().setNoItemsMessage("No episodes available.").build());
+            }return shelves(this,sections);}
+            ListTemplate.Builder b=list();if(loading)return b.build();ItemList.Builder rows=new ItemList.Builder();
+            for(NativeData.Item episode:ShelfGroups.window(values,offset,30))rows.addItem(row(episode.subtitle,"",()->push(new DetailsPage(episode))));
             if(values.size()>offset+30)rows.addItem(row("More episodes","",()->push(new EpisodesPage(item,offset+30))));
-            rows.setNoItemsMessage("No episodes available.");return b.setSingleList(rows.build()).build();}
+            rows.setNoItemsMessage("No episodes available.");return b.setSingleList(rows.build()).build();
+        }
     }
     private final class StreamsPage extends Page {
         final NativeData.Item item;NativeData.Item detail;List<NativeData.Choice> values=Collections.emptyList();

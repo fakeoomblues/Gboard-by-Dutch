@@ -27,6 +27,18 @@ public final class CarHomeProbe {
   check(StreamRateProbe.rate(base+"/video.mp4",Map.of(),60d,null)==null,"HTTP error accepted");
   check(StreamRateProbe.rate(base+"/error",Map.of("X-Test","required"),60d,null)==null,"HTML error page sized as video");
   check(Long.valueOf(4000000).equals(StreamRateProbe.rate(base+"/master.m3u8",Map.of("X-Test","required"),60d,1L)),"manifest byte size treated as video size");
+  Map<Integer,List<String>> seasons=ShelfGroups.seasons(List.of("2:3","0:1","1:2","1:1","-1:8"),v->Integer.parseInt(v.split(":")[0]),Comparator.comparingInt(v->Integer.parseInt(v.split(":")[1])));
+  check(new ArrayList<>(seasons.keySet()).equals(List.of(1,2,0,-1)),"season ordering and Specials/unknown grouping");
+  check(seasons.get(1).equals(List.of("1:1","1:2")),"episode sorting");
+  check(ShelfGroups.window(List.of(1,2,3,4,5),2,2).equals(List.of(3,4)),"shelf page offset");
+  check(ShelfGroups.window(List.of(1,2,3,4,5),4,2).equals(List.of(5)),"last item unreachable");
+  check(!ShelfGroups.identity("session-a",1,"home").equals(ShelfGroups.identity("session-b",1,"home")),"session/profile cache collision");
+  check(!ShelfGroups.identity("session-a",1,"home").equals(ShelfGroups.identity("session-a",2,"home")),"refresh cache collision");
+  AutoplayQueue<Source> queue=new AutoplayQueue<>(List.of(over,unknown,first,preferred,new Source("third","other",5000000L),new Source("fourth","other",6000000L)),"favorite");
+  check(queue.next()==preferred&&queue.next()==first,"autoplay ordering");
+  check(queue.next()!=null&&queue.next()==null,"autoplay retried beyond three candidates");
+  queue=new AutoplayQueue<>(List.of(first,preferred),"");queue.cancel();check(queue.next()==null,"cancelled autoplay restarted");
+  queue=new AutoplayQueue<>(List.of(over,unknown),"");check(queue.next()==null,"autoplay queue accepted unsafe candidates");
   System.out.println("PASS: bitrate boundary, invalid/unknown sources, runtime, URL and preferred-addon ordering");
  }
 }

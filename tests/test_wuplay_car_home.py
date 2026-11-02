@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 JAVA = ROOT / "extensions/wuplay-gearslip/src/main/java/nl/johninnl/wuplaycar"
 class WuplayCarHomeTests(unittest.TestCase):
     def test_source_policy_and_shelves(self):
-        required = [JAVA / "CarStreamPolicy.java", JAVA / "StreamRateProbe.java"]
+        required = [JAVA / "CarStreamPolicy.java", JAVA / "StreamRateProbe.java", JAVA / "ShelfGroups.java", JAVA / "AutoplayQueue.java"]
         for source in required:
             self.assertTrue(source.is_file(), f"Missing car Home implementation: {source.name}")
         with tempfile.TemporaryDirectory() as tmp:
@@ -52,4 +52,3 @@ class WuplayCarHomeTests(unittest.TestCase):
                 server.shutdown()
                 server.server_close()
                 thread.join()
-

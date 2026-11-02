@@ -2,6 +2,11 @@ package patches.wuplaymobile
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.*
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import org.w3c.dom.Element
 import patches.shared.originalInput
 import patches.shared.uniqueMatch
@@ -49,6 +54,12 @@ private val carInterfaceResources = resourcePatch {
             val action = xml.createElement("action"); action.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.CarAppService")
             val category = xml.createElement("category"); category.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.category.NAVIGATION")
             filter.appendChild(action); filter.appendChild(category); service.appendChild(filter); application.appendChild(service)
+            val artwork = xml.createElement("provider")
+            artwork.setAttributeNS(ANDROID_NS,"android:name","nl.johninnl.wuplaycar.ArtworkProvider")
+            artwork.setAttributeNS(ANDROID_NS,"android:authorities","app.wuplay.android.morphe.car.art")
+            artwork.setAttributeNS(ANDROID_NS,"android:exported","false")
+            artwork.setAttributeNS(ANDROID_NS,"android:grantUriPermissions","true")
+            application.appendChild(artwork)
             val api = xml.createElement("meta-data")
             api.setAttributeNS(ANDROID_NS,"android:name","androidx.car.app.minCarApiLevel"); api.setAttributeNS(ANDROID_NS,"android:value","5")
             application.appendChild(api)
@@ -77,6 +88,32 @@ val wuplayGearslip = bytecodePatch(
         val container = Fingerprint(definingClass = "Lapp/wuplay/androidtv/AppContainer;", name = "<init>",
             parameters = listOf("Lapp/wuplay/android/MobileApplication;", "Ljava/lang/Integer;"), returnType = "V").uniqueMatch().method
         MobileIdentity.retain(container)
+        // R8 stripped the unused public IconCompat wire API from this exact input.
+        // Add it to the existing class; never replace or duplicate AndroidX Core.
+        val iconType = "Landroidx/core/graphics/drawable/IconCompat;"
+        val icon = mutableClassDefBy(iconType)
+        check(icon.fields.any { it.name == "mType" && it.type == "I" } &&
+            icon.fields.any { it.name == "mObj1" && it.type == "Ljava/lang/Object;" }) { "WuPlay artwork icon ABI changed" }
+        for ((name, result, helper) in listOf(
+            Triple("getType", "I", "type"), Triple("getUri", "Landroid/net/Uri;", "uri"),
+            Triple("toBundle", "Landroid/os/Bundle;", "bundle"),
+            Triple("createFromBundle", iconType, "fromBundle")
+        )) {
+            val isStatic = name == "createFromBundle"
+            val argument = if (isStatic) "Landroid/os/Bundle;" else iconType
+            check(icon.methods.none { it.name == name }) { "WuPlay artwork icon method already present: $name" }
+            val method = MutableMethod(ImmutableMethod(iconType, name,
+                if (isStatic) listOf(ImmutableMethodParameter(argument, emptySet(), null)) else emptyList(),
+                result, if (isStatic) 9 else 1, emptySet(), emptySet(),
+                ImmutableMethodImplementation(2, emptyList(), emptyList(), emptyList())))
+            val objectResult = result != "I"
+            method.addInstructions(0, """
+                invoke-static/range { p0 .. p0 }, Lnl/johninnl/wuplaycar/ArtworkIcons;->$helper($argument)$result
+                ${if (objectResult) "move-result-object" else "move-result"} v0
+                ${if (objectResult) "return-object" else "return"} v0
+            """)
+            icon.methods.add(method)
+        }
         val continuation = "Lkotlin/coroutines/jvm/internal/ContinuationImpl;"
         val classes = mapOf(
             "Lapp/wuplay/android/MobileApplication;" to mapOf("container" to "Lapp/wuplay/androidtv/AppContainer;"),
