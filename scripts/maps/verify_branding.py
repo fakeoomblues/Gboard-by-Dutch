@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild Maps for every launcher variant and inspect compiled Android resources."""
 import argparse
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -62,7 +63,12 @@ def inspect(args, apk, directory, style, legacy, expected_name, original_dex=Non
     assert f"application-label:'{displayed_name}'" in badging
     manifest = run([args.aapt2, "dump", "xmltree", apk, "--file", "AndroidManifest.xml"],
                    directory / "manifest.txt")
-    table = resource_table(run([args.aapt2, "dump", "resources", apk], directory / "resources.txt"))
+    resource_dump = run([args.aapt2, "dump", "resources", apk], directory / "resources.txt")
+    table = resource_table(resource_dump)
+    # Maps has a large localized table; keep evidence without accumulating gigabytes.
+    with gzip.open(directory / "resources.txt.gz", "wt") as archive:
+        archive.write(resource_dump)
+    (directory / "resources.txt").unlink()
     expected = ("mipmap/ungoogled_legacy_icon" if legacy else "mipmap/maps_2025") if style == "automatic" else \
                "mipmap/maps_2025" if style == "original" else "mipmap/morphe_maps_launcher"
     assert attribute(manifest, "icon") == table[expected]["id"]
@@ -85,7 +91,8 @@ def inspect(args, apk, directory, style, legacy, expected_name, original_dex=Non
         assert ("#ff171a21" if style.endswith("_dark") else "#fffafafa") in background.lower()
         foreground = run([args.aapt2, "dump", "xmltree", apk, "--file",
                           "res/drawable/morphe_maps_foreground.xml"], directory / "foreground.txt")
-        assert "28.000000dp" in foreground
+        inset = re.search(r":inset\(0x[0-9a-f]+\)=([0-9.]+)%", foreground)
+        assert inset and abs(float(inset[1]) - 28 / 108) < 0.0001, foreground
         assert "@" + table["drawable/morphe_maps_artwork"]["id"] in foreground
     elif style == "original":
         assert "mipmap/ungoogled_legacy_icon" not in table

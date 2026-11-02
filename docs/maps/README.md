@@ -77,7 +77,7 @@ Legacy icon for that patching run. Explicit styles affect the regular and round
 launcher icons; they leave the stock splash in place, while in-app artwork follows other selected patches.
 
 All six transparent PNGs are bundled unchanged. Android drawable layers provide
-#FAFAFA or #171A21 backgrounds and a 28dp inset in the 108dp adaptive canvas.
+#FAFAFA or #171A21 backgrounds and a 25.9259% inset (28/108 of the adaptive canvas).
 The target requires Android 10+, so no legacy-icon rendering path is needed.
 Selections are scoped to each ResourcePatchContext using synchronized weak keys,
 matching the per-run approach of the existing microG selection helper.

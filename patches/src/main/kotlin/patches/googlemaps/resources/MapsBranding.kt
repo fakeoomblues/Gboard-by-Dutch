@@ -63,8 +63,10 @@ internal fun ResourcePatchContext.applyMapsBranding(style: String) {
             <solid android:color="$background" />
         </shape>
     """)
+    // 28/108 of the adaptive canvas, proportional at every host icon size.
+    // A fixed 28dp inset collapses the foreground in small Android Auto slots.
     write("drawable/morphe_maps_foreground.xml", """
-        <inset xmlns:android="$ANDROID" android:inset="28dp">
+        <inset xmlns:android="$ANDROID" android:inset="25.9259%">
             <bitmap android:src="@drawable/morphe_maps_artwork" android:gravity="fill" android:filter="true" />
         </inset>
     """)
