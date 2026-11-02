@@ -6,7 +6,7 @@
 
 Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager. Android 10 of nieuwer is vereist.
 
-Deze 30 Maps-patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat en zijn hier aangepast voor deze Maps-versie. Dit project breidt **Waze alerts** uit met Flitsmeister en de navigatiegegevens die Vela Maps al ondersteunt.
+De oorspronkelijke Maps-patches komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat en zijn hier aangepast voor deze Maps-versie. Dit project voegt native autonavigatie toe en breidt **Waze alerts** uit met Flitsmeister en de navigatiegegevens die Vela Maps al ondersteunt.
 
 ## Patches
 
@@ -30,6 +30,7 @@ Deze 30 Maps-patches komen uit [bearinmind patches](https://github.com/bearinmin
 | **Hide ads and clutter** | Aan | Verbergt gesponsorde spelden en zoekresultaten, AI-samenvattingen, bedrijfsrijen, de Explore-feed en onderste tabbladen. |
 | **Legacy icon** | Aan | Herstelt de platte meerkleurige Maps-speld van vóór het verloopicoon. |
 | **Location provider toggle** | Aan | Voegt een keuze toe tussen locatie via Android, Google Play services of microG-RE, met terugval op netwerklocatie. |
+| **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. Vereist de volledige Android Auto-app voor de auto-interface. |
 | **Offline saved places** | Aan | Bewaart plaatsen en lijsten lokaal, importeert en exporteert back-ups en voegt een optionele lokale Timeline-opname toe. |
 | **Power saving mode** | Aan | Voegt een zwart navigatiescherm toe en instellingen voor de knop, automatisch openen, snelheidsmeter en beeldsnelheid. |
 | **Proxy** | Aan | Voegt een HTTP-proxyinstelling voor Maps-verkeer toe; kaarten laden niet door als de ingestelde proxy onbereikbaar is. |
@@ -52,6 +53,8 @@ Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde
 ## Voor gebruik
 
 Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps** en behoudt je gekozen naam bij beide microG-patches. **Add microG-RE support** wijzigt de standaardpakketnaam naar `org.ungoogled.android.apps.maps.microg`. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
+
+Laat voor native autonavigatie **Native navigation for Gearslip and Android Auto** geselecteerd, installeer de volledige Android Auto-app en geef de gepatchte Maps-app toegang tot de exacte locatie. Gearslip vindt dan één navigatietegel in plaats van Maps als berichtenapp te behandelen. Installeer de gepatchte APK voor Android Auto via KingInstaller en controleer het installatieresultaat; gebruik de Shizuku-modus als de normale methode niet de verwachte installer vastlegt. Kies **Ungoogled Maps** of je eigen appnaam in de autolauncher, zodat de sessie de gepatchte versie gebruikt.
 
 Open **Customization** en **Waze & external data source** in het accountmenu om de gekozen patches in te stellen. **Aan** in de tabel betekent dat de patch standaard geselecteerd is tijdens het patchen; cameralagen en externe bronnen moeten daarnaast in de app worden aangezet. **120 refresh rate** begint ook uit in Customization.
 

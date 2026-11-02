@@ -29,7 +29,6 @@ import org.w3c.dom.Element
 
 private const val TEMPLATE = "Lapp/seb3thehacker/gearslip/host/TemplateApp;"
 private const val MEDIA = "Lapp/seb3thehacker/gearslip/media/MediaApp;"
-private const val SCREEN = "Lapp/seb3thehacker/gearslip/car/AppTile\$Screen;"
 private const val PLAYER = "Lapp/seb3thehacker/gearslip/car/AppTile\$Player;"
 private const val OWNER = "Lapp/seb3thehacker/gearslip/car/CallOverlayKt;"
 private const val ENTRY = "Lapp/seb3thehacker/gearslip/car/Entry;"
@@ -53,7 +52,7 @@ private val gearslip = Compatibility(
 @Suppress("unused")
 val gearslipMusicPlayers = bytecodePatch(
     name = "Keep music player entries",
-    description = "Keeps a music app's player available when it also provides a car Settings screen, including YT Music Morphe. Uses Gearslip's existing docked player.",
+    description = "Shows only the music player when an app also provides a car Settings service, including YT Music Morphe. Uses Gearslip's existing docked player.",
 ) {
     compatibleWith(gearslip)
     execute {
@@ -67,17 +66,15 @@ val gearslipMusicPlayers = bytecodePatch(
         } ?: throw PatchException("Gearslip tile selection contract changed")
         if (tiles.implementation!!.registerCount <= tiles.parameterTypes.size ||
             tiles.accessFlags and AccessFlags.STATIC.value == 0) throw PatchException("Gearslip tile registers changed")
-        for ((type, parameters) in listOf(PLAYER to listOf(MEDIA), SCREEN to listOf(TEMPLATE, "Ljava/lang/String;"))) {
-            if (classDefBy(type).methods.none { it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == parameters }) {
-                throw PatchException("Gearslip tile constructor changed: $type")
-            }
-        }
+        if (classDefBy(PLAYER).methods.none {
+                it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf(MEDIA)
+            }) throw PatchException("Gearslip player constructor changed")
         val helper = "morpheSettingsPlayer"
         if (owner.methods.any { it.name == helper }) throw PatchException("Gearslip player patch already applied")
         owner.methods.add(ImmutableMethod(
             OWNER, helper,
             listOf(TEMPLATE, MEDIA).map { ImmutableMethodParameter(it, null, null) }, LIST,
-            AccessFlags.PRIVATE.value or AccessFlags.STATIC.value, null, null, MutableMethodImplementation(7),
+            AccessFlags.PRIVATE.value or AccessFlags.STATIC.value, null, null, MutableMethodImplementation(4),
         ).toMutable().apply {
             addInstructions(0, """
                 if-eqz p0, :original
@@ -88,18 +85,10 @@ val gearslipMusicPlayers = bytecodePatch(
                 invoke-virtual { v1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
                 move-result v0
                 if-eqz v0, :original
-                new-instance v0, Ljava/util/ArrayList;
-                invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
                 new-instance v1, $PLAYER
                 invoke-direct { v1, p1 }, $PLAYER-><init>($MEDIA)V
-                invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-                iget-object v2, p0, $TEMPLATE->label:Ljava/lang/String;
-                const-string v3, " · Settings"
-                invoke-virtual { v2, v3 }, Ljava/lang/String;->concat(Ljava/lang/String;)Ljava/lang/String;
-                move-result-object v2
-                new-instance v1, $SCREEN
-                invoke-direct { v1, p0, v2 }, $SCREEN-><init>(${TEMPLATE}Ljava/lang/String;)V
-                invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
+                invoke-static { v1 }, Ljava/util/Collections;->singletonList(Ljava/lang/Object;)Ljava/util/List;
+                move-result-object v0
                 return-object v0
                 :original
                 const/4 v0, 0x0

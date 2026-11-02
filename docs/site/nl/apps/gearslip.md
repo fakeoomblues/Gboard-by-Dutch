@@ -10,7 +10,7 @@ Gebruik de officiële Gearslip-APK. **Keep music player entries** en **Hide apps
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Keep music player entries** | Aan | Houdt de audiospeler van een muziekapp beschikbaar naast het aparte auto-instellingenscherm, ook bij YT Music Morphe. |
+| **Keep music player entries** | Aan | Toont alleen de audiospeler als een muziekapp ook een auto-instellingenservice aanbiedt, ook bij YT Music Morphe. |
 | **Hide apps from drawer** | Aan | Zet de kaart **Apps** bovenaan onder **Auto** in Gearslips instellingen op de telefoon. Alle apps staan standaard aangevinkt; vink er een uit om de tegel uit de autolijst te halen. Apps blijven geïnstalleerd. |
 | **Control car display density** | Aan | Voegt **Dichtheid autoscherm** toe onder **Auto → Scherm**, direct na **Grootte**, op de telefoon. Past tekst en bediening in Gearslip en gehoste auto-apps aan. Standaard volgt de instelling de dichtheid van de auto. |
 
@@ -22,7 +22,7 @@ Deze patches veranderen de applijst, de keuze van de speler en de dichtheid van 
 
 Start een nummer in Gearslips muziekscherm, ga terug naar de kaart en gebruik de dockknop in de afspeelbalk om de speler naast de kaart te zetten. SoundCloud gebruikt Gearslips bestaande speler. YT Music heeft daarnaast de patch **Gearslip music browser support** nodig.
 
-Kies wat de autolijst toont via de kaart **Apps**, die bovenaan onder **Auto** op Gearslips startscherm op de telefoon staat. Elke app met een autoscherm of speler staat aangevinkt. Vink een app uit om de tegel te verbergen en vink hem weer aan om hem terug te krijgen. Een muziekapp met een aparte Settings-tegel heeft voor elke tegel een rij. Een tegel die je aan de navigatiebalk hebt vastgezet blijft daar staan, en Gearslips eigen tegels zoals Settings staan niet in de lijst.
+Kies wat de autolijst toont via de kaart **Apps**, die bovenaan onder **Auto** op Gearslips startscherm op de telefoon staat. Elke app met een autoscherm of speler staat aangevinkt. Vink een app uit om de tegel te verbergen en vink hem weer aan om hem terug te krijgen. Met **Keep music player entries** heeft een muziekapp met een Settings-service alleen een rij voor de speler. Een tegel die je aan de navigatiebalk hebt vastgezet blijft daar staan, en Gearslips eigen tegels zoals Settings staan niet in de lijst.
 
 Open voor grotere tekst en bediening **Auto → Scherm → Dichtheid autoscherm** op de telefoon. De dichtheidsinstelling staat direct na **Grootte**. Kies de dichtheid van de auto of **160**, **180**, **200**, **220** of **240 DPI**. Begin met **Grootte → Normaal** en **200 DPI** en probeer zo nodig **240 DPI**. De bestaande instelling **Groot** vergroot Gearslips eigen bediening daar nog bovenop. Kies weer de dichtheid van de auto als bedieningselementen worden afgesneden. Verbind de auto opnieuw of open het voorbeeldscherm opnieuw om de keuze toe te passen; het bijschrift van het voorbeeld toont de gebruikte dichtheid.
 
