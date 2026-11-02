@@ -63,10 +63,19 @@ public final class CatalogChannels {
         });
     }
 
-    static String refresh(Application application) {
+    static final class RefreshResult {
+        final String message;
+        final boolean success;
+        RefreshResult(String message, boolean success) { this.message = message; this.success = success; }
+    }
+
+    static String refresh(Application application) { return refreshResult(application).message; }
+
+    static RefreshResult refreshResult(Application application) {
         String status;
+        boolean success = true;
         try {
-            if (!supported(application)) return "Preview channels require Android TV 8 or later.";
+            if (!supported(application)) return new RefreshResult("Preview channels require Android TV 8 or later.", false);
             Set<String> selected = selected(application);
             CatalogPublisher publisher = new CatalogPublisher(application);
             if (selected.isEmpty()) {
@@ -99,14 +108,16 @@ public final class CatalogChannels {
                 for (NativeCatalogs.Definition definition : current.definitions)
                     if (currentSelected.contains(definition.key)) currentDesired.add(definition.key);
                 publisher.removeUnselected(currentDesired);
+                success = failed == 0;
                 status = "Published " + published + " catalogs." + (failed == 0 ? "" : " " + failed + " failed; previous content retained.");
             }
             Log.i("WuplayTvChannels", status);
         } catch (Exception | LinkageError failure) {
+            success = false;
             status = failure instanceof IllegalStateException && failure.getMessage() != null ? failure.getMessage() : "Could not refresh TV channels. Open Wuplay's default profile and try again.";
             Log.w("WuplayTvChannels", "Catalog refresh stopped (" + failure.getClass().getSimpleName() + ")");
         }
         preferences(application).edit().putString("status", status).putLong("last_attempt", System.currentTimeMillis()).apply();
-        return status;
+        return new RefreshResult(status, success);
     }
 }
