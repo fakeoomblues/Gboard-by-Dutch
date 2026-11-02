@@ -67,20 +67,23 @@ def verify_manifest(contract, manifest, *, require_complete):
         _verify_disposition(method, row, require_complete)
 
 
+def resolve_classpath():
+    cache = Path(os.environ.get('GRADLE_USER_HOME', Path.home() / '.gradle')) / 'caches/modules-2/files-2.1'
+    coordinates = [
+        ('com.github.MorpheApp.smali', 'smali-dexlib2'),
+        ('com.google.guava', 'guava'), ('com.google.code.gson', 'gson')]
+    jars = []
+    for group, name in coordinates:
+        candidates = sorted(p for p in (cache / group / name).glob('*/*/*.jar')
+                            if not p.name.endswith(('-sources.jar', '-javadoc.jar')))
+        if not candidates:
+            raise ValueError(f'Missing cached {group}:{name}; run the project Gradle dependency resolution or pass --classpath')
+        jars.append(str(candidates[-1]))
+    return os.pathsep.join(jars)
+
+
 def inspect(artifact, selection, *, classpath=None):
-    if classpath is None:
-        cache = Path(os.environ.get('GRADLE_USER_HOME', Path.home() / '.gradle')) / 'caches/modules-2/files-2.1'
-        coordinates = [
-            ('com.github.MorpheApp.smali', 'smali-dexlib2'),
-            ('com.google.guava', 'guava'), ('com.google.code.gson', 'gson')]
-        jars = []
-        for group, name in coordinates:
-            candidates = sorted(p for p in (cache / group / name).glob('*/*/*.jar')
-                                if not p.name.endswith(('-sources.jar', '-javadoc.jar')))
-            if not candidates:
-                raise ValueError(f'Missing cached {group}:{name}; run the project Gradle dependency resolution or pass --classpath')
-            jars.append(str(candidates[-1]))
-        classpath = os.pathsep.join(jars)
+    classpath = classpath if classpath is not None else resolve_classpath()
     source = Path(__file__).with_name('InspectBindings.java')
     with tempfile.TemporaryDirectory(prefix='native-warning-bindings-') as tmp:
         subprocess.run(['javac', '-cp', classpath, '-d', tmp, str(source)], check=True)

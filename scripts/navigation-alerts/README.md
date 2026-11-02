@@ -31,3 +31,11 @@ python3 -m unittest discover -s tests -p test_navigation_warning_bindings.py
 ```
 
 Exact matching does not prove insertion safety, warning eligibility, playback, routing, timing or compatibility after patching. Those gates remain in the reviewed design.
+
+## Private native audio experiments
+
+`build_native_probe.py` builds test-only same-signer Maps/Vela instrumentation. `run_native_probe.py` checks the original artifact digest, its non-signing ZIP payloads, the exact owned emulator/AVD, installed APK hashes and actual native results. It archives previous reports before a rerun and atomically publishes a new result only after successful collection. Raw results stay under ignored `.analysis/`.
+
+`build_fenced_vela.py` produces a private candidate for the specific delayed system-TTS closure race, with exact three-hook verification. `probe/TaggedSpeechFence.java` is a test prototype; it is not part of any extension or release. The native probe's `scenario=fenced` compares tagged cancellation with retained untagged synthetic speech.
+
+See [runtime evidence and reproduction](../../docs/research/2026-11-02-native-warning-runtime-spikes.md). Native model capture, real route regeneration, neural outcomes, audio ownership/replay, full phone/car coordination and complete-warning acceptance remain separate requirements.
