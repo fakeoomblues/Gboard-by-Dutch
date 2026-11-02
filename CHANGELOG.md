@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.34.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [a4d6f09ee9af](https://github.com/johninnl/nl-morphe-patches/commit/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.34.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.33.3...v1.34.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** add custom app name and six launcher icons ([a4d6f09](https://github.com/johninnl/nl-morphe-patches/commit/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/07967a2b26f03d82afe3fcf6c6ca7fbf7336749f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.33.3.**

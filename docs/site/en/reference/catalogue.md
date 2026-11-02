@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.33.3**
+**Patch bundle: 1.34.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -375,6 +375,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Custom branding | Off | Any |
 | Gearslip personal library | On | Any |
 
 ## Nieuwsblad

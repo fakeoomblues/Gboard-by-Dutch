@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.33.3",
+  "version": "1.34.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -1022,6 +1022,60 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Custom branding",
+      "description": "Changes Myspoti's launcher icon and app name. Choose from six bundled icons or keep the original.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.myspoti.stable",
+          "name": "Myspoti",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep the original name.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching. Original keeps Myspoti's current icon.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": {
+            "Original": "original",
+            "Classic Spotify Green": "classic_green",
+            "Elegant dark Spotify": "elegant_dark",
+            "Emerald Spotify on pitch black": "emerald_black",
+            "Dark emerald Spotify glass": "emerald_glass",
+            "Platinum Spotify on charcoal": "platinum_charcoal",
+            "Black Spotify on warm white": "black_warm_white"
+          }
+        }
+      ]
     },
     {
       "name": "Customization screen",
