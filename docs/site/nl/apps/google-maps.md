@@ -14,7 +14,7 @@ Deze 30 Maps-patches komen uit [bearinmind patches](https://github.com/bearinmin
 | --- | --- | --- |
 | **120 refresh rate** | Aan | Laat Maps de ondersteunde verversingssnelheid van het scherm gebruiken. Zet dit aan in Customization; het kan meer batterij verbruiken. |
 | **Account sheet cleanup** | Aan | Verwijdert de extra kop in het accountmenu en houdt het menu open bij terugkeer uit Settings of Customization. |
-| **Add microG-RE support** | Uit | Maakt een aparte microG Maps-app met Google-aanmelding via microG-RE of ReVanced GmsCore. |
+| **Add microG-RE support** | Uit | Voegt Google-aanmelding via microG-RE of ReVanced GmsCore toe en behoudt de naam uit Change app name. |
 | **Add original microG support** | Uit | Gebruikt originele microG voor Google-aanmelding op een ROM met signature spoofing; behoudt de oorspronkelijke pakketnaam. |
 | **Any media app** | Aan | Voegt geschikte muziek- en podcastapps voor Android Auto toe aan de keuze Default media app in Navigation. |
 | **Avoid Flock cameras** | Aan | Biedt autoroutes om bekende Flock-camera’s heen via BRouter. Begint uit; routes met tussenstops blijven gelijk. |
@@ -51,7 +51,7 @@ Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde
 
 ## Voor gebruik
 
-Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps**. Met **Add microG-RE support** worden de standaardwaarden `org.ungoogled.android.apps.maps.microg` en **microG Maps**. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
+Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app te installeren; de standaardpakketnaam is `org.ungoogled.android.apps.maps`. **Change app name** gebruikt standaard **Ungoogled Maps** en behoudt je gekozen naam bij beide microG-patches. **Add microG-RE support** wijzigt de standaardpakketnaam naar `org.ungoogled.android.apps.maps.microg`. De twee microG-patches zijn alternatieven: kies alleen de variant die bij je omgeving past. Originele microG vereist een ROM met signature spoofing en behoudt de oorspronkelijke Maps-pakketnaam.
 
 Open **Customization** en **Waze & external data source** in het accountmenu om de gekozen patches in te stellen. **Aan** in de tabel betekent dat de patch standaard geselecteerd is tijdens het patchen; cameralagen en externe bronnen moeten daarnaast in de app worden aangezet. **120 refresh rate** begint ook uit in Customization.
 

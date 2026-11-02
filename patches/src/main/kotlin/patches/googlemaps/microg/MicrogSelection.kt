@@ -7,7 +7,7 @@ import java.util.WeakHashMap
  * Whether "Add microG-RE support" is part of the patching run a patch is in.
  *
  * The patches it changes -- the removals that take the Google account out, telemetry,
- * and the package and app name -- ask with their own context object: Morphe hands every
+ * and the package name -- ask with their own context object: Morphe hands every
  * patch of one run the same bytecode and resource contexts, so a run never sees another
  * run's choice, even in a Manager that patches several apps in one process.
  *

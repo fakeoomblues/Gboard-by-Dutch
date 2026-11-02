@@ -28,6 +28,16 @@ The home screen resolver is now `afsl.bb`, with `agay` state and `pfc` sheet val
 
 ## Verified behavior
 
+`Change app name` owns the launcher and app-switcher labels for every build. Both microG support variants retain its exact option value, including the default `Ungoogled Maps`; installing or removing microG cannot change that resource. The microG support controls appear alongside the other Maps controls without separate categories. Package-name handling remains specific to each microG variant.
+
+Run the app-name regression against a built bundle and the supported original APK:
+
+```sh
+java -cp "$DESKTOP_JAR" tests/MapsAppNameRegression.java "$BUNDLE" "$MAPS_APK" "$SCRATCH_DIR"
+```
+
+This executes the resource patch with no microG, microG-RE and original microG, checking the default, an explicitly entered default, custom names with XML characters, locale isolation, launcher/activity labels and support-patch categories.
+
 All 30 Maps controls are present with the upstream patch defaults. Four full profiles cover the 27 defaults, both microG alternatives and optional media following. Every output rebuilds, verifies its v2 signature, and passes emitted-reference existence/access checks and native speed/limit entry-hook checks. Exact input and output hashes, metadata and test counts are recorded in [validation.json](validation.json).
 
 The Maps extension passes 42 tests. The full release Gradle checks pass alongside 414 Python regressions (45 skipped), 47 release integration tests, 15 Medium tooling tests, the private ABI audit and documentation checks.
