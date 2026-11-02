@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/bfdc032e1ee71fc160fc208d48f6aa96f4568e02/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [bfdc032e1ee7](https://github.com/johninnl/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.0](https://github.com/johninnl/nl-morphe-patches/compare/v1.26.1...v1.27.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** enable personal libraries in Gearslip ([bfdc032](https://github.com/johninnl/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c50dcd8cdd23df060acba8e214d505b65d452eb6/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.26.1.**

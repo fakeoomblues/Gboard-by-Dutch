@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.26.1",
+  "version": "1.27.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -3308,6 +3308,60 @@
           "key": "packageNames",
           "title": "Trusted Gearslip packages",
           "description": "Comma-separated installed Gearslip host package names. Each caller must own its package under its actual callback UID.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "app.seb3thehacker.gearslip",
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Gearslip personal library",
+      "description": "Allows the configured Gearslip host to use Myspoti's signed-in library, search and playback while retaining Android caller verification.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.myspoti.stable",
+          "name": "Myspoti",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2.2.0",
+              "versionCodes": {
+                "ARM64_V8A": 1116,
+                "ARMEABI_V7A": 1116,
+                "X86_64": 1116,
+                "X86": 1116
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            },
+            {
+              "version": "2.3.0",
+              "versionCodes": {
+                "ARM64_V8A": 1121,
+                "ARMEABI_V7A": 1121,
+                "X86_64": 1121,
+                "X86": 1121
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "packageNames",
+          "title": "Trusted Gearslip packages",
+          "description": "Comma-separated Gearslip host packages. Myspoti retains its UID ownership checks for browsing and search.",
           "required": true,
           "type": "kotlin.String",
           "default": "app.seb3thehacker.gearslip",

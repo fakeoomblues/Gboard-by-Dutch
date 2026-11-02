@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.26.1**
+**Patch bundle: 1.27.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -364,6 +364,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Individual Wuplay catalog rows | Off | 1.1.0 |
+
+## Myspoti
+
+[What do the patches change?](../apps/myspoti.md)
+
+`app.myspoti.stable`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Gearslip personal library | On | 2.2.0, 2.3.0 |
 
 ## Nieuwsblad
 

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.26.1**
+**Patchbundel: 1.27.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -364,6 +364,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Individual Wuplay catalog rows | Uit | 1.1.0 |
+
+## Myspoti
+
+[Wat veranderen de patches?](../apps/myspoti.md)
+
+`app.myspoti.stable`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Gearslip personal library | Aan | 2.2.0, 2.3.0 |
 
 ## Nieuwsblad
 
