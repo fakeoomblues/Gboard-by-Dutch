@@ -183,6 +183,9 @@ public class HostProbe {
  public static void main(String[] args){
   check(HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip"}));
   check(HostPackages.allowed(new String[]{"app.seb3thehacker.gearslip.dev"}));
+  check(HostPackages.allowed(new String[]{"app.johninnl.drivedeck"}));
+  check(HostPackages.allowed(new String[]{"app.johninnl.drivedeck.dev"}));
+  check(!HostPackages.allowed(new String[]{"app.johninnl.drivedeck.fake"}));
   check(HostPackages.allowed(new String[]{"another.package","app.seb3thehacker.gearslip"}));
   check(!HostPackages.allowed(null));check(!HostPackages.allowed(new String[]{}));
   check(!HostPackages.allowed(new String[]{null,"another.package"}));

@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 public final class WuplayCarService extends Service {
     private final Handler main=new Handler(Looper.getMainLooper());
     private ExecutorService worker;
-    private CarArtwork artwork;private int hostApi=5;private String browseSession=UUID.randomUUID().toString();private int browseRevision;
+    private CarArtwork artwork;private int hostApi=5;private String hostPackage="";private boolean homeDirty;private String browseSession=UUID.randomUUID().toString();private int browseRevision;
     private NativeData data;private NativePlayer engine;private CarPlayback<SurfaceHolder> playback;private CarVideoRenderer renderer;
     private PowerManager.WakeLock wake;private IAppHost host;private final Deque<Page> pages=new ArrayDeque<>();private boolean ended;
     private Rect visibleArea;private NativeData.Item playingItem;private NativeData.Choice playingChoice;private SurfaceContainer currentSurface;
@@ -27,6 +27,7 @@ public final class WuplayCarService extends Service {
         out.println("WuPlay car uid="+android.os.Process.myUid()+" ended="+ended+" page="+(pages.peekLast()==null?"none":pages.peekLast().getClass().getSimpleName()));
         out.println("ticksAgeMs="+(SystemClock.uptimeMillis()-tickAt)+" actions="+actionCount+" lastAction="+lastAction+" templates="+templateCount);out.println(diagnostic);if(renderer!=null)out.println(renderer.diagnostics());
     }
+    private final Runnable reloadHome=()->{if(!ended&&pages.peekLast() instanceof HomePage){pages.peekLast().load();invalidate();}};
     private final Runnable tick=new Runnable(){public void run(){
         if(ended)return;
         try {
@@ -71,7 +72,7 @@ public final class WuplayCarService extends Service {
         public void onHandshakeCompleted(Bundleable info,IOnDoneCallback cb){int caller=Binder.getCallingUid();respond(cb,()->{
             HandshakeInfo handshake=(HandshakeInfo)info.get();
             if(getPackageManager().getPackageUid(handshake.getHostPackageName(),0)!=caller)throw new SecurityException("Handshake package does not match caller UID");
-            hostApi=handshake.getHostCarAppApiLevel();
+            hostPackage=handshake.getHostPackageName();hostApi=handshake.getHostCarAppApiLevel();
             if(hostApi<5)throw new IllegalArgumentException("Car API 5 is required");return null;
         });}
         public void onAppCreate(ICarHost carHost,Intent intent,Configuration config,IOnDoneCallback cb){respond(cb,()->{
@@ -121,6 +122,7 @@ public final class WuplayCarService extends Service {
         if(data==null){
             artwork=new CarArtwork(this);data=new NativeData(this);engine=new NativePlayer(this,data);playback=new CarPlayback<>(engine);renderer=new CarVideoRenderer(playback,engine);
             NativeData observed=data;data.watchProfiles(()->main.post(()->{if(!ended&&data==observed)profileChanged();}));
+            data.watchHome(()->main.post(()->{if(!ended&&data==observed){homeDirty=true;main.removeCallbacks(reloadHome);main.postDelayed(reloadHome,250);}}));
         }
         if(wake==null){wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,getPackageName()+":WuPlayCar");wake.setReferenceCounted(false);}
         NotificationManager notifications=getSystemService(NotificationManager.class);
@@ -141,7 +143,7 @@ public final class WuplayCarService extends Service {
         playingItem=null;playingChoice=null;push(rootPage());
     }
     private void finishSession() {
-        if(ended)return;ended=true;main.removeCallbacks(tick);
+        if(ended)return;ended=true;main.removeCallbacks(tick);main.removeCallbacks(reloadHome);
         for(Page page:pages)page.cancel();pages.clear();
         if(renderer!=null)renderer.close();if(playback!=null)playback.close();if(data!=null)data.close();if(artwork!=null)artwork.close();artwork=null;
         if(worker!=null)worker.shutdownNow();
@@ -150,7 +152,7 @@ public final class WuplayCarService extends Service {
         stopForeground(STOP_FOREGROUND_REMOVE);
     }
     private void push(Page page){Page old=pages.peekLast();if(old!=null)old.cancel();pages.addLast(page);page.load();if(!(page instanceof PlayerPage)&&renderer!=null)renderer.close();invalidate();}
-    private void back(){if(pages.size()>1){pages.removeLast().cancel();Page page=pages.peekLast();if(page instanceof PlayerPage)openVideo();else if(renderer!=null)renderer.close();if(page.loading)page.load();invalidate();}}
+    private void back(){if(pages.size()>1){pages.removeLast().cancel();Page page=pages.peekLast();if(page instanceof PlayerPage)openVideo();else if(renderer!=null)renderer.close();if(page.loading||(page instanceof HomePage&&homeDirty))page.load();invalidate();}}
     private void invalidate(){try {if(host!=null)host.invalidate();}catch(Exception e){android.util.Log.w("WuPlayCar","Host unavailable");}}
     private void showError(String text){if(!ended){Page page=pages.peekLast();if(page!=null){page.error=text;page.loading=false;invalidate();}}}
     private void openVideo(){if(currentSurface==null||renderer==null)return;renderer.open(this,currentSurface.getSurface(),currentSurface.getWidth(),currentSurface.getHeight(),currentSurface.getDpi());if(visibleArea!=null)renderer.area(visibleArea);}
@@ -193,10 +195,14 @@ public final class WuplayCarService extends Service {
     private Page rootPage(){return hostApi>=8?new HomePage(0):new CatalogPage();}
     private void openTitle(NativeData.Item item){push(item.parentId==null&&item.type.equals("series")?new EpisodesPage(item,0):new DetailsPage(item));}
     private Template shelves(Page page,List<Section<?>> sections){
-        Header.Builder header=new Header.Builder().setTitle(page.title).setStartHeaderAction(pages.size()>1?Action.BACK:Action.APP_ICON);
-        if(page instanceof HomePage)header.addEndHeaderAction(action(page,"Refresh",page::load));
-        if(playingChoice!=null)header.addEndHeaderAction(action(page,"Playing",()->push(new PlayerPage())));
-        SectionedItemTemplate content=new SectionedItemTemplate.Builder().setHeader(header.build()).setLoading(page.loading).setSections(sections).build();
+        SectionedItemTemplate.Builder builder=new SectionedItemTemplate.Builder().setLoading(page.loading).setSections(sections);
+        if(!(page instanceof HomePage))builder.setHeader(new Header.Builder().setTitle(page.title).setStartHeaderAction(Action.BACK).build());
+        if(playingChoice!=null)builder.addAction(new Action.Builder().setIcon(CarIcon.MEDIA_PLAYBACK).setBackgroundColor(CarColor.BLUE)
+            .setOnClickListener(()->{if(NavigationStack.current(pages,page,ended))push(new PlayerPage());}).build());
+        SectionedItemTemplate content=builder.build();
+        // DriveDeck versions the shelf cache by its delegate, so no visible navigation wrapper is needed.
+        if(HostPackages.isDriveDeck(hostPackage))return content;
+        // Older Gearslip needs the tab identity to prevent stale rows across profiles/reloads.
         String identity=ShelfGroups.identity(browseSession,page.contentRevision,page.id),home=identity+"/home",catalogs=identity+"/catalogs";
         return new TabTemplate.Builder(new TabTemplate.TabCallback(){public void onTabSelected(String selected){if(NavigationStack.current(pages,page,ended)&&selected.equals(catalogs))push(new CatalogPage());}})
             .setHeaderAction(Action.APP_ICON).addTab(new Tab.Builder().setTitle("Home").setIcon(CarIcon.APP_ICON).setContentId(home).build())
@@ -213,8 +219,8 @@ public final class WuplayCarService extends Service {
     private final class HomePage extends Page {
         final int offset;List<NativeData.Catalog> catalogs=Collections.emptyList();List<Shelf> values=Collections.emptyList();
         HomePage(int offset){this.offset=offset;}
-        void load(){contentRevision++;artwork.refresh();async(()->{
-            String profile=data.profileName();List<NativeData.Catalog> all=data.catalogs();List<Future<Shelf>> pending=new ArrayList<>();
+        void load(){homeDirty=false;contentRevision++;artwork.refresh();async(()->{
+            List<NativeData.Catalog> all=data.catalogs();List<Future<Shelf>> pending=new ArrayList<>();
             List<NativeData.Catalog> group=ShelfGroups.window(all,offset,4);List<Shelf> shelves=new ArrayList<>();
             try{
                 for(NativeData.Catalog catalog:group)pending.add(worker.submit(()->{
@@ -226,8 +232,8 @@ public final class WuplayCarService extends Service {
                 catch(ExecutionException e){if(e.getCause() instanceof NativeData.PinRequired)throw (NativeData.PinRequired)e.getCause();throw e;}
                 catch(TimeoutException e){pending.get(i).cancel(true);shelves.add(new Shelf(group.get(i),Collections.emptyList(),"Catalog timed out. Open it to retry."));}
             }finally{for(Future<?> job:pending)if(!job.isDone())job.cancel(true);}
-            return new Object[]{profile,all,shelves};
-        },result->{title="Wuplay · "+result[0];catalogs=(List<NativeData.Catalog>)result[1];values=(List<Shelf>)result[2];});}
+            return new Object[]{all,shelves};
+        },result->{catalogs=(List<NativeData.Catalog>)result[0];values=(List<Shelf>)result[1];});}
         Template content(){
             List<Section<?>> sections=new ArrayList<>();
             if(!loading){

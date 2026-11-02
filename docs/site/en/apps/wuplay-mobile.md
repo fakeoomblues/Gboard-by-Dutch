@@ -18,7 +18,7 @@ WuPlay's own services and your configured add-ons remain in use. This patch does
 
 ## Before using
 
-Set up or import your WuPlay profile and configure its add-ons on the phone first. In Gearslip, open **Wuplay** to browse your profile’s Home catalogs as horizontal poster shelves. Open a film for its artwork, summary and **Play · ≤10 Mbps** button. Series open season shelves with episode thumbnails and titles; select an episode to play it. **Sources** offers eligible alternatives. Protected profiles require their normal PIN. Changing profiles or disconnecting the car ends the car playback session.
+Set up or import your WuPlay profile and configure its add-ons on the phone first. In DriveDeck, open **Wuplay** to start directly with the catalog rows configured on your profile’s Home screen, in their exact order. The screen has no Home/Catalogs tabs, profile heading or permanent refresh button. Catalog changes are picked up automatically. Older Gearslip retains its compatibility navigation wrapper. Open a film for its artwork, summary and **Play · ≤10 Mbps** button. Series open season shelves with episode thumbnails and titles; select an episode to play it. **Sources** offers eligible alternatives. Protected profiles require their normal PIN. Changing profiles or disconnecting the car ends the car playback session.
 
 **Play** chooses a direct stream automatically from your enabled add-ons, preferring your configured autoplay add-on among eligible sources. It tries at most three eligible sources if playback fails while its player page remains open. This does not start videos merely by opening Home or automatically advance to the next episode.
 

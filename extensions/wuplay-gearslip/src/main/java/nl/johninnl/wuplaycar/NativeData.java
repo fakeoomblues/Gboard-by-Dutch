@@ -7,7 +7,7 @@ import java.util.concurrent.CancellationException;
 /** Uses the installed app's selected profile, caches, filters and add-on transport. */
 final class NativeData implements AutoCloseable {
     static final class PinRequired extends Exception { PinRequired(){super("Unlock your selected WuPlay profile");} }
-    private final ProfileAccess access=new ProfileAccess();private Thread observer;
+    private final ProfileAccess access=new ProfileAccess();private Thread observer;private final List<Thread> homeObservers=new ArrayList<>();
     void watchProfiles(Runnable changed) throws Exception {
         final Object[] previous=new Object[3];final boolean[] initial={true};
         observer=calls.watch(NativeCalls.field(settings,"activeProfile"),profile->{
@@ -17,6 +17,12 @@ final class NativeData implements AutoCloseable {
             if(initial[0]){initial[0]=false;return;}
             if(differs){access.clear();changed.run();}
         });
+    }
+    void watchHome(Runnable changed)throws Exception {
+        for(String name:new String[]{"definitions","screens"}){
+            final boolean[] initial={true};
+            homeObservers.add(calls.watch(NativeCalls.field(catalogs,name),value->{if(initial[0])initial[0]=false;else changed.run();}));
+        }
     }
     private static final class ProfileStamp {
         final String id,key;ProfileStamp(String id,String key){this.id=id;this.key=key;}
@@ -48,8 +54,8 @@ final class NativeData implements AutoCloseable {
         return access.unlock(id,key);
     }
     static final class Catalog {
-        final Object value; final String title,source; final int order;
-        Catalog(Object value) throws Exception {this.value=value;title=NativeCalls.text(value,"name");source=NativeCalls.text(value,"source");order=(Integer)NativeCalls.field(value,"homeOrder");}
+        final Object value; final String title,source; final int order,id;
+        Catalog(Object value) throws Exception {this.value=value;id=(Integer)NativeCalls.field(value,"id");title=NativeCalls.text(value,"name");source=NativeCalls.text(value,"source");order=(Integer)NativeCalls.field(value,"homeOrder");}
     }
     static final class Item {
         final String type,id,title,subtitle,parentId; final Object value;
@@ -101,22 +107,36 @@ final class NativeData implements AutoCloseable {
         ProfileStamp current=begin();
         if(!Objects.equals(expected.id,current.id)||!Objects.equals(expected.key,current.key))throw new CancellationException("Profile changed; reload WuPlay in the car");
     }
+    /** Match the app Home screen: explicit row IDs override legacy flags, including an empty Home. */
     List<Catalog> catalogs() throws Exception {
-        ProfileStamp profile=begin();calls.await(catalogs,"awaitSchemaReady");List<Catalog> out=new ArrayList<>();
-        for(Object value:(List<?>)calls.first(NativeCalls.field(catalogs,"definitions"))) {
-            if(Boolean.TRUE.equals(NativeCalls.field(value,"showHome")))out.add(new Catalog(value));
+        ProfileStamp profile=begin();calls.await(catalogs,"awaitSchemaReady");
+        Map<Integer,Catalog> available=new LinkedHashMap<>();
+        for(Object value:(List<?>)calls.first(NativeCalls.field(catalogs,"definitions"))){Catalog row=new Catalog(value);available.put(row.id,row);}
+        List<?> rowIds=null;
+        for(Object screen:(List<?>)calls.first(NativeCalls.field(catalogs,"screens"))){
+            if("home".equals(NativeCalls.field(screen,"systemKey"))){rowIds=(List<?>)NativeCalls.field(screen,"rowCatalogIds");break;}
         }
-        out.sort(Comparator.comparingInt(c->c.order));requireProfile(profile);return out;
+        List<Catalog> out=new ArrayList<>();
+        if(rowIds!=null){
+            Set<Integer> seen=new HashSet<>();
+            for(Object rowId:rowIds){int id=((Number)rowId).intValue();Catalog row=available.get(id);if(seen.add(id)&&row!=null&&contentSource(row.source))out.add(row);}
+        }else{
+            for(Catalog row:available.values())if(contentSource(row.source)&&Boolean.TRUE.equals(NativeCalls.field(row.value,"showHome")))out.add(row);
+            out.sort(Comparator.comparingInt(c->c.order));
+        }
+        requireProfile(profile);return out;
     }
+    private static boolean contentSource(String source){return source!=null&&!source.isEmpty()&&!source.equals("hub")&&!source.equals("saved_collections");}
+    private boolean isHome(int id)throws Exception {for(Catalog row:catalogs())if(row.id==id)return true;return false;}
     CatalogWindow<Item> items(Catalog catalog,int skip) throws Exception {
-        ProfileStamp profile=begin();Map<String,String> extra=skip==0?Collections.emptyMap():Collections.singletonMap("skip",Integer.toString(skip));
+        ProfileStamp profile=begin();if(!isHome(catalog.id))throw new CancellationException("Home catalog changed; reload");Map<String,String> extra=skip==0?Collections.emptyMap():Collections.singletonMap("skip",Integer.toString(skip));
         boolean remote=catalog.source.equals("addon");
         Object result=remote?calls.await(catalogs,"fetchContent-BWLJW6A",catalog.value,extra,null):calls.await(catalogs,"fetchGridContent-0E7RQCE",catalog.value,null);
         String error=NativeCalls.text(result,"error");if(!error.isEmpty())throw new IllegalStateException(error);
         List<Item> out=new ArrayList<>();for(Object value:(List<?>)NativeCalls.field(result,"items"))out.add(Item.preview(NativeCalls.call(Class.forName("androidx.core.math.MathUtils"),"withNormalizedId",value)));
         int next=-1;
         if(remote){int consumed=skip==0?(Integer)NativeCalls.field(result,"unfilteredCount"):out.size();if(consumed>0)next=skip+consumed;}
-        requireProfile(profile);return new CatalogWindow<>(out,next);
+        requireProfile(profile);if(!isHome(catalog.id))throw new CancellationException("Home catalog changed; reload");return new CatalogWindow<>(out,next);
     }
     Item details(Item item) throws Exception {
         if(item.parentId!=null){begin();return item;}
@@ -169,5 +189,5 @@ final class NativeData implements AutoCloseable {
         }
         requireProfile(profile);return out;
     }
-    @Override public void close(){access.clear();calls.close();if(observer!=null)observer.interrupt();}
+    @Override public void close(){access.clear();calls.close();if(observer!=null)observer.interrupt();for(Thread thread:homeObservers)thread.interrupt();homeObservers.clear();}
 }

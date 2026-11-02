@@ -23,7 +23,7 @@ final class CarArtwork implements AutoCloseable {
    String key=hex(MessageDigest.getInstance("SHA-256").digest((session+"/"+revision+"/"+url+"/"+label).getBytes("UTF-8")));
    if(!closed){entries.put(key,new String[]{url,label});keys.add(key);}
    Uri uri=Uri.parse("content://"+context.getPackageName()+".morphe.car.art/"+key);
-   for(String host:new String[]{"app.seb3thehacker.gearslip","app.seb3thehacker.gearslip.dev"})try{context.grantUriPermission(host,uri,Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(RuntimeException ignored){}
+   for(String host:HostPackages.packageNames())try{context.grantUriPermission(host,uri,Intent.FLAG_GRANT_READ_URI_PERMISSION);}catch(RuntimeException ignored){}
    return new CarIcon.Builder(ArtworkIcons.create(uri)).build();
   }catch(Exception e){throw new IllegalStateException("Car artwork unavailable",e);}
  }
@@ -36,10 +36,10 @@ final class CarArtwork implements AutoCloseable {
   try{
    acquired=downloads.tryAcquire(5,TimeUnit.SECONDS);if(!acquired)return placeholder(folder,key,entry[1]);
    if(output.isFile())return output;
-   Bitmap image=fetch(entry[0]);if(image==null)return placeholder(folder,key,entry[1]);Bitmap tile=Bitmap.createBitmap(240,240,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(tile);
-   Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);paint.setShader(new LinearGradient(0,0,240,240,0xff1c283a,0xff0a101a,Shader.TileMode.CLAMP));canvas.drawRect(0,0,240,240,paint);paint.setShader(null);
-   if(image!=null){float scale=Math.min(240f/image.getWidth(),240f/image.getHeight());float w=image.getWidth()*scale,h=image.getHeight()*scale;canvas.drawBitmap(image,null,new RectF((240-w)/2,(240-h)/2,(240+w)/2,(240+h)/2),paint);image.recycle();}
-   else {paint.setColor(0xff8bbce0);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));paint.setTextSize(52);String label=entry[1].trim();canvas.drawText(label.isEmpty()?"W":label.substring(0,Math.min(2,label.length())).toUpperCase(Locale.ROOT),120,138,paint);}
+   Bitmap image=fetch(entry[0]);if(image==null)return placeholder(folder,key,entry[1]);
+   float scale=Math.min(1f,240f/Math.max(image.getWidth(),image.getHeight()));
+   Bitmap tile=Bitmap.createScaledBitmap(image,Math.max(1,Math.round(image.getWidth()*scale)),Math.max(1,Math.round(image.getHeight()*scale)),true);
+   if(tile!=image)image.recycle();
    File temporary=File.createTempFile("thumbnail-",".tmp",folder);
    try(FileOutputStream stream=new FileOutputStream(temporary)){tile.compress(Bitmap.CompressFormat.JPEG,88,stream);}finally{tile.recycle();}
    if(!temporary.renameTo(output)){temporary.delete();throw new IOException("Artwork write failed");}

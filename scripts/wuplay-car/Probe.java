@@ -99,6 +99,12 @@ public final class Probe extends Instrumentation {
  }
  public static final class EpisodeFixture {public Integer season=2,episode=1,runtime=24;public String title="Episode One",thumbnail="",overview="Episode description";}
  public static final class ParentFixture {public String runtime="1000 min",poster="",description="Series description";}
+ private void artworkRatio(Bundle result)throws Exception {
+  Object art=make("nl.johninnl.wuplaycar.CarArtwork",target);
+  try{Object icon=invoke(art,"icon","http://10.0.2.2:8819/slow-poster.png","Natural poster");android.net.Uri uri=(android.net.Uri)invoke(invoke(icon,"getIcon"),"getUri");
+   try(java.io.InputStream in=target.getContentResolver().openInputStream(uri)){android.graphics.Bitmap bitmap=android.graphics.BitmapFactory.decodeStream(in);if(bitmap==null)throw new IllegalStateException("Poster did not decode");int width=bitmap.getWidth(),height=bitmap.getHeight();bitmap.recycle();if(width*3!=height*2)throw new IllegalStateException("Poster was padded to "+width+"x"+height+" instead of keeping 2:3");result.putString("naturalPoster",width+"x"+height+"; original 2:3 aspect preserved");}
+  }finally{invoke(art,"close");}
+ }
  private void artworkBurst(Bundle result)throws Exception {
   Object art=make("nl.johninnl.wuplaycar.CarArtwork",target);ExecutorService pool=Executors.newFixedThreadPool(16);List<Future<Boolean>> images=new ArrayList<>();
   try{
@@ -153,6 +159,7 @@ public final class Probe extends Instrumentation {
   try{
    target=getTargetContext();loader=target.getClassLoader();onMain(()->null);result.putInt("appUid",android.os.Process.myUid());
    if("install-addon".equals(args.getString("mode"))){installAddon(result);outcome=Activity.RESULT_OK;return;}
+   if("artwork-ratio".equals(args.getString("mode"))){artworkRatio(result);outcome=Activity.RESULT_OK;return;}
    if("artwork-burst".equals(args.getString("mode"))){artworkBurst(result);outcome=Activity.RESULT_OK;return;}
    connect();result.putString("protocol","handshake and sectioned Home template passed");
    if("home-contract".equals(args.getString("mode"))){homeContract(result);outcome=Activity.RESULT_OK;return;}
