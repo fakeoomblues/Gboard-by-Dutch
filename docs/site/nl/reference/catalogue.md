@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.27.0-dev.2**
+**Ontwikkelbundel: 1.27.0-dev.3**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -235,6 +235,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads and clutter | Aan | 26.43.05.1002020710 |
 | Legacy icon | Aan | 26.43.05.1002020710 |
 | Location provider toggle | Aan | 26.43.05.1002020710 |
+| Native navigation for Gearslip and Android Auto | Aan | 26.43.05.1002020710 |
 | Offline saved places | Aan | 26.43.05.1002020710 |
 | Power saving mode | Aan | 26.43.05.1002020710 |
 | Proxy | Aan | 26.43.05.1002020710 |

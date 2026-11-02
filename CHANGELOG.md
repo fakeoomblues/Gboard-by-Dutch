@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6f52bfabce541f237ba817c460e24b8d5de016f3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.0-dev.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.github.io/nl-morphe-patches/en/)
+
+Source: [6f52bfabce54](https://github.com/johninnl/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.0-dev.3](https://github.com/johninnl/nl-morphe-patches/compare/v1.27.0-dev.2...v1.27.0-dev.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Gearslip:** show functional music entries and native Maps navigation ([6f52bfa](https://github.com/johninnl/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3))
+* **Google Maps:** show functional music entries and native Maps navigation ([6f52bfa](https://github.com/johninnl/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/5b333f79e55763aac4ad2d3c9d4feae68550ef70/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.27.0-dev.2.**

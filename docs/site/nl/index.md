@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">53 apps</span> · Ontwikkelbundel: 1.27.0-dev.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">53 apps</span> · Ontwikkelbundel: 1.27.0-dev.3</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -365,7 +365,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for gearslip and android auto offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Google Maps](apps/google-maps.md)
@@ -373,7 +373,7 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">26.43.05.1002020710</span></p>
 <p class="dap-app-card__package">com.google.android.apps.maps</p>
 <details class="dap-app-card__patches">
-<summary>30 patches</summary>
+<summary>31 patches</summary>
 <ul>
 <li>120 refresh rate <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Account sheet cleanup <span class="dap-app-card__target">26.43.05.1002020710</span></li>
@@ -393,6 +393,7 @@ hide:
 <li>Hide ads and clutter <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Legacy icon <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Location provider toggle <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Native navigation for Gearslip and Android Auto <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Offline saved places <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Power saving mode <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Proxy <span class="dap-app-card__target">26.43.05.1002020710</span></li>

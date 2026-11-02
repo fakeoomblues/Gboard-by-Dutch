@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.27.0-dev.2](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.0-dev.2)** · 53 apps · 274 patches
+**Patch bundle [v1.27.0-dev.3](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.0-dev.3)** · 53 apps · 275 patches
 
 ### Weather
 
@@ -96,7 +96,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [9292](https://johninnl.github.io/nl-morphe-patches/apps/9292/) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
 | [Flitsmeister](https://johninnl.github.io/nl-morphe-patches/apps/flitsmeister/) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 8 |
 | [Gearslip](https://johninnl.github.io/nl-morphe-patches/apps/gearslip/) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 3 |
-| [Google Maps](https://johninnl.github.io/nl-morphe-patches/apps/google-maps/) | See guide | 26.43.05.1002020710 | APK | 30 |
+| [Google Maps](https://johninnl.github.io/nl-morphe-patches/apps/google-maps/) | See guide | 26.43.05.1002020710 | APK | 31 |
 | [Rollerbank](https://johninnl.github.io/nl-morphe-patches/apps/rollerbank/) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
 | [Vela Maps](https://johninnl.github.io/nl-morphe-patches/apps/vela/) | See guide | 0.5.2621 | APK | 1 |
 | [Waze](https://johninnl.github.io/nl-morphe-patches/apps/waze/) | Ads · Prompts · Home audio | 5.26.90.901, Any | APKM | 40 |
