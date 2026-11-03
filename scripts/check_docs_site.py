@@ -4,9 +4,10 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, urljoin
 import argparse
+import os
 
 ROOT = Path(__file__).resolve().parents[1]
-SITE_URL = 'https://johninnl.codeberg.page/nl-morphe-patches/'
+SITE_URL = os.environ.get('SITE_URL', 'https://nl-morphe-patches-ed90fa.gitlab.io/')
 
 
 class Document(HTMLParser):

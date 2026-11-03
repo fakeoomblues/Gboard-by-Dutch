@@ -6,12 +6,12 @@
 </p>
 
 <p align="center">
-  <a href="docs/site/en/guides/install.md#2-add-the-patch-source">
+  <a href="https://morphe.software/add-source?gitlab=johninnld/nl-morphe-patches">
     <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" width="320">
   </a>
 </p>
 
-<p align="center">Follow the installation guide to add the GitLab metadata URL in Morphe Manager.</p>
+<p align="center">Tap to add the GitLab source in Morphe Manager · <a href="https://nl-morphe-patches-ed90fa.gitlab.io/">Browse the GitLab Pages site</a></p>
 
 # Dutch App Patches
 

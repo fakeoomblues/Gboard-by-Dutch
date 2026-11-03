@@ -1,5 +1,5 @@
 image: eclipse-temurin:21-jdk-noble
-stages: [verify, release]
+stages: [verify, release, deploy]
 workflow:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
@@ -24,7 +24,11 @@ verify:
     - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest :extensions:waze:testDebugUnitTest :extensions:flitsmeister:testDebugUnitTest :extensions:vela:testDebugUnitTest :extensions:extension:testDebugUnitTest :extensions:gearslip:testDebugUnitTest :extensions:maps-gearslip:testDebugUnitTest :extensions:soundcloud:testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
     - .venv/bin/python scripts/medium/check_bundle.py
     - .venv/bin/python -m unittest discover -s scripts/medium/tests
-    - if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then export GITLAB_REPOSITORY="$CI_PROJECT_PATH"; fi
+    - |
+      if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then
+        export GITLAB_REPOSITORY="$CI_PROJECT_PATH"
+        export SITE_URL="${CI_PAGES_URL:-https://nl-morphe-patches-ed90fa.gitlab.io/}"
+      fi
     - .venv/bin/python scripts/generate_docs_catalog.py
     - .venv/bin/python scripts/check_docs_app_pages.py
     - .venv/bin/python -m mkdocs build --strict
@@ -56,3 +60,28 @@ release:
       else
         node .gitlab/scripts/release.cjs
       fi
+pages:
+  stage: deploy
+  image: eclipse-temurin:21-jdk-noble
+  before_script: []
+  needs:
+    - job: release
+      artifacts: false
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - test -n "$CI_PAGES_URL"
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends git python3 python3-venv
+    - git fetch origin "+refs/heads/main:refs/remotes/origin/pages-main"
+    - git checkout --detach refs/remotes/origin/pages-main
+    - python3 -m venv .venv
+    - .venv/bin/pip install -r docs/site-requirements.txt
+    - GITLAB_REPOSITORY="$CI_PROJECT_PATH" SITE_URL="${CI_PAGES_URL%/}/" .venv/bin/python scripts/generate_docs_catalog.py
+    - GITLAB_REPOSITORY="$CI_PROJECT_PATH" SITE_URL="${CI_PAGES_URL%/}/" REPOSITORY_URL="https://gitlab.com/$CI_PROJECT_PATH" REPOSITORY_NAME="$CI_PROJECT_PATH" REPOSITORY_ICON=simple/gitlab SOCIAL_IMAGE_URL="${CI_PAGES_URL%/}/assets/brand/social-card.png" .venv/bin/python -m mkdocs build --strict --site-dir public
+    - test -s public/index.html
+  pages:
+    publish: public
+  environment:
+    name: production
+    url: $CI_PAGES_URL

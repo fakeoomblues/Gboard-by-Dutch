@@ -19,3 +19,7 @@ not call its API or wait for a Codeberg release. The old GitGud mirror helper is
 retained for historical compatibility and is not the GitLab publishing entrypoint.
 
 Public Morphe source: `https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json`.
+
+GitLab Pages deploys the verified static documentation after the release job.
+Its public Pages URL is `https://nl-morphe-patches-ed90fa.gitlab.io/`; README
+and in-site metadata use this URL when they are built.

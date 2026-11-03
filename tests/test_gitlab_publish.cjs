@@ -32,6 +32,26 @@ test("GitLab chooses versions with existing source guards and never loads anothe
   assert.ok(commands.indexOf("publish_release.cjs")<commands.indexOf("discovery.cjs"));
   assert.deepEqual(ci.release.needs,["verify"]);
 });
+test("GitLab Pages deploys only the post-release site to its public Pages URL", () => {
+  const ci=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  assert.deepEqual(ci.stages,["verify","release","deploy"]);
+  assert.equal(ci.pages.stage,"deploy");
+  assert.deepEqual(ci.pages.needs,[{job:"release",artifacts:false}]);
+  assert.equal(ci.pages.pages.publish,"public");
+  assert.deepEqual(ci.pages.rules,[{if:'$CI_COMMIT_BRANCH == "main"'}]);
+  const commands=ci.pages.script.join("\n");
+  assert.match(commands,/apt-get install -y --no-install-recommends git python3 python3-venv/);
+  assert.ok(commands.indexOf("apt-get install")<commands.indexOf("git fetch origin"));
+  assert.match(commands,/CI_PAGES_URL/);
+  assert.match(commands,/GITLAB_REPOSITORY="\$CI_PROJECT_PATH" SITE_URL=/);
+  assert.deepEqual(ci.pages.before_script,[]);
+  assert.match(commands,/mkdocs build --strict --site-dir public/);
+  assert.match(commands,/test -s public\/index\.html/);
+  assert.equal(ci.pages.environment.name,"production");
+  const mkdocs=fs.readFileSync(path.join(__dirname,"../mkdocs.yml"),"utf8");
+  assert.match(mkdocs,/site_url: !ENV \[SITE_URL, 'https:\/\/nl-morphe-patches-ed90fa\.gitlab\.io\/'\]/);
+  assert.match(fs.readFileSync(path.join(__dirname,"../scripts/check_docs_site.py"),"utf8"),/os\.environ\.get\('SITE_URL'/);
+});
 test("GitLab source metadata uses its public release permalink and existing signing key", async () => {
   const cwd=fs.mkdtempSync(path.join(os.tmpdir(),"gitlab-native-notes-"));
   try {
