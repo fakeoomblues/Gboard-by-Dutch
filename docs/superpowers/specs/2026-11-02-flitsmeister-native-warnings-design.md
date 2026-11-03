@@ -1,6 +1,6 @@
 # Native Flitsmeister warnings in patched Google Maps and Vela
 
-- **Status:** proposed engineering design; implementation and physical-device acceptance pending.
+- **Status:** reviewed design; implementation present on the feature branch, with final acceptance and release approval pending. See the [implementation review](../../research/2026-11-03-native-warning-implementation-review.md).
 - **Date:** 2026-11-02.
 - **Source baseline:** `e1314b8ea2deb4e37070de8d29715c721eed58e9`. The four principal producer/consumer/control files were checked and are unchanged from research baseline `839868dfab1624eba2265b0fa199f123eadc2d1a`.
 - **App targets:** Flitsmeister 15.0/1289 is the primary target following the user's 2026-11-03 update; retain the separately guarded 14.17/1287 profile. Google Maps 26.43.05.1002020710 and its supported patched package variants; Vela Maps 0.5.2621.

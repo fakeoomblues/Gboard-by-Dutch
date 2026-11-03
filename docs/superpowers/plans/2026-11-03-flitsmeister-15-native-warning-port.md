@@ -2,6 +2,8 @@
 
 The released v1.36.0 patches already support FM 15.0. The unfinished native-warning integration was explicitly limited to 14.17. Port that integration to 15.0/1289 while preserving the existing FM controls, the Maps/Vela behavior and separately guarded 14.17 support. Diagnose the reported background-start failure when selecting FM in Maps or Vela; phone reboot is outside this report.
 
+Maps and Vela retain trip routing and turn-by-turn guidance. FM supplies native alerts and navigation-related data. Existing-route checks concern delayed point-alert relevance and guidance regression only; FM's average-speed-zone `gpsPath` describes the camera segment, not a trip route or destination.
+
 ## Authoritative inputs
 
 | Input | Base APK SHA-256 |
