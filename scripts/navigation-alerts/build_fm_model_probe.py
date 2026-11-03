@@ -21,7 +21,7 @@ def main():
     source = Path(__file__).with_name('probe') / (probe_class + '.java')
     sources = [source]
     if args.kind == 'capture':
-        sources.append(source.with_name('Fm15PrivateMovingInput.java'))
+        sources += [source.with_name(name) for name in ['Fm15PrivateMovingInput.java','Fm15PrivateZoneInput.java']]
     tools = args.sdk / 'build-tools/36.0.0'
     android = args.sdk / 'platforms/android-36/android.jar'
     args.output.mkdir(parents=True, exist_ok=True)

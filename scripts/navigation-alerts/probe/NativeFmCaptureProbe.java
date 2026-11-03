@@ -19,6 +19,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -353,6 +354,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         String futureId=base+"-future";Object future=camera("SPEED_50",futureId);controlledFix();onMain(()->call(service,"J",future,true));Object futureEvent=awaitProductionEvent(endpoint,session,futureId,0);activateEvent(futureEvent);JSONArray futureOutcomes=new JSONArray();awaitTerminal(endpoint,new HashSet<>(),futureOutcomes,SystemClock.elapsedRealtime()+15000,false);check("COMPLETED".equals(lastTerminalState),"Future native warning did not complete after actual recovery");onMain(()->call(service,"J",future,false));death.put("future_authority",new JSONObject((Map<?,?>)call(futureEvent,"fields"))).put("future_source_dispositions",futureOutcomes);status("death_future_completed",death);
     }
     private void realWarningSuite(JSONObject report)throws Exception{
+        if(arguments.getString("warning_suite_cases","all").equals("native-zone")){realNativeZone15Suite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("delayed-passage")){realDelayedPassageSuite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("moving-camera")){realMovingCameraSuite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("concurrent")){realConcurrentWarningSuite(report);return;}
@@ -417,6 +419,98 @@ public final class NativeFmCaptureProbe extends Instrumentation {
             onMain(()->call(service,"J",model,false));Object clear=awaitNativeOperation(endpoint,session,authority.getString("warning_id"),"CLEAR",authority.getLong("sequence"));row.put("native_clear",new JSONObject((Map<?,?>)call(clear,"fields")));
         }
         Object queue=call(singleton("s6i","f"),"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Replay provider queue was not muted/empty");report.put("production_endpoint_used",true).put("test_sink_used",false).put("raw_packet_emitted",false).put("coverage_override_used",false).put("provider_native_queue_empty",true).put("receiver_source_off_and_quiescent",true).put("scope_note","Controlled original accepted native events before genuine registration/rebind, real journal deadlines and receiving GPS. No constructed packets, cursor/clock edits or grant overrides.");status("warning_suite_complete",new JSONObject().put("native_authorities",cases.length()));
+    }
+    private JSONObject zone15Bean(Object value)throws Exception{
+        JSONObject out=new JSONObject();
+        for(Field field:value.getClass().getFields()){
+            if(java.lang.reflect.Modifier.isStatic(field.getModifiers()))continue;
+            Object item=field.get(value);
+            if(item instanceof Number&&!Double.isFinite(((Number)item).doubleValue()))item=null;
+            if(item instanceof Map)item=new JSONObject((Map<?,?>)item);
+            else if(item!=null&&!(item instanceof String)&&!(item instanceof Number)&&!(item instanceof Boolean))item=zone15Bean(item);
+            out.put(field.getName(),item==null?JSONObject.NULL:item);
+        }
+        return out;
+    }
+    private JSONObject zone15Journal(Object endpoint,String session,long cursor)throws Exception{
+        java.util.concurrent.ExecutorService actor=(java.util.concurrent.ExecutorService)read(endpoint,"actor");
+        return actor.submit(()->{
+            Object view=call(read(endpoint,"journal"),"resume",session,cursor,SystemClock.elapsedRealtime());
+            check(!Boolean.TRUE.equals(read(view,"resyncRequired"))&&!Boolean.TRUE.equals(read(view,"overflow")),"Zone journal gap/overflow; no substitute authority admitted");
+            JSONArray rows=new JSONArray();for(Object event:(List<?>)read(view,"events"))rows.put(new JSONObject((Map<?,?>)call(event,"fields")));
+            return new JSONObject().put("head",read(view,"headSequence")).put("events",rows);
+        }).get(3,TimeUnit.SECONDS);
+    }
+    /** Original wd6/engine/manager pipeline, private candidate only; no GPS or decision field writes. */
+    private void realNativeZone15Suite(JSONObject report)throws Exception{
+        check(fm15,"Native zone fixture requires the admitted15 profile");
+        Object endpoint=restartEndpoint();String session=String.valueOf(call(endpoint,"sourceSession")),receiver=arguments.getString("death_owner");
+        JSONObject initial=productionAudioState(endpoint);check(!initial.optBoolean("pending_present")&&!initial.optBoolean("owner_present"),"Pre-existing zone playback");
+        status("warning_suite_ready",new JSONObject().put("provider_session",session).put("receiver",receiver));
+        long deadline=SystemClock.elapsedRealtime()+90000;while(!productionReceiverSynced(endpoint,receiver)&&SystemClock.elapsedRealtime()<deadline){assertMuted();SystemClock.sleep(20);}
+        check(productionReceiverSynced(endpoint,receiver),"Actual zone receiver did not synchronize");
+        String id="private-fm15-zone-"+java.util.UUID.randomUUID();float speed=20;JSONArray requests=new JSONArray(),samples=new JSONArray(),events=new JSONArray(),announcements=new JSONArray();
+        JSONObject trace=new JSONObject().put("native_id",id).put("source_location_override_used",false).put("native_policy_override_used",false)
+                .put("native_decision_override_used",false).put("native_repeat_acceptance",false).put("gps_requests",requests).put("source_samples",samples).put("journal_events",events).put("announcements",announcements);
+        nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle handle=null;Throwable primaryFailure=null;
+        Map<Long,Object> authorities=new LinkedHashMap<>();Map<Long,JSONArray> outcomes=new LinkedHashMap<>();Map<Long,Set<String>> seen=new LinkedHashMap<>();
+        try{
+            AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.SourceState> warm=new AtomicReference<>();
+            long began=SystemClock.elapsedRealtime(),next=began;Exception last=null;
+            while(warm.get()==null&&SystemClock.elapsedRealtime()-began<20000){
+                long now=SystemClock.elapsedRealtime();if(now>=next){next=now+1000;requestMoving15Gps(requests,72,52.345+speed*(now-began)/111195000d,4.9,speed,"zone_warmup");}
+                try{onMain(()->{nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.SourceState state=nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.inspect(context);if(state.sourceElapsedRealtimeNanos/1000000>=began&&Math.abs(state.sourceSpeedMps-speed)<1)warm.set(state);});}catch(Exception error){last=error;}
+                if(warm.get()==null)SystemClock.sleep(50);
+            }
+            check(warm.get()!=null,"Original zone lifecycle/jobs/GPS unavailable: "+(last==null?"":last.getClass().getName()));
+            final double origin=warm.get().sourceLatitude,longitude=warm.get().sourceLongitude,start=origin+300/111195d,end=start+500/111195d;
+            trace.put("warmup",zone15Bean(warm.get())).put("start_latitude",start).put("end_latitude",end).put("longitude",longitude).put("speed_mps",speed);
+            AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle> admitted=new AtomicReference<>();
+            onMain(()->admitted.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.begin(context,id,start,longitude,end,longitude)));handle=admitted.get();
+            roots.add("Liji;->l");roots.add("Lwd6;->B");final nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle owned=handle;
+            long anchor=warm.get().sourceElapsedRealtimeNanos/1000000,nextGps=SystemClock.elapsedRealtime(),lastFix=-1,cursor=0;
+            boolean entered=false,left=false;long crossedEnd=-1;
+            while(SystemClock.elapsedRealtime()-anchor<75000){
+                long now=SystemClock.elapsedRealtime();if(now>=nextGps){nextGps=now+1000;requestMoving15Gps(requests,72,origin+speed*(now-anchor)/111195000d,longitude,speed,"zone_native_motion");}
+                AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Sample> sample=new AtomicReference<>();AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.ZoneObservation> zone=new AtomicReference<>();
+                onMain(()->{sample.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.check(owned));zone.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.observeZone(owned));});
+                if(sample.get().sourceElapsedRealtimeNanos!=lastFix){lastFix=sample.get().sourceElapsedRealtimeNanos;samples.put(new JSONObject().put("observed_elapsed_ms",now).put("native",zone15Bean(sample.get())).put("zone",zone15Bean(zone.get())));check(samples.length()<=128,"Zone sample archive bound");}
+                entered|=sample.get().nativeInGpsPath;
+                if(sample.get().sourceLatitude>=end&&crossedEnd<0)crossedEnd=sample.get().sourceElapsedRealtimeNanos/1000000;
+                left|=entered&&crossedEnd>=0&&!sample.get().nativeInGpsPath&&!sample.get().nativeWarningActive;
+                JSONObject journal=zone15Journal(endpoint,session,cursor);cursor=journal.getLong("head");JSONArray rows=journal.getJSONArray("events");
+                for(int i=0;i<rows.length();i++){JSONObject row=rows.getJSONObject(i);if(!row.optString("warning_id").endsWith(id))continue;events.put(row);check(events.length()<=512,"Zone event archive bound");
+                    if(row.optString("operation").equals("ANNOUNCE")){
+                        Object event=productionEventAfter(endpoint,session,id,row.getLong("sequence")-1);check(event!=null,"Original zone ANNOUNCE unavailable");
+                        long seq=row.getLong("sequence");authorities.put(seq,event);JSONArray acks=new JSONArray();outcomes.put(seq,acks);seen.put(seq,new HashSet<>());
+                        announcements.put(new JSONObject().put("authority",row).put("source_dispositions",acks));
+                        status("native_zone_announcement",row);
+                    }
+                }
+                for(Map.Entry<Long,Object> entry:authorities.entrySet()){activateEvent(entry.getValue());append(outcomes.get(entry.getKey()),productionOutcomes(endpoint,seen.get(entry.getKey())));}
+                if(left&&crossedEnd>=0&&now-crossedEnd>=6000&&authorities.size()>=2){boolean done=true;for(JSONArray acks:outcomes.values()){boolean completed=false;for(int i=0;i<acks.length();i++)completed|=acks.getJSONObject(i).optString("outcome").equals("COMPLETED");done&=completed;}if(done)break;}
+                assertMuted();SystemClock.sleep(50);
+            }
+            trace.put("native_path_entry_observed",entered).put("native_path_exit_and_removal_observed",left).put("source_end_crossed_elapsed_ms",crossedEnd);
+            check(entered&&left&&crossedEnd>0,"Original native zone entry/exit/removal missing");
+            check(announcements.length()==2,"Expected actual native zone start and end; preserve any different original result");
+            check(announcements.getJSONObject(0).getJSONObject("authority").getString("phase").equals("enter")&&announcements.getJSONObject(1).getJSONObject("authority").getString("phase").equals("exit"),"Unexpected native zone authority phases");
+            for(JSONArray acks:outcomes.values()){check(acks.length()==3&&acks.getJSONObject(2).getString("outcome").equals("COMPLETED"),"Actual zone output did not complete exactly once");}
+        }catch(Throwable error){primaryFailure=error;trace.put("failure",android.util.Log.getStackTraceString(error));if(error instanceof Exception)throw (Exception)error;throw (Error)error;}finally{
+            Exception cleanupFailure=null;
+            AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.RestoreResult> restored=new AtomicReference<>();
+            final nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle owned=handle;
+            try{onMain(()->{nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle current=owned==null?nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.current():owned;if(current!=null)restored.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.restore(current));});}catch(Exception error){trace.put("candidate_restore_failure",android.util.Log.getStackTraceString(error));if(primaryFailure!=null)primaryFailure.addSuppressed(error);else cleanupFailure=error;}
+            if(restored.get()!=null)trace.put("candidate_restore",zone15Bean(restored.get()));
+            java.io.File folder=new java.io.File(context.getExternalFilesDir(null),"native-warning-zones");check(folder.exists()||folder.mkdirs(),"Private zone trace folder");java.io.File file=new java.io.File(folder,id+".json");byte[] bytes=trace.toString().getBytes("UTF-8");try(java.io.FileOutputStream stream=new java.io.FileOutputStream(file)){stream.write(bytes);}
+            StringBuilder digest=new StringBuilder();for(byte value:java.security.MessageDigest.getInstance("SHA-256").digest(bytes))digest.append(String.format(java.util.Locale.ROOT,"%02x",value&255));
+            report.put("native_zone_trace",file.getAbsolutePath()).put("native_zone_trace_sha256",digest.toString());status("native_zone_trace_ready",new JSONObject().put("remote_trace",file.getAbsolutePath()).put("trace_sha256",digest.toString()));
+            if(cleanupFailure!=null)throw cleanupFailure;
+        }
+        status("warning_suite_complete",new JSONObject().put("native_authorities",announcements.length()));
+        deadline=SystemClock.elapsedRealtime()+20000;while(SystemClock.elapsedRealtime()<deadline){productionOutcomes(endpoint,new HashSet<>());if(!ownerPresent&&!pendingPresent&&!productionReceiverSynced(endpoint,receiver))break;assertMuted();SystemClock.sleep(20);}
+        check(!ownerPresent&&!pendingPresent&&!productionReceiverSynced(endpoint,receiver),"Zone receiver did not release");Object queue=call(singleton("s6i","f"),"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Native source zone queue not muted/empty");
+        report.put("production_endpoint_used",true).put("test_sink_used",false).put("raw_packet_emitted",false).put("coverage_override_used",false).put("provider_native_queue_empty",true).put("receiver_source_off_and_quiescent",true).put("real_terminal_ack_observed",true);
     }
     /** Candidate list is private; original task geometry, decision and alert callbacks remain intact. */
     /** FM15 path v3: GNSS requests are forwarded by the host; only real collected native fixes are read. */

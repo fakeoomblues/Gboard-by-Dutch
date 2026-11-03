@@ -16,13 +16,13 @@ parser.add_argument('--serial',choices=['emulator-5590'],default='emulator-5590'
 parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
 parser.add_argument('--prepare-vela-ui',action='store_true')
 parser.add_argument('--warning-suite',action='store_true')
-parser.add_argument('--warning-suite-cases',choices=['all','road-service','concurrent','native-guidance','moving-camera','delayed-passage'],default='all')
+parser.add_argument('--warning-suite-cases',choices=['all','road-service','concurrent','native-guidance','moving-camera','delayed-passage','native-zone'],default='all')
 parser.add_argument('--warning-categories',type=int,choices=range(1,128),default=127)
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
 args=parser.parse_args();
-if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage'] and not args.warning_suite:parser.error('Guidance, moving camera and delayed passage cases require the warning suite')
-if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage'] and args.receiver=='vela' and not args.prepare_vela_ui:parser.error('Vela guidance and spatial cases require the original phone UI setup')
-if args.warning_suite_cases in ['moving-camera','delayed-passage'] and args.serial!='emulator-5590':parser.error('Spatial replay and moving camera cases require the isolated phone AVD')
+if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage','native-zone'] and not args.warning_suite:parser.error('Guidance, moving camera and delayed passage cases require the warning suite')
+if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage','native-zone'] and args.receiver=='vela' and not args.prepare_vela_ui:parser.error('Vela guidance and spatial cases require the original phone UI setup')
+if args.warning_suite_cases in ['moving-camera','delayed-passage','native-zone'] and args.serial!='emulator-5590':parser.error('Spatial replay and moving camera cases require the isolated phone AVD')
 if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
 if args.warning_categories!=127 and (not args.warning_suite or args.warning_suite_cases!='road-service'):parser.error('A restricted category mask is only supported for the focused road-service suite')
 sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd='native_warnings_ui_api34';output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
@@ -129,7 +129,7 @@ def source(name,scenario,**expectations):
  for key,value in expectations.items():command.extend(['--'+key.replace('_','-'),value])
  launch(name,command)
 def receiver(role):
- launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'-e','warning_categories',str(args.warning_categories),'-e','passage_case','true' if args.warning_suite_cases=='delayed-passage' else 'false','-e','moving_camera_case','true' if args.warning_suite_cases=='moving-camera' else 'false','-e','native_guidance_case','true' if args.warning_suite_cases=='native-guidance' else 'false','nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
+ launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'-e','warning_categories',str(args.warning_categories),'-e','passage_case','true' if args.warning_suite_cases=='delayed-passage' else 'false','-e','moving_camera_case','true' if args.warning_suite_cases=='moving-camera' else 'false','-e','native_zone_case','true' if args.warning_suite_cases=='native-zone' else 'false','-e','native_guidance_case','true' if args.warning_suite_cases=='native-guidance' else 'false','nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
 def signal(role,action='stop'):
  assert action in ['stop','on','off']
  folder='/sdcard/Android/data/'+receiver_package+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+token+'-'+role+'-'+action)
@@ -242,7 +242,7 @@ try:
    if not value['granted']:
     assert not any(flag in value['flags'] for flag in ['SYSTEM_FIXED','POLICY_FIXED','USER_FIXED']);device('shell','pm','grant',route_package,permission);route_permission_changes.append(permission)
   record['route_permissions_during']=vela_permissions(route_package,declared_only=True);assert all(value['granted'] for value in record['route_permissions_during'].values())
- if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
+ if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage','native-zone']:
   (output/'route-location-before.txt').write_text(device('shell','dumpsys','location').stdout);device('emu','geo','fix','4.9000','52.3700');record['controlled_route_start']={'latitude':52.3700,'longitude':4.9000}
  if args.prepare_vela_ui:prepare_vela_ui()
  if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':
@@ -257,7 +257,7 @@ try:
   if line:
    if name in ['seed-source','restarted-source'] and line.startswith('INSTRUMENTATION_STATUS: fm_capture_detail='):source_details[name]=json.loads(line.split('fm_capture_detail=',1)[1])
    if name=='seed-source' and 'fm_capture_stage=restart_seed_ready' in line:receiver('seed-receiver')
-   if args.warning_suite_cases=='moving-camera' and name=='seed-source' and 'fm_capture_stage=moving_camera_fix' in line:
+   if args.warning_suite_cases in ['moving-camera','native-zone'] and name=='seed-source' and 'fm_capture_stage=moving_camera_fix' in line:
     sample=dict(source_details[name]);sample['gps_console_response']=device('emu','geo','fix',sample['longitude'],sample['latitude'],'0','8',sample['speed_mps']*1.94384449).stdout.strip();assert sample['gps_console_response']=='OK','Emulator rejected moving GPS';sample['host_monotonic_s']=time.monotonic();record.setdefault('moving_gps_samples',[]).append(sample)
    if args.warning_suite and args.warning_suite_cases!='delayed-passage' and name=='seed-source' and 'fm_capture_stage=warning_suite_ready' in line:receiver('seed-receiver')
    if args.warning_suite_cases=='delayed-passage' and name=='seed-source':
@@ -271,6 +271,9 @@ try:
     if 'fm_capture_stage=replay_case_completed' in line:signal('seed-receiver','off')
     if 'fm_capture_stage=replay_same_authority_rebind' in line:signal('seed-receiver','on')
     if 'fm_capture_stage=replay_rebind_completed' in line:signal('seed-receiver','off')
+   if args.warning_suite_cases=='native-zone' and name=='seed-source' and 'fm_capture_stage=native_zone_trace_ready' in line:
+    detail=source_details[name];remote=detail['remote_trace'];assert re.fullmatch(r'/storage/emulated/0/Android/data/nl\.flitsmeister/files/native-warning-zones/private-fm15-zone-[a-f0-9-]+\.json',remote)
+    local=output/'native-zone-source-trace.json';device('pull',remote,local);assert sha(local)==detail['trace_sha256'];record['native_zone_trace']=str(local);record['native_zone_trace_sha256']=detail['trace_sha256']
    if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_complete' in line:
     if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':device('emu','geo','fix','4.9000','52.3701');record['fresh_post_warning_fix']={'latitude':52.3701,'longitude':4.9000}
     else:signal('seed-receiver')
