@@ -80,15 +80,28 @@ Flitsmeister keeps Vela's independent Flock display, voice and detour choices ac
 
 ## Native Flitsmeister warning audio
 
-The native-event speech upgrade is still under integrated validation. Pinned producer capture has passed its coverage audit and development builds can use event-owned audio after compatible patching and review. Full receiving/routing/lifecycle acceptance remains open. A running provider or successful preview is not a complete-warning guarantee.
+These warning controls are part of the development change and are still being validated. Emulator checks cover native warning text, moving camera warnings and delayed delivery through both receiving apps. Car audio routing, compatibility and lifecycle checks remain open. A running provider or successful preview does not establish complete warning support.
 
-With compatible event-enabled builds on both sides, choose **Flitsmeister** and review **Flitsmeister warning audio** and **Flitsmeister warning categories** once. Confirm **Use these warning choices**. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories. Keep every actively receiving map updated or disable its FM source before using the complete event mode.
+For this warning mode, use **Flitsmeister 14.17 (version code 1287)** with the matching updated receiver patch. FM 15 retains its legacy navigation feed; it does not enable this native-warning upgrade. An older receiver can still use its legacy feed, but must be updated or have its Flitsmeister source disabled before another map takes exclusive warning audio.
+
+With compatible builds on both sides, choose **Flitsmeister**. In Maps, open **Flitsmeister warning audio** and **Flitsmeister warning categories**, then **Review Flitsmeister warnings** and tap **Use these choices** in the confirmation dialog. In Vela, open **Flitsmeister warning audio**, review the output and categories, then tap **Use these warning choices**. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories.
 
 Choose Voice, Tone or Silent. Native Maps/Vela mute still caps that choice: alerts-only mode uses Tone, and full native mute stays Silent. Voice uses an available installed offline-capable voice. Native announcements do not wait for the old camera-distance or global cooldown heuristic. Missing distance stays unknown, and a moving emergency is not discarded because the car is stationary or the event has no point coordinates.
 
 Only one receiving map owns warning audio. Another receiver can show current warnings while reporting which map handles audio. Reception, queue acceptance, audio start and audio completion are different states. A missing engine, denied focus or interrupted delivery does not automatically unmute FM during the managed session. If previous output might still be playing, the next map remains silent until stop/completion is positively acknowledged.
 
 Use **Parked audio preview** only while parked with navigation stopped. It requests a clearly labelled local synthetic example through the normal audio grant and creates no public road report. It respects native mute. If warning audio remains fenced, **Recover warning audio while parked** opens FM's own confirmation screen. Stop both receiving maps and their speech engine, verify no warning is playing or queued, then confirm the parked reset. Recovery revokes old announcement authority; it does not replay the earlier warning.
+
+A warning received after reconnecting keeps its original deadline. A clearly passed point or expired announcement is not played again. A current warning card can remain visible after its audio deadline; the card itself does not trigger speech. Missing output after an uncertain interruption can be intentional duplicate prevention.
+
+| Warning audio status | What to do |
+| --- | --- |
+| **Review warning categories and output** | Review the FM output and category choices, then confirm them. |
+| **Audio ready** | The receiver is ready for a future eligible warning. Check the separate provider status for engine/data reception. |
+| **Alerts handled by Google Maps / Vela** | The named map owns warning audio. Change or disable its FM source if you want the other map to handle it. |
+| **Warning audio unavailable** | Check the receiving app's voice engine, voice download and native mute setting. Select Tone explicitly if that is the output you want. |
+| **Waiting for previous audio to stop** | Keep the vehicle parked, stop both receiving maps and their speech engine, then use parked recovery after confirming that no output remains. |
+| **Update the other receiving map** | Update the other map's patch or disable its FM source. An older active receiver prevents exclusive warning audio. |
 
 ## 4. Check reception before relying on it
 
@@ -103,11 +116,12 @@ Changing provider, leaving a zone or losing fresh zone observations clears the p
 | Source still stays unavailable | Check that both apps have the updated patches, provider onboarding is complete and the correct source is selected. Check the startup status and the provider app's battery restrictions. |
 | One receiver gets data but another does not | Remove or correct the provider patch's optional **Receiver package**, then repatch the provider if you change that option. |
 | Speed works but no average appears | A fresh active-zone observation is required, followed by enough observed time and distance. A camera report alone is not an active zone. |
-| No pins or warning sound in Maps | Select the report types and enable the map/chime switches. The provider must have fresh reports, with positions for pins and a usable approach distance for warnings. |
+| No map pins in Maps | Enable the map display and pin categories. Pins need a fresh report with a known position. |
+| FM data arrives but there is no warning audio | For the new mode, review the separate FM audio/categories, confirm the choices and check the warning audio status above. The old chime switch and estimated approach distance do not control native FM announcements. |
 | Data stops when the screen locks | Check background location and phone battery restrictions. Return to the receiving map to retry a blocked silent start. |
 
 Google Maps' consumer display and fallback were checked with controlled provider replays. Vela's background reception, phone/car display and advance speech were checked on an Android 16 emulator with Gearslip. Native Maps navigation has separate Gearslip and official Android Auto Desktop Head Unit checks. These results do not establish every combination of provider, phone, physical car display or live-road accuracy.
 
-For developers, the [shared navigation broadcast contract](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md) documents the data and freshness rules. Other receiving apps need an implementation of that contract; installing the provider patch alone does not add support to an arbitrary app.
+For developers, the [shared navigation broadcast contract](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/navigation-broadcasts.md) documents the data and freshness rules. Other receiving apps need an implementation of that contract; installing the provider patch alone does not add support to an arbitrary app.
 
 Silent cold startup was also checked for all four Maps/Vela × Waze/Flitsmeister pairs on an Android 16 emulator, using the supplied originals and native engine health. This does not establish all manufacturer power policies or physical car behavior.

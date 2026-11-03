@@ -80,15 +80,30 @@ Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en om
 
 ## Native waarschuwingsaudio van Flitsmeister
 
-De koppeling met native gebeurtenissen en spraak wordt nog integraal gevalideerd. De opname door de vastgelegde bronversie heeft de dekkingscontrole doorstaan; ontwikkelbuilds kunnen na compatibel patchen en controle van de keuzes gebeurtenisgestuurde audio gebruiken. Volledige ontvangst-, routerings- en levensduurcontroles staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
+Deze waarschuwingsopties horen bij de ontwikkelversie en worden nog gevalideerd. Emulatorcontroles omvatten de oorspronkelijke waarschuwingstekst, flitspaalmeldingen tijdens beweging en vertraagde levering aan beide kaartapps. Controles van autogeluid, compatibiliteit en levensduur staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
 
-Kies met compatibele gebeurtenisbuilds aan beide kanten **Flitsmeister** en controleer eenmaal **Flitsmeister-waarschuwingsaudio** en de waarschuwingscategorieën. Bevestig **Deze waarschuwingskeuzes gebruiken**. Eerdere expliciete demp- en typekeuzes blijven geselecteerd; een expliciete Maps-geluidskeuze wordt Toon. Kaartspelden staan los van hoorbare categorieën. Werk iedere actief ontvangende kaartapp bij of schakel daar de FM-bron uit voordat je de volledige gebeurtenismodus gebruikt.
+Gebruik voor deze waarschuwingsmodus **Flitsmeister 14.17 (versiecode 1287)** met de bijbehorende bijgewerkte ontvangerpatch. FM 15 behoudt de oudere navigatiegegevens, maar schakelt deze nieuwe waarschuwingsmodus niet in. Een oudere kaartapp kan haar oudere koppeling blijven gebruiken. Werk die kaartapp bij of schakel daar Flitsmeister uit voordat een andere kaart de waarschuwingsaudio overneemt.
+
+Kies met compatibele builds aan beide kanten **Flitsmeister**. Open in Maps **Flitsmeister warning audio** en **Flitsmeister warning categories**, daarna **Review Flitsmeister warnings**, en tik in het bevestigingsvenster op **Use these choices**. Deze Maps-opties hebben Engelse namen. Open in Vela **Flitsmeister-waarschuwingsaudio**, controleer audio en categorieën en tik op **Deze waarschuwingskeuzes gebruiken**. Eerdere expliciete demp- en typekeuzes blijven geselecteerd; een expliciete Maps-geluidskeuze wordt Toon. Kaartspelden staan los van hoorbare categorieën.
 
 Kies Spraak, Toon of Stil. De eigen dempstand van Maps/Vela begrenst die keuze: alleen meldingen gebruikt Toon en volledig gedempt blijft Stil. Spraak gebruikt een beschikbare geïnstalleerde offline stem. Native meldingen wachten niet op de oude camera-afstand of algemene afkoelperiode. Een ontbrekende afstand blijft onbekend; een naderende hulpdienst wordt niet weggefilterd omdat de auto stilstaat of de gebeurtenis geen puntcoördinaten heeft.
 
 Slechts één kaartapp bezit de waarschuwingsaudio. Een tweede ontvanger kan actuele waarschuwingen tonen en aangeven welke kaart de audio afhandelt. Ontvangst, wachtrij, audiostart en voltooiing zijn verschillende toestanden. Een ontbrekende engine, geweigerde audiofocus of onderbroken levering zet FM tijdens de beheerde sessie niet automatisch weer hoorbaar. Als eerdere audio mogelijk nog speelt, blijft de volgende kaart stil tot stoppen of voltooien positief is bevestigd.
 
 Gebruik **Audiovoorbeeld terwijl u geparkeerd staat** alleen terwijl je geparkeerd staat en navigatie is gestopt. Dit vraagt via de normale audiotoestemming een duidelijk gemarkeerd lokaal synthetisch voorbeeld aan en maakt geen openbare verkeersmelding. De eigen dempstand blijft gelden. Blijft waarschuwingsaudio geblokkeerd, dan opent de hersteloptie FM's eigen bevestigingsscherm. Stop beide ontvangende kaartapps en hun spraakengine, controleer dat niets speelt of wacht, en bevestig het geparkeerde herstel. Oude aankondigingstoestemming vervalt; de eerdere waarschuwing wordt niet opnieuw afgespeeld.
+
+Een waarschuwing die na opnieuw verbinden aankomt, behoudt haar oorspronkelijke geldigheidsduur. Een duidelijk gepasseerd punt of verlopen aankondiging wordt niet alsnog afgespeeld. Een actuele waarschuwingskaart kan na de audiotermijn zichtbaar blijven; de kaart zelf veroorzaakt geen spraak. Na een onzekere onderbreking kan stilte bedoeld zijn om dubbel afspelen te voorkomen.
+
+Maps toont de onderstaande statussen in het Engels. Vela kan de Nederlandse tekst tonen.
+
+| Status van waarschuwingsaudio | Wat je kunt doen |
+| --- | --- |
+| **Waarschuwingskeuzes controleren** / **Review warning categories and output** | Controleer FM-audio en categorieën en bevestig de keuzes. |
+| **Audio gereed** / **Audio ready** | De ontvanger is gereed voor een volgende geldige waarschuwing. Controleer de aparte bronstatus voor de motor en gegevensontvangst. |
+| **Waarschuwingen afgehandeld door Google Maps / Vela** | De genoemde kaart verzorgt de audio. Wijzig of schakel daar de FM-bron uit als je de andere kaart wilt gebruiken. |
+| **Waarschuwingsaudio niet beschikbaar** / **Warning audio unavailable** | Controleer de spraakengine, gedownloade stem en eigen dempstand van de kaartapp. Kies Toon zelf als dat de gewenste uitvoer is. |
+| **Wacht op bevestiging dat vorige audio is gestopt** / **Waiting for previous audio to stop** | Blijf geparkeerd, stop beide kaartapps en hun spraakengine en gebruik herstel pas nadat je hebt gecontroleerd dat niets meer speelt of wacht. |
+| **Werk de andere ontvangende kaartapp bij** / **Update the other receiving map** | Werk de patch van de andere kaart bij of schakel daar FM uit. Een oudere actieve ontvanger verhindert exclusieve waarschuwingsaudio. |
 
 ## 4. Controleer de ontvangst
 
@@ -103,11 +118,12 @@ Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen ver
 | Bron blijft daarna onbeschikbaar | Controleer of beide apps de bijgewerkte patches hebben, de eerste broninstellingen zijn afgerond en de juiste bron is gekozen. Controleer de bronstatus en de batterijbeperkingen van de bronapp. |
 | Eén ontvanger krijgt gegevens, een andere niet | Verwijder of corrigeer de optionele **Receiver package** van de bronpatch en patch de bron opnieuw als je die optie wijzigt. |
 | Snelheid werkt, maar geen gemiddelde | Er is een verse waarneming van een actief traject nodig, gevolgd door voldoende tijd en afstand. Alleen een cameramelding is geen actief traject. |
-| Geen spelden of geluid in Maps | Kies de meldingstypen en zet de kaart-/geluidsschakelaars aan. De bron moet verse meldingen hebben, met posities voor spelden en een bruikbare naderingsafstand voor waarschuwingen. |
+| Geen kaartspelden in Maps | Zet kaartweergave en de gewenste speldcategorieën aan. Spelden vereisen een verse melding met een bekende positie. |
+| FM-gegevens komen aan, maar waarschuwingsaudio ontbreekt | Controleer voor de nieuwe modus de aparte FM-audio en categorieën, bevestig de keuzes en bekijk de audiostatus hierboven. De oude geluidsschakelaar en geschatte naderingsafstand sturen oorspronkelijke FM-aankondigingen niet aan. |
 | Gegevens stoppen bij schermvergrendeling | Controleer achtergrondlocatie, de brondienst en batterijbeperkingen. Open een gestopte bron opnieuw. |
 
 De weergave en terugval in Google Maps zijn gecontroleerd met gestuurde bronherhalingen. Ontvangst op de achtergrond, telefoon-/autoweergave en gesproken voorwaarschuwingen in Vela zijn gecontroleerd op een Android 16-emulator met Gearslip. Native Maps-navigatie heeft aparte controles in Gearslip en de officiële Android Auto Desktop Head Unit. Deze resultaten bewijzen niet iedere combinatie van bron, telefoon, fysiek autoscherm of nauwkeurigheid op de weg.
 
-Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
+Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
 
 Stil koud starten is ook gecontroleerd voor alle vier combinaties van Maps/Vela en Waze/Flitsmeister op een Android 16-emulator, met de aangeleverde originelen en de eigen motorstatus van de bron. Dit bewijst niet alle energieregels van fabrikanten of gedrag in een fysieke auto.
