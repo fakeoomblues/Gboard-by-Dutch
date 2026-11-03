@@ -43,7 +43,7 @@ jobs:
         run: node .forgejo/scripts/identity.cjs --history
       - name: Run regression and release-policy tests
         run: |
-          node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs
+          node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs
           .venv/bin/python -m unittest discover -s tests
   android:
     runs-on: codeberg-medium
@@ -110,6 +110,10 @@ jobs:
         run: node .forgejo/scripts/release.cjs
       - name: Verify published discovery and bundle bytes
         run: node .forgejo/scripts/discovery.cjs
+      - name: Mirror authoritative source and release tag to GitGud
+        env:
+          GITGUD_TOKEN: ${{ secrets.JOHNINNL_GITGUD_TOKEN }}
+        run: node .forgejo/scripts/mirror_gitgud.cjs
       - name: Build the published documentation
         if: github.ref == 'refs/heads/main'
         run: |

@@ -16,4 +16,4 @@ The files under `.github/` preserve the original GitHub integration. Codeberg us
 
 Local verification: all 47 existing release/identity tests and seven Codeberg integration tests pass; all 426 Python checks pass (45 intentional skips); the Android bundle plus nine extension test suites build successfully; strict MkDocs/link checks validate 95 bilingual page pairs and 191 HTML files. The recovered raw Ed25519 seed matches the existing public source key.
 
-GitGud is also authorized as a second independent destination. Its publishing token must remain separate; only build/signing secrets are shared between forges. GitLab CI integration follows the Codeberg migration.
+GitGud is also authorized as a second independent destination. Codeberg is the release authority. Its mirror step uses a separately named GitGud token only at GitGud to replicate identical source heads/tags and trigger GitLab CI. GitGud copies the exact verified signed bytes into its own packages/releases and keeps channel metadata on a separate distribution branch; it does not create competing source release tags.

@@ -21,3 +21,7 @@ local.properties
 *.xapk
 /maps/
 /yt/
+
+# Disposable CI toolchains and Python environment.
+.ci-tools/
+.venv/

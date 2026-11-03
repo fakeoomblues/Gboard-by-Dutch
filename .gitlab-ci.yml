@@ -1,0 +1,45 @@
+image: eclipse-temurin:21-jdk-jammy
+stages: [verify, release]
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+variables:
+  GIT_DEPTH: "0"
+  GIT_AUTHOR_NAME: johninnl
+  GIT_AUTHOR_EMAIL: 349981574+johninnl@users.noreply.github.com
+  GIT_COMMITTER_NAME: johninnl
+  GIT_COMMITTER_EMAIL: 349981574+johninnl@users.noreply.github.com
+before_script:
+  - source .gitlab/scripts/bootstrap.sh
+verify:
+  stage: verify
+  variables:
+    SHARED_MAPS_API_KEY: AIzaSyDOCSGATEPLACEHOLDER00000000000000
+  script:
+    - node .forgejo/scripts/identity.cjs --history
+    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs
+    - .venv/bin/python -m unittest discover -s tests
+    - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest :extensions:waze:testDebugUnitTest :extensions:flitsmeister:testDebugUnitTest :extensions:vela:testDebugUnitTest :extensions:extension:testDebugUnitTest :extensions:gearslip:testDebugUnitTest :extensions:maps-gearslip:testDebugUnitTest :extensions:soundcloud:testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
+    - .venv/bin/python scripts/medium/check_bundle.py
+    - .venv/bin/python -m unittest discover -s scripts/medium/tests
+    - .venv/bin/python scripts/generate_docs_catalog.py
+    - .venv/bin/python scripts/check_docs_app_pages.py
+    - .venv/bin/python -m mkdocs build --strict
+    - .venv/bin/python scripts/check_docs_site.py
+  artifacts:
+    when: always
+    paths: [build/docs-site/]
+    expire_in: 7 days
+release:
+  stage: release
+  needs: [verify]
+  resource_group: gitgud-release-mirror
+  rules:
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev")'
+  script:
+    - export GITLAB_TOKEN="$JOHNINNL_GITGUD_TOKEN"
+    - node .gitlab/scripts/identity.cjs
+    - git checkout -B "$CI_COMMIT_BRANCH" "$CI_COMMIT_SHA"
+    - node .gitlab/scripts/release.cjs

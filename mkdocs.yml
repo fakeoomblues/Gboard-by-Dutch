@@ -20,7 +20,7 @@ theme:
   logo: assets/brand/mark-on-dark.svg
   favicon: assets/brand/favicon.png
   icon:
-    repo: fontawesome/brands/github
+    repo: simple/codeberg
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
