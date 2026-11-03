@@ -2743,7 +2743,7 @@
   },
   "policy_boundary": "Only the native EarlyWarningReport/EarlyWarningNotification ROAD_SERVICE models acquire emergency/P0/moving-emergency semantics; an ordinary ROAD_SERVICE incident remains ordinary, and explicit CITS StationaryEmergencyVehicle source evidence overrides to P1/notice.",
   "remaining": [
-    "Concurrent distinct dangers and guidance preemption",
+    "Actual native route-guidance preemption",
     "Representative moving source lead/passage, route/parallel/replay/zone scenarios",
     "Other layouts/modes, compatibility, actual car routing and final delivery checks"
   ],
@@ -2985,5 +2985,6 @@
   },
   "semantic_policy_annex": "flitsmeister-warning-policy.json",
   "bundle_provenance": ".analysis/native-warning-bindings/road-service-fixed-bundle/provenance.json",
-  "all_18_non_fm_mpes_byte_identical_to_preceding_bundle": true
+  "all_18_non_fm_mpes_byte_identical_to_preceding_bundle": true,
+  "related_concurrent_warning_verification": "concurrent-warning-verification.json"
 }

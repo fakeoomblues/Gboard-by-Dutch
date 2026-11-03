@@ -12,7 +12,7 @@ parser.add_argument('--serial',choices=['emulator-5584','emulator-5590'],default
 parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
 parser.add_argument('--prepare-vela-ui',action='store_true')
 parser.add_argument('--warning-suite',action='store_true')
-parser.add_argument('--warning-suite-cases',choices=['all','road-service'],default='all')
+parser.add_argument('--warning-suite-cases',choices=['all','road-service','concurrent'],default='all')
 parser.add_argument('--warning-categories',type=int,choices=range(1,128),default=127)
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
 args=parser.parse_args();
