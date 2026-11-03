@@ -21,7 +21,7 @@ verify:
     - node .forgejo/scripts/identity.cjs --history
     - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs tests/test_gitlab_publish.cjs
     - .venv/bin/python -m unittest discover -s tests
-    - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest :extensions:waze:testDebugUnitTest :extensions:flitsmeister:testDebugUnitTest :extensions:vela:testDebugUnitTest :extensions:extension:testDebugUnitTest :extensions:gearslip:testDebugUnitTest :extensions:maps-gearslip:testDebugUnitTest :extensions:soundcloud:testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
+    - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
     - .venv/bin/python scripts/medium/check_bundle.py
     - .venv/bin/python -m unittest discover -s scripts/medium/tests
     - if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then export GITLAB_REPOSITORY="$CI_PROJECT_PATH"; fi
