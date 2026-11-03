@@ -3,7 +3,9 @@
 - **Status:** proposed engineering design; implementation and physical-device acceptance pending.
 - **Date:** 2026-11-02.
 - **Source baseline:** `e1314b8ea2deb4e37070de8d29715c721eed58e9`. The four principal producer/consumer/control files were checked and are unchanged from research baseline `839868dfab1624eba2265b0fa199f123eadc2d1a`.
-- **App targets:** Flitsmeister 14.17; Google Maps 26.43.05.1002020710 and its supported patched package variants; Vela Maps 0.5.2621.
+- **App targets:** Flitsmeister 15.0/1289 is the primary target following the user's 2026-11-03 update; retain the separately guarded 14.17/1287 profile. Google Maps 26.43.05.1002020710 and its supported patched package variants; Vela Maps 0.5.2621.
+
+The FM 15.0 port and reported Maps/Vela-triggered background-startup regression are tracked in [the port plan](../plans/2026-11-03-flitsmeister-15-native-warning-port.md). Existing FM 14.17 runtime evidence remains specific to its recorded artifacts. It does not establish FM 15.0 acceptance. The original 14.17 symbol examples below remain discovery history; the 15.0 profile requires its own original-DEX contracts and runtime checks.
 - **Audience:** patch implementers and reviewers.
 
 ## 1. Intent and requirements

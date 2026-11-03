@@ -155,6 +155,12 @@ def normalize_manifest(manifest, selected, version):
         if nodes:
             assert nodes[0].attrib == attributes and len(nodes[0]) == 0, name + ': exact export/foreground/permission contract'
             app.remove(nodes[0])
+    recovery = 'nl.johninnl.flitsmeister.WarningRecoveryActivity'
+    activities = [node for node in app.findall('activity') if node.get(A + 'name') == recovery]
+    assert len(activities) == int(nav), recovery + ': selected-only recovery Activity'
+    if activities:
+        assert activities[0].attrib == {A + 'name': recovery, A + 'exported': 'false'} and len(activities[0]) == 0, recovery + ': exact private recovery Activity declaration'
+        app.remove(activities[0])
     queries = doc.findall('queries')
     assert len(queries) == MANIFESTS[version]['queries_count'], 'Preserve all native package-query containers'
     for name in HOST_PACKAGES:
@@ -167,7 +173,7 @@ def normalize_manifest(manifest, selected, version):
         assert not len(queries[0])
         doc.remove(queries[0])
     # Both foreground permissions already exist in both publisher profiles;
-    # no permission is dropped while normalizing the two explicit services.
+    # no permission is dropped while normalizing the explicit services and private recovery Activity.
     return doc
 
 
@@ -331,9 +337,13 @@ def verify_pending_intent_source(root):
             'Landroid/app/PendingIntent;->getCreatorUid()I',
             'Landroid/content/pm/PackageManager;->getApplicationInfo(Ljava/lang/String;I)Landroid/content/pm/ApplicationInfo;',
             'Landroid/app/PendingIntent;->isForegroundService()Z',
-            'Landroid/app/PendingIntent;->send()V')
-    positions = [next(index for index, line in enumerate(instructions) if ref in line) for ref in refs]
-    assert positions == sorted(positions), 'Check capability creator package/UID and foreground type before send'
+            'Lnl/johninnl/navigation/startup/NavigationClient;->sendStart(Landroid/app/PendingIntent;)V')
+    positions = []
+    for ref in refs:
+        matches = [index for index, line in enumerate(instructions) if ref in line]
+        assert len(matches) == 1, 'Exact capability authorization operation before sender helper: ' + ref
+        positions.append(matches[0])
+    assert positions == sorted(positions), 'Check capability creator package/UID and foreground type before sender helper'
     start = positions[0] - 1
     assert instructions[start].startswith('if-eqz '), 'Reject absent startup capability'
     incompatible = [line.split(' ', 1)[1].split(', ')[0] for line in instructions if re.match(r'const-string \w+, "incompatible"$', line)]
@@ -346,6 +356,8 @@ def verify_pending_intent_source(root):
     app_line = next(line for line in instructions[positions[1]:positions[2]] if '->app:Landroid/app/Application;' in line)
     client_reg = app_line.split(' ', 1)[1].split(', ')[1]
     flag_reg = invoke_args(instructions[positions[2]])[-1]
+    assert invoke_args(instructions[positions[4]]) == [client_reg, token_reg], 'Send only the same creator/UID/foreground-authenticated capability through its client helper'
+    assert not any('Landroid/app/PendingIntent;->send(' in line for line in instructions), 'Authorization callback cannot bypass the guarded sender helper'
     from verify_flitsmeister import run_fragment
     for package, uid, foreground, sdk, present, valid in (
         ('provider.name', 777, True, 31, True, True),
@@ -371,6 +383,76 @@ def verify_pending_intent_source(root):
                                      stop=lambda pc, line, regs, calls: pc in (accepted, rejected),
                                      fields=lambda ref: sdk if ref == 'Landroid/os/Build$VERSION;->SDK_INT:I' else ref)
         assert stopped == (accepted if valid else rejected), 'Capability package/UID/API31 foreground rejection flow'
+
+    sender = method(root, 'Lnl/johninnl/navigation/startup/NavigationClient;->sendStart(Landroid/app/PendingIntent;)V')
+    verify_sender_options(sender)
+    verify_binding_capabilities(method(root, 'Lnl/johninnl/navigation/startup/NavigationClient;->connect(J)V'))
+    direct = [match[1] for match in METHOD.finditer(text) if 'Landroid/app/PendingIntent;->send(' in match[0]]
+    assert direct == ['sendStart(Landroid/app/PendingIntent;)V'], 'Closed capability-send cohort; no unguarded send elsewhere'
+
+
+def verify_sender_options(body):
+    """Execute actual emitted sender modes at visible/background Android boundaries."""
+    from verify_flitsmeister import run_fragment
+    assert body.splitlines()[0] == '.method private sendStart(Landroid/app/PendingIntent;)V', 'Private guarded sender helper ABI'
+    code = canonical(body)
+    local = int(re.search(r'\.locals (\d+)', body)[1])
+    basic = 'Landroid/app/ActivityOptions;->makeBasic()Landroid/app/ActivityOptions;'
+    mode = 'Landroid/app/ActivityOptions;->setPendingIntentBackgroundActivityStartMode(I)Landroid/app/ActivityOptions;'
+    bundle = 'Landroid/app/ActivityOptions;->toBundle()Landroid/os/Bundle;'
+    empty = 'Ljava/util/Set;->isEmpty()Z'
+    plain = 'Landroid/app/PendingIntent;->send()V'
+    options = 'Landroid/app/PendingIntent;->send(Landroid/content/Context;ILandroid/content/Intent;Landroid/app/PendingIntent$OnFinished;Landroid/os/Handler;Ljava/lang/String;Landroid/os/Bundle;)V'
+    refs = [line.split('}, ', 1)[1] for line in code if line.startswith('invoke-')]
+    assert sorted(refs) == sorted((basic, mode, bundle, empty, plain, options)), 'Exact sender platform-call cohort'
+    for sdk in (29, 30, 33, 34, 35, 36, 37):
+        for visible in (False, True):
+            modes, sent, made = [], [], []
+            def boundary(reference, values):
+                if reference == empty:
+                    assert values == ['resumed-activities'], 'Inspect only the actual resumed Activity set'
+                    return not visible
+                if reference == basic:
+                    assert not values
+                    made.append(True)
+                    return 'activity-options'
+                if reference == mode:
+                    assert values[0] == 'activity-options'
+                    modes.append(values[1])
+                    return 'activity-options'
+                if reference == bundle:
+                    assert values == ['activity-options']
+                    return 'sender-options'
+                if reference == plain:
+                    assert values == ['authenticated-capability'], 'Background plain-send preserves the same capability'
+                    sent.append('plain')
+                    return None
+                if reference == options:
+                    assert values == ['authenticated-capability', 'application', 0, 0, 0, 0, 0, 'sender-options'], 'Only sender options are added; native capability/context/arguments stay exact'
+                    sent.append('options')
+                    return None
+                raise AssertionError('Unexpected sender platform operation: ' + reference)
+            client = {'Lnl/johninnl/navigation/startup/NavigationClient;->visible:Ljava/util/Set;': 'resumed-activities',
+                      'Lnl/johninnl/navigation/startup/NavigationClient;->app:Landroid/app/Application;': 'application'}
+            run_fragment(code, 0, {f'v{local}': client, f'v{local + 1}': 'authenticated-capability'}, boundary,
+                         fields=lambda ref: sdk if ref == 'Landroid/os/Build$VERSION;->SDK_INT:I' else ref)
+            modern = sdk >= 34 and visible
+            assert sent == (['options'] if modern else ['plain']), 'Visible-only modern sender opt-in; background always stays plain'
+            # Android36 SDK constants: ALLOWED=1 and ALLOW_IF_VISIBLE=4, never ALLOW_ALWAYS=3.
+            assert modes == ([4 if sdk >= 36 else 1] if modern else []), 'Exact API34/35 allowed versus API36 visible-only sender mode'
+            assert len(made) == int(modern), 'No sender options created for background/older clients'
+
+
+def verify_binding_capabilities(body):
+    """The min-API29 extension folds its SDK guard to AUTO_CREATE|INCLUDE_CAPABILITIES."""
+    code = canonical(body)
+    calls = [index for index, line in enumerate(code) if 'Landroid/app/Application;->bindService(Landroid/content/Intent;Landroid/content/ServiceConnection;I)Z' in line]
+    assert len(calls) == 1, 'Singleton original startup binding boundary'
+    at = calls[0]
+    args = invoke_args(code[at])
+    assert len(args) == 4, 'Exact Context/Intent/connection/flags binding ABI'
+    flags = re.fullmatch(r'const(?:/\w+)? ' + re.escape(args[-1]) + r', (0x[0-9a-f]+)', code[at - 1])
+    assert flags and int(flags[1], 16) == 0x1001, 'API29 binding uses exactly AUTO_CREATE plus INCLUDE_CAPABILITIES'
 
 
 def verify_startup_api(root, selected):
@@ -413,27 +495,50 @@ def verify_startup_api(root, selected):
     assert any(line.startswith('throw ') for line in api[reject + 1:accepted]), 'Reject unauthorized UID before capability creation'
     from verify_flitsmeister import run_fragment
     local = int(re.search(r'\.locals (\d+)', api_body)[1])
-    for uid, owned, configured, expected in (
+    declaration = 'Landroid/os/Parcel;->dataAvail()I'
+    declared_version = 'Landroid/os/Parcel;->readInt()I'
+    observer = 'Lnl/johninnl/navigation/startup/ProviderControlService;->observeControlClient(IZ)V'
+    assert sum(declaration in line for line in api) == 2, 'Bound the optional declaration to exactly one integer'
+    assert sum(declared_version in line for line in api) == 1 and sum(observer in line for line in api) == 1, 'Singleton warning-awareness declaration and authenticated observer'
+    malformed = [index for index, line in enumerate(api[:accepted]) if line.startswith('new-instance ') and 'Ljava/lang/IllegalArgumentException;' in line]
+    assert len(malformed) == 1 and denied < malformed[0] < accepted, 'Malformed declarations reject before response creation'
+    for uid, owned, configured, authorized in (
         (900, ['forged'], '', True), (901, ['forged'], '', False),
         (901, ['app.vela'], '', True), (901, ['app.vela'], 'configured.only', False),
         (901, ['configured.only'], 'configured.only', True),
     ):
-        def caller_boundary(reference, values):
-            if reference == 'Landroid/os/Binder;->getCallingUid()I': return uid
-            if reference == 'Landroid/os/Process;->myUid()I': return 900
-            if reference.endswith('->getPackageManager()Landroid/content/pm/PackageManager;'): return 'packages'
-            if reference == 'Landroid/content/pm/PackageManager;->getPackagesForUid(I)[Ljava/lang/String;':
-                assert values == ['packages', uid], 'Package ownership lookup uses actual Binder calling UID'
-                return owned
-            if reference.endswith('->receiverPackage()Ljava/lang/String;'): return configured
-            if reference.endswith('->allowed([Ljava/lang/String;Ljava/lang/String;)Z'):
-                assert values == [owned, configured]
-                return run_allowed(allowed, *values)
-            raise AssertionError('Unexpected startup authorization operation: ' + reference)
-        this = {'Lnl/johninnl/navigation/startup/ProviderControlService$1;->this$0:Lnl/johninnl/navigation/startup/ProviderControlService;': 'service'}
-        _, _, stopped = run_fragment(api, positions[1], {f'v{local}': this}, caller_boundary,
-                                     stop=lambda pc, line, registers, calls: pc in (denied, accepted))
-        assert stopped == (accepted if expected else denied), 'Actual Binder UID/package rejection control flow'
+        for available, version_value, valid in ((0, None, True), (4, 1, True), (4, 0, False), (4, 2, False), (2, 1, False), (8, 1, False)):
+            parcel_reads, observed = [], []
+            def caller_boundary(reference, values):
+                if reference == 'Landroid/os/Parcel;->enforceInterface(Ljava/lang/String;)V':
+                    assert values == ['incoming-parcel', 'nl.johninnl.navigation.STARTUP_V1'], 'Status1 enforces its exact interface before UID lookup'
+                    return None
+                if reference == 'Landroid/os/Binder;->getCallingUid()I': return uid
+                if reference == 'Landroid/os/Process;->myUid()I': return 900
+                if reference.endswith('->getPackageManager()Landroid/content/pm/PackageManager;'): return 'packages'
+                if reference == 'Landroid/content/pm/PackageManager;->getPackagesForUid(I)[Ljava/lang/String;':
+                    assert values == ['packages', uid], 'Package ownership lookup uses actual Binder calling UID'
+                    return owned
+                if reference.endswith('->receiverPackage()Ljava/lang/String;'): return configured
+                if reference.endswith('->allowed([Ljava/lang/String;Ljava/lang/String;)Z'):
+                    assert values == [owned, configured]
+                    return run_allowed(allowed, *values)
+                if reference in (declaration, declared_version):
+                    assert values == ['incoming-parcel'], 'Read only the actual supplied startup Parcel'
+                    parcel_reads.append(reference)
+                    return available if reference == declaration else version_value
+                if reference == observer:
+                    assert values == ['service', uid, int(available == 4)], 'Observer receives authenticated UID and only validated warning awareness'
+                    observed.append(values)
+                    return None
+                raise AssertionError('Unexpected startup authorization operation: ' + reference)
+            this = {'Lnl/johninnl/navigation/startup/ProviderControlService$1;->this$0:Lnl/johninnl/navigation/startup/ProviderControlService;': 'service'}
+            _, _, stopped = run_fragment(api, 0, {f'v{local}': this, f'v{local + 1}': 1, f'v{local + 2}': 'incoming-parcel', f'v{local + 3}': 'reply-parcel', f'v{local + 4}': 0}, caller_boundary,
+                                         stop=lambda pc, line, registers, calls: pc in (denied, malformed[0], accepted))
+            expected = denied if not authorized else accepted if valid else malformed[0]
+            assert stopped == expected, 'Actual Binder UID/package and optional declaration rejection control flow'
+            assert len(observed) == int(authorized and valid), 'Observe only authenticated, valid legacy or warning-aware declarations'
+            assert authorized or not parcel_reads, 'Unauthorized callers cannot decode the optional warning declaration'
     args = invoke_args(api[capability]); flags_reg = args[-1]
     constants = [line for line in api[:capability] if re.match(r'^const(?:/\w+)? ' + flags_reg + r', ', line)]
     assert constants and int(constants[-1].split(', ')[1], 16) == 0xc000000, 'Immutable update-current provider-owned PendingIntent'

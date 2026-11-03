@@ -50,22 +50,26 @@ public final class NativeWarnings {
     private static final class Record {
         Bundle fields; long revision=1,index; boolean listed;
     }
-    /** The audited event protocol belongs to this exact pinned native artifact. */
-    static boolean supportsEventProtocol(Context context){
+    /** Patch-time original-DEX guards and the matching capture audit pin each native profile. */
+    private static int auditedNativeProfile(Context context){
         try{
             android.content.pm.PackageInfo info=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
-            return "14.17".equals(info.versionName)&&info.versionCode==1287;
-        }catch(android.content.pm.PackageManager.NameNotFoundException|RuntimeException unavailable){return false;}
+            long code=info.getLongVersionCode();
+            if("14.17".equals(info.versionName)&&code==1287)return 14;
+            if("15.0".equals(info.versionName)&&code==1289)return 15;
+            return 0;
+        }catch(android.content.pm.PackageManager.NameNotFoundException|RuntimeException unavailable){return 0;}
     }
+    static boolean supportsEventProtocol(Context context){return auditedNativeProfile(context)!=0;}
     public static synchronized WarningEndpoint init(Context context) {
         if(app==null){app=context.getApplicationContext();captureEnabled=true;}
-        if(endpoint==null)endpoint=new WarningEndpoint(app,uid->{
+        if(endpoint==null){int profile=auditedNativeProfile(app);endpoint=new WarningEndpoint(app,uid->{
             String[] packages=app.getPackageManager().getPackagesForUid(uid);
             String configured=NavigationBroadcasts.receiverPackage();
             if(!StartupProtocol.allowed(packages,configured))return null;
             for(String name:packages)if(StartupProtocol.allowed(new String[]{name},configured))return name;
             return null;
-        },new WarningCapabilities(FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),supportsEventProtocol(app)));
+        },new WarningCapabilities(profile==15?FlitsmeisterWarningTypes.MANIFEST_DIGEST_15:FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),profile!=0));}
         return endpoint;
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}

@@ -4,10 +4,11 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-/** Pinned FM14.17 semantic identifiers; coverage proof remains separate. */
+/** Pinned FM14.17/15.0 semantic identifiers; native coverage proofs are version-specific. */
 public final class FlitsmeisterWarningTypes {
     private FlitsmeisterWarningTypes() {}
     public static final String MANIFEST_DIGEST = "881aa19c7a51d5cfee1ec0acf6be9a926f7b79b5563e4326f666fe661bdb2deb";
+    public static final String MANIFEST_DIGEST_15 = "9239032c17feb8ffa39775de34381ac8b415c87d1a4d146ce47c5e918c69c888";
     private static final Set<String> TYPES = build();
     public static Set<String> required() { return TYPES; }
     private static Set<String> build() {

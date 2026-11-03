@@ -12,18 +12,20 @@ parser=argparse.ArgumentParser(description=__doc__)
 for name in ['sdk','source-apk','maps-apk','vela-apk','source-probe','maps-probe','vela-probe','output']:parser.add_argument('--'+name,type=Path,required=True)
 parser.add_argument('--death-owner',choices=['maps','vela'],default='vela')
 parser.add_argument('--scenario',choices=['handover','death-recovery'],default='handover')
+parser.add_argument('--serial',choices=['emulator-5590'],default='emulator-5590')
+parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='org.ungoogled.android.apps.maps')
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
-args=parser.parse_args();sdk=args.sdk;adb=sdk/'platform-tools/adb';serial='emulator-5584';output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
+args=parser.parse_args();sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;maps_package=args.maps_package;output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
 
 def device(*args,check=True):return subprocess.run([str(adb),'-s',serial,*map(str,args)],capture_output=True,text=True,check=check,timeout=60)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-assert device('emu','avd','name').stdout.splitlines()[0]=='native_warnings_car_api34'
+assert device('emu','avd','name').stdout.splitlines()[0]=='native_warnings_ui_api34'
 assert device('shell','getprop','ro.kernel.qemu').stdout.strip()=='1'
 assert device('shell','getprop','ro.build.version.sdk').stdout.strip()=='34'
 assert device('shell','getprop','sys.boot_completed').stdout.strip()=='1'
 assert device('shell','id','-u').stdout.strip()=='0'
-inputs={'nl.flitsmeister':args.source_apk,'com.google.android.apps.maps':args.maps_apk,'app.vela':args.vela_apk}
-record={'scenario':args.scenario,'death_owner':args.death_owner,'serial':serial,'avd':'native_warnings_car_api34','output':str(output),'control_token':token,'installed_sha256':{}}
+inputs={'nl.flitsmeister':args.source_apk,maps_package:args.maps_apk,'app.vela':args.vela_apk}
+record={'scenario':args.scenario,'death_owner':args.death_owner,'serial':serial,'avd':'native_warnings_ui_api34','output':str(output),'control_token':token,'installed_sha256':{}}
 for pkg,apk in inputs.items():
  installed=device('shell','pm','path',pkg).stdout.strip().removeprefix('package:');actual=device('shell','sha256sum',installed).stdout.split()[0];assert actual==sha(apk),(pkg,actual);record['installed_sha256'][pkg]=actual
 certs=[]
@@ -43,6 +45,14 @@ def permissions():
   if m:out[key]={'granted':m[1]=='true','flags':m[2].strip()}
  return out
 before=permissions();record['source_permissions_before']=before;changed=[];events=queue.Queue();processes={};threads=[];failure=None
+receiver_permission_baselines={};receiver_permission_changes=[]
+def receiver_permissions(package):
+ text=device('shell','dumpsys','package',package).stdout;values={}
+ for name in ['ACCESS_FINE_LOCATION','ACCESS_COARSE_LOCATION','POST_NOTIFICATIONS']:
+  permission='android.permission.'+name;match=re.search(re.escape(permission)+r': granted=(true|false), flags=\[([^\]]*)\]',text)
+  if match:values[permission]={'granted':match[1]=='true','flags':match[2].strip()}
+ assert 'android.permission.ACCESS_FINE_LOCATION' in values and 'android.permission.ACCESS_COARSE_LOCATION' in values,'Missing receiver location declaration'
+ return values
 window_before={key:device('shell','settings','get','global',key).stdout.strip() for key in ['enable_freeform_support','force_resizable_activities']};window_changed=[];record['window_settings_before']=window_before
 
 def launch(name,args):
@@ -68,9 +78,18 @@ def snapshot_preferences(package,label):
    data=tar.extractfile(item).read();state['files'][name]={'sha256':hashlib.sha256(data).hexdigest(),'uid':item.uid,'gid':item.gid,'mode':item.mode}
  return state
 preferences_before={}
-def assert_stopped(package):
- lines=device('shell','ps','-A','-o','UID,PID,NAME').stdout.splitlines()
- assert not any(line.split() and (line.split()[-1]==package or line.split()[-1].startswith(package+':')) for line in lines),package+' process is still alive'
+def assert_stopped(package,wait_seconds=0):
+ started=time.monotonic();deadline=started+wait_seconds
+ observation={'package':package,'stopped':False,'samples':[]}
+ record.setdefault('process_stop_observations',[]).append(observation)
+ while True:
+  lines=device('shell','ps','-A','-o','UID,PID,STAT,NAME').stdout.splitlines()
+  matching=[line for line in lines if line.split() and (line.split()[-1]==package or line.split()[-1].startswith(package+':'))]
+  now=time.monotonic();observation['samples'].append({'elapsed_seconds':now-started,'processes':matching})
+  if not matching:
+   observation['stopped']=True;return
+  assert now<deadline,package+' process is still alive'
+  time.sleep(min(.05,deadline-now))
 if args.scenario=='death-recovery':
  for pkg in inputs:
   assert_stopped(pkg);preferences_before[pkg]=snapshot_preferences(pkg,pkg+'-before')
@@ -94,8 +113,8 @@ def restore_preferences(package):
 def stop_output_and_preserve_evidence():
  # Kill the receiver while its genuine speaker has already acknowledged STARTED.
  record['death_force_stop_monotonic_ns']=time.monotonic_ns()
- for pkg in ['app.vela','com.google.android.apps.maps','com.google.android.tts']:device('shell','am','force-stop',pkg);assert_stopped(pkg)
- for kind,pkg in [('maps','com.google.android.apps.maps'),('vela','app.vela')]:
+ for pkg in ['app.vela',maps_package,'com.google.android.tts']:device('shell','am','force-stop',pkg);assert_stopped(pkg,wait_seconds=5)
+ for kind,pkg in [('maps',maps_package),('vela','app.vela')]:
   device('pull','/sdcard/Android/data/'+pkg+'/files/native-warning-ownership/'+token+'-progress.json',output/(kind+'-pre-death-progress.json'))
   record.setdefault('pre_death_receiver_preferences_cleanup',{})[pkg]=restore_preferences(pkg)
  audio=device('shell','dumpsys','audio').stdout;(output/'audio-after-all-outputs-stopped.txt').write_text(audio)
@@ -104,21 +123,27 @@ def stop_output_and_preserve_evidence():
  for line in players.splitlines():
   uid=re.search(r'u/pid:(\d+)/',line)
   assert not (uid and int(uid[1]) in relevant and 'state:started' in line),'Relevant engine player remains active'
- record['outputs_verified_stopped']={'packages':['com.google.android.apps.maps','app.vela','com.google.android.tts'],'relevant_uids':sorted(relevant),'active_relevant_players':0}
+ record['outputs_verified_stopped']={'packages':[maps_package,'app.vela','com.google.android.tts'],'relevant_uids':sorted(relevant),'active_relevant_players':0}
  folder='/sdcard/Android/data/nl.flitsmeister/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/probe-handover-'+token+'-outputs-stopped')
 
 def receiver(kind):
  label=kind;target=kind.removesuffix('-recovered');control=token+'-recovered' if kind.endswith('-recovered') else token
  launch(label,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',control,'nl.johninnl.warningprobe.owner.'+target+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
 def signal(kind,command):
- pkg='com.google.android.apps.maps' if kind.removesuffix('-recovered')=='maps' else 'app.vela';control=token+'-recovered' if kind.endswith('-recovered') else token;folder='/sdcard/Android/data/'+pkg+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+control+'-'+command)
+ pkg=maps_package if kind.removesuffix('-recovered')=='maps' else 'app.vela';control=token+'-recovered' if kind.endswith('-recovered') else token;folder='/sdcard/Android/data/'+pkg+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+control+'-'+command)
 try:
  for key,value in window_before.items():
   if value!='1':device('shell','settings','put','global',key,'1');window_changed.append(key)
  for perm,value in before.items():
   if not value['granted']:
    assert not any(x in value['flags'] for x in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',perm);changed.append(perm)
- launch('source',[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/'source','--scenarios','integrated_death_recovery' if args.scenario=='death-recovery' else 'integrated_handover','--death-owner','app.vela' if args.death_owner=='vela' else 'com.google.android.apps.maps','--native-id','probe-handover-'+token,'--matrix-timeout-seconds','240'])
+ for package in [maps_package,'app.vela']:
+  baseline=receiver_permissions(package);receiver_permission_baselines[package]=baseline
+  for permission,value in baseline.items():
+   if not value['granted']:
+    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant',package,permission);receiver_permission_changes.append((package,permission))
+ record['receiver_permissions_before']=receiver_permission_baselines
+ launch('source',[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/'source','--receiver-package',maps_package,'--scenarios','integrated_death_recovery' if args.scenario=='death-recovery' else 'integrated_handover','--death-owner','app.vela' if args.death_owner=='vela' else maps_package,'--native-id','probe-handover-'+token,'--matrix-timeout-seconds','240'])
  deadline=time.monotonic()+300
  while time.monotonic()<deadline:
   try:name,line=events.get(timeout=.2)
@@ -168,10 +193,16 @@ finally:
   for pkg in inputs:
    if pkg=='nl.flitsmeister' and processes.get('source') is not None and processes['source'].poll() is None:
     failure=(failure or '')+'; source runner remains live, preserve source preferences for verified rollback';continue
-   device('shell','am','force-stop',pkg)
-   try:record.setdefault('final_preferences_cleanup',{})[pkg]=restore_preferences(pkg)
+   try:
+    device('shell','am','force-stop',pkg)
+    assert_stopped(pkg,wait_seconds=5)
+    record.setdefault('final_preferences_cleanup',{})[pkg]=restore_preferences(pkg)
    except Exception as error:failure=(failure or '')+'; preference cleanup: '+repr(error)
  for perm in reversed(changed):device('shell','pm','revoke','nl.flitsmeister',perm)
+ for package,permission in reversed(receiver_permission_changes):device('shell','pm','revoke',package,permission)
+ record['receiver_permissions_after']={package:receiver_permissions(package) for package in receiver_permission_baselines}
+ record['receiver_permissions_restored_exactly']=record['receiver_permissions_after']==receiver_permission_baselines
+ if not record['receiver_permissions_restored_exactly']:failure=(failure or '')+'; receiver permission grants/flags drift'
  record['source_permissions_after']=permissions();record['source_permissions_restored_exactly']=record['source_permissions_after']==before
  if not record['source_permissions_restored_exactly']:failure=(failure or '')+'; permission drift'
  for key in reversed(window_changed):

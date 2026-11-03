@@ -23,7 +23,17 @@ public class NativeWarningVersionTest {
         Bundle result=new Bundle();service.appendWarningCapabilities(result,10001);return result;
     }
     @Test public void pinned14AdvertisesRealEventProtocol()throws Exception{assertNotNull(metadata("14.17",1287).getBinder("warning_api"));}
-    @Test public void version15KeepsLegacyControlWithoutClaiming14NativeCapture()throws Exception{
+    @Test public void pinned15AdvertisesItsAuditedEventProtocol()throws Exception{assertNotNull(metadata("15.0",1289).getBinder("warning_api"));}
+    @Test public void pinned15UsesItsOwnCompleteCoverageDigest()throws Exception{
+        NativeWarnings.setEndpointForTest(null);
+        assertNotNull(metadata("15.0",1289).getBinder("warning_api"));
+        java.lang.reflect.Field field=nl.johninnl.navigation.alerts.WarningEndpoint.class.getDeclaredField("profile");field.setAccessible(true);
+        nl.johninnl.navigation.alerts.WarningCapabilities profile=(nl.johninnl.navigation.alerts.WarningCapabilities)field.get(NativeWarnings.endpoint());
+        assertTrue(profile.complete);
+        assertEquals(nl.johninnl.navigation.alerts.FlitsmeisterWarningTypes.MANIFEST_DIGEST_15,profile.manifestDigest);
+        assertNotEquals(nl.johninnl.navigation.alerts.FlitsmeisterWarningTypes.MANIFEST_DIGEST,profile.manifestDigest);
+    }
+    @Test public void unreviewed15BuildKeepsLegacyControlWithoutClaimingNativeCapture()throws Exception{
         Bundle value=metadata("15.0",150000);assertFalse(value.containsKey("warning_api"));assertFalse(value.containsKey("warning_protocols"));
     }
     @Test public void sameNameDifferentArtifactCannotClaimCompleteCapture()throws Exception{assertFalse(metadata("14.17",1289).containsKey("warning_api"));}

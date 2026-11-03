@@ -1,6 +1,11 @@
 """Negative controls for exact current-main additions on both Flitsmeister versions."""
 import copy
+import json
+import re
 import unittest
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 import verify_flitsmeister_release as release
@@ -23,6 +28,7 @@ class ManifestTests(unittest.TestCase):
         if nav:
             ET.SubElement(app, 'service', {release.A + 'name': 'nl.johninnl.flitsmeister.NavigationControlService', release.A + 'exported': 'true'})
             ET.SubElement(app, 'service', {release.A + 'name': 'nl.johninnl.flitsmeister.NavigationEngineService', release.A + 'exported': 'false', release.A + 'foregroundServiceType': 'location'})
+            ET.SubElement(app, 'activity', {release.A + 'name': 'nl.johninnl.flitsmeister.WarningRecoveryActivity', release.A + 'exported': 'false'})
         return root
 
     def test_only_explicit_services_and_queries_are_normalized(self):
@@ -52,6 +58,80 @@ class ManifestTests(unittest.TestCase):
         ET.SubElement(doc.find('queries'), 'package', {release.A + 'name': release.HOST_PACKAGES[0]})
         with self.assertRaisesRegex(AssertionError, 'selected-only package visibility'):
             release.normalize_manifest(doc, {release.SUPPORT}, 15)
+
+    def test_recovery_activity_requires_exact_private_selected_only_declaration(self):
+        for version in (14, 15):
+            for attribute, value in ((release.A + 'exported', 'true'), (release.A + 'permission', 'unexpected.permission')):
+                with self.subTest(version=version, attribute=attribute):
+                    doc = self.manifest(True)
+                    doc.find('application/activity').set(attribute, value)
+                    with self.assertRaisesRegex(AssertionError, 'exact private recovery'):
+                        release.normalize_manifest(doc, {release.BROADCAST}, version)
+            doc = self.manifest()
+            doc.find('application').append(copy.deepcopy(self.manifest(True).find('application/activity')))
+            with self.assertRaisesRegex(AssertionError, 'selected-only recovery'):
+                release.normalize_manifest(doc, set(), version)
+            duplicate = self.manifest(True)
+            duplicate.find('application').append(copy.deepcopy(duplicate.find('application/activity')))
+            with self.assertRaisesRegex(AssertionError, 'selected-only recovery'):
+                release.normalize_manifest(duplicate, {release.BROADCAST}, version)
+
+    def test_extra_component_cannot_be_normalized_away_from_publisher_manifest(self):
+        for version in (14, 15):
+            original = self.manifest()
+            contract = {**release.MANIFESTS[version], 'hashes': {'1-0': release.xml_digest(original, 'AndroidManifest.xml')}}
+            with tempfile.TemporaryDirectory() as temporary, patch.dict(release.MANIFESTS, {version: contract}):
+                root = Path(temporary)
+                doc = self.manifest(True)
+                ET.ElementTree(doc).write(root / 'AndroidManifest.xml')
+                release.verify_manifest(root, {release.BROADCAST}, version)
+                ET.SubElement(doc.find('application'), 'activity', {release.A + 'name': 'unreviewed.ExtraActivity', release.A + 'exported': 'false'})
+                ET.ElementTree(doc).write(root / 'AndroidManifest.xml')
+                with self.assertRaisesRegex(AssertionError, 'Complete publisher manifest'):
+                    release.verify_manifest(root, {release.BROADCAST}, version)
+
+
+class SenderBoundaryTests(unittest.TestCase):
+    def fixture(self):
+        return json.loads((Path(__file__).parent / 'fixtures/navigation-warnings/navigation-client-sender.json').read_text())['methods']
+
+    def verify(self, methods):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            file = root / 'smali/nl/johninnl/navigation/startup/NavigationClient.smali'
+            file.parent.mkdir(parents=True)
+            file.write_text('.class public Lnl/johninnl/navigation/startup/NavigationClient;\n.super Ljava/lang/Object;\n' + '\n'.join(methods.values()))
+            release.verify_pending_intent_source(root)
+
+    def test_creator_uid_foreground_sender_and_binding_boundaries_match_emitted_code(self):
+        self.verify(self.fixture())
+
+    def test_missing_creator_uid_authorization_is_rejected(self):
+        methods = self.fixture()
+        methods['authorization'] = methods['authorization'].replace('->getCreatorUid()I', '->unreviewedCreatorUid()I')
+        with self.assertRaisesRegex(AssertionError, 'capability authorization'):
+            self.verify(methods)
+
+    def test_background_visibility_bypass_is_rejected(self):
+        methods = self.fixture()
+        self.assertEqual(methods['sender'].count('if-nez v0,'), 1)
+        methods['sender'] = methods['sender'].replace('if-nez v0,', 'if-eqz v0,')
+        with self.assertRaisesRegex(AssertionError, 'visible|background|sender'):
+            self.verify(methods)
+
+    def test_changed_api36_mode_is_rejected_without_shape_change(self):
+        methods = self.fixture()
+        self.assertEqual(methods['sender'].count('const/4 v1, 0x4'), 1)
+        methods['sender'] = methods['sender'].replace('const/4 v1, 0x4', 'const/4 v1, 0x3')
+        with self.assertRaisesRegex(AssertionError, 'mode'):
+            self.verify(methods)
+
+    def test_binding_capability_opt_in_cannot_be_dropped(self):
+        methods = self.fixture()
+        self.assertEqual(methods['binding'].count('0x1001'), 1)
+        methods['binding'] = methods['binding'].replace('0x1001', '0x1')
+        with self.assertRaisesRegex(AssertionError, 'binding|capabilit'):
+            self.verify(methods)
 
 
 class AudioTests(unittest.TestCase):

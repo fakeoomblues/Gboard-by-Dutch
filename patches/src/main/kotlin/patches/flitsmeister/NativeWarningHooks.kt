@@ -20,8 +20,7 @@ private const val EARLY_VIEW="Lnl/flitsmeister/fmcore/models/data/earlywarnings/
 /** Resolve every native authority before edits; parameters and native completion stay untouched. */
 context(context: BytecodePatchContext)
 internal fun bindFlitsmeisterNativeWarnings() {
-    // Version15 retains its released legacy feed; these exact native authorities are14.17-only.
-    if (isFlitsmeister15()) return
+    if (isFlitsmeister15()) { bindFlitsmeisterNativeWarnings15();return }
     val methods=flitsmeisterWarningContracts.keys.associateWith { descriptor ->
         val owner=descriptor.substringBefore("->");val signature=descriptor.substringAfter("->")
         val parameters=Regex("\\[*L[^;]+;|\\[*[ZBCSIJFD]").findAll(signature.substringAfter('(').substringBefore(')')).map{it.value}.toList()
@@ -32,6 +31,7 @@ internal fun bindFlitsmeisterNativeWarnings() {
 
 /** Testable complete transformation; validate every root before changing any method. */
 internal fun bindFlitsmeisterNativeWarnings(methods:Map<String,MutableMethod>) {
+    if(methods.keys==flitsmeisterWarningContracts15.keys){bindFlitsmeisterNativeWarnings15(methods);return}
     validateFlitsmeisterWarningMethods(methods)
     fun pick(owner:String,name:String,result:String="V",vararg parameters:String)=methods.getValue("$owner->$name(${parameters.joinToString("")})$result")
     fun shape(method:MutableMethod,registers:Int,count:Int):MutableMethod {

@@ -13,7 +13,7 @@ import uuid
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adb', type=Path, required=True)
-    parser.add_argument('--serial', choices=['emulator-5580'], default='emulator-5580')
+    parser.add_argument('--serial', choices=['emulator-5590'], default='emulator-5590')
     parser.add_argument('--target-apk', type=Path, required=True, help='Exact already-installed patched/test-signed FM APK')
     parser.add_argument('--probe-apk', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
@@ -26,7 +26,10 @@ def main():
         return subprocess.check_output([str(args.adb), '-s', args.serial, *map(str, command)], text=True, timeout=timeout).strip()
 
     def guard():
-        if adb('shell', 'getprop', 'ro.kernel.qemu') != '1' or adb('emu', 'avd', 'name').splitlines()[0] != 'native_warnings_api34':
+        if (adb('shell', 'getprop', 'ro.kernel.qemu') != '1'
+                or adb('emu', 'avd', 'name').splitlines()[0] != 'native_warnings_ui_api34'
+                or adb('shell', 'getprop', 'ro.build.version.sdk') != '34'
+                or adb('shell', 'id', '-u') != '0'):
             raise RuntimeError('Wrong device; only the owned warning AVD is permitted')
 
     def installed_hash(package):
@@ -53,21 +56,27 @@ def main():
     if installed_hash('nl.flitsmeister') != target_hash:
         raise RuntimeError('Installed FM bytes differ from the supplied patched APK; no target installation is performed')
     package = adb('shell', 'dumpsys', 'package', 'nl.flitsmeister')
-    if not re.search(r'versionName=14\.17(?:\s|$)', package) or not re.search(r'versionCode=1287(?:\s|$)', package):
-        raise RuntimeError('Target is not pinned FM 14.17/1287')
+    version = re.search(r'versionName=(\S+)', package)
+    code = re.search(r'versionCode=(\d+)(?:\s|$)', package)
+    profile = (version.group(1), code.group(1)) if version and code else None
+    if profile not in {('14.17', '1287'), ('15.0', '1289')}:
+        raise RuntimeError('Target is not pinned FM 14.17/1287 or 15.0/1289')
     adb('install', '--no-incremental', '-r', args.probe_apk)
     probe_hash = digest(args.probe_apk)
     if installed_hash('nl.johninnl.warningprobe.fm.models') != probe_hash:
         raise RuntimeError('Installed model probe differs from the built APK')
     root = Path(__file__).resolve().parents[2]
-    contract = json.loads((root / 'tests/fixtures/navigation-warnings/flitsmeister-contract.json').read_text())
+    contract_name = 'flitsmeister15-contract.json' if profile[0] == '15.0' else 'flitsmeister-contract.json'
+    contract = json.loads((root / 'tests/fixtures/navigation-warnings' / contract_name).read_text())
     expected = {'cameras': contract['enums']['Lnl/flitsmeister/fmcore/data/model/reports/SpeedCamType;'],
                 'incidents': contract['enums']['Lnl/flitsmeister/fmcore/data/model/reports/IncidentType;'],
                 'early': contract['enums']['Lnl/flitsmeister/earlywarning/model/EarlyWarningTypeEnum;'],
                 'services': contract['enums']['Lnl/flitsmeister/fmcore/data/model/reports/ServiceVehicle$Type;'],
                 'base_types': contract['enums']['Lnl/flitsmeister/fmcore/data/model/reports/BaseReportType;']}
     expected['lane_closed'] = ['ANY_MIDDLE_LANE', 'LEFT_LANE', 'RIGHT_LANE']
-    result = {'run_id': str(uuid.uuid4()), 'serial': args.serial, 'avd': 'native_warnings_api34',
+    result = {'run_id': str(uuid.uuid4()), 'serial': args.serial, 'avd': 'native_warnings_ui_api34',
+              'source_version': profile[0], 'source_version_code': int(profile[1]),
+              'original_contract_sha256': contract['artifact_sha256'],
               'installed_target_sha256': target_hash, 'installed_probe_sha256': probe_hash, 'languages': {}}
     for language in args.languages:
         guard()

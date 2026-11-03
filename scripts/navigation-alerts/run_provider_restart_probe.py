@@ -12,7 +12,7 @@ if not __debug__:
 parser=argparse.ArgumentParser(description=__doc__)
 for name in ['sdk','source-apk','maps-apk','vela-apk','source-probe','maps-probe','vela-probe','output']:parser.add_argument('--'+name,type=Path,required=True)
 parser.add_argument('--receiver',choices=['maps','vela'],default='maps')
-parser.add_argument('--serial',choices=['emulator-5584','emulator-5590'],default='emulator-5584')
+parser.add_argument('--serial',choices=['emulator-5590'],default='emulator-5590')
 parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
 parser.add_argument('--prepare-vela-ui',action='store_true')
 parser.add_argument('--warning-suite',action='store_true')
@@ -25,7 +25,7 @@ if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passa
 if args.warning_suite_cases in ['moving-camera','delayed-passage'] and args.serial!='emulator-5590':parser.error('Spatial replay and moving camera cases require the isolated phone AVD')
 if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
 if args.warning_categories!=127 and (not args.warning_suite or args.warning_suite_cases!='road-service'):parser.error('A restricted category mask is only supported for the focused road-service suite')
-sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd={'emulator-5584':'native_warnings_car_api34','emulator-5590':'native_warnings_ui_api34'}[serial];output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
+sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd='native_warnings_ui_api34';output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
 
 def device(*args,check=True):return subprocess.run([str(adb),'-s',serial,*map(str,args)],capture_output=True,text=True,check=check,timeout=60)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -105,6 +105,7 @@ def restore_preferences(package,baseline=None):
  return {'restored_exactly':True,'files':after['files']}
 
 receiver_package=args.maps_package if args.receiver=='maps' else 'app.vela'
+route_package=receiver_package
 working_preferences=dict(preferences_before)
 vela_permission_changes=[]
 vela_permissions_before={}
@@ -130,10 +131,12 @@ def source_report(name):
  results=list((output/name).glob('*/result.json'));assert len(results)==1
  value=json.loads(results[0].read_text());assert value['network_and_lease_restored'] and not value['cleanup_errors'];return results[0],value
 
-def vela_permissions(package='app.vela'):
+def vela_permissions(package='app.vela',declared_only=False):
  text=device('shell','dumpsys','package',package).stdout;out={}
  for name in ['ACCESS_FINE_LOCATION','ACCESS_COARSE_LOCATION','POST_NOTIFICATIONS']:
-  key='android.permission.'+name;match=re.search(re.escape(key)+r': granted=(true|false), flags=\[([^\]]*)\]',text);assert match,'Missing Vela permission '+key;out[key]={'granted':match[1]=='true','flags':match[2].strip()}
+  key='android.permission.'+name;match=re.search(re.escape(key)+r': granted=(true|false), flags=\[([^\]]*)\]',text)
+  if declared_only and match is None:continue
+  assert match,'Missing receiver permission '+key;out[key]={'granted':match[1]=='true','flags':match[2].strip()}
  return out
 
 def ui_dump(label):
@@ -157,10 +160,11 @@ def ui_scroll(tree):
  scrollers=[node for node in tree.iter('node') if node.get('package')=='app.vela' and node.get('scrollable')=='true'];assert scrollers,'No actual Vela scroll surface';bounds=[list(map(int,re.findall(r'\d+',node.get('bounds')))) for node in scrollers];x1,y1,x2,y2=max(bounds,key=lambda b:(b[2]-b[0])*(b[3]-b[1]));device('shell','input','swipe',(x1+x2)//2,y1+(y2-y1)*4//5,(x1+x2)//2,y1+(y2-y1)//5,'350')
 def prepare_vela_ui():
  global vela_permissions_before
- vela_permissions_before=vela_permissions();record['vela_permissions_before']=vela_permissions_before
- for permission,value in vela_permissions_before.items():
-  if not value['granted']:
-   assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','app.vela',permission);vela_permission_changes.append(permission)
+ vela_permissions_before=route_permissions_before if args.warning_suite else vela_permissions();record['vela_permissions_before']=vela_permissions_before
+ if not args.warning_suite:
+  for permission,value in vela_permissions_before.items():
+   if not value['granted']:
+    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','app.vela',permission);vela_permission_changes.append(permission)
  record['vela_permissions_during']=vela_permissions();assert all(value['granted'] for value in record['vela_permissions_during'].values())
  device('shell','am','start','-W','--windowingMode','1','-n','app.vela/.Launcher')
  tree=ui_dump('onboarding-initial');ui_picture('onboarding-initial');ui_click(tree,'Get started');time.sleep(.5)
@@ -211,12 +215,16 @@ try:
  for permission,value in before.items():
   if not value['granted']:
    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
- if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
-  route_package=args.maps_package if args.receiver=='maps' else 'app.vela'
-  route_permissions_before=vela_permissions(route_package);record['route_permissions_before']=route_permissions_before
+ if args.warning_suite:
+  # Complete reviewed receiver permission setup before its real Activity can request it mid-corpus.
+  # Never synthesize a permission absent from this installed receiver's runtime declaration.
+  route_permissions_before=vela_permissions(route_package,declared_only=True);record['route_permissions_before']=route_permissions_before
+  record['reviewed_receiver_permission_package']=route_package
   for permission,value in route_permissions_before.items():
-   if args.receiver=='maps' and not value['granted']:
+   if not value['granted']:
     assert not any(flag in value['flags'] for flag in ['SYSTEM_FIXED','POLICY_FIXED','USER_FIXED']);device('shell','pm','grant',route_package,permission);route_permission_changes.append(permission)
+  record['route_permissions_during']=vela_permissions(route_package,declared_only=True);assert all(value['granted'] for value in record['route_permissions_during'].values())
+ if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
   (output/'route-location-before.txt').write_text(device('shell','dumpsys','location').stdout);device('emu','geo','fix','4.9000','52.3700');record['controlled_route_start']={'latitude':52.3700,'longitude':4.9000}
  if args.prepare_vela_ui:prepare_vela_ui()
  if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':
@@ -315,9 +323,9 @@ finally:
   record['hidden_api_policy_after']=device('shell','settings','get','global','hidden_api_policy').stdout.strip();record['hidden_api_policy_restored_exactly']=record['hidden_api_policy_after']==hidden_policy_before
  for permission in reversed(route_permission_changes):device('shell','pm','revoke',route_package,permission)
  for permission in reversed(vela_permission_changes):device('shell','pm','revoke','app.vela',permission)
- if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
-  record['route_permissions_after']=vela_permissions(route_package);record['route_permissions_restored_exactly']=record['route_permissions_after']==route_permissions_before
-  if not record['route_permissions_restored_exactly']:failure=(failure or '')+'; Maps route permission drift'
+ if 'route_permissions_before' in record:
+  record['route_permissions_after']=vela_permissions(route_package,declared_only=True);record['route_permissions_restored_exactly']=record['route_permissions_after']==route_permissions_before
+  if not record['route_permissions_restored_exactly']:failure=(failure or '')+'; receiver permission grants/flags drift'
  if args.prepare_vela_ui:
   record['vela_permissions_after']=vela_permissions();record['vela_permissions_restored_exactly']=record['vela_permissions_after']==vela_permissions_before
   if not record['vela_permissions_restored_exactly']:failure=(failure or '')+'; Vela permission drift'

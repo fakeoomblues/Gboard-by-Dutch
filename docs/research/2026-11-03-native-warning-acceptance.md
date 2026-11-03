@@ -1,5 +1,26 @@
 # Native warning acceptance evidence
 
+## FM15 acceptance checkpoint
+
+The FM15.0/1289 port uses its own guarded contracts and manifest. Records below this checkpoint describe earlier candidates unless they explicitly name FM15. They remain regression evidence and do not establish acceptance on the new artifacts.
+
+The current controlled FM15 integration binds source APK `13dc9673fa32e662b20c7e3afadd03d3e230a18814027cd1d86a45ea19eef765`, renamed Maps APK `3285d836bfb7caefd361fec42d7ed080017021f885eabf331b02b88287fb8839`, and Vela APK `958bd90f477c45d8210f797b34e8649162d4153238419ab2ab7af856cd9edf19` to signed MPP `86728ba08899b61de807e16da8f80a45f0ed67f041ac3c779e7f495824e71064`.
+
+| Boundary | Current FM15 evidence | Limit |
+| --- | --- | --- |
+| Native payload delivery | Eleven cases through each receiver; exact semantic payload/language, unique native STARTED/COMPLETED and matching source attempt/UID acknowledgements. `flitsmeister15-integration-verification.json`. | Controlled original native entries; not natural detection of every enum. |
+| Moving camera | Three speeds through each receiver, actual source native relevance/radius, receiver GPS after the target, completion before crossing and natural native clear. `flitsmeister15-moving-verification.json`. | Straight private trajectories; bend/parallel-route acceptance remains open. |
+| Concurrent priorities | Two P1 warnings, P0 preemption of P1, and two P0 warnings through each receiver. Unique native callbacks and matching source acknowledgements; no playback interval overlap. `flitsmeister15-concurrent-verification.json`. | A polled attempt flag may miss a short start; the preserved callback and matching source STARTED are authoritative. |
+| Native guidance | Actual app-created routes, existing native guidance stopped before external playback, and later native regeneration. `flitsmeister15-guidance-verification.json`. | Maps proves creation of a distinct current-route pull job, not its later playback. Vela proves new native content starts on the same route; archived fixes do not prove fresh-GPS causality. |
+| Receiver handover | Both receiver UIDs bound, contender BUSY, explicit owner disconnect, next owner plays once. `flitsmeister15-handover-verification.json`. | Accepted subrun only; its containing cohort failed a later death case, which remains recorded. |
+| Receiver death and parked recovery | Actual STARTED before deliberate force-stop; durable source attempt remains UNCERTAIN through lease expiry; live-owner recovery refused; both parked confirmations required; positive platform output-stop evidence; only a distinct future authority plays. `flitsmeister15-death-recovery-verification.json`. | Receiver preferences were restored to baseline before restart. This proves the source fence and controlled parked recovery, not receiver-local ledger persistence, spontaneous-crash cause or provider restart. |
+
+These proofs are in `tests/fixtures/navigation-warnings/`; their compressed baselines and independent verifiers retain source, receiver and cleanup joins. The death cases come from two cohorts: Maps passed in a cohort whose later Vela case failed an immediate process-exit assertion; the Vela-only rerun passed with a bounded observed exit barrier. Both cohorts restored exact original app state and removed their owned snapshots/helpers. The earlier failure remains explicit.
+
+Full FM15 acceptance remains open for directed route passage, native zone/phase/repeat behavior, targeted modes/engines/failure/UI boundaries, provider restart and lifecycle, compatibility variants, final timing, and owned car/projection acceptance. Physical phone/car acceptance and stable promotion also remain separate gates. Only task-owned emulator 5590 may be used for current runtime work; the historical shared-emulator references below are not current authorization. No native feature release is claimed.
+
+## Earlier artifact evidence
+
 Implementation remains in progress against the full [reviewed design](../superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). Producer capture coverage has now been reconciled and enabled for the pinned artifact; full integrated runtime/delivery acceptance remains unproved.
 
 | Requirement | Current evidence | Remaining acceptance |

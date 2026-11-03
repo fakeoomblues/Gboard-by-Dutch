@@ -45,6 +45,33 @@ class WarningBindingTests(unittest.TestCase):
         self.assertEqual(policy['capture_manifest_sha256'], digest)
         self.assertEqual(policy['native_original_sha256'], json.loads(raw)['artifact_sha256'])
 
+    def test_fm15_advertisement_joins_its_own_complete_artifact_and_runtime_audits(self):
+        folder = ROOT / 'tests/fixtures/navigation-warnings'
+        raw = (folder / 'flitsmeister15-coverage.json').read_bytes()
+        manifest = json.loads(raw)
+        contract = json.loads((folder / 'flitsmeister15-contract.json').read_text())
+        self.require_api().verify_manifest(contract, manifest, require_complete=True)
+        source = (ROOT / 'support/navigation-alerts/src/main/java/nl/johninnl/navigation/alerts/FlitsmeisterWarningTypes.java').read_text()
+        self.assertEqual(re.search(r'MANIFEST_DIGEST_15 = "([0-9a-f]{64})"', source)[1], hashlib.sha256(raw).hexdigest())
+        producer = json.loads((folder / manifest['completion_evidence']).read_text())
+        self.assertEqual(producer['source_version'], '15.0/1289')
+        self.assertTrue(producer['producer_capture_complete'])
+        self.assertFalse(producer['native_detection_quality_claimed'])
+        self.assertEqual(producer['original_base_sha256'], contract['artifact_sha256'])
+        self.assertEqual(set(producer['callback_roots']), set(contract['warning_entry_points']))
+        self.assertEqual(len(producer['scenarios']), 8)
+        self.assertTrue(all(row['probe_completed'] and row['managed_mute_verified']
+                            and row['max_active_playbacks'] == 0 for row in producer['scenarios'].values()))
+        self.assertEqual(set(producer['model_languages']), {'en', 'nl'})
+        self.assertTrue(all(row['adapter_calls'] == 170 and row['inventory_members'] == 159
+                            for row in producer['model_languages'].values()))
+        scope_raw = (folder / producer['nonwarning_scope']).read_bytes()
+        self.assertEqual(hashlib.sha256(scope_raw).hexdigest(), producer['nonwarning_scope_sha256'])
+        scope = json.loads(scope_raw)
+        self.assertEqual(scope['blockers'], [])
+        self.assertEqual(set(scope['members']), {'BASEREPORT', 'CITS_PARKING', 'ENVIRONMENTAL_ZONE',
+                                               'FM_OFFICE', 'LBA', 'PARKED_LOCATION', 'TOLLING'})
+
     def test_exact_contract_accepts_same_artifact_and_body(self):
         api = self.require_api()
         api.verify_contract(self.sample(), copy.deepcopy(self.sample()))

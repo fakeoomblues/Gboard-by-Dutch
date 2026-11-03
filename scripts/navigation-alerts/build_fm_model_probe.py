@@ -19,6 +19,9 @@ def main():
     args = parser.parse_args()
     probe_class = 'NativeFmModelProbe' if args.kind == 'models' else 'NativeFmCaptureProbe'
     source = Path(__file__).with_name('probe') / (probe_class + '.java')
+    sources = [source]
+    if args.kind == 'capture':
+        sources.append(source.with_name('Fm15PrivateMovingInput.java'))
     tools = args.sdk / 'build-tools/36.0.0'
     android = args.sdk / 'platforms/android-36/android.jar'
     args.output.mkdir(parents=True, exist_ok=True)
@@ -29,9 +32,10 @@ def main():
     with tempfile.TemporaryDirectory(prefix='compile-', dir=args.output) as temporary:
         classes, dex = Path(temporary) / 'classes', Path(temporary) / 'dex'
         classes.mkdir();dex.mkdir()
-        digest = hashlib.sha256(source.read_bytes()).hexdigest()
-        run('javac', '--release', '8', '-cp', android, '-d', classes, source)
-        if hashlib.sha256(source.read_bytes()).hexdigest() != digest:
+        source_hashes = {item.name: hashlib.sha256(item.read_bytes()).hexdigest() for item in sources}
+        digest = source_hashes[source.name]
+        run('javac', '--release', '8', '-cp', android, '-d', classes, *sources)
+        if any(hashlib.sha256(item.read_bytes()).hexdigest() != source_hashes[item.name] for item in sources):
             raise RuntimeError('Probe source changed during compilation')
         run(tools / 'd8', '--min-api', '29', '--lib', android, '--output', dex, *sorted(classes.rglob('*.class')))
         manifest = args.output / 'AndroidManifest.xml'
@@ -51,6 +55,7 @@ def main():
         run(tools / 'apksigner', 'verify', apk)
         (args.output / 'build-report.json').write_text(json.dumps({
             'source_sha256': digest, 'probe_sha256': hashlib.sha256(apk.read_bytes()).hexdigest(),
+            'sources_sha256': source_hashes,
             'android_jar_sha256': hashlib.sha256(android.read_bytes()).hexdigest(),
             'target_package': 'nl.flitsmeister', 'target_model_classes_in_probe': False, 'kind': args.kind,
         }, indent=2) + '\n')

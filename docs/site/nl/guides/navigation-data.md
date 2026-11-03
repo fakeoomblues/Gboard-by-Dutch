@@ -2,9 +2,9 @@
 
 Gebruik Google Maps of Vela Maps voor navigatie terwijl gepatchte Waze of Flitsmeister op de achtergrond snelheid, maximumsnelheden en beschikbare wegmeldingen levert. De apps delen die waarnemingen lokaal op dezelfde telefoon. Zowel de bron als de ontvangende kaartapp moet worden gepatcht.
 
-!!! important "Automatisch starten: zet locatietoegang van de bron op ‘Altijd toestaan’"
+!!! important "Flitsmeister blijft op de achtergrond: werk ook Maps of Vela bij"
 
-    Stel dit in voor **Waze / De-Waze of Flitsmeister zelf**, ook als Maps of Vela al locatietoegang heeft. **‘Alleen toestaan bij gebruik van de app’ is onvoldoende voor betrouwbaar stil starten op de achtergrond.** Volg [stap 2](#2-stel-de-bron-eenmaal-in) vóór je de bron in je kaartapp kiest.
+    Rond de broninstellingen eenmaal af en kies daarna **Flitsmeister** terwijl de ontvangende kaart zichtbaar is. De herstelde overdracht kan FM starten met locatietoegang **Alleen toestaan bij gebruik van de app**, zonder FM's scherm te openen. Een oudere Maps/Vela-patch kan bij die overdracht mislukken terwijl FM al locatietoegang heeft. Deze oplossing is gecontroleerd op een Android 14-emulator; de Android 16-telefooncontrole staat nog open. Volg [stap 2](#2-stel-de-bron-eenmaal-in).
 
 ## Wat de koppeling toevoegt
 
@@ -25,7 +25,7 @@ Kies één bron en één ontvangende kaartapp. Beide bronnen installeren kan ook
 | App | Ondersteund origineel | Benodigde patch |
 | --- | --- | --- |
 | [Waze](../apps/waze.md) | 5.26.90.901, volledige APKM | **Broadcast navigation data** |
-| [Flitsmeister](../apps/flitsmeister.md) | 14.17, volledige APKS | **Broadcast navigation data**; houd **Fix PairIP startup** aan |
+| [Flitsmeister](../apps/flitsmeister.md) | 14.17 / 1287 of 15.0 / 1289, volledige APKS/APKM | **Broadcast navigation data**; houd **Fix PairIP startup** aan |
 | [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710, volledige APK | **Waze alerts**; kies ook **Native navigation for Gearslip and Android Auto** voor de native auto-interface |
 | [Vela Maps](../apps/vela.md) | 0.5.2621, volledige APK | **External speed controls** |
 
@@ -37,16 +37,16 @@ De bronpatch heeft een optionele instelling **Receiver package**. Laat die leeg 
 
 1. Open gepatchte **Waze / De-Waze** of **Flitsmeister** eenmaal en rond de eerste instellingen af. Geef de app locatietoegang.
 2. Houd het pictogram van die **bronapp** ingedrukt en kies **App-info**. Of open Android **Instellingen → Apps → Waze / De-Waze / Flitsmeister**.
-3. Open **Machtigingen → Locatie → Altijd toestaan**. Menunamen kunnen per telefoon verschillen. Kies niet alleen **Alleen toestaan bij gebruik van de app**. Gebruik je beide bronnen, stel dit dan voor elke bron apart in.
-4. Ga terug naar **Google Maps of Vela Maps** en kies **De-Waze** of **Flitsmeister**. Controleer de bronstatus; de kaartapp probeert de bron automatisch opnieuw te starten.
+3. Open **Machtigingen → Locatie**. Voor **Flitsmeister** kan exacte locatie met **Alleen toestaan bij gebruik van de app** volstaan wanneer bijgewerkte Maps/Vela de bron vanuit een zichtbare kaart start. Je hoeft FM voor die overdracht niet opnieuw te openen. Houd voor **Waze / De-Waze** **Altijd toestaan** aan voor de beschreven achtergrondstart. Toestemming geldt per bronapp.
+4. Ga terug naar bijgewerkte **Google Maps of Vela Maps**, houd de kaart zichtbaar en kies **De-Waze** of **Flitsmeister**. Controleer de bronstatus; de kaartapp probeert herstelbare startfouten automatisch opnieuw.
 
 Voor het wijzigen van deze Android-toestemming hoef je de apps niet opnieuw te patchen.
 
-**Zie je ‘Altijd toestaan’ niet?** Geef eerst locatietoegang tijdens gebruik, open de bron eenmaal en kijk daarna opnieuw bij de Android-machtigingen. Vanaf Android 11 staat achtergrondlocatie op deze instellingenpagina, niet in de eerste toestemmingsvraag. Zie de [uitleg van Android](https://developer.android.com/develop/sensors-and-location/location/permissions/background).
+**Achtergrondlocatie nodig voor een andere startsituatie?** Vanaf Android 11 geef je **Altijd toestaan** op de instellingenpagina van de app, na de eerste locatietoestemming. Zie de [uitleg van Android](https://developer.android.com/develop/sensors-and-location/location/permissions/background). Dit is geen algemene eis voor de herstelde overdracht vanuit een zichtbare kaart naar FM.
 
-Deze toestemming laat de bron locatie gebruiken terwijl je in Maps/Vela zit of het scherm uit staat. Je kunt haar later op dezelfde plek intrekken. Controleer de batterijbeperkingen als updates stoppen zodra het scherm uitgaat. De overlay mag uit blijven.
+Android kan een herstart beperken wanneer alle ontvangende apps verborgen zijn. Ga terug naar de ontvangende kaart en controleer de status; de koppeling houdt FM's scherm gesloten. Controleer de batterijbeperkingen als updates stoppen zodra het scherm uitgaat. De overlay mag uit blijven.
 
-Met de bijgewerkte patches aan beide kanten start de gekozen rij-engine automatisch zodra je Maps/Vela opent of **De-Waze**/**Flitsmeister** kiest. Het scherm van de bronapp opent niet. Android toont de normale doorlopende melding voor de locatiedienst. Tijdens deze beheerde sessie blijft de bron gedempt: Maps/Vela geeft de gesproken waarschuwingen en geluiden. Opgeslagen geluidsinstellingen en het telefoonvolume blijven ongewijzigd; normaal brongeluid keert terug nadat de deelsessie is verlopen. De kaartapp controleert de eigen motorstatus van de bron tijdens zichtbaar gebruik en actieve navigatie, herstelt de verbinding na een gestopt proces en probeert een gestopte motor opnieuw te starten met tussenpozen. Ontbrekende GPS- of wegwaarnemingen veroorzaken geen herstart en worden niet als verse gegevens behandeld.
+Met de bijgewerkte patches aan beide kanten start de gekozen rij-engine automatisch zodra je Maps/Vela opent of **De-Waze**/**Flitsmeister** kiest. Het scherm van de bronapp opent niet. Android beheert de bron als foregroundlocatiedienst; de zichtbaarheid van de melding hangt af van de toestemming voor meldingen. Tijdens deze beheerde sessie blijft de bron gedempt: Maps/Vela geeft de gesproken waarschuwingen en geluiden. Opgeslagen geluidsinstellingen en het telefoonvolume blijven ongewijzigd; normaal brongeluid keert terug nadat de deelsessie is verlopen. De kaartapp controleert de eigen motorstatus van de bron tijdens zichtbaar gebruik en actieve navigatie, herstelt de verbinding na een gestopt proces en probeert een gestopte motor opnieuw te starten met tussenpozen. Ontbrekende GPS- of wegwaarnemingen veroorzaken geen herstart en worden niet als verse gegevens behandeld.
 
 De bronstatus maakt onderscheid tussen starten, een actieve motor, ontbrekende locatietoegang en een ontbrekende start-API. Patch beide apps opnieuw als de API ontbreekt; oudere bronpatches kunnen nog steeds gegevens leveren nadat je de bron handmatig opent. Blokkeert Android een herstart op de achtergrond, dan meldt de kaartapp dit zonder de bron te openen. Bij terugkeer naar de kaart volgt een nieuwe stille poging. De koppeling gebruikt geen root of Shizuku.
 
@@ -80,9 +80,9 @@ Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en om
 
 ## Native waarschuwingsaudio van Flitsmeister
 
-Deze waarschuwingsopties horen bij de ontwikkelversie en worden nog gevalideerd. Emulatorcontroles omvatten de oorspronkelijke waarschuwingstekst, flitspaalmeldingen tijdens beweging en vertraagde levering aan beide kaartapps. Controles van autogeluid, compatibiliteit en levensduur staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
+Deze waarschuwingsopties horen bij de ontwikkelversie en worden nog gevalideerd. De waarschuwingsmodellen van Flitsmeister 15.0 en de opname van oorspronkelijke gebeurtenissen hebben de broncontroles doorstaan. Eerdere ontvangercontroles tijdens beweging en bij vertraagde levering gebruikten 14.17; volledige integratie-, bewegings- en autocontroles voor 15.0 staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
 
-Gebruik voor deze waarschuwingsmodus **Flitsmeister 14.17 (versiecode 1287)** met de bijbehorende bijgewerkte ontvangerpatch. FM 15 behoudt de oudere navigatiegegevens, maar schakelt deze nieuwe waarschuwingsmodus niet in. Een oudere kaartapp kan haar oudere koppeling blijven gebruiken. Werk die kaartapp bij of schakel daar Flitsmeister uit voordat een andere kaart de waarschuwingsaudio overneemt.
+Deze waarschuwingsmodus in ontwikkeling richt zich op **Flitsmeister 14.17 (versiecode 1287)** en nu ook **15.0 (versiecode 1289)**, met bijbehorende bijgewerkte bron- en ontvangerpatches. Bestaande basisondersteuning voor FM15 maakt een oudere geïnstalleerde bundel nog geen versie met native waarschuwingen. Werk beide kanten samen bij zodra deze wijziging beschikbaar is. Een oudere kaartapp kan haar oudere koppeling blijven gebruiken. Werk die kaartapp bij of schakel daar Flitsmeister uit voordat een andere kaart de waarschuwingsaudio overneemt.
 
 Kies met compatibele builds aan beide kanten **Flitsmeister**. Open in Maps **Flitsmeister warning audio** en **Flitsmeister warning categories**, daarna **Review Flitsmeister warnings**, en tik in het bevestigingsvenster op **Use these choices**. Deze Maps-opties hebben Engelse namen. Open in Vela **Flitsmeister-waarschuwingsaudio**, controleer audio en categorieën en tik op **Deze waarschuwingskeuzes gebruiken**. Eerdere expliciete demp- en typekeuzes blijven geselecteerd; een expliciete Maps-geluidskeuze wordt Toon. Kaartspelden staan los van hoorbare categorieën.
 
@@ -113,17 +113,20 @@ Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen ver
 
 | Probleem | Controleer |
 | --- | --- |
-| **Android blocked background startup** of De-Waze blijft onbeschikbaar | Zet bij **Waze / De-Waze → App-info → Machtigingen → Locatie** de toegang op **Altijd toestaan** en ga terug naar Maps/Vela. Volg [stap 2](#2-stel-de-bron-eenmaal-in). |
+| **Android blocked background startup** bij Flitsmeister | Werk naast FM ook Maps/Vela bij, controleer FM's toegang tot de exacte locatie en kies FM terwijl de ontvangende kaart zichtbaar is. FM's scherm blijft gesloten; altijd toegestane locatie is niet de algemene oplossing voor een oudere ontvanger. |
+| De-Waze blijft onbeschikbaar | Zet bij **Waze / De-Waze → App-info → Machtigingen → Locatie** de toegang op **Altijd toestaan** en ga terug naar Maps/Vela. Volg [stap 2](#2-stel-de-bron-eenmaal-in). |
 | Flitsmeister werkt, maar De-Waze niet | Locatietoestemming geldt per app. Controleer **Altijd toestaan** ook voor **Waze / De-Waze**; Flitsmeisters toestemming geldt niet voor Waze. |
 | Bron blijft daarna onbeschikbaar | Controleer of beide apps de bijgewerkte patches hebben, de eerste broninstellingen zijn afgerond en de juiste bron is gekozen. Controleer de bronstatus en de batterijbeperkingen van de bronapp. |
 | Eén ontvanger krijgt gegevens, een andere niet | Verwijder of corrigeer de optionele **Receiver package** van de bronpatch en patch de bron opnieuw als je die optie wijzigt. |
 | Snelheid werkt, maar geen gemiddelde | Er is een verse waarneming van een actief traject nodig, gevolgd door voldoende tijd en afstand. Alleen een cameramelding is geen actief traject. |
 | Geen kaartspelden in Maps | Zet kaartweergave en de gewenste speldcategorieën aan. Spelden vereisen een verse melding met een bekende positie. |
 | FM-gegevens komen aan, maar waarschuwingsaudio ontbreekt | Controleer voor de nieuwe modus de aparte FM-audio en categorieën, bevestig de keuzes en bekijk de audiostatus hierboven. De oude geluidsschakelaar en geschatte naderingsafstand sturen oorspronkelijke FM-aankondigingen niet aan. |
-| Gegevens stoppen bij schermvergrendeling | Controleer achtergrondlocatie, de brondienst en batterijbeperkingen. Open een gestopte bron opnieuw. |
+| Gegevens stoppen bij schermvergrendeling | Controleer de bronstatus en batterijbeperkingen. Ga terug naar de ontvangende kaart voor een nieuwe stille startpoging. Voor een volledig verborgen herstart gelden andere Android-beperkingen dan bij het kiezen van FM in een zichtbare kaart. |
 
 De weergave en terugval in Google Maps zijn gecontroleerd met gestuurde bronherhalingen. Ontvangst op de achtergrond, telefoon-/autoweergave en gesproken voorwaarschuwingen in Vela zijn gecontroleerd op een Android 16-emulator met Gearslip. Native Maps-navigatie heeft aparte controles in Gearslip en de officiële Android Auto Desktop Head Unit. Deze resultaten bewijzen niet iedere combinatie van bron, telefoon, fysiek autoscherm of nauwkeurigheid op de weg.
 
 Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
 
 Stil koud starten is ook gecontroleerd voor alle vier combinaties van Maps/Vela en Waze/Flitsmeister op een Android 16-emulator, met de aangeleverde originelen en de eigen motorstatus van de bron. Dit bewijst niet alle energieregels van fabrikanten of gedrag in een fysieke auto.
+
+De nieuwere FM15-startoplossing is apart gecontroleerd op Android 14 met exacte locatie toegestaan, achtergrondlocatie geweigerd en meldingen geweigerd. Beide bijgewerkte kaartapps startten de echte FM-motor terwijl FM's scherm gesloten bleef. Voor Android 16 bestaan unitcontroles en onderbouwing uit de platformbron; de controle op de fysieke telefoon staat nog open. Zie het [startbewijs en de grenzen](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-03-fm15-background-startup.md).

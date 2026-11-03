@@ -21,22 +21,26 @@ public final class NativeFmModelProbe extends Instrumentation {
     private Class<?> capture;
     private Context context;
     private final List<Bundle> events=new ArrayList<>();
-    private boolean bootstrappedConfiguration;
+    private boolean bootstrappedConfiguration,fm15;
+    private String versionName;
+    private long versionCode;
     private Bundle arguments;
     @Override public void onCreate(Bundle args){super.onCreate(args);arguments=args==null?new Bundle():args;start();}
     @Override public void onStart(){
-        Bundle output=new Bundle();
+        Bundle output=new Bundle();JSONObject report=new JSONObject();
         try{
             Context target=getTargetContext();check(target.getPackageName().equals("nl.flitsmeister"),"Wrong target");
+            admitVersion(target,report);
             Configuration configuration=new Configuration(target.getResources().getConfiguration());configuration.setLocale(Locale.forLanguageTag(arguments.getString("language","en")));
             context=target.createConfigurationContext(configuration);
             bootstrapNativeConfiguration();
             capture=Class.forName("nl.johninnl.flitsmeister.NativeWarnings");
             capture.getDeclaredMethod("citsSource",Object.class); // Reject the earlier checkpoint APK.
             Method reset=capture.getDeclaredMethod("resetForTest",Context.class,Consumer.class);reset.setAccessible(true);reset.invoke(null,context,(Consumer<Bundle>)events::add);
-            JSONObject report=new JSONObject();report.put("language",configuration.getLocales().get(0).toLanguageTag());
+            report.put("language",configuration.getLocales().get(0).toLanguageTag());
             report.put("target_uid",target.getApplicationInfo().uid);report.put("process_uid",Process.myUid());report.put("process_pid",Process.myPid());
-            report.put("native_configuration_bootstrap",bootstrappedConfiguration?"original_z80_singleton_via_t25_i":"already_initialized");
+            report.put("native_configuration_bootstrap",bootstrappedConfiguration?(fm15?"original_y80_singleton_via_lp0_j":"original_z80_singleton_via_t25_i"):"already_initialized");
+            report.put("native_configuration_globals",nativeName("t25")).put("native_configuration_field",fm15?"b":"a").put("native_geojson_parser",nativeName("ma9"));
             check(target.getApplicationInfo().uid==Process.myUid(),"Probe not in target UID");
             report.put("cameras",cameras());report.put("incidents",incidents());report.put("early",early());report.put("services",services());report.put("base_types",baseTypes());
             report.put("lane_closed",lanes());report.put("cits_roadworks",roadworks());
@@ -48,8 +52,21 @@ public final class NativeFmModelProbe extends Instrumentation {
             report.put("inventory_members",159);report.put("native_detector_invoked",false);report.put("native_audio_invoked",false);
             report.put("probe_completed",true);report.put("acceptance_scope","Actual pinned native model/resource and installed extension adapter acceptance only; synthetic accepted calls, no detection/category preference runtime, transport, speech or car proof");
             output.putString("fm_model_result",report.toString());finish(Activity.RESULT_OK,output);
-        }catch(Throwable error){output.putString("fm_model_error",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,output);}
+        }catch(Throwable error){try{report.put("probe_completed",false);output.putString("fm_model_partial_result",report.toString());}catch(Exception ignored){}output.putString("fm_model_error",android.util.Log.getStackTraceString(error));finish(Activity.RESULT_CANCELED,output);}
     }
+    private void admitVersion(Context target,JSONObject report)throws Exception{
+        android.content.pm.PackageInfo info=target.getPackageManager().getPackageInfo(target.getPackageName(),0);
+        versionName=info.versionName;versionCode=info.getLongVersionCode();
+        report.put("target_version",versionName).put("target_version_code",versionCode);
+        fm15="15.0".equals(versionName)&&versionCode==1289;
+        check(fm15||"14.17".equals(versionName)&&versionCode==1287,"Only exact FM14.17/1287 or FM15.0/1289 is admitted");
+        report.put("native_binding_profile",fm15?"15.0/1289":"14.17/1287");
+    }
+    private String nativeName(String legacy){
+        if(!fm15)return legacy;
+        switch(legacy){case "t25":return "lp0";case "z80":return "y80";case "ye4":return "ff4";case "ma9":return "aa9";default:throw new IllegalArgumentException("Unported FM15 model alias: "+legacy);}
+    }
+    private Class<?> nativeType(String legacy)throws ClassNotFoundException{return context.getClassLoader().loadClass(nativeName(legacy));}
     private JSONArray cameras()throws Exception{
         reset();
         JSONArray rows=new JSONArray();Object[] types=values(REPORTS+"SpeedCamType");check(types.length==82,"Camera inventory");
@@ -60,13 +77,13 @@ public final class NativeFmModelProbe extends Instrumentation {
         return rows;
     }
     private void bootstrapNativeConfiguration()throws Exception{
-        Class<?> nativeGlobals=Class.forName("t25");if(nativeGlobals.getField("a").get(null)!=null)return;
+        Class<?> nativeGlobals=nativeType("t25");if(nativeGlobals.getField(fm15?"b":"a").get(null)!=null)return;
         // Same concrete initializer used by the app's native entrypoints. z80's constructor
         // obtains feature preferences from the actual Hilt component; it starts no detector/audio.
-        Object factory=Class.forName("z80").getField("e").get(null);
+        Object factory=nativeType("z80").getField("e").get(null);
         Object manager=factory.getClass().getMethod("getInstance",Context.class).invoke(factory,context);
-        nativeGlobals.getMethod("i",Context.class,Class.forName("ye4")).invoke(null,context,manager);
-        check(nativeGlobals.getField("a").get(null)==manager,"Native configuration bootstrap");bootstrappedConfiguration=true;
+        nativeGlobals.getMethod(fm15?"j":"i",Context.class,nativeType("ye4")).invoke(null,context,manager);
+        check(nativeGlobals.getField(fm15?"b":"a").get(null)==manager,"Native configuration bootstrap");bootstrappedConfiguration=true;
     }
     private JSONArray services()throws Exception{
         reset();
@@ -128,7 +145,7 @@ public final class NativeFmModelProbe extends Instrumentation {
         JSONObject info=new JSONObject().put("eventID","probe-roadworks").put("version",1);
         event.getClass().getField("info").set(event,Class.forName("bemobile.cits.sdk.core.model.response.generalObjects.Info").getConstructor(JSONObject.class).newInstance(info));
         JSONObject geo=new JSONObject("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,52]},\"properties\":{}}]}");
-        event.getClass().getField("geoJSON").set(event,Class.forName("ma9").getMethod("a",JSONObject.class).invoke(null,geo));
+        event.getClass().getField("geoJSON").set(event,nativeType("ma9").getMethod("a",JSONObject.class).invoke(null,geo));
         Object model=Class.forName("nl.flitsmeister.fmcore.models.data.cits.CitsRoadWorks").getConstructor(event.getClass()).newInstance(event);
         regular(model,null);Bundle value=last();String expected=context.getString(resource("report_roadworks_singleline"));
         check("INCIDENT".equals(value.getString("native_type"))&&"CitsRoadWorks".equals(value.getString("native_family")),"CITS roadworks model family");
@@ -151,7 +168,7 @@ public final class NativeFmModelProbe extends Instrumentation {
         Object event=Class.forName("bemobile.cits.sdk.core.model.response."+kind).getConstructor().newInstance();
         event.getClass().getField("info").set(event,Class.forName("bemobile.cits.sdk.core.model.response.generalObjects.Info").getConstructor(JSONObject.class).newInstance(new JSONObject().put("eventID",id).put("version",1)));
         JSONObject geo=new JSONObject("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,52]},\"properties\":{}}]}");
-        event.getClass().getField("geoJSON").set(event,Class.forName("ma9").getMethod("a",JSONObject.class).invoke(null,geo));return event;
+        event.getClass().getField("geoJSON").set(event,nativeType("ma9").getMethod("a",JSONObject.class).invoke(null,geo));return event;
     }
     private JSONArray citsLabels()throws Exception{
         reset();JSONArray rows=new JSONArray();Class<?> base=Class.forName("bemobile.cits.sdk.core.model.response.generalObjects.BaseEvent");

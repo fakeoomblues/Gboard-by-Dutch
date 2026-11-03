@@ -44,10 +44,20 @@ def prepare_output(output):
 
 def verify_entries(original, signed, allowed_changes=()):
     def members(archive):
-        return {name: hashlib.sha256(archive.read(name)).hexdigest()
-                for name in archive.namelist()
-                if name != 'stamp-cert-sha256'
-                and not re.fullmatch(r'META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC))', name, re.I)}
+        result = {}
+        for entry in archive.infolist():
+            if entry.is_dir():
+                if entry.file_size != 0:
+                    raise ValueError('Malformed nonempty ZIP directory entry: ' + entry.filename)
+                # apksigner may omit empty directory records; they contain no application bytes.
+                continue
+            name = entry.filename
+            if name == 'stamp-cert-sha256' or re.fullmatch(r'META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC))', name, re.I):
+                continue
+            if name in result:
+                raise ValueError('Duplicate ZIP application entry: ' + name)
+            result[name] = hashlib.sha256(archive.read(entry)).hexdigest()
+        return result
     with zipfile.ZipFile(original) as before, zipfile.ZipFile(signed) as after:
         first, second = members(before), members(after)
     changed = sorted(name for name in first.keys() | second.keys() if first.get(name) != second.get(name))

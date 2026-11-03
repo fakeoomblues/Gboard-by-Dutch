@@ -2,6 +2,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -73,6 +74,38 @@ class NativeWarningProbeTests(unittest.TestCase):
             write(signed, b'original-dex', b'modified-manifest')
             with self.assertRaisesRegex(ValueError, 'AndroidManifest.xml'):
                 api.verify_resigned(original, signed)
+
+    def test_resigning_may_omit_only_empty_directory_records(self):
+        api = self.require_api()
+        payloads = {'classes.dex': b'original-dex', 'resources.arsc': b'resources',
+                    'lib/arm64-v8a/libmaplibre.so': b'original-native-library'}
+        with tempfile.TemporaryDirectory() as tmp:
+            original, signed = Path(tmp) / 'original.apk', Path(tmp) / 'signed.apk'
+
+            def write(path, files, directories=()):
+                with zipfile.ZipFile(path, 'w') as archive:
+                    for name, data in [*directories, *files.items()]:
+                        archive.writestr(name, data)
+
+            write(original, payloads, [('lib/', b''), ('lib/arm64-v8a/', b'')])
+            write(signed, payloads)
+            api.verify_resigned(original, signed)
+            for name in payloads:
+                with self.subTest(missing=name):
+                    write(signed, {key: value for key, value in payloads.items() if key != name})
+                    with self.assertRaisesRegex(ValueError, re.escape(name)):
+                        api.verify_resigned(original, signed)
+                with self.subTest(changed=name):
+                    write(signed, {**payloads, name: b'changed-payload'})
+                    with self.assertRaisesRegex(ValueError, re.escape(name)):
+                        api.verify_resigned(original, signed)
+            for destination in [original, signed]:
+                with self.subTest(nonempty_directory=destination.name):
+                    write(original, payloads)
+                    write(signed, payloads)
+                    write(destination, payloads, [('lib/', b'nonempty-directory-data')])
+                    with self.assertRaisesRegex(ValueError, 'directory'):
+                        api.verify_resigned(original, signed)
 
     def test_missing_or_incomplete_instrumentation_is_never_accepted(self):
         api = self.require_api()

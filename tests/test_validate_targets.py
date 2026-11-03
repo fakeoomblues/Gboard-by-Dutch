@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -570,13 +571,30 @@ class TargetRoutingTests(unittest.TestCase):
             self.assertTrue(retained.is_dir())
             self.assertEqual(original.read_bytes(), b"original")
 
-    def test_failed_compact_verification_keeps_evidence_for_diagnosis(self):
+    def test_failed_compact_verification_cleans_scratch_and_preserves_logs(self):
         with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            diagnostic = out / 'verify-failed.log'
+            diagnostic.write_text('verification failed: original cause')
+            other = out / 'another-job'
+            other.mkdir()
+            (other / 'keep.txt').write_text('unowned evidence')
             with self.assertRaisesRegex(RuntimeError, "verification failed"):
-                with validator.decoded_destination(Path(tmp), "failed", compact=True) as destination:
+                with validator.decoded_destination(out, "failed", compact=True) as destination:
                     (destination / "smali.txt").write_text("diagnostic output")
                     raise RuntimeError("verification failed")
-            self.assertEqual((destination / "smali.txt").read_text(), "diagnostic output")
+            self.assertFalse(destination.exists())
+            self.assertEqual(diagnostic.read_text(), 'verification failed: original cause')
+            self.assertEqual((other / 'keep.txt').read_text(), 'unowned evidence')
+
+    def test_decode_cleanup_failure_keeps_the_original_verification_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(validator.shutil, 'rmtree', side_effect=OSError('busy scratch')):
+                with self.assertRaisesRegex(RuntimeError, 'original verification failure') as caught:
+                    with validator.decoded_destination(Path(tmp), 'failed', compact=True):
+                        raise RuntimeError('original verification failure')
+            self.assertTrue(caught.exception.cleanupRequired)
+            self.assertTrue(any('busy scratch' in note for note in caught.exception.__notes__))
 
 
 class KijkRoutingTests(unittest.TestCase):
