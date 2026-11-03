@@ -7,7 +7,7 @@ const path = require("node:path");
 const os = require("node:os");
 const crypto = require("node:crypto");
 const {execFileSync} = require("node:child_process");
-const {load} = require("js-yaml");
+const {loadAll} = require("js-yaml");
 const {verifyPublisher} = require("../.gitlab/scripts/identity.cjs");
 test("GitLab publisher rejects a different account and missing credentials", async () => {
   await assert.doesNotReject(verifyPublisher({env: {GITLAB_TOKEN: "fixture"}, request: async () => ({username:"johninnld"})}));
@@ -57,7 +57,7 @@ test("GitLab mirrors identical signed bytes without competing source commits or 
   } finally {process.chdir(previous);fs.rmSync(cwd,{recursive:true,force:true});}
 });
 test("GitLab pipeline publishes only protected authoritative main/dev releases", () => {
-  const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const config=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   assert.equal(config.image,"eclipse-temurin:21-jdk-noble","The pinned documentation tools require Python 3.11+, unavailable in Jammy");
   assert.equal(config.variables.GIT_DEPTH,"0");
   assert.equal(config.variables.GIT_AUTHOR_NAME,"johninnl");
@@ -70,7 +70,7 @@ test("GitLab pipeline publishes only protected authoritative main/dev releases",
 });
 
 test("GitLab cloud workflows require explicit web opt-in, including main/dev and MR events", () => {
-  const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const config=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   function allowed(env) {
     for (const rule of config.workflow.rules) {
       const matches = !rule.if || Function(`return (${rule.if.replace(/\$([A-Z_]+)/g, (_match, name) => JSON.stringify(env[name] || ""))});`)();

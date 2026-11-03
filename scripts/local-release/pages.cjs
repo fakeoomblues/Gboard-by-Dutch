@@ -57,7 +57,7 @@ async function deployPages({cwd=process.cwd(),env=process.env,config,request,isQ
     receipt.version=JSON.parse(fs.readFileSync(path.join(cwd,"patches-bundle.json"),"utf8")).version;if(!/^\d+\.\d+\.\d+$/.test(receipt.version))throw new Error("Production Pages requires a stable version");
     const prior=await cleanupJobs({config,request:api,isQuiescent,env});
     if(prior.cleanupRequired){receipt.cleanup=prior;receipt.cleanupRequired=true;throw cleanupFailure("Previous owned Pages pipeline or job cleanup remains pending");}
-    const pipeline=await api(`/projects/${PROJECT_ID}/pipeline`,{method:"POST",body:{ref:"main",variables:[{key:"RUN_LOCAL_PAGES",value:"true"},{key:"EXPECTED_PAGES_SHA",value:receipt.sha}]}});
+    const pipeline=await api(`/projects/${PROJECT_ID}/pipeline`,{method:"POST",body:{ref:"main",inputs:{run_local_pages:"true",expected_pages_sha:receipt.sha}}});
     if(!Number.isSafeInteger(pipeline?.id)||pipeline.id<=0)throw new Error("Invalid Pages pipeline ID");
     receipt.pipelineId=pipeline.id;receipt.status="running";external=path.join(directory(config,"pages-pipelines"),pipeline.id+".json");save();assertPipeline(pipeline,receipt);
     let job;

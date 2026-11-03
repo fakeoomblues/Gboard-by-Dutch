@@ -1,6 +1,6 @@
 "use strict";
 const assert=require("node:assert/strict"),{test}=require("node:test"),fs=require("node:fs"),path=require("node:path"),os=require("node:os");
-const {load}=require("js-yaml");
+const {loadAll}=require("js-yaml");
 function controller(){const file=path.join(__dirname,"../scripts/local-release/pages.cjs");assert.ok(fs.existsSync(file),"Local Pages controller is required");return require(file);}
 function job(){const file=path.join(__dirname,"../scripts/local-release/pages-job.cjs");assert.ok(fs.existsSync(file),"Independent local Pages job is required");return require(file);}
 const SHA="a".repeat(40),TAG="nl-morphe-pages-macos";
@@ -30,7 +30,7 @@ function ciFixture(f){
   return {cwd,env,config:f.config,run,git,calls};
 }
 test("API Pages pipelines select only the protected tagged local job; cloud jobs require web opt-in",()=>{
-  const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const config=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   function allowed(rules,env){for(const rule of rules||[]){if(!rule.if||Function(`return (${rule.if.replace(/\$([A-Z_]+)/g,(_m,key)=>JSON.stringify(env[key]||""))});`)())return rule.when!=="never";}return false;}
   const env={CI_SERVER_HOST:"gitlab.com",CI_PIPELINE_SOURCE:"api",CI_COMMIT_BRANCH:"main",CI_COMMIT_REF_PROTECTED:"true",RUN_LOCAL_PAGES:"true"};
   assert.equal(allowed(config.workflow.rules,env),true);assert.equal(allowed(config.pages_local?.rules,env),true);
@@ -38,12 +38,27 @@ test("API Pages pipelines select only the protected tagged local job; cloud jobs
   for(const change of [{CI_COMMIT_BRANCH:"dev"},{CI_COMMIT_REF_PROTECTED:"false"},{CI_PIPELINE_SOURCE:"push"},{RUN_LOCAL_PAGES:"false"}])assert.equal(allowed(config.pages_local?.rules,{...env,...change}),false);
   assert.deepEqual(config.pages_local.tags,[TAG]);assert.deepEqual(config.pages_local.before_script,[]);assert.equal(config.pages_local.variables.GIT_DEPTH,"1");assert.equal(config.pages_local.variables.GIT_STRATEGY,"clone");assert.equal(config.pages_local.variables.GIT_CLONE_PATH,"$CI_BUILDS_DIR/$CI_JOB_ID");assert.equal(config.pages_local.variables.FF_ENABLE_JOB_CLEANUP,"true");assert.deepEqual(config.pages_local.pages,{publish:"public"});
 });
-test("controller creates only flag/SHA variables, verifies runner and public stamp, persists receipt",async t=>{
+test("pipeline inputs validate explicit opt-ins and SHA without permitting variable overrides",()=>{
+  const docs=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));assert.equal(docs.length,2);
+  const inputs=docs[0].spec.inputs,config=docs[1];
+  for(const name of ["run_local_pages","run_cloud_ci"]){assert.equal(inputs[name].type,"string");assert.equal(inputs[name].default,"false");assert.deepEqual(inputs[name].options,["false","true"]);}
+  assert.equal(inputs.expected_pages_sha.type,"string");assert.equal(inputs.expected_pages_sha.default,"");
+  const pattern=new RegExp(inputs.expected_pages_sha.regex);assert.equal(pattern.test(SHA),true);assert.equal(pattern.test(""),true);assert.equal(pattern.test("main"),false);assert.equal(pattern.test('" || true'),false);
+  assert.equal(config.variables.RUN_LOCAL_PAGES,"$[[ inputs.run_local_pages ]]");assert.equal(config.variables.RUN_CLOUD_CI,"$[[ inputs.run_cloud_ci ]]");assert.equal(config.variables.EXPECTED_PAGES_SHA,"$[[ inputs.expected_pages_sha ]]");
+});
+test("controller creates only validated flag/SHA inputs, verifies runner and public stamp, persists receipt",async t=>{
   const f=fixture(t),result=await controller().deployPages(options(f));assert.equal(result.verified,true);assert.equal(result.sha,SHA);assert.equal(result.version,"1.2.3");
   const created=f.calls.find(call=>call.method==="POST"&&call.endpoint.endsWith("/pipeline"));
-  assert.deepEqual(created.body,{ref:"main",variables:[{key:"RUN_LOCAL_PAGES",value:"true"},{key:"EXPECTED_PAGES_SHA",value:SHA}]});
+  assert.deepEqual(created.body,{ref:"main",inputs:{run_local_pages:"true",expected_pages_sha:SHA}});assert.equal(Object.hasOwn(created.body,"variables"),false);
   assert.ok(f.calls.every(call=>call.endpoint.startsWith("/projects/88427867/")));assert.ok(!JSON.stringify(created).includes("fixture-secret"));
   assert.equal(JSON.parse(fs.readFileSync(path.join(f.cwd,"build/release-safety/pages-result.json"))).verified,true);
+});
+test("Pages creation succeeds when the project forbids pipeline-variable overrides",async t=>{
+  const f=fixture(t),request=async(endpoint,options)=>{
+    if(endpoint.endsWith("/pipeline")&&Object.hasOwn(options.body,"variables"))throw Error("Insufficient permissions to set pipeline variables");
+    return f.request(endpoint,options);
+  };
+  assert.equal((await controller().deployPages(options(f,{request}))).verified,true);
 });
 test("wrong pipeline SHA, wrong runner, extra jobs and wrong tags cancel rather than verify",async t=>{
   for(const variant of ["sha","runner","extra","tags"]){const f=fixture(t);const request=async(endpoint,options)=>{const value=await f.request(endpoint,options);if(endpoint.endsWith("/pipeline")&&variant==="sha")value.sha="b".repeat(40);if(endpoint.includes("/jobs")){if(variant==="runner")value[0].runner.id=8;if(variant==="extra")value.push({...value[0],id:67,name:"verify"});if(variant==="tags")value[0].tag_list=["shared-linux"];}return value;};
