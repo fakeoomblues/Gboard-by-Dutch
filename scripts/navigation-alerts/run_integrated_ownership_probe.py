@@ -4,6 +4,10 @@ import io
 import tarfile
 import subprocess,threading,queue,time,json,hashlib,re,uuid,sys,shutil
 from pathlib import Path
+
+if not __debug__:
+    raise RuntimeError("Run validation without -O or PYTHONOPTIMIZE; assertion checks are required")
+
 parser=argparse.ArgumentParser(description=__doc__)
 for name in ['sdk','source-apk','maps-apk','vela-apk','source-probe','maps-probe','vela-probe','output']:parser.add_argument('--'+name,type=Path,required=True)
 parser.add_argument('--death-owner',choices=['maps','vela'],default='vela')

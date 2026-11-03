@@ -21,6 +21,12 @@ def verify_emulator_profile(serial,qemu,avd_name,sdk):
     return names[0]
 
 
+def prepare_output(path):
+    if path.exists() and any(path.iterdir()):
+        raise ValueError("Use a fresh output directory; existing evidence must be retained")
+    path.mkdir(parents=True,exist_ok=True)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sdk',type=Path,required=True)
@@ -39,12 +45,13 @@ def main():
     parser.add_argument('--matrix-timeout-seconds',type=int,choices=range(60,901),default=900)
     parser.add_argument('--observe-pcm',action='store_true',help='Private observer for one integrated VOICE case only; never timing100')
     parser.add_argument('--diagnostic-hidden-api-policy',action='store_true',help='Owned5580 only: temporarily allow private listener identity observation and restore exact prestate')
-    args=parser.parse_args();serial=args.serial;adb_path=args.sdk/'platform-tools/adb';args.output.mkdir(parents=True,exist_ok=True)
+    args=parser.parse_args();serial=args.serial;adb_path=args.sdk/'platform-tools/adb';prepare_output(args.output)
     if args.observe_pcm and (args.mode!='VOICE' or args.matrix_count!=1):parser.error('PCM observation is limited to one reviewed integrated VOICE case')
     if args.diagnostic_hidden_api_policy and not args.observe_pcm:parser.error('Diagnostic policy is allowed only for the private PCM observer')
     if args.diagnostic_hidden_api_policy:parser.error('Prior5580 diagnostic-policy admission does not authorize a new5584 override')
     def adb(*command,check=True):return subprocess.run([str(adb_path),'-s',serial,*map(str,command)],capture_output=True,text=True,check=check,timeout=60)
-    def sha(path):return hashlib.file_digest(path.open('rb'),'sha256').hexdigest()
+    def sha(path):
+        with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
     avd=verify_emulator_profile(serial,adb('shell','getprop','ro.kernel.qemu').stdout,adb('emu','avd','name').stdout,adb('shell','getprop','ro.build.version.sdk').stdout)
     if adb('shell','id','-u').stdout.strip()!='0':raise ValueError('Owned AVD adbd must already be root for the source UID network fence')
     inputs={};certs=[]

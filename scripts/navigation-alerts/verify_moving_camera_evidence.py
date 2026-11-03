@@ -7,6 +7,10 @@ import math
 from pathlib import Path
 import struct
 
+if not __debug__:
+    raise RuntimeError("Run validation without -O or PYTHONOPTIMIZE; assertion checks are required")
+
+
 
 def event_key(authority):
     # The private fixture IDs are ASCII, so Java writeUTF has ordinary UTF-8 bytes.
@@ -58,7 +62,9 @@ def verify(folder):
         payload = speaker['payload']
         assert speaker['started']
         for field in ['provider_session', 'warning_id', 'announcement_index', 'phase',
-                      'native_subtype', 'message', 'latitude', 'longitude', 'priority']:
+                      'native_type', 'native_subtype', 'category', 'relevance', 'relationship',
+                      'message', 'message_origin', 'language_tag', 'native_text_key',
+                      'latitude', 'longitude', 'priority']:
             assert payload[field] == authority[field], field
         accepted, = [event for event in diagnostics if event['stage'] == 'RECEIVER_ACCEPTED'
                      and event['sequence'] == authority['sequence'] and event['event_key'] == key]

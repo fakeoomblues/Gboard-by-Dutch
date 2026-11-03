@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from verify_moving_camera_evidence import event_key
 
+if not __debug__:
+    raise RuntimeError("Run validation without -O or PYTHONOPTIMIZE; assertion checks are required")
+
+
 
 def verify(folder):
     record_path = folder / 'result.json'
@@ -85,8 +89,11 @@ def verify(folder):
             assert authority['issued_elapsed_ms'] <= started['elapsed_ms'] < completed['elapsed_ms'] < authority['announce_until_elapsed_ms']
             speaker, = receiver['actual_speaker_attempts']
             assert speaker['event_key'] == key and speaker['started']
-            assert speaker['payload']['warning_id'] == authority['warning_id']
-            assert speaker['payload']['message'] == authority['message']
+            for field in ['provider_session', 'warning_id', 'announcement_index', 'phase',
+                          'native_type', 'native_subtype', 'category', 'relevance', 'relationship',
+                          'message', 'message_origin', 'language_tag', 'native_text_key',
+                          'latitude', 'longitude', 'priority']:
+                assert speaker['payload'][field] == authority[field], field
             assert any(value['outcome'] == 'STARTED' and value['started'] for value in row['source_dispositions'])
             assert any(value['outcome'] == 'COMPLETED' and value['started'] for value in row['source_dispositions'])
             assert all(value['event_key'] == key and value['attempt_id'] == speaker['attempt_id']

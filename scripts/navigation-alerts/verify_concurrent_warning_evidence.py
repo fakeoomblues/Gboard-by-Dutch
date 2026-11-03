@@ -1,6 +1,10 @@
 from pathlib import Path
 import json,hashlib,struct,sys
 
+if not __debug__:
+    raise RuntimeError("Run validation without -O or PYTHONOPTIMIZE; assertion checks are required")
+
+
 def event_key(event):
  raw=b''
  for value in [event['provider_session'],event['warning_id'],event['phase'].upper()]:

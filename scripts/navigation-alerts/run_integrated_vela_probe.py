@@ -14,6 +14,12 @@ import time
 import uuid
 
 
+def prepare_output(path):
+    if path.exists() and any(path.iterdir()):
+        raise ValueError("Use a fresh output directory; existing evidence must be retained")
+    path.mkdir(parents=True,exist_ok=True)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sdk',type=Path,required=True)
@@ -33,12 +39,13 @@ def main():
     parser.add_argument('--event-count',type=int,choices=range(1,101),default=1)
     parser.add_argument('--matrix-timeout-seconds',type=int,choices=range(60,901),default=600)
     parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
-    args=parser.parse_args();cancel_token=uuid.uuid4().hex;serial='emulator-5582';adb_path=args.sdk/'platform-tools/adb';args.output.mkdir(parents=True,exist_ok=True)
+    args=parser.parse_args();cancel_token=uuid.uuid4().hex;serial='emulator-5582';adb_path=args.sdk/'platform-tools/adb';prepare_output(args.output)
     if args.disable_location_for_no_speed and (not args.matrix or args.trigger_family!='p0' or args.post_warmup_no_gps_delay_ms<5000):parser.error('Location-off witness requires genuine P0 matrix and >=5 seconds of expiry')
     if args.capture_pcm and (args.matrix or args.mode!='VOICE'):parser.error('PCM observation is a separate single-event actual system Voice run')
     if args.matrix and args.mode=='SILENT':parser.error('Current genuine native matrix warmup requires completed audio; use the single scenario for Silent intent')
     def adb(*command,check=True):return subprocess.run([str(adb_path),'-s',serial,*map(str,command)],capture_output=True,text=True,check=check,timeout=60)
-    def sha(path):return hashlib.file_digest(path.open('rb'),'sha256').hexdigest()
+    def sha(path):
+        with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
     if (adb('shell','getprop','ro.kernel.qemu').stdout.strip()!='1' or adb('emu','avd','name').stdout.splitlines()[0].strip()!='native_warnings_vela_api34'
             or adb('shell','getprop','ro.build.version.sdk').stdout.strip()!='34' or adb('shell','getprop','sys.boot_completed').stdout.strip()!='1'):raise ValueError('Wrong/unbooted owned Vela AVD')
     if adb('shell','id','-u').stdout.strip()!='0':raise ValueError('Owned AVD adbd must already be root for the source UID network fence')
@@ -154,30 +161,41 @@ def main():
         record['matrix']=args.matrix;record['event_count']=args.event_count;record['trigger_family']=args.trigger_family;record['trigger_pattern']=args.trigger_pattern;record['post_warmup_no_gps_delay_ms']=args.post_warmup_no_gps_delay_ms
     except Exception as error:failure=repr(error)
     finally:
-        # Leave source runner alive long enough to execute its verified force-stop/firewall/lease rollback.
-        if any(p.poll() is None for p in processes.values()):
-            request_cancel('Coordinator leaving failed/incomplete run')
-            if receiver is not None:
-                try:receiver.wait(timeout=20)
-                except subprocess.TimeoutExpired:failure=(failure or '')+'; receiver still live, bounded finally/prefs restoration pending'
-            if source is not None:
-                try:source.wait(timeout=65)
-                except subprocess.TimeoutExpired:failure=(failure or '')+'; source runner still live, manual verified rollback required'
-        if args.disable_location_for_no_speed:
-            if location_mode_before=='null':adb('shell','settings','delete','secure','location_mode')
-            else:adb('shell','settings','put','secure','location_mode',location_mode_before)
-            record['location_mode_after']=adb('shell','settings','get','secure','location_mode').stdout.strip();record['location_mode_restored_exactly']=record['location_mode_after']==location_mode_before
-            if not record['location_mode_restored_exactly']:failure=(failure or '')+'; location mode not restored'
-        for permission in reversed(changed):adb('shell','pm','revoke','nl.flitsmeister',permission)
-        if args.capture_pcm:
-            if observer_policy_before=='null':adb('shell','settings','delete','global','hidden_api_policy')
-            else:adb('shell','settings','put','global','hidden_api_policy',observer_policy_before)
-            record['observer_policy_before']=observer_policy_before;record['observer_policy_after']=adb('shell','settings','get','global','hidden_api_policy').stdout.strip()
-            if record['observer_policy_after']!=observer_policy_before:failure=(failure or '')+'; observer policy not restored'
-        record['permissions_after']=permissions();record['permissions_restored_exactly']=record['permissions_after']==before
-        if not record['permissions_restored_exactly']:failure=(failure or '')+'; permission grants/flags differ from baseline'
-        record['failure']=failure;record['probe_completed']=failure is None;record['process_exit_codes']={name:p.poll() for name,p in processes.items()}
-        (args.output/'result.json').write_text(json.dumps(record,indent=2)+'\n')
+        cleanup_errors=[]
+        def cleanup(label,action):
+            try:action()
+            except Exception as error:cleanup_errors.append(label+': '+repr(error))
+        try:
+            # Preserve the original failure and attempt every independent restoration.
+            def finish_processes():
+                if any(p.poll() is None for p in processes.values()):
+                    cleanup('receiver cancellation',lambda:request_cancel('Coordinator leaving failed/incomplete run'))
+                    if receiver is not None:cleanup('receiver termination',lambda:receiver.wait(timeout=20))
+                    if source is not None:cleanup('source rollback',lambda:source.wait(timeout=65))
+            cleanup('process cleanup',finish_processes)
+            if args.disable_location_for_no_speed:
+                def restore_location():
+                    if location_mode_before=='null':adb('shell','settings','delete','secure','location_mode')
+                    else:adb('shell','settings','put','secure','location_mode',location_mode_before)
+                    record['location_mode_after']=adb('shell','settings','get','secure','location_mode').stdout.strip();record['location_mode_restored_exactly']=record['location_mode_after']==location_mode_before
+                    if not record['location_mode_restored_exactly']:raise RuntimeError('Location mode not restored')
+                cleanup('location restore',restore_location)
+            for permission in reversed(changed):cleanup('permission restore '+permission,lambda permission=permission:adb('shell','pm','revoke','nl.flitsmeister',permission))
+            if args.capture_pcm:
+                def restore_policy():
+                    if observer_policy_before=='null':adb('shell','settings','delete','global','hidden_api_policy')
+                    else:adb('shell','settings','put','global','hidden_api_policy',observer_policy_before)
+                    record['observer_policy_before']=observer_policy_before;record['observer_policy_after']=adb('shell','settings','get','global','hidden_api_policy').stdout.strip()
+                    if record['observer_policy_after']!=observer_policy_before:raise RuntimeError('Observer policy not restored')
+                cleanup('observer policy restore',restore_policy)
+            def verify_permissions():
+                record['permissions_after']=permissions();record['permissions_restored_exactly']=record['permissions_after']==before
+                if not record['permissions_restored_exactly']:raise RuntimeError('Permission grants/flags differ from baseline')
+            cleanup('permission verification',verify_permissions)
+        finally:
+            if cleanup_errors:failure=(failure or '')+'; cleanup: '+'; '.join(cleanup_errors)
+            record['cleanup_errors']=cleanup_errors;record['failure']=failure;record['probe_completed']=failure is None;record['process_exit_codes']={name:p.poll() for name,p in processes.items()}
+            (args.output/'result.json').write_text(json.dumps(record,indent=2)+'\n')
     print(json.dumps({'probe_completed':record['probe_completed'],'failure':failure,'result':str(args.output/'result.json')}),flush=True)
     if failure:raise SystemExit(1)
 
