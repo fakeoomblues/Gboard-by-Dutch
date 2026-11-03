@@ -92,6 +92,6 @@ prepared source snapshot, including the complete current patch set. Do not
 import old branches or tags.
 
 Open issues and pull requests at
-https://github.com/johninnl/nl-morphe-patches. Include the app version, selected
+https://codeberg.org/JohninNL/nl-morphe-patches. Include the app version, selected
 patches and reproducible steps. Keep original APKs, credentials, signing keys,
 private app data and downloaded tools out of Git.

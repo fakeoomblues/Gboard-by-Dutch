@@ -29,7 +29,7 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-**Broadcast navigation data** werkt zolang de rij-/locatiedienst met locatietoegang op de achtergrond draait. De overlay mag uit blijven. Ontvangende apps gebruiken dezelfde actie en velden voor Flitsmeister en Waze. De bron levert geschatte afstand vóór trajectinrit en beschikbare meldingen van vaste/mobiele flitsers, politie, gevaren, ongevallen, files en afsluitingen. Gemiddelden gaan alleen over het waargenomen deel; berekende voortgang wordt als schatting gemarkeerd. [Gedeeld broadcastcontract](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md).
+**Broadcast navigation data** werkt zolang de rij-/locatiedienst met locatietoegang op de achtergrond draait. De overlay mag uit blijven. Ontvangende apps gebruiken dezelfde actie en velden voor Flitsmeister en Waze. De bron levert geschatte afstand vóór trajectinrit en beschikbare meldingen van vaste/mobiele flitsers, politie, gevaren, ongevallen, files en afsluitingen. Gemiddelden gaan alleen over het waargenomen deel; berekende voortgang wordt als schatting gemarkeerd. [Gedeeld broadcastcontract](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md).
 
 Navigatie, live verkeers-/locatie-uitwisseling, accounts en meldingen gebruiken nog steeds online diensten. Unlock Pro activeert geen serverdiensten. Volg voor Android Auto de [KingInstaller-installatiestappen](../guides/android-auto.md).
 

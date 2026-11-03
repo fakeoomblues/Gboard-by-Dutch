@@ -21,3 +21,6 @@ local.properties
 *.xapk
 /maps/
 /yt/
+
+.ci-tools/
+.venv/

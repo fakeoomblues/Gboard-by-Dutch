@@ -4,7 +4,7 @@
 
 Controleer versie en build op de [apppagina](../apps/index.md). Selecteer het volledige originele bestand of gesplitste archief. Telefoon- en Android TV-builds zijn afzonderlijke doelen. Werk de bron bij in Manager en controleer of de benodigde bundel beschikbaar is.
 
-Controleer de [releaselijst](https://github.com/johninnl/nl-morphe-patches/releases) als Manager geen bundel vindt. Een bron heeft een gepubliceerde bundel nodig voordat Manager de patches kan downloaden.
+Controleer de [releaselijst](https://codeberg.org/JohninNL/nl-morphe-patches/releases) als Manager geen bundel vindt. Een bron heeft een gepubliceerde bundel nodig voordat Manager de patches kan downloaden.
 
 ## Android weigert installatie
 
@@ -22,4 +22,4 @@ Sommige reclame zit in het programma of de stream. Trackingpatches behouden ook 
 
 ## Meld een probleem
 
-Open een [issue](https://github.com/johninnl/nl-morphe-patches/issues) met appversie/build, bundelversie, gekozen patches, apparaat-/Androidversie, exacte fout en stappen om het probleem te herhalen. Verwijder inloggegevens en persoonlijke gegevens uit wat je deelt.
+Open een [issue](https://codeberg.org/JohninNL/nl-morphe-patches/issues) met appversie/build, bundelversie, gekozen patches, apparaat-/Androidversie, exacte fout en stappen om het probleem te herhalen. Verwijder inloggegevens en persoonlijke gegevens uit wat je deelt.

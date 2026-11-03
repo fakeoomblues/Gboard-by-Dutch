@@ -8,7 +8,13 @@ Zoek je app in het [appoverzicht](../apps/index.md) en [download het originele b
 
 ## 2. Voeg de patchbron toe
 
-Installeer [Morphe Manager](https://morphe.software/) en open [Toevoegen aan Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches). Controleer dat de bron `johninnl/nl-morphe-patches` is.
+Installeer [Morphe Manager](https://morphe.software/). Open **Bronnen → + → Extern** en plak deze volledige metadata-URL:
+
+```text
+https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json
+```
+
+Tik op **Toevoegen**. Gebruik de volledige metadata-URL hierboven in plaats van de GitHub-repositorysnelkoppeling. Vervang `main` door `dev` als je ontwikkelvoorversies wilt volgen.
 
 Tik op **Update** bij de bron om de nieuwste gepubliceerde patchbundel op te halen. Controleer vóór het patchen de bundelversie. Die staat los van de appversie.
 
@@ -26,4 +32,4 @@ Gebruik voor toekomstige gepatchte updates dezelfde sleutel en bewaar een werken
 
 Controleer opstarten en de functies die je gebruikt, zoals afspelen, kaarten, login of waarschuwingen. [Problemen oplossen](troubleshooting.md) helpt bij veelvoorkomende problemen.
 
-Volg voor Waze of Flitsmeister in de auto de [Android Auto-stappen met screenshots](android-auto.md). Lees voor installatietools met extra toegang over [Shizuku](shizuku.md) of [Android TV instellen](shizuku-tv.md).
+Volg voor Waze, Flitsmeister of Ungoogled Maps in de auto de [Android Auto-stappen met screenshots](android-auto.md). Lees voor installatietools met extra toegang over [Shizuku](shizuku.md) of [Android TV instellen](shizuku-tv.md).

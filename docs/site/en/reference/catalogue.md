@@ -756,4 +756,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://github.com/johninnl/nl-morphe-patches/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

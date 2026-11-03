@@ -6,7 +6,7 @@ from urllib.parse import unquote, urlsplit, urljoin
 import argparse
 
 ROOT = Path(__file__).resolve().parents[1]
-SITE_URL = 'https://johninnl.github.io/nl-morphe-patches/'
+SITE_URL = 'https://johninnl.codeberg.page/nl-morphe-patches/'
 
 
 class Document(HTMLParser):
