@@ -21,7 +21,7 @@ def main():
     def run(*command):subprocess.run(list(map(str,command)),check=True)
     with tempfile.TemporaryDirectory(dir=args.output,prefix='receiver-build-') as temp:
         work=Path(temp);classes=work/'classes';dex=work/'dex';classes.mkdir();dex.mkdir()
-        run('javac','--release','8','-cp',android,'-d',classes,Path(__file__).with_name('probe')/'OwnershipReceiverProbe.java',Path(__file__).with_name('probe')/'MapsVoiceProbe.java',Path(__file__).with_name('probe')/'MapsRouteReadinessProbe.java')
+        run('javac','--release','8','-cp',android,'-d',classes,Path(__file__).with_name('probe')/'OwnershipReceiverProbe.java',Path(__file__).with_name('probe')/'MapsVoiceProbe.java',Path(__file__).with_name('probe')/'MapsRouteReadinessProbe.java',Path(__file__).with_name('probe')/'VelaRouteReadinessProbe.java')
         run(tools/'d8','--min-api','29','--lib',android,'--output',dex,*classes.rglob('*.class'))
         manifest=work/'AndroidManifest.xml';manifest.write_text('<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="' + helper + '"><uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34"/><application android:label="Reviewed receiver ownership probe"/><instrumentation android:name="nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe" android:targetPackage="' + target + '"/></manifest>')
         raw=work/'raw.apk';apk=args.output/'probe.apk';run(tools/'aapt2','link','-I',android,'--manifest',manifest,'-o',raw)
@@ -31,7 +31,7 @@ def main():
         run(tools/'apksigner','sign','--ks',args.key,'--ks-key-alias','native-warning-test','--ks-pass','pass:android','--key-pass','pass:android',apk)
         run(tools/'apksigner','verify',apk)
     source=Path(__file__).with_name("probe")/"OwnershipReceiverProbe.java"
-    support_sources={name:hashlib.sha256((Path(__file__).with_name('probe')/name).read_bytes()).hexdigest() for name in ['MapsVoiceProbe.java','MapsRouteReadinessProbe.java']}
+    support_sources={name:hashlib.sha256((Path(__file__).with_name('probe')/name).read_bytes()).hexdigest() for name in ['MapsVoiceProbe.java','MapsRouteReadinessProbe.java','VelaRouteReadinessProbe.java']}
     for name in support_sources:(args.output/name).write_bytes((Path(__file__).with_name('probe')/name).read_bytes())
     (args.output/"build-report.json").write_text(json.dumps({"probe_sha256":hashlib.sha256(apk.read_bytes()).hexdigest(),"source_sha256":hashlib.sha256(source.read_bytes()).hexdigest(),"support_sources_sha256":support_sources,"target_package":target,"helper_package":helper,"scope":"Target-only reflection; actual receiver phone lifecycle; no bundled Maps or warning core classes"},indent=2)+"\n")
     (args.output/source.name).write_bytes(source.read_bytes())

@@ -16,7 +16,8 @@ parser.add_argument('--warning-suite-cases',choices=['all','road-service','concu
 parser.add_argument('--warning-categories',type=int,choices=range(1,128),default=127)
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
 args=parser.parse_args();
-if args.warning_suite_cases=='native-guidance' and (not args.warning_suite or args.receiver!='maps'):parser.error('The current native manager witness requires the Maps warning suite')
+if args.warning_suite_cases=='native-guidance' and not args.warning_suite:parser.error('Native guidance requires the warning suite')
+if args.warning_suite_cases=='native-guidance' and args.receiver=='vela' and not args.prepare_vela_ui:parser.error('Vela native guidance requires the original phone UI setup')
 if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
 if args.warning_categories!=127 and (not args.warning_suite or args.warning_suite_cases!='road-service'):parser.error('A restricted category mask is only supported for the focused road-service suite')
 sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd={'emulator-5584':'native_warnings_car_api34','emulator-5590':'native_warnings_ui_api34'}[serial];output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
@@ -104,6 +105,7 @@ vela_permission_changes=[]
 vela_permissions_before={}
 route_permissions_before={}
 route_permission_changes=[]
+hidden_policy_before=None
 base='probe-restart-'+token
 source_details={}
 
@@ -204,12 +206,15 @@ try:
   if not value['granted']:
    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
  if args.warning_suite_cases=='native-guidance':
-  route_permissions_before=vela_permissions(args.maps_package);record['route_permissions_before']=route_permissions_before
+  route_package=args.maps_package if args.receiver=='maps' else 'app.vela'
+  route_permissions_before=vela_permissions(route_package);record['route_permissions_before']=route_permissions_before
   for permission,value in route_permissions_before.items():
-   if not value['granted']:
-    assert not any(flag in value['flags'] for flag in ['SYSTEM_FIXED','POLICY_FIXED','USER_FIXED']);device('shell','pm','grant',args.maps_package,permission);route_permission_changes.append(permission)
+   if args.receiver=='maps' and not value['granted']:
+    assert not any(flag in value['flags'] for flag in ['SYSTEM_FIXED','POLICY_FIXED','USER_FIXED']);device('shell','pm','grant',route_package,permission);route_permission_changes.append(permission)
   (output/'route-location-before.txt').write_text(device('shell','dumpsys','location').stdout);device('emu','geo','fix','4.9000','52.3700');record['controlled_route_start']={'latitude':52.3700,'longitude':4.9000}
  if args.prepare_vela_ui:prepare_vela_ui()
+ if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':
+  hidden_policy_before=device('shell','settings','get','global','hidden_api_policy').stdout.strip();record['hidden_api_policy_before']=hidden_policy_before;device('shell','settings','put','global','hidden_api_policy','1')
  source('seed-source','integrated_warning_suite' if args.warning_suite else 'integrated_restart_seed');deadline=time.monotonic()+300
  while time.monotonic()<deadline:
   try:name,line=events.get(timeout=.2)
@@ -221,7 +226,10 @@ try:
    if name in ['seed-source','restarted-source'] and line.startswith('INSTRUMENTATION_STATUS: fm_capture_detail='):source_details[name]=json.loads(line.split('fm_capture_detail=',1)[1])
    if name=='seed-source' and 'fm_capture_stage=restart_seed_ready' in line:receiver('seed-receiver')
    if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_ready' in line:receiver('seed-receiver')
-   if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_complete' in line:signal('seed-receiver')
+   if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_complete' in line:
+    if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':device('emu','geo','fix','4.9000','52.3701');record['fresh_post_warning_fix']={'latitude':52.3701,'longitude':4.9000}
+    else:signal('seed-receiver')
+   if name=='seed-receiver' and 'INSTRUMENTATION_STATUS: stage=NATIVE_GUIDANCE_REGENERATED' in line:signal('seed-receiver')
    if name=='seed-receiver' and 'INSTRUMENTATION_STATUS: stage=NATIVE_GUIDANCE_STARTED' in line:
     folder='/sdcard/Android/data/nl.flitsmeister/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+base+'-native-guidance-started')
    if args.warning_suite and name=='seed-source' and 'fm_capture_error=' in line:raise RuntimeError('Actual native warning suite failed; partial evidence retained')
@@ -279,11 +287,16 @@ finally:
   device('shell','am','force-stop',package)
   try:record.setdefault('final_preferences_cleanup',{})[package]=restore_preferences(package)
   except Exception as error:failure=(failure or '')+'; preference cleanup '+repr(error)
- for permission in reversed(route_permission_changes):device('shell','pm','revoke',args.maps_package,permission)
- if args.warning_suite_cases=='native-guidance':
-  record['route_permissions_after']=vela_permissions(args.maps_package);record['route_permissions_restored_exactly']=record['route_permissions_after']==route_permissions_before
-  if not record['route_permissions_restored_exactly']:failure=(failure or '')+'; Maps route permission drift'
+ if hidden_policy_before is not None:
+  current=device('shell','settings','get','global','hidden_api_policy').stdout.strip()
+  if current!='1':failure=(failure or '')+'; independent hidden API policy change, preserve for review'
+  else:device('shell','settings','delete' if hidden_policy_before=='null' else 'put','global','hidden_api_policy',*([] if hidden_policy_before=='null' else [hidden_policy_before]))
+  record['hidden_api_policy_after']=device('shell','settings','get','global','hidden_api_policy').stdout.strip();record['hidden_api_policy_restored_exactly']=record['hidden_api_policy_after']==hidden_policy_before
+ for permission in reversed(route_permission_changes):device('shell','pm','revoke',route_package,permission)
  for permission in reversed(vela_permission_changes):device('shell','pm','revoke','app.vela',permission)
+ if args.warning_suite_cases=='native-guidance':
+  record['route_permissions_after']=vela_permissions(route_package);record['route_permissions_restored_exactly']=record['route_permissions_after']==route_permissions_before
+  if not record['route_permissions_restored_exactly']:failure=(failure or '')+'; Maps route permission drift'
  if args.prepare_vela_ui:
   record['vela_permissions_after']=vela_permissions();record['vela_permissions_restored_exactly']=record['vela_permissions_after']==vela_permissions_before
   if not record['vela_permissions_restored_exactly']:failure=(failure or '')+'; Vela permission drift'

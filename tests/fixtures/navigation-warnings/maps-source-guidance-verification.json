@@ -306,10 +306,10 @@
     }
   ],
   "remaining": [
-    "Corresponding source-driven Vela route-guidance case",
     "Moving route/lead/passage and next-maneuver transition cases",
     "Other modes/lifecycle/compatibility, actual car routing and final review/delivery"
   ],
   "controlled_native_wav_cache_file_removed": true,
-  "cache_verification": "Read-only listing after verified target stop contained no maps-manager-probe temporary WAV; other app navigation caches are retained in the disposable guest."
+  "cache_verification": "Read-only listing after verified target stop contained no maps-manager-probe temporary WAV; other app navigation caches are retained in the disposable guest.",
+  "related_vela_source_guidance_verification": "vela-source-guidance-verification.json"
 }
