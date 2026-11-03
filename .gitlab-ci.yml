@@ -1,10 +1,10 @@
 image: eclipse-temurin:21-jdk-noble
-stages: [verify, release]
+stages: [verify, release, deploy]
 workflow:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "api" && $RUN_LOCAL_PAGES == "true" && $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_REF_PROTECTED == "true"'
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true"'
+    - when: never
 variables:
   GIT_DEPTH: "0"
   GIT_AUTHOR_NAME: johninnl
@@ -15,20 +15,12 @@ before_script:
   - source .gitlab/scripts/bootstrap.sh
 verify:
   stage: verify
+  rules:
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true"'
   variables:
     SHARED_MAPS_API_KEY: AIzaSyDOCSGATEPLACEHOLDER00000000000000
   script:
-    - node .forgejo/scripts/identity.cjs --history
-    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs tests/test_gitlab_publish.cjs
-    - .venv/bin/python -m unittest discover -s tests
-    - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
-    - .venv/bin/python scripts/medium/check_bundle.py
-    - .venv/bin/python -m unittest discover -s scripts/medium/tests
-    - if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then export GITLAB_REPOSITORY="$CI_PROJECT_PATH"; fi
-    - .venv/bin/python scripts/generate_docs_catalog.py
-    - .venv/bin/python scripts/check_docs_app_pages.py
-    - .venv/bin/python -m mkdocs build --strict
-    - .venv/bin/python scripts/check_docs_site.py
+    - node scripts/local-release/verify.cjs
   artifacts:
     when: always
     paths: [build/docs-site/]
@@ -38,7 +30,7 @@ release:
   needs: [verify]
   resource_group: signed-release-mirror
   rules:
-    - if: '$CI_COMMIT_REF_PROTECTED == "true" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev")'
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true" && $CI_COMMIT_REF_PROTECTED == "true" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev")'
   script:
     - |
       if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then
@@ -51,8 +43,54 @@ release:
     - |
       if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then
         node .gitlab/scripts/check_secrets.cjs
+        node scripts/local-release/mirrors.cjs --preflight
         node .gitlab/scripts/publish_release.cjs
         node .gitlab/scripts/discovery.cjs
+        node scripts/local-release/mirrors.cjs
       else
         node .gitlab/scripts/release.cjs
       fi
+pages:
+  stage: deploy
+  image: eclipse-temurin:21-jdk-noble
+  before_script: []
+  needs:
+    - job: release
+      artifacts: false
+  rules:
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true" && $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_BRANCH == "main"'
+  script:
+    - test -n "$CI_PAGES_URL"
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends git python3 python3-venv
+    - git fetch origin "+refs/heads/main:refs/remotes/origin/pages-main"
+    - git checkout --detach refs/remotes/origin/pages-main
+    - python3 -m venv .venv
+    - .venv/bin/pip install -r docs/site-requirements.txt
+    - GITLAB_REPOSITORY="$CI_PROJECT_PATH" SITE_URL="${CI_PAGES_URL%/}/" .venv/bin/python scripts/generate_docs_catalog.py
+    - GITLAB_REPOSITORY="$CI_PROJECT_PATH" SITE_URL="${CI_PAGES_URL%/}/" REPOSITORY_URL="https://gitlab.com/$CI_PROJECT_PATH" REPOSITORY_NAME="$CI_PROJECT_PATH" REPOSITORY_ICON=simple/gitlab SOCIAL_IMAGE_URL="${CI_PAGES_URL%/}/assets/brand/social-card.png" .venv/bin/python -m mkdocs build --strict --site-dir public
+    - test -s public/index.html
+  pages:
+    publish: public
+  environment:
+    name: production
+    url: $CI_PAGES_URL
+pages_local:
+  stage: deploy
+  before_script: []
+  tags: [nl-morphe-pages-macos]
+  resource_group: production-pages-local
+  variables:
+    GIT_STRATEGY: clone
+    GIT_DEPTH: "1"
+    GIT_CLONE_PATH: "$CI_BUILDS_DIR/$CI_JOB_ID"
+    FF_ENABLE_JOB_CLEANUP: "true"
+  rules:
+    - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "api" && $RUN_LOCAL_PAGES == "true" && $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_REF_PROTECTED == "true"'
+  script:
+    - node scripts/local-release/pages-job.cjs
+  pages:
+    publish: public
+  environment:
+    name: production
+    url: $CI_PAGES_URL

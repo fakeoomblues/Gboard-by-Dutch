@@ -69,6 +69,31 @@ test("GitLab pipeline publishes only protected authoritative main/dev releases",
   assert.equal(fs.existsSync(path.join(__dirname,"../.gitlab/release.config.cjs")),false);
 });
 
+test("GitLab cloud workflows require explicit web opt-in, including main/dev and MR events", () => {
+  const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  function allowed(env) {
+    for (const rule of config.workflow.rules) {
+      const matches = !rule.if || Function(`return (${rule.if.replace(/\$([A-Z_]+)/g, (_match, name) => JSON.stringify(env[name] || ""))});`)();
+      if(matches)return rule.when !== "never";
+    }
+    return false;
+  }
+  for(const branch of ["main", "dev", "feature/example"]){
+    for(const source of ["push", "merge_request_event", "schedule", "api"]){
+      assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:source, RUN_CLOUD_CI:"true"}),false,`${source} ${branch}`);
+    }
+    for(const choice of [undefined, "false", "TRUE"]){
+      assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:"web", RUN_CLOUD_CI:choice}),false);
+    }
+    assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:"web", RUN_CLOUD_CI:"true"}),true);
+  }
+  assert.equal(allowed({CI_SERVER_HOST:"gitgud.io",CI_PIPELINE_SOURCE:"web",RUN_CLOUD_CI:"true"}),false);
+  assert.deepEqual(config.verify.script,["node scripts/local-release/verify.cjs"]);
+  assert.match(config.release.rules[0].if,/CI_COMMIT_REF_PROTECTED/);
+  assert.match(config.pages.rules[0].if,/CI_COMMIT_REF_PROTECTED/);
+  assert.match(config.pages.rules[0].if,/CI_COMMIT_BRANCH == "main"/);
+});
+
 test("GitLab API and Git credentials stay on the exact destination host", async () => {
   const {api} = require("../.gitlab/scripts/api.cjs");
   await api("/user", {token:"fixture-token", fetcher:async(url, options)=>{
