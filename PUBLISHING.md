@@ -132,6 +132,6 @@ Do not edit generated versions or delete failure state to hide an error. Diagnos
 
 ## Optional hosted fallback
 
-Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with `RUN_CLOUD_CI=true` retains the complete fallback; protected main/dev publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.
+Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with the `run_cloud_ci` input set to `true` retains the complete fallback; protected main/dev publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.
 
-The separate `RUN_LOCAL_PAGES=true` API path is restricted to the tagged protected Mac project runner, not shared runners. A skipped/canceled hosted pipeline is never reported as a passing verification run; retain the local source-SHA receipt instead.
+The separate API path supplies the validated `run_local_pages=true` and `expected_pages_sha` pipeline inputs. The YAML derives the job's `RUN_LOCAL_PAGES` and `EXPECTED_PAGES_SHA` environment variables from those inputs. It is restricted to the tagged protected Mac project runner, not shared runners. Keep arbitrary pipeline-variable overrides disabled; the controller does not require that permission. A skipped/canceled hosted pipeline is never reported as a passing verification run; retain the local source-SHA receipt instead.

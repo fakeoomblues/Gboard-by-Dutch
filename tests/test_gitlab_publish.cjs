@@ -7,7 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const {execFileSync} = require("node:child_process");
-const {load} = require("js-yaml");
+const {loadAll} = require("js-yaml");
 function signedFixture() {
   const {privateKey, publicKey} = crypto.generateKeyPairSync("ed25519");
   const key = Buffer.from(publicKey.export({format:"jwk"}).x,"base64url").toString("base64");
@@ -26,14 +26,14 @@ test("GitLab chooses versions with existing source guards and never loads anothe
   assert.ok(plugins.includes("./.gitlab/scripts/publish.cjs"));
   assert.ok(plugins.includes("./.gitlab/scripts/changelog.cjs"));
   assert.ok(!plugins.some(p=>p.includes(".forgejo/")||p.includes("public_github")));
-  const ci=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const ci=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   const commands=ci.release.script.join("\n");
   assert.ok(commands.indexOf("check_secrets.cjs")<commands.indexOf("publish_release.cjs"));
   assert.ok(commands.indexOf("publish_release.cjs")<commands.indexOf("discovery.cjs"));
   assert.deepEqual(ci.release.needs,["verify"]);
 });
 test("GitLab Pages deploys only the post-release site to its public Pages URL", () => {
-  const ci=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const ci=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   assert.deepEqual(ci.stages,["verify","release","deploy"]);
   assert.equal(ci.pages.stage,"deploy");
   assert.deepEqual(ci.pages.needs,[{job:"release",artifacts:false}]);

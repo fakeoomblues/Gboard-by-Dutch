@@ -1,3 +1,21 @@
+spec:
+  inputs:
+    run_local_pages:
+      type: string
+      default: "false"
+      options: ["false", "true"]
+      description: Run only the protected local Mac Pages job through the API.
+    expected_pages_sha:
+      type: string
+      default: ""
+      regex: '^([a-f0-9]{40})?$'
+      description: Exact main source SHA required by the local Pages job.
+    run_cloud_ci:
+      type: string
+      default: "false"
+      options: ["false", "true"]
+      description: Explicit web-only opt-in for the hosted fallback.
+---
 image: eclipse-temurin:21-jdk-noble
 stages: [verify, release, deploy]
 workflow:
@@ -6,6 +24,9 @@ workflow:
     - if: '$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true"'
     - when: never
 variables:
+  RUN_LOCAL_PAGES: "$[[ inputs.run_local_pages ]]"
+  EXPECTED_PAGES_SHA: "$[[ inputs.expected_pages_sha ]]"
+  RUN_CLOUD_CI: "$[[ inputs.run_cloud_ci ]]"
   GIT_DEPTH: "0"
   GIT_AUTHOR_NAME: johninnl
   GIT_AUTHOR_EMAIL: 349981574+johninnl@users.noreply.github.com

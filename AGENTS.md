@@ -21,7 +21,7 @@
 
 Operational details, private-file inventory and both channel procedures are in [PUBLISHING.md](PUBLISHING.md). Keep rules here and implementation/setup details there.
 
-- Prefer local build/test/release automation. Hosted jobs must not run on ordinary branch, merge-request, main/dev or mirror pushes; the GitLab fallback requires explicit web opt-in with `RUN_CLOUD_CI=true`. Legacy forge workflows remain manual.
+- Prefer local build/test/release automation. Hosted jobs must not run on ordinary branch, merge-request, main/dev or mirror pushes; the GitLab fallback requires explicit web opt-in through the `run_cloud_ci=true` pipeline input. Keep arbitrary pipeline-variable overrides disabled. Legacy forge workflows remain manual.
 - Use `scripts/local-release/verify.cjs` as the single complete verification command set. Do not replace required release/history, Python, Android, Medium or bilingual documentation checks with a smaller passing subset.
 - Maintain `scripts/local-release/templates.json`, `.releaserc`, `PUBLISHING.md` and both main/dev procedures together. `main` is stable; `dev` is the dev prerelease channel. Existing version/note/catalogue generation remains authoritative.
 - Publish only approved main/dev heads. The local watcher baselines existing heads on first startup, then processes later approved updates automatically. Obtain user approval before promoting unapproved app changes to main; feature branches never publish.
