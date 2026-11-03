@@ -58,7 +58,7 @@ def main():
     parser.add_argument('--expected-pending-attempt', default='')
     parser.add_argument('--expected-old-session', default='')
     parser.add_argument('--reviewed-stopped-output', action='store_true')
-    parser.add_argument('--warning-suite-cases', choices=['all','road-service','concurrent'], default='all')
+    parser.add_argument('--warning-suite-cases', choices=['all','road-service','concurrent','native-guidance'], default='all')
     parser.add_argument('--hold-seconds', type=int, choices=range(10, 31), default=20)
     parser.add_argument('--native-id', help='Controlled native model ID; expected warning ID is SpeedCam:<native-id>')
     parser.add_argument('--receiver-wait-seconds', '--confirm-wait-seconds', dest='receiver_wait_seconds', type=int, choices=range(30, 121), default=120)

@@ -62,6 +62,28 @@ public final class MapsVoiceProbe {
         return result;
     }
 
+    /** Controlled native TEST_AUDIO only, submitted to the EXISTING product guidance manager. */
+    public static final class GuidanceWitness {
+        final Object manager;final ManagerItem item;final Trace trace=new Trace();final java.util.Set<Object> known=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());String regenerated="";long regenerationAt=-1;
+        GuidanceWitness(Object manager,ManagerItem item){this.manager=manager;this.item=item;}
+    }
+    public static GuidanceWitness beginOnActualManager(Instrumentation probe,Object manager)throws Exception{
+        ClassLoader loader=probe.getTargetContext().getClassLoader();Trace trace=new Trace();long until=SystemClock.elapsedRealtime()+7000;while(SystemClock.elapsedRealtime()<until&&!managerSnapshot(manager,trace,"actual_route_idle").getBoolean("idle"))SystemClock.sleep(30);if(!managerSnapshot(manager,trace,"actual_route_before_controlled_job").getBoolean("idle"))throw new IllegalStateException("Actual route manager did not become idle");
+        ManagerItem item=createManagerItem(probe,loader,"source_driven_route_preemption",10000);GuidanceWitness witness=new GuidanceWitness(manager,item);submitManagerItem(probe,manager,item,loader,witness.trace);if(!item.started.await(5,TimeUnit.SECONDS))throw new IllegalStateException("Actual manager did not start controlled native job");
+        until=SystemClock.elapsedRealtime()+2000;while(item.player.getCurrentPosition()<30&&SystemClock.elapsedRealtime()<until)SystemClock.sleep(10);if(item.player.getCurrentPosition()<30)throw new IllegalStateException("Native controlled media did not advance");
+        freezeWitnessJobs(witness);JSONObject state=managerSnapshot(manager,witness.trace,"actual_native_guidance_armed");if(!identity(item.job).equals(state.getString("active")))throw new IllegalStateException("Controlled job no longer occupies native manager");return witness;
+    }
+    private static void freezeWitnessJobs(GuidanceWitness witness)throws Exception{
+        CountDownLatch done=new CountDownLatch(1);AtomicReference<Throwable> error=new AtomicReference<>();((Executor)field(witness.manager.getClass(),"j").get(witness.manager)).execute(()->{try{for(String name:new String[]{"p","q","prevJob"}){Object job=field(witness.manager.getClass(),name).get(witness.manager);if(job!=null)witness.known.add(job);}}catch(Throwable failure){error.set(failure);}finally{done.countDown();}});if(!done.await(5,TimeUnit.SECONDS)||error.get()!=null)throw new IllegalStateException("Native job identity freeze failed",error.get());
+    }
+    public static JSONObject actualManagerWitness(GuidanceWitness witness)throws Exception{
+        for(String name:new String[]{"p","q","prevJob"}){Object job=field(witness.manager.getClass(),name).get(witness.manager);if(job==null||witness.known.contains(job))continue;String category=((Enum<?>)field(job.getClass(),"m").get(job)).name();if(category.equals("PULL_GUIDANCE")){witness.regenerated=identity(job);if(witness.regenerationAt<0)witness.regenerationAt=SystemClock.elapsedRealtime();}}
+        return witness.item.snapshot().put("controlled_duration_ms",10000).put("native_start_to_stop_ns",witness.item.trace.between("media_start_return","media_stop_enter")).put("new_current_route_pull_job",witness.regenerated).put("regeneration_observed_elapsed_ms",witness.regenerationAt).put("known_jobs_before_external_warning",witness.known.size());
+    }
+    public static void closeActualManagerWitness(Instrumentation probe,GuidanceWitness witness)throws Exception{
+        if(witness==null)return;if(witness.item.job!=null&&witness.item.terminalCount==0){onMain(probe,()->method(witness.manager.getClass(),"l",Class.forName("bmud",false,probe.getTargetContext().getClassLoader())).invoke(witness.manager,witness.item.job));witness.item.terminal.await(3,TimeUnit.SECONDS);}onMain(probe,()->{if(witness.item.player.releases==0)witness.item.player.release();});witness.item.deleted=witness.item.wav.delete();
+    }
+
     /** Use a real app-created route model; missing network/location/route state is a failure, not fabricated. */
     private static JSONObject runProductionRoute(Instrumentation probe)throws Exception {
         JSONObject result=new JSONObject().put("probe","MapsVoiceProbe").put("scenario","production_route")
