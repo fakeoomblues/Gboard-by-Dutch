@@ -1,13 +1,12 @@
 "use strict";
-const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
+const {loadApiKeys,loadTokenFile} = require("../../scripts/local-release/credentials.cjs");
 const {api} = require("./api.cjs");
 const guard = require("../../.github/scripts/verify_identity.cjs");
-function localToken() {
-  const file = process.env.CODEBERG_TOKEN_FILE || path.join(os.homedir(), ".codeberg");
-  const value = fs.readFileSync(file, "utf8").trim();
-  return value.replace(/^(?:export )?[A-Za-z_][A-Za-z_0-9]*\s*=\s*/, "").replace(/^["']|["']$/g, "");
+function localToken({env=process.env,home=os.homedir()}={}) {
+  if(env.CODEBERG_TOKEN_FILE)return loadTokenFile(env.CODEBERG_TOKEN_FILE);
+  return loadApiKeys(path.join(home,".ci")).CODEBERG_TOKEN;
 }
 async function verifyPublisher({env = process.env, request = api} = {}) {
   if (!env.CODEBERG_TOKEN) throw new Error("JOHNINNL_CODEBERG_TOKEN must supply CODEBERG_TOKEN");

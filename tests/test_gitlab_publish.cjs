@@ -38,7 +38,7 @@ test("GitLab Pages deploys only the post-release site to its public Pages URL", 
   assert.equal(ci.pages.stage,"deploy");
   assert.deepEqual(ci.pages.needs,[{job:"release",artifacts:false}]);
   assert.equal(ci.pages.pages.publish,"public");
-  assert.deepEqual(ci.pages.rules,[{if:'$CI_COMMIT_BRANCH == "main"'}]);
+  assert.deepEqual(ci.pages.rules,[{if:'$CI_SERVER_HOST == "gitlab.com" && $CI_PIPELINE_SOURCE == "web" && $RUN_CLOUD_CI == "true" && $CI_COMMIT_REF_PROTECTED == "true" && $CI_COMMIT_BRANCH == "main"'}]);
   const commands=ci.pages.script.join("\n");
   assert.match(commands,/apt-get install -y --no-install-recommends git python3 python3-venv/);
   assert.ok(commands.indexOf("apt-get install")<commands.indexOf("git fetch origin"));
@@ -137,4 +137,148 @@ test("GitLab anonymous downloads and discovery reject wrong hosts, channels and 
   assert.throws(()=>verifyDiscovery(manifest,release,{...options,branch:"dev"}),/channel/);
   assert.throws(()=>verifyDiscovery({...manifest,public_key:signedFixture().key},release,options),/signing/);
   assert.throws(()=>verifyDiscovery(manifest,{...release,author:{username:"bot"}},options),/source/);
+});
+
+function publisherFixture(t, branch="main") {
+  const cwd=fs.mkdtempSync(path.join(os.tmpdir(),"gitlab-publisher-entry-"));
+  t.after(()=>fs.rmSync(cwd,{recursive:true,force:true}));
+  execFileSync("git",["init","-b",branch],{cwd,stdio:"pipe"});
+  const receipt=()=>JSON.parse(fs.readFileSync(path.join(cwd,"build/release-safety/gitlab-result.json"),"utf8"));
+  return {cwd,receipt};
+}
+test("local main/dev releases check the remote before running the unchanged signed release configuration", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");
+  for(const branch of ["main","dev"]){
+    const {cwd,receipt}=publisherFixture(t,branch);const calls=[];
+    const version=branch==="main"?"1.2.4":"1.2.4-dev.1";
+    const result=await main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+      verifyHead:checked=>{assert.equal(checked,branch);calls.push("head");},
+      release:async(options,context)=>{
+        calls.push("release");assert.equal(options.ci,false);assert.notEqual(options.dryRun,true);
+        assert.equal(context.cwd,cwd);assert.equal(context.env.GITLAB_REPOSITORY,"johninnld/nl-morphe-patches");
+        assert.deepEqual(options.plugins,require("../.gitlab/gitlab-com.release.config.cjs").plugins);
+        return {nextRelease:{version}};
+      },recover:async()=>{assert.fail("A selected release must not invoke recovery");}});
+    assert.deepEqual(calls,["head","release"]);assert.deepEqual(result,{version,branch});assert.deepEqual(receipt(),result);
+  }
+});
+test("hosted publication retains semantic-release CI defaults", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);
+  await main([],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{},release:async options=>{
+    assert.equal(options.ci,undefined);return {nextRelease:{version:"1.2.4"}};
+  },recover:async()=>assert.fail("Unexpected recovery")});
+});
+test("dry-run records selected and unselected previews without invoking tagged recovery", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");
+  for(const selected of [true,false]){
+    const {cwd,receipt}=publisherFixture(t,"dev");
+    const result=await main(["--local","--dry-run"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+      verifyHead:()=>assert.fail("Preview must not enter publication guards or recovery"),
+      release:async(options)=>{
+        assert.equal(options.ci,false);assert.equal(options.dryRun,true);
+        return selected?{nextRelease:{version:"1.2.4-dev.1"}}:false;
+      },recover:async()=>assert.fail("A preview must never publish a tagged release")});
+    const expected={preview:true,published:false,branch:"dev",...(selected?{version:"1.2.4-dev.1"}:{})};
+    assert.deepEqual(result,expected);assert.deepEqual(receipt(),expected);
+  }
+});
+test("dry-run is respected without local mode", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd,receipt}=publisherFixture(t);
+  await main(["--dry-run"],{cwd,env:{GITLAB_TOKEN:"fixture"},release:async options=>{
+    assert.equal(options.dryRun,true);assert.equal(options.ci,undefined);return false;
+  },recover:async()=>assert.fail("Dry-run recovery would publish"),verifyHead:()=>assert.fail("Unexpected publication")});
+  assert.deepEqual(receipt(),{preview:true,published:false,branch:"main"});
+});
+test("feature branches and unknown options are refused before release or recovery", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t,"feature/test");
+  const deps={cwd,env:{GITLAB_TOKEN:"fixture"},release:async()=>assert.fail("Feature publication"),recover:async()=>assert.fail("Feature recovery"),verifyHead:()=>assert.fail("Unexpected remote lookup")};
+  await assert.rejects(main(["--local"],deps),/Only main\/dev/);
+  await assert.rejects(main(["--local","--dry-run"],deps),/Only main\/dev/);
+  await assert.rejects(main(["--preview"],deps),/Unknown option/);
+});
+test("stale release checkouts fail before semantic-release or tagged recovery", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);
+  await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+    verifyHead:()=>{throw new Error("Stale release checkout");},
+    release:async()=>assert.fail("Stale source must not publish"),recover:async()=>assert.fail("Stale source must not recover")}),/Stale release checkout/);
+  assert.equal(fs.existsSync(path.join(cwd,"build/release-safety/gitlab-result.json")),false);
+});
+test("local no-release runs recheck the head before preserving tagged recovery", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");
+  for(const recovered of [true,false]){
+    const {cwd,receipt}=publisherFixture(t);const calls=[];
+    const result=await main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>calls.push("head"),
+      release:async()=>{calls.push("release");return false;},
+      recover:async branch=>{calls.push("recover");assert.equal(branch,"main");return recovered?{version:"1.2.3",branch}:null;}});
+    assert.deepEqual(calls,["head","release","head","recover"]);
+    assert.deepEqual(result,recovered?{version:"1.2.3",branch:"main"}:{published:false});assert.deepEqual(receipt(),result);
+  }
+});
+test("a remote advance during no-release analysis blocks recovery publication", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);let checks=0;
+  await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{
+    if(++checks===2)throw new Error("Stale release checkout");
+  },release:async()=>false,recover:async()=>assert.fail("The remote advanced before recovery")}),/Stale release checkout/);
+  assert.equal(checks,2);
+});
+test("the default local head guard compares the selected checkout to its exact GitLab branch", async t => {
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t,"dev");
+  const env={...process.env,GITLAB_TOKEN:"fixture",GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com"};
+  execFileSync("git",["-c","commit.gpgsign=false","commit","--allow-empty","-m","test: source head fixture"],{cwd,env,stdio:"pipe"});
+  const source=execFileSync("git",["rev-parse","HEAD"],{cwd,encoding:"utf8"}).trim();
+  let remote=source;const calls=[];
+  const exec=(file,args,options)=>{
+    if(args[0]==="ls-remote"){
+      assert.equal(file,"git");assert.equal(options.cwd,cwd);
+      assert.deepEqual(args,["ls-remote","https://gitlab.com/johninnld/nl-morphe-patches.git","refs/heads/dev"]);
+      calls.push("remote");return `${remote}\trefs/heads/dev\n`;
+    }
+    return execFileSync(file,args,options);
+  };
+  const release=async()=>{calls.push("release");return {nextRelease:{version:"1.2.4-dev.1"}};};
+  await main(["--local"],{cwd,env,exec,release});assert.deepEqual(calls,["remote","release"]);
+  remote="b".repeat(40);calls.length=0;
+  await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Stale release checkout/);assert.deepEqual(calls,["remote"]);
+  remote="";
+  await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Cannot verify the current GitLab source head/);
+});
+test("local SSH publication safely quotes its key and checks the same SSH remote",async t=>{
+  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t,"dev"),head="a".repeat(40);
+  const sshUrl="git@gitlab.com:johninnld/nl-morphe-patches.git",key="/private/keys/GitLab user's identity";
+  const env={GITLAB_TOKEN:"api-fixture",GITLAB_SSH_KEY:key,GIT_SSH:"inherited-ssh",GIT_SSH_COMMAND:"inherited-command",GIT_CONFIG_COUNT:"1",GIT_CONFIG_KEY_0:"http.https://other.invalid/.extraheader",GIT_CONFIG_VALUE_0:"old-header-fixture"};
+  const sshEnv=value=>{
+    assert.ok(value.GITLAB_TOKEN==="api-fixture","The publisher API token must remain available");
+    assert.equal(value.GIT_SSH_COMMAND,"ssh -i '/private/keys/GitLab user'\\''s identity' -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes");
+    assert.equal(value.GIT_SSH_VARIANT,"ssh");assert.equal(value.GIT_CONFIG_COUNT,"0");
+    assert.equal(value.GIT_SSH,undefined);assert.equal(value.GIT_CONFIG_KEY_0,undefined);assert.ok(value.GIT_CONFIG_VALUE_0===undefined,"Unrelated Git authentication must not be inherited");
+  };
+  const seen=[],exec=(command,args,options)=>{
+    assert.equal(command,"git");
+    if(args[0]==="branch")return "dev\n";
+    sshEnv(options.env);if(args[0]==="rev-parse")return head;
+    assert.deepEqual(args,["ls-remote",sshUrl,"refs/heads/dev"]);seen.push("head");return `${head}\trefs/heads/dev\n`;
+  };
+  await main(["--local"],{cwd,env,exec,authenticate:()=>assert.fail("SSH refs must not require HTTPS Git authentication"),release:async(options,context)=>{
+    assert.equal(options.repositoryUrl,sshUrl);assert.equal(options.ci,false);sshEnv(context.env);seen.push("release");return {nextRelease:{version:"1.2.4-dev.1"}};
+  }});
+  assert.deepEqual(seen,["head","release"]);
+});
+test("local SSH previews retain the API token without performing a remote head lookup",async t=>{
+  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);
+  await main(["--local","--dry-run"],{cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>assert.fail("A preview must not publish"),release:async(options,context)=>{
+    assert.equal(options.repositoryUrl,"git@gitlab.com:johninnld/nl-morphe-patches.git");assert.equal(options.dryRun,true);
+    assert.ok(context.env.GITLAB_TOKEN==="api-fixture","Preview API authentication must remain available");assert.equal(context.env.GIT_SSH_VARIANT,"ssh");return false;
+  },recover:()=>assert.fail("A preview must never recover")});
+});
+test("hosted runs keep HTTPS Git authentication even when a local key path is present",async t=>{
+  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);let authenticated=false;
+  await main([],{cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>{},authenticate:env=>{authenticated=true;return env;},release:async(options,context)=>{
+    assert.equal(options.repositoryUrl,"https://gitlab.com/johninnld/nl-morphe-patches.git");assert.equal(options.ci,undefined);assert.equal(context.env.GIT_SSH_COMMAND,undefined);return {nextRelease:{version:"1.2.4"}};
+  }});assert.equal(authenticated,true);
+});
+test("invalid local SSH key paths fail before any publication or remote check",async t=>{
+  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);
+  for(const key of ["relative-key","/private/key\0invalid"]){
+    await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"api-fixture",GITLAB_SSH_KEY:key},verifyHead:()=>assert.fail("Invalid SSH path must not reach the remote"),release:()=>assert.fail("Invalid SSH path must not publish")}),/SSH key path/);
+  }
 });
