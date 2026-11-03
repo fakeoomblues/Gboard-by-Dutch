@@ -1,4 +1,4 @@
-image: eclipse-temurin:21-jdk-jammy
+image: eclipse-temurin:21-jdk-noble
 stages: [verify, release]
 workflow:
   rules:

@@ -58,6 +58,7 @@ test("GitLab mirrors identical signed bytes without competing source commits or 
 });
 test("GitLab pipeline publishes only protected authoritative main/dev releases", () => {
   const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  assert.equal(config.image,"eclipse-temurin:21-jdk-noble","The pinned documentation tools require Python 3.11+, unavailable in Jammy");
   assert.equal(config.variables.GIT_DEPTH,"0");
   assert.equal(config.variables.GIT_AUTHOR_NAME,"johninnl");
   assert.equal(config.variables.GIT_COMMITTER_EMAIL,"349981574+johninnl@users.noreply.github.com");

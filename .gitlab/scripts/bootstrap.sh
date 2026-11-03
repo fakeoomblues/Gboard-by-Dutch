@@ -30,5 +30,6 @@ set -o pipefail
 test "$license_status" = 0
 sdkmanager platform-tools
 python3 -m venv .venv
+python3 -c 'import sys; assert sys.version_info >= (3, 11), "Documentation tools require Python 3.11 or newer"'
 .venv/bin/pip install -r docs/site-requirements.txt
 npm ci --ignore-scripts
