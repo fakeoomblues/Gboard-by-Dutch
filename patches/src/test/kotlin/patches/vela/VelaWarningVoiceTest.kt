@@ -5,6 +5,7 @@ import com.android.tools.smali.dexlib2.DexFileFactory
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import java.io.File
@@ -31,6 +32,12 @@ class VelaWarningVoiceTest {
             val key=originals.keys.single { it.startsWith("Lvy4;->$name(") }
             val original=originals.getValue(key);val changed=methods.getValue(key)
             val code=changed.implementation!!.instructions.toList()
+            if(name=="onStop") {
+                assertEquals("$speaker->utteranceStopped(Ljava/lang/Object;Ljava/lang/String;Z)Z",(code[0] as ReferenceInstruction).reference.toString())
+                assertEquals(3,(code[0] as RegisterRangeInstruction).registerCount)
+                assertEquals(1,(code[0] as RegisterRangeInstruction).startRegister)
+                assertEquals(4,changed.implementation!!.registerCount)
+            }
             assertEquals(Opcode.IF_EQZ,code[2].opcode)
             assertEquals(Opcode.RETURN_VOID,code[3].opcode)
             val suffix=ImmutableMethod(original.definingClass,original.name,original.parameters,original.returnType,

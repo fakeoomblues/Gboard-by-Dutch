@@ -56,10 +56,10 @@ public final class WarningPreferences {
     public static int categoryOf(WarningEvent e){
         if(e.category.equals("emergency_vehicle") || e.relevance.equals("moving_emergency"))return EMERGENCY;
         if(e.nativeType.equals("AVG_SPEED_CHECK"))return ZONE;
-        if(e.nativeType.equals("POLICEHOTSPOT") || e.nativeType.equals("POLICE_HOTSPOT") || e.nativeSubtype.equals("POLICE") || e.nativeSubtype.startsWith("POLICE_"))return POLICE;
-        if(e.category.equals("speed_control"))return CAMERA;
+        if(e.category.equals("police_control")||e.nativeType.equals("POLICEHOTSPOT") || e.nativeType.equals("POLICE_HOTSPOT") || e.nativeSubtype.equals("POLICE") || e.nativeSubtype.startsWith("POLICE_"))return POLICE;
+        if(e.category.equals("speed_control")||e.category.equals("traffic_camera"))return CAMERA;
         if(e.category.equals("traffic")||e.category.equals("speed_advice"))return TRAFFIC;
-        if((e.category.equals("road_danger")||e.category.equals("roadworks")||e.category.equals("closure")||e.category.equals("weather")) && !e.nativeType.equals("UNKNOWN"))return ROAD_DANGER;
+        if((e.category.equals("road_danger")||e.category.equals("roadworks")||e.category.equals("closure")||e.category.equals("weather")||e.category.equals("service_vehicle")||e.category.equals("slow_vehicle")) && !e.nativeType.equals("UNKNOWN"))return ROAD_DANGER;
         return OTHER;
     }
     private static int legacyCategories(int types){

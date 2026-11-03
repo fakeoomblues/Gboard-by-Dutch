@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -21,6 +22,7 @@ public class NativeWarningsTest {
     private final List<Bundle> events = new ArrayList<>();
     private Context app;
     @Before public void before() { app=RuntimeEnvironment.getApplication(); NativeWarnings.resetForTest(app, events::add); }
+    @After public void after(){NativeWarnings.setEndpointForTest(null);}
     public static class BaseReport {
         public String getId(){return "danger-7";}
         public String getReportType(){return "INCIDENT";}
@@ -232,7 +234,7 @@ public class NativeWarningsTest {
         String idA=last().getString("warning_id");assertEquals("early/AMBULANCE:gmp_a",idA);assertEquals("incoming",last().getString("native_source_motion"));assertEquals("unknown",last().getString("relationship"));
         NativeWarnings.citsSource(new IncomingEmergencyVehicle("b"));NativeWarnings.citsModel(reportB);NativeWarnings.early(null,"AMBULANCE",null,b,"Second ambulance",true,null);
         String idB=last().getString("warning_id");assertNotEquals(idA,idB);
-        NativeWarnings.bindProjection(new EarlyWarning(),reportB);assertEquals(idB,last().getString("warning_id"));assertEquals("Second ambulance",last().getString("message"));assertEquals("UPSERT",last().getString("operation"));
+        NativeWarnings.bindProjection(new EarlyWarning(),reportB);assertEquals(idB,last().getString("warning_id"));assertEquals("Second ambulance",last().getString("native_announced_text"));assertEquals(b.getFreetext(),last().getString("native_instruction"));assertEquals("UPSERT",last().getString("operation"));
         NativeWarnings.earlyRemoved(reportA);assertEquals(idA,last().getString("warning_id"));assertEquals("CLEAR",last().getString("operation"));
     }
     @Test public void nativeStationaryEmergencyIsNotInferredToBeApproaching() {
@@ -275,5 +277,49 @@ public class NativeWarningsTest {
     @Test public void laneClosurePreservesNativeSubtypeLaneIndexAndClosedCount(){
         NativeWarnings.regular(null,new CitsLaneClosed(),true,false,null,null);
         assertEquals("RIGHT_LANE",last().getString("native_subtype"));assertEquals(0,last().getInt("lane_index"));assertEquals(2,last().getInt("number_of_lanes_closed"));assertEquals("Two lanes closed",last().getString("message"));
+    }
+    @Test public void citsGenericAnnouncementKeepsTheActualMatchingLanguageInstructionInOneAuthority(){
+        EarlyWarningNotification n=new EarlyWarningNotification();AliasedEarlyReport report=new AliasedEarlyReport("instruction",n);IncomingEmergencyVehicle event=new IncomingEmergencyVehicle("instruction");
+        event.freeTextsWhere=Arrays.asList(new FreeTextWhere(n.getFreetext(),"en"));NativeWarnings.citsSource(event);NativeWarnings.citsModel(report);
+        NativeWarnings.early(null,"AMBULANCE",null,n,"Caution! Ambulance",true,null);
+        assertEquals(1,events.size());assertEquals("ANNOUNCE",last().getString("operation"));assertEquals("Caution! Ambulance",last().getString("native_announced_text"));
+        assertEquals(n.getFreetext(),last().getString("native_instruction"));assertEquals("en",last().getString("native_instruction_language_tag"));assertTrue(last().getString("message").contains(n.getFreetext()));assertEquals("en",last().getString("language_tag"));
+        NativeWarnings.bindProjection(new EarlyWarning(),report);assertEquals("UPSERT",last().getString("operation"));assertTrue(last().getString("message").contains(n.getFreetext()));assertEquals("Caution! Ambulance",last().getString("native_announced_text"));
+    }
+    @Test public void citsInstructionDoesNotPretendAnEnglishLabelIsGerman(){
+        EarlyWarningNotification n=new EarlyWarningNotification(){@Override public String getFreetext(){return "Krankenwagen hinter Ihnen";}};AliasedEarlyReport report=new AliasedEarlyReport("mixed",n);IncomingEmergencyVehicle event=new IncomingEmergencyVehicle("mixed");
+        event.freeTextsWhere=Arrays.asList(new FreeTextWhere(n.getFreetext(),"de"));NativeWarnings.citsSource(event);NativeWarnings.citsModel(report);NativeWarnings.early(null,"AMBULANCE",null,n,"Caution! Ambulance",true,null);
+        assertEquals("Caution! Ambulance",last().getString("native_announced_text"));assertEquals(n.getFreetext(),last().getString("message"));assertEquals("de",last().getString("language_tag"));assertEquals("unknown",last().getString("relationship"));
+    }
+    public static class MutableInstruction extends EarlyWarningNotification {String instruction;MutableInstruction(String text){instruction=text;}@Override public String getFreetext(){return instruction;}}
+    @Test public void nativeCitsRevisionUpdatesTheInstructionWithoutIssuingAnotherAnnouncement(){
+        MutableInstruction first=new MutableInstruction("Ambulance behind you");AliasedEarlyReport report=new AliasedEarlyReport("revision",first);IncomingEmergencyVehicle event=new IncomingEmergencyVehicle("revision");event.freeTextsWhere=Arrays.asList(new FreeTextWhere(first.getFreetext(),"en"));
+        NativeWarnings.citsSource(event);NativeWarnings.citsModel(report);NativeWarnings.early(null,"AMBULANCE",null,first,"Caution! Ambulance",true,null);long index=last().getLong("announcement_index");
+        MutableInstruction next=new MutableInstruction("Allow the ambulance to pass");AliasedEarlyReport revised=new AliasedEarlyReport("revision",next);event.freeTextsWhere=Arrays.asList(new FreeTextWhere(next.getFreetext(),"en"));NativeWarnings.citsSource(event);NativeWarnings.citsModel(revised);NativeWarnings.bindProjection(new EarlyWarning(),revised);
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(index,last().getLong("announcement_index"));assertTrue(last().getString("message").contains(next.getFreetext()));assertEquals("Caution! Ambulance",last().getString("native_announced_text"));
+        assertEquals(1,events.stream().filter(value->"ANNOUNCE".equals(value.getString("operation"))).count());
+    }
+    public static class CitsWeather extends CitsBaseReport {
+        enum Weather {FOG,ICE_ON_THE_ROAD}
+        private Weather mWeatherType=Weather.ICE_ON_THE_ROAD;
+        @Override public String getReportType(){return "CITS_WEATHER";}
+        public String getTitle(Context c){return "Ice on the road";}public String getSubtitle(Context c){return "Watch your speed";}
+    }
+    @Test public void actualWeatherSubtypeAndHazardTitleAreNotReducedToACareSubtitle(){
+        NativeWarnings.regular(null,new CitsWeather(),true,false,null,null);
+        assertEquals("ICE_ON_THE_ROAD",last().getString("native_subtype"));assertEquals("weather",last().getString("category"));assertEquals("Ice on the road. Watch your speed",last().getString("message"));
+    }
+    @Test public void overCapacityNativeSnapshotFaultsInsteadOfClearingAnUnseenAcceptedWarning() throws Exception {
+        nl.johninnl.navigation.alerts.WarningEndpoint endpoint=nl.johninnl.navigation.alerts.WarningEndpointFixtures.empty();NativeWarnings.setEndpointForTest(endpoint);NativeWarnings.resetForTest(app,events::add);
+        Incident accepted=new Incident();NativeWarnings.regular(null,accepted,true,false,"Native accepted warning",null);int count=events.size();List<Alerted> oversized=new ArrayList<>();for(int i=0;i<129;i++)oversized.add(new Alerted(new BaseReport()));
+        NativeWarnings.reports(oversized);assertEquals("Partial snapshot must not create false clears",count,events.size());
+        java.lang.reflect.Field fault=endpoint.getClass().getDeclaredField("captureFault");fault.setAccessible(true);assertTrue("Native capacity loss must be explicit",fault.getBoolean(endpoint));
+    }
+    @Test public void provedProducerAdvertisesItsCompleteCoverageAndPinnedRequiredInventory() throws Exception {
+        nl.johninnl.navigation.alerts.WarningEndpoint endpoint=NativeWarnings.init(app);
+        java.lang.reflect.Field field=endpoint.getClass().getDeclaredField("profile");field.setAccessible(true);nl.johninnl.navigation.alerts.WarningCapabilities profile=(nl.johninnl.navigation.alerts.WarningCapabilities)field.get(endpoint);
+        assertTrue("Proved native capture must not remain permanently disabled",profile.complete);
+        assertEquals(nl.johninnl.navigation.alerts.FlitsmeisterWarningTypes.MANIFEST_DIGEST,profile.manifestDigest);
+        assertEquals(nl.johninnl.navigation.alerts.FlitsmeisterWarningTypes.required(),profile.required);assertEquals(163,profile.required.size());
     }
 }

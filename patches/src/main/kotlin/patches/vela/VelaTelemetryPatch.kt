@@ -403,6 +403,8 @@ val externalSpeedControlsPatch = bytecodePatch(
         validateVelaHostAbi(classes)
         validateVelaWarningVoice(classes)
         validateVelaWarningExtension()
+        val nativeCarFrame=validateVelaCarWarningFrame(classes)
+        validateVelaCarWarningExtension()
         guardNativeAbi()
         // Resolve the full cohort before changing a field, register, instruction or template.
         val warningVoice = velaWarningVoiceContracts.keys.associateWith { method(it) }
@@ -463,6 +465,7 @@ val externalSpeedControlsPatch = bytecodePatch(
         }
         // All guards passed. Retype only descriptor-only extension fields, then apply bounded edits.
         bindVelaWarningVoice(warningVoice)
+        bindVelaCarWarningFrame(method(nativeCarFrame.toString()))
         val ui = mutableClassDefBy(UI)
         effectiveFields.forEach { name ->
             val field = ui.fields.single { it.name == name }

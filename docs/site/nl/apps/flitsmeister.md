@@ -32,7 +32,7 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-De uitbreiding met native FM-gebeurtenissen en spraak wordt nog gevalideerd; volledige gebeurtenisgestuurde audio blijft begrensd. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
+De koppeling met native FM-gebeurtenissen en spraak wordt nog integraal gevalideerd. De opname door de vastgelegde bronversie heeft de dekkingscontrole doorstaan; audio, routering en levensduur van de ontvanger worden verder gecontroleerd. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
 
 Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
 

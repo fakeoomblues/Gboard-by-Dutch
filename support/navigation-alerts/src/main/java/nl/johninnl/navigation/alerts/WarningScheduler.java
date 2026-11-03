@@ -98,7 +98,7 @@ public final class WarningScheduler {
             boolean possible=grant.granted&&(grant.outcome==PlaybackGrant.Outcome.GRANTED||grant.outcome==PlaybackGrant.Outcome.UNCERTAIN||grant.outcome==PlaybackGrant.Outcome.STARTED);
             if(possible&&active==null&&!grant.started&&source.identity().equals(unsubmitted.get(grant.attemptNonce)))recover=grant;
             else {
-                if(PlaybackGrant.suppressesReplay(grant.outcome))handled.put(grant.eventKey,time.now()+WarningJournal.RETENTION_MS);
+                if(grant.started || PlaybackGrant.suppressesReplay(grant.outcome))handled.put(grant.eventKey,time.now()+WarningJournal.RETENTION_MS);
                 if(possible&&active==null)unknownOutput=true;
                 if(grant.outcome==PlaybackGrant.Outcome.NOT_STARTED){unsubmitted.remove(grant.attemptNonce);unknownReplies.remove(grant.attemptNonce);}
             }
@@ -148,7 +148,7 @@ public final class WarningScheduler {
         Pending old=queue.get(key);
         if(old!=null){if(payload.revision>=old.payload.revision)old.payload=payload;old.replay|=replay;return;}
         Pending value=new Pending(authority,payload,replay);
-        observer.outcome(authority,PlaybackGrant.Outcome.RECEIVED);
+        observe(authority,PlaybackGrant.Outcome.RECEIVED);
         if(payload.category.equals("display_only")){terminal(value,PlaybackGrant.Outcome.REJECTED);return;}
         if(time.now()>=authority.announceUntil){terminal(value,PlaybackGrant.Outcome.EXPIRED);return;}
         prune();
@@ -159,13 +159,19 @@ public final class WarningScheduler {
             setStatus("OVERFLOW");
         }
         if(handled.size()>=MAX_HANDLED){terminal(value,PlaybackGrant.Outcome.REJECTED);setStatus("OVERFLOW");return;}
-        queue.put(key,value);observer.outcome(authority,PlaybackGrant.Outcome.QUEUED);
+        queue.put(key,value);observe(authority,PlaybackGrant.Outcome.QUEUED);
     }
     private void revise(WarningEvent event) {
         for(Pending p:queue.values())if(sameWarning(p.authority,event) && event.revision>=p.payload.revision)p.payload=event;
         if(active!=null && !active.started && sameWarning(active.pending.authority,event) && event.revision>active.pending.payload.revision) {
-            active.pending.payload=event;cancel(active,true);
+            // Retain the submitted immutable revision when only state/geometry changed.
+            // Cancelling identical audio can consume retries or interrupt a late real start.
+            if(!active.accepted || !sameSpeech(active.pending.payload,event)){active.pending.payload=event;cancel(active,true);}
         }
+    }
+    private static boolean sameSpeech(WarningEvent a,WarningEvent b){
+        return a.message.equals(b.message)&&a.languageTag.equals(b.languageTag)&&a.priority==b.priority
+                &&a.category.equals(b.category)&&a.nativeType.equals(b.nativeType)&&java.util.Objects.equals(a.nativeSubtype,b.nativeSubtype);
     }
     private static boolean sameWarning(WarningEvent a,WarningEvent b){return a.warningId.equals(b.warningId) && a.phase==b.phase && a.announcementIndex==b.announcementIndex;}
     private void clear(String id){for(Pending p:new ArrayList<>(queue.values()))if(p.authority.warningId.equals(id)){queue.remove(p.key);terminal(p,PlaybackGrant.Outcome.CANCELLED);}if(active!=null && active.pending.authority.warningId.equals(id))cancel(active,false);}
@@ -281,17 +287,19 @@ public final class WarningScheduler {
     }
     private void onStarted(Active attempt,PlaybackGrant grant){
         if(active!=attempt || !attempt.grant.sameIdentity(grant) || attempt.started)return;
-        attempt.started=true;observer.outcome(attempt.pending.authority,PlaybackGrant.Outcome.STARTED);
-        if(attempt.cancelled || attempt.generation!=generation || transport==null || lease==null || lease.epoch!=grant.ownerEpoch
-                || time.now()>=attempt.pending.authority.announceUntil){cancel(attempt,false);return;}
-        setStatus("STARTED");attempt.source.outcome(grant,PlaybackGrant.Outcome.STARTED,false).whenComplete((code,error)->time.execute(()-> {
+        attempt.started=true;observe(attempt.pending.authority,PlaybackGrant.Outcome.STARTED);
+        // A cancellation request cannot erase a real start or authorize a replacement grant.
+        attempt.source.outcome(grant,PlaybackGrant.Outcome.STARTED,false).whenComplete((code,error)->time.execute(()-> {
             if(active==attempt && (error!=null || !"OK".equals(code)))cancel(attempt,false);
         }));
+        if(attempt.cancelled || attempt.generation!=generation || transport==null || lease==null || lease.epoch!=grant.ownerEpoch
+                || time.now()>=attempt.pending.authority.announceUntil){cancel(attempt,false);return;}
+        setStatus("STARTED");
     }
     private void finish(Active attempt,PlaybackGrant.Outcome outcome,boolean quiet){
         if(active!=attempt || !PlaybackGrant.terminal(outcome) || attempt.terminal!=null && attempt.quiet)return;
         if(outcome==PlaybackGrant.Outcome.NOT_STARTED && attempt.started){outcome=PlaybackGrant.Outcome.UNCERTAIN;quiet=false;}
-        attempt.terminal=outcome;attempt.quiet=quiet;attempt.retryAt=0;observer.outcome(attempt.pending.authority,outcome);setStatus(quiet?outcome.name():"AUDIO_UNCERTAIN");ack(attempt);
+        attempt.terminal=outcome;attempt.quiet=quiet;attempt.retryAt=0;observe(attempt.pending.authority,outcome);setStatus(quiet?outcome.name():"AUDIO_UNCERTAIN");ack(attempt);
         if(!quiet&&previewResult!=null&&Boolean.TRUE.equals(attempt.pending.payload.fields().get("is_preview")))previewResult.complete("AUDIO_UNCERTAIN");
     }
     private void ack(Active attempt){
@@ -307,8 +315,8 @@ public final class WarningScheduler {
             active=null;
             boolean example=Boolean.TRUE.equals(attempt.pending.payload.fields().get("is_preview"));
             if(example)endPreview(sent.name());
-            boolean retry=(attempt.retry || !attempt.cancelled&&!attempt.started&&(sent==PlaybackGrant.Outcome.NOT_STARTED||sent==PlaybackGrant.Outcome.FAILED))
-                    && (sent==PlaybackGrant.Outcome.INTERRUPTED || sent==PlaybackGrant.Outcome.NOT_STARTED || sent==PlaybackGrant.Outcome.CANCELLED || sent==PlaybackGrant.Outcome.FAILED)
+            boolean retry=!attempt.started && (attempt.retry || !attempt.cancelled&&sent==PlaybackGrant.Outcome.NOT_STARTED)
+                    && (sent==PlaybackGrant.Outcome.NOT_STARTED || sent==PlaybackGrant.Outcome.CANCELLED)
                     && !example && attempt.pending.attempts<MAX_ATTEMPTS && attempt.generation==generation && transport!=null && time.now()<attempt.pending.authority.announceUntil;
             if(retry){attempt.pending.nonce=null;attempt.pending.retryAt=time.now()+250;queue.put(attempt.pending.key,attempt.pending);}
             else remember(attempt.pending);
@@ -325,7 +333,8 @@ public final class WarningScheduler {
             if(version!=generation || source!=transport)return;controlBusy=false;if(error!=null)setStatus("DELIVERY_INTERRUPTED");pump();
         }));
     }
-    private void terminal(Pending p,PlaybackGrant.Outcome outcome){remember(p);observer.outcome(p.authority,outcome);}
+    private void terminal(Pending p,PlaybackGrant.Outcome outcome){remember(p);observe(p.authority,outcome);}
+    private void observe(WarningEvent event,PlaybackGrant.Outcome outcome){WarningDiagnostics.event(event,"SCHEDULER_"+outcome.name(),time.now());observer.outcome(event,outcome);}
     private void remember(Pending p){if(handled.size()<MAX_HANDLED || handled.containsKey(p.key))handled.put(p.key,p.authority.issuedAt+WarningJournal.RETENTION_MS);}
     private void setStatus(String value){if(!value.equals(status)){status=value;observer.changed(value);}}
     private void endPreview(String outcome){if(previewResult!=null)previewResult.complete(outcome);previewResult=null;previewRequested=false;}

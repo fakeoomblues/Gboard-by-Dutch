@@ -11,6 +11,9 @@ import android.widget.Toast;
 /** Private source-owned parked confirmation; receivers receive only a PendingIntent to this UI. */
 public final class WarningRecoveryActivity extends Activity {
     @Override public void onCreate(Bundle state){
+        // Keep platform confirmation controls legible independently of the host map's theme.
+        boolean dark=(getResources().getConfiguration().uiMode&android.content.res.Configuration.UI_MODE_NIGHT_MASK)==android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        setTheme(dark?android.R.style.Theme_DeviceDefault_NoActionBar:android.R.style.Theme_DeviceDefault_Light_NoActionBar);
         super.onCreate(state);boolean nl=getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
         LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);int pad=(int)(24*getResources().getDisplayMetrics().density);content.setPadding(pad,pad,pad,pad);
         TextView title=new TextView(this);title.setText(nl?"Waarschuwingsaudio herstellen":"Recover warning audio");title.setTextSize(22);content.addView(title);

@@ -112,7 +112,9 @@ public final class WarningEndpoint implements Closeable {
             WarningAudioOwner.Snapshot snapshot=audio.snapshot(clock.getAsLong());
             if(snapshot.owner!=null&&snapshot.owner.ready){result.complete("OUTPUT_ACTIVE");return;}
             String status=audio.resetAfterVerifiedParkedStop().name();
-            if(status.equals("OK"))for(Registration r:registrations.values()){r.synced=false;r.view=null;r.deliveryGeneration++;if(!r.slot.busy){Bundle b=base(r);b.putBoolean("resync_required",true);send(r,WarningWire.STATE_INVALIDATED,b,null);}}
+            if(status.equals("OK"))for(Registration r:registrations.values()){
+                r.synced=false;r.view=null;r.deliveryGeneration++;r.invalidationPending=true;verifyOrDeliver(r);
+            }
             refresh();result.complete(status);
         });}catch(RejectedExecutionException error){result.complete("OVERLOADED");}
         return result;
@@ -147,6 +149,7 @@ public final class WarningEndpoint implements Closeable {
             WarningEvent event=WarningCodec.decode(fields,clock.getAsLong());
             WarningJournal.Append result=journal.append(event,clock.getAsLong());
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)head=event.sequence;
+            if(result==WarningJournal.Append.ACCEPTED)WarningDiagnostics.event(event,"SOURCE_APPEND",clock.getAsLong());
             if(result==WarningJournal.Append.OVERFLOW)captureFault=true;
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)
                 for(Registration registration:new ArrayList<>(registrations.values()))deliver(registration);
@@ -213,6 +216,7 @@ public final class WarningEndpoint implements Closeable {
                 else grant=audio.begin(uid,r.client,WarningWire.text(q,"owner_token"),WarningWire.number(q,"owner_epoch"),
                         WarningWire.text(q,"warning_id"),phase,WarningWire.number(q,"announcement_index"),WarningWire.number(q,"revision"),WarningWire.text(q,"attempt_nonce"),clock.getAsLong());
                 result=WarningWire.status(grant.code.name());
+                if(grant.grant!=null&&grant.code==WarningAudioOwner.Code.GRANTED)WarningDiagnostics.grant(grant.grant,"GRANT_PERSISTED",clock.getAsLong());
                 if(grant.grant!=null && grant.grant.ownerUid==uid && grant.grant.consumerNonce.equals(r.client.consumerNonce)
                         && grant.grant.attemptNonce.equals(WarningWire.text(q,"attempt_nonce"))
                         && grant.grant.ownerToken.equals(WarningWire.text(q,"owner_token"))
@@ -278,6 +282,7 @@ public final class WarningEndpoint implements Closeable {
             }
             if(audio!=null)for(PlaybackGrant grant:audio.dispositions(r.client.uid,r.client.consumerNonce,now))items.add(item("disposition","grant",WarningWire.grant(grant)));
             r.view=new View(resume.headSequence,resume.resyncRequired || captureFault,items,now+VIEW_TIMEOUT);
+            r.invalidationPending=false; // An explicit fresh snapshot satisfies a deferred invalidation.
             // A live callback already in flight cannot advance a new snapshot's cursor.
             r.synced=false;r.deliveryGeneration++;
         }
@@ -342,6 +347,7 @@ public final class WarningEndpoint implements Closeable {
             try {
                 if(!WarningWire.CALLBACK.equals(r.callback.getInterfaceDescriptor()))throw new SecurityException("CALLBACK_DESCRIPTOR");
                 in.writeInterfaceToken(WarningWire.CALLBACK);in.writeBundle(WarningWire.checked(payload));
+                if(code==WarningWire.EVENTS)for(WarningEvent event:WarningCodec.decodeBatch(payload.getBundle("batch"),clock.getAsLong()))WarningDiagnostics.event(event,"CALLBACK_SEND",clock.getAsLong());
                 if(!r.callback.transact(code,in,out,0))throw new RemoteException("CALLBACK_TRANSACTION");
                 out.readException();if(out.dataAvail()>WarningWire.MAX_FRAME)throw new IllegalArgumentException("FRAME_SIZE");
                 response=out.readBundle(null);if(response==null)throw new IllegalArgumentException("CALLBACK_RESPONSE");
@@ -360,7 +366,14 @@ public final class WarningEndpoint implements Closeable {
     }
     private void verifyOrDeliver(Registration r) {
         if(!r.confirmed && !r.verifySent) { Bundle b=base(r);b.putString("challenge",r.challenge);r.verifySent=send(r,WarningWire.VERIFY,b,null); }
-        else deliver(r);
+        else if(r.confirmed && r.revocationPending!=0) {
+            Bundle b=base(r);b.putLong("owner_epoch",r.revocationPending);
+            if(send(r,WarningWire.OWNER_REVOKED,b,null))r.revocationPending=0;
+        }else if(r.confirmed && r.invalidationPending) {
+            Bundle b=base(r);b.putBoolean("resync_required",true);
+            // A callback in flight must finish first; its completion retries this notification.
+            if(send(r,WarningWire.STATE_INVALIDATED,b,null))r.invalidationPending=false;
+        }else deliver(r);
     }
     private void maintenance() {
         if(closed)return;long now=clock.getAsLong();
@@ -377,9 +390,9 @@ public final class WarningEndpoint implements Closeable {
         audio.legacyReceiverActive(legacyClients.legacyActive(clock.getAsLong()));
         WarningAudioOwner.Snapshot snapshot=audio.snapshot(clock.getAsLong());exclusive=snapshot.exclusive;
         audioStatus=snapshot.code==WarningAudioOwner.Code.STORAGE_FAILED||snapshot.code==WarningAudioOwner.Code.AUDIO_UNCERTAIN?snapshot.code.name():captureFault?"OVERFLOW":!profile.complete?"COVERAGE_INCOMPLETE":snapshot.owner!=null&&snapshot.owner.ready&&snapshot.owner.mode==WarningAudioOwner.Mode.SILENT?"USER_MUTED":snapshot.owner!=null&&snapshot.owner.ready?"BUSY:"+snapshot.owner.packageName:snapshot.code.name();
-        if(lastOwner!=null && (snapshot.owner==null || lastOwner.epoch!=snapshot.owner.epoch || !snapshot.owner.ready)) {
-            for(Registration r:registrations.values())if(ownLease(r,lastOwner) && !r.slot.busy) {
-                Bundle b=base(r);b.putLong("owner_epoch",lastOwner.epoch);send(r,WarningWire.OWNER_REVOKED,b,null);
+        if(lastOwner!=null && (snapshot.owner==null || lastOwner.epoch!=snapshot.owner.epoch || lastOwner.ready&&!snapshot.owner.ready)) {
+            for(Registration r:registrations.values())if(ownLease(r,lastOwner)) {
+                r.revocationPending=Math.max(r.revocationPending,lastOwner.epoch);verifyOrDeliver(r);
             }
         }
         lastOwner=snapshot.owner;
@@ -416,7 +429,7 @@ public final class WarningEndpoint implements Closeable {
     private final class Registration {
         final WarningAudioOwner.Client client;final IBinder callback;final Slot slot;final String challenge=UUID.randomUUID().toString();
         final IBinder.DeathRecipient death=()->post(()-> { remove(this);refresh(); });
-        boolean confirmed,synced,verifySent;long cursor,touched=clock.getAsLong(),deliveryGeneration;View view;
+        boolean confirmed,synced,verifySent,invalidationPending;long cursor,touched=clock.getAsLong(),deliveryGeneration,revocationPending;View view;
         Registration(WarningAudioOwner.Client client,IBinder callback,Slot slot) { this.client=client;this.callback=callback;this.slot=slot; }
     }
     private static final class Slot {

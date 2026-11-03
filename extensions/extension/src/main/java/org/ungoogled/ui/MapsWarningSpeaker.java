@@ -33,6 +33,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private AudioFocusRequest focus;
     private volatile boolean initialized,closed;
     private volatile String preparedLanguage="";
+    private String requestedLanguage="";
     private Attempt active;
     private final AudioAttributes attributes=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build();
     private final AudioAttributes toneAttributes=new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
@@ -48,12 +49,13 @@ public final class MapsWarningSpeaker implements AutoCloseable {
         if(mode!=WarningAudioOwner.Mode.VOICE)return;
         main.post(()-> {
             if(closed)return;
+            requestedLanguage=language==null?"":language;
             if(tts==null) {
                 tts=new TextToSpeech(app,result->main.post(()-> {
                     initialized=result==TextToSpeech.SUCCESS;
-                    if(initialized && !closed) { tts.setAudioAttributes(attributes);tts.setOnUtteranceProgressListener(progress);selectVoice(language); }
+                    if(initialized && !closed) { tts.setAudioAttributes(attributes);tts.setOnUtteranceProgressListener(progress);selectVoice(requestedLanguage); }
                 }));
-            }else if(initialized && active==null)selectVoice(language);
+            }else if(initialized && active==null)selectVoice(requestedLanguage);
         });
     }
     private boolean selectVoice(String language) {
@@ -117,8 +119,18 @@ public final class MapsWarningSpeaker implements AutoCloseable {
             if(attempt.cancelled || closed || SystemClock.elapsedRealtime()>=attempt.until || !isReady(attempt.payload.languageTag,attempt.grant.mode)){attempt.cancelled=true;stop(attempt);}
         });}
         @Override public void onDone(String id){main.post(()->{Attempt attempt=matching(id);if(attempt!=null)finish(attempt,attempt.cancelled?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.COMPLETED,true);});}
-        @Override public void onError(String id){main.post(()->{Attempt attempt=matching(id);if(attempt!=null)finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);});}
-        @Override public void onStop(String id,boolean interrupted){main.post(()->{Attempt attempt=matching(id);if(attempt!=null)finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);});}
+        @Override public void onError(String id){main.post(()->{Attempt attempt=matching(id);if(attempt!=null){
+            // An error may occur during any synthesis phase, even without an observed onStart.
+            attempt.cancelled=true;attempt.ambiguousHistory=true;
+            if(!attempt.uncertain){attempt.uncertain=true;attempt.listener.finished(attempt.grant,PlaybackGrant.Outcome.UNCERTAIN,false);}
+            stop(attempt);
+        }});}
+        @Override public void onStop(String id,boolean interrupted){main.post(()->{Attempt attempt=matching(id);if(attempt!=null){
+            // Only false proves a pre-synthesis flush. True can include already-generated audio.
+            PlaybackGrant.Outcome outcome=attempt.started?PlaybackGrant.Outcome.INTERRUPTED:
+                    interrupted||attempt.ambiguousHistory?PlaybackGrant.Outcome.UNCERTAIN:PlaybackGrant.Outcome.NOT_STARTED;
+            finish(attempt,outcome,true);
+        }});}
     };
     private Attempt matching(String id){Attempt attempt=active;return attempt!=null && attempt.id.equals(id)?attempt:null;}
     public void cancel(PlaybackGrant grant) {
@@ -150,7 +162,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     }
     private static final class Attempt {
         final WarningEvent payload;final PlaybackGrant grant;final long until;final Listener listener;final String id="morphe-warning-"+UUID.randomUUID();
-        boolean submitted,started,cancelled,uncertain;
+        boolean submitted,started,cancelled,uncertain,ambiguousHistory;
         Attempt(WarningEvent payload,PlaybackGrant grant,long until,Listener listener){this.payload=payload;this.grant=grant;this.until=until;this.listener=listener;}
     }
 }

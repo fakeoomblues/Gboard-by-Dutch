@@ -1,7 +1,7 @@
 {
   "format": 1,
   "artifact_sha256": "17f622c8072c9fd8bd121b872a3733a9a22aaff041d57560f6f3dd59a33ce1b7",
-  "completion_status": "blocked_pending_upstream_native_callbacks_and_end_to_end_runtime",
+  "completion_status": "producer_capture_complete_r8_end_to_end_separate",
   "scope": "Static discovery only; unsupported means new semantic export remains unimplemented or unverified, not that native Flitsmeister lacks the feature.",
   "enums": {
     "Lnl/flitsmeister/earlywarning/model/EarlyWarningTypeEnum;": {
@@ -195,9 +195,14 @@
     },
     "Lnl/flitsmeister/fmcore/data/model/reports/BaseReportType;": {
       "AVG_SPEED_CHECK": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.J -> s6i.l start/end plus state updates",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/AVG_SPEED_CHECK",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "BASEREPORT": {
         "status": "excluded",
@@ -210,20 +215,30 @@
         ]
       },
       "CITS_BRIDE_CLOSED": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.x CitsBaseReport direct t50 bypass",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/CITS_BRIDE_CLOSED",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "CITS_LANE_CLOSED": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.J accepted branch -> s6i.l",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified.",
         "implemented_fields": [
           "native_subtype",
           "native_lane_code",
           "lane_index",
           "number_of_lanes_closed"
-        ]
+        ],
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/CITS_LANE_CLOSED",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "CITS_PARKING": {
         "status": "excluded",
@@ -236,14 +251,24 @@
         ]
       },
       "CITS_SPEED_ADVICE": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "cz2.a VRISpeedAdviceBus; not proven native ANNOUNCE",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/CITS_SPEED_ADVICE",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "CITS_WEATHER": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.x CitsBaseReport direct t50 bypass",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/CITS_WEATHER",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "ENVIRONMENTAL_ZONE": {
         "status": "excluded",
@@ -266,10 +291,15 @@
         ]
       },
       "INCIDENT": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "Concrete Incident versus EarlyWarningReport versus CitsRoadWorks adapters",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified.",
-        "model_family_note": "CitsRoadWorks reports raw INCIDENT but has no ordinary Incident subtype; preserve its concrete family and classify roadworks without calling getIncidentType."
+        "model_family_note": "CitsRoadWorks reports raw INCIDENT but has no ordinary Incident subtype; preserve its concrete family and classify roadworks without calling getIncidentType.",
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/INCIDENT",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "LBA": {
         "status": "excluded",
@@ -292,29 +322,54 @@
         ]
       },
       "POLICEHOTSPOT": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.J accepted -> fc0.x -> s6i.l",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/POLICEHOTSPOT",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "SERVICE_VEHICLE": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.x -> s6i.l; m71/dz2 feature eligibility",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/SERVICE_VEHICLE",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "SLOW_MOVING_VEHICLE": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.x -> s6i.l; m71/ez2 feature eligibility",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/SLOW_MOVING_VEHICLE",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "SPEED_CAM": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.J accepted -> fc0.x -> s6i.l",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/SPEED_CAM",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "SPEED_TRAP": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.x -> s6i.l",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/SPEED_TRAP",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       },
       "TOLLING": {
         "status": "excluded",
@@ -327,9 +382,14 @@
         ]
       },
       "TRAFFIC_JAM": {
-        "status": "unsupported",
+        "status": "exported",
         "capture_candidate": "fc0.J -> s6i.l start/end",
-        "reason": "Capture, native text, feature eligibility and runtime acceptance remain unverified."
+        "evidence": [
+          "flitsmeister-producer-coverage.json:base_warning_families/TRAFFIC_JAM",
+          "flitsmeister-contract.json",
+          "NativeWarningHooksTest:all15originalroots"
+        ],
+        "verified_scope": "Pinned native producer path and real model/text export; detection quality/source lead and consumer/car remain separate R8 gates."
       }
     },
     "Lnl/flitsmeister/fmcore/data/model/reports/IncidentType;": {
@@ -1695,81 +1755,126 @@
   "entry_points": [
     {
       "method": "Ls6i;->l(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;ZZLjava/lang/String;Lz39;)V",
-      "status": "unsupported",
-      "reason": "regular report start/end; initial predicates select local sound, not complete eligibility; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Ls6i;->l(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;ZZLjava/lang/String;Lz39;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Ls6i;->b(Lnl/flitsmeister/earlywarning/model/EarlyWarningTypeEnum;Lnl/flitsmeister/fmcore/models/data/reports/EarlyWarningReport;Lnl/flitsmeister/earlywarning/model/EarlyWarningNotification;Ljava/lang/String;ZLz39;)V",
-      "status": "unsupported",
-      "reason": "early warning report/notification and raw pre-gate text; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Ls6i;->b(Lnl/flitsmeister/earlywarning/model/EarlyWarningTypeEnum;Lnl/flitsmeister/fmcore/models/data/reports/EarlyWarningReport;Lnl/flitsmeister/earlywarning/model/EarlyWarningNotification;Ljava/lang/String;ZLz39;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lxl$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;",
-      "status": "unsupported",
-      "reason": "VOICE_ONLY bypass, coroutine resumed branch only; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lxl$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lfc0;->x(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;)V",
-      "status": "unsupported",
-      "reason": "CitsBaseReport direct tone bypass with report context; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lfc0;->x(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lxl;->k(Landroid/content/Context;Lnl/flitsmeister/fmcore/models/data/earlywarnings/EarlyWarning;Z)V",
-      "status": "unsupported",
-      "reason": "EarlyWarning impact-attenuator/direct CITS tone, z=true announcement only; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lxl;->k(Landroid/content/Context;Lnl/flitsmeister/fmcore/models/data/earlywarnings/EarlyWarning;Z)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lfc0;->J(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;Z)V",
-      "status": "unsupported",
-      "reason": "state acceptance/removal only, no duplicate ANNOUNCE; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lfc0;->J(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;Z)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lfc0;->O(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;)V",
-      "status": "unsupported",
-      "reason": "state update only; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lfc0;->O(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lnh7$c;->onEarlyWarningNotificationUpdate(Landroid/location/Location;Lnl/flitsmeister/earlywarning/model/EarlyWarningNotification;)V",
-      "status": "unsupported",
-      "reason": "accepted early-warning feature path and removal; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lnh7$c;->onEarlyWarningNotificationUpdate(Landroid/location/Location;Lnl/flitsmeister/earlywarning/model/EarlyWarningNotification;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lcz2;->a(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
-      "status": "unsupported",
-      "reason": "CITS ImpactAttenuator and VRISpeedAdvice state; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lcz2;->a(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lvz2;->J(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
-      "status": "unsupported",
-      "reason": "CITS early warning overlapping s6i.b and xl.k; guarded hook and native probe pending"
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lvz2;->J(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lvz2;->K(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
-      "status": "unsupported",
-      "reason": "Native CITS removal/update requires guarded state lifecycle hooks and native probes; never invent ANNOUNCE from a refresh."
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lvz2;->K(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lvz2;->L(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
-      "status": "unsupported",
-      "reason": "Native CITS removal/update requires guarded state lifecycle hooks and native probes; never invent ANNOUNCE from a refresh."
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lvz2;->L(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)Z",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lcz2;->b(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
-      "status": "unsupported",
+      "status": "exported",
       "capture_candidate": "Guarded native accepted state/update/removal hook in NativeWarningHooks.kt",
-      "reason": "Implementation added; original-artifact patch application and native callback timing validation still pending."
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lcz2;->b(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lcz2;->e(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
-      "status": "unsupported",
+      "status": "exported",
       "capture_candidate": "Guarded native accepted state/update/removal hook in NativeWarningHooks.kt",
-      "reason": "Implementation added; original-artifact patch application and native callback timing validation still pending."
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lcz2;->e(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+        "flitsmeister-contract.json"
+      ]
     },
     {
       "method": "Lvz2$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;",
-      "status": "unsupported",
+      "status": "exported",
       "capture_candidate": "Guarded native accepted state/update/removal hook in NativeWarningHooks.kt",
-      "reason": "Implementation added; original-artifact patch application and native callback timing validation still pending."
+      "evidence": [
+        "flitsmeister-producer-coverage.json:callback_roots/Lvz2$c;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;",
+        "flitsmeister-contract.json"
+      ]
     }
   ],
   "implementation_scope": "Raw accepted text/subtype adapters cover all159 frozen enum members; native text formatters and CITS/early state hooks are implemented. Per-family runtime acceptance remains independent.",
@@ -1817,14 +1922,31 @@
         "NativeWarningsTest.laneClosurePreservesNativeSubtypeLaneIndexAndClosedCount"
       ],
       "verified_scope": "All3 actual native enum/model/title/scalar variants; upstream detection timing remains pending."
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;": {
+      "members": [
+        "FOG",
+        "ICE_ON_THE_ROAD"
+      ],
+      "status": "exported",
+      "evidence": [
+        "flitsmeister-producer-coverage.json",
+        "real en/nl CitsWeather models/title/subtitle/private enum"
+      ],
+      "capture_fields": [
+        "native_subtype",
+        "category",
+        "message"
+      ]
     }
   },
   "model_adapter_acceptance": {
-    "exported_original_subtype_rows": 140,
+    "exported_original_enum_rows": 152,
     "excluded_nonwarning_base_rows": 7,
-    "base_warning_rows_pending_upstream_acceptance": 12,
-    "native_callback_roots_pending": 15,
-    "source_complete": false,
-    "evidence": "flitsmeister-model-verification.json"
-  }
+    "base_warning_rows_pending_upstream_acceptance": 0,
+    "native_callback_roots_pending": 0,
+    "source_complete": true,
+    "evidence": "flitsmeister-producer-coverage.json"
+  },
+  "completion_evidence": "flitsmeister-producer-coverage.json"
 }

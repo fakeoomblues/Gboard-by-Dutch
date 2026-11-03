@@ -57,3 +57,42 @@ These are completion gates for R3, R5 and R8 in the [design](../superpowers/spec
 System cases require real engine callbacks, pending/active cancellation and actual original `xo2`/`rj2` route regeneration with synthetic geometry. The probe-only observer wraps and forwards to the same installed `vy4` object on a newly owned guide. Its report identifies that observer change. Neural cases require the real selected installed model, original synthesis worker and actual AudioTrack lifecycle; a missing model returns **inconclusive**, which must fail an acceptance run. The probe uses isolated in-memory grants and creates no public road reports or system location updates. It refuses an already active native route and restores the application's previous voice/session binding during cleanup.
 
 The source passes compilation against Android 36. This is preparation for runtime validation, not an executed result.
+
+## Actual adapter runtime result, 2026-11-03
+
+The strict 14-case suite passed on the dedicated fresh API 34 arm64 `native_warnings_vela_api34` AVD / `emulator-5582`, with genuine Google system TTS and the installed official HFC Female Piper model. The [compact verification record](../../tests/fixtures/navigation-warnings/vela-adapter-verification.json) binds the candidate, MPP, probe, model and raw-report hashes. Actual FM-to-Vela app-session transport/scheduler/UI acceptance is separate.
+
+Runtime testing found and fixed two defects that host-only readiness checks missed: engine selection invalidated an observed focus grant even when native `d` retained the same request, and MODE_STATIC tone rejected STATE_NO_STATIC_DATA before its first write. Four engine-switch and two static-buffer regressions were added; all 63 Vela host tests passed. The focused pinned-original Vela guard run passed 11 tests.
+
+System tests observed real start/completion, pending and active cancellation, and real native left/right route regeneration after a current fix and passage. Neural tests used the selected real model/executor and observed playback-head start/drain and selective cancellation. Tone baseline drained all 5,511 frames; pending cancellation never started; active cancellation stopped its own track. Actual native mute caps and zero native focus count/abandoned focus were verified with both speech engines absent from the owned tone guide.
+
+The private system observer temporarily used hidden-API diagnostic access to forward the same installed `vy4` object. The original `null` policy was restored in `finally`; no production observer modification was made. The raw passing suite is `.analysis/native-warning-bindings/vela-complete-adapter-runtime/result.json`; preceding failed artifacts/reports remain preserved.
+
+## Current full-path system audio observation, 2026-11-03
+
+A separate controlled single-event run on the final replay/car-fixed artifacts passed through the real FM production Endpoint and the real Vela Activity/ViewModel, session, connection, scheduler, selected Google system TTS and attached widget. The [artifact-bound full-path audio record](../../tests/fixtures/navigation-warnings/vela-fullpath-audio-verification.json) retains the original ANNOUNCE, revised display payload, source STARTED/COMPLETED acknowledgement, report hashes and exact cleanup.
+
+The same native `vy4` listener was temporarily wrapped and forwarded by the private diagnostic probe. The tagged warning produced 74,160 bytes of 24 kHz mono PCM16: 1.545 seconds, 32,705 nonzero samples and RMS 0.0876, followed by actual DONE. The original listener, hidden-API policy (`null`), extension preferences, temporary permissions and source network/lease state were restored; output was quiescent. The source and receiver processes both exited successfully. This proves generated nonzero system audio on the complete app path, with visible native widget evidence; it does not establish acoustic hearing or a timing percentile.
+
+The raw run is `.analysis/native-warning-bindings/vela-fullpath-pcm-final/result.json`. Warm ordinary/P0 acceptance and genuine car-session evidence remain separate from this single audio observation.
+
+Current-artifact bounded [update, clear and repeat checks](../../tests/fixtures/navigation-warnings/vela-final-behavior-verification.json) also passed on the real app path. An original native UPSERT revision completed under one announcement with one START; a native clear after actual START produced UNCERTAIN then CANCELLED with no replay; an explicit native repeat produced two distinct announcement indices, each with one START and COMPLETED. All three source/receiver pairs terminated successfully with exact preference, permission, lease and network restoration. These behavior checks make no latency percentile claim.
+
+## Phone slot without speed or a fresh native frame
+
+The current [phone-slot verification](../../tests/fixtures/navigation-warnings/vela-phone-slot-verification.json) binds a genuine source-to-Vela P0 run with the owned emulator's actual location service disabled and restored. After the native camera warmup completed and cleared, the source set its existing native GPS/speed inputs to absent/zero, waited eight seconds for genuine expiry, and invoked its original ambulance callback. The source remained GPS-absent; Vela had no native fix, fresh native measured speed, legacy current speed or displayed speed. The actual attached Vela window visibly showed “Flitsmeister / Caution, ambulance!” and the real scheduler/native engine completed once, followed by source acknowledgement/off and exact cleanup. No view, route, receiver event or grant was constructed by this observer.
+
+Two phone eligibility regressions first failed. The final disjunction now includes a fresh enabled semantic warning while retaining the original native hide/SpeedDisplay gates. The existing guarded outer CornerOverlay `phoneState` hook also observes the application's native snapshot pulse before Compose's skip/visibility logic. Previously only an already-created inner speed widget observed that pulse, so an initially absent slot could miss warning arrival until an unrelated native recompose. The earlier ordinary 100 run with successful audio and absent UI remains a failed full-run artifact. All 82 Vela tests and 13 pinned-original guards passed after the correction.
+
+The final phone change affects only `TelemetryRuntime` and its generated accessor consumer in the extension. Individually normalized DEX class comparison confirms all 17 speech adapter classes and all shared scheduler/client classes are unchanged from the prior passing corpus. Both final 100-event runs below were nevertheless independently repeated against the exact final candidate.
+
+The [final timing corpora record](../../tests/fixtures/navigation-warnings/vela-final-timing-verification.json) binds candidate `72012b…` to both exact 100-announcement app-path runs:
+
+| Real native input | Delivery p95 | Accepted to START p95 | Native input to START p95 |
+| --- | ---: | ---: | ---: |
+| P0 ambulance, no GPS/zero speed | 23 ms | 143 ms | 153 ms |
+| Ordinary camera | 22 ms | 458 ms | 468 ms |
+
+The P0 result is below the 500 ms target; the original failing 602 ms baseline is preserved. Each corpus contains 100 original ANNOUNCE identities, 100 receiver STARTs, 100 source STARTs and 100 COMPLETED acknowledgements. No missing stages, replays or original-deadline violations occurred. Both runs finished with actual attached UI, source-off and exact cleanup. The authority join excludes only warmup and never counts UPSERTs as extra announcements.
+
+These are observed emulator/host timings. The root-owned car guest remained paused for P0; an external actor on another emulator was uncontrolled, and complete host CPU load was not recorded. Physical audio/head-unit routing, natural detection and separately scoped selected-engine/ownership/car acceptance are not established by these phone corpora.

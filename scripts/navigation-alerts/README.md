@@ -12,6 +12,8 @@ python3 scripts/navigation-alerts/inspect_bindings.py --artifact /absolute/path/
 
 Use `flitsmeister` or `vela` selection/contract pairs for those artifacts. Extract FM's `base.apk` from the supplied APKM first. Input identities are recorded in [the binding report](../../docs/research/2026-11-02-native-warning-bindings.md).
 
+The additional `maps-speech-selection.json`/`maps-speech-contract.json` freezes Maps' current-route, composite-player and original never-played completion bindings. Apply both original-artifact oracles when changing the Maps speech hooks.
+
 FM additionally has an exhaustive coverage inventory:
 
 ```bash
@@ -23,6 +25,14 @@ Add `--require-complete` to reject unsupported categories or entry points. This 
 `--output` writes a fresh inventory for review. Do not automatically overwrite the frozen oracle to accommodate an incompatible target. The method hash includes opcodes, widths, register operands, literals, references, branch/switch/array payloads and typed catch ranges, excluding debug metadata. Enum inventories contain raw ACC_ENUM field names; they may differ from runtime `Enum.name()` or JADX aliases. Initializer contracts retain those semantic mappings for Maps.
 
 For private control-flow inspection, add `"include_instructions": true` to a copy of the selection. Keep resulting instruction dumps in ignored `.analysis/`, and use the ordinary selection when comparing frozen contracts. Offsets are obtained by summing instruction code-unit widths; catch rows are not instructions.
+
+## Production Maps runtime cases
+
+Build the Maps instrumentation with `build_native_probe.py`, then use `run_maps_production_probe.py` against a rebuilt candidate. The runner requires the pinned original, verifies the owned emulator and installed APK hashes, and preserves candidate ZIP payloads when test-signing. It rejects blocked/inconclusive observations and retains their instrumentation separately from successful results.
+
+Supported cases are `production` (native original-player regression, hold/final-dispatch fencing, composite teardown and missing-route refusal), `production_speech` (private durable grant, real offline TTS callbacks and bounded synthetic PCM capture), `production_tone` (native static-track head/drain/release with no TTS instance), `production_speech_arrival` (a real native job arriving during the owned warning), and `production_route` (require an app-created current route before P0 preemption/regeneration).
+
+The route case needs the actual intended Maps patch combination, including **Bypass Play Services checks** and its map-data restoration dependency for a re-signed app. A Waze-alerts-only candidate can prove local player/speaker behavior while failing to load online routing. No route model is fabricated to satisfy that case. These component cases do not replace cross-UID FM-to-receiver, physical-phone or actual-car acceptance.
 
 Tests:
 
@@ -55,3 +65,23 @@ python3 scripts/navigation-alerts/build_binder_probe.py --sdk "$ANDROID_HOME" --
 The source service permits the actual PackageManager UID of the allowed client; the stranger APK is denied. The client instrumentation checks the remote Binder descriptor, source callback UID, callback challenge, initial snapshot/live ordering, authenticated health PING and grant bookkeeping. Readiness is explicitly simulated and no speaker is created. The synthetic event's NOT_STARTED/quiescent report is justified by that absence of output.
 
 Run only on the designated disposable `native_warnings_api34` AVD, verifying both its name and `ro.kernel.qemu=1` before installing. Each client APK supplies `nl.johninnl.warningprobe.BinderClientProbe` instrumentation targeting itself. Pass `-e unauthorized true` for the stranger. Retain source/build hashes, independently verified installed APK hashes and both instrumentation results. The observed component record is `tests/fixtures/navigation-warnings/binder-verification.json`; it does not establish FM capture, native speech or phone/car acceptance.
+
+## Native FM producer and integrated receiver probes
+
+Build the reflection-only helper with `build_fm_model_probe.py --kind capture`. The `integrated_trigger` and `integrated_matrix` scenarios initialize the installed production endpoint and invoke the actual patched native entry points. They reject an installed test sink and never emit a packet directly or override source coverage. Source mute uses the real managed lease, and the host runner blocks only the owned FM UID's IPv4/IPv6 traffic while retaining exact lease/firewall rollback evidence.
+
+The current capture runner admits only `emulator-5582` / `native_warnings_vela_api34` or `emulator-5584` / `native_warnings_car_api34`, with qemu and API 34 checks. The shared `emulator-5580` profile is rejected after a conflicting external host session; its earlier evidence remains historical. The car coordinator is fixed to the exact 5584 profile and has no generic serial override. Coordinate the assigned AVD before use. Install the independently verified source/helper APKs first. Start the source runner before the real Maps or Vela receiver instrumentation; launch the receiver immediately on `fm_capture_stage=production_endpoint_ready`. The source waits for the actual confirmed and synchronized registration.
+
+For a warm matrix, use `--scenarios integrated_matrix --trigger-family ordinary --trigger-pattern single --event-count 100 --native-id BASE`. One genuine native camera warning named `BASE-warmup` prepares the receiver and must complete before the measured events. Its separate `warmup_record` is excluded from warm latency statistics. Measured IDs are `BASE-001` through `BASE-100`; count one uses `BASE`. Ordinary identities are `SpeedCam:<id>` with `SPEED_CAM/SPEED_50`. `--trigger-family p0` uses `early/AMBULANCE:<id>` with `INCIDENT/AMBULANCE`, native GPS absent and native speed zero.
+
+The `update` pattern requires a real later native UPSERT and revision advance; `repeat` requires a second native ANNOUNCE with an increased announcement index; `clear` removes the model through the actual native callback after observing STARTED. Normal and repeat events require COMPLETED; clear requires INTERRUPTED or CANCELLED. Each model contributes one measured authority, or two for repeat, plus one separate warmup authority per run. All events retain one source session. The source remains alive until terminal acknowledgements and actual receiver source-off/quiescence.
+
+The matrix deadline defaults to 600 seconds, bounded at 900. The host process deadline is receiver-wait plus matrix deadline plus 45 seconds; receiver/coordinator deadlines must exceed it. Drain production diagnostics continuously into private output when collecting 100 events, because the production ring retains 512 rows. Input spacing occurs before native issuance and is recorded separately from delivery latency. These controlled native inputs establish the tested producer/IPC/receiver path; they do not establish detection quality, source lead time, or physical phone/car acceptance.
+
+`build_vela_car_probe.py` builds a separate target-only car observer. Prepare the installed DriveDeck host's genuine **Car preview** UI, preserving its package, preferences and permissions. Start the source, then `nl.johninnl.warningprobe.integration.vela.car/nl.johninnl.warningprobe.integration.VelaCarReceiverProbe` with `reviewed_synthetic_choices=true`, explicit `host_package`, `mode=VOICE`, and exact `expected_warning_id`. After `CAR_RECEIVER_CONFIGURED`, select Vela through the actual host UI. The observer waits for the host-created native car Session, native guide and complete production warning connection; it never launches Vela's phone Activity. `CAR_WARNING_FRAME` records a real active host-window screenshot after a fresh native car frame. Require actual STARTED/COMPLETED diagnostics, managed provider mute, source-off/quiescence, host service/surface bindings, screenshot review and exact preference rollback. A standalone Canvas or manually constructed CarAppConnection does not satisfy this scenario. The observer is a prepared test harness; a successful build does not establish car-session acceptance.
+
+### Parked recovery screen
+
+`build_recovery_probe.py` builds only the reflection-based `ParkedRecoveryProbe` instrumentation for the real FM APK; it includes no target or alert class definitions. The probe requires the explicit `reviewed_parked_empty_state=true` test argument and verifies on the actual source actor that ownership and pending output are both absent before opening the private recovery Activity. It checks the two separate required confirmations, captures the actual window, performs the source-owned reset and verifies successful Activity closure. It does not create a grant/player or clear pre-existing uncertain output.
+
+Run only on an explicitly owned test emulator after verifying exact AVD/API, target/helper hashes, matching signing certificate and an initially stopped source process. Preserve/restore app-startup preference changes and remove only the newly installed helper after stopping the source process created by the test. The recorded runs and cleanup are in `tests/fixtures/navigation-warnings/parked-recovery-verification.json`; actual live-owner refusal and uncertain real-output recovery remain separate acceptance cases.

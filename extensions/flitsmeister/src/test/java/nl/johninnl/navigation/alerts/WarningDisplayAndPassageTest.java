@@ -33,4 +33,12 @@ public class WarningDisplayAndPassageTest {
         assertFalse(WarningPassage.passedOnRoute(point,fix,1100,100d));assertTrue(WarningPassage.passedOnRoute(point,fix,1100,-100d));assertFalse(WarningPassage.passedOnRoute(point,fix,1100,null));
         b.putString("relevance","moving_emergency");assertFalse(WarningPassage.passed(WarningCodec.decode(b,1000),fix,1100));assertFalse(WarningPassage.passed(point,null,1100));
     }
+    @Test public void producerSpecificFamiliesUseThePromisedAudibleCategory(){
+        Bundle b=WarningCodec.encode(state("families",1,1));
+        for(String family:new String[]{"service_vehicle","slow_vehicle","roadworks","weather","closure"}){
+            b.putString("category",family);assertEquals(family,WarningPreferences.ROAD_DANGER,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        }
+        b.putString("category","traffic_camera");assertEquals(WarningPreferences.CAMERA,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("category","police_control");assertEquals(WarningPreferences.POLICE,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+    }
 }

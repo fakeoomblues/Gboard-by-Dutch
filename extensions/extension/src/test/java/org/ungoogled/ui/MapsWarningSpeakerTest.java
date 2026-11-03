@@ -48,9 +48,16 @@ public class MapsWarningSpeakerTest {
     @Test public void submittedStopWithoutCallbackRemainsUncertainUntilPositiveTerminal()throws Exception{
         field(attempt.getClass(),"submitted").setBoolean(attempt,true);speaker.cancel(grant);Shadows.shadowOf(Looper.getMainLooper()).idle();assertTrue(outcomes.isEmpty());
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(1001,TimeUnit.MILLISECONDS);assertEquals(Collections.singletonList("UNCERTAIN:false"),outcomes);
-        progress.onStop(id,true);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Arrays.asList("UNCERTAIN:false","NOT_STARTED:true"),outcomes);
+        progress.onStop(id,true);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Arrays.asList("UNCERTAIN:false","UNCERTAIN:true"),outcomes);
     }
-    @Test public void engineFailureBeforeObservedStartDoesNotBecomeCompletion()throws Exception{
-        progress.onError(id);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList("NOT_STARTED:true"),outcomes);
+    @Test public void engineFailureWithoutObservedStartIsNotProofOfNoAudio()throws Exception{
+        field(attempt.getClass(),"submitted").setBoolean(attempt,true);progress.onError(id);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList("UNCERTAIN:false"),outcomes);
+        progress.onStop(id,false);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Arrays.asList("UNCERTAIN:false","UNCERTAIN:true"),outcomes);
+    }
+    @Test public void confirmedFlushBeforeSynthesisWithNoStartIsPositiveNotStarted()throws Exception{
+        field(attempt.getClass(),"submitted").setBoolean(attempt,true);progress.onStop(id,false);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList("NOT_STARTED:true"),outcomes);
+    }
+    @Test public void interruptedSynthesisWithoutStartIsConsumedUncertainNotRetryable()throws Exception{
+        field(attempt.getClass(),"submitted").setBoolean(attempt,true);progress.onStop(id,true);Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList("UNCERTAIN:true"),outcomes);
     }
 }

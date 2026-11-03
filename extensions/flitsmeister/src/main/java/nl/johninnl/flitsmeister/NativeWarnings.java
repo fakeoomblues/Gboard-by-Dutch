@@ -58,7 +58,7 @@ public final class NativeWarnings {
             if(!StartupProtocol.allowed(packages,configured))return null;
             for(String name:packages)if(StartupProtocol.allowed(new String[]{name},configured))return name;
             return null;
-        },new WarningCapabilities(FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),false));
+        },new WarningCapabilities(FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),true));
         return endpoint;
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}
@@ -129,8 +129,16 @@ public final class NativeWarnings {
     public static void bindProjection(Object projection,Object report){capture(()->{
         if(!captureEnabled||projection==null||report==null)return;
         Bundle fields=describe(report);String id=identity(report,fields);linkProjection(projection,id);
-        Record old=records.get(id);String supplied=old!=null&&fields.getString("native_text_key").equals(old.fields.getString("native_text_key"))?old.fields.getString("message"):null;
-        NativeWarningText.Text text=NativeWarningText.resolve(app,report,"notice",supplied);
+        Record old=records.get(id);boolean sameText=old!=null&&fields.getString("native_text_key").equals(old.fields.getString("native_text_key"));
+        NativeWarningText.Text text;
+        if(sameText){
+            text=new NativeWarningText.Text(old.fields.getString("message",""),old.fields.getString("message_origin","native_text"),old.fields.getString("language_tag","und"));
+            copyNativeTextFields(old.fields,fields);
+        }else{
+            text=NativeWarningText.resolve(app,report,"notice",null);
+            if(old!=null&&old.fields.containsKey("native_announced_text"))text=new NativeWarningText.Text(old.fields.getString("native_announced_text"),"native_text",old.fields.getString("native_announced_language_tag","und"));
+            text=citsInstruction(report,fields,text,"notice");
+        }
         fields.putString("language_tag",text.language);update(id,fields,text.value,text.origin,"notice",false,false,"cits_projection_state",false);
     });}
     public static void earlyRemoved(Object report){capture(()->{if(report!=null)clear(identity(report,describe(report)));});}
@@ -192,9 +200,11 @@ public final class NativeWarnings {
         if(!(values instanceof Collection))return;
         capture(()->{
             if(!captureEnabled)return;
+            // A partial snapshot cannot authorize clearing an unseen native warning.
+            if(((Collection<?>)values).size()>MAX_WARNINGS){overflow();return;}
             Set<String> seen=new HashSet<>();int count=0;
             for(Object entry:(Collection<?>)values){
-                if(++count>MAX_WARNINGS)break;
+                if(++count>MAX_WARNINGS){overflow();return;}
                 if(!Boolean.TRUE.equals(optional(entry,"isActive")))continue;
                 Object report=optional(entry,"getReport");if(report==null)continue;
                 Bundle fields=describe(report);String id=identity(report,fields);seen.add(id);
@@ -228,12 +238,23 @@ public final class NativeWarnings {
         if(!captureEnabled||report==null)return;announceFields(report,fields==null?describe(report):fields,supplied,phase,bypass,path,context);
     }
     private static void announceFields(Object report,Bundle fields,String supplied,String phase,boolean bypass,String path,Context context) {
-        NativeWarningText.Text text=NativeWarningText.resolve(context,report,phase,supplied);fields.putString("language_tag",text.language);
+        NativeWarningText.Text text=citsInstruction(report,fields,NativeWarningText.resolve(context,report,phase,supplied),phase);fields.putString("language_tag",text.language);
         SourceFact fact=citsAliases.get(report);
         if(fact!=null&&!fact.selectedLanguage.equals("und")&&text.value.equals(NativeWarningText.free(report)))fields.putString("language_tag",fact.selectedLanguage);
         fields.putBoolean("native_announce_observed",true);
         if(text.origin.equals("template"))fields.putString("template_id","fm_native_exit_v1");
         update(identity(report,fields),fields,text.value,text.origin,phase,NativeWarningText.useful(text.value),bypass,path,false);
+    }
+    private static NativeWarningText.Text citsInstruction(Object report,Bundle fields,NativeWarningText.Text announced,String phase){
+        SourceFact fact=citsAliases.get(report);String instruction=NativeWarningText.free(report);
+        if(fact==null||phase.equals("exit")||!NativeWarningText.useful(instruction))return announced;
+        fields.putString("native_announced_text",announced.value);fields.putString("native_announced_language_tag",announced.language);
+        fields.putString("native_instruction",instruction);fields.putString("native_instruction_language_tag",fact.selectedLanguage);
+        return NativeWarningText.withInstruction(announced,instruction,fact.selectedLanguage);
+    }
+    private static void copyNativeTextFields(Bundle from,Bundle to){
+        for(String key:new String[]{"native_announced_text","native_announced_language_tag","native_instruction","native_instruction_language_tag","language_origin"})
+            if(from.containsKey(key))to.putString(key,from.getString(key));
     }
     private static void update(String id,Bundle fields,String text,String origin,String phase,boolean announce,boolean bypass,String path,boolean listed) {
         Record record=records.get(id);
@@ -274,6 +295,11 @@ public final class NativeWarnings {
             if(count instanceof Number&&((Number)count).intValue()>=0)b.putInt("number_of_lanes_closed",((Number)count).intValue());
             if(nativeType instanceof Enum)b.putString("native_lane_code",String.valueOf(nativeType));
         }
+        else if(isFamily(report,"CitsWeather")){
+            for(Class<?> model=report.getClass();model!=null;model=model.getSuperclass())if(model.getSimpleName().equals("CitsWeather"))try{
+                java.lang.reflect.Field field=model.getDeclaredField("mWeatherType");field.setAccessible(true);sub=string(field.get(report));break;
+            }catch(ReflectiveOperationException unavailable){b.putString("capture_diagnostic","MISSING_NATIVE_WEATHER_TYPE");}
+        }
         else if(isFamily(report,"Incident"))sub=value(report,"getIncidentType");
         else if(isFamily(report,"SpeedCam"))sub=value(report,"getSpeedCamType");
         else if(isFamily(report,"ServiceVehicle"))sub=value(report,"getType");
@@ -312,7 +338,7 @@ public final class NativeWarnings {
         return fields.getString("native_family","")+":"+id;
     }
     private static boolean semanticChange(Bundle old,Bundle next){
-        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_source_event","native_source_motion","lane_index","number_of_lanes_closed","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
+        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
             if(!java.util.Objects.equals(old.get(key),next.get(key)))return true;
         return false;
     }
@@ -326,6 +352,7 @@ public final class NativeWarnings {
         if(type.equals("SERVICE_VEHICLE"))return "service_vehicle";
         if(type.equals("SLOW_MOVING_VEHICLE"))return "slow_vehicle";
         if(type.equals("CITS_SPEED_ADVICE"))return "speed_advice";
+        if(type.equals("CITS_WEATHER"))return "weather";
         if(type.equals("CITS_BRIDE_CLOSED")||type.equals("CITS_LANE_CLOSED")||subtype.equals("ROAD_CLOSURE")||subtype.equals("CLOSURE_WITH_REROUTE"))return "closure";
         if(subtype.equals("ROADWORKS")||subtype.equals("ROAD_WORKER")||subtype.equals("TEXT_CAR")||subtype.equals("TRAFFIC_CONTROLLER"))return "roadworks";
         if(type.equals("POLICEHOTSPOT")||subtype.equals("CONTROL"))return "police_control";

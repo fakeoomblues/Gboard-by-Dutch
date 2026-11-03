@@ -187,6 +187,7 @@ public final class WarningConnection implements Closeable,WarningScheduler.Trans
                 reply.putLong("accepted_sequence",cursor);scheduleResync();return;
             }
             accepted.add(events);acceptedCount+=events.size();cursor=through;reply.putLong("accepted_sequence",through);
+            for(WarningEvent event:events)WarningDiagnostics.event(event,"RECEIVER_ACCEPTED",SystemClock.elapsedRealtime());
             if(!drainScheduled) { drainScheduled=true;submit(()-> { drain();return null; }); }
         }
     }

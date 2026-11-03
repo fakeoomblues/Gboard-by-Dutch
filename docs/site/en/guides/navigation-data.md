@@ -80,7 +80,7 @@ Flitsmeister keeps Vela's independent Flock display, voice and detour choices ac
 
 ## Native Flitsmeister warning audio
 
-The native-event speech upgrade is still under validation. Current development builds report incomplete source coverage and keep full event-owned playback disabled until native capture acceptance is proved. A running provider or successful preview is not a complete-warning guarantee.
+The native-event speech upgrade is still under integrated validation. Pinned producer capture has passed its coverage audit and development builds can use event-owned audio after compatible patching and review. Full receiving/routing/lifecycle acceptance remains open. A running provider or successful preview is not a complete-warning guarantee.
 
 With compatible event-enabled builds on both sides, choose **Flitsmeister** and review **Flitsmeister warning audio** and **Flitsmeister warning categories** once. Confirm **Use these warning choices**. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories. Keep every actively receiving map updated or disable its FM source before using the complete event mode.
 

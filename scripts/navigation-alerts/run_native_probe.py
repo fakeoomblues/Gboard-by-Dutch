@@ -13,6 +13,7 @@ TARGETS = {
     'vela': ('app.vela', 'f168bc730568b98ee8132131658d9220ef5be3557af41fd373bdaf104c31b20f'),
     'maps': ('com.google.android.apps.maps', '81506a2c54fc9a8faca34c18af7619d9c9d26cbfbe799b66884a59ac17791004'),
 }
+ADAPTER_SCENARIOS = frozenset(('adapter_system', 'adapter_neural', 'adapter_tone', 'adapter_all'))
 
 
 def digest(path):
@@ -58,7 +59,7 @@ def verify_resigned(original, signed):
     verify_entries(original, signed)
 
 
-def parse_result(text):
+def parse_result(text, expected_scenario=None):
     match = re.search(r'^INSTRUMENTATION_RESULT: native_warning_result=(.+)$', text, re.M)
     if not match:
         raise ValueError('Native instrumentation produced no complete result')
@@ -66,7 +67,15 @@ def parse_result(text):
     uid = result.get('process_uid')
     if result.get('probe_completed') is not True or not isinstance(uid, int) or uid < 10000 or uid != result.get('target_uid'):
         raise ValueError('Native probe did not complete in the target app UID')
-    if (result.get('probe_status') == 'failed' or result.get('status') in ('blocked', 'inconclusive')
+    scenario = result.get('scenario')
+    adapter_requested = isinstance(expected_scenario, str) and expected_scenario.startswith('adapter_')
+    adapter_reported = isinstance(scenario, str) and scenario.startswith('adapter_')
+    if adapter_requested or adapter_reported:
+        if (scenario not in ADAPTER_SCENARIOS or result.get('target_package') != 'app.vela'
+                or result.get('probe_status') != 'passed'
+                or (expected_scenario is not None and scenario != expected_scenario)):
+            raise ValueError('Vela adapter acceptance requires the exact requested scenario and probe_status=passed')
+    if (result.get('probe_status') in ('failed', 'blocked', 'inconclusive') or result.get('status') in ('blocked', 'inconclusive')
             or any(case.get('status') in ('blocked', 'inconclusive') or case.get('observation_timed_out') is True
                    or case.get('native_callback_forward_failures', 0) != 0 or case.get('terminal_callback') == 'onError'
                    for case in result.get('cases', []))
@@ -88,6 +97,9 @@ def main():
     parser.add_argument('--scenario', default='baseline')
     parser.add_argument('--candidate', type=Path, help='Private Vela three-hook fence candidate; only scenario=fenced')
     args = parser.parse_args()
+    if args.scenario.startswith('adapter_'):
+        if args.scenario not in ADAPTER_SCENARIOS or args.target != 'vela':
+            parser.error('Adapter scenarios require Vela and adapter_system, adapter_neural or adapter_all')
     run_id = prepare_output(args.output)
     tools = args.sdk / 'build-tools/36.0.0'
     adb_path = args.sdk / 'platform-tools/adb'
@@ -142,7 +154,7 @@ def main():
     component = 'nl.johninnl.warningprobe.' + args.target + '/nl.johninnl.warningprobe.NativeWarningProbe'
     text = adb('shell', 'am', 'instrument', '-w', '-r', '-e', 'scenario', args.scenario, component)
     (args.output / 'instrumentation.txt').write_text(text)
-    result = parse_result(text)
+    result = parse_result(text, args.scenario)
     if result.get('target_package') != package:
         raise ValueError('Native result came from a different target package')
     result.update(original_sha256=expected_hash, test_signed_sha256=digest(signed),

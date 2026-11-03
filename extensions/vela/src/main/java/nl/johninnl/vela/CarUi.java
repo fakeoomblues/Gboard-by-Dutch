@@ -17,6 +17,8 @@ import java.util.WeakHashMap;
 /** Native Vela 0.5.2621 car templates and map-surface additions. No window or car runtime. */
 public final class CarUi {
     private static final Map<Object,Object> PARENTS = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Object,Boolean> RENDERERS=Collections.synchronizedMap(new WeakHashMap<>());
+    private static String lastWarningFrameKey="";
     private static boolean loggedFailure;
     private CarUi() {}
 
@@ -40,6 +42,7 @@ public final class CarUi {
 
     /** Call on the main thread when the runtime publishes a new telemetry/preference state. */
     public static void changed() {
+        warningChanged();
         Object[] pages;
         synchronized (PARENTS) { pages = PARENTS.keySet().toArray(); }
         for (Object page : pages) {
@@ -129,6 +132,44 @@ public final class CarUi {
         set(builder, "f", delegate);
         set(builder, "h", browsable);
         return invoke(builder, "b");
+    }
+
+    /** Request the original surface snapshot on semantic arrival, clear and expiry, even without GPS. */
+    public static void warningChanged() {
+        if(TelemetryRuntime.app()==null)return;
+        String key=TelemetryRuntime.carEnabled()+":"+TelemetryRuntime.app().getSharedPreferences("vela_settings",0).getBoolean("car_speed_on",false)+":"+TelemetryRuntime.nativeCarWarningText();
+        if(key.equals(lastWarningFrameKey))return;
+        lastWarningFrameKey=key;
+        Object[] renderers;synchronized(RENDERERS){renderers=RENDERERS.keySet().toArray();}
+        for(Object renderer:renderers)try{invoke(renderer,"s");}catch(ReflectiveOperationException error){failure(error);}
+    }
+
+    /** Observe every actual native map frame, including browsing and a disabled speed display. */
+    public static void warningFrame(Object renderer, Canvas canvas) {
+        RENDERERS.put(renderer,Boolean.TRUE);
+        TelemetryRuntime.carFrame(renderer);
+        if (!TelemetryRuntime.carEnabled()) return;
+        String warning=TelemetryRuntime.nativeCarWarningText();
+        if (warning.isEmpty()) return;
+        try {
+            // The existing compact speed/zone renderer already includes the same warning on
+            // native drive/navigation frames. Preserve its layout and do not draw it twice.
+            boolean nativeDrive=Boolean.TRUE.equals(invoke(renderer,"n"))||Boolean.TRUE.equals(field(renderer,"I"));
+            boolean nativeSpeed=TelemetryRuntime.app().getSharedPreferences("vela_settings",0).getBoolean("car_speed_on",false);
+            if (nativeDrive&&nativeSpeed) return;
+            Rect safe=new Rect((Rect)invoke(renderer,"u"));
+            if (!safe.intersect(0,0,canvas.getWidth(),canvas.getHeight())) return;
+            drawWarning(canvas,safe,warning,Boolean.TRUE.equals(invoke(renderer,"l")),(Paint)field(renderer,"m0"));
+        } catch (ReflectiveOperationException|RuntimeException error) { failure(error); }
+    }
+    static void drawWarning(Canvas canvas,Rect safe,String warning,boolean dark,Paint nativePaint) {
+        String[] lines=warning.split("\n",4);
+        float scale=Math.min(1f,Math.min((safe.width()-16f)/156f,(safe.height()-16f)/(lines.length*22f)));
+        if(scale<.5f)return;
+        RectF bounds=new RectF(safe.right-8f-156f*scale,safe.bottom-8f-lines.length*22f*scale,safe.right-8f,safe.bottom-8f);
+        Paint text=new Paint(nativePaint);text.setTextAlign(Paint.Align.LEFT);text.setTextSize(18f*scale);
+        text.setColor(dark?Color.WHITE:0xff111827);text.setShadowLayer(1.5f*scale,0,0,dark?0x99000000:0xbbffffff);
+        int save=canvas.save();try{canvas.clipRect(bounds);for(int i=0;i<lines.length;i++)canvas.drawText(ellipsize(lines[i],text,bounds.width()),bounds.left,bounds.top+(17f+22f*i)*scale,text);}finally{canvas.restoreToCount(save);}
     }
 
     /** Intercept only the selected external-provider display; native mode keeps the original renderer. */

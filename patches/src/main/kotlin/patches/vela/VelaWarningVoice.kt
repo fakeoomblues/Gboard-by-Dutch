@@ -4,6 +4,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -58,14 +59,18 @@ internal fun validateVelaWarningVoice(classes: Iterable<ClassDef>): Map<String,M
     fun field(owner:String,name:String,type:String) {
         check(types.getValue(owner).fields.count { it.name==name && it.type==type }==1) { "Changed Vela warning field $owner->$name:$type" }
     }
-    mapOf("b" to "Landroid/speech/tts/TextToSpeech;", "c" to "F", "l" to "Ly43;", "d" to "F", "e" to "Z", "g" to "Ljj;",
-        "h" to "Z", "i" to "Z", "j" to "Ljava/lang/String;", "m" to "Z", "n" to "Z", "o" to "Z", "s" to "I", "p" to "Landroid/media/AudioManager;").forEach { (name,type)->field("Lwy4;",name,type) }
+    mapOf("a" to "Landroid/content/Context;", "f" to "Ljava/lang/String;", "b" to "Landroid/speech/tts/TextToSpeech;", "c" to "F", "l" to "Ly43;", "d" to "F", "e" to "Z", "g" to "Ljj;",
+        "h" to "Z", "i" to "Z", "j" to "Ljava/lang/String;", "m" to "Z", "n" to "Z", "o" to "Z", "s" to "I", "p" to "Landroid/media/AudioManager;", "q" to "Landroid/media/AudioFocusRequest;", "t" to "Z").forEach { (name,type)->field("Lwy4;",name,type) }
     mapOf("a" to "Landroid/content/Context;","c" to "Ljava/util/concurrent/ExecutorService;","d" to "Lcom/k2fsa/sherpa/onnx/OfflineTts;",
         "e" to "Landroid/media/AudioTrack;","f" to "Z","g" to "I","h" to "Ljava/lang/String;").forEach { (name,type)->field("Ly43;",name,type) }
     field("Lzy4;","a","D");field("Lzy4;","b","J");field("Ly03;","f","Ljava/lang/Object;");field("Ly03;","g","Ljava/lang/Object;")
     field("Ldn2;","f","B");field("Ldn2;","h","Ljava/lang/Object;")
     field("Lpn1;","f","B");field("Lpn1;","h","Ljava/lang/Object;");field("Lpn1;","i","Ljava/lang/Object;")
     field("Lvy4;","a","Lwy4;");field("Lty4;","a","Lwy4;")
+    field("Lapp/vela/VelaApp;","g","Lwi;");field("Lyb0;","p","Lee3;")
+    listOf("Lwi;->b()Ljava/lang/Object;","Lee3;->get()Ljava/lang/Object;","Los1;->w(Landroid/content/Context;)Z").forEach { abi ->
+        check(types.getValue(abi.substringBefore("->")).methods.count { it.toString()==abi }==1) { "Changed native selected-engine initialization ABI $abi" }
+    }
     field("Lxo2;","b","Lwy4;");field("Lxo2;","f","Lcg3;")
     listOf("a","b","c").forEach { field("Lno2;",it,"Z") };field("Lno2;","d","Lapp/vela/core/model/Route;")
     mapOf("a" to "I","b" to "D","c" to "D","d" to "D","e" to "Z","f" to "I","g" to "Z","h" to "Ljava/util/Set;",
@@ -83,9 +88,9 @@ internal fun validateVelaWarningVoice(classes: Iterable<ClassDef>): Map<String,M
 context(context: BytecodePatchContext)
 internal fun validateVelaWarningExtension() {
     listOf("neuralSpeech(Ljava/lang/Object;)Z", "regenerateInput(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", "beforeSpeech(Ljava/lang/Object;Z)Z", "language(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/String;", "capture(Ljava/lang/Object;)V", "dispatch(Ljava/lang/Object;)Z", "focusRequest(Ljava/lang/Object;)V",
-        "focusResult(Ljava/lang/Object;I)V", "nativeStop(Ljava/lang/Object;)V", "nativeSpeech(Ljava/lang/Object;)V", "focusChanged(Ljava/lang/Object;I)V",
+        "engineChanging(Ljava/lang/Object;)V", "engineChanged(Ljava/lang/Object;)V", "focusResult(Ljava/lang/Object;I)V", "nativeStop(Ljava/lang/Object;)V", "nativeSpeech(Ljava/lang/Object;)V", "focusChanged(Ljava/lang/Object;I)V",
         "utteranceStart(Ljava/lang/Object;Ljava/lang/String;)V", "utteranceDone(Ljava/lang/Object;Ljava/lang/String;)Z",
-        "utteranceError(Ljava/lang/Object;Ljava/lang/String;)Z", "utteranceStopped(Ljava/lang/Object;Ljava/lang/String;)Z").forEach { signature ->
+        "utteranceError(Ljava/lang/Object;Ljava/lang/String;)Z", "utteranceStopped(Ljava/lang/Object;Ljava/lang/String;Z)Z").forEach { signature ->
         check(context.classDefBy(SPEAKER).methods.count { it.toString()=="$SPEAKER->$signature" }==1) { "Missing Vela warning extension $signature" }
     }
 }
@@ -138,13 +143,21 @@ internal fun bindVelaWarningVoice(methods:Map<String,MutableMethod>) {
     val result=focus.getInstruction<OneRegisterInstruction>(request+1).registerA
     focus.addInstructions(request+2,"invoke-static {p0, v$result}, $SPEAKER->focusResult(Ljava/lang/Object;I)V")
     focus.addInstructions(0,"invoke-static/range {p0 .. p0}, $SPEAKER->focusRequest(Ljava/lang/Object;)V")
-    listOf("n","d").forEach { pick("Lwy4;",it).addInstructions(0,"invoke-static/range {p0 .. p0}, $SPEAKER->nativeStop(Ljava/lang/Object;)V") }
+    pick("Lwy4;","n").addInstructions(0,"invoke-static/range {p0 .. p0}, $SPEAKER->nativeStop(Ljava/lang/Object;)V")
+    val engine=pick("Lwy4;","d")
+    engine.instructions.withIndex().filter { it.value.opcode==Opcode.RETURN_VOID }.map { it.index }.reversed().forEach { at ->
+        engine.replaceInstruction(at,"invoke-static/range {p0 .. p0}, $SPEAKER->engineChanged(Ljava/lang/Object;)V")
+        engine.addInstructions(at+1,"return-void")
+    }
+    engine.addInstructions(0,"invoke-static/range {p0 .. p0}, $SPEAKER->engineChanging(Ljava/lang/Object;)V")
     pick("Lty4;","onAudioFocusChange").addInstructions(0,"invoke-static/range {p0 .. p1}, $SPEAKER->focusChanged(Ljava/lang/Object;I)V")
     pick("Lvy4;","onStart").addInstructions(0,"invoke-static/range {p0 .. p1}, $SPEAKER->utteranceStart(Ljava/lang/Object;Ljava/lang/String;)V")
     mapOf("onDone" to "utteranceDone", "onError" to "utteranceError", "onStop" to "utteranceStopped").forEach { (name,hook) ->
         val m=pick("Lvy4;",name)
+        val last=if(name=="onStop")"p2" else "p1"
+        val args=if(name=="onStop")"Ljava/lang/Object;Ljava/lang/String;Z" else "Ljava/lang/Object;Ljava/lang/String;"
         m.addInstructionsWithLabels(0,"""
-            invoke-static/range {p0 .. p1}, $SPEAKER->$hook(Ljava/lang/Object;Ljava/lang/String;)Z
+            invoke-static/range {p0 .. $last}, $SPEAKER->$hook($args)Z
             move-result v0
             if-eqz v0, :vela_native_utterance
             return-void

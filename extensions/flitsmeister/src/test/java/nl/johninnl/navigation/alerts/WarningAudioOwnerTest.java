@@ -103,6 +103,21 @@ public class WarningAudioOwnerTest {
         assertFalse(result.grant.eventKey.contains("secret"));assertEquals(64,result.grant.eventKey.length());
     }
 
+    @Test public void interruptedOrFailedOutputCannotBeRegrantedWhenTheStartCallbackWasLost(){
+        for(PlaybackGrant.Outcome outcome:Arrays.asList(PlaybackGrant.Outcome.INTERRUPTED,PlaybackGrant.Outcome.FAILED)){
+            WarningCapabilities p=profile(true);MemoryStore store=new MemoryStore();WarningAudioOwner a=owner(store,journal(),p);WarningAudioOwner.Client c=client(10001,p);
+            WarningAudioOwner.Lease lease=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;PlaybackGrant grant=begin(a,c,lease,20,NOW).grant;
+            assertEquals(WarningAudioOwner.Code.OK,a.outcome(c.uid,c.consumerNonce,grant,outcome,true,NOW));assertNull(store.value);
+            assertEquals("A terminal stop is not proof that this grant never produced audio: "+outcome,WarningAudioOwner.Code.ALREADY_HANDLED,begin(a,c,lease,21,NOW).code);
+        }
+    }
+    @Test public void cancelledStartedOutputCannotBeRegrantedEvenAfterQuiescence(){
+        WarningCapabilities p=profile(true);MemoryStore store=new MemoryStore();WarningAudioOwner a=owner(store,journal(),p);WarningAudioOwner.Client c=client(10001,p);
+        WarningAudioOwner.Lease lease=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;PlaybackGrant grant=begin(a,c,lease,20,NOW).grant;
+        assertEquals(WarningAudioOwner.Code.OK,a.outcome(c.uid,c.consumerNonce,grant,PlaybackGrant.Outcome.STARTED,false,NOW));
+        assertEquals(WarningAudioOwner.Code.OK,a.outcome(c.uid,c.consumerNonce,grant,PlaybackGrant.Outcome.CANCELLED,true,NOW));
+        assertEquals(WarningAudioOwner.Code.ALREADY_HANDLED,begin(a,c,lease,21,NOW).code);
+    }
     @Test public void sourceClearAndExpiredAuthorityCannotObtainAGrant() {
         WarningCapabilities p=profile(true);MemoryStore s=new MemoryStore();WarningJournal j=journal();WarningAudioOwner a=owner(s,j,p);WarningAudioOwner.Client c=client(10001,p);
         WarningAudioOwner.Lease l=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;

@@ -10,6 +10,18 @@ final class NativeWarningText {
         final String value,origin,language;
         Text(String value,String origin,String language){this.value=value;this.origin=origin;this.language=language;}
     }
+    /** Keep exact native fragments; never declare a mixed-language sentence proven. */
+    static Text withInstruction(Text announced,String instruction,String instructionLanguage){
+        if(!useful(instruction))return announced;
+        String language=instructionLanguage==null||instructionLanguage.isEmpty()?"und":instructionLanguage;
+        if(announced.value.equals(instruction))return new Text(instruction,"native_text",language);
+        boolean matching=!language.equals("und")&&!announced.language.equals("und")
+            &&java.util.Locale.forLanguageTag(language).getLanguage().equals(java.util.Locale.forLanguageTag(announced.language).getLanguage());
+        if(announced.value.contains(instruction))return new Text(announced.value,"native_text",matching?language:"und");
+        // Prefer an instruction with its actual declared language over a guessed translated label.
+        if(!matching||!useful(announced.value))return new Text(instruction,"native_text",language);
+        return new Text(announced.value+" "+instruction,"native_text",language);
+    }
     static Context context(Context fallback,Object nativeOwner){
         if(nativeOwner!=null)for(String field:new String[]{"a","b"})try{
             Object value=nativeOwner.getClass().getField(field).get(nativeOwner);if(value instanceof Context)return (Context)value;
@@ -36,6 +48,9 @@ final class NativeWarningText {
         else if(family(model,"ServiceVehicle"))value=callText(model,"reportTitleText",context);
         else if(family(model,"CitsLaneClosed"))value=callText(model,"getLaneClosedTitle",context);
         else if(family(model,"CitsRoadWorks"))value=resource(context,"report_roadworks_singleline");
+        else if(family(model,"CitsWeather")||family(model,"CitsSpeedAdvice"))value=joinNative(callText(model,"getTitle",context),callText(model,"getSubtitle",context));
+        else if(family(model,"CitsBridgeClosed"))value=joinNative(callText(model,"reportTitleText",context),callText(model,"getShortDescription",context));
+        else if(family(model,"TrafficJam"))value=joinNative(callText(model,"reportTitleText",context),callText(model,"getShortDescription",context));
         else if(family(model,"EarlyWarningNotification")){
             value=text(call(model,"getFreetext"));if(useful(value))return new Text(value,"native_text","und");
             value=callText(model,"getNotificationTitle",context);
@@ -95,6 +110,10 @@ final class NativeWarningText {
         return null;
     }
     private static String callText(Object model,String method,Object... args){return text(call(model,method,args));}
+    private static String joinNative(String title,String description){
+        if(!useful(title))return description;if(!useful(description)||description.equals(title))return title;
+        if(description.startsWith(title))return description;return title+". "+description;
+    }
     private static boolean freeText(Object model,String supplied){for(String method:new String[]{"getFreeText","getFreetext","getVoiceOnlyText"}){String free=text(call(model,method));if(useful(free)&&supplied.contains(free))return true;}return false;}
     private static String resource(Context context,String name,Object... args){
         if(context==null)return "";

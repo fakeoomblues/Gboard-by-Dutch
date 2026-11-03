@@ -1892,6 +1892,78 @@
       ],
       "register_count": 4
     },
+    "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->getShortDescription(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "55b0b742b7bad9c4dc3bc1bab14ae31685e740d548536461ed5a06df70ae3811",
+      "code_units": 221,
+      "dex": "classes6.dex",
+      "instruction_count": 113,
+      "references": [
+        "",
+        "%.0f",
+        "%.1f",
+        "Landroid/content/Context;->getString(I[Ljava/lang/Object;)Ljava/lang/String;",
+        "Lh4k;->x:Lh4k;",
+        "Ljava/lang/Float;->floatValue()F",
+        "Ljava/lang/Float;->valueOf(F)Ljava/lang/Float;",
+        "Ljava/lang/Object;->getClass()Ljava/lang/Class;",
+        "Ljava/lang/String;->format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;",
+        "Ljava/lang/String;->length()I",
+        "Ljava/lang/String;->valueOf(I)Ljava/lang/String;",
+        "Ljava/util/Arrays;->copyOf([Ljava/lang/Object;I)[Ljava/lang/Object;",
+        "Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;->getRoad()Ljava/lang/String;",
+        "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->getCause(Landroid/content/Context;)Ljava/lang/String;",
+        "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->getDirectionText(Landroid/content/Context;)Ljava/lang/String;",
+        "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->lengthInMeters:Ljava/lang/Float;",
+        "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->minutesDelay:I",
+        "Lp71;->c(Landroid/content/Context;)Landroid/content/ContextWrapper;",
+        "Lphi;->u(Ljava/lang/String;CC)Ljava/lang/String;",
+        "Lt25;->c()Lh4k;",
+        "Lt25;->e()Lp71;",
+        "Ltvj;->a:Ltvj;",
+        "Lym4;->e(ILandroid/content/Context;)Ljava/lang/String;",
+        "[Ljava/lang/Object;"
+      ],
+      "register_count": 7
+    },
+    "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;->reportTitleText(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "bfff4a6378635d4a1923c1e044bb54ecf206c8f71646309d9fa01bc0f9b9ccd0",
+      "code_units": 22,
+      "dex": "classes6.dex",
+      "instruction_count": 10,
+      "references": [
+        "Landroid/content/Context;->getString(I)Ljava/lang/String;",
+        "Ljava/lang/Object;->getClass()Ljava/lang/Class;",
+        "Lp71;->c(Landroid/content/Context;)Landroid/content/ContextWrapper;",
+        "Lt25;->e()Lp71;"
+      ],
+      "register_count": 2
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsBridgeClosed;->getShortDescription(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "b56982ac8020ae365527b539f931633e1af8ee4a2744f9b0f04385f60a3ec872",
+      "code_units": 59,
+      "dex": "classes6.dex",
+      "instruction_count": 29,
+      "references": [
+        "",
+        "Landroid/content/Context;->getString(I[Ljava/lang/Object;)Ljava/lang/String;",
+        "Lgoi;->getValue()Ljava/lang/Object;",
+        "Ljava/lang/Object;->getClass()Ljava/lang/Class;",
+        "Ljava/lang/String;->valueOf(I)Ljava/lang/String;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsBridgeClosed;->getEnd()Ljava/lang/String;",
+        "Lorg/joda/time/DateTime;->now()Lorg/joda/time/DateTime;",
+        "Lorg/joda/time/Minutes;->getMinutes()I",
+        "Lorg/joda/time/Seconds;->secondsBetween(Lorg/joda/time/ReadableInstant;Lorg/joda/time/ReadableInstant;)Lorg/joda/time/Seconds;",
+        "Lorg/joda/time/Seconds;->toStandardMinutes()Lorg/joda/time/Minutes;",
+        "Lorg/joda/time/format/DateTimeFormatter;",
+        "Lorg/joda/time/format/DateTimeFormatter;->parseDateTime(Ljava/lang/String;)Lorg/joda/time/DateTime;",
+        "Lzz2;->a:Lgoi;",
+        "[Ljava/lang/Object;"
+      ],
+      "register_count": 3
+    },
     "Lnl/flitsmeister/fmcore/models/data/cits/CitsLaneClosed;->getLaneClosedTitle(Landroid/content/Context;)Ljava/lang/String;": {
       "access_flags": 17,
       "body_sha256": "224244464c42cb85a6260edd29b3c39068d7432d14d4fcdf45bfd3f1325a76cf",
@@ -2000,6 +2072,17 @@
       ],
       "register_count": 2
     },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsSpeedAdvice;->getSubtitle(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "c381e3a1c5b87bb9cf69626e45d1bc8c93f6bfa89543bb14cd645262217c8a16",
+      "code_units": 8,
+      "dex": "classes6.dex",
+      "instruction_count": 4,
+      "references": [
+        "Landroid/content/Context;->getString(I)Ljava/lang/String;"
+      ],
+      "register_count": 2
+    },
     "Lnl/flitsmeister/fmcore/models/data/cits/CitsSpeedAdvice;->getTitle(Landroid/content/Context;)Ljava/lang/String;": {
       "access_flags": 1,
       "body_sha256": "f58478bebb7110d32dbb3be79b3978a9bf9c6bcf5ac11c8818a944a07f56659f",
@@ -2010,6 +2093,97 @@
         "Landroid/content/Context;->getString(I)Ljava/lang/String;"
       ],
       "register_count": 2
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;-><clinit>()V": {
+      "access_flags": 65544,
+      "body_sha256": "7b0040a7429b4e88baff95c4d6492675fa3a1782154ca53eb3996765ba4d5daa",
+      "code_units": 27,
+      "dex": "classes6.dex",
+      "instruction_count": 14,
+      "references": [
+        "FOG",
+        "ICE_ON_THE_ROAD",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->$VALUES:[Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->$values()[Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;-><init>(Ljava/lang/String;I)V",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->FOG:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->ICE_ON_THE_ROAD:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;"
+      ],
+      "register_count": 3
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;-><init>(Landroid/os/Parcel;)V": {
+      "access_flags": 65538,
+      "body_sha256": "6f392e7af109a2ae86b6564a6014cb816f25c44d8e4115d33b60712d64f6740c",
+      "code_units": 4,
+      "dex": "classes6.dex",
+      "instruction_count": 2,
+      "references": [
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsBaseReport;-><init>(Landroid/os/Parcel;)V"
+      ],
+      "register_count": 2
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;-><init>(Landroid/os/Parcel;I)V": {
+      "access_flags": 69633,
+      "body_sha256": "c76e039d237ce8e50e34842de759739adbe9f57f4d75a11c4e7c8adc06f10d7b",
+      "code_units": 4,
+      "dex": "classes6.dex",
+      "instruction_count": 2,
+      "references": [
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;-><init>(Landroid/os/Parcel;)V"
+      ],
+      "register_count": 3
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;-><init>(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V": {
+      "access_flags": 65537,
+      "body_sha256": "a5b3870010e0821752c81a85eded9c40aefc583cd0013581a7f6aee90f7ee50c",
+      "code_units": 21,
+      "dex": "classes6.dex",
+      "instruction_count": 11,
+      "references": [
+        "Lbemobile/cits/sdk/core/model/response/Fog;",
+        "Lbemobile/cits/sdk/core/model/response/IceOnTheRoad;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsBaseReport;-><init>(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->FOG:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;->ICE_ON_THE_ROAD:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->mWeatherType:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;"
+      ],
+      "register_count": 3
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->getShortDescription(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "d55cced115ec77deacd50ac72241757728e83258efb90032090ea9f204d9db53",
+      "code_units": 5,
+      "dex": "classes6.dex",
+      "instruction_count": 3,
+      "references": [
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->getSubtitle(Landroid/content/Context;)Ljava/lang/String;"
+      ],
+      "register_count": 2
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->getSubtitle(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "93dacdb3a8538f505264e46e2743fd80b9b882f88bd4277b3aa51987205d25d6",
+      "code_units": 8,
+      "dex": "classes6.dex",
+      "instruction_count": 4,
+      "references": [
+        "Landroid/content/Context;->getString(I)Ljava/lang/String;"
+      ],
+      "register_count": 2
+    },
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->getTitle(Landroid/content/Context;)Ljava/lang/String;": {
+      "access_flags": 1,
+      "body_sha256": "74243d2c920e56cefebd2b9ec2921a44c6cf1fabbba8012bac2dd9d50af219b9",
+      "code_units": 25,
+      "dex": "classes6.dex",
+      "instruction_count": 13,
+      "references": [
+        "Landroid/content/Context;->getString(I)Ljava/lang/String;",
+        "Ljava/lang/Enum;->ordinal()I",
+        "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;->mWeatherType:Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;"
+      ],
+      "register_count": 3
     },
     "Lnl/flitsmeister/fmcore/models/data/reports/EarlyWarningReport;-><init>(Landroid/os/Parcel;)V": {
       "access_flags": 65537,

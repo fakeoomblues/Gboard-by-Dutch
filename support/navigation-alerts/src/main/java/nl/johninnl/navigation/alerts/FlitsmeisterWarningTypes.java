@@ -7,7 +7,7 @@ import java.util.TreeSet;
 /** Pinned FM14.17 semantic identifiers; coverage proof remains separate. */
 public final class FlitsmeisterWarningTypes {
     private FlitsmeisterWarningTypes() {}
-    public static final String MANIFEST_DIGEST = "5e429638f0d3098d74ba5620fd385da4712ddf77eca5e83cd8bfc0c00b082f32";
+    public static final String MANIFEST_DIGEST = "881aa19c7a51d5cfee1ec0acf6be9a926f7b79b5563e4326f666fe661bdb2deb";
     private static final Set<String> TYPES = build();
     public static Set<String> required() { return TYPES; }
     private static Set<String> build() {

@@ -1,6 +1,6 @@
 # Native warning protocol core
 
-This source set implements the event codec/journal, authenticated Binder transport, receiving scheduler and durable ownership core for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). FM, Maps and Vela compile these sources. Native capture, receiver display, settings and speech integrations exist; complete native capture/speech/phone/car acceptance remains pending. FM source coverage stays incomplete, so these changes do not enable exclusive warning playback.
+This source set implements the event codec/journal, authenticated Binder transport, receiving scheduler and durable ownership core for the [native warning design](../../docs/superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). FM, Maps and Vela compile these sources. Native capture, receiver display, settings and speech integrations exist; complete native capture/speech/phone/car acceptance remains pending. FM producer coverage has passed the pinned capture audit; integrated receiving/routing/UI acceptance remains separate and incomplete.
 
 ## Codec
 
@@ -53,3 +53,5 @@ The owned API-34 fixture exercised actual distinct source/client/unauthorized UI
 Shared protocol regression tests live in the FM extension's `nl.johninnl.navigation.alerts` test package. Run the FM, Maps-extension and Vela unit tasks plus Waze compatibility checks. The full patch build verifies source-set integration; it does not prove complete spoken warnings.
 
 The test-only native probe's `scenario=codec` compiles these production sources into instrumentation and exercises the codec against real Android Parcel. It preserves eight large synthetic events by splitting them into 121,940-byte and 40,708-byte batches on the controlled API-34 emulator. This is codec evidence, not proof of native FM capture, cross-UID event authentication, audio or car routing. See the active [transport implementation plan](../../docs/superpowers/plans/2026-11-02-warning-contract-transport.md) for remaining work.
+
+An actual start remains reportable after cancellation was requested. The source never grants the same authority again after a started, interrupted, failed or uncertain attempt. Automatic retries require positive evidence of no output; a terminal stop alone proves quiescence, not that playback never began. Identical state/geometry revisions retain the accepted immutable speech payload and original grant/deadline; a changed unsaid message still requires confirmed cancellation before replacement.

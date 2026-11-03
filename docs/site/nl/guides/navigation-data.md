@@ -80,7 +80,7 @@ Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en om
 
 ## Native waarschuwingsaudio van Flitsmeister
 
-De uitbreiding met native gebeurtenissen en spraak wordt nog gevalideerd. Huidige ontwikkelbuilds melden onvolledige brondekking en houden volledige gebeurtenisgestuurde audio uitgeschakeld tot de native opname is bewezen. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
+De koppeling met native gebeurtenissen en spraak wordt nog integraal gevalideerd. De opname door de vastgelegde bronversie heeft de dekkingscontrole doorstaan; ontwikkelbuilds kunnen na compatibel patchen en controle van de keuzes gebeurtenisgestuurde audio gebruiken. Volledige ontvangst-, routerings- en levensduurcontroles staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
 
 Kies met compatibele gebeurtenisbuilds aan beide kanten **Flitsmeister** en controleer eenmaal **Flitsmeister-waarschuwingsaudio** en de waarschuwingscategorieën. Bevestig **Deze waarschuwingskeuzes gebruiken**. Eerdere expliciete demp- en typekeuzes blijven geselecteerd; een expliciete Maps-geluidskeuze wordt Toon. Kaartspelden staan los van hoorbare categorieën. Werk iedere actief ontvangende kaartapp bij of schakel daar de FM-bron uit voordat je de volledige gebeurtenismodus gebruikt.
 

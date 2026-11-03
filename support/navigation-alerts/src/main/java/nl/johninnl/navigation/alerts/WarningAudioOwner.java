@@ -204,7 +204,7 @@ public final class WarningAudioOwner {
             if(decision!=null && !g.granted && decision!=g.outcome)return result(Code.NONCE_CONFLICT,null,candidate);
             return result(Code.ALREADY_HANDLED,g,candidate);
         }
-        for(Attempt attempt:attempts.values())if(attempt.grant.eventKey.equals(eventKey) && PlaybackGrant.suppressesReplay(attempt.grant.outcome))
+        for(Attempt attempt:attempts.values())if(attempt.grant.eventKey.equals(eventKey) && (attempt.grant.started || PlaybackGrant.suppressesReplay(attempt.grant.outcome)))
             return result(Code.ALREADY_HANDLED,attempt.grant,candidate);
         if(pending!=null && (decision==null || pending.eventKey.equals(eventKey)))return result(Code.ATTEMPT_ACTIVE,null,candidate);
         if(journal.resume(session,0,now).overflow || attempts.size()==MAX_ATTEMPTS)return result(Code.OVERFLOW,null,candidate);

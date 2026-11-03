@@ -110,7 +110,8 @@
     "Lnl/flitsmeister/fmcore/models/data/cits/CitsSpeedAdvice;": [
       "getAdviceKph",
       "getShortDescription",
-      "getTitle"
+      "getTitle",
+      "getSubtitle"
     ],
     "Lnl/flitsmeister/fmcore/data/model/reports/BaseReportType;": [
       "getTypeString"
@@ -127,6 +128,22 @@
     ],
     "Lnl/flitsmeister/fmcore/models/enums/LaneClosedType;": [
       "<clinit>"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather;": [
+      "<init>",
+      "getTitle",
+      "getSubtitle",
+      "getShortDescription"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsWeather$CitsWeatherType;": [
+      "<clinit>"
+    ],
+    "Lnl/flitsmeister/fmcore/models/data/cits/CitsBridgeClosed;": [
+      "getShortDescription"
+    ],
+    "Lnl/flitsmeister/fmcore/data/model/reports/TrafficJam;": [
+      "getShortDescription",
+      "reportTitleText"
     ]
   },
   "enums": [

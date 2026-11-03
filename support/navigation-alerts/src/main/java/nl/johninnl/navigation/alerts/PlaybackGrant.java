@@ -51,7 +51,7 @@ public final class PlaybackGrant {
                 || state==Outcome.REJECTED || state==Outcome.FAILED || state==Outcome.UNCERTAIN;
     }
     static boolean suppressesReplay(Outcome state) {
-        return state==Outcome.COMPLETED || state==Outcome.USER_MUTED || state==Outcome.USER_FILTERED
+        return state==Outcome.COMPLETED || state==Outcome.INTERRUPTED || state==Outcome.FAILED || state==Outcome.USER_MUTED || state==Outcome.USER_FILTERED
                 || state==Outcome.EXPIRED || state==Outcome.REJECTED || state==Outcome.UNCERTAIN;
     }
 }

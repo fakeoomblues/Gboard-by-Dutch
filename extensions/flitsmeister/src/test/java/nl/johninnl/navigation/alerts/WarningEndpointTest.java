@@ -24,12 +24,17 @@ public class WarningEndpointTest {
         Parcel in=Parcel.obtain(),out=Parcel.obtain();try { in.writeInterfaceToken(WarningWire.DESCRIPTOR);in.writeBundle(b);source.binder().transact(code,in,out,0);out.readException();return out.readBundle(null); }finally{in.recycle();out.recycle();}
     }
     static final class Callback extends Binder {
-        final BlockingQueue<Bundle> verifies=new LinkedBlockingQueue<>(),events=new LinkedBlockingQueue<>();
+        final BlockingQueue<Bundle> verifies=new LinkedBlockingQueue<>(),events=new LinkedBlockingQueue<>(),invalidations=new LinkedBlockingQueue<>(),revocations=new LinkedBlockingQueue<>();
+        volatile CountDownLatch eventRelease;
         Callback(){attachInterface(null,WarningWire.CALLBACK);}
         @Override protected boolean onTransact(int code,Parcel in,Parcel out,int flags) {
             in.enforceInterface(WarningWire.CALLBACK);Bundle b=in.readBundle(null);Bundle response=WarningWire.status("OK");
             if(code==WarningWire.VERIFY)verifies.add(b);
-            if(code==WarningWire.EVENTS){events.add(b);response.putLong("accepted_sequence",b.getLong("through_sequence"));}
+            if(code==WarningWire.STATE_INVALIDATED)invalidations.add(b);
+            if(code==WarningWire.OWNER_REVOKED)revocations.add(b);
+            if(code==WarningWire.EVENTS){events.add(b);response.putLong("accepted_sequence",b.getLong("through_sequence"));
+                if(eventRelease!=null)try{if(!eventRelease.await(5,TimeUnit.SECONDS))throw new IllegalStateException("Test callback was not released");}catch(InterruptedException error){Thread.currentThread().interrupt();throw new IllegalStateException(error);}
+            }
             out.writeNoException();out.writeBundle(response);return true;
         }
     }
@@ -77,6 +82,67 @@ public class WarningEndpointTest {
         source.controlClient(10001,true);assertEquals("LEGACY_RECEIVER_ACTIVE",call(WarningWire.CLAIM_AUDIO,q).getString("status"));
         clock.set(142000);assertEquals("OK",call(WarningWire.PING,q).getString("status"));
         clock.set(145000);assertEquals("OK",call(WarningWire.CLAIM_AUDIO,q).getString("status"));
+    }
+    @Test public void expiredOwnerRevocationWaitsForAnInflightEventCallbackInsteadOfBeingLost() throws Exception {
+        Callback callback=new Callback();Bundle registration=confirmed(callback);
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        request.putString("mode","VOICE");request.putBoolean("ready",true);
+        Bundle claimed=call(WarningWire.CLAIM_AUDIO,request);assertEquals("OK",claimed.getString("status"));
+        long epoch=claimed.getBundle("lease").getLong("owner_epoch");
+        callback.eventRelease=new CountDownLatch(1);
+        assertTrue(source.emit(event()));assertNotNull(callback.events.poll(3,TimeUnit.SECONDS));
+        Bundle owned=new Bundle(request);owned.putString("owner_token",claimed.getBundle("lease").getString("owner_token"));owned.putLong("owner_epoch",epoch);
+        Bundle attempt=new Bundle(owned);attempt.putString("warning_id","a");attempt.putString("phase","notice");attempt.putLong("announcement_index",1);attempt.putLong("revision",1);attempt.putString("attempt_nonce",UUID.randomUUID().toString());
+        try{
+            assertEquals("GRANTED",call(WarningWire.BEGIN_ATTEMPT,attempt).getString("status"));
+            clock.addAndGet(6000);
+            assertEquals("STALE_OWNER",call(WarningWire.RENEW_AUDIO,owned).getString("status"));
+        }finally{callback.eventRelease.countDown();}
+        Bundle revoked=callback.revocations.poll(3,TimeUnit.SECONDS);
+        assertNotNull("The old owner must receive its cancellation even when its callback was busy",revoked);
+        assertEquals(epoch,revoked.getLong("owner_epoch"));
+        assertEquals("AUDIO_UNCERTAIN",call(WarningWire.CLAIM_AUDIO,request).getString("status"));
+    }
+    @Test public void parkedRecoveryRefusesAReadyReceiverAndPreservesItsAuthority() throws Exception {
+        source.close();
+        source=localRecoverySource();
+        Callback callback=new Callback();Bundle registration=confirmed(callback);
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        request.putString("mode","VOICE");request.putBoolean("ready",true);
+        Bundle claim=call(WarningWire.CLAIM_AUDIO,request);assertEquals("OK",claim.getString("status"));
+        assertTrue(source.emit(event()));assertNotNull(callback.events.poll(3,TimeUnit.SECONDS));
+
+        assertEquals("OUTPUT_ACTIVE",source.recoverAfterParkedStop().get(3,TimeUnit.SECONDS));
+        Bundle state=call(WarningWire.GET_STATE,request);
+        assertEquals(claim.getBundle("lease").getString("owner_token"),state.getBundle("lease").getString("owner_token"));
+        request.putString("provider_session",registration.getString("provider_session"));request.putLong("after_sequence",0);
+        Bundle snapshot=call(WarningWire.RESUME,request);
+        assertTrue(snapshot.getParcelableArrayList("items").stream().anyMatch(item->"announcement".equals(((Bundle)item).getString("item_type"))));
+    }
+    @Test public void parkedRecoveryInvalidatesTheOldViewAndKeepsVisualStateWithoutPlaybackAuthority() throws Exception {
+        source.close();
+        source=localRecoverySource();
+        Callback callback=new Callback();Bundle registration=confirmed(callback);
+        callback.eventRelease=new CountDownLatch(1);
+        assertTrue(source.emit(event()));assertNotNull(callback.events.poll(3,TimeUnit.SECONDS));
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        request.putString("provider_session",registration.getString("provider_session"));request.putLong("after_sequence",0);
+        Bundle oldView=call(WarningWire.RESUME,request);
+
+        try{assertEquals("OK",source.recoverAfterParkedStop().get(3,TimeUnit.SECONDS));}
+        finally{callback.eventRelease.countDown();}
+        assertNotNull("Recovery must notify the receiver after its in-flight event callback finishes",callback.invalidations.poll(3,TimeUnit.SECONDS));
+        Bundle oldAck=new Bundle(request);oldAck.putString("view_token",oldView.getString("view_token"));oldAck.putLong("head_sequence",oldView.getLong("head_sequence"));
+        assertNotEquals("OK",call(WarningWire.ACK,oldAck).getString("status"));
+        Bundle current=call(WarningWire.RESUME,request);assertEquals("OK",current.getString("status"));
+        ArrayList<Bundle> items=current.getParcelableArrayList("items");
+        assertTrue(items.stream().anyMatch(item->"state".equals(item.getString("item_type"))&&"Actual native text".equals(item.getBundle("event").getString("message"))));
+        assertFalse(items.stream().anyMatch(item->"announcement".equals(item.getString("item_type"))));
+    }
+    private WarningEndpoint localRecoverySource(){
+        WarningCapabilities profile=new WarningCapabilities(repeat('a',64),caps,true);
+        return new WarningEndpoint(android.os.Process.myUid(),u->u>=10001&&u<=10006?"app.client"+u:null,profile,
+                ()->new WarningEndpoint.Storage("boot-count:7",new PlaybackStore(){PlaybackGrant value;public PlaybackGrant load(){return value;}public void save(PlaybackGrant grant){value=grant;}},null),clock::get,uid::get);
     }
     private Bundle event(){Bundle b=new Bundle();b.putString("operation","ANNOUNCE");b.putString("warning_id","a");b.putLong("revision",1);b.putLong("announcement_index",1);b.putString("phase","notice");b.putString("native_type","Incident");b.putString("category","road_danger");b.putInt("priority",0);b.putString("message","Actual native text");b.putString("language_tag","en");b.putString("message_origin","native_text");b.putString("relevance","notice");b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",clock.get());return b;}
     private static String repeat(char c,int n){char[] a=new char[n];Arrays.fill(a,c);return new String(a);}

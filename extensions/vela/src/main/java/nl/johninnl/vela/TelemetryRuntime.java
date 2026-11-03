@@ -83,6 +83,7 @@ public final class TelemetryRuntime {
                 }
             },new WarningScheduler.Speaker(){
                 public void prepare(String language){nativeSpeaker.prepare(language);}
+                public void prepare(String language,WarningAudioOwner.Mode mode){nativeSpeaker.prepare(language,mode);}
                 public boolean ready(String language,WarningAudioOwner.Mode mode){return nativeSpeaker.isReady(language,mode);}
                 public boolean ready(WarningEvent event,WarningAudioOwner.Mode mode){return nativeSpeaker.canSpeak(event,mode);}
                 public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return nativeSpeaker.effectiveMode(mode);}
@@ -160,8 +161,11 @@ public final class TelemetryRuntime {
     public static double carSpeedMps(double fallback) { return carEnabled()?speedMps(fallback):fallback; }
     public static Double carLimitKmh(Double fallback) { return carEnabled()?limitKmh(fallback):fallback; }
     public static boolean phoneCurrentUnknown() { return phoneUnknown; }
-    public static boolean showSpeed(boolean nativeValue) { return nativeValue||view().external; }
+    public static boolean showSpeed(boolean nativeValue) { return nativeValue||view().external||!nativeCarWarningText().isEmpty(); }
     public static void phoneState(Object state) {
+        // The guarded outer CornerOverlay hook runs before Compose's skip/visibility gates.
+        // Observe here so a warning can create an initially absent native phone slot.
+        NativeUi.observe();
         phoneAt=SystemClock.elapsedRealtime();
         try {
             Object nativeSpeed=state.getClass().getField("j").get(state);
@@ -233,6 +237,13 @@ public final class TelemetryRuntime {
         String icon;
         switch(w.kind){case "average_speed_zone":icon="⌀";break;case "police":icon="🚓";break;case "camera":case "mobile_camera":icon="📷";break;case "closure":icon="⛔";break;case "jam":icon="↔";break;case "flock":icon="◉";break;default:icon="⚠";}
         return icon+(w.estimated?"≈":"")+NativeUi.distance(w.distanceMeters,NativeUi.imperial()).replace(" ","").replace("\u00a0","");
+    }
+    /** Native semantic warnings only; the independent car layer never promotes legacy estimates. */
+    static String nativeCarWarningText() {
+        if(!TelemetryStore.FLITSMEISTER.equals(selected()))return "";
+        long now=SystemClock.elapsedRealtime();
+        nl.johninnl.navigation.alerts.WarningEvent event=nativeWarnings.current(now,value->warningPreferences==null||warningPreferences.enabled(value));
+        return event==null?"":"Flitsmeister\n"+nativeWarnings.messages(now,value->warningPreferences==null||warningPreferences.enabled(value));
     }
     public static void setWarning(String value) { main(()->{warning=value==null?"":value;publish(false);}); }
     public static void fix(Location original) { nativeSample(original); }
@@ -339,6 +350,7 @@ public final class TelemetryRuntime {
         if(legacyAudio&&voiceAvailable()&&(nativeGuidance()||carActive()||now-phoneAt<=5000)&&ahead!=null&&WARNINGS.shouldSpeak(ahead,now))speakWarning(warningLabel(ahead));
         String key=(startup==null?"":startup.state())+":"+selected()+":"+v.currentKmh+":"+v.limitKmh+":"+v.zoneId+":"+v.zoneSession+":"+v.averageKmh+":"+v.progressPercent+":"+v.remainingMeters+":"+v.external+":"+suppressNativeFlock()+":"+carEnabled()+":"+spokenEnabled()+":"+warning+":"+freshNativeSpeed()+":"+(freshNativeSpeed()&&own!=null?own.getSpeed():null)+":"+phoneNativeLimit;
         if(force||!key.equals(lastKey)){lastKey=key;changed.run();CarUi.changed();}
+        CarUi.warningChanged();
     }
     private static boolean dutch() { return app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl"); }
     private static String warningLabel(RoadWarningEngine.Warning w) {

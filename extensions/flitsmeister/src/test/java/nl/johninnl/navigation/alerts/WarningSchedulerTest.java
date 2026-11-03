@@ -39,6 +39,42 @@ public class WarningSchedulerTest {
         speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);
         WarningEvent state=event("state-only",0,1,WarningEvent.Operation.UPSERT);source.add(state);scheduler.events(source,Arrays.asList(state));assertEquals(1,speaker.calls);
     }
+    @Test public void repeatedStateUpdatesDoNotCancelIdenticalAudioAlreadyAcceptedByTheSpeaker(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant granted=speaker.grant;
+        for(int revision=2;revision<=4;revision++){
+            time.now+=25;Bundle fields=WarningCodec.encode(event("road",1,revision,WarningEvent.Operation.UPSERT));
+            fields.putString("message",authority.message);fields.putDouble("latitude",52+revision*.00001);fields.putDouble("longitude",5);
+            fields.putLong("position_observed_elapsed_ms",time.now);fields.putString("position_clock_origin","native_decision");fields.putBoolean("position_estimated",false);
+            WarningEvent state=WarningCodec.decode(fields,time.now);source.add(state);scheduler.events(source,Collections.singletonList(state));
+        }
+        assertEquals("Unchanged speech must not consume cancellation/retry attempts",0,speaker.cancels);
+        assertEquals(1,speaker.calls);assertEquals(granted.attemptId,speaker.grant.attemptId);
+        assertEquals("The submitted immutable payload still matches its durable grant",granted.revision,speaker.event.revision);
+        assertEquals(authority.announceUntil,speaker.deadline);
+        speaker.callback.started(granted);speaker.callback.finished(granted,PlaybackGrant.Outcome.COMPLETED,true);
+        assertNull(source.pending);assertTrue(observed.contains(PlaybackGrant.Outcome.COMPLETED));
+    }
+    @Test public void startArrivingAfterCancellationIsStillPersistedAndNeverReplayed(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant original=speaker.grant;WarningScheduler.Callback originalCallback=speaker.callback;
+        time.now+=25;WarningEvent changed=event("road",1,2,WarningEvent.Operation.UPSERT);source.add(changed);scheduler.events(source,Collections.singletonList(changed));
+        assertEquals(1,speaker.cancels);
+        originalCallback.started(original);
+        assertTrue("An actual start remains durable even when cancellation was already requested",source.pending.started);
+        originalCallback.finished(original,PlaybackGrant.Outcome.INTERRUPTED,true);time.now+=250;scheduler.refresh();
+        assertEquals("An interrupted started warning must not obtain replacement audio",1,speaker.calls);
+        assertNull(source.pending);
+    }
+    @Test public void changedUnsaidMessageStillCancelsBeforeReplacementAndRetainsOriginalDeadline(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant original=speaker.grant;WarningScheduler.Callback originalCallback=speaker.callback;
+        time.now+=25;WarningEvent changed=event("road",1,2,WarningEvent.Operation.UPSERT);source.add(changed);scheduler.events(source,Collections.singletonList(changed));
+        assertEquals(1,speaker.cancels);assertEquals(1,speaker.calls);
+        originalCallback.finished(original,PlaybackGrant.Outcome.NOT_STARTED,true);time.now+=250;scheduler.refresh();
+        assertEquals(2,speaker.calls);assertEquals(changed.message,speaker.event.message);assertEquals(changed.revision,speaker.event.revision);
+        assertNotEquals(original.attemptId,speaker.grant.attemptId);assertEquals(authority.announceUntil,speaker.deadline);
+    }
     @Test public void clearAndSourceOffFenceLateGrantBeforeAnySpeakerCall(){
         source.delayBegin=true;WarningEvent e=event("road",0,1,WarningEvent.Operation.ANNOUNCE);source.add(e);scheduler.events(source,Arrays.asList(e));
         assertEquals(0,speaker.calls);scheduler.disconnected();source.beginReply.complete(source.delayedReply);
