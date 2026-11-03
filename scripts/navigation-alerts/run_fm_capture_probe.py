@@ -52,9 +52,11 @@ def main():
     parser.add_argument('--target-apk', type=Path, required=True)
     parser.add_argument('--probe-apk', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--scenarios', nargs='+', choices=['sound', 'point', 'voice', 'cits_direct', 'early_bus', 'impact', 'vri', 'cits', 'integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'], default=['sound'])
+    parser.add_argument('--scenarios', nargs='+', choices=['sound', 'point', 'voice', 'cits_direct', 'early_bus', 'impact', 'vri', 'cits', 'integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery', 'integrated_restart_seed', 'integrated_restart_recovery'], default=['sound'])
     parser.add_argument('--receiver-package', default='com.google.android.apps.maps')
     parser.add_argument('--death-owner', choices=['app.vela','com.google.android.apps.maps'], default='app.vela')
+    parser.add_argument('--expected-pending-attempt', default='')
+    parser.add_argument('--expected-old-session', default='')
     parser.add_argument('--hold-seconds', type=int, choices=range(10, 31), default=20)
     parser.add_argument('--native-id', help='Controlled native model ID; expected warning ID is SpeedCam:<native-id>')
     parser.add_argument('--receiver-wait-seconds', '--confirm-wait-seconds', dest='receiver_wait_seconds', type=int, choices=range(30, 121), default=120)
@@ -160,12 +162,15 @@ def main():
                           '-e', 'native_spacing_ms', str(args.native_spacing_ms),
                           '-e', 'post_warmup_no_gps_delay_ms', str(args.post_warmup_no_gps_delay_ms),
                           'nl.johninnl.warningprobe.fm.capture/nl.johninnl.warningprobe.NativeFmCaptureProbe']
-            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'):
+            for key, value in [('expected_pending_attempt', args.expected_pending_attempt), ('expected_old_session', args.expected_old_session)]:
+                if value:
+                    instrument[-1:-1] = ['-e', key, value]
+            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery', 'integrated_restart_seed', 'integrated_restart_recovery'):
                 # Stream the genuine source-ready/native-event statuses so the coordinator can
                 # launch the real receiver while this source process remains alive.
                 process = subprocess.Popen([str(args.adb), '-s', serial, *instrument], stdout=subprocess.PIPE,
                                            stderr=subprocess.STDOUT, text=True, bufsize=1)
-                duration = args.matrix_timeout_seconds if scenario in ('integrated_matrix', 'integrated_handover', 'integrated_death_recovery') else args.hold_seconds
+                duration = args.matrix_timeout_seconds if scenario in ('integrated_matrix', 'integrated_handover', 'integrated_death_recovery', 'integrated_restart_seed', 'integrated_restart_recovery') else args.hold_seconds
                 timeout = threading.Timer(args.receiver_wait_seconds + duration + 45, process.kill)
                 timeout.start()
                 try:
@@ -190,7 +195,7 @@ def main():
                 raise RuntimeError('Actual native capture failed: ' + scenario)
             if not report.get('probe_completed') or report['process_uid'] != uid or not report['managed_mute_verified']:
                 raise RuntimeError('Native capture/mute assertion failed: ' + scenario)
-            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'):
+            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery', 'integrated_restart_seed', 'integrated_restart_recovery'):
                 if not report.get('production_endpoint_used') or report.get('test_sink_used') or report.get('raw_packet_emitted') or report.get('coverage_override_used') or not report.get('provider_native_queue_empty'):
                     raise RuntimeError('Integrated native trigger bypassed production or provider mute')
             elif report['max_active_playbacks'] != 0:

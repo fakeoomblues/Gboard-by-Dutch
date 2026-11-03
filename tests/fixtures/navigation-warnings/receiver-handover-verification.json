@@ -167,7 +167,6 @@
   "receiver_output_quiescent": true,
   "remaining": [
     "Death during actual playback and durable unknown-output fencing",
-    "Source-process restart with unknown output",
     "Actual ready-owner refusal and parked uncertain-output recovery",
     "Background navigation and car routing"
   ],
@@ -178,5 +177,6 @@
     "probe_completed": true,
     "source_location_permissions_restored_exactly": true,
     "window_settings_restored_exactly": true
-  }
+  },
+  "related_provider_restart_verification": "tests/fixtures/navigation-warnings/provider-restart-verification.json"
 }

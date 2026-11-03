@@ -305,8 +305,8 @@
     }
   ],
   "remaining": [
-    "Actual source-process restart with a possibly playing attempt",
     "Other output adapters, background navigation and car routing"
   ],
-  "related_maps_verification": "tests/fixtures/navigation-warnings/maps-death-recovery-verification.json"
+  "related_maps_verification": "tests/fixtures/navigation-warnings/maps-death-recovery-verification.json",
+  "related_provider_restart_verification": "tests/fixtures/navigation-warnings/provider-restart-verification.json"
 }

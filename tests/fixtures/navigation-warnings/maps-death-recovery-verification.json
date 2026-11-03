@@ -301,8 +301,8 @@
     }
   ],
   "remaining": [
-    "Provider-process restart with potentially playing output",
     "Other adapters, background navigation and actual car routing"
   ],
-  "visual_inspection": "The actual uncertain-output recovery layout is legible; both controls have their blue checked fill and Reset is enabled. The two required View-state confirmations and successful real click are independently asserted. This is one light English freeform layout."
+  "visual_inspection": "The actual uncertain-output recovery layout is legible; both controls have their blue checked fill and Reset is enabled. The two required View-state confirmations and successful real click are independently asserted. This is one light English freeform layout.",
+  "related_provider_restart_verification": "tests/fixtures/navigation-warnings/provider-restart-verification.json"
 }
