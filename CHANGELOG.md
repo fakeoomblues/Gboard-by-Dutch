@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/add9b1148db454926dc6ef60f62d2b2b3ee2af08/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0-dev.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [add9b1148db4](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/add9b1148db454926dc6ef60f62d2b2b3ee2af08). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0-dev.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.1...v1.28.0-dev.2) (2026-11-03)
+
+### 🐛 Bug Fixes
+
+* **ci:** migrate development publishing to GitLab.com ([ffe484c](https://gitlab.com/johninnld/nl-morphe-patches/commit/ffe484c3f032e1d229b2d58c1c2208dc83f42acf))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c2cd274d52659ec34924d27c37f7ac5de66ed584/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.0-dev.1.**
