@@ -12,6 +12,20 @@ Every `main` release also rebuilds and publishes the production Pages site from 
 
 Docker is optional for an additional Linux check. The existing macOS Android SDK and emulator remain the native Android test environment.
 
+The former GitHub account is retired. The fixed `johninnl` name/noreply address is Git attribution; it does not require a live GitHub account. Publisher authentication is GitLab `johninnld` through `~/.ci`, with the configured GitLab SSH key for Git transport. GitHub login and token-owner checks are not CI/release gates.
+
+### Older primary checkouts
+
+An older primary checkout may deliberately retain pending app changes. Refreshing its instruction files does not update or approve those app changes. If it lacks `scripts/local-release/` or `.gitlab/scripts/`, use the already installed driver, which creates current isolated source checkouts:
+
+```bash
+CONFIG="$HOME/Library/Application Support/nl-morphe-local-release/config.json"
+TOOLING="$HOME/Library/Application Support/nl-morphe-local-release/tooling"
+node "$TOOLING/flow.cjs" --config "$CONFIG" --branch main
+```
+
+That command previews verification; normal publication still requires the established `--publish` procedure and approved branch head. For an ordinary Git operation in an older checkout, run the current `.gitlab/scripts/identity.cjs` by its path in an up-to-date isolated checkout while keeping the target repository as the working directory. It checks the target repository's effective identity/history and reads `~/.ci`; do not use the old GitHub local check. Do not reset, clean or bulk-update a dirty primary checkout just to refresh these instructions.
+
 ## Channels and verification
 
 `scripts/local-release/templates.json` contains the two maintained templates:
@@ -38,7 +52,7 @@ The private store defaults to `~/Library/Application Support/nl-morphe-local-rel
 | Morphe Ed25519 signing seed | Private `secrets/morphe-signing-key` | `MORPHE_SIGNING_KEY` | Existing protected/masked `MORPHE_SIGNING_KEY` |
 | Shared Maps application key | Private `secrets/maps-api-key`; existing ignored `.community-maps-api-key` may be the setup source | `SHARED_MAPS_API_KEY` | Existing protected/masked `SHARED_MAPS_API_KEY` |
 | Bright article signing key | Private `secrets/bright-signing-key`; existing ignored `.bright-article-signing-key` may be the setup source | `BRIGHT_ARTICLE_SIGNING_KEY` | Existing protected/masked `BRIGHT_ARTICLE_SIGNING_KEY` |
-| Maven/package read credential | Existing authenticated `gh` store or private `secrets/github-package-token` | `GITHUB_TOKEN`, with `GITHUB_ACTOR=johninnl` | Only if needed by the chosen hosted package setup |
+| Optional legacy Maven/package credential | Explicit private package credential only if a locked dependency host still requires it; reusable caches/mirrors remain available | Dependency read only; never publisher/Git identity authentication | Only if an actual dependency fetch requires it; no retired-account login check |
 | Pages runner authentication token | Private `pages-runner/config.toml` | The dedicated runner's GitLab connection | Separate from account API keys; never commit it |
 | API/private configuration | Private `config.json` | `apiKeysFile`, nonsecret tool paths, `secretFiles`, Pages runner settings | No automatic secret synchronization |
 | Inputs and development tooling | Android SDK, original APK/APKM/APKS files, ignored `.analysis`/`.tools`, test APK keystores | Build/test inputs and local evidence | Not release credentials or repository source |

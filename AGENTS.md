@@ -1,6 +1,19 @@
 # Repository instructions
 
+## Global execution: batch implementation, then validate
+
+These rules apply to every task and delegated task, ahead of skills that prescribe frequent implementation/validation switching.
+
+- Complete substantial connected implementation changes across relevant files/modules before validation. Write or update tests alongside that batch.
+- Group static checks, builds and unit tests at the batch checkpoint. Collect related findings, fix them together, then rerun affected checks together.
+- Reserve emulator, device and browser UI testing for a planned acceptance session after the batch builds. Keep task-owned runtimes stopped between acceptance sessions.
+- Preserve and reuse passing evidence. Repeat a check only for a relevant change, a failure or a remaining required acceptance gate; do not alternate tiny edits with repeated UI runs, screenshots or broad suites.
+- Run an early diagnostic only for a specific unresolved fact blocking meaningful progress, or at the user's request. State the reason and run the smallest diagnostic that resolves it.
+- Retain all required verification and mandatory gates. Batching changes their sequence and frequency, not whether the outcome must be verified.
+
 ## HARD REQUIREMENT: johninnl identity only
+
+Git attribution remains `johninnl`; the live publisher is the GitLab account `johninnld`. The former GitHub account is retired. Do not require a GitHub login, GitHub token-owner check, `gh api user` or the legacy `verify_identity.cjs --local` path for local commits, pushes, CI or releases.
 
 - Use exactly `johninnl <349981574+johninnl@users.noreply.github.com>` for **every Git author and committer**, on every branch and tag history, including generated release commits, merges, cherry-picks, and amended commits. Never create or retain commits under another person, automation account, or bot identity.
 - Do not add `Co-authored-by` trailers or commit-message attribution identifying another author. Do not introduce the previous personal identity into repository files, commit metadata, or release metadata.
@@ -20,6 +33,8 @@
 ## Local CI and publishing rules
 
 Operational details, private-file inventory and both channel procedures are in [PUBLISHING.md](PUBLISHING.md). Keep rules here and implementation/setup details there.
+
+If an older dirty checkout lacks the current pipeline scripts, preserve its work and use the installed local driver or an up-to-date isolated GitLab checkout as described there. Do not restore the obsolete GitHub identity workflow.
 
 - Prefer local build/test/release automation. Hosted jobs must not run on ordinary branch, merge-request, main/dev or mirror pushes; the GitLab fallback requires explicit web opt-in through the `run_cloud_ci=true` pipeline input. Keep arbitrary pipeline-variable overrides disabled. Legacy forge workflows remain manual.
 - Use `scripts/local-release/verify.cjs` as the single complete verification command set. Do not replace required release/history, Python, Android, Medium or bilingual documentation checks with a smaller passing subset.
