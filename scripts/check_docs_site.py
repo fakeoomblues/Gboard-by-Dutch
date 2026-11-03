@@ -7,7 +7,8 @@ import argparse
 import os
 
 ROOT = Path(__file__).resolve().parents[1]
-SITE_URL = os.environ.get('SITE_URL', 'https://nl-morphe-patches-ed90fa.gitlab.io/')
+# GitLab supplies CI_PAGES_URL without a trailing slash. Keep its root path relative.
+SITE_URL = os.environ.get('SITE_URL', 'https://nl-morphe-patches-ed90fa.gitlab.io/').rstrip('/') + '/'
 
 
 class Document(HTMLParser):
