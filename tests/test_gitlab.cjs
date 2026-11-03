@@ -7,7 +7,7 @@ const path = require("node:path");
 const os = require("node:os");
 const crypto = require("node:crypto");
 const {execFileSync} = require("node:child_process");
-const {load} = require("js-yaml");
+const {loadAll} = require("js-yaml");
 const {verifyPublisher} = require("../.gitlab/scripts/identity.cjs");
 test("GitLab publisher rejects a different account and missing credentials", async () => {
   await assert.doesNotReject(verifyPublisher({env: {GITLAB_TOKEN: "fixture"}, request: async () => ({username:"johninnld"})}));
@@ -57,7 +57,7 @@ test("GitLab mirrors identical signed bytes without competing source commits or 
   } finally {process.chdir(previous);fs.rmSync(cwd,{recursive:true,force:true});}
 });
 test("GitLab pipeline publishes only protected authoritative main/dev releases", () => {
-  const config=load(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8"));
+  const config=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
   assert.equal(config.image,"eclipse-temurin:21-jdk-noble","The pinned documentation tools require Python 3.11+, unavailable in Jammy");
   assert.equal(config.variables.GIT_DEPTH,"0");
   assert.equal(config.variables.GIT_AUTHOR_NAME,"johninnl");
@@ -67,6 +67,31 @@ test("GitLab pipeline publishes only protected authoritative main/dev releases",
   assert.ok(!config.release.script.some(s=>s.includes("semantic-release")));
   assert.equal(config.verify.artifacts.paths[0],"build/docs-site/");
   assert.equal(fs.existsSync(path.join(__dirname,"../.gitlab/release.config.cjs")),false);
+});
+
+test("GitLab cloud workflows require explicit web opt-in, including main/dev and MR events", () => {
+  const config=loadAll(fs.readFileSync(path.join(__dirname,"../.gitlab-ci.yml"),"utf8")).at(-1);
+  function allowed(env) {
+    for (const rule of config.workflow.rules) {
+      const matches = !rule.if || Function(`return (${rule.if.replace(/\$([A-Z_]+)/g, (_match, name) => JSON.stringify(env[name] || ""))});`)();
+      if(matches)return rule.when !== "never";
+    }
+    return false;
+  }
+  for(const branch of ["main", "dev", "feature/example"]){
+    for(const source of ["push", "merge_request_event", "schedule", "api"]){
+      assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:source, RUN_CLOUD_CI:"true"}),false,`${source} ${branch}`);
+    }
+    for(const choice of [undefined, "false", "TRUE"]){
+      assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:"web", RUN_CLOUD_CI:choice}),false);
+    }
+    assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:"web", RUN_CLOUD_CI:"true"}),true);
+  }
+  assert.equal(allowed({CI_SERVER_HOST:"gitgud.io",CI_PIPELINE_SOURCE:"web",RUN_CLOUD_CI:"true"}),false);
+  assert.deepEqual(config.verify.script,["node scripts/local-release/verify.cjs"]);
+  assert.match(config.release.rules[0].if,/CI_COMMIT_REF_PROTECTED/);
+  assert.match(config.pages.rules[0].if,/CI_COMMIT_REF_PROTECTED/);
+  assert.match(config.pages.rules[0].if,/CI_COMMIT_BRANCH == "main"/);
 });
 
 test("GitLab API and Git credentials stay on the exact destination host", async () => {

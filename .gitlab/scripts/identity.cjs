@@ -1,12 +1,12 @@
 "use strict";
-const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const {api, OWNER, NAME, TOKEN_KEY, TOKEN_FILE, TOKEN_FILE_ENV} = require("./api.cjs");
+const {api, OWNER, NAME, TOKEN_KEY, TOKEN_FILE_ENV} = require("./api.cjs");
+const {loadApiKeys,loadTokenFile} = require("../../scripts/local-release/credentials.cjs");
 const git = require("../../.github/scripts/verify_identity.cjs");
-function localToken() {
-  return fs.readFileSync(process.env[TOKEN_FILE_ENV] || path.join(os.homedir(), TOKEN_FILE), "utf8").trim()
-    .replace(/^(?:export )?[A-Za-z_][A-Za-z_0-9]*\s*=\s*/, "").replace(/^["']|["']$/g, "");
+function localToken({env=process.env,home=os.homedir()}={}) {
+  if(env[TOKEN_FILE_ENV])return loadTokenFile(env[TOKEN_FILE_ENV]);
+  return loadApiKeys(path.join(home,".ci"))[NAME.toUpperCase()+"_TOKEN"];
 }
 async function verifyPublisher({env = process.env, request = api} = {}) {
   if (!env.GITLAB_TOKEN) throw new Error(`${TOKEN_KEY} must supply GITLAB_TOKEN`);

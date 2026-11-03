@@ -1,0 +1,137 @@
+# Local CI and publishing
+
+The enforceable rules are in [AGENTS.md](AGENTS.md). This file contains the setup, channel procedures, private-file inventory, deployment and cleanup details. Update both files and both channel templates together.
+
+## What runs locally
+
+A user LaunchAgent periodically invokes the local release watcher. The first successful invocation baselines the existing `main` and `dev` heads without publishing historical work. Later approved branch updates run the complete local verification, build/sign and publication flow. Feature branches never publish.
+
+GitLab is the source/version authority. One canonical signed MPP is published to GitLab, then the same published bytes are mirrored to Codeberg and GitGud in parallel. Each destination is authenticated separately and its public download is verified. No mirror selects another version, rewrites source metadata or force-pushes conflicting refs.
+
+Every `main` release also rebuilds and publishes the production Pages site from committed release metadata. Main documentation-only/no-release updates may refresh the site too. `dev` never replaces the production website. GitLab Pages requires a Pages job, so that small tagged job runs on this Mac's protected project runner; it does not consume shared-runner minutes. The build/test/release watcher itself is independent of hosted runners.
+
+Docker is optional for an additional Linux check. The existing macOS Android SDK and emulator remain the native Android test environment.
+
+## Channels and verification
+
+`scripts/local-release/templates.json` contains the two maintained templates:
+
+| Branch | Publication |
+| --- | --- |
+| `main` | Stable releases |
+| `dev` | `dev` prereleases |
+
+`.releaserc` and `.gitlab/gitlab-com.release.config.cjs` own version selection, release notes, generated catalogues and release files. Do not bump generated versions manually. Required approval for unapproved app changes happens before promotion to `main`; the watcher automatically publishes approved updates afterward.
+
+Both local automation and optional cloud CI use `scripts/local-release/verify.cjs`. It retains identity/history and release-policy tests, Python regressions, patch build/tests and all applicable extension unit tests through Gradle's aggregate `testDebugUnitTest` task, Medium bundle/tests and strict bilingual documentation/link checks. This supports the different modules on main and dev without merging app changes between them. Tests and builds use isolated flow-owned checkouts. `LOCAL_RELEASE_PYTHON` selects the documentation Python environment; `LOCAL_RELEASE_GRADLE_OFFLINE=true` restricts Gradle to cached dependencies.
+
+## Private files: keep these out of Git
+
+The private store defaults to `~/Library/Application Support/nl-morphe-local-release/`. Its configuration and secret files use mode `600`; private directories use `700`. Use absolute paths in configuration. Never put credential values in this document, `AGENTS.md`, a committed configuration, a plist, command output or a test diagnostic.
+
+| Private input | Local source/reference | Environment/use | Remote CI counterpart |
+| --- | --- | --- | --- |
+| GitLab API key | `~/.ci`, `GITLAB` entry | `GITLAB_TOKEN`; publisher `johninnld` | Existing protected/masked `JOHNINNL_GITLAB_TOKEN` |
+| GitGud API key | `~/.ci`, `GITGUD` entry | `GITGUD_TOKEN`; mirror owner `JohninNL` | `GITGUD_TOKEN` for optional cloud mirroring; legacy name `JOHNINNL_GITGUD_TOKEN` |
+| Codeberg API key | `~/.ci`, `CODEBERG` entry | `CODEBERG_TOKEN`; mirror owner `JohninNL` | `CODEBERG_TOKEN` for optional cloud mirroring; legacy name `JOHNINNL_CODEBERG_TOKEN` |
+| GitLab/GitGud/Codeberg SSH identities | Verified private paths selected by configuration (`GITLAB_SSH_KEY`, `GITGUD_SSH_KEY`, `CODEBERG_SSH_KEY`) | Git transport only; one destination key per operation | Not copied to hosted CI |
+| Morphe Ed25519 signing seed | Private `secrets/morphe-signing-key` | `MORPHE_SIGNING_KEY` | Existing protected/masked `MORPHE_SIGNING_KEY` |
+| Shared Maps application key | Private `secrets/maps-api-key`; existing ignored `.community-maps-api-key` may be the setup source | `SHARED_MAPS_API_KEY` | Existing protected/masked `SHARED_MAPS_API_KEY` |
+| Bright article signing key | Private `secrets/bright-signing-key`; existing ignored `.bright-article-signing-key` may be the setup source | `BRIGHT_ARTICLE_SIGNING_KEY` | Existing protected/masked `BRIGHT_ARTICLE_SIGNING_KEY` |
+| Maven/package read credential | Existing authenticated `gh` store or private `secrets/github-package-token` | `GITHUB_TOKEN`, with `GITHUB_ACTOR=johninnl` | Only if needed by the chosen hosted package setup |
+| Pages runner authentication token | Private `pages-runner/config.toml` | The dedicated runner's GitLab connection | Separate from account API keys; never commit it |
+| API/private configuration | Private `config.json` | `apiKeysFile`, nonsecret tool paths, `secretFiles`, Pages runner settings | No automatic secret synchronization |
+| Inputs and development tooling | Android SDK, original APK/APKM/APKS files, ignored `.analysis`/`.tools`, test APK keystores | Build/test inputs and local evidence | Not release credentials or repository source |
+
+`morphe-signing.pub` is intentionally public and tracked. Its matching private seed is not. Morphe signing is distinct from an APK test keystore or an Apple Developer ID identity. Setup reused the existing Morphe seed and verified its derived public key; do not generate a replacement signing identity as a workaround.
+
+The API store supports labelled entries (colon or equals), optional quotes and JSON. A placeholder example is:
+
+```text
+GITLAB=<GitLab API key>
+GITGUD=<GitGud API key>
+CODEBERG=<Codeberg API key>
+```
+
+SSH identities must be actual private key files, not files containing `APIKEY=...`. Use the verified paths recorded in private configuration. Legacy working identities may be named `~/gitlab`, `~/gitgud` and `~/codeberg`; preferred dot-file paths are used only when they contain valid matching private keys. Normal jobs do not rename or overwrite credential inputs.
+
+Credential tests use an isolated fixture HOME/environment and temporary files. Diagnostics must never print credential values, including assertion actual/expected values.
+
+Local jobs read `~/.ci` afresh. Other existing signing/application credentials are referenced through private `secretFiles`; keep values out of the configuration itself. Hosted secrets are not silently changed by local setup. When rotating a token, check every documented local reference and any corresponding protected remote variable; do not leave fallback CI using a retired token.
+
+## Required API permissions
+
+Scope project permissions to the relevant `nl-morphe-patches` project. The account must also have the required project role. Git metadata always remains exactly `johninnl <349981574+johninnl@users.noreply.github.com>`.
+
+For fine-grained GitLab/GitGud release tokens:
+
+| Boundary | Resource | Actions |
+| --- | --- | --- |
+| User | User | Read, for the authenticated owner check |
+| Project | Project | Read |
+| Project | Package | Read, Create |
+| Project | Release | Read, Create |
+| Project | Release Link | Create |
+
+Token-metadata Read is optional diagnostic access for fine-grained keys; an explicit metadata-scope denial does not bypass owner/project checks or require a broad legacy `api` scope. Classic read-only API keys remain unsuitable for publishing. SSH handles Git refs in the configured local flow.
+
+For production Pages control on GitLab, also grant project **Page: Read**, **Pipeline: Create, Read, Update**, and **Job: Read, Update**. Page Update is needed only when changing Pages settings; Pages Domain permissions are needed only for custom-domain management. No custom domain is required for the current site. One-time runner setup needs **Runner: Create** at User boundary and appropriate project runner management; its separate runner authentication token handles job execution afterward.
+
+Codeberg uses its supported repository/release write access and user read access. Fine-grained Wiki access is independent and is not used merely because it is available. Do not grant Delete/admin capabilities for normal release creation.
+
+[GitLab REST permission mapping](https://docs.gitlab.com/auth/tokens/fine_grained_access_tokens_rest/) and [Pages deployment model](https://docs.gitlab.com/user/project/pages/) describe these boundaries.
+
+## Mac setup and automatic operation
+
+The Mac needs Git, a supported Node version, Java/Android tools, a Python environment with `docs/site-requirements.txt`, and locked npm dependencies. The driver installs checkout dependencies with scripts disabled and reuses normal caches. Configuration records tool paths and separate private secret-file references.
+
+```bash
+CONFIG="$HOME/Library/Application Support/nl-morphe-local-release/config.json"
+```
+
+After both approved branches contain the maintained workflow, install/update the reviewed watcher:
+
+```bash
+node scripts/local-release/install.cjs --config "$CONFIG" --dry-run
+node scripts/local-release/install.cjs --config "$CONFIG" --install
+```
+
+The installer validates staged tooling/plist and coordinates updates with the release lock. The user LaunchAgent `nl.johninnl.morphe.local-release` runs in the signed-in macOS session; keep the Mac available. Installation does not publish pre-existing branch heads.
+
+The Pages helper configures one project-scoped, locked, protected runner tagged `nl-morphe-pages-macos`, with concurrency one and untagged jobs disabled. Its user service and private TOML are separate from the watcher. The API Pages pipeline selects only the local tagged Pages job, excludes hosted verify/release jobs, checks the expected main SHA, rebuilds the site and verifies its public release marker. Unique per-job checkout paths and terminal-job cleanup prevent runner build storage accumulating.
+
+## Maintained branch procedures
+
+Stable (`main`, after required app-promotion approval):
+
+```bash
+node scripts/local-release/flow.cjs --config "$CONFIG" --branch main
+node scripts/local-release/flow.cjs --config "$CONFIG" --branch main --publish
+```
+
+Development (`dev`):
+
+```bash
+node scripts/local-release/flow.cjs --config "$CONFIG" --branch dev
+node scripts/local-release/flow.cjs --config "$CONFIG" --branch dev --publish
+```
+
+Branch commands preview by default. Preview never invokes tagged recovery, mirror publication or production Pages. `--publish` is explicit. The installed watcher uses `--watch-once` and serializes jobs. A failed head remains recorded, not rebuilt every polling interval; after diagnosing its cause, use `--retry-failed` deliberately.
+
+## Cleanup and recovery
+
+Every terminal job, successful or failed, executes cleanup. It first retains a compact receipt, redacted bounded log tails and bounded release-safety JSON, then removes its owned checkout, generated output, installed job dependencies, temporary files and per-run repository. These are disposable build outputs, not the primary checkout or credential/input store.
+
+Release success requires GitLab discovery/signature verification, both mirror confirmations and main Pages verification where applicable. Independent downstream results are all accounted for even when one fails. Partial publication records retain per-destination outcomes. Existing canonical signed bytes are reused during idempotent recovery; a different signed rebuild cannot silently replace the canonical artifact.
+
+Owned process groups must be stopped before deletion. If quiescence or cleanup cannot be proved, mark `cleanupRequired`, preserve the original failure and block later work until the pending cleanup is resolved. A still-active Pages job is cleaned only after it becomes terminal; later watcher ticks retry that cleanup even without a new source head.
+
+Receipts/state remain for audit and retry. Per-stage logs are capped at 2 MiB and safety archives at 8 MiB/64 JSON files per run. Declared finished-run logs/archives expire after 30 days and are pruned oldest-first to a 512 MiB total budget. Unknown files, symlinks, active jobs and cleanup-pending evidence are not blindly deleted. The task's reusable bare object cache/tool environment and ordinary SDK/npm/Gradle input caches are not per-job garbage; no job may prune another project's active/global cache or the user's original downloads.
+
+Do not edit generated versions or delete failure state to hide an error. Diagnose the failed stage, refresh the relevant credential/tool if required, then use supported recovery/retry and verify all public results.
+
+## Optional hosted fallback
+
+Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with the `run_cloud_ci` input set to `true` retains the complete fallback; protected main/dev publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.
+
+The separate API path supplies the validated `run_local_pages=true` and `expected_pages_sha` pipeline inputs. The YAML derives the job's `RUN_LOCAL_PAGES` and `EXPECTED_PAGES_SHA` environment variables from those inputs. It is restricted to the tagged protected Mac project runner, not shared runners. Keep arbitrary pipeline-variable overrides disabled; the controller does not require that permission. A skipped/canceled hosted pipeline is never reported as a passing verification run; retain the local source-SHA receipt instead.
