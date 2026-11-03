@@ -2,15 +2,15 @@
 const fs = require("node:fs");
 const crypto = require("node:crypto");
 const {execFileSync} = require("node:child_process");
-const {api, REPOSITORY, BASE} = require("./api.cjs");
+const {api, REPOSITORY, SOURCE_REPOSITORY, BASE, OWNER, NAME} = require("./api.cjs");
 const {verifyPublisher} = require("./identity.cjs");
 const {verifyBundle, download} = require("../../.forgejo/scripts/bundle.cjs");
 const {verifyDiscovery} = require("../../.forgejo/scripts/discovery.cjs");
 function git(args, options = {}) {return execFileSync("git", args, {encoding: "utf8", ...options}).trim();}
 function gitAuth(env = process.env) {
   return {...env, GIT_TRACE: "0", GIT_TRACE_CURL: "0", GIT_CONFIG_COUNT: "2",
-    GIT_CONFIG_KEY_0: "http.https://gitgud.io/.extraheader", GIT_CONFIG_VALUE_0: `Authorization: Basic ${Buffer.from(`JohninNL:${env.GITLAB_TOKEN}`).toString("base64")}`,
-    GIT_CONFIG_KEY_1: "http.https://gitgud.io/.extraheader", GIT_CONFIG_VALUE_1: `PRIVATE-TOKEN: ${env.GITLAB_TOKEN}`};
+    GIT_CONFIG_KEY_0: `http.${BASE}/.extraheader`, GIT_CONFIG_VALUE_0: `Authorization: Basic ${Buffer.from(`${OWNER}:${env.GITLAB_TOKEN}`).toString("base64")}`,
+    GIT_CONFIG_KEY_1: `http.${BASE}/.extraheader`, GIT_CONFIG_VALUE_1: `PRIVATE-TOKEN: ${env.GITLAB_TOKEN}`};
 }
 async function mirrorRelease({env = process.env, request = api, fetcher = fetch, readBundle = download, updateMetadata = true} = {}) {
   await verifyPublisher({env, request});
@@ -24,7 +24,7 @@ async function mirrorRelease({env = process.env, request = api, fetcher = fetch,
     console.log("No authoritative release tag at this source commit; source mirror only"); return false;
   }
   const publicKey = fs.readFileSync("morphe-signing.pub", "utf8").trim();
-  const response = await fetcher(`https://codeberg.org/api/v1/repos/${REPOSITORY}/releases/tags/${tag}`, {signal: AbortSignal.timeout(30000)});
+  const response = await fetcher(`https://codeberg.org/api/v1/repos/${SOURCE_REPOSITORY}/releases/tags/${tag}`, {signal: AbortSignal.timeout(30000)});
   if (!response.ok) throw new Error("Authoritative Codeberg release is unavailable");
   const sourceRelease = await response.json();
   const {url, asset} = verifyDiscovery(manifest, sourceRelease, {branch, version, publicKey});
@@ -38,7 +38,7 @@ async function mirrorRelease({env = process.env, request = api, fetcher = fetch,
     await request(packagePath, {token: env.GITLAB_TOKEN, method: "PUT", body: bytes});
     stored = await request(packagePath, {token: env.GITLAB_TOKEN, binary: true});
   }
-  if (!stored || verifyBundle(stored, publicKey) !== hash) throw new Error("GitGud package differs from the authoritative signed bundle");
+  if (!stored || verifyBundle(stored, publicKey) !== hash) throw new Error(`${NAME} package differs from the authoritative signed bundle`);
   const permalink = `${BASE}/${REPOSITORY}/-/releases/${tag}/downloads/${filename}`;
   const link = {name: filename, url: `${BASE}/api/v4${packagePath}`, direct_asset_path: `/${filename}`, link_type: "package"};
   let release = await request(`${project}/releases/${tag}`, {token: env.GITLAB_TOKEN});
@@ -46,14 +46,14 @@ async function mirrorRelease({env = process.env, request = api, fetcher = fetch,
     tag_name: tag, name: `Dutch App Patches ${version}`, description: manifest.description,
     assets: {links: [link]},
   }});
-  if (release.author?.username !== "JohninNL" || release.tag_name !== tag) throw new Error("Unexpected GitGud release owner or tag");
+  if (release.author?.username !== OWNER || release.tag_name !== tag) throw new Error(`Unexpected ${NAME} release owner or tag`);
   if (!release.assets?.links?.some(item => item.name === filename && item.url === link.url))
-    throw new Error("GitGud release is missing the exact mirrored package link");
+    throw new Error(`${NAME} release is missing the exact mirrored package link`);
   if (updateMetadata) {
     const {publishMetadata} = require("./source.cjs");
     await publishMetadata({...manifest, download_url: permalink}, branch, {env: gitAuth(env)});
   }
-  console.log(`Verified GitGud mirror: ${tag}, SHA-256 ${hash}`);
+  console.log(`Verified ${NAME} mirror: ${tag}, SHA-256 ${hash}`);
   return true;
 }
 module.exports = {mirrorRelease, gitAuth};

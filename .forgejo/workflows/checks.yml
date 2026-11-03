@@ -41,7 +41,7 @@ jobs:
       - name: Audit exact candidate history
         run: node .forgejo/scripts/identity.cjs --history
       - name: Test release guards and Codeberg integration
-        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs
+        run: node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs
       - name: Python regression tests
         run: .venv/bin/python -m unittest discover -s tests
       - name: Build candidate metadata and patch bundle

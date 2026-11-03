@@ -19,7 +19,7 @@ verify:
     SHARED_MAPS_API_KEY: AIzaSyDOCSGATEPLACEHOLDER00000000000000
   script:
     - node .forgejo/scripts/identity.cjs --history
-    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs
+    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs
     - .venv/bin/python -m unittest discover -s tests
     - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest :extensions:waze:testDebugUnitTest :extensions:flitsmeister:testDebugUnitTest :extensions:vela:testDebugUnitTest :extensions:extension:testDebugUnitTest :extensions:gearslip:testDebugUnitTest :extensions:maps-gearslip:testDebugUnitTest :extensions:soundcloud:testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
     - .venv/bin/python scripts/medium/check_bundle.py
@@ -35,11 +35,16 @@ verify:
 release:
   stage: release
   needs: [verify]
-  resource_group: gitgud-release-mirror
+  resource_group: signed-release-mirror
   rules:
     - if: '$CI_COMMIT_REF_PROTECTED == "true" && ($CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev")'
   script:
-    - export GITLAB_TOKEN="$JOHNINNL_GITGUD_TOKEN"
+    - |
+      if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then
+        export GITLAB_TOKEN="$JOHNINNL_GITLAB_TOKEN"
+      else
+        export GITLAB_TOKEN="$JOHNINNL_GITGUD_TOKEN"
+      fi
     - node .gitlab/scripts/identity.cjs
     - git checkout -B "$CI_COMMIT_BRANCH" "$CI_COMMIT_SHA"
     - node .gitlab/scripts/release.cjs

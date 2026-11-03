@@ -1,4 +1,5 @@
 "use strict";
+process.env.GITLAB_DESTINATION = "gitgud";
 const assert = require("node:assert/strict");
 const {test} = require("node:test");
 const fs = require("node:fs");
