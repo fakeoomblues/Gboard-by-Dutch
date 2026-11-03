@@ -111,9 +111,34 @@ test("Forgejo workflows use bounded hosted runners and keep secrets out of pull 
         assert.equal(android.with.packages, "platform-tools", "Do not install the retired Android tools package");
         const compiler = job.steps.findIndex(step => /apt-get install[^\n]*\bclang\b/.test(step.run || ""));
         const pythonTests = job.steps.findIndex(step => /unittest discover -s tests/.test(step.run || ""));
-        assert.ok(compiler >= 0 && compiler < pythonTests, "Install clang before the native assembly regression test");
+        if (pythonTests >= 0) assert.ok(compiler >= 0 && compiler < pythonTests, "Install clang before the native assembly regression test");
       }
     }
     if (name === "checks") assert.ok(!JSON.stringify(config).includes("secrets."));
+  }
+});
+
+test("publication waits for both independent release gates on the same candidate", () => {
+  const {jobs} = load(fs.readFileSync(path.join(__dirname, "../.forgejo/workflows/release.yml"), "utf8"));
+  assert.deepEqual(jobs.release.needs, ["policy", "android"]);
+  const commands = name => jobs[name].steps.map(step => step.run || "").join("\n");
+  assert.match(commands("policy"), /node --test .*test_release_branding.*test_preview_release.*test_identity.*test_release_discovery.*test_codeberg/);
+  assert.match(commands("policy"), /python -m unittest discover -s tests/);
+  assert.match(commands("android"), /:patches:buildAndroid :patches:test/);
+  for (const extension of ["medium-reader", "medium-privacy", "waze", "flitsmeister", "vela", "extension", "gearslip", "maps-gearslip", "soundcloud"]) {
+    assert.ok(commands("android").includes(`:extensions:${extension}:testDebugUnitTest`));
+  }
+  assert.match(commands("android"), /python3 scripts\/medium\/check_bundle\.py/);
+  assert.match(commands("android"), /python3 -m unittest discover -s scripts\/medium\/tests/);
+  assert.match(commands("release"), /identity\.cjs --release/);
+  assert.match(commands("release"), /check_secrets\.cjs/);
+  assert.match(commands("release"), /release\.cjs/);
+  assert.match(commands("release"), /discovery\.cjs/);
+  for (const name of ["policy", "android"]) {
+    assert.ok(!commands(name).includes("scripts/release.cjs"));
+    assert.ok(!jobs[name]["continue-on-error"]);
+    const checkout = jobs[name].steps.find(step => step.uses?.includes("actions/checkout"));
+    assert.equal(checkout.with["persist-credentials"], false);
+    assert.ok(!checkout.with.ref, "Every gate must use the workflow candidate, not a mutable branch");
   }
 });
