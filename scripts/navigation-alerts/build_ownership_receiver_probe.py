@@ -15,7 +15,8 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--key',type=Path,required=True)
     parser.add_argument('--target',choices=['maps','vela'],required=True)
-    args=parser.parse_args();target='com.google.android.apps.maps' if args.target=='maps' else 'app.vela';helper='nl.johninnl.warningprobe.owner.'+args.target;args.output.mkdir(parents=True,exist_ok=True)
+    parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
+    args=parser.parse_args();target=args.maps_package if args.target=='maps' else 'app.vela';helper='nl.johninnl.warningprobe.owner.'+args.target;args.output.mkdir(parents=True,exist_ok=True)
     tools=args.sdk/'build-tools/36.0.0';android=args.sdk/'platforms/android-36/android.jar'
     def run(*command):subprocess.run(list(map(str,command)),check=True)
     with tempfile.TemporaryDirectory(dir=args.output,prefix='receiver-build-') as temp:

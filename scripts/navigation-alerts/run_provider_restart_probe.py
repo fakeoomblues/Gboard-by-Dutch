@@ -2,23 +2,29 @@
 import argparse
 import io
 import tarfile
+import xml.etree.ElementTree as ET
 import subprocess,threading,queue,time,json,hashlib,re,uuid,sys,shutil
 from pathlib import Path
 parser=argparse.ArgumentParser(description=__doc__)
 for name in ['sdk','source-apk','maps-apk','vela-apk','source-probe','maps-probe','vela-probe','output']:parser.add_argument('--'+name,type=Path,required=True)
 parser.add_argument('--receiver',choices=['maps','vela'],default='maps')
+parser.add_argument('--serial',choices=['emulator-5584','emulator-5590'],default='emulator-5584')
+parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
+parser.add_argument('--prepare-vela-ui',action='store_true')
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
-args=parser.parse_args();sdk=args.sdk;adb=sdk/'platform-tools/adb';serial='emulator-5584';output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
+args=parser.parse_args();
+if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
+sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd={'emulator-5584':'native_warnings_car_api34','emulator-5590':'native_warnings_ui_api34'}[serial];output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
 
 def device(*args,check=True):return subprocess.run([str(adb),'-s',serial,*map(str,args)],capture_output=True,text=True,check=check,timeout=60)
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-assert device('emu','avd','name').stdout.splitlines()[0]=='native_warnings_car_api34'
+assert device('emu','avd','name').stdout.splitlines()[0]==avd
 assert device('shell','getprop','ro.kernel.qemu').stdout.strip()=='1'
 assert device('shell','getprop','ro.build.version.sdk').stdout.strip()=='34'
 assert device('shell','getprop','sys.boot_completed').stdout.strip()=='1'
 assert device('shell','id','-u').stdout.strip()=='0'
-inputs={'nl.flitsmeister':args.source_apk,'com.google.android.apps.maps':args.maps_apk,'app.vela':args.vela_apk}
-record={'scenario':'provider-restart','receiver':args.receiver,'serial':serial,'avd':'native_warnings_car_api34','output':str(output),'control_token':token,'installed_sha256':{}}
+inputs={'nl.flitsmeister':args.source_apk,args.maps_package:args.maps_apk,'app.vela':args.vela_apk}
+record={'scenario':'provider-restart','receiver':args.receiver,'serial':serial,'avd':avd,'output':str(output),'control_token':token,'installed_sha256':{}}
 for pkg,apk in inputs.items():
  installed=device('shell','pm','path',pkg).stdout.strip().removeprefix('package:');actual=device('shell','sha256sum',installed).stdout.split()[0];assert actual==sha(apk),(pkg,actual);record['installed_sha256'][pkg]=actual
 certs=[]
@@ -27,6 +33,8 @@ for kind in ['maps','vela','source']:
  apk=getattr(args,kind+'_probe');frozen=output/(kind+'-helper.apk');shutil.copyfile(apk,frozen);helpers[kind]=frozen
  build=apk.parent/'build-report.json'
  if build.exists():shutil.copyfile(build,output/(kind+'-build-report.json'))
+ if kind==args.receiver:
+  assert build.exists() and json.loads(build.read_text())['target_package']==(args.maps_package if kind=='maps' else 'app.vela'),'Receiver helper target differs from requested package'
 for apk in [*inputs.values(),*helpers.values()]:
  certs.append(re.search(r'Signer #1 certificate SHA-256 digest: ([0-9a-f]+)',subprocess.check_output([str(sdk/'build-tools/36.0.0/apksigner'),'verify','--print-certs',str(apk)],text=True)).group(1))
 assert len(set(certs))==1;record['signer_sha256']=certs[0];record['helper_sha256']={k:sha(v) for k,v in helpers.items()}
@@ -70,8 +78,8 @@ for pkg in inputs:
  assert_stopped(pkg);preferences_before[pkg]=snapshot_preferences(pkg,pkg+'-before')
 record['preferences_before']=preferences_before
 
-def restore_preferences(package):
- assert_stopped(package);baseline=preferences_before[package];now=snapshot_preferences(package,package+'-pre-restore')
+def restore_preferences(package,baseline=None):
+ assert_stopped(package);baseline=preferences_before[package] if baseline is None else baseline;now=snapshot_preferences(package,package+'-pre-restore')
  remote=baseline['remote']
  for name in now['files'].keys()-baseline['files'].keys():device('shell','rm','-f',remote+'/'+name)
  if baseline.get('directory_existed'):
@@ -85,7 +93,10 @@ def restore_preferences(package):
  after=snapshot_preferences(package,package+'-restored');assert after['files']==baseline['files'] and after['directory_existed']==baseline['directory_existed'],'Preference restore drift: '+package
  return {'restored_exactly':True,'files':after['files']}
 
-receiver_package='com.google.android.apps.maps' if args.receiver=='maps' else 'app.vela'
+receiver_package=args.maps_package if args.receiver=='maps' else 'app.vela'
+working_preferences=dict(preferences_before)
+vela_permission_changes=[]
+vela_permissions_before={}
 base='probe-restart-'+token
 source_details={}
 
@@ -104,15 +115,80 @@ def source_report(name):
  results=list((output/name).glob('*/result.json'));assert len(results)==1
  value=json.loads(results[0].read_text());assert value['network_and_lease_restored'] and not value['cleanup_errors'];return results[0],value
 
+def vela_permissions():
+ text=device('shell','dumpsys','package','app.vela').stdout;out={}
+ for name in ['ACCESS_FINE_LOCATION','ACCESS_COARSE_LOCATION','POST_NOTIFICATIONS']:
+  key='android.permission.'+name;match=re.search(re.escape(key)+r': granted=(true|false), flags=\[([^\]]*)\]',text);assert match,'Missing Vela permission '+key;out[key]={'granted':match[1]=='true','flags':match[2].strip()}
+ return out
+
+def ui_dump(label):
+ remote='/sdcard/native-warning-vela-reviewed-ui.xml';device('shell','uiautomator','dump',remote);path=output/(label+'.xml');device('pull',remote,path);return ET.parse(path)
+def ui_click(tree,label,package='app.vela'):
+ parents={child:parent for parent in tree.iter() for child in parent};nodes=[node for node in tree.iter('node') if node.get('package')==package and (node.get('text')==label or node.get('content-desc')==label)];assert len(nodes)==1,('Expected unique UI control',label,len(nodes));node=nodes[0]
+ original=node
+ while node.get('clickable')!='true' and node in parents:node=parents[node]
+ # Some original Compose pointer-input controls expose enabled text but no clickable ancestor.
+ if node.get('clickable')!='true':node=original
+ assert node.get('package')==package and node.get('enabled')=='true';display=None;focus=[]
+ for line in device('shell','dumpsys','window','displays').stdout.splitlines():
+  match=re.search(r'Display: mDisplayId=(\d+)',line)
+  if match:display=int(match[1])
+  if display==0 and 'mCurrentFocus=' in line:focus.append(line)
+ assert len(focus)==1 and package+'/' in focus[0],('Unexpected current UI focus',focus)
+ coords=list(map(int,re.findall(r'\d+',node.get('bounds'))));assert len(coords)==4;record.setdefault('reviewed_ui_actions',[]).append({'label':label,'package':package,'bounds':node.get('bounds')});device('shell','input','tap',(coords[0]+coords[2])//2,(coords[1]+coords[3])//2)
+def ui_picture(label):
+ (output/(label+'.png')).write_bytes(subprocess.check_output([str(adb),'-s',serial,'exec-out','screencap','-p']))
+def ui_scroll(tree):
+ scrollers=[node for node in tree.iter('node') if node.get('package')=='app.vela' and node.get('scrollable')=='true'];assert scrollers,'No actual Vela scroll surface';bounds=[list(map(int,re.findall(r'\d+',node.get('bounds')))) for node in scrollers];x1,y1,x2,y2=max(bounds,key=lambda b:(b[2]-b[0])*(b[3]-b[1]));device('shell','input','swipe',(x1+x2)//2,y1+(y2-y1)*4//5,(x1+x2)//2,y1+(y2-y1)//5,'350')
+def prepare_vela_ui():
+ global vela_permissions_before
+ vela_permissions_before=vela_permissions();record['vela_permissions_before']=vela_permissions_before
+ for permission,value in vela_permissions_before.items():
+  if not value['granted']:
+   assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','app.vela',permission);vela_permission_changes.append(permission)
+ record['vela_permissions_during']=vela_permissions();assert all(value['granted'] for value in record['vela_permissions_during'].values())
+ device('shell','am','start','-W','--windowingMode','1','-n','app.vela/.Launcher')
+ tree=ui_dump('onboarding-initial');ui_picture('onboarding-initial');ui_click(tree,'Get started');time.sleep(.5)
+ for attempt in range(9):
+  tree=ui_dump('onboarding-'+str(attempt));labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
+  record.setdefault('reviewed_onboarding_ui_labels',[]).append(sorted(value for value in labels if value))
+  if 'No Google' in labels:
+   ui_click(tree,'No Google');time.sleep(.3);choice=ui_dump('onboarding-google-choice-'+str(attempt));choice_labels={node.get('text') or node.get('content-desc') for node in choice.iter('node') if node.get('package')=='app.vela'}
+   if 'Continue' in choice_labels:ui_click(choice,'Continue')
+   time.sleep(.3);continue
+  if 'Continue' in labels and ('Plate cameras' in labels or 'License plate camera marker' in labels):ui_click(tree,'Continue');time.sleep(.3);continue
+  if 'Use system voice' in labels:ui_click(tree,'Use system voice');time.sleep(.5);continue
+  if 'Got it' in labels:ui_click(tree,'Got it');time.sleep(.5);continue
+  if 'Settings' in labels or 'Open settings' in labels:break
+  if attempt==8:raise RuntimeError('Original Vela map/settings UI not reached after reviewed onboarding')
+  time.sleep(.5)
+ ui_picture('after-onboarding');device('shell','am','force-stop','app.vela');assert_stopped('app.vela');working_preferences['app.vela']=snapshot_preferences('app.vela','vela-reviewed-ui-baseline');record['working_vela_ui_preferences']=working_preferences['app.vela']
+
+def inspect_vela_status_ui():
+ tree=ui_dump('fenced-map-ui');ui_picture('fenced-map-ui');labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
+ assert any(label and 'Speed cam 50' in label for label in labels),'Actual Vela map does not expose received semantic warning'
+ ui_click(tree,'Settings');time.sleep(.2);opened=False
+ for attempt in range(7):
+  tree=ui_dump('fenced-settings-menu-'+str(attempt));labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
+  if 'Navigation' in labels:ui_click(tree,'Navigation');time.sleep(.2);opened=True;break
+  ui_scroll(tree)
+ assert opened,'Actual Navigation settings section not reached'
+ expected='Waiting for previous audio to stop';found=False
+ for attempt in range(18):
+  tree=ui_dump('fenced-navigation-'+str(attempt));labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
+  if any(value and expected in value for value in labels):found=True;ui_picture('actual-vela-uncertainty-status');record['visible_vela_uncertainty_status']={'text':expected,'xml':str(output/('fenced-navigation-'+str(attempt)+'.xml')),'screenshot':str(output/'actual-vela-uncertainty-status.png')};break
+  ui_scroll(tree)
+ assert found,'Actual Vela uncertainty status not visible in navigation settings'
+
 def stop_and_verify_outputs():
- for pkg in ['com.google.android.apps.maps','app.vela','com.google.android.tts']:
+ for pkg in [args.maps_package,'app.vela','com.google.android.tts']:
   device('shell','am','force-stop',pkg);assert_stopped(pkg)
- for pkg in ['com.google.android.apps.maps','app.vela']:record.setdefault('pre_recovery_preferences_cleanup',{})[pkg]=restore_preferences(pkg)
+ for pkg in [args.maps_package,'app.vela']:record.setdefault('pre_recovery_preferences_cleanup',{})[pkg]=restore_preferences(pkg,working_preferences[pkg])
  audio=device('shell','dumpsys','audio').stdout;(output/'audio-before-parked-reset.txt').write_text(audio);players=audio.split('  players:',1)[1].split('  ducked players',1)[0]
  relevant={int(re.search(r'uid:(\d+)',device('shell','pm','list','packages','-U',pkg).stdout)[1]) for pkg in [*inputs,'com.google.android.tts']}
  for line in players.splitlines():
   uid=re.search(r'u/pid:(\d+)/',line);assert not(uid and int(uid[1]) in relevant and 'state:started' in line),'Relevant player remains active'
- record['outputs_verified_stopped']={'packages':['com.google.android.apps.maps','app.vela','com.google.android.tts'],'relevant_uids':sorted(relevant),'active_relevant_players':0}
+ record['outputs_verified_stopped']={'packages':[args.maps_package,'app.vela','com.google.android.tts'],'relevant_uids':sorted(relevant),'active_relevant_players':0}
  folder='/sdcard/Android/data/nl.flitsmeister/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+base+'-outputs-stopped')
 try:
  for key,value in window_before.items():
@@ -120,6 +196,7 @@ try:
  for permission,value in before.items():
   if not value['granted']:
    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
+ if args.prepare_vela_ui:prepare_vela_ui()
  source('seed-source','integrated_restart_seed');deadline=time.monotonic()+300
  while time.monotonic()<deadline:
   try:name,line=events.get(timeout=.2)
@@ -138,7 +215,7 @@ try:
     for thread in threads:thread.join(timeout=.1)
     path,seed=source_report('seed-source');assert not seed['probe_completed'];record['expected_killed_source_result']=str(path)
     device('pull','/sdcard/Android/data/'+receiver_package+'/files/native-warning-ownership/'+token+'-seed-receiver-progress.json',output/'seed-receiver-progress.json')
-    record['seed_receiver_preferences_restored']=restore_preferences(receiver_package)
+    record['seed_receiver_preferences_restored']=restore_preferences(receiver_package,working_preferences[receiver_package])
     source('restarted-source','integrated_restart_recovery',expected_pending_attempt=pending['pending_attempt'],expected_old_session=pending['provider_session'])
    if name=='restarted-source' and 'fm_capture_stage=restart_uncertainty_loaded' in line:
     loaded=source_details[name];original=record['seed_started']['pending'];assert loaded['provider_session']!=original['provider_session'] and loaded['pending_provider_session']==original['provider_session'] and loaded['pending_attempt']==original['pending_attempt'] and loaded['code']=='AUDIO_UNCERTAIN';record['reloaded_pending']=loaded;receiver('fenced-receiver')
@@ -148,6 +225,7 @@ try:
     progress=json.loads((output/'fenced-receiver-progress.json').read_text());assert any(row['audio']=='AUDIO_UNCERTAIN' for row in progress['states']);assert not any(row['stage']=='SCHEDULER_STARTED' for row in progress['diagnostics']);assert any(row['stage']=='RECEIVER_ACCEPTED' and row.get('sequence')==record['fenced_native_event']['authority']['sequence'] for row in progress['diagnostics'])
     picture=subprocess.check_output([str(adb),'-s',serial,'exec-out','screencap','-p']);(output/'actual-fenced-receiver.png').write_bytes(picture)
     (output/'actual-fenced-activities.txt').write_text(device('shell','dumpsys','activity','activities').stdout)
+    if args.prepare_vela_ui:inspect_vela_status_ui()
     signal('fenced-receiver');processes['fenced-receiver'].wait(timeout=20)
     for thread in threads:thread.join(timeout=.1)
     receiver_report('fenced-receiver');stop_and_verify_outputs()
@@ -161,7 +239,12 @@ try:
  case=restarted['scenarios']['integrated_restart_recovery'];reset=case['uncertain_output_recovery']
  for field in ['actual_window_screenshot','confirmations_screenshot']:
   remote=reset[field];assert re.fullmatch(r'/storage/emulated/0/Android/data/nl\.flitsmeister/files/probe-restart-[a-f0-9]+-(?:recovered|uncertain-confirmations)\.png',remote);device('pull',remote,output/(field+'.png'))
-except Exception as error:failure=repr(error)
+except Exception as error:
+ failure=repr(error)
+ if args.prepare_vela_ui and 'fenced_native_event' in record and 'outputs_verified_stopped' not in record and processes.get('restarted-source') is not None and processes['restarted-source'].poll() is None:
+  try:
+   stop_and_verify_outputs();record['failure_cleanup_parked_reset_requested']=True
+  except Exception as cleanup_error:record['failure_cleanup_error']=repr(cleanup_error)
 finally:
  for role in ['seed-receiver','fenced-receiver','recovered-receiver']:
   if role in processes and processes[role].poll() is None:signal(role)
@@ -173,6 +256,10 @@ finally:
   device('shell','am','force-stop',package)
   try:record.setdefault('final_preferences_cleanup',{})[package]=restore_preferences(package)
   except Exception as error:failure=(failure or '')+'; preference cleanup '+repr(error)
+ for permission in reversed(vela_permission_changes):device('shell','pm','revoke','app.vela',permission)
+ if args.prepare_vela_ui:
+  record['vela_permissions_after']=vela_permissions();record['vela_permissions_restored_exactly']=record['vela_permissions_after']==vela_permissions_before
+  if not record['vela_permissions_restored_exactly']:failure=(failure or '')+'; Vela permission drift'
  for permission in reversed(changed):device('shell','pm','revoke','nl.flitsmeister',permission)
  record['source_permissions_after']=permissions();record['source_permissions_restored_exactly']=record['source_permissions_after']==before
  if not record['source_permissions_restored_exactly']:failure=(failure or '')+'; permission drift'

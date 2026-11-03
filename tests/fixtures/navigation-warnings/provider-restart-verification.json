@@ -507,7 +507,7 @@
       "visible_fenced_warning_observed": false
     }
   },
-  "visual_inspection": "Maps visibly displays Flitsmeister / Speed cam 50 during the fenced interval. The Vela frame shows its original onboarding screen, so that run proves event acceptance, uncertainty status and audio fencing only; visible Vela warning placement during uncertainty remains unproved. Both audio conclusions are joined to actual receiver archives and stored-record snapshots.",
+  "visual_inspection": "Maps visibly displays Flitsmeister / Speed cam 50 during the fenced interval. The Vela frame shows its original onboarding screen, so that run proves event acceptance, uncertainty status and audio fencing only; visible Vela warning placement during uncertainty remains unproved. Both audio conclusions are joined to actual receiver archives and stored-record snapshots. A subsequent isolated phone UI run after original onboarding now verifies the Vela map warning and native navigation-settings uncertainty text; see related_vela_visible_uncertainty_verification.",
   "rejected_baselines": [
     {
       "path": ".analysis/native-warning-bindings/provider-restart-actual-01/result.json",
@@ -517,7 +517,7 @@
   "remaining": [
     "Other IPC/audio-service failure boundaries and adapters",
     "Route/lead/passage scenarios and phone/car lifecycle combinations",
-    "Actual car output routing and physical acceptance",
-    "Visible Vela warning/status during uncertainty after original onboarding"
-  ]
+    "Actual car output routing and physical acceptance"
+  ],
+  "related_vela_visible_uncertainty_verification": "tests/fixtures/navigation-warnings/vela-degraded-ui-verification.json"
 }

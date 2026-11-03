@@ -25,7 +25,7 @@ public final class OwnershipReceiverProbe extends Instrumentation {
         File off=null,stop=null,on=null; Object connection=null;
         try {
             check("true".equals(args.getString("reviewed_synthetic_choices")),"Reviewed choices required");
-            Context context=getTargetContext();String pkg=context.getPackageName();vela=pkg.equals("app.vela");check(vela||pkg.equals("com.google.android.apps.maps"),"Unexpected target");
+            Context context=getTargetContext();String pkg=context.getPackageName();vela=pkg.equals("app.vela");check(vela||pkg.equals("com.google.android.apps.maps")||pkg.equals("org.ungoogled.android.apps.maps"),"Unexpected target");
             String token=args.getString("control_token","");check(token.matches("[A-Za-z0-9_-]{1,80}"),"Fresh private control token required");
             File folder=new File(context.getExternalFilesDir(null),"native-warning-ownership");check(folder.exists()||folder.mkdirs(),"Control folder");
             off=new File(folder,token+"-off");on=new File(folder,token+"-on");stop=new File(folder,token+"-stop");check(!off.exists()&&!stop.exists()&&!on.exists(),"Reused controls");
