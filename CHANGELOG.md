@@ -1,4 +1,31 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/eadbb826d0abc3af8c29f6424b2ebf23dd369b34/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.36.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [eadbb826d0ab](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/eadbb826d0abc3af8c29f6424b2ebf23dd369b34). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.36.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.35.1...v1.36.0) (2026-11-03)
+
+### 🐛 Bug Fixes
+
+* **ci:** add GitGud release mirroring and native build tools ([333872f](https://gitlab.com/johninnld/nl-morphe-patches/commit/333872f62b2dd9abf2de50d2a480bf080995fcd7))
+* **ci:** install supported Android SDK packages on Forgejo ([dc18b9c](https://gitlab.com/johninnld/nl-morphe-patches/commit/dc18b9cb12bd6de892cc891b8114341e4d04b078))
+* **ci:** split Forgejo release gates into bounded jobs ([bade99a](https://gitlab.com/johninnld/nl-morphe-patches/commit/bade99a08588eec05493615b40369b663e5bc381))
+* **ci:** support signed release mirrors on GitLab.com ([14d181b](https://gitlab.com/johninnld/nl-morphe-patches/commit/14d181b5e22fbfba8433bc3f44b091beeef4ff2f))
+* **ci:** use Python-compatible GitLab build image ([59a4c21](https://gitlab.com/johninnld/nl-morphe-patches/commit/59a4c21938f385965b305c5b98b5dfa221493fdf))
+* **release:** move publishing and source discovery to Codeberg ([36b615a](https://gitlab.com/johninnld/nl-morphe-patches/commit/36b615a695d7929275e5afa7b0c5aef4ead669cd))
+* **release:** publish signed Morphe bundles on GitLab ([eadbb82](https://gitlab.com/johninnld/nl-morphe-patches/commit/eadbb826d0abc3af8c29f6424b2ebf23dd369b34))
+
+### ✨ New Features
+
+* **Flitsmeister:** support version 15.0 with restored runtime callbacks ([0acd087](https://gitlab.com/johninnld/nl-morphe-patches/commit/0acd087c13a49de1e12f9f2ec7d92bdca12354f6))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4c9028dc425ffe7cc9c141a5d263ef6996cdae13/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.35.1.**

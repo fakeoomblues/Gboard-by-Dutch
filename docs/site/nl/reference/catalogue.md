@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.35.1**
+**Patchbundel: 1.36.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -174,15 +174,15 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Broadcast navigation data | Aan | 14.17 |
-| Disable partner services | Aan | 14.17 |
-| Disable tracking | Aan | 14.17 |
-| Fix PairIP startup | Aan | 14.17 |
-| Guest mode | Aan | 14.17 |
-| Hide Pro notices | Aan | 14.17 |
-| Hide ads | Aan | 14.17 |
-| Support Gearslip and DriveDeck | Aan | 14.17 |
-| Unlock Pro | Aan | 14.17 |
+| Broadcast navigation data | Aan | 14.17, 15.0 |
+| Disable partner services | Aan | 14.17, 15.0 |
+| Disable tracking | Aan | 14.17, 15.0 |
+| Fix PairIP startup | Aan | 14.17, 15.0 |
+| Guest mode | Aan | 14.17, 15.0 |
+| Hide Pro notices | Aan | 14.17, 15.0 |
+| Hide ads | Aan | 14.17, 15.0 |
+| Support Gearslip and DriveDeck | Aan | 14.17, 15.0 |
+| Unlock Pro | Aan | 14.17, 15.0 |
 
 ## FTM
 
@@ -781,4 +781,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
+[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.35.1",
+  "version": "1.36.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -690,6 +690,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -1401,6 +1413,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -1771,6 +1795,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -3213,6 +3249,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -3606,6 +3654,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -4502,6 +4562,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -4872,6 +4944,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -9500,6 +9584,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -9698,6 +9794,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,

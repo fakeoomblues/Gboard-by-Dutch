@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.35.1**
+**Patch bundle: 1.36.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -174,15 +174,15 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Broadcast navigation data | On | 14.17 |
-| Disable partner services | On | 14.17 |
-| Disable tracking | On | 14.17 |
-| Fix PairIP startup | On | 14.17 |
-| Guest mode | On | 14.17 |
-| Hide Pro notices | On | 14.17 |
-| Hide ads | On | 14.17 |
-| Support Gearslip and DriveDeck | On | 14.17 |
-| Unlock Pro | On | 14.17 |
+| Broadcast navigation data | On | 14.17, 15.0 |
+| Disable partner services | On | 14.17, 15.0 |
+| Disable tracking | On | 14.17, 15.0 |
+| Fix PairIP startup | On | 14.17, 15.0 |
+| Guest mode | On | 14.17, 15.0 |
+| Hide Pro notices | On | 14.17, 15.0 |
+| Hide ads | On | 14.17, 15.0 |
+| Support Gearslip and DriveDeck | On | 14.17, 15.0 |
+| Unlock Pro | On | 14.17, 15.0 |
 
 ## FTM
 
@@ -781,4 +781,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
+[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
