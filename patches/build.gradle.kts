@@ -75,10 +75,10 @@ patches {
     about {
         name = "Dutch App Patches"
         description = "App-specific controls for advertising, publisher promotions, tracking, onboarding and article delivery in Dutch applications"
-        source = "https://github.com/johninnl/nl-morphe-patches"
+        source = "https://codeberg.org/JohninNL/nl-morphe-patches"
         author = "johninnl"
-        contact = "https://github.com/johninnl/nl-morphe-patches/issues"
-        website = "https://github.com/johninnl/nl-morphe-patches"
+        contact = "https://codeberg.org/JohninNL/nl-morphe-patches/issues"
+        website = "https://codeberg.org/JohninNL/nl-morphe-patches"
         license = "GPLv3"
     }
 }

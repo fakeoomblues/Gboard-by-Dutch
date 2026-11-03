@@ -9,6 +9,8 @@ function restorePublicLinks(notes) {
   // semantic-release mistakes GIT_AUTHOR_NAME for a secret. Restore only this
   // repository's known public URL prefixes; retain all other secret masking.
   return notes
+    .replaceAll("https://codeberg.org/[secure]/nl-morphe-patches", "https://codeberg.org/JohninNL/nl-morphe-patches")
+    .replaceAll("https://[secure].codeberg.page/nl-morphe-patches/", "https://johninnl.codeberg.page/nl-morphe-patches/")
     .replace(/https:\/\/github\.com\/\[secure\]\/nl-morphe-patches(?=[/?#\s)"'<>]|$)/g,
       "https://github.com/johninnl/nl-morphe-patches")
     .replaceAll("https://raw.githubusercontent.com/[secure]/nl-morphe-patches/",
@@ -22,7 +24,8 @@ function restorePublicLinks(notes) {
 function renderNotes(notes, context) {
   if (notes.startsWith(`${MARKER}\n`)) return notes;
 
-  const repository = context.env?.GITHUB_REPOSITORY || REPOSITORY;
+  const codeberg = !!context.env?.CODEBERG_REPOSITORY;
+  const repository = context.env?.CODEBERG_REPOSITORY || context.env?.GITHUB_REPOSITORY || REPOSITORY;
   const { version, gitHead } = context.nextRelease;
   if (!/^[a-f0-9]{40}(?:[a-f0-9]{24})?$/i.test(gitHead || "")) {
     throw new Error("Release branding requires the full source commit, never a mutable ref.");
@@ -31,15 +34,18 @@ function renderNotes(notes, context) {
     throw new Error("Release branding requires an owner/repository GitHub repository name.");
   }
 
-  const banner = `https://raw.githubusercontent.com/${repository}/${gitHead}/docs/site/assets/brand/release-banner.png`;
-  const source = `https://github.com/${repository}/commit/${gitHead}`;
+  const banner = codeberg ? `https://codeberg.org/${repository}/raw/commit/${gitHead}/docs/site/assets/brand/release-banner.png`
+    : `https://raw.githubusercontent.com/${repository}/${gitHead}/docs/site/assets/brand/release-banner.png`;
+  const source = `https://${codeberg ? "codeberg.org" : "github.com"}/${repository}/commit/${gitHead}`;
   return [
     MARKER,
     `![Dutch App Patches. Dutch apps. Your choices.](${banner})`,
     "",
     `**Release · patch bundle v${version}.**`,
     "",
-    `[Add to Morphe](https://morphe.software/add-source?github=${REPOSITORY}) · [User guide](${GUIDE})`,
+    codeberg
+      ? `[Source metadata](https://codeberg.org/${repository}/raw/branch/${context.branch?.name || "main"}/patches-bundle.json) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)`
+      : `[Add to Morphe](https://morphe.software/add-source?github=${REPOSITORY}) · [User guide](${GUIDE})`,
     "",
     `Source: [${gitHead.slice(0, 12)}](${source}). Check each app's target versions in the user guide before patching.`,
     "",

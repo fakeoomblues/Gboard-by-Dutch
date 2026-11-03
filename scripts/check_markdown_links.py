@@ -41,7 +41,15 @@ def main():
     for path, document in documents.items():
         for href in document.links:
             url = urlsplit(href)
-            if url.netloc == 'github.com' and url.path.startswith(REPOSITORY):
+            if url.netloc == 'codeberg.org' and url.path.lower().startswith(REPOSITORY):
+                parts = url.path[len(REPOSITORY):].split('/', 3)
+                if parts[:2] != ['src', 'branch']:
+                    continue
+                if len(parts) != 4 or parts[2] != 'main':
+                    failures.append(f'{path.relative_to(ROOT)} -> {href}: unavailable historical ref')
+                    continue
+                target = ROOT / unquote(parts[3])
+            elif url.netloc == 'github.com' and url.path.startswith(REPOSITORY):
                 parts = url.path[len(REPOSITORY):].split('/', 2)
                 if parts[0] not in {'blob', 'tree'}:
                     continue

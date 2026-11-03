@@ -4,7 +4,7 @@
 
 Match the version and build on the [app page](../apps/index.md). Select the complete original file or split archive. Phone and Android TV builds are separate. Update the source in Manager and check whether the required bundle is available.
 
-Check the [release list](https://github.com/johninnl/nl-morphe-patches/releases) if Manager cannot find a bundle. A source needs a published bundle before Manager can download its patches.
+Check the [release list](https://codeberg.org/JohninNL/nl-morphe-patches/releases) if Manager cannot find a bundle. A source needs a published bundle before Manager can download its patches.
 
 ## Android refuses installation
 
@@ -22,4 +22,4 @@ Some ads are part of the programme or stream. Tracking controls also keep necess
 
 ## Report a problem
 
-Open an [issue](https://github.com/johninnl/nl-morphe-patches/issues) with the app version/build, bundle version, selected patches, device/Android version, exact error and steps to reproduce. Remove credentials and personal data from anything shared.
+Open an [issue](https://codeberg.org/JohninNL/nl-morphe-patches/issues) with the app version/build, bundle version, selected patches, device/Android version, exact error and steps to reproduce. Remove credentials and personal data from anything shared.

@@ -23,9 +23,9 @@ def render(data, repository):
     if version == '0.0.0':
         status = '**Unreleased source snapshot**'
     else:
-        status = f'**Patch bundle [v{version}](https://github.com/{repository}/releases/tag/v{version})**'
+        status = f'**Patch bundle [v{version}](https://codeberg.org/{repository}/releases/tag/v{version})**'
     lines = [f'{status} · {len(groups)} apps · {total} patches']
-    site = 'https://johninnl.github.io/nl-morphe-patches'
+    site = 'https://johninnl.codeberg.page/nl-morphe-patches'
     for category, title in CATEGORIES.items():
         entries = [group for group in groups.values() if app_page(group['package'])[1] == category]
         if not entries:
@@ -60,7 +60,7 @@ def render(data, repository):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('repository', help='GitHub owner/repository')
+    parser.add_argument('repository', help='Codeberg owner/repository')
     parser.add_argument('metadata', type=Path, nargs='?', default=Path('patches-list.json'))
     parser.add_argument('readme', type=Path, nargs='?', default=Path('README.md'))
     args = parser.parse_args()

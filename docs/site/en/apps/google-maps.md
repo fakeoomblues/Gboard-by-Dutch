@@ -24,7 +24,7 @@ We built a navigation adapter that connects Gearslip and Android Auto to the pat
 
 Signing the patched APK creates another problem: Google's optional private vehicle-data client rejects the new signing certificate. We isolated that client so it cannot crash the map, while retaining GPS navigation. Search needed a separate bridge between the host's keyboard and Maps' native editor. The map and editor also have to survive display resizing, keyboard changes and reconnects.
 
-Native search, route start, guidance and reconnect were checked in Gearslip and Google's official Android Auto Desktop Head Unit. Those checks do not establish every phone, car or live-road setup. The [engineering report](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/research/2026-11-02-maps-native-car-ui.md) records the implementation and test limits.
+Native search, route start, guidance and reconnect were checked in Gearslip and Google's official Android Auto Desktop Head Unit. Those checks do not establish every phone, car or live-road setup. The [engineering report](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/research/2026-11-02-maps-native-car-ui.md) records the implementation and test limits.
 
 ## Waze and Flitsmeister data inside Maps
 

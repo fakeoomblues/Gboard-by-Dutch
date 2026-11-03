@@ -781,4 +781,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://github.com/johninnl/nl-morphe-patches/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

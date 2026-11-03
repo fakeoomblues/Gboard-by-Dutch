@@ -196,7 +196,7 @@ def render(data, language):
             versions = ', '.join(_app_versions({'patches': [(patch, own_package)]}, dutch)) or \
                        ('Niet opgegeven' if dutch else 'Not specified')
             text.append(f'| {patch["name"]} | {state} | {versions} |')
-    text += ['', '[Releases](https://github.com/johninnl/nl-morphe-patches/releases)', '']
+    text += ['', '[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)', '']
     return '\n'.join(text)
 
 

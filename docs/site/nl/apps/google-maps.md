@@ -24,7 +24,7 @@ We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eig
 
 Het ondertekenen van de gepatchte APK veroorzaakt nog een probleem: Googles optionele privéclient voor voertuiggegevens weigert het nieuwe ondertekeningscertificaat. We hebben die client geïsoleerd zodat hij de kaart niet laat crashen, terwijl GPS-navigatie blijft werken. Zoeken vroeg om een aparte koppeling tussen het toetsenbord van de host en het native zoekveld van Maps. De kaart en het zoekveld moeten bovendien behouden blijven bij schermwijzigingen, het openen van het toetsenbord en opnieuw verbinden.
 
-Native zoeken, een route starten, navigeren en opnieuw verbinden zijn gecontroleerd in Gearslip en Googles officiële Android Auto Desktop Head Unit. Daarmee is niet iedere telefoon, auto of rit op de weg getest. Het [technische verslag](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/research/2026-11-02-maps-native-car-ui.md) beschrijft de uitvoering en testgrenzen.
+Native zoeken, een route starten, navigeren en opnieuw verbinden zijn gecontroleerd in Gearslip en Googles officiële Android Auto Desktop Head Unit. Daarmee is niet iedere telefoon, auto of rit op de weg getest. Het [technische verslag](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/research/2026-11-02-maps-native-car-ui.md) beschrijft de uitvoering en testgrenzen.
 
 ## Gegevens van Waze en Flitsmeister in Maps
 

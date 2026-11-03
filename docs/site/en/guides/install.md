@@ -8,7 +8,13 @@ Find your app in the [app directory](../apps/index.md) and [download its origina
 
 ## 2. Add the patch source
 
-Install [Morphe Manager](https://morphe.software/), then open [Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches). Check that the source is `johninnl/nl-morphe-patches`.
+Install [Morphe Manager](https://morphe.software/). Open **Sources → + → Remote** and paste this complete metadata URL:
+
+```text
+https://codeberg.org/JohninNL/nl-morphe-patches/raw/branch/main/patches-bundle.json
+```
+
+Tap **Add**. Use the metadata URL above: Morphe's repository shortcuts and one-tap GitHub links do not support Codeberg repositories. To follow development prereleases instead, replace `main` with `dev`.
 
 Tap the source’s **Update** button to get its latest published patch bundle. Check the bundle version before patching. A bundle version is separate from the app version.
 

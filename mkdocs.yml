@@ -1,7 +1,7 @@
 site_name: Dutch App Patches
 site_description: Kies patches voor Nederlandse en Belgische Android-apps en lees wat ze veranderen.
-site_url: https://johninnl.github.io/nl-morphe-patches/
-repo_url: https://github.com/johninnl/nl-morphe-patches
+site_url: https://johninnl.codeberg.page/nl-morphe-patches/
+repo_url: https://codeberg.org/JohninNL/nl-morphe-patches
 repo_name: johninnl/nl-morphe-patches
 edit_uri: ''
 docs_dir: docs/site
@@ -52,7 +52,7 @@ extra_css:
 extra_javascript:
   - assets/javascripts/app-catalogue.js
 extra:
-  social_image: https://johninnl.github.io/nl-morphe-patches/assets/brand/social-card.png
+  social_image: https://johninnl.codeberg.page/nl-morphe-patches/assets/brand/social-card.png
 
 plugins:
   - i18n:

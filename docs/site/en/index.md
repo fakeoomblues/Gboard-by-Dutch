@@ -13,10 +13,10 @@ hide:
 
 <div class="dap-home-links" markdown>
 
-[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches){ .md-button .md-button--primary }
+[Add the patch source](guides/install.md#2-add-the-patch-source){ .md-button .md-button--primary }
 [Installation guide](guides/install.md)
 [Download original apps](guides/downloads.md)
-[Releases](https://github.com/johninnl/nl-morphe-patches/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
 
 </div>
 </div>

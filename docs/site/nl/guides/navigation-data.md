@@ -96,6 +96,6 @@ Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen ver
 
 De weergave en terugval in Google Maps zijn gecontroleerd met gestuurde bronherhalingen. Ontvangst op de achtergrond, telefoon-/autoweergave en gesproken voorwaarschuwingen in Vela zijn gecontroleerd op een Android 16-emulator met Gearslip. Native Maps-navigatie heeft aparte controles in Gearslip en de officiële Android Auto Desktop Head Unit. Deze resultaten bewijzen niet iedere combinatie van bron, telefoon, fysiek autoscherm of nauwkeurigheid op de weg.
 
-Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://github.com/johninnl/nl-morphe-patches/blob/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
+Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md) de gegevens en geldigheidsregels. Andere ontvangende apps moeten dat protocol ondersteunen; alleen de bronpatch installeren voegt geen ondersteuning toe aan een willekeurige app.
 
 Stil koud starten is ook gecontroleerd voor alle vier combinaties van Maps/Vela en Waze/Flitsmeister op een Android 16-emulator, met de aangeleverde originelen en de eigen motorstatus van de bron. Dit bewijst niet alle energieregels van fabrikanten of gedrag in een fysieke auto.

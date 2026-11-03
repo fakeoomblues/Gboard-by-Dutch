@@ -106,7 +106,7 @@ The user explicitly requested publication to `dev` and will test device behavior
 
 ## Verified development publication
 
-Published [v1.27.0-dev.2](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.27.0-dev.2) from feature commit `5b333f79e55763aac4ad2d3c9d4feae68550ef70` and generated release commit `a80b44c0107a6e9d7de909282a90206788e20ae9`. The [Release workflow](https://github.com/johninnl/nl-morphe-patches/actions/runs/41394444912) and [Release safety](https://github.com/johninnl/nl-morphe-patches/actions/runs/41394444977) both passed. Both commits and the GitHub release use the required johninnl identity.
+Published [v1.27.0-dev.2](https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.27.0-dev.2) from feature commit `5b333f79e55763aac4ad2d3c9d4feae68550ef70` and generated release commit `a80b44c0107a6e9d7de909282a90206788e20ae9`. The [Release workflow](https://codeberg.org/JohninNL/nl-morphe-patches/actions/runs/41394444912) and [Release safety](https://codeberg.org/JohninNL/nl-morphe-patches/actions/runs/41394444977) both passed. Both commits and the GitHub release use the required johninnl identity.
 
 The dev branch manifest advertises 1.27.0-dev.2 and its uploaded `.mpp` asset with the unchanged source public key. The downloaded bundle SHA-256 is `69a463def03c7711ce1463d4a6a3dc22c1dda838af34e628c90b56b0ff9a6aa0`, matching GitHub's asset digest. All nine new patch-class/extension payload entries are byte-identical to the locally tested build. Strict patching and rebuilding with the downloaded published bundle passed again against the supplied Myspoti 2.3.0 and already-patched YT Music 9.30.53 APKs.
 

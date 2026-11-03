@@ -56,7 +56,7 @@ These are controlled consumer replays, not native provider road recordings. The 
 
 ## Publication
 
-Published in [Dutch App Patches v1.25.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
+Published in [Dutch App Patches v1.25.0](https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
 
 All 184 Maps/shared compiled class and extension entries in the downloaded release are byte-identical to the locally validated bundle. The release bundle SHA-256 is `92263759a8a6694409cff395098d78a04e70da1091e3cc073bfb8f7841af9ee7`. The installed test APK and the current validation APK differ in outer ZIP/signing layout; all 9,299 uncompressed ZIP entries are byte-identical. Their separate whole-file hashes and canonical payload hash are retained in `validation.json`.
 
