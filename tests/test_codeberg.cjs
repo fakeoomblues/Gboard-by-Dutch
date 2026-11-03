@@ -107,7 +107,12 @@ test("Forgejo workflows use bounded hosted runners and keep secrets out of pull 
       assert.ok(["codeberg-medium", "codeberg-small"].includes(job["runs-on"]));
       assert.ok(job["timeout-minutes"] <= (job["runs-on"] === "codeberg-small" ? 5 : 10));
       const android = job.steps.find(step => step.uses?.includes("android-actions/setup-android"));
-      if (android) assert.equal(android.with.packages, "platform-tools", "Do not install the retired Android tools package");
+      if (android) {
+        assert.equal(android.with.packages, "platform-tools", "Do not install the retired Android tools package");
+        const compiler = job.steps.findIndex(step => /apt-get install[^\n]*\bclang\b/.test(step.run || ""));
+        const pythonTests = job.steps.findIndex(step => /unittest discover -s tests/.test(step.run || ""));
+        assert.ok(compiler >= 0 && compiler < pythonTests, "Install clang before the native assembly regression test");
+      }
     }
     if (name === "checks") assert.ok(!JSON.stringify(config).includes("secrets."));
   }

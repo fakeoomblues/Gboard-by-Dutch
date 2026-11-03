@@ -257,7 +257,7 @@ def expected(kind: str) -> list[str]:
     raise AssertionError('Unknown tracking contract: ' + kind)
 
 
-def verify(root: Path, enabled: bool) -> None:
+def verify(root: Path, enabled: bool, *, originals=ORIGINALS, retained=RETAINED, expected_body=expected) -> None:
     failures = []
     namespace = '{http://schemas.android.com/apk/res/android}'
     manifest = ET.parse(root / 'AndroidManifest.xml').getroot()
@@ -275,17 +275,17 @@ def verify(root: Path, enabled: bool) -> None:
                 failures.append('SDK collection metadata: ' + name)
         elif nodes:
             failures.append('Unexpected SDK collection metadata with control disabled: ' + name)
-    for descriptor, (original_hash, flags, locals_count, kind) in ORIGINALS.items():
+    for descriptor, (original_hash, flags, locals_count, kind) in originals.items():
         body = method(root, descriptor)
         assert sorted(body.splitlines()[0].split()[1:-1]) == flags, descriptor
         assert int(re.search(r'\.locals (\d+)', body)[1]) == locals_count, descriptor
-        valid = canonical(body) == expected(kind) if enabled else digest(body) == original_hash
+        valid = canonical(body) == expected_body(kind) if enabled else digest(body) == original_hash
         if not valid:
             failures.append(descriptor)
-    for descriptor, original_hash in RETAINED.items():
+    for descriptor, original_hash in retained.items():
         assert digest(method(root, descriptor)) == original_hash, 'Retained SDK contract changed: ' + descriptor
     assert not failures, 'Tracking controls differ (' + str(len(failures)) + '): ' + '; '.join(failures)
-    print(f'PASS: Disable tracking={enabled}; {len(ORIGINALS)} SDK collection/event/identity/job contracts; {len(RETAINED)} retained contracts')
+    print(f'PASS: Disable tracking={enabled}; {len(originals)} SDK collection/event/identity/job contracts; {len(retained)} retained contracts')
 
 
 if __name__ == '__main__':

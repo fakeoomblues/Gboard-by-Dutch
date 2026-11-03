@@ -111,9 +111,9 @@ val hideAds = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15)
     execute {
-        applyPlans(listOf(
+        applyPlans(if (isFlitsmeister15()) adsPlans15() else listOf(
             adsReaderPlan(replace = false),
             MethodPlan("Lim8;->a(Landroid/content/Context;)Z", 2, 15, listOf(
                 Guard(0, Opcode.CONST_CLASS, listOf(0), "Ltle;"),
@@ -137,6 +137,6 @@ val hideAds = bytecodePatch(
     finalize {
         // Morphe 2.0.1 finalizers run after all execute blocks. Leave W intact
         // during execution so Unlock Pro can validate/apply its original plan.
-        applyPlans(listOf(adsReaderPlan(replace = true)))
+        applyPlans(listOf(if (isFlitsmeister15()) adsReaderPlan15(replace = true) else adsReaderPlan(replace = true)))
     }
 }

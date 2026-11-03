@@ -1,7 +1,11 @@
 package patches.flitsmeister
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.util.smali.ExternalLabel
 import patches.shared.PROVIDER_AUDIO
 import patches.shared.gateProviderAudio
 import patches.shared.gateProviderQueue
@@ -11,6 +15,10 @@ import patches.shared.trackProviderAudio
 
 context(context: BytecodePatchContext)
 internal fun bindFlitsmeisterNavigationAudio() {
+    if (isFlitsmeister15()) {
+        bindFlitsmeisterNavigationAudio15()
+        return
+    }
     val request = exact("Lt50;", "a", "V", "Ljava/lang/String;", "Ljava/lang/String;", "Lh4k;", "Z", "Z", "Z", "Lz39;").method
     val queue = exact("Lt50;", "j", "V", "Landroid/media/AudioAttributes;", "I", "Z", "Z", "Ljava/lang/Float;").method
     val batch = exact("Lt50;", "i", "V", "[Lt50\$c;").method
@@ -35,10 +43,8 @@ internal fun bindFlitsmeisterNavigationAudio() {
     }
     gateProviderAudio(request, 7, "void"); gateProviderQueue(queue); gateProviderAudio(mapSpeech, -1, "void")
     gateProviderBatch(batch); routing.forEach(::gateProviderQueue)
-    gateProviderAudio(focus, -1, "void")
     trackProviderAudio(constructor, 0, "trackQueue")
-    // Register the focus owner on each request; there is no saved setting to restore.
-    focus.addInstruction(0, "invoke-static/range {p0 .. p0}, $PROVIDER_AUDIO->trackMapFocus(Ljava/lang/Object;)V")
+    gateFlitsmeisterMapFocus(focus)
     replaceAudioCalls(mediaFactory, "Landroid/media/MediaPlayer;->setVolume(FF)V", "$PROVIDER_AUDIO->mediaVolume(Landroid/media/MediaPlayer;FF)V", 1)
     for (method in listOf(prepared, resume)) replaceAudioCalls(method, "Landroid/media/MediaPlayer;->start()V", "$PROVIDER_AUDIO->start(Landroid/media/MediaPlayer;)V", 1)
     replaceAudioCalls(speech, "Landroid/speech/tts/TextToSpeech;->speak(Ljava/lang/CharSequence;ILandroid/os/Bundle;Ljava/lang/String;)I",
@@ -51,5 +57,21 @@ internal fun bindFlitsmeisterNavigationAudio() {
     }
     replaceAudioCalls(mapSpeech, "Landroid/speech/tts/TextToSpeech;->speak(Ljava/lang/String;ILjava/util/HashMap;)I",
         "$PROVIDER_AUDIO->legacySpeak(Landroid/speech/tts/TextToSpeech;Ljava/lang/String;ILjava/util/HashMap;)I", 1)
+}
+
+/** Bind the fallthrough to an instruction owned by this method. Prepending
+ * tracking after a separately assembled local gate leaves its label behind.
+ */
+internal fun gateFlitsmeisterMapFocus(method: MutableMethod) {
+    check(method.returnType == "V" && method.parameterTypes.isEmpty())
+    check(checkNotNull(method.implementation).registerCount > 1)
+    method.addInstruction(0, "nop")
+    method.addInstructionsWithLabels(0, """
+        invoke-static/range {p0 .. p0}, $PROVIDER_AUDIO->trackMapFocus(Ljava/lang/Object;)V
+        invoke-static {}, $PROVIDER_AUDIO->muted()Z
+        move-result v0
+        if-eqz v0, :native_audio
+        return-void
+    """.trimIndent(), ExternalLabel("native_audio", method.getInstruction(0)))
 }
 

@@ -18,12 +18,20 @@ import java.util.function.Supplier
 private const val STARTUP_ASSET = "bsnPCDnBLcHWJvVO"
 private var embeddedStartupDex: ByteArray? = null
 
+/** Set by the version-aware resource dependencies before extendWithAll is consulted. */
+internal var flitsmeisterInputIs15: Boolean = false
+
 private fun ByteArray.sha256(): String = MessageDigest.getInstance("SHA-256").digest(this)
     .joinToString("") { "%02x".format(it.toInt() and 0xff) }
 
 private val startupRestorationResources = rawResourcePatch {
     dependsOn(originalInput)
     execute {
+        if (isFlitsmeister15Resources()) {
+            flitsmeisterInputIs15 = true
+            return@execute
+        }
+        flitsmeisterInputIs15 = false
         val asset = get("assets").resolve(STARTUP_ASSET).readBytes()
         check(asset.size == 456927)
         check(asset.sha256() == "2a5f48741f795034142e3691996c62b2f1378f7d4812ee0359533168226ecf09")
@@ -46,6 +54,7 @@ private val startupRestorationResources = rawResourcePatch {
 private val startupManifestResources = resourcePatch {
     dependsOn(originalInput)
     execute {
+        if (isFlitsmeister15Resources()) return@execute
         document("AndroidManifest.xml").use { doc ->
             val namespace = "http://schemas.android.com/apk/res/android"
             val activities = doc.getElementsByTagName("activity")
@@ -149,13 +158,18 @@ internal val startupCompatibility = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupRestorationResources, startupManifestResources)
+    dependsOn(originalInput, startupRestorationResources, startupManifestResources, startupCompatibility15)
     extendWithAll {
-        listOf(Supplier {
-            checkNotNull(embeddedStartupDex) { "Startup resource extraction did not run" }.inputStream()
-        })
+        if (flitsmeisterInputIs15) {
+            emptyList()
+        } else {
+            listOf(Supplier {
+                checkNotNull(embeddedStartupDex) { "Startup resource extraction did not run" }.inputStream()
+            })
+        }
     }
     execute {
+        if (isFlitsmeister15()) return@execute
         check(StartupRestoreData.strings.size == 32)
         check(StartupRestoreData.strings.values.sumOf { it.size } == 1442)
         check(StartupRestoreData.methods.size == 17)

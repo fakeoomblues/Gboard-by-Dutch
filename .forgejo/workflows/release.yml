@@ -35,6 +35,10 @@ jobs:
       - uses: https://github.com/android-actions/setup-android@v3
         with:
           packages: platform-tools
+      - name: Install native assembly test compiler
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends clang
       - name: Verify publisher and history before building or publishing
         run: node .forgejo/scripts/identity.cjs --release
       - name: Verify required signing and build secrets
