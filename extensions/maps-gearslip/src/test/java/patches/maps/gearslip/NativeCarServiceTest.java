@@ -283,6 +283,85 @@ public final class NativeCarServiceTest {
         constructor.setAccessible(true); return (IBinder) constructor.newInstance(service, session);
     }
 
+    @Test public void retiredSurfaceCannotApplyAreasToAReplacementSession() throws Exception {
+        handshake(HOST); focusEditor("Amsterdam");
+        IBinder earlier = surfaceCapability();
+        handshake(HOST); focusEditor("Utrecht");
+        assertSecurity(call(earlier, "ISurfaceCallback", 3, data -> {
+            data.writeInt(1); new android.graphics.Rect(0, 0, 920, 396).writeToParcel(data, 0);
+        }));
+        assertEquals(2, call(surfaceCapability(), "ISurfaceCallback", 3, data -> {
+            data.writeInt(1); new android.graphics.Rect(0, 0, 1280, 480).writeToParcel(data, 0);
+        }).code);
+    }
+
+    @Test public void areaCallbacksRequireTheCapturedHostUid() throws Exception {
+        handshake(HOST); focusEditor("Amsterdam");
+        IBinder surface = surfaceCapability();
+        ShadowBinder.setCallingUid(HOST_UID + 1);
+        for (int code : new int[]{3, 4}) assertSecurity(call(surface, "ISurfaceCallback", code, data -> {
+            data.writeInt(1); new android.graphics.Rect(0, 0, 920, 396).writeToParcel(data, 0);
+        }));
+    }
+
+    @Test public void companionBindingIsOwnedByTheCurrentCalSessionAndDoesNotCloseItOnUnbind() throws Exception {
+        handshake(HOST);
+        Intent companion = new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/one"));
+        IBinder capability = service.onBind(companion);
+        assertEquals(SurfaceOcclusionChannel.DESCRIPTOR, capability.getInterfaceDescriptor());
+        assertEquals(SurfaceOcclusionChannel.NO_SURFACE, overlayStatus(capability));
+        ShadowBinder.setCallingUid(HOST_UID + 1);
+        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
+        ShadowBinder.setCallingUid(HOST_UID);
+        service.onUnbind(companion);
+        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
+        assertEquals(2, call(car, "ICarApp", 9, data -> data.writeString("app")).code);
+        handshake(HOST);
+        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
+    }
+
+    private static int overlayStatus(IBinder capability) throws Exception {
+        return overlayStatus(capability, 1);
+    }
+    private static int overlayStatus(IBinder capability, int code) throws Exception {
+        return overlayStatus(capability, code, () -> {});
+    }
+    private static int overlayStatus(IBinder capability, int code, Runnable beforeDrain) throws Exception {
+        int[] status = {-1};
+        Binder callback = new Binder() {
+            @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
+                data.enforceInterface(SurfaceOcclusionChannel.RESULT); data.readLong(); status[0] = data.readInt(); return true;
+            }
+        };
+        Parcel data = Parcel.obtain();
+        try {
+            data.writeInterfaceToken(SurfaceOcclusionChannel.DESCRIPTOR); data.writeInt(1);
+            data.writeLong(1); data.writeStrongBinder(callback);
+            assertTrue(capability.transact(code, data, null, IBinder.FLAG_ONEWAY));
+            beforeDrain.run();
+            shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(status[0] >= 0); return status[0];
+        } finally { data.recycle(); }
+    }
+    @Test public void companionReleaseKeepsTheNativeEditorAndRevokesWithItsSession() throws Exception {
+        handshake(HOST); ProjectedEditor editor = focusEditor("Amsterdam");
+        IBinder app = manager(), search = searchCallback(app);
+        IBinder capability = service.onBind(new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/release")));
+        assertEquals(SurfaceOcclusionChannel.ACCEPTED, overlayStatus(capability, 3));
+        assertEquals(2, call(search, "model.ISearchCallback", 2, data -> data.writeString("Utrecht")).code);
+        assertEquals("Utrecht", editor.field.getText().toString());
+        handshake(HOST); assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability, 3));
+    }
+    @Test public void companionUnbindRevokesRequestsAlreadyQueuedWithoutClosingTheEditor() throws Exception {
+        handshake(HOST); ProjectedEditor editor = focusEditor("Amsterdam");
+        IBinder search = searchCallback(manager());
+        Intent companion = new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/queued"));
+        IBinder capability = service.onBind(companion);
+        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability, 3, () -> service.onUnbind(companion)));
+        assertEquals(2, call(search, "model.ISearchCallback", 2, data -> data.writeString("Utrecht")).code);
+        assertEquals("Utrecht", editor.field.getText().toString());
+    }
+
     private static Bundle nullSurfaceContainer() {
         Parcel parcel = Parcel.obtain();
         try {

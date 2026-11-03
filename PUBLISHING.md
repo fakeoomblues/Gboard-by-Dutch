@@ -59,6 +59,14 @@ The private store defaults to `~/Library/Application Support/nl-morphe-local-rel
 
 `morphe-signing.pub` is intentionally public and tracked. Its matching private seed is not. Morphe signing is distinct from an APK test keystore or an Apple Developer ID identity. Setup reused the existing Morphe seed and verified its derived public key; do not generate a replacement signing identity as a workaround.
 
+### Community Maps application key lookup
+
+The installed release configuration is `~/Library/Application Support/nl-morphe-local-release/config.json`. Its `secretFiles.SHARED_MAPS_API_KEY` points to `~/Library/Application Support/nl-morphe-local-release/secrets/maps-api-key`. The existing setup source on this Mac is the ignored `/Users/jneerdael/Scripts/nl-morphe-patches/.community-maps-api-key` in the primary checkout. Both files were confirmed present without displaying their values.
+
+Use the configured secret-file reference for releases. The local driver reads it into the scoped `SHARED_MAPS_API_KEY` build environment. In linked worktrees, resolve the primary checkout through Git's common directory if the ignored setup file is needed; a missing worktree-local file does not mean the community key is missing. Keep these files ignored and never commit, echo or copy key values into documentation. Verification fixtures may use a placeholder, but a release must use the real configured key.
+
+This is a Maps application/API key. APK signing remains owned by the patching client, such as the phone's Morphe Manager; the MPP release uses the separate existing Morphe Ed25519 signing seed. Downloading the dev MPP through Manager preserves the client's APK signing identity.
+
 The API store supports labelled entries (colon or equals), optional quotes and JSON. A placeholder example is:
 
 ```text

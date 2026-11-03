@@ -31,6 +31,7 @@ public final class NativeCarService extends Service {
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Object lock = new Object();
     private final Map<Intent.FilterComparison, Binding> bindings = new HashMap<>();
+    private final Map<Intent.FilterComparison, OcclusionBinding> occlusionBindings = new HashMap<>();
     private volatile Session active;
 
     private final class Binding {
@@ -50,16 +51,58 @@ public final class NativeCarService extends Service {
         IBinder.DeathRecipient death;
         Throwable failure;
         volatile NativeKeyboard keyboard;
+        OcclusionBinding occlusionOwner;
         Session(int uid, Binding binding) { this.uid = uid; this.binding = binding; this.generation = binding.generation; }
     }
 
+    private final class OcclusionBinding {
+        final Session session;
+        final SurfaceOcclusionChannel binder;
+        volatile boolean bound = true;
+        OcclusionBinding(Session session) {
+            this.session = session;
+            binder = new SurfaceOcclusionChannel(main, new SurfaceOcclusionChannel.Target() {
+                @Override public void checkOwner(int uid) {
+                    if (!bound || session == null || owned(session.binding, uid) != session) throw new SecurityException("Current car session required");
+                }
+                @Override public SurfaceOcclusionChannel.Info surface() {
+                    return session.renderer == null || session.failure != null ? null : session.renderer.surfaceInfo();
+                }
+                @Override public boolean apply(Rect player, java.util.List<Rect> covers) throws SurfaceOcclusionChannel.NotReady {
+                    if (session.renderer != null && player != null && !player.isEmpty() && !session.renderer.occlusionReady())
+                        throw new SurfaceOcclusionChannel.NotReady();
+                    boolean accepted = session.renderer != null && session.renderer.applyOcclusions(player, covers);
+                    if (accepted) session.occlusionOwner = OcclusionBinding.this;
+                    return accepted;
+                }
+                @Override public void release() { releaseLayout(); }
+            });
+        }
+        void releaseLayout() {
+            if (session != null && active == session && !session.closed && session.occlusionOwner == this) {
+                session.occlusionOwner = null;
+                if (session.renderer != null) session.renderer.clearControls();
+            }
+        }
+    }
+
     @Override public IBinder onBind(Intent intent) {
+        if (isOcclusionBinding(intent)) {
+            OcclusionBinding binding = new OcclusionBinding(active);
+            occlusionBindings.put(bindingKey(intent), binding);
+            return binding.binder;
+        }
         // Android Auto can bind this component explicitly without an action. The
         // authenticated Binder handshake, rather than Intent metadata, owns access.
         return activateBinding(intent).binder;
     }
 
     @Override public boolean onUnbind(Intent intent) {
+        if (isOcclusionBinding(intent)) {
+            OcclusionBinding binding = occlusionBindings.remove(bindingKey(intent));
+            if (binding != null) { binding.bound = false; main.post(binding::releaseLayout); }
+            return false;
+        }
         Session owner = null;
         synchronized (lock) {
             Binding binding = bindings.get(bindingKey(intent));
@@ -72,12 +115,16 @@ public final class NativeCarService extends Service {
     }
 
     @Override public void onRebind(Intent intent) {
+        if (isOcclusionBinding(intent)) return;
         activateBinding(intent);
         super.onRebind(intent);
     }
 
     private static Intent.FilterComparison bindingKey(Intent intent) {
         return new Intent.FilterComparison(intent == null ? new Intent() : new Intent(intent));
+    }
+    private static boolean isOcclusionBinding(Intent intent) {
+        return intent != null && SurfaceOcclusionChannel.ACTION.equals(intent.getAction());
     }
 
     private Binding activateBinding(Intent intent) {
@@ -92,6 +139,7 @@ public final class NativeCarService extends Service {
 
     @Override public void onDestroy() {
         release(active);
+        occlusionBindings.clear();
         synchronized (lock) { for (Binding binding : bindings.values()) binding.bound = false; bindings.clear(); }
         super.onDestroy();
     }
@@ -166,6 +214,7 @@ public final class NativeCarService extends Service {
     }
 
     private void close(Session session) {
+        session.occlusionOwner = null;
         clearKeyboard(session);
         if (session.host != null && session.death != null) session.host.unlinkToDeath(session.death, 0);
         session.host = null;
@@ -366,7 +415,7 @@ public final class NativeCarService extends Service {
             IBinder callback = null;
             try {
                 int callerUid = Binder.getCallingUid();
-                if (code != 5 && code != 2) requireSession(session);
+                if (code != 5 && code != 2 && code != 3 && code != 4) requireSession(session);
                 switch (code) {
                     case 5: {
                         Bundle container = CarProtocol.readBundleable(data); callback = data.readStrongBinder();
@@ -415,6 +464,7 @@ public final class NativeCarService extends Service {
                     }
                     case 3: case 4: {
                         Rect area = CarProtocol.nullable(data, Rect.CREATOR); callback = data.readStrongBinder();
+                        requireSession(session);
                         dispatch(session, callback, true, () -> {
                             if (code == 3) session.renderer.visibleArea(area); else session.renderer.stableArea(area);
                         }); return true;
