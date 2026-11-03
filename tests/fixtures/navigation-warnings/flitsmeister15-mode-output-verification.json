@@ -120,10 +120,151 @@
       "attached_widget_draw_observed": true
     }
   ],
-  "vela_modes": "Expected Voice/Tone completion and Silent USER_MUTED observed, but all three fail mandatory attached-UI gate; not accepted. UI setup rerun blocked before any warning by a Digital Wellbeing system ANR dialog. No product defect established.",
-  "timing": "Not executed; no percentile acceptance. Local CI overlapped the first functional batch.",
+  "vela_modes": [
+    {
+      "mode": "VOICE",
+      "functional_status": "passed",
+      "warning_id": "SpeedCam:fm15-final-vela-voice",
+      "provider_session": "2dd69c67-d6ff-40cf-9062-27a9a02f4c39",
+      "sequence": 1,
+      "announcement_index": 1,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "afd09b4c885be9f93297a00d49ab2ce01142381493903752c73b3a41c998c398",
+      "attempt_id": "d9b1a7b6-39b7-4ddd-b941-ba24ef8c5a1a",
+      "source_outcomes": [
+        "GRANTED",
+        "STARTED",
+        "COMPLETED"
+      ],
+      "actual_start_count": 1,
+      "terminal": "COMPLETED",
+      "native_ui_attached_and_shown": true,
+      "native_message_preserved": true,
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "containing_host_job_passed": true,
+      "outer_vm_restored_exactly": true,
+      "screenshot": {
+        "archive_member": "vela-voice/integrated-warning.png",
+        "sha256": "26760d405bfdd5bad8292bfb1d61c1ab31c7b2cbe783367f7c5643dd93bd6b1e",
+        "visually_reviewed": true
+      },
+      "tagged_pcm_signals": [
+        {
+          "utterance_id": "vela-warning-9c436123-d582-41d7-9962-0f8f441f1efa",
+          "warning_id": "SpeedCam:fm15-final-vela-voice",
+          "provider_session": "2dd69c67-d6ff-40cf-9062-27a9a02f4c39",
+          "grant_attempt_id": "d9b1a7b6-39b7-4ddd-b941-ba24ef8c5a1a",
+          "sample_rate": 24000,
+          "audio_format": 2,
+          "channels": 1,
+          "captured_bytes": 74554,
+          "total_bytes": 74554,
+          "truncated": false,
+          "samples": 37277,
+          "nonzero_samples": 34830,
+          "peak": 0.470062255859375,
+          "rms": 0.09247080255576748,
+          "duration_seconds": 1.5532083333333333,
+          "started": true,
+          "done": true,
+          "stopped": false,
+          "failed": false,
+          "pcm_file": "/storage/emulated/0/Android/data/app.vela/files/native-warning-integrated/vela-warning-9c436123-d582-41d7-9962-0f8f441f1efa.pcm",
+          "pcm_sha256": "284d3f3452753812edaaede9af03b17cc71be6dc48e41539e11bb5343fe5819b"
+        }
+      ],
+      "pcm_retention": "Runtime PCM assertion and hash retained; raw .pcm clip was omitted by archive suffix selection and is no longer retained. A future quiet output capture must retain raw PCM for exportable audio evidence."
+    },
+    {
+      "mode": "TONE",
+      "functional_status": "passed",
+      "warning_id": "SpeedCam:fm15-final-vela-tone",
+      "provider_session": "ea672d6b-77c6-4c29-8d99-83e6575d78ae",
+      "sequence": 1,
+      "announcement_index": 1,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "9f1d7e9f1c59fad537c853c27ce84cb335bea88125399069df9b92269a97a86e",
+      "attempt_id": "787da30c-eab3-4df2-8d30-034f3b87dcc4",
+      "source_outcomes": [
+        "GRANTED",
+        "STARTED",
+        "COMPLETED"
+      ],
+      "actual_start_count": 1,
+      "terminal": "COMPLETED",
+      "native_ui_attached_and_shown": true,
+      "native_message_preserved": true,
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "containing_host_job_passed": true,
+      "outer_vm_restored_exactly": true,
+      "screenshot": {
+        "archive_member": "vela-tone/integrated-warning.png",
+        "sha256": "f6d6b7217ed66dd87cf7c113251e79ff2d5b656cc65c657b34b90fed35040fdf",
+        "visually_reviewed": true
+      }
+    },
+    {
+      "mode": "SILENT",
+      "functional_status": "passed",
+      "warning_id": "SpeedCam:fm15-final-vela-silent",
+      "provider_session": "a6075eca-d118-4ee6-9e5a-8b6505dfff97",
+      "sequence": 1,
+      "announcement_index": 1,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "635f6be6e180a5536de7a1a6ee5454ccf945f0d84252ce24574391e7068f5478",
+      "attempt_id": "afc856af-8571-4dfc-8a17-bb9d4fb24125",
+      "source_outcomes": [
+        "USER_MUTED"
+      ],
+      "actual_start_count": 0,
+      "terminal": "USER_MUTED",
+      "native_ui_attached_and_shown": true,
+      "native_message_preserved": true,
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "containing_host_job_passed": false,
+      "outer_vm_restored_exactly": true,
+      "limitation": "Original containing job failed on netd cleanup classification; captured IPv4/IPv6 tables independently re-audited with strict corrected guard. Original failure retained. UI screenshot created in guest but export was skipped by the old host ordering; attached/shown/text/geometry witness retained.",
+      "firewall_reaudit": {
+        "original_source_job_status": "failed; retained unchanged",
+        "original_cleanup_errors": [
+          "ip6tables: RuntimeError('Unexpected mangle rules changed')",
+          "iptables: RuntimeError('Unexpected mangle rules changed')"
+        ],
+        "source_uid_chain": "NWFM_32257ed97ece",
+        "offline_reaudit": {
+          "iptables": {
+            "owned_chain_absent": true,
+            "changes": [
+              "Android netd interface marks/wakeup/idle-timer rules changed in *mangle; preserved",
+              "Android netd interface marks/wakeup/idle-timer rules changed in *raw; preserved"
+            ],
+            "after_sha256": "0483d688275f4906210d4b977387b0b67c61e4a9f549216db7fc4414a38616cf"
+          },
+          "ip6tables": {
+            "owned_chain_absent": true,
+            "changes": [
+              "Android netd interface marks/wakeup/idle-timer rules changed in *mangle; preserved",
+              "Android netd interface marks/wakeup/idle-timer rules changed in *raw; preserved"
+            ],
+            "after_sha256": "2426e9551dbd377244e31c8d9ac63102a89fcfba6fe9ac78886bd76a4d6454f1"
+          }
+        },
+        "result": "Source UID fence removed; only captured exact netd interface bookkeeping changed. Outer VM restore independently exact. No raw original outcome rewritten."
+      }
+    }
+  ],
+  "timing": "First 100-event corpus interrupted after user reported audible repetition. No completed timing corpus or percentile claim. All further audible repetition stopped.",
   "regression_checkpoint": {
-    "python_tests": 549,
+    "python_tests": 558,
     "skipped": 45,
     "failures": 0,
     "receiver_probes_compiled_signed": true
@@ -138,6 +279,21 @@
       "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-02/evidence.tar.gz",
       "sha256": "b6200ba86f14d64386055c9e5fdfe30cb1075162ef2195fad93c8f7ea98209c0",
       "bytes": 148362
+    },
+    {
+      "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-03/evidence.tar.gz",
+      "sha256": "d40e67dfe49219970526c51ff4c407357ce2c22b9d43b8a24be96dd18ec4842b",
+      "bytes": 816752
+    },
+    {
+      "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-04/evidence.tar.gz",
+      "sha256": "63185181b3fe43bfdb80c3ea57910ea5adf4aeb05ef2784659fe0c0330af2d16",
+      "bytes": 432894
+    },
+    {
+      "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-05/evidence.tar.gz",
+      "sha256": "ae3fc79f93ce5e1ac516333da137013092defbfb37b72364c986c78b7980d05d",
+      "bytes": 436471
     }
   ],
   "cleanup_required": false
