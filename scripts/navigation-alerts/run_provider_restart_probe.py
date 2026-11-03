@@ -11,9 +11,13 @@ parser.add_argument('--receiver',choices=['maps','vela'],default='maps')
 parser.add_argument('--serial',choices=['emulator-5584','emulator-5590'],default='emulator-5584')
 parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
 parser.add_argument('--prepare-vela-ui',action='store_true')
+parser.add_argument('--warning-suite',action='store_true')
+parser.add_argument('--warning-suite-cases',choices=['all','road-service'],default='all')
+parser.add_argument('--warning-categories',type=int,choices=range(1,128),default=127)
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
 args=parser.parse_args();
 if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
+if args.warning_categories!=127 and (not args.warning_suite or args.warning_suite_cases!='road-service'):parser.error('A restricted category mask is only supported for the focused road-service suite')
 sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd={'emulator-5584':'native_warnings_car_api34','emulator-5590':'native_warnings_ui_api34'}[serial];output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
 
 def device(*args,check=True):return subprocess.run([str(adb),'-s',serial,*map(str,args)],capture_output=True,text=True,check=check,timeout=60)
@@ -24,7 +28,7 @@ assert device('shell','getprop','ro.build.version.sdk').stdout.strip()=='34'
 assert device('shell','getprop','sys.boot_completed').stdout.strip()=='1'
 assert device('shell','id','-u').stdout.strip()=='0'
 inputs={'nl.flitsmeister':args.source_apk,args.maps_package:args.maps_apk,'app.vela':args.vela_apk}
-record={'scenario':'provider-restart','receiver':args.receiver,'serial':serial,'avd':avd,'output':str(output),'control_token':token,'installed_sha256':{}}
+record={'scenario':'warning-suite' if args.warning_suite else 'provider-restart','receiver':args.receiver,'warning_suite_cases':args.warning_suite_cases,'warning_categories':args.warning_categories,'serial':serial,'avd':avd,'output':str(output),'control_token':token,'installed_sha256':{}}
 for pkg,apk in inputs.items():
  installed=device('shell','pm','path',pkg).stdout.strip().removeprefix('package:');actual=device('shell','sha256sum',installed).stdout.split()[0];assert actual==sha(apk),(pkg,actual);record['installed_sha256'][pkg]=actual
 certs=[]
@@ -101,11 +105,11 @@ base='probe-restart-'+token
 source_details={}
 
 def source(name,scenario,**expectations):
- command=[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/name,'--scenarios',scenario,'--death-owner',receiver_package,'--native-id',base,'--matrix-timeout-seconds','240']
+ command=[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/name,'--scenarios',scenario,'--death-owner',receiver_package,'--native-id',base,'--warning-suite-cases',args.warning_suite_cases,'--matrix-timeout-seconds','240']
  for key,value in expectations.items():command.extend(['--'+key.replace('_','-'),value])
  launch(name,command)
 def receiver(role):
- launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
+ launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'-e','warning_categories',str(args.warning_categories),'nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
 def signal(role):
  folder='/sdcard/Android/data/'+receiver_package+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+token+'-'+role+'-stop')
 def receiver_report(role):
@@ -197,16 +201,19 @@ try:
   if not value['granted']:
    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
  if args.prepare_vela_ui:prepare_vela_ui()
- source('seed-source','integrated_restart_seed');deadline=time.monotonic()+300
+ source('seed-source','integrated_warning_suite' if args.warning_suite else 'integrated_restart_seed');deadline=time.monotonic()+300
  while time.monotonic()<deadline:
   try:name,line=events.get(timeout=.2)
   except queue.Empty:
    if all(p.poll() is not None for p in processes.values()):break
    continue
-  if name=='seed-source' and line is None and 'restarted-source' not in processes:raise RuntimeError('Seed source ended before the native playback boundary')
+  if not args.warning_suite and name=='seed-source' and line is None and 'restarted-source' not in processes:raise RuntimeError('Seed source ended before the native playback boundary')
   if line:
    if name in ['seed-source','restarted-source'] and line.startswith('INSTRUMENTATION_STATUS: fm_capture_detail='):source_details[name]=json.loads(line.split('fm_capture_detail=',1)[1])
    if name=='seed-source' and 'fm_capture_stage=restart_seed_ready' in line:receiver('seed-receiver')
+   if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_ready' in line:receiver('seed-receiver')
+   if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_complete' in line:signal('seed-receiver')
+   if args.warning_suite and name=='seed-source' and 'fm_capture_error=' in line:raise RuntimeError('Actual native warning suite failed; partial evidence retained')
    if name=='seed-source' and 'fm_capture_stage=restart_seed_started' in line:
     detail=source_details[name];pending=detail['pending'];assert pending['stored_started'] and pending['stored_attempt']==pending['pending_attempt'];record['seed_started']=detail
     # Deliberately kill both real processes after the source durably acknowledged native STARTED.
@@ -233,12 +240,17 @@ try:
    if name=='restarted-source' and 'fm_capture_stage=restart_future_completed' in line:signal('recovered-receiver')
    if name=='restarted-source' and 'fm_capture_error=' in line:raise RuntimeError('Actual restarted provider probe failed; partial evidence retained')
   if all(p.poll() is not None for p in processes.values()):break
- assert 'restarted-source' in processes and all(p.poll() is not None for p in processes.values()),'Provider restart deadline'
- for thread in threads:thread.join(timeout=2)
- path,restarted=source_report('restarted-source');assert restarted['probe_completed'] and not restarted['failure'];record['restarted_source_result']=str(path);receiver_report('recovered-receiver')
- case=restarted['scenarios']['integrated_restart_recovery'];reset=case['uncertain_output_recovery']
- for field in ['actual_window_screenshot','confirmations_screenshot']:
-  remote=reset[field];assert re.fullmatch(r'/storage/emulated/0/Android/data/nl\.flitsmeister/files/probe-restart-[a-f0-9]+-(?:recovered|uncertain-confirmations)\.png',remote);device('pull',remote,output/(field+'.png'))
+ if args.warning_suite:
+  assert all(process.poll() is not None for process in processes.values()),'Native warning suite deadline'
+  for thread in threads:thread.join(timeout=2)
+  path,result=source_report('seed-source');assert result['probe_completed'] and not result['failure'];record['warning_suite_source_result']=str(path);receiver_report('seed-receiver')
+ else:
+  assert 'restarted-source' in processes and all(p.poll() is not None for p in processes.values()),'Provider restart deadline'
+  for thread in threads:thread.join(timeout=2)
+  path,restarted=source_report('restarted-source');assert restarted['probe_completed'] and not restarted['failure'];record['restarted_source_result']=str(path);receiver_report('recovered-receiver')
+  case=restarted['scenarios']['integrated_restart_recovery'];reset=case['uncertain_output_recovery']
+  for field in ['actual_window_screenshot','confirmations_screenshot']:
+   remote=reset[field];assert re.fullmatch(r'/storage/emulated/0/Android/data/nl\.flitsmeister/files/probe-restart-[a-f0-9]+-(?:recovered|uncertain-confirmations)\.png',remote);device('pull',remote,output/(field+'.png'))
 except Exception as error:
  failure=repr(error)
  if args.prepare_vela_ui and 'fenced_native_event' in record and 'outputs_verified_stopped' not in record and processes.get('restarted-source') is not None and processes['restarted-source'].poll() is None:

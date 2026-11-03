@@ -80,6 +80,23 @@ public class NativeWarningsTest {
         assertEquals("INCIDENT",last().getString("native_type"));
         assertEquals("roadworks",last().getString("category"));assertEquals(1,last().getInt("priority"));assertFalse(last().containsKey("native_subtype"));
     }
+    public static class RoadServiceEarlyReport extends EarlyWarningReport {
+        @Override public String getEarlyWarningTypeEnum(){return "ROAD_SERVICE";}
+    }
+    @Test public void acceptedEarlyRoadServiceUsesEmergencyCategoryAndImmediatePriorityWithoutGeometry(){
+        NativeWarnings.regular(null,new RoadServiceEarlyReport(),true,false,"Emergency vehicle behind you",null);
+        assertEquals("emergency_vehicle",last().getString("category"));assertEquals(0,last().getInt("priority"));assertEquals("moving_emergency",last().getString("relevance"));assertEquals("ROAD_SERVICE",last().getString("native_subtype"));assertFalse(last().containsKey("latitude"));
+    }
+    @Test public void roadServiceNotificationUsesTheSameEmergencyPolicy(){
+        EarlyWarningNotification notification=new EarlyWarningNotification(){@Override public String getType(){return "ROAD_SERVICE";}};
+        NativeWarnings.early(null,"ROAD_SERVICE",null,notification,"Emergency vehicle",false,null);
+        assertEquals("emergency_vehicle",last().getString("category"));assertEquals(0,last().getInt("priority"));assertEquals("moving_emergency",last().getString("relevance"));
+    }
+    @Test public void ordinaryRoadServiceIncidentDoesNotAcquireEarlyEmergencySemantics(){
+        Incident incident=new Incident(){@Override public String getIncidentType(){return "ROAD_SERVICE";}};
+        NativeWarnings.regular(null,incident,true,false,"Road service",null);
+        assertEquals("road_danger",last().getString("category"));assertEquals(2,last().getInt("priority"));assertEquals("notice",last().getString("relevance"));
+    }
     @Test public void trueNativeRepeatsIncrementButBusUpdatesNeverAnnounce() {
         Incident report=new Incident();
         NativeWarnings.regular(null,report,true,false,"Spookrijder!",null);
@@ -241,6 +258,16 @@ public class NativeWarningsTest {
         EarlyWarningNotification n=new EarlyWarningNotification();AliasedEarlyReport report=new AliasedEarlyReport("stationary",n);
         NativeWarnings.citsSource(new StationaryEmergencyVehicle("stationary"));NativeWarnings.citsModel(report);NativeWarnings.early(null,"AMBULANCE",null,n,"Stationary ambulance",false,null);
         assertEquals(1,last().getInt("priority"));assertEquals("notice",last().getString("relevance"));assertEquals("unknown",last().getString("relationship"));
+    }
+    public static class RoadServiceAliasedReport extends AliasedEarlyReport {
+        RoadServiceAliasedReport(String id,EarlyWarningNotification notification){super(id,notification);}
+        @Override public String getEarlyWarningTypeEnum(){return "ROAD_SERVICE";}
+    }
+    @Test public void explicitStationaryRoadServiceStillUsesNativeStationaryPolicy(){
+        EarlyWarningNotification notification=new EarlyWarningNotification(){@Override public String getType(){return "ROAD_SERVICE";}};
+        RoadServiceAliasedReport report=new RoadServiceAliasedReport("stationary-road-service",notification);
+        NativeWarnings.citsSource(new StationaryEmergencyVehicle("stationary-road-service"));NativeWarnings.citsModel(report);NativeWarnings.early(null,"ROAD_SERVICE",null,notification,"Stationary emergency service",false,null);
+        assertEquals("emergency_vehicle",last().getString("category"));assertEquals(1,last().getInt("priority"));assertEquals("notice",last().getString("relevance"));assertEquals("stationary",last().getString("native_source_motion"));
     }
     public static class CitsSpeedAdvice extends CitsBaseReport {@Override public String getReportType(){return "CITS_SPEED_ADVICE";}public int getAdviceKph(){return 40;}}
     public static class AdviceWrapper {boolean added;AdviceWrapper(boolean value){added=value;}public CitsSpeedAdvice getSpeedAdvice(){return new CitsSpeedAdvice();}public boolean getAdded(){return added;}}

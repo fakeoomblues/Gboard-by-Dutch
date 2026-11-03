@@ -314,6 +314,8 @@ public final class NativeWarnings {
         b.putString("native_type",type);if(!sub.isEmpty())b.putString("native_subtype",sub);
         b.putString("native_text_key",NativeWarningText.fingerprint(report));
         b.putString("category",category(type,sub));b.putInt("priority",priority(type,sub));
+        // This is the native early emergency model, distinct from an ordinary road-service incident.
+        if(sub.equals("ROAD_SERVICE")&&(isFamily(report,"EarlyWarningReport")||isFamily(report,"EarlyWarningNotification"))){b.putString("category","emergency_vehicle");b.putInt("priority",0);}
         if(isFamily(report,"CitsRoadWorks")){b.putString("category","roadworks");b.putInt("priority",1);}
         SourceFact fact=citsAliases.get(report);
         if(fact!=null){b.putString("native_source_event",fact.type);
@@ -379,7 +381,7 @@ public final class NativeWarnings {
         if(phase.equals("exit"))return "exit";
         String type=fields.getString("native_type",""),sub=fields.getString("native_subtype","");
         if(fields.getString("native_source_motion","").equals("stationary"))return "notice";
-        if(sub.equals("AMBULANCE")||sub.equals("FIRE_DEPARTMENT")||sub.equals("POLICE"))return "moving_emergency";
+        if(fields.getString("category","").equals("emergency_vehicle"))return "moving_emergency";
         if(type.equals("AVG_SPEED_CHECK"))return "zone";
         if(type.equals("SPEED_CAM")||type.equals("SPEED_TRAP")||type.equals("POLICEHOTSPOT"))return "point_ahead";
         if(fields.getBoolean("native_point_target",false))return "point_ahead";

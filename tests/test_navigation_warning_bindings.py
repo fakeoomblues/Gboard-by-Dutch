@@ -1,6 +1,8 @@
 """The warning coverage gate must reject drift and incomplete native support."""
 import copy
 import importlib.util
+import hashlib
+import re
 import json
 from pathlib import Path
 import unittest
@@ -32,6 +34,16 @@ class WarningBindingTests(unittest.TestCase):
                 'code_units': 4, 'body_sha256': 'b' * 64,
                 'references': ['Lengine;->speak(Ljava/lang/String;)V']}},
             'enums': {'LWarningType;': ['CAMERA', 'EMERGENCY']}}
+
+    def test_frozen_capture_digest_matches_advertised_profile_and_policy_annex(self):
+        folder = ROOT / 'tests/fixtures/navigation-warnings'
+        raw = (folder / 'flitsmeister-coverage.json').read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        source = (ROOT / 'support/navigation-alerts/src/main/java/nl/johninnl/navigation/alerts/FlitsmeisterWarningTypes.java').read_text()
+        self.assertEqual(re.search(r'MANIFEST_DIGEST = "([0-9a-f]{64})"', source)[1], digest)
+        policy = json.loads((folder / 'flitsmeister-warning-policy.json').read_text())
+        self.assertEqual(policy['capture_manifest_sha256'], digest)
+        self.assertEqual(policy['native_original_sha256'], json.loads(raw)['artifact_sha256'])
 
     def test_exact_contract_accepts_same_artifact_and_body(self):
         api = self.require_api()
