@@ -152,14 +152,16 @@ def main():
             (args.output/'receiver-manifest.json').write_text(json.dumps(result,indent=2)+'\n');result=json.loads(full.read_text())
         (args.output/'receiver-result.json').write_text(json.dumps(result,indent=2)+'\n')
         if result.get('status')!='observed' or not result.get('preferences_restored_exactly') or not result.get('cleanup_output_quiescent'):raise RuntimeError('Receiver did not prove output and exact restoration')
+        # Preserve the actual frame even if later source/cleanup verification fails.
+        # The containing job still fails; diagnostic export never changes its outcome.
+        remote=result.get('ui',{}).get('screenshot')
+        if remote!='/storage/emulated/0/Android/data/app.vela/files/native-warning-integrated/integrated-warning.png':raise ValueError('Expected the actual owned warning UI screenshot')
+        image=args.output/'integrated-warning.png';adb('pull',remote,image);record['screenshot_sha256']=sha(image)
         source_results=list((args.output/'source').glob('*/result.json'))
         if len(source_results)!=1:raise RuntimeError('Expected exactly one source result')
         source_result=json.loads(source_results[0].read_text())
         if not source_result.get('probe_completed') or not source_result.get('network_and_lease_restored'):raise RuntimeError('Source or its cleanup failed')
         record['source_result']=str(source_results[0]);record['receiver_result']=str(args.output/'receiver-result.json')
-        remote=result.get('ui',{}).get('screenshot')
-        if remote:
-            image=args.output/'integrated-warning.png';adb('pull',remote,image);record['screenshot_sha256']=sha(image)
         if args.capture_pcm:
             signals=result.get('pcm_signals',[])
             if not any(row.get('started') and row.get('done') and not row.get('stopped') and not row.get('failed') and row.get('nonzero_samples',0)>1000 for row in signals):raise RuntimeError('No completed non-silent actual warning PCM signal')

@@ -167,6 +167,44 @@ def ui_picture(label):
  (output/(label+'.png')).write_bytes(subprocess.check_output([str(adb),'-s',serial,'exec-out','screencap','-p']))
 def ui_scroll(tree):
  scrollers=[node for node in tree.iter('node') if node.get('package')=='app.vela' and node.get('scrollable')=='true'];assert scrollers,'No actual Vela scroll surface';bounds=[list(map(int,re.findall(r'\d+',node.get('bounds')))) for node in scrollers];x1,y1,x2,y2=max(bounds,key=lambda b:(b[2]-b[0])*(b[3]-b[1]));device('shell','input','swipe',(x1+x2)//2,y1+(y2-y1)*4//5,(x1+x2)//2,y1+(y2-y1)//5,'350')
+def vela_setup_surface(tree,focus):
+ """Admit reviewed setup surfaces; never dismiss an arbitrary app-failure dialog."""
+ android={node.get('text') for node in tree.iter('node') if node.get('package')=='android'}
+ if "Digital Wellbeing isn't responding" in android:
+  if not re.search(r'Application Not Responding: com\.google\.android\.apps\.wellbeing(?:[ }]|$)',focus):
+   raise RuntimeError('Digital Wellbeing dialog has an unexpected focused package')
+  buttons=[node for node in tree.iter('node') if node.get('package')=='android' and node.get('text')=='Close app' and node.get('enabled')=='true' and node.get('clickable')=='true']
+  if len(buttons)!=1 or not re.fullmatch(r'\[\d+,\d+\]\[\d+,\d+\]',buttons[0].get('bounds','')):
+   raise RuntimeError('Reviewed system ANR close control is ambiguous')
+  coords=list(map(int,re.findall(r'\d+',buttons[0].get('bounds'))))
+  if coords[2]<=coords[0] or coords[3]<=coords[1]:raise RuntimeError('Reviewed system ANR close control has invalid bounds')
+  return 'WELLBEING_ANR',buttons[0].get('bounds')
+ if any(text and ("isn't responding" in text or 'keeps stopping' in text) for text in android):
+  raise RuntimeError('Unreviewed app failure dialog blocks Vela setup')
+ if 'app.vela/' not in focus:return 'PENDING',None
+ labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
+ known={'Get started','No Google','Use system voice','Got it','Settings','Open settings'}
+ if labels&known or ('Continue' in labels and labels&{'Plate cameras','License plate camera marker'}):return 'READY',None
+ return 'PENDING',None
+def await_vela_setup_surface():
+ deadline=time.monotonic()+30;closed=False
+ for attempt in range(12):
+  if time.monotonic()>=deadline:break
+  tree=ui_dump('setup-admission-'+str(attempt));display=None;focus=[]
+  for line in device('shell','dumpsys','window','displays').stdout.splitlines():
+   match=re.search(r'Display: mDisplayId=(\d+)',line)
+   if match:display=int(match[1])
+   if display==0 and 'mCurrentFocus=' in line:focus.append(line)
+  if len(focus)!=1:raise RuntimeError('Ambiguous default-display focus during Vela setup')
+  state,bounds=vela_setup_surface(tree,focus[0]);record.setdefault('setup_admission',[]).append({'state':state,'focus':focus[0]})
+  if state=='READY':return tree
+  if state=='WELLBEING_ANR':
+   if closed:raise RuntimeError('Reviewed Digital Wellbeing ANR recurred; setup is not stable')
+   ui_picture('reviewed-wellbeing-anr');coords=list(map(int,re.findall(r'\d+',bounds)))
+   record.setdefault('reviewed_ui_actions',[]).append({'label':'Close app','package':'android','target':'com.google.android.apps.wellbeing','bounds':bounds,'scope':'Owned emulator snapshot only; restored after job'})
+   device('shell','input','tap',(coords[0]+coords[2])//2,(coords[1]+coords[3])//2);closed=True
+  time.sleep(.5)
+ raise RuntimeError('Original Vela setup surface did not become ready within its admission bound')
 def prepare_vela_ui():
  global vela_permissions_before
  vela_permissions_before=route_permissions_before if args.warning_suite else vela_permissions();record['vela_permissions_before']=vela_permissions_before
@@ -176,7 +214,8 @@ def prepare_vela_ui():
     assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','app.vela',permission);vela_permission_changes.append(permission)
  record['vela_permissions_during']=vela_permissions();assert all(value['granted'] for value in record['vela_permissions_during'].values())
  device('shell','am','start','-W','--windowingMode','1','-n','app.vela/.Launcher')
- tree=ui_dump('onboarding-initial');ui_picture('onboarding-initial');ui_click(tree,'Get started');time.sleep(.5)
+ tree=await_vela_setup_surface();ui_picture('onboarding-initial')
+ if any(node.get('package')=='app.vela' and node.get('text')=='Get started' for node in tree.iter('node')):ui_click(tree,'Get started');time.sleep(.5)
  for attempt in range(9):
   tree=ui_dump('onboarding-'+str(attempt));labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
   record.setdefault('reviewed_onboarding_ui_labels',[]).append(sorted(value for value in labels if value))

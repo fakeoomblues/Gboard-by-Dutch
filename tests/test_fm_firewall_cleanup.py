@@ -20,3 +20,31 @@ class FirewallCleanupTest(unittest.TestCase):
     def test_unrelated_mangle_rule_change_fails(self):
         with self.assertRaisesRegex(RuntimeError, 'Unexpected mangle'):
             MOD.firewall_cleanup_changes(self.before, self.before.replace(':INPUT ACCEPT', ':INPUT DROP'), 'NWFM_test')
+
+    def idle_transition(self):
+        mangle='-A idletimer_mangle_POSTROUTING -o wlan0 -j IDLETIMER --timeout 15 --label 1 --send_nl_msg\n'
+        raw='*raw\n:PREROUTING ACCEPT [0:0]\n-A idletimer_raw_PREROUTING -i wlan0 -j IDLETIMER --timeout 15 --label 1 --send_nl_msg\nCOMMIT\n'
+        before=self.before.replace('COMMIT',mangle+'COMMIT',1)+raw
+        after=before.replace('wlan0 -j IDLETIMER --timeout 15 --label 1','eth0 -j IDLETIMER --timeout 10 --label 0')
+        return before,after
+
+    def test_captured_netd_wifi_to_ethernet_idle_transition_is_preserved(self):
+        before,after=self.idle_transition()
+        self.assertEqual(2,len(MOD.firewall_cleanup_changes(before,after,'NWFM_test')))
+
+    def test_raw_rule_target_change_is_not_hidden_by_idle_exception(self):
+        before,after=self.idle_transition()
+        with self.assertRaisesRegex(RuntimeError,'Unexpected raw'):
+            MOD.firewall_cleanup_changes(before,after.replace('idletimer_raw_PREROUTING -i eth0 -j IDLETIMER','idletimer_raw_PREROUTING -i eth0 -j DROP'),'NWFM_test')
+
+    def test_unobserved_interface_or_timer_is_rejected(self):
+        before,after=self.idle_transition()
+        for changed in [after.replace('eth0','eth1'),after.replace('--timeout 10','--timeout 99')]:
+            with self.subTest(rules=changed),self.assertRaisesRegex(RuntimeError,'Unexpected'):
+                MOD.firewall_cleanup_changes(before,changed,'NWFM_test')
+
+    def test_uid_fence_change_remains_a_failure_during_netd_transition(self):
+        before,after=self.idle_transition()
+        after=after.replace(':OUTPUT ACCEPT',':OUTPUT DROP')
+        with self.assertRaisesRegex(RuntimeError,'filter'):
+            MOD.firewall_cleanup_changes(before,after,'NWFM_test')

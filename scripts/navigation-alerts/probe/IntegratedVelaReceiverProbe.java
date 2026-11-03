@@ -124,7 +124,9 @@ public final class IntegratedVelaReceiverProbe extends Instrumentation {
                 for(Set<String> stages:eventStages.values()){if(stages.contains("SCHEDULER_STARTED")){started=true;startedCount++;}if(stages.contains(expectedTerminal))terminalCount++;else terminal=false;}
                 terminalStage=terminal?expectedTerminal:"";
                 report.put("observed_event_count",eventStages.size()).put("started_event_count",startedCount).put("terminal_event_count",terminalCount);
-                if(terminal&&observedAuthority!=null&&field(scheduler.getClass(),"active").get(scheduler)==null)break;
+                // Silent can finish before the first map/widget frame. Keep observing the
+                // original UI within the existing deadline; audio completion is not a draw fence.
+                if(terminal&&observedAuthority!=null&&uiCaptured&&field(scheduler.getClass(),"active").get(scheduler)==null)break;
                 SystemClock.sleep(10);
             }
             if(uiCaptured){final JSONObject drawn=new JSONObject();onMain(()->{View view=findCompact(actualActivity.getWindow().getDecorView());if(view!=null)drawn.put("shown",view.isShown()).put("alpha",view.getAlpha()).put("draw_time",view.getDrawingTime()).put("description",String.valueOf(view.getContentDescription()));});report.put("post_terminal_ui",drawn);}
@@ -134,7 +136,7 @@ public final class IntegratedVelaReceiverProbe extends Instrumentation {
             if(!terminal)throw new IllegalStateException("No actual terminal outcome");
             if(!terminalStage.equals(expectedTerminal))throw new IllegalStateException("The real outcome did not satisfy the reviewed test choice: "+terminalStage);
             JSONObject ui=report.optJSONObject("ui");String message=ui==null?"":ui.optString("captured_message");
-            if(ui==null||!ui.optBoolean("widget_attached")||!ui.optString("widget_description").contains(message.replace('\n',' ').replace('\r',' ')))throw new IllegalStateException("Actual attached warning UI did not preserve the received text");
+            if(!uiCaptured||ui==null||!ui.optBoolean("widget_attached")||!ui.optBoolean("widget_shown")||!ui.optString("widget_description").contains(message.replace('\n',' ').replace('\r',' ')))throw new IllegalStateException("Actual attached warning UI did not preserve the received text");
             if("true".equals(args.getString("require_no_speed"))&&(ui.optBoolean("legacy_measured_speed_present",true)||ui.optBoolean("native_fresh_measured_speed",true)||ui.optBoolean("phone_speed_present",true)))throw new IllegalStateException("No-speed UI witness requires actual absent legacy and native measured speed");
             if(!report.getJSONObject("final_state").optBoolean("provider_audio_muted"))throw new IllegalStateException("Production startup status did not observe source mute");
             if("true".equals(args.getString("capture_pcm"))){JSONArray signals=pcmReport(folder);report.put("pcm_signals",signals);boolean valid=false;for(int i=0;i<signals.length();i++){JSONObject signal=signals.getJSONObject(i);if(signal.optBoolean("started")&&signal.optBoolean("done")&&!signal.optBoolean("failed")&&!signal.optBoolean("stopped")&&signal.optLong("nonzero_samples")>1000&&signal.optDouble("duration_seconds")>.3&&!signal.optBoolean("truncated"))valid=true;}if(!valid)throw new IllegalStateException("No bounded non-silent tagged TTS PCM signal observed");}

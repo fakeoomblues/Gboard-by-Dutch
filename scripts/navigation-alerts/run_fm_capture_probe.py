@@ -34,14 +34,19 @@ def firewall_cleanup_changes(before, after, chain):
     for name in old:
         if old[name] == new[name]:
             continue
-        if name != '*mangle':
+        if name not in ('*mangle','*raw'):
             raise RuntimeError('Firewall rules differ from prior state: ' + name)
-        prefixes = ('-A routectrl_mangle_INPUT ', '-A wakeupctrl_mangle_INPUT ')
-        stable_old = [line for line in old[name] if not line.startswith(prefixes)]
-        stable_new = [line for line in new[name] if not line.startswith(prefixes)]
+        prefixes = ('-A routectrl_mangle_INPUT ', '-A wakeupctrl_mangle_INPUT ') if name=='*mangle' else ()
+        # Captured API34 netd transition: Wi-Fi -> emulator Ethernet. These exact
+        # idle-timer bookkeeping rules are not the source UID's OUTPUT fence.
+        idle_chain,direction=('idletimer_mangle_POSTROUTING','-o') if name=='*mangle' else ('idletimer_raw_PREROUTING','-i')
+        idle_rules={f'-A {idle_chain} {direction} wlan0 -j IDLETIMER --timeout 15 --label 1 --send_nl_msg',
+                    f'-A {idle_chain} {direction} eth0 -j IDLETIMER --timeout 10 --label 0 --send_nl_msg'}
+        stable_old = [line for line in old[name] if not line.startswith(prefixes) and line not in idle_rules]
+        stable_new = [line for line in new[name] if not line.startswith(prefixes) and line not in idle_rules]
         if stable_old != stable_new:
-            raise RuntimeError('Unexpected mangle rules changed')
-        changed.append('Android netd interface marks/wakeup rules changed; preserved')
+            raise RuntimeError('Unexpected '+name.lstrip('*')+' rules changed')
+        changed.append('Android netd interface marks/wakeup/idle-timer rules changed in '+name+'; preserved')
     return changed
 
 
