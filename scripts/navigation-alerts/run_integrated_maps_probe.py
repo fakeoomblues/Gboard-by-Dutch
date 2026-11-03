@@ -14,10 +14,10 @@ import time
 
 
 def verify_emulator_profile(serial,qemu,avd_name,sdk):
-    """Old5580 is deliberately inadmissible after the external-thread handoff."""
+    """Admit only the current task-owned UI emulator; shared cohorts stay excluded."""
     names=[line.strip() for line in avd_name.splitlines() if line.strip() and line.strip()!='OK']
-    if serial!='emulator-5584' or qemu.strip()!='1' or names!=['native_warnings_car_api34'] or sdk.strip()!='34':
-        raise ValueError('Only owned emulator-5584/native_warnings_car_api34/API34 is authorized for this cohort')
+    if serial!='emulator-5590' or qemu.strip()!='1' or names!=['native_warnings_ui_api34'] or sdk.strip()!='34':
+        raise ValueError('Only owned emulator-5590/native_warnings_ui_api34/API34 is authorized for this cohort')
     return names[0]
 
 
@@ -30,7 +30,8 @@ def prepare_output(path):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sdk',type=Path,required=True)
-    parser.add_argument('--serial',choices=['emulator-5584'],default='emulator-5584')
+    parser.add_argument('--serial',choices=['emulator-5590'],default='emulator-5590')
+    parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='org.ungoogled.android.apps.maps')
     parser.add_argument('--source-apk',type=Path,required=True)
     parser.add_argument('--source-probe',type=Path,required=True)
     parser.add_argument('--receiver-apk',type=Path,required=True,help='Already test-signed current Maps APK')
@@ -44,18 +45,17 @@ def main():
     parser.add_argument('--trigger-pattern',choices=['single','update','clear','repeat'],default='single')
     parser.add_argument('--matrix-timeout-seconds',type=int,choices=range(60,901),default=900)
     parser.add_argument('--observe-pcm',action='store_true',help='Private observer for one integrated VOICE case only; never timing100')
-    parser.add_argument('--diagnostic-hidden-api-policy',action='store_true',help='Owned5580 only: temporarily allow private listener identity observation and restore exact prestate')
+    parser.add_argument('--diagnostic-hidden-api-policy',action='store_true',help='Owned5590 only: temporarily allow private listener identity observation and restore exact prestate')
     args=parser.parse_args();serial=args.serial;adb_path=args.sdk/'platform-tools/adb';prepare_output(args.output)
     if args.observe_pcm and (args.mode!='VOICE' or args.matrix_count!=1):parser.error('PCM observation is limited to one reviewed integrated VOICE case')
     if args.diagnostic_hidden_api_policy and not args.observe_pcm:parser.error('Diagnostic policy is allowed only for the private PCM observer')
-    if args.diagnostic_hidden_api_policy:parser.error('Prior5580 diagnostic-policy admission does not authorize a new5584 override')
     def adb(*command,check=True):return subprocess.run([str(adb_path),'-s',serial,*map(str,command)],capture_output=True,text=True,check=check,timeout=60)
     def sha(path):
         with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
     avd=verify_emulator_profile(serial,adb('shell','getprop','ro.kernel.qemu').stdout,adb('emu','avd','name').stdout,adb('shell','getprop','ro.build.version.sdk').stdout)
     if adb('shell','id','-u').stdout.strip()!='0':raise ValueError('Owned AVD adbd must already be root for the source UID network fence')
     inputs={};certs=[]
-    for package,apk in [('nl.flitsmeister',args.source_apk),('com.google.android.apps.maps',args.receiver_apk),('nl.johninnl.warningprobe.integration.maps',args.receiver_probe)]:
+    for package,apk in [('nl.flitsmeister',args.source_apk),(args.maps_package,args.receiver_apk),('nl.johninnl.warningprobe.integration.maps',args.receiver_probe)]:
         path=adb('shell','pm','path',package).stdout.strip().removeprefix('package:');actual=adb('shell','sha256sum',path).stdout.split()[0]
         if actual!=sha(apk):raise ValueError('Installed bytes differ: '+package)
         inputs[package]=actual
@@ -73,7 +73,7 @@ def main():
         return out
     before=permissions();changed=[];events=queue.Queue();processes={};threads=[];failure=None;receiver=None;source=None
     policy_before=adb('shell','settings','get','global','hidden_api_policy').stdout.strip() if args.diagnostic_hidden_api_policy else None
-    record={'serial':serial,'qemu':'1','avd':avd,'android_sdk':34,'installed_sha256':inputs,'source_probe_sha256':sha(args.source_probe),'signer_sha256':certs[0],'permissions_before':before,'native_id':args.native_id,'mode':args.mode,'diagnostic_hidden_api_policy_before':policy_before,'diagnostic_policy_is_not_production_requirement':True}
+    record={'maps_package':args.maps_package,'serial':serial,'qemu':'1','avd':avd,'android_sdk':34,'installed_sha256':inputs,'source_probe_sha256':sha(args.source_probe),'signer_sha256':certs[0],'permissions_before':before,'native_id':args.native_id,'mode':args.mode,'diagnostic_hidden_api_policy_before':policy_before,'diagnostic_policy_is_not_production_requirement':True}
     def launch(name,command):
         process=subprocess.Popen(list(map(str,command)),stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1);processes[name]=process
         record[name+'_host_pid']=process.pid
@@ -91,7 +91,7 @@ def main():
                 adb('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
         record['permissions_during']=permissions()
         adb('emu','geo','fix','5','52')
-        source_command=[sys.executable,'-u',Path(__file__).with_name('run_fm_capture_probe.py'),'--adb',adb_path,'--serial',serial,'--target-apk',args.source_apk,'--probe-apk',args.source_probe,'--output',args.output/'source','--scenarios','integrated_matrix' if args.matrix_count else 'integrated_trigger','--receiver-package','com.google.android.apps.maps','--native-id',args.native_id,'--hold-seconds','20','--confirm-wait-seconds','120']
+        source_command=[sys.executable,'-u',Path(__file__).with_name('run_fm_capture_probe.py'),'--adb',adb_path,'--serial',serial,'--target-apk',args.source_apk,'--probe-apk',args.source_probe,'--output',args.output/'source','--scenarios','integrated_matrix' if args.matrix_count else 'integrated_trigger','--receiver-package',args.maps_package,'--native-id',args.native_id,'--hold-seconds','20','--confirm-wait-seconds','120']
         if args.matrix_count:source_command+=['--trigger-family',args.trigger_family,'--trigger-pattern',args.trigger_pattern,'--event-count',str(args.matrix_count),'--matrix-timeout-seconds',str(args.matrix_timeout_seconds),'--native-spacing-ms','1000']
         source=launch('source',source_command)
         deadline=time.monotonic()+(args.matrix_timeout_seconds+220 if args.matrix_count else 190)
@@ -118,7 +118,7 @@ def main():
             manifest=re.search(r'^INSTRUMENTATION_RESULT: integrated_receiver_manifest=(.+)$',text,re.M)
             if not manifest:raise RuntimeError('No complete actual receiver result')
             manifest=json.loads(manifest.group(1));remote=manifest['file']
-            if remote!='/storage/emulated/0/Android/data/com.google.android.apps.maps/files/native-warning-integrated/matrix-result.json':raise RuntimeError('Unexpected private matrix report path')
+            if remote!='/storage/emulated/0/Android/data/'+args.maps_package+'/files/native-warning-integrated/matrix-result.json':raise RuntimeError('Unexpected private matrix report path')
             local=args.output/'receiver-full-report.json';adb('pull',remote,local)
             if sha(local)!=manifest['sha256']:raise RuntimeError('Private matrix report bytes differ')
             result=json.loads(local.read_text());record['receiver_manifest']=manifest
@@ -130,7 +130,7 @@ def main():
             if not good or pcm.get('overflow_chunks') or pcm.get('forward_failures') or not (pcm.get('original_listener_restored') or pcm.get('newer_listener_untouched')):raise RuntimeError('Actual measured warning PCM/lifecycle/listener restoration not proven')
             exports=[]
             for value in good:
-                remote=value.get('wav','');expected='/storage/emulated/0/Android/data/com.google.android.apps.maps/files/native-warning-integrated/'+value['utterance_id']+'.wav'
+                remote=value.get('wav','');expected='/storage/emulated/0/Android/data/'+args.maps_package+'/files/native-warning-integrated/'+value['utterance_id']+'.wav'
                 if remote!=expected:raise RuntimeError('Unexpected synthetic warning audio path')
                 local=args.output/(value['utterance_id']+'.wav');adb('pull',remote,local);exports.append({'utterance_id':value['utterance_id'],'wav_sha256':sha(local),'path':str(local)})
             record['integrated_pcm_exports']=exports
@@ -143,7 +143,7 @@ def main():
     finally:
         # Leave source runner alive long enough to execute its verified force-stop/firewall/lease rollback.
         if any(p.poll() is None for p in processes.values()):
-            adb('shell','am','force-stop','com.google.android.apps.maps',check=False)
+            adb('shell','am','force-stop',args.maps_package,check=False)
             if receiver is not None:
                 try:receiver.wait(timeout=10)
                 except subprocess.TimeoutExpired:receiver.kill()

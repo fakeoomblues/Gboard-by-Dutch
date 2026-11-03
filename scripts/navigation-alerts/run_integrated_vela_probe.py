@@ -14,6 +14,14 @@ import time
 import uuid
 
 
+def verify_emulator_profile(serial,qemu,avd_name,sdk):
+    """Admit only the current task-owned emulator, never a phone/shared cohort."""
+    names=[line.strip() for line in avd_name.splitlines() if line.strip() and line.strip()!='OK']
+    if serial!='emulator-5590' or qemu.strip()!='1' or names!=['native_warnings_ui_api34'] or sdk.strip()!='34':
+        raise ValueError('Only owned emulator-5590/native_warnings_ui_api34/API34 is authorized for this cohort')
+    return names[0]
+
+
 def prepare_output(path):
     if path.exists() and any(path.iterdir()):
         raise ValueError("Use a fresh output directory; existing evidence must be retained")
@@ -23,6 +31,7 @@ def prepare_output(path):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--sdk',type=Path,required=True)
+    parser.add_argument('--serial',choices=['emulator-5590'],default='emulator-5590')
     parser.add_argument('--source-apk',type=Path,required=True)
     parser.add_argument('--source-probe',type=Path,required=True)
     parser.add_argument('--receiver-apk',type=Path,required=True,help='Already test-signed current Vela APK')
@@ -39,15 +48,15 @@ def main():
     parser.add_argument('--event-count',type=int,choices=range(1,101),default=1)
     parser.add_argument('--matrix-timeout-seconds',type=int,choices=range(60,901),default=600)
     parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
-    args=parser.parse_args();cancel_token=uuid.uuid4().hex;serial='emulator-5582';adb_path=args.sdk/'platform-tools/adb';prepare_output(args.output)
+    args=parser.parse_args();cancel_token=uuid.uuid4().hex;serial=args.serial;adb_path=args.sdk/'platform-tools/adb';prepare_output(args.output)
     if args.disable_location_for_no_speed and (not args.matrix or args.trigger_family!='p0' or args.post_warmup_no_gps_delay_ms<5000):parser.error('Location-off witness requires genuine P0 matrix and >=5 seconds of expiry')
     if args.capture_pcm and (args.matrix or args.mode!='VOICE'):parser.error('PCM observation is a separate single-event actual system Voice run')
     if args.matrix and args.mode=='SILENT':parser.error('Current genuine native matrix warmup requires completed audio; use the single scenario for Silent intent')
     def adb(*command,check=True):return subprocess.run([str(adb_path),'-s',serial,*map(str,command)],capture_output=True,text=True,check=check,timeout=60)
     def sha(path):
         with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
-    if (adb('shell','getprop','ro.kernel.qemu').stdout.strip()!='1' or adb('emu','avd','name').stdout.splitlines()[0].strip()!='native_warnings_vela_api34'
-            or adb('shell','getprop','ro.build.version.sdk').stdout.strip()!='34' or adb('shell','getprop','sys.boot_completed').stdout.strip()!='1'):raise ValueError('Wrong/unbooted owned Vela AVD')
+    avd=verify_emulator_profile(serial,adb('shell','getprop','ro.kernel.qemu').stdout,adb('emu','avd','name').stdout,adb('shell','getprop','ro.build.version.sdk').stdout)
+    if adb('shell','getprop','sys.boot_completed').stdout.strip()!='1':raise ValueError('Owned Vela AVD is not booted')
     if adb('shell','id','-u').stdout.strip()!='0':raise ValueError('Owned AVD adbd must already be root for the source UID network fence')
     inputs={};certs=[]
     for package,apk in [('nl.flitsmeister',args.source_apk),('app.vela',args.receiver_apk),('nl.johninnl.warningprobe.integration.vela',args.receiver_probe)]:
@@ -73,7 +82,7 @@ def main():
     observer_policy_before=adb('shell','settings','get','global','hidden_api_policy').stdout.strip() if args.capture_pcm else None
     location_mode_before=adb('shell','settings','get','secure','location_mode').stdout.strip() if args.disable_location_for_no_speed else None
     before=permissions();changed=[];events=queue.Queue();processes={};threads=[];failure=None;receiver=None;source=None
-    record={'serial':serial,'qemu':'1','avd':'native_warnings_vela_api34','installed_sha256':inputs,'source_probe_sha256':sha(args.source_probe),'signer_sha256':certs[0],'permissions_before':before,'native_id':args.native_id,'mode':args.mode}
+    record={'serial':serial,'qemu':'1','avd':avd,'installed_sha256':inputs,'source_probe_sha256':sha(args.source_probe),'signer_sha256':certs[0],'permissions_before':before,'native_id':args.native_id,'mode':args.mode}
     cancel_requested=False
     def request_cancel(reason):
         nonlocal cancel_requested

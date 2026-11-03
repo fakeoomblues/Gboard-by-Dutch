@@ -1,0 +1,144 @@
+{
+  "format": 1,
+  "overall_status": "incomplete",
+  "source_apk_sha256": "19d40560cb885f868ffeeb936f12a0daa0e7fa666776acf1582e85e63b6c2ecd",
+  "maps_apk_sha256": "3285d836bfb7caefd361fec42d7ed080017021f885eabf331b02b88287fb8839",
+  "vela_apk_sha256": "958bd90f477c45d8210f797b34e8649162d4153238419ab2ab7af856cd9edf19",
+  "maps_modes": [
+    {
+      "mode": "VOICE",
+      "status": "passed",
+      "warning_id": "SpeedCam:fm15-final-maps-voice",
+      "provider_session": "3a0a6aad-577e-4a4f-a4e0-710ba1aacc53",
+      "sequence": 4,
+      "announcement_index": 2,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "3cb50d9bfb1bab403fa042ff3daa3eecd8af537f291b8e40dbc3d2ff5334dd45",
+      "attempt_id": "40b4711f-dca7-4c41-b127-9b85428926eb",
+      "source_outcomes": [
+        "GRANTED",
+        "STARTED",
+        "COMPLETED"
+      ],
+      "actual_start_count": 1,
+      "terminal": "COMPLETED",
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "source_report_sha256": "dc64a7640f94588a963bdee3e5a7148d24bfde4b5c08a3e85a2216bd06afff29",
+      "pcm_exports": [
+        {
+          "utterance_id": "morphe-warning-d97e79e4-7f63-40fb-81ad-3494f044b2a4",
+          "wav_sha256": "323f2d975821d26bc59aace5c3ee2cc25c9f0860af64266d586ee68fd0978207",
+          "archive_member": "maps-voice/morphe-warning-d97e79e4-7f63-40fb-81ad-3494f044b2a4.wav"
+        }
+      ],
+      "pcm_observer": {
+        "installed": true,
+        "total_bytes": 144000,
+        "overflow_chunks": 0,
+        "forward_failures": 0,
+        "original_listener_restored": true,
+        "newer_listener_untouched": false,
+        "utterances": [
+          {
+            "utterance_id": "morphe-warning-ae75c82c-5b38-4c3f-95a4-c54117a23f29",
+            "starts": 1,
+            "done": 1,
+            "stops": 0,
+            "errors": 0,
+            "bytes": 72000,
+            "nonzero_bytes": 60267,
+            "rate": 24000,
+            "format": 2,
+            "channels": 1,
+            "wav": "/storage/emulated/0/Android/data/org.ungoogled.android.apps.maps/files/native-warning-integrated/morphe-warning-ae75c82c-5b38-4c3f-95a4-c54117a23f29.wav"
+          },
+          {
+            "utterance_id": "morphe-warning-d97e79e4-7f63-40fb-81ad-3494f044b2a4",
+            "starts": 1,
+            "done": 1,
+            "stops": 0,
+            "errors": 0,
+            "bytes": 72000,
+            "nonzero_bytes": 60267,
+            "rate": 24000,
+            "format": 2,
+            "channels": 1,
+            "wav": "/storage/emulated/0/Android/data/org.ungoogled.android.apps.maps/files/native-warning-integrated/morphe-warning-d97e79e4-7f63-40fb-81ad-3494f044b2a4.wav"
+          }
+        ],
+        "scope": "Private test observer of the actual receiver-owned synthetic warning TTS stream only; no microphone or other-app audio"
+      },
+      "warmup_excluded": true
+    },
+    {
+      "mode": "TONE",
+      "status": "passed",
+      "warning_id": "SpeedCam:fm15-final-maps-tone",
+      "provider_session": "e283f9f2-e8e9-45f0-a3d7-4742e57d2ad4",
+      "sequence": 1,
+      "announcement_index": 1,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "23507d38203d3d63c553d2c20dad0dc788da3cc588a957735dd83a90eaeaf89a",
+      "attempt_id": "2fc99a55-b61b-42d4-875e-6f9056af7842",
+      "source_outcomes": [
+        "GRANTED",
+        "STARTED",
+        "COMPLETED"
+      ],
+      "actual_start_count": 1,
+      "terminal": "COMPLETED",
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "source_report_sha256": "b7f09749aa39d43d33d18517c0b11416fb38cb9931d2e82bc19abd5771ab65f6",
+      "attached_widget_draw_observed": true
+    },
+    {
+      "mode": "SILENT",
+      "status": "passed",
+      "warning_id": "SpeedCam:fm15-final-maps-silent",
+      "provider_session": "5cc7fd77-4363-49cd-9b6b-b569dd19ad03",
+      "sequence": 1,
+      "announcement_index": 1,
+      "message": "Speed cam 50",
+      "language_tag": "en-US",
+      "event_key": "f94a2946c31f1e1d16a94eb605928499e9126c2282c5aa754fd2abd2d6893238",
+      "attempt_id": "a690ebc8-c207-4d25-8ff0-dbe5d7adaeec",
+      "source_outcomes": [
+        "USER_MUTED"
+      ],
+      "actual_start_count": 0,
+      "terminal": "USER_MUTED",
+      "provider_muted": true,
+      "receiver_quiescent": true,
+      "preferences_restored": true,
+      "source_report_sha256": "175a25b9b98c6cdd243f3acfb63f041317622a71c9d976c2017cb1809263fef5",
+      "attached_widget_draw_observed": true
+    }
+  ],
+  "vela_modes": "Expected Voice/Tone completion and Silent USER_MUTED observed, but all three fail mandatory attached-UI gate; not accepted. UI setup rerun blocked before any warning by a Digital Wellbeing system ANR dialog. No product defect established.",
+  "timing": "Not executed; no percentile acceptance. Local CI overlapped the first functional batch.",
+  "regression_checkpoint": {
+    "python_tests": 549,
+    "skipped": 45,
+    "failures": 0,
+    "receiver_probes_compiled_signed": true
+  },
+  "archives": [
+    {
+      "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-01/evidence.tar.gz",
+      "sha256": "39d2438f3653d9769d2899513505ba6d6cf6035c205c57bec8b2d865ec2da8f9",
+      "bytes": 128407
+    },
+    {
+      "path": ".analysis/native-warning-bindings/fm15-port/final-output-timing-02/evidence.tar.gz",
+      "sha256": "b6200ba86f14d64386055c9e5fdfe30cb1075162ef2195fad93c8f7ea98209c0",
+      "bytes": 148362
+    }
+  ],
+  "cleanup_required": false
+}

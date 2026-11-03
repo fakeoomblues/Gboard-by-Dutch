@@ -48,7 +48,7 @@ class IntegratedVelaCleanupTest(unittest.TestCase):
                 if args[:2] == ['shell', 'getprop']:
                     output = '34' if args[-1] == 'ro.build.version.sdk' else '1'
                 elif args == ['emu', 'avd', 'name']:
-                    output = 'native_warnings_vela_api34\nOK'
+                    output = 'native_warnings_ui_api34\nOK'
                 elif args[:3] == ['shell', 'id', '-u']:
                     output = '0'
                 elif args[:3] == ['shell', 'pm', 'path']:

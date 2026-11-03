@@ -39,7 +39,7 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             if(!"true".equals(args.getString("reviewed_synthetic_choices")))throw new IllegalArgumentException("Explicit reviewed_synthetic_choices=true is required");
             String mode=args.getString("mode","");if(!mode.equals("VOICE")&&!mode.equals("TONE")&&!mode.equals("SILENT"))throw new IllegalArgumentException("Explicit VOICE/TONE/SILENT mode is required");
             String type=args.getString("expected_native_type","");if(type.isEmpty())throw new IllegalArgumentException("Expected native type required");
-            Context context=getTargetContext();String pkg=context.getPackageName();if(!pkg.equals("com.google.android.apps.maps"))throw new IllegalArgumentException("Unexpected target");
+            Context context=getTargetContext();String pkg=context.getPackageName();if(!pkg.equals("com.google.android.apps.maps")&&!pkg.equals("org.ungoogled.android.apps.maps"))throw new IllegalArgumentException("Unexpected target");
             ClassLoader loader=context.getClassLoader();telemetry=Class.forName("org.ungoogled.ui.ExternalTelemetry",true,loader);diagnostics=Class.forName("nl.johninnl.navigation.alerts.WarningDiagnostics",true,loader);
             Class<?> shapes=Class.forName("org.ungoogled.ui.Shapes",true,loader);String file=(String)field(shapes,"PREFS").get(null);prefs=context.getSharedPreferences(file,Context.MODE_PRIVATE);original=copy(prefs.getAll());
             report.put("preferences_before_sha256",fingerprint(original)).put("process_uid",android.os.Process.myUid()).put("target_uid",context.getApplicationInfo().uid).put("target_package",pkg);
