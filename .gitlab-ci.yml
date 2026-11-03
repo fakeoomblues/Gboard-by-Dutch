@@ -19,11 +19,12 @@ verify:
     SHARED_MAPS_API_KEY: AIzaSyDOCSGATEPLACEHOLDER00000000000000
   script:
     - node .forgejo/scripts/identity.cjs --history
-    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs
+    - node --test tests/test_release_branding.cjs tests/test_preview_release.cjs tests/test_identity.cjs tests/test_release_discovery.cjs tests/test_codeberg.cjs tests/test_gitgud.cjs tests/test_gitlab.cjs tests/test_gitlab_publish.cjs
     - .venv/bin/python -m unittest discover -s tests
     - ./gradlew :patches:buildAndroid :patches:test :patches:generatePatchesList :extensions:medium-reader:testDebugUnitTest :extensions:medium-privacy:testDebugUnitTest :extensions:waze:testDebugUnitTest :extensions:flitsmeister:testDebugUnitTest :extensions:vela:testDebugUnitTest :extensions:extension:testDebugUnitTest :extensions:gearslip:testDebugUnitTest :extensions:maps-gearslip:testDebugUnitTest :extensions:soundcloud:testDebugUnitTest --no-daemon -Dorg.gradle.jvmargs=-Xmx2g
     - .venv/bin/python scripts/medium/check_bundle.py
     - .venv/bin/python -m unittest discover -s scripts/medium/tests
+    - if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then export GITLAB_REPOSITORY="$CI_PROJECT_PATH"; fi
     - .venv/bin/python scripts/generate_docs_catalog.py
     - .venv/bin/python scripts/check_docs_app_pages.py
     - .venv/bin/python -m mkdocs build --strict
@@ -47,4 +48,11 @@ release:
       fi
     - node .gitlab/scripts/identity.cjs
     - git checkout -B "$CI_COMMIT_BRANCH" "$CI_COMMIT_SHA"
-    - node .gitlab/scripts/release.cjs
+    - |
+      if [ "$CI_SERVER_HOST" = "gitlab.com" ]; then
+        node .gitlab/scripts/check_secrets.cjs
+        node .gitlab/scripts/publish_release.cjs
+        node .gitlab/scripts/discovery.cjs
+      else
+        node .gitlab/scripts/release.cjs
+      fi

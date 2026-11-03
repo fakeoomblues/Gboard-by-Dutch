@@ -6,30 +6,30 @@
 </p>
 
 <p align="center">
-  <a href="https://johninnl.codeberg.page/nl-morphe-patches/en/guides/install/#2-add-the-patch-source">
+  <a href="docs/site/en/guides/install.md#2-add-the-patch-source">
     <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" width="320">
   </a>
 </p>
 
-<p align="center">Follow the installation guide to add the Codeberg metadata URL in Morphe Manager.</p>
+<p align="center">Follow the installation guide to add the GitLab metadata URL in Morphe Manager.</p>
 
 # Dutch App Patches
 
 Community patches for Dutch and Belgian Android apps, compatible with Morphe. Choose which
 ads, tracking and prompts to remove, and read what each patch changes in the
-[Dutch guide](https://johninnl.codeberg.page/nl-morphe-patches/) or
-[English guide](https://johninnl.codeberg.page/nl-morphe-patches/en/).
+[Dutch guide](docs/site/nl/index.md) or
+[English guide](docs/site/en/index.md).
 Independently maintained; not affiliated with Morphe or the app publishers.
 
 Installable bundles are listed on the
-[releases page](https://codeberg.org/JohninNL/nl-morphe-patches/releases).
+[releases page](https://gitlab.com/johninnld/nl-morphe-patches/-/releases).
 All app targets listed below belong to the production patch set.
 
 ## Get started
 
 1. Install [Morphe Manager](https://morphe.software/).
 2. Check your app's guide for the supported version and original download.
-3. Follow [Add the patch source](https://johninnl.codeberg.page/nl-morphe-patches/en/guides/install/#2-add-the-patch-source)
+3. Follow [Add the patch source](docs/site/en/guides/install.md#2-add-the-patch-source)
    on your Android device, then choose your patches in Manager and apply them
    to the original app file.
 
@@ -40,15 +40,15 @@ it does not guarantee anonymity or remove all network traffic.
 
 ### Waze or Flitsmeister missing from Android Auto?
 
-Use the [Android Auto walkthrough with screenshots (Nederlands)](https://johninnl.codeberg.page/nl-morphe-patches/guides/android-auto/)
-or [English](https://johninnl.codeberg.page/nl-morphe-patches/en/guides/android-auto/).
+Use the [Android Auto walkthrough with screenshots (Nederlands)](docs/site/nl/guides/android-auto.md)
+or [English](docs/site/en/guides/android-auto.md).
 It explains why navigation apps need extra installation steps and takes you
 through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.35.1](https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.35.1)** · 55 apps · 282 patches
+**Patch bundle [v1.35.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/tag/v1.35.1)** · 55 apps · 282 patches
 
 ### Weather
 

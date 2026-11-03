@@ -9,6 +9,8 @@ function restorePublicLinks(notes) {
   // semantic-release mistakes GIT_AUTHOR_NAME for a secret. Restore only this
   // repository's known public URL prefixes; retain all other secret masking.
   return notes
+    .replaceAll("https://gitlab.com/[secure]d/nl-morphe-patches", "https://gitlab.com/johninnld/nl-morphe-patches")
+    .replaceAll("https://gitlab.com/[secure]/nl-morphe-patches", "https://gitlab.com/johninnld/nl-morphe-patches")
     .replaceAll("https://gitgud.io/[secure]/nl-morphe-patches", "https://gitgud.io/JohninNL/nl-morphe-patches")
     .replaceAll("https://codeberg.org/[secure]/nl-morphe-patches", "https://codeberg.org/JohninNL/nl-morphe-patches")
     .replaceAll("https://[secure].codeberg.page/nl-morphe-patches/", "https://johninnl.codeberg.page/nl-morphe-patches/")
@@ -25,9 +27,10 @@ function restorePublicLinks(notes) {
 function renderNotes(notes, context) {
   if (notes.startsWith(`${MARKER}\n`)) return notes;
 
-  const gitgud = !!context.env?.GITGUD_REPOSITORY;
-  const codeberg = !gitgud && !!context.env?.CODEBERG_REPOSITORY;
-  const repository = context.env?.GITGUD_REPOSITORY || context.env?.CODEBERG_REPOSITORY || context.env?.GITHUB_REPOSITORY || REPOSITORY;
+  const gitlab = !!context.env?.GITLAB_REPOSITORY;
+  const gitgud = !gitlab && !!context.env?.GITGUD_REPOSITORY;
+  const codeberg = !gitlab && !gitgud && !!context.env?.CODEBERG_REPOSITORY;
+  const repository = context.env?.GITLAB_REPOSITORY || context.env?.GITGUD_REPOSITORY || context.env?.CODEBERG_REPOSITORY || context.env?.GITHUB_REPOSITORY || REPOSITORY;
   const { version, gitHead } = context.nextRelease;
   if (!/^[a-f0-9]{40}(?:[a-f0-9]{24})?$/i.test(gitHead || "")) {
     throw new Error("Release branding requires the full source commit, never a mutable ref.");
@@ -36,16 +39,18 @@ function renderNotes(notes, context) {
     throw new Error("Release branding requires an owner/repository GitHub repository name.");
   }
 
-  const banner = gitgud ? `https://gitgud.io/${repository}/-/raw/${gitHead}/docs/site/assets/brand/release-banner.png` : codeberg ? `https://codeberg.org/${repository}/raw/commit/${gitHead}/docs/site/assets/brand/release-banner.png`
+  const banner = gitlab ? `https://gitlab.com/${repository}/-/raw/${gitHead}/docs/site/assets/brand/release-banner.png` : gitgud ? `https://gitgud.io/${repository}/-/raw/${gitHead}/docs/site/assets/brand/release-banner.png` : codeberg ? `https://codeberg.org/${repository}/raw/commit/${gitHead}/docs/site/assets/brand/release-banner.png`
     : `https://raw.githubusercontent.com/${repository}/${gitHead}/docs/site/assets/brand/release-banner.png`;
-  const source = gitgud ? `https://gitgud.io/${repository}/-/commit/${gitHead}` : `https://${codeberg ? "codeberg.org" : "github.com"}/${repository}/commit/${gitHead}`;
+  const source = gitlab ? `https://gitlab.com/${repository}/-/commit/${gitHead}` : gitgud ? `https://gitgud.io/${repository}/-/commit/${gitHead}` : `https://${codeberg ? "codeberg.org" : "github.com"}/${repository}/commit/${gitHead}`;
   return [
     MARKER,
     `![Dutch App Patches. Dutch apps. Your choices.](${banner})`,
     "",
     `**Release · patch bundle v${version}.**`,
     "",
-    gitgud
+    gitlab
+      ? `[Source metadata](https://gitlab.com/${repository}/-/raw/${context.branch?.name || "main"}/patches-bundle.json) · [User guide](https://gitlab.com/${repository}/-/blob/main/docs/site/en/index.md)`
+      : gitgud
       ? `[Source metadata](https://gitgud.io/${repository}/-/raw/${context.branch?.name || "main"}/patches-bundle.json) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)`
       : codeberg
       ? `[Source metadata](https://codeberg.org/${repository}/raw/branch/${context.branch?.name || "main"}/patches-bundle.json) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)`
