@@ -33,6 +33,8 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: https://github.com/android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Verify publisher and history before building or publishing
         run: node .forgejo/scripts/identity.cjs --release
       - name: Verify required signing and build secrets

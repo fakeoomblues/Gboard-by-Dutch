@@ -27,6 +27,8 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: https://github.com/android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - run: npm ci --ignore-scripts
       - name: Prepare documentation tools
         run: |
