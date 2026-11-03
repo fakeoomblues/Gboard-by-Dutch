@@ -42,8 +42,12 @@ val disablePartnerServices = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility, partnerServiceResources)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, partnerServiceResources)
     execute {
+        if (isFlitsmeister15()) {
+            applyPlans(partnerServiceLeafPlans15() + mainPartnerPlans15())
+            return@execute
+        }
         applyPlans(listOf(
             MethodPlan(
                 "Ljxg;->d(Landroidx/compose/ui/Modifier;Lz39;Lz39;Lz39;Lz39;Lz39;Lz39;ZLnl/flitsmeister/fmcore/data/model/vehicle/BaseVehicleProfile;Landroidx/compose/runtime/Composer;I)V",

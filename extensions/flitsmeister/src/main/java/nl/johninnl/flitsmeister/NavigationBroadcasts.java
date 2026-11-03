@@ -39,14 +39,21 @@ public final class NavigationBroadcasts {
     private static BroadcastReceiver requests;
     private static Candidate candidate;
     private static long candidateAt=-1;
+    // The patch selects this profile from its verified publisher version before
+    // the service starts. Old obfuscated names also exist as unrelated15 types.
+    private static volatile boolean version15;
 
     public static String receiverPackage() { return ""; }
+    public static void init15(Context context) {
+        version15 = true;
+        init(context);
+    }
     private static void main(Runnable action) {
         if (Looper.myLooper() == Looper.getMainLooper()) action.run(); else MAIN.post(action);
     }
     public static void init(Context context) {
         nl.johninnl.navigation.startup.ProviderAudio.init(context);
-        NativeWarnings.init(context);
+        if(NativeWarnings.supportsEventProtocol(context))NativeWarnings.init(context);
         Context application = context.getApplicationContext();
         main(() -> {
             if (app != null) return;
@@ -65,7 +72,7 @@ public final class NavigationBroadcasts {
         });
     }
     public static void started() {
-        NativeWarnings.started();
+        if(NativeWarnings.endpoint()!=null)NativeWarnings.started();
         drivingEngine = true;
         main(() -> { if (app == null || active) return; active = true; STATE.reset(true); ALERTS.reset(true); dirty = true;
             publish(true); MAIN.removeCallbacks(TICK); MAIN.postDelayed(TICK,1000); });
@@ -104,28 +111,41 @@ public final class NavigationBroadcasts {
     /** Called after native RoadInfoService has selected the final road/vehicle/VMS limit. */
     public static void road() {
         try {
-            Class<?> info=Class.forName("hmf");
+            Class<?> info=Class.forName(version15 ? "brf" : "hmf");
             int limit=info.getField("f").getInt(null);
-            int country=Class.forName("r65").getField("b").getInt(null);
+            int country=Class.forName(version15 ? "m65" : "r65").getField("b").getInt(null);
             limit(limit,country==14 ? "imperial" : "metric");
         } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Road source",e); }
     }
     /** Capture a candidate and geometry after native detection; do not use premium sample averages. */
     public static void zone(Object task, Location original) {
         if (original == null || (original.hasAccuracy() && original.getAccuracy()>50)) return;
+        try {
+            observeCandidate(task.getClass().getField("d").get(task), original);
+        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Zone source",e); }
+    }
+    /**15 replaces the old average-speed task with the background lookahead
+     * report-events service. Called immediately after its native candidate write,
+     * while p0 still refers to the service, using that service's measured fix. */
+    public static void zone15(Object task) {
+        try {
+            Object report=Class.forName("hff").getField("b").get(null);
+            Location fix=(Location)task.getClass().getField("v1").get(task);
+            observeCandidate(report, fix);
+        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Lookahead zone source",e); }
+    }
+    private static void observeCandidate(Object report, Location original) throws ReflectiveOperationException {
+        if (original == null || (original.hasAccuracy() && original.getAccuracy()>50)) return;
         final Location fix=new Location(original);
         final long at=fix.getElapsedRealtimeNanos()/1_000_000, received=SystemClock.elapsedRealtime(), token=generation;
-        try {
-            Object report=task.getClass().getField("d").get(task);
-            final Candidate selected=report==null ? null : readCandidate(report,fix);
-            main(() -> {
-                if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
-                if(at<candidateAt) return;
-                candidateAt=at; candidate=selected;
-                if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); } else observe(selected,fix,at);
-                dirty=true; publish(false);
-            });
-        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Zone source",e); }
+        final Candidate selected=report==null ? null : readCandidate(report,fix);
+        main(() -> {
+            if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
+            if(at<candidateAt) return;
+            candidateAt=at; candidate=selected;
+            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); } else observe(selected,fix,at);
+            dirty=true; publish(false);
+        });
     }
     private static void observe(Candidate c,Location fix,long at) {
         ZoneGeometry.Result p=ZoneGeometry.project(c.path,fix.getLatitude(),fix.getLongitude());
@@ -158,9 +178,9 @@ public final class NavigationBroadcasts {
         if(reportSubscription!=null)return;
         try {
             Object bus=Class.forName("nl.flitsmeister.fmcore.models.eventbuses.AppNotificationBus").getMethod("getBusAlertedReports").invoke(null);
-            Class<?> function=Class.forName("b49");
+            Class<?> function=Class.forName(version15 ? "u39" : "b49");
             Object callback=Proxy.newProxyInstance(function.getClassLoader(),new Class<?>[]{function},(proxy,method,args)->{
-                if(method.getName().equals("invoke")) { reports(args[0]); return Class.forName("tvj").getField("a").get(null); }
+                if(method.getName().equals("invoke")) { reports(args[0]); return Class.forName(version15 ? "l1k" : "tvj").getField("a").get(null); }
                 if(method.getName().equals("hashCode"))return System.identityHashCode(proxy);
                 if(method.getName().equals("equals"))return proxy==args[0];
                 return "NavigationReports";
@@ -170,7 +190,7 @@ public final class NavigationBroadcasts {
     }
     public static void reports(Object value) {
         if(!(value instanceof Collection))return;
-        NativeWarnings.reports(value);
+        if(NativeWarnings.endpoint()!=null)NativeWarnings.reports(value);
         final long at=SystemClock.elapsedRealtime(), token=generation;
         List<NavigationAlerts.Alert> reports=new ArrayList<>();
         for(Object entry:(Collection<?>)value) {
@@ -261,6 +281,6 @@ public final class NavigationBroadcasts {
         drivingEngine = false;
         MAIN.removeCallbacksAndMessages(null);
         // Robolectric resets receiver registrations between tests.
-        app=null; requests=null; ALERTS.reset(true); reportSubscription=null; active=false; candidate=null; candidateAt=-1; generation++; lastSent=-5000; lastRequest=-1000; lastStatus="";
+        app=null; requests=null; ALERTS.reset(true); reportSubscription=null; active=false; candidate=null; candidateAt=-1; generation++; lastSent=-5000; lastRequest=-1000; lastStatus=""; version15=false;
     }
 }

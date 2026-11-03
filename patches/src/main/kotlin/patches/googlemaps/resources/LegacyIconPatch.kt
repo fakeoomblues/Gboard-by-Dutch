@@ -78,6 +78,10 @@ val legacyIconPatch = resourcePatch(
     compatibleWith(COMPATIBILITY_MAPS)
 
     execute {
+        // Change app name runs first. An explicit icon choice takes precedence over
+        // this default patch, including an explicit Original Google Maps choice.
+        if (hasMapsBranding()) return@execute
+
         val res = this["res"]
         File(res, "drawable").mkdirs()
         // microG Maps: the same pin with microG's C laid over its circle.

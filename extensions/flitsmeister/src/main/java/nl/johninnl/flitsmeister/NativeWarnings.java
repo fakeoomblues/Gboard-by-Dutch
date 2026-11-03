@@ -50,6 +50,13 @@ public final class NativeWarnings {
     private static final class Record {
         Bundle fields; long revision=1,index; boolean listed;
     }
+    /** The audited event protocol belongs to this exact pinned native artifact. */
+    static boolean supportsEventProtocol(Context context){
+        try{
+            android.content.pm.PackageInfo info=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
+            return "14.17".equals(info.versionName)&&info.versionCode==1287;
+        }catch(android.content.pm.PackageManager.NameNotFoundException|RuntimeException unavailable){return false;}
+    }
     public static synchronized WarningEndpoint init(Context context) {
         if(app==null){app=context.getApplicationContext();captureEnabled=true;}
         if(endpoint==null)endpoint=new WarningEndpoint(app,uid->{
@@ -58,7 +65,7 @@ public final class NativeWarnings {
             if(!StartupProtocol.allowed(packages,configured))return null;
             for(String name:packages)if(StartupProtocol.allowed(new String[]{name},configured))return name;
             return null;
-        },new WarningCapabilities(FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),true));
+        },new WarningCapabilities(FlitsmeisterWarningTypes.MANIFEST_DIGEST,FlitsmeisterWarningTypes.required(),supportsEventProtocol(app)));
         return endpoint;
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}

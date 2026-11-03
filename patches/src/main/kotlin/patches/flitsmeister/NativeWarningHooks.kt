@@ -20,6 +20,8 @@ private const val EARLY_VIEW="Lnl/flitsmeister/fmcore/models/data/earlywarnings/
 /** Resolve every native authority before edits; parameters and native completion stay untouched. */
 context(context: BytecodePatchContext)
 internal fun bindFlitsmeisterNativeWarnings() {
+    // Version15 retains its released legacy feed; these exact native authorities are14.17-only.
+    if (isFlitsmeister15()) return
     val methods=flitsmeisterWarningContracts.keys.associateWith { descriptor ->
         val owner=descriptor.substringBefore("->");val signature=descriptor.substringAfter("->")
         val parameters=Regex("\\[*L[^;]+;|\\[*[ZBCSIJFD]").findAll(signature.substringAfter('(').substringBefore(')')).map{it.value}.toList()

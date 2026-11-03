@@ -13,10 +13,10 @@ hide:
 
 <div class="dap-home-links" markdown>
 
-[Toevoegen aan Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches){ .md-button .md-button--primary }
+[Patchbron toevoegen](guides/install.md#2-voeg-de-patchbron-toe){ .md-button .md-button--primary }
 [Installatiehandleiding](guides/install.md)
 [Download originele apps](guides/downloads.md)
-[Releases](https://github.com/johninnl/nl-morphe-patches/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
 
 </div>
 </div>
@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.33.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.36.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -298,25 +298,25 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">14.17</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">14.17, 15.0</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
 <summary>9 patches</summary>
 <ul>
-<li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
-<li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
-<li>Disable tracking <span class="dap-app-card__target">14.17</span></li>
-<li>Fix PairIP startup <span class="dap-app-card__target">14.17</span></li>
-<li>Guest mode <span class="dap-app-card__target">14.17</span></li>
-<li>Hide Pro notices <span class="dap-app-card__target">14.17</span></li>
-<li>Hide ads <span class="dap-app-card__target">14.17</span></li>
-<li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17</span></li>
-<li>Unlock Pro <span class="dap-app-card__target">14.17</span></li>
+<li>Broadcast navigation data <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Disable partner services <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Disable tracking <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Fix PairIP startup <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Guest mode <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Hide Pro notices <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Unlock Pro <span class="dap-app-card__target">14.17, 15.0</span></li>
 </ul>
 </details>
 
@@ -603,7 +603,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable alle versies gearslip personal library" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable alle versies custom branding gearslip personal library" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Myspoti](apps/myspoti.md)
@@ -611,8 +611,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
 <p class="dap-app-card__package">app.myspoti.stable</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>2 patches</summary>
 <ul>
+<li>Custom branding <span class="dap-app-card__target">Alle versies · standaard uit</span></li>
 <li>Gearslip personal library <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>

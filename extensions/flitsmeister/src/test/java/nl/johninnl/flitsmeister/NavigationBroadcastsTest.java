@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk=32,manifest=Config.NONE)
 public class NavigationBroadcastsTest {
  Application app;
- @Before public void setup() { app=RuntimeEnvironment.getApplication(); NavigationBroadcasts.resetForTest(); NativeWarnings.setEndpointForTest(nl.johninnl.navigation.alerts.WarningEndpointFixtures.empty()); NavigationBroadcasts.init(app); }
+ @Before public void setup() { app=RuntimeEnvironment.getApplication(); NavigationBroadcasts.resetForTest(); nl.flitsmeister.fmcore.models.eventbuses.AppNotificationBus.version15=false; NativeWarnings.setEndpointForTest(nl.johninnl.navigation.alerts.WarningEndpointFixtures.empty()); NavigationBroadcasts.init(app); }
  @After public void cleanup(){NativeWarnings.setEndpointForTest(null);}
  Intent last() { List<Intent> e=shadowOf(app).getBroadcastIntents(); return e.get(e.size()-1); }
  Location fix(float speed) { Location l=new Location("gps"); l.setLatitude(52); l.setLongitude(5); l.setAccuracy(4); l.setSpeed(speed); l.setElapsedRealtimeNanos(android.os.SystemClock.elapsedRealtimeNanos()); return l; }

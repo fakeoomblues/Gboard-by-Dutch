@@ -1,4 +1,4 @@
-"""Verify independently decoded Flitsmeister 14.17 local controls and retained contracts.
+"""Verify independently decoded Flitsmeister 14.17/15.0 controls and retained contracts.
 
 The digest oracle was derived from the publisher artifact before production edits.
 It checks entire instruction bodies, including original branch destinations and all
@@ -13,7 +13,7 @@ import re
 import xml.etree.ElementTree as ET
 from flitsmeister_contracts import METHOD_HASHES, RESOURCE_HASHES, PROBES, METHOD_SHAPES, ROW_CONTRACTS
 
-NAMES = {'Unlock Pro', 'Hide Pro notices', 'Fix PairIP startup', 'Disable partner services', 'Hide ads', 'Disable tracking', 'Guest mode', 'Broadcast navigation data'}
+NAMES = {'Unlock Pro', 'Hide Pro notices', 'Fix PairIP startup', 'Disable partner services', 'Hide ads', 'Disable tracking', 'Guest mode', 'Broadcast navigation data', 'Support Gearslip and DriveDeck'}
 A = '{http://schemas.android.com/apk/res/android}'
 HELPER = 'Lmorphe/flitsmeister/FeatureEligibility;'
 NAVIGATION = 'Lnl/johninnl/flitsmeister/NavigationBroadcasts;'
@@ -29,7 +29,12 @@ def source(root, cls):
     text = paths[0].read_text()
     # The added calls are checked separately against a closed callsite list.
     # Remove only those calls before applying all original whole-method/class oracles.
-    return NAVIGATION_CALL.sub('', text) if NAVIGATION_ENABLED else text
+    if NAVIGATION_ENABLED:
+        text = NAVIGATION_CALL.sub('', text)
+        if name == 'nl/flitsmeister/services/base/FlitsmeisterBaseService':
+            from verify_flitsmeister_release import normalize_destroy_class
+            text = normalize_destroy_class(text, True)
+    return text
 
 
 def method(root, descriptor):
@@ -547,6 +552,8 @@ def verify_navigation(root, selected):
 def verify(root: Path, selected: set[str]) -> None:
     global NAVIGATION_ENABLED
     NAVIGATION_ENABLED = "Broadcast navigation data" in selected
+    from verify_flitsmeister_release import verify as verify_release
+    verify_release(root, selected, 14)
     verify_navigation(root, NAVIGATION_ENABLED)
     assert selected <= NAMES, f'Unknown controls {selected - NAMES}'
     unlock, hide = 'Unlock Pro' in selected, 'Hide Pro notices' in selected
@@ -591,6 +598,9 @@ def verify(root: Path, selected: set[str]) -> None:
     assert not failures, f'{len(failures)} entire-method contracts differ for selection {selected}; first: ' + ', '.join(failures[:5])
     for path, expected in RESOURCE_HASHES.items():
         doc = ET.parse(root / path).getroot()
+        if path == 'AndroidManifest.xml':
+            from verify_flitsmeister_release import normalize_manifest
+            doc = normalize_manifest(doc, selected, 14)
         wanted = expected[int(hide)]
         if path == 'AndroidManifest.xml' and selected:
             wanted = ('51f42612fa08c69e387f6651e89235784e99d63979b3394caf447b0dc248da18'
@@ -631,5 +641,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('decoded', type=Path)
     parser.add_argument('-e', '--enable', action='append', default=[], choices=sorted(NAMES))
+    parser.add_argument('--apk', type=Path, help='Actual APK for version 15 native payload verification')
     args = parser.parse_args()
-    verify(args.decoded, set(args.enable))
+    from verify_flitsmeister15 import decoded_profile, verify as verify15
+    profile = decoded_profile(args.decoded)
+    if profile[0] == '15.0':
+        verify15(args.decoded, set(args.enable), args.apk)
+    else:
+        verify(args.decoded, set(args.enable))

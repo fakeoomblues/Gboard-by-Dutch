@@ -4,9 +4,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, urljoin
 import argparse
+import os
 
 ROOT = Path(__file__).resolve().parents[1]
-SITE_URL = 'https://johninnl.github.io/nl-morphe-patches/'
+# GitLab supplies CI_PAGES_URL without a trailing slash. Keep its root path relative.
+SITE_URL = os.environ.get('SITE_URL', 'https://nl-morphe-patches-ed90fa.gitlab.io/').rstrip('/') + '/'
 
 
 class Document(HTMLParser):

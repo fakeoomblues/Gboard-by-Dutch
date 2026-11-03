@@ -19,7 +19,7 @@ val navigationBroadcastPatch = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(startupCompatibility, startupResources)
+    dependsOn(startupCompatibility, startupCompatibility15, startupResources)
     extendWith("extensions/flitsmeister.mpe")
     val receiverPackage by stringOption(
         key = "receiverPackage", default = "", title = "Receiver package",
@@ -37,6 +37,10 @@ val navigationBroadcastPatch = bytecodePatch(
     finalize {
         bindFlitsmeisterNativeWarnings()
         bindFlitsmeisterNavigationAudio()
+        if (isFlitsmeister15()) {
+            installNavigation15()
+            return@finalize
+        }
         // originalInput enforces publisher/version metadata. Resolve every producer
         // before mutating, and guard its semantic reference independently.
         // These exact artifact bindings are used reflectively by the background report subscription.

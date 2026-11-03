@@ -6,6 +6,6 @@ Each patch applies to the app versions listed in the [catalogue](catalogue.md). 
 
 A service listed in the guide describes the patch's scope; it is not a claim that every user contacted every listed service. A provider's general capabilities can also differ from its use in a particular app.
 
-Use the [releases page](https://github.com/johninnl/nl-morphe-patches/releases) to find installable patch bundles and their release notes. Match the supported app version before patching.
+Use the [releases page](https://codeberg.org/JohninNL/nl-morphe-patches/releases) to find installable patch bundles and their release notes. Match the supported app version before patching.
 
-Report incorrect descriptions or problems through [GitHub issues](https://github.com/johninnl/nl-morphe-patches/issues), including the app version, bundle version and selected patches.
+Report incorrect descriptions or problems through [GitHub issues](https://codeberg.org/JohninNL/nl-morphe-patches/issues), including the app version, bundle version and selected patches.

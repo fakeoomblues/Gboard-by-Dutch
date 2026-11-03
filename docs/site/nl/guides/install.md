@@ -8,7 +8,13 @@ Zoek je app in het [appoverzicht](../apps/index.md) en [download het originele b
 
 ## 2. Voeg de patchbron toe
 
-Installeer [Morphe Manager](https://morphe.software/) en open [Toevoegen aan Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches). Controleer dat de bron `johninnl/nl-morphe-patches` is.
+Installeer [Morphe Manager](https://morphe.software/). Open **Bronnen → + → Extern** en plak deze volledige metadata-URL:
+
+```text
+https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json
+```
+
+Tik op **Toevoegen**. Gebruik de volledige metadata-URL hierboven in plaats van de GitHub-repositorysnelkoppeling. Vervang `main` door `dev` als je ontwikkelvoorversies wilt volgen.
 
 Tik op **Update** bij de bron om de nieuwste gepubliceerde patchbundel op te halen. Controleer vóór het patchen de bundelversie. Die staat los van de appversie.
 

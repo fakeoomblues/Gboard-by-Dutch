@@ -22,12 +22,23 @@ import patches.shared.uniqueMatch
 internal val flitsmeister = Compatibility(
     name = "Flitsmeister", packageName = "nl.flitsmeister", apkFileType = ApkFileType.APKS,
     signatures = setOf("ba4fdde5ed7d1082f6ba1af87df2ca39c81b094af20d36ff55b583aa3e3353e6"),
-    targets = listOf(AppTarget(version = "14.17", versionCode = 1287, minSdk = 29)),
+    targets = listOf(
+        AppTarget(version = "14.17", versionCode = 1287, minSdk = 29),
+        // Both 15.0/1289 APKM variants share identical DEX and assets; only the
+        // manifest minimum and split sets differ, so one bytecode port covers them.
+        AppTarget(version = "15.0", versionCode = 1289, minSdk = 29),
+    ),
 )
 // The publisher's API 29 and API 32 split sets contain identical DEX/assets/native
 // libraries. Advertise the lowest device SDK while accepting only these variants.
 internal val originalInput = patches.shared.originalInput(flitsmeister, additionalMinSdks = setOf(32))
 internal const val ELIGIBILITY = "Lmorphe/flitsmeister/FeatureEligibility;"
+
+context(context: BytecodePatchContext)
+internal fun isFlitsmeister15(): Boolean = context.packageMetadata.versionName == "15.0"
+
+context(context: app.morphe.patcher.patch.ResourcePatchContext)
+internal fun isFlitsmeister15Resources(): Boolean = context.packageMetadata.versionName == "15.0"
 
 context(context: BytecodePatchContext)
 internal fun exact(cls: String, name: String, result: String = "V", vararg params: String) =
@@ -68,7 +79,10 @@ internal fun applyPlans(plans: List<MethodPlan>) {
             check(instruction.opcode == guard.opcode && instruction.registers() == guard.registers &&
                 (guard.reference == null || (instruction as? ReferenceInstruction)?.reference?.toString() == guard.reference)) { "Changed Flitsmeister anchor ${plan.descriptor} @${guard.index}: expected ${guard.opcode}/${guard.registers}, actual ${instruction.opcode}/${instruction.registers()}" }
             guard.target?.let { target ->
-                check(instruction is OffsetInstruction && addresses[target] == addresses[guard.index] + instruction.codeOffset) { "Changed Flitsmeister continuation ${plan.descriptor}" }
+                check(instruction is OffsetInstruction && addresses[target] == addresses[guard.index] + instruction.codeOffset) {
+                    val actual = if (instruction is OffsetInstruction) addresses.indexOf(addresses[guard.index] + instruction.codeOffset) else -1
+                    "Changed Flitsmeister continuation ${plan.descriptor} @${guard.index}: expected target=$target actual target=$actual"
+                }
             }
         }
         plan to method

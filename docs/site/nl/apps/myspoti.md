@@ -12,6 +12,7 @@ Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **All
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
+| **Custom branding** | Uit | Stelt een eigen appnaam in en kiest een van zes meegeleverde launchericonen in Spotify-stijl, of behoudt het originele icoon. |
 | **Gearslip personal library** | Aan | Laat de ingestelde Gearslip-host de bestaande Home, bibliotheek en downloads van Myspoti bekijken, zoeken en muziek kiezen om af te spelen. |
 
 ## Advertentie- en trackingdiensten
@@ -19,6 +20,8 @@ Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **All
 Deze compatibiliteitspatch verandert de toegang tot de muziekbrowser. De patch verwijdert geen onlinediensten, levert geen account en verandert geen abonnementsrechten.
 
 ## Voor gebruik
+
+Schakel **Custom branding** in om **App name** en de keuzelijst **App icon** te gebruiken. De keuzes zijn Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal en Black Spotify on warm white. Een lege naam behoudt Myspoti. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht. Branding kan samen met **Gearslip personal library** uit dezelfde bundel worden gekozen. De patch verandert de Android-appnaam en het launchericoon; logo’s in de app, het opstartscherm, notificatieafbeeldingen en accounttoegang blijven zoals Myspoti ze levert.
 
 Log in bij Myspoti. De optie voor vertrouwde hosts gebruikt standaard de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
 

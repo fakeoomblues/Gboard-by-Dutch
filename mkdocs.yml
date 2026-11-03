@@ -1,8 +1,8 @@
 site_name: Dutch App Patches
 site_description: Kies patches voor Nederlandse en Belgische Android-apps en lees wat ze veranderen.
-site_url: https://johninnl.github.io/nl-morphe-patches/
-repo_url: https://github.com/johninnl/nl-morphe-patches
-repo_name: johninnl/nl-morphe-patches
+site_url: !ENV [SITE_URL, 'https://nl-morphe-patches-ed90fa.gitlab.io/']
+repo_url: !ENV [REPOSITORY_URL, 'https://gitlab.com/johninnld/nl-morphe-patches']
+repo_name: !ENV [REPOSITORY_NAME, 'johninnld/nl-morphe-patches']
 edit_uri: ''
 docs_dir: docs/site
 site_dir: build/docs-site
@@ -20,7 +20,7 @@ theme:
   logo: assets/brand/mark-on-dark.svg
   favicon: assets/brand/favicon.png
   icon:
-    repo: fontawesome/brands/github
+    repo: !ENV [REPOSITORY_ICON, 'simple/gitlab']
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
@@ -52,7 +52,7 @@ extra_css:
 extra_javascript:
   - assets/javascripts/app-catalogue.js
 extra:
-  social_image: https://johninnl.github.io/nl-morphe-patches/assets/brand/social-card.png
+  social_image: !ENV [SOCIAL_IMAGE_URL, 'https://nl-morphe-patches-ed90fa.gitlab.io/assets/brand/social-card.png']
 
 plugins:
   - i18n:

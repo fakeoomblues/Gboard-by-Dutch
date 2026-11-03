@@ -5,8 +5,12 @@ import com.android.tools.smali.dexlib2.Opcode
 
 /** Automatic trajectory and usage uploads, separate from explicit reports. */
 internal val firstPartyTelemetry = bytecodePatch {
-    dependsOn(originalInput)
+    dependsOn(originalInput, startupCompatibility15)
     execute {
+        if (isFlitsmeister15()) {
+            applyPlans(telemetryLeafPlans15() + lifecycleTelemetryPlans15())
+            return@execute
+        }
         applyPlans(listOf(
             MethodPlan(
                 "Lnl/flitsmeister/services/base/FlitsmeisterBaseService;->onStartCommand(Landroid/content/Intent;II)I", 41, 794,

@@ -316,6 +316,8 @@ public class NativeWarningsTest {
         java.lang.reflect.Field fault=endpoint.getClass().getDeclaredField("captureFault");fault.setAccessible(true);assertTrue("Native capacity loss must be explicit",fault.getBoolean(endpoint));
     }
     @Test public void provedProducerAdvertisesItsCompleteCoverageAndPinnedRequiredInventory() throws Exception {
+        android.content.pm.PackageInfo info=app.getPackageManager().getPackageInfo(app.getPackageName(),0);info.versionName="14.17";info.versionCode=1287;
+        org.robolectric.Shadows.shadowOf(app.getPackageManager()).installPackage(info);
         nl.johninnl.navigation.alerts.WarningEndpoint endpoint=NativeWarnings.init(app);
         java.lang.reflect.Field field=endpoint.getClass().getDeclaredField("profile");field.setAccessible(true);nl.johninnl.navigation.alerts.WarningCapabilities profile=(nl.johninnl.navigation.alerts.WarningCapabilities)field.get(endpoint);
         assertTrue("Proved native capture must not remain permanently disabled",profile.complete);

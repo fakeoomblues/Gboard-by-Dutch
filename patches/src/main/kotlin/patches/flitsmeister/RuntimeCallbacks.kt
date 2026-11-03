@@ -224,21 +224,30 @@ internal val runtimeCallbackRestorations = listOf(
     ),
 )
 
-private data class RuntimeCatch(val type: String, val start: String, val end: String, val handler: String)
+private data class RuntimeCatch(val type: String?, val start: String, val end: String, val handler: String)
 
 internal fun MutableMethod.addRuntimeCallbackInstructions(code: String, expectedCatches: Int) {
     // Morphe assembles .catch instructions but does not copy their exception table.
     val labels = mutableMapOf<String, Int>()
     val catches = mutableListOf<RuntimeCatch>()
-    val pattern = Regex("""\.catch (L[^;]+;) \{(:\w+) \.\. (:\w+)\} (:\w+)""")
+    val pattern = Regex("""\.catch(?: (L[^;]+;)|all) \{(:\w+) \.\. (:\w+)\} (:\w+)""")
     var index = 0
+    var payload: String? = null
     for (line in code.lineSequence().map(String::trim).filter(String::isNotEmpty)) {
+        if (payload != null) {
+            if (line == ".end $payload") payload = null
+            continue
+        }
         when {
+            line.startsWith(".packed-switch ") || line.startsWith(".sparse-switch") || line.startsWith(".array-data ") -> {
+                payload = line.substringAfter('.').substringBefore(' ')
+                index++
+            }
             line.startsWith(":") -> check(labels.put(line, index) == null) { "Duplicate callback label: $line" }
             line.startsWith(".catch") -> {
                 val match = checkNotNull(pattern.matchEntire(line)) { "Unexpected callback catch: $line" }
                 val (type, start, end, handler) = match.destructured
-                catches += RuntimeCatch(type, start, end, handler)
+                catches += RuntimeCatch(type.ifEmpty { null }, start, end, handler)
             }
             else -> {
                 check(line.first().isLowerCase()) { "Unexpected callback directive: $line" }
@@ -246,7 +255,7 @@ internal fun MutableMethod.addRuntimeCallbackInstructions(code: String, expected
             }
         }
     }
-    check(catches.size == expectedCatches && implementation!!.tryBlocks.isEmpty())
+    check(payload == null && catches.size == expectedCatches && implementation!!.tryBlocks.isEmpty())
     addInstructions(0, code)
     val target = checkNotNull(implementation)
     for (entry in catches) {

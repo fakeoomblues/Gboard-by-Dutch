@@ -3,6 +3,7 @@
 import argparse
 from html import escape
 import json
+import os
 from pathlib import Path
 import re
 
@@ -196,7 +197,8 @@ def render(data, language):
             versions = ', '.join(_app_versions({'patches': [(patch, own_package)]}, dutch)) or \
                        ('Niet opgegeven' if dutch else 'Not specified')
             text.append(f'| {patch["name"]} | {state} | {versions} |')
-    text += ['', '[Releases](https://github.com/johninnl/nl-morphe-patches/releases)', '']
+    release = f'https://gitlab.com/{os.environ["GITLAB_REPOSITORY"]}/-/releases' if os.environ.get('GITLAB_REPOSITORY') else 'https://codeberg.org/JohninNL/nl-morphe-patches/releases'
+    text += ['', f'[Releases]({release})', '']
     return '\n'.join(text)
 
 

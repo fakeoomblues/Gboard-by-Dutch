@@ -489,6 +489,7 @@ class TargetRoutingTests(unittest.TestCase):
     def test_flitsmeister_local_controls_and_dedicated_verifier(self):
         self.assertIn('flitsmeister', validator.APPS)
         self.assertEqual(validator.APPS['flitsmeister'], {
+            'Support Gearslip and DriveDeck': [],
             'Fix PairIP startup': [], 'Unlock Pro': [], 'Hide Pro notices': [],
             'Broadcast navigation data': [],
             'Disable partner services': [], 'Hide ads': [], 'Disable tracking': [],

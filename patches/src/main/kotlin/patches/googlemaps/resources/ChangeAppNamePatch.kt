@@ -21,7 +21,7 @@ private const val UNGOOGLED_NAME = "Ungoogled Maps"
 @Suppress("unused")
 val changeAppNamePatch = resourcePatch(
     name = "Change app name",
-    description = "Sets the launcher and in-app app name.",
+    description = "Sets the launcher and app-switcher name, with a choice of launcher icon styles on light or dark backgrounds.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
@@ -34,7 +34,15 @@ val changeAppNamePatch = resourcePatch(
         required = true,
     )
 
+    val appIcon by stringOption(
+        key = "appIcon", title = "App icon", default = "automatic",
+        description = "Automatic follows the Legacy icon patch. Original keeps Google's icon. " +
+            "A supplied light or dark style overrides Legacy icon for the launcher; in-app artwork and splash screen stay unchanged.",
+        values = mapsIconChoices, required = true,
+    ) { it in mapsIconChoices.values }
+
     execute {
+        applyMapsBranding(appIcon!!)
         val name = appName.value!!
         var relabeled = 0
         document("AndroidManifest.xml").use { manifest ->

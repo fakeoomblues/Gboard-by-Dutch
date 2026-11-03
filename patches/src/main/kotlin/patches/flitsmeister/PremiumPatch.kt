@@ -38,8 +38,13 @@ private val noticeResources = resourcePatch {
 }
 
 private val noticeRendering = bytecodePatch {
-    dependsOn(originalInput)
-    execute { applyPlans(listOf(
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15)
+    execute {
+        if (isFlitsmeister15()) {
+            applyPlans(proNotices15Plans() + proNotices15AdditionalPlans() + mainNoticePlans15())
+            return@execute
+        }
+        applyPlans(listOf(
     MethodPlan("Le8d;->invoke(Ljava/lang/Object;)Ljava/lang/Object;", 4, 33, listOf(
             Guard(20, Opcode.MOVE_RESULT_OBJECT, listOf(3)),
             Guard(21, Opcode.CHECK_CAST, listOf(3), "Lsle;"),
@@ -179,7 +184,7 @@ val unlockPro = bytecodePatch(
     description = "Enables local Pro feature eligibility while preserving saved preferences, permissions, genuine account tiers and backend activation requirements.",
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility, featureSettings, featureUi, androidAutoFeatures, androidAutoNotices)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, featureSettings, featureUi, androidAutoFeatures, androidAutoNotices)
 }
 
 @Suppress("unused")
@@ -188,5 +193,5 @@ val hideProNotices = bytecodePatch(
     description = "Hides automatic Pro promotions, Pro/Plus badges and Android Auto upsells while retaining settings, avatar data and genuine account/readiness states.",
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility, noticeResources, noticeRendering, androidAutoNotices)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, noticeResources, noticeRendering, androidAutoNotices)
 }

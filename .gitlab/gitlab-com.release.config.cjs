@@ -1,0 +1,13 @@
+"use strict";
+const fs = require("node:fs");
+const path = require("node:path");
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, "../.releaserc"), "utf8"));
+config.repositoryUrl = "https://gitlab.com/johninnld/nl-morphe-patches.git";
+config.plugins = config.plugins.map(entry => {
+  const [name] = Array.isArray(entry) ? entry : [entry];
+  if (name === "./.github/scripts/verify_identity.cjs") return "./.gitlab/scripts/identity.cjs";
+  if (name === "./.github/scripts/public_changelog.cjs") return "./.gitlab/scripts/changelog.cjs";
+  if (name === "./.github/scripts/public_github.cjs") return "./.gitlab/scripts/publish.cjs";
+  return entry;
+});
+module.exports = config;

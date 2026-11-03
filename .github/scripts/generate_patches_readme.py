@@ -2,6 +2,7 @@
 """Render one compact README catalogue from the production patch metadata."""
 import argparse
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -16,6 +17,7 @@ CATEGORIES = {
 
 
 def render(data, repository):
+    gitlab = bool(os.environ.get('GITLAB_REPOSITORY'))
     groups = _app_groups(data)
     total = sum(len(group['patches']) for group in groups.values())
     bundle_label(data, False)  # Require a production version, or the initial snapshot.
@@ -23,9 +25,10 @@ def render(data, repository):
     if version == '0.0.0':
         status = '**Unreleased source snapshot**'
     else:
-        status = f'**Patch bundle [v{version}](https://github.com/{repository}/releases/tag/v{version})**'
+        release = f'https://gitlab.com/{repository}/-/releases/v{version}' if gitlab else f'https://codeberg.org/{repository}/releases/tag/v{version}'
+        status = f'**Patch bundle [v{version}]({release})**'
     lines = [f'{status} · {len(groups)} apps · {total} patches']
-    site = 'https://johninnl.github.io/nl-morphe-patches'
+    site = 'https://johninnl.codeberg.page/nl-morphe-patches'
     for category, title in CATEGORIES.items():
         entries = [group for group in groups.values() if app_page(group['package'])[1] == category]
         if not entries:
@@ -35,7 +38,10 @@ def render(data, repository):
         for group in sorted(entries, key=lambda g: g['package']['name'].casefold()):
             package = group['package']
             slug, _ = app_page(package)
-            link = f'{site}/apps/{slug}/' if slug else f'{site}/reference/catalogue/#{package["name"].lower()}'
+            if gitlab:
+                link = f'docs/site/en/apps/{slug}.md' if slug else 'docs/site/en/reference/catalogue.md'
+            else:
+                link = f'{site}/apps/{slug}/' if slug else f'{site}/reference/catalogue/#{package["name"].lower()}'
             versions = sorted(set(_app_versions(group, False)))
             formats = ', '.join(sorted({own.get('apkFileType', '—') for _, own in group['patches']}))
             names = {patch['name'] for patch, _ in group['patches']}
@@ -52,15 +58,15 @@ def render(data, repository):
                 ('Home audio', 'YT Music Morphe in Waze' in names),
             ] if present]
             lines.append(f'| [{package["name"]}]({link}) | {" · ".join(changes) or "See guide"} | {", ".join(versions)} | {formats} | {len(group["patches"])} |')
-    lines += ['', f'[Patch defaults and supported versions]({site}/reference/catalogue/) · '
-              f'[English]({site}/en/reference/catalogue/)', '',
+    catalogue = '[Patch defaults and supported versions](docs/site/nl/reference/catalogue.md) · [English](docs/site/en/reference/catalogue.md)' if gitlab else f'[Patch defaults and supported versions]({site}/reference/catalogue/) · [English]({site}/en/reference/catalogue/)'
+    lines += ['', catalogue, '',
               'Targets and defaults vary by patch; the bundle version is separate from each app version.']
     return '\n'.join(lines)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('repository', help='GitHub owner/repository')
+    parser.add_argument('repository', help='Codeberg owner/repository')
     parser.add_argument('metadata', type=Path, nargs='?', default=Path('patches-list.json'))
     parser.add_argument('readme', type=Path, nargs='?', default=Path('README.md'))
     args = parser.parse_args()

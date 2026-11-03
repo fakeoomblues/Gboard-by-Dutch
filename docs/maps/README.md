@@ -56,7 +56,7 @@ These are controlled consumer replays, not native provider road recordings. The 
 
 ## Publication
 
-Published in [Dutch App Patches v1.25.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
+Published in [Dutch App Patches v1.25.0](https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
 
 All 184 Maps/shared compiled class and extension entries in the downloaded release are byte-identical to the locally validated bundle. The release bundle SHA-256 is `92263759a8a6694409cff395098d78a04e70da1091e3cc073bfb8f7841af9ee7`. The installed test APK and the current validation APK differ in outer ZIP/signing layout; all 9,299 uncompressed ZIP entries are byte-identical. Their separate whole-file hashes and canonical payload hash are retained in `validation.json`.
 
@@ -65,3 +65,28 @@ All 184 Maps/shared compiled class and extension entries in the downloaded relea
 Keep generated versions and release metadata under semantic-release. Before committing or pushing, run the repository's required login/effective-author/effective-committer/history identity checks. Only the `johninnl` identity is permitted.
 
 The release must contain the Maps extension and 30 Maps controls in the same published bundle as existing app patches. A source copy, successful compilation, a generated catalogue, or a green documentation job alone does not prove that delivery.
+
+## Launcher branding
+
+**Change app name** retains its existing name option and now provides **App icon**.
+The dropdown contains Automatic, Original Google Maps, and twelve supplied-artwork
+variants: Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin,
+and Folded map, each on light or dark backgrounds. Automatic preserves the prior
+Legacy icon behavior. Explicit Original or supplied artwork takes precedence over
+Legacy icon for that patching run. Explicit styles affect the regular and round
+launcher icons; they leave the stock splash in place, while in-app artwork follows other selected patches.
+
+All six transparent PNGs are bundled unchanged. Android drawable layers provide
+#FAFAFA or #171A21 backgrounds and a 25.9259% inset (28/108 of the adaptive canvas).
+The target requires Android 10+, so no legacy-icon rendering path is needed.
+Selections are scoped to each ResourcePatchContext using synchronized weak keys,
+matching the per-run approach of the existing microG selection helper.
+
+Run `scripts/maps/verify_branding.py` against the original supported APK to check
+all variants, Original, Automatic with Legacy icon enabled/disabled, resolved
+labels, compiled resources and unchanged DEX. It removes validated intermediate
+APKs by default to keep disk usage bounded; reports retain their SHA-256 hashes.
+Use `scripts/maps/validate.py --app-icon STYLE --app-name NAME` with each full
+Maps profile to check combined patching, APK signing and Android references.
+`tests/MapsBrandingSelectionRegression.java` checks successive Manager-style
+runs with one loaded bundle, including return to Automatic after explicit choices.

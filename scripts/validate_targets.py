@@ -147,6 +147,7 @@ APPS = {
         "Hide Premium banner": [], "Read full articles": [],
     },
     "flitsmeister": {
+        "Support Gearslip and DriveDeck": [],
         "Fix PairIP startup": [], "Unlock Pro": [], "Hide Pro notices": [],
         "Broadcast navigation data": [],
         "Disable partner services": [], "Hide ads": [], "Disable tracking": [],
@@ -359,7 +360,7 @@ def verifier_command(app: str, destination: Path, effective: set[str], apk: Path
         command = [sys.executable, f"tests/verify_{app}.py", str(destination)]
     else:
         command = [sys.executable, "tests/verify_targets.py", app, str(destination)]
-    if app in {"detijd", "tvgids", "marktplaats", "2dehands", "9292", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"} and apk is not None:
+    if app in {"detijd", "tvgids", "marktplaats", "2dehands", "9292", "dumpert", "rtl", "brabant", "west", "vi", "teletekst", "flitsmeister"} and apk is not None:
         command += ["--apk", str(apk)]
     if app == "tvgids":
         if original_reference is None:

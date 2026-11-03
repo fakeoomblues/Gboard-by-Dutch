@@ -86,9 +86,9 @@ val disableTracking = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility, firstPartyTelemetry, trackingCollectionResources)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, firstPartyTelemetry, trackingCollectionResources)
     execute {
-        applyPlans(listOf(
+        applyPlans(if (isFlitsmeister15()) trackingPlans15() else listOf(
             MethodPlan(
                 "Lcom/google/android/gms/measurement/internal/zzic;->zzC()I", 4, 49,
                 listOf(
