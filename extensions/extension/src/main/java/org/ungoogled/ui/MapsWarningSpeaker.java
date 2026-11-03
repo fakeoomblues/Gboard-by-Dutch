@@ -151,7 +151,11 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private synchronized void finish(Attempt attempt,PlaybackGrant.Outcome outcome,boolean quiescent) {
         if(active!=attempt)return;
         active=null;if(focus!=null && audio!=null)audio.abandonAudioFocusRequest(focus);focus=null;
-        guidance.release(attempt.id);attempt.listener.finished(attempt.grant,outcome,quiescent);
+        guidance.release(attempt.id);
+        // The scheduler may have requested another language while this utterance was active.
+        // Apply it only after the positive terminal, before the listener advances queued work.
+        if(!closed && quiescent && initialized && tts!=null && !requestedLanguage.equals(preparedLanguage))selectVoice(requestedLanguage);
+        attempt.listener.finished(attempt.grant,outcome,quiescent);
         if(closed){if(tts!=null)tts.shutdown();tts=null;guidance.close();}
     }
     @Override public void close() {

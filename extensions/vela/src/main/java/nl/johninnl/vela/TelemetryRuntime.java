@@ -77,8 +77,10 @@ public final class TelemetryRuntime {
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){
+                    Boolean guidance=sessionGuidanceState();
+                    if(guidance==null)return false;
                     RoadWarningEngine.Route route=nativeRoute();Location fix=lastFix;
-                    if(route!=null&&fix!=null&&event.latitude!=null&&event.longitude!=null)return WarningPassage.passedOnRoute(event,fix,now,route.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));
+                    if(guidance)return route!=null&&fix!=null&&event.latitude!=null&&event.longitude!=null&&WarningPassage.passedOnRoute(event,fix,now,route.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));
                     return WarningPassage.passed(event,fix,now);
                 }
             },new WarningScheduler.Speaker(){
@@ -182,12 +184,16 @@ public final class TelemetryRuntime {
     public static void bindNavSession(Object session) { navSession=session;nativeSpeaker.bindSession(session); }
     private static boolean nativeGuidance() { return nativeSessionGuidance(); }
     private static boolean nativeSessionGuidance() {
+        return Boolean.TRUE.equals(sessionGuidanceState());
+    }
+    /** Null means the native session cannot establish active or inactive route state. */
+    private static Boolean sessionGuidanceState() {
         if(navSession==null)return false;
         try {
             Object flow=navSession.getClass().getField("f").get(navSession);
             Object state=flow.getClass().getMethod("getValue").invoke(flow);
             return state.getClass().getField("a").getBoolean(state)&&!state.getClass().getField("b").getBoolean(state)&&!state.getClass().getField("c").getBoolean(state);
-        }catch(ReflectiveOperationException e){return false;}
+        }catch(ReflectiveOperationException|RuntimeException e){return null;}
     }
     /** Reuse Vela's current navigation route; never request another route or position. */
     private static RoadWarningEngine.Route nativeRoute() {

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +18,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
+import org.robolectric.shadows.ShadowTextToSpeech;
 
 /** Callback reducer tests. Runtime speech/focus/route acceptance needs the original patched app. */
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE) @LooperMode(LooperMode.Mode.PAUSED)
@@ -34,6 +37,25 @@ public class MapsWarningSpeakerTest {
         id=(String)field(type,"id").get(attempt);field(MapsWarningSpeaker.class,"active").set(speaker,attempt);progress=(UtteranceProgressListener)field(MapsWarningSpeaker.class,"progress").get(speaker);
     }
     @After public void close(){speaker.close();Shadows.shadowOf(Looper.getMainLooper()).idle();}
+    private void readyEnglishWhileAttemptActive()throws Exception{
+        field(MapsWarningSpeaker.class,"active").set(speaker,null);
+        ShadowTextToSpeech.addVoice(new Voice("offline-en",Locale.US,Voice.QUALITY_NORMAL,Voice.LATENCY_NORMAL,false,Collections.emptySet()));
+        ShadowTextToSpeech.addVoice(new Voice("offline-nl",Locale.forLanguageTag("nl-NL"),Voice.QUALITY_NORMAL,Voice.LATENCY_NORMAL,false,Collections.emptySet()));
+        speaker.prepare("en-US");Shadows.shadowOf(Looper.getMainLooper()).idle();
+        Shadows.shadowOf(ShadowTextToSpeech.getLastTextToSpeechInstance()).getOnInitListener().onInit(TextToSpeech.SUCCESS);Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("en-US",field(MapsWarningSpeaker.class,"preparedLanguage").get(speaker));field(MapsWarningSpeaker.class,"active").set(speaker,attempt);
+    }
+    @Test public void queuedLanguageIsPreparedAfterPositiveCompletion()throws Exception{
+        readyEnglishWhileAttemptActive();speaker.prepare("nl-NL");Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("en-US",field(MapsWarningSpeaker.class,"preparedLanguage").get(speaker));
+        progress.onDone(id);Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("nl-NL",field(MapsWarningSpeaker.class,"preparedLanguage").get(speaker));
+    }
+    @Test public void latestQueuedLanguageIsPreparedAfterPositiveStop()throws Exception{
+        readyEnglishWhileAttemptActive();speaker.prepare("en-US");speaker.prepare("nl-NL");Shadows.shadowOf(Looper.getMainLooper()).idle();
+        progress.onStop(id,false);Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("nl-NL",field(MapsWarningSpeaker.class,"preparedLanguage").get(speaker));
+    }
     @Test public void queuedAttemptAndForeignUtteranceCannotReportPlayback()throws Exception{
         assertTrue(outcomes.isEmpty());progress.onStart("native-route");progress.onDone("native-route");Shadows.shadowOf(Looper.getMainLooper()).idle();assertTrue(outcomes.isEmpty());
     }

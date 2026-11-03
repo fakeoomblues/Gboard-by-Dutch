@@ -110,6 +110,14 @@ public class NativeWarningsTest {
         NativeWarnings.reports(Collections.emptyList());
         assertEquals("CLEAR",last().getString("operation"));
     }
+    @Test public void reportSnapshotPreservesUnknownLanguageOfRetainedFreeText(){
+        Incident report=new Incident();NativeWarnings.regular(null,report,true,false,report.getVoiceOnlyText(),null);
+        Bundle original=new Bundle(last());assertEquals("und",original.getString("language_tag"));
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals("UPSERT",last().getString("operation"));
+        for(String key:new String[]{"message","message_origin","language_tag","native_text_key"})assertEquals(key,original.getString(key),last().getString(key));
+        assertEquals(original.getLong("announcement_index"),last().getLong("announcement_index"));
+    }
     @Test public void serviceSubtypeAndAuditedNativeResourceFallbackSurvive() {
         NativeWarnings.regular(null,new ServiceVehicle(),true,false,null,null);
         assertEquals("TOW_SERVICE",last().getString("native_subtype"));

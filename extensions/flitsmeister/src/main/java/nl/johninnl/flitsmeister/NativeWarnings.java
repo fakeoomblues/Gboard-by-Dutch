@@ -220,6 +220,11 @@ public final class NativeWarnings {
                 String text=!current?nativeText(report):old.fields.getString("message","");
                 String origin=!current?"native_resource":old.fields.getString("message_origin","native_resource");
                 String phase=!current?"active":old.fields.getString("phase","active");
+                if(current){
+                    fields.putString("language_tag",old.fields.getString("language_tag","und"));
+                    copyNativeTextFields(old.fields,fields);
+                    for(String key:new String[]{"native_text_key","template_id"})if(old.fields.containsKey(key))fields.putString(key,old.fields.getString(key));
+                }
                 update(id,fields,text,origin,phase,false,false,"report_state",true);
             }
             for(String id:new ArrayList<>(records.keySet())){
