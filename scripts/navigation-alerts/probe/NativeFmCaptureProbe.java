@@ -302,6 +302,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         String futureId=base+"-future";Object future=camera("SPEED_50",futureId);controlledFix();onMain(()->call(service,"J",future,true));Object futureEvent=awaitProductionEvent(endpoint,session,futureId,0);activateEvent(futureEvent);JSONArray futureOutcomes=new JSONArray();awaitTerminal(endpoint,new HashSet<>(),futureOutcomes,SystemClock.elapsedRealtime()+15000,false);check("COMPLETED".equals(lastTerminalState),"Future native warning did not complete after actual recovery");onMain(()->call(service,"J",future,false));death.put("future_authority",new JSONObject((Map<?,?>)call(futureEvent,"fields"))).put("future_source_dispositions",futureOutcomes);status("death_future_completed",death);
     }
     private void realWarningSuite(JSONObject report)throws Exception{
+        if(arguments.getString("warning_suite_cases","all").equals("delayed-passage")){realDelayedPassageSuite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("moving-camera")){realMovingCameraSuite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("concurrent")){realConcurrentWarningSuite(report);return;}
         if(arguments.getString("warning_suite_cases","all").equals("native-guidance")){realNativeGuidanceSuite(report);return;}
@@ -319,6 +320,52 @@ public final class NativeFmCaptureProbe extends Instrumentation {
             activateEvent(event);JSONArray outcomes=new JSONArray();Set<String> seen=new HashSet<>();JSONObject row=new JSONObject().put("index",index).put("family",family).put("native_subtype",subtype).put("expected_native_text_fragment",nativeExpected).put("controlled_native_input",input).put("receiver_owner_ready_before_native",ready).put("authority",authority).put("source_dispositions",outcomes);rows.put(row);report.put("warning_suite_records",rows);status("warning_suite_native_event",row);awaitTerminal(endpoint,seen,outcomes,SystemClock.elapsedRealtime()+18000,false);check("COMPLETED".equals(lastTerminalState),"Native warning-suite event did not complete: "+subtype);row.put("source_terminal",lastTerminalState);onMain(()->call(service,"J",actualModel,false));status("warning_suite_event_completed",row);
         }
         status("warning_suite_complete",new JSONObject().put("native_authorities",rows.length()));end=SystemClock.elapsedRealtime()+30000;while(SystemClock.elapsedRealtime()<end){productionOutcomes(endpoint,new HashSet<>());if(!ownerPresent&&!pendingPresent&&((Set<?>)call(endpoint,"capablePackages")).isEmpty())break;assertMuted();SystemClock.sleep(20);}check(!ownerPresent&&!pendingPresent&&((Set<?>)call(endpoint,"capablePackages")).isEmpty(),"Suite receiver did not quiesce/release");Object queue=call(singleton("s6i","f"),"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Suite provider queue was not muted/empty");report.put("production_endpoint_used",true).put("test_sink_used",false).put("raw_packet_emitted",false).put("coverage_override_used",false).put("provider_native_queue_empty",true).put("receiver_source_off_and_quiescent",true).put("real_terminal_ack_observed",true).put("warning_suite_records",rows).put("scope_note","Controlled accepted original native announcement entry points and input speeds; not natural detector/route lead-time proof or a latency percentile corpus.");
+    }
+    private JSONObject replayJournal(Object endpoint,String session)throws Exception{
+        java.util.concurrent.ExecutorService actor=(java.util.concurrent.ExecutorService)read(endpoint,"actor");
+        return actor.submit(()->{
+            long now=SystemClock.elapsedRealtime();Object view=call(read(endpoint,"journal"),"resume",session,0L,now);
+            JSONObject snapshot=new JSONObject().put("observed_elapsed_ms",now).put("head_sequence",read(view,"headSequence"));
+            for(String key:new String[]{"events","currentState"}){JSONArray values=new JSONArray();for(Object event:(List<?>)read(view,key))values.put(new JSONObject((Map<?,?>)call(event,"fields")));snapshot.put(key,values);}
+            JSONArray announcements=new JSONArray();for(Object candidate:(List<?>)read(view,"announcements"))announcements.put(new JSONObject((Map<?,?>)call(read(candidate,"authority"),"fields")));return snapshot.put("announcements",announcements);
+        }).get(3,TimeUnit.SECONDS);
+    }
+    private void replayWaitConnected(Object endpoint,String receiver)throws Exception{
+        long until=SystemClock.elapsedRealtime()+12000;while(!productionReceiverSynced(endpoint,receiver)&&SystemClock.elapsedRealtime()<until){assertMuted();SystemClock.sleep(20);}check(productionReceiverSynced(endpoint,receiver),"Replay receiver did not synchronize");
+    }
+    private void replayWaitReleased(Object endpoint)throws Exception{
+        long until=SystemClock.elapsedRealtime()+10000;
+        while(SystemClock.elapsedRealtime()<until){productionOutcomes(endpoint,new HashSet<>());if(!ownerPresent&&!pendingPresent&&((Set<?>)call(endpoint,"capablePackages")).isEmpty())return;assertMuted();SystemClock.sleep(20);}
+        throw new IllegalStateException("Replay receiver did not release/quiesce");
+    }
+    private void realDelayedPassageSuite(JSONObject report)throws Exception{
+        Object endpoint=restartEndpoint();String session=String.valueOf(call(endpoint,"sourceSession")),receiver=arguments.getString("death_owner"),base=arguments.getString("native_id");
+        JSONObject initial=productionAudioState(endpoint);check(!initial.optBoolean("pending_present")&&!initial.optBoolean("owner_present")&&((Set<?>)call(endpoint,"capablePackages")).isEmpty(),"Pre-existing replay output or client");
+        status("warning_suite_ready",new JSONObject().put("provider_session",session).put("receiver",receiver));Object service=singleton("fc0","S1");call(service,"P");JSONArray cases=new JSONArray();report.put("delayed_passage_records",cases);
+        replayWaitConnected(endpoint,receiver);java.io.File gpsReady=new java.io.File(context.getExternalFilesDir(null),"native-warning-ownership/"+base+"-replay-gps-ready");long gpsDeadline=SystemClock.elapsedRealtime()+10000;while(!gpsReady.exists()&&SystemClock.elapsedRealtime()<gpsDeadline){assertMuted();SystemClock.sleep(20);}check(gpsReady.exists()&&gpsReady.delete(),"Empty-journal receiving GPS warmup was not witnessed");JSONObject emptyJournal=replayJournal(endpoint,session);check(emptyJournal.getJSONArray("events").length()==0,"Preflight journal is not empty");report.put("empty_journal_preflight",emptyJournal);status("replay_preflight_completed",emptyJournal);replayWaitReleased(endpoint);
+        for(String scenario:new String[]{"passed_fresh","ahead_fresh","expired_ahead"}){
+            String id=base+"-"+scenario;Object model=camera("SPEED_50",id);Location target=new Location("private-delayed-camera-target");target.setLatitude(scenario.equals("passed_fresh")?52.38:52.3815);target.setLongitude(4.9);call(model,"setLocation",target);
+            check(((Set<?>)call(endpoint,"capablePackages")).isEmpty(),"Replay warning must precede receiver registration");
+            onMain(()->{Location sourceFix=new Location("private-native-before-target");sourceFix.setLatitude(target.getLatitude()-.0005);sourceFix.setLongitude(4.9);sourceFix.setBearing(0);sourceFix.setSpeed(20);sourceFix.setAccuracy(3);sourceFix.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());type("bza").getField("b").set(null,sourceFix);type("bza").getField("h").set(null,null);call(service,"J",model,true);});roots.add("Lfc0;->J");
+            Object event=awaitProductionEvent(endpoint,session,id,0);activateEvent(event);JSONObject authority=new JSONObject((Map<?,?>)call(event,"fields"));JSONArray outcomes=new JSONArray();Set<String> seen=new HashSet<>();
+            JSONObject row=new JSONObject().put("scenario",scenario).put("authority",authority).put("source_dispositions",outcomes).put("receiver_latitude",52.3806).put("receiver_longitude",4.9).put("receiver_speed_mps",20).put("receiver_registered_at_native_issue",false);cases.put(row);
+            if(scenario.equals("expired_ahead")){long expiry=authority.getLong("announce_until_elapsed_ms");status("replay_waiting_for_native_deadline",row);while(SystemClock.elapsedRealtime()<=expiry+250){assertMuted();SystemClock.sleep(20);}}
+            row.put("journal_before_receiver",replayJournal(endpoint,session));status("replay_case_prepared",row);replayWaitConnected(endpoint,receiver);row.put("receiver_synchronized_elapsed_ms",SystemClock.elapsedRealtime());
+            if(scenario.equals("expired_ahead")){
+                long until=SystemClock.elapsedRealtime()+1600;while(SystemClock.elapsedRealtime()<until){append(outcomes,productionOutcomes(endpoint,seen));assertMuted();SystemClock.sleep(20);}check(outcomes.length()==0&&!pendingPresent,"Expired snapshot acquired playback authority");row.put("journal_after_receiver",replayJournal(endpoint,session)).put("expected_result","STATE_ONLY_NO_AUTHORITY");
+            }else{
+                String desired=scenario.equals("passed_fresh")?"REJECTED":"COMPLETED";long until=SystemClock.elapsedRealtime()+8000;
+                while(!desired.equals(lastTerminalState)&&SystemClock.elapsedRealtime()<until){append(outcomes,productionOutcomes(endpoint,seen));assertMuted();SystemClock.sleep(10);}check(desired.equals(lastTerminalState),"Delayed native warning had wrong outcome: "+scenario+" / "+lastTerminalState);row.put("expected_result",desired);
+                if(scenario.equals("passed_fresh")){check(!startedObserved&&SystemClock.elapsedRealtime()<authority.getLong("announce_until_elapsed_ms"),"Passed case expired or actually started");}
+                else check(startedObserved,"Ahead replay completed without a real native start");
+            }
+            status("replay_case_completed",row);replayWaitReleased(endpoint);
+            if(scenario.equals("passed_fresh")){
+                status("replay_same_authority_rebind",row);replayWaitConnected(endpoint,receiver);JSONArray rebound=new JSONArray();long until=SystemClock.elapsedRealtime()+1000;Set<String> reboundSeen=new HashSet<>();while(SystemClock.elapsedRealtime()<until){append(rebound,productionOutcomes(endpoint,reboundSeen));assertMuted();SystemClock.sleep(20);}check(!startedObserved&&!pendingPresent&&"REJECTED".equals(lastTerminalState),"Passed authority replayed after receiver rebind");row.put("same_authority_rebind_dispositions",rebound);status("replay_rebind_completed",row);replayWaitReleased(endpoint);
+            }
+            onMain(()->call(service,"J",model,false));Object clear=awaitNativeOperation(endpoint,session,authority.getString("warning_id"),"CLEAR",authority.getLong("sequence"));row.put("native_clear",new JSONObject((Map<?,?>)call(clear,"fields")));
+        }
+        Object queue=call(singleton("s6i","f"),"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Replay provider queue was not muted/empty");report.put("production_endpoint_used",true).put("test_sink_used",false).put("raw_packet_emitted",false).put("coverage_override_used",false).put("provider_native_queue_empty",true).put("receiver_source_off_and_quiescent",true).put("scope_note","Controlled original accepted native events before genuine registration/rebind, real journal deadlines and receiving GPS. No constructed packets, cursor/clock edits or grant overrides.");status("warning_suite_complete",new JSONObject().put("native_authorities",cases.length()));
     }
     /** Candidate list is private; original task geometry, decision and alert callbacks remain intact. */
     private void realMovingCameraSuite(JSONObject report)throws Exception{
@@ -435,7 +482,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
                     Object outcome=grant.getClass().getField("outcome").get(grant);String state=String.valueOf(outcome),attempt=String.valueOf(grant.getClass().getField("attemptId").get(grant));
                     if(grant.getClass().getField("started").getBoolean(grant))startedObserved=true;
                     Method terminal=grant.getClass().getDeclaredMethod("terminal",outcome.getClass());terminal.setAccessible(true);if(Boolean.TRUE.equals(terminal.invoke(null,outcome))){terminalObserved=true;lastTerminalState=state;if(grant.getClass().getField("started").getBoolean(grant)){startedTerminalObserved=true;lastStartedTerminalState=state;}}
-                    if(seen.add(attempt+":"+state))out.put(new JSONObject().put("receiver_uid",observedConsumerUid).put("outcome",state).put("started",grant.getClass().getField("started").getBoolean(grant)).put("mode",String.valueOf(grant.getClass().getField("mode").get(grant))));}
+                    if(seen.add(attempt+":"+state))out.put(new JSONObject().put("receiver_uid",observedConsumerUid).put("attempt_id",attempt).put("event_key",read(grant,"eventKey")).put("granted",read(grant,"granted")).put("observed_elapsed_ms",SystemClock.elapsedRealtime()).put("outcome",state).put("started",grant.getClass().getField("started").getBoolean(grant)).put("mode",String.valueOf(grant.getClass().getField("mode").get(grant))));}
             }
             return out;
         }).get(3,TimeUnit.SECONDS);

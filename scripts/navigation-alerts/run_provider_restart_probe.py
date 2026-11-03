@@ -12,13 +12,13 @@ parser.add_argument('--serial',choices=['emulator-5584','emulator-5590'],default
 parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
 parser.add_argument('--prepare-vela-ui',action='store_true')
 parser.add_argument('--warning-suite',action='store_true')
-parser.add_argument('--warning-suite-cases',choices=['all','road-service','concurrent','native-guidance','moving-camera'],default='all')
+parser.add_argument('--warning-suite-cases',choices=['all','road-service','concurrent','native-guidance','moving-camera','delayed-passage'],default='all')
 parser.add_argument('--warning-categories',type=int,choices=range(1,128),default=127)
 parser.add_argument('--reviewed-synthetic-choices',action='store_true',required=True)
 args=parser.parse_args();
-if args.warning_suite_cases in ['native-guidance','moving-camera'] and not args.warning_suite:parser.error('Native guidance and moving camera cases require the warning suite')
-if args.warning_suite_cases in ['native-guidance','moving-camera'] and args.receiver=='vela' and not args.prepare_vela_ui:parser.error('Vela native guidance and moving camera cases require the original phone UI setup')
-if args.warning_suite_cases=='moving-camera' and args.serial!='emulator-5590':parser.error('Moving camera cases require the isolated phone AVD')
+if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage'] and not args.warning_suite:parser.error('Guidance, moving camera and delayed passage cases require the warning suite')
+if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage'] and args.receiver=='vela' and not args.prepare_vela_ui:parser.error('Vela guidance and spatial cases require the original phone UI setup')
+if args.warning_suite_cases in ['moving-camera','delayed-passage'] and args.serial!='emulator-5590':parser.error('Spatial replay and moving camera cases require the isolated phone AVD')
 if args.prepare_vela_ui and args.receiver!='vela':parser.error('--prepare-vela-ui requires --receiver vela')
 if args.warning_categories!=127 and (not args.warning_suite or args.warning_suite_cases!='road-service'):parser.error('A restricted category mask is only supported for the focused road-service suite')
 sdk=args.sdk;adb=sdk/'platform-tools/adb';serial=args.serial;avd={'emulator-5584':'native_warnings_car_api34','emulator-5590':'native_warnings_ui_api34'}[serial];output=args.output;output.mkdir(parents=True,exist_ok=False);token=uuid.uuid4().hex
@@ -115,9 +115,10 @@ def source(name,scenario,**expectations):
  for key,value in expectations.items():command.extend(['--'+key.replace('_','-'),value])
  launch(name,command)
 def receiver(role):
- launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'-e','warning_categories',str(args.warning_categories),'-e','moving_camera_case','true' if args.warning_suite_cases=='moving-camera' else 'false','-e','native_guidance_case','true' if args.warning_suite_cases=='native-guidance' else 'false','nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
-def signal(role):
- folder='/sdcard/Android/data/'+receiver_package+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+token+'-'+role+'-stop')
+ launch(role,[adb,'-s',serial,'shell','am','instrument','-w','-r','-e','reviewed_synthetic_choices','true','-e','control_token',token+'-'+role,'-e','warning_categories',str(args.warning_categories),'-e','passage_case','true' if args.warning_suite_cases=='delayed-passage' else 'false','-e','moving_camera_case','true' if args.warning_suite_cases=='moving-camera' else 'false','-e','native_guidance_case','true' if args.warning_suite_cases=='native-guidance' else 'false','nl.johninnl.warningprobe.owner.'+args.receiver+'/nl.johninnl.warningprobe.ownership.OwnershipReceiverProbe'])
+def signal(role,action='stop'):
+ assert action in ['stop','on','off']
+ folder='/sdcard/Android/data/'+receiver_package+'/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+token+'-'+role+'-'+action)
 def receiver_report(role):
  text=(output/(role+'-output.txt')).read_text();m=re.search(r'^INSTRUMENTATION_RESULT: ownership_receiver_result=(.+)$',text,re.M);assert m,'Missing complete receiver result: '+role
  value=json.loads(m[1]);(output/(role+'-result.json')).write_text(json.dumps(value,indent=2)+'\n');assert value['status']=='observed' and value['output_quiescent'] and value['preferences_restored_exactly'];return value
@@ -206,7 +207,7 @@ try:
  for permission,value in before.items():
   if not value['granted']:
    assert not any(flag in value['flags'] for flag in ['USER_FIXED','POLICY_FIXED','SYSTEM_FIXED']);device('shell','pm','grant','nl.flitsmeister',permission);changed.append(permission)
- if args.warning_suite_cases in ['native-guidance','moving-camera']:
+ if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
   route_package=args.maps_package if args.receiver=='maps' else 'app.vela'
   route_permissions_before=vela_permissions(route_package);record['route_permissions_before']=route_permissions_before
   for permission,value in route_permissions_before.items():
@@ -228,11 +229,24 @@ try:
    if name=='seed-source' and 'fm_capture_stage=restart_seed_ready' in line:receiver('seed-receiver')
    if args.warning_suite_cases=='moving-camera' and name=='seed-source' and 'fm_capture_stage=moving_camera_fix' in line:
     sample=dict(source_details[name]);sample['gps_console_response']=device('emu','geo','fix',sample['longitude'],sample['latitude'],'0','8',sample['speed_mps']*1.94384449).stdout.strip();assert sample['gps_console_response']=='OK','Emulator rejected moving GPS';sample['host_monotonic_s']=time.monotonic();record.setdefault('moving_gps_samples',[]).append(sample)
-   if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_ready' in line:receiver('seed-receiver')
+   if args.warning_suite and args.warning_suite_cases!='delayed-passage' and name=='seed-source' and 'fm_capture_stage=warning_suite_ready' in line:receiver('seed-receiver')
+   if args.warning_suite_cases=='delayed-passage' and name=='seed-source':
+    if 'fm_capture_stage=warning_suite_ready' in line:
+     response=device('emu','geo','fix','4.9','52.3806','0','8',20*1.94384449).stdout.strip();assert response=='OK';receiver('seed-receiver')
+    if 'fm_capture_stage=replay_preflight_completed' in line:signal('seed-receiver','off')
+    if 'fm_capture_stage=replay_case_prepared' in line:
+     detail=source_details[name];response=device('emu','geo','fix',detail['receiver_longitude'],detail['receiver_latitude'],'0','8',detail['receiver_speed_mps']*1.94384449).stdout.strip();assert response=='OK';record.setdefault('replay_cases_prepared',[]).append(detail)
+     if 'seed-receiver' not in processes:receiver('seed-receiver')
+     else:signal('seed-receiver','on')
+    if 'fm_capture_stage=replay_case_completed' in line:signal('seed-receiver','off')
+    if 'fm_capture_stage=replay_same_authority_rebind' in line:signal('seed-receiver','on')
+    if 'fm_capture_stage=replay_rebind_completed' in line:signal('seed-receiver','off')
    if args.warning_suite and name=='seed-source' and 'fm_capture_stage=warning_suite_complete' in line:
     if args.warning_suite_cases=='native-guidance' and args.receiver=='vela':device('emu','geo','fix','4.9000','52.3701');record['fresh_post_warning_fix']={'latitude':52.3701,'longitude':4.9000}
     else:signal('seed-receiver')
    if name=='seed-receiver' and 'INSTRUMENTATION_STATUS: stage=NATIVE_GUIDANCE_REGENERATED' in line:signal('seed-receiver')
+   if name=='seed-receiver' and 'INSTRUMENTATION_STATUS: stage=RECEIVER_PASSAGE_FIX_READY' in line:
+    folder='/sdcard/Android/data/nl.flitsmeister/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+base+'-replay-gps-ready')
    if name=='seed-receiver' and 'INSTRUMENTATION_STATUS: stage=NATIVE_GUIDANCE_STARTED' in line:
     folder='/sdcard/Android/data/nl.flitsmeister/files/native-warning-ownership';device('shell','mkdir','-p',folder);device('shell','touch',folder+'/'+base+'-native-guidance-started')
    if args.warning_suite and name=='seed-source' and 'fm_capture_error=' in line:raise RuntimeError('Actual native warning suite failed; partial evidence retained')
@@ -297,7 +311,7 @@ finally:
   record['hidden_api_policy_after']=device('shell','settings','get','global','hidden_api_policy').stdout.strip();record['hidden_api_policy_restored_exactly']=record['hidden_api_policy_after']==hidden_policy_before
  for permission in reversed(route_permission_changes):device('shell','pm','revoke',route_package,permission)
  for permission in reversed(vela_permission_changes):device('shell','pm','revoke','app.vela',permission)
- if args.warning_suite_cases in ['native-guidance','moving-camera']:
+ if args.warning_suite_cases in ['native-guidance','moving-camera','delayed-passage']:
   record['route_permissions_after']=vela_permissions(route_package);record['route_permissions_restored_exactly']=record['route_permissions_after']==route_permissions_before
   if not record['route_permissions_restored_exactly']:failure=(failure or '')+'; Maps route permission drift'
  if args.prepare_vela_ui:
