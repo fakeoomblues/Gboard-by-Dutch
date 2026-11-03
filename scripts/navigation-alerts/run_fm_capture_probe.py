@@ -11,6 +11,40 @@ import threading
 import uuid
 
 
+def firewall_cleanup_changes(before, after, chain):
+    """Verify task-rule rollback while preserving netd's independent network changes."""
+    def tables(text):
+        result = {}; current = None
+        for line in text.splitlines():
+            if not line or line.startswith('#'):
+                continue
+            line = re.sub(r'\[\d+:\d+\]', '[COUNTERS]', line)
+            if line.startswith('*'):
+                current = line
+                result[current] = []
+            if current is not None:
+                result[current].append(line)
+        return result
+    old, new = tables(before), tables(after)
+    if old.keys() != new.keys() or '*filter' not in old:
+        raise RuntimeError('Firewall table set changed unexpectedly')
+    if any(chain in line for lines in new.values() for line in lines):
+        raise RuntimeError('Task firewall chain or reference remains')
+    changed = []
+    for name in old:
+        if old[name] == new[name]:
+            continue
+        if name != '*mangle':
+            raise RuntimeError('Firewall rules differ from prior state: ' + name)
+        prefixes = ('-A routectrl_mangle_INPUT ', '-A wakeupctrl_mangle_INPUT ')
+        stable_old = [line for line in old[name] if not line.startswith(prefixes)]
+        stable_new = [line for line in new[name] if not line.startswith(prefixes)]
+        if stable_old != stable_new:
+            raise RuntimeError('Unexpected mangle rules changed')
+        changed.append('Android netd interface marks/wakeup rules changed; preserved')
+    return changed
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adb', type=Path, required=True)
@@ -57,9 +91,6 @@ def main():
         if len(paths) != 1:
             raise RuntimeError('Expected one installed APK')
         return adb('shell', 'sha256sum', paths[0].split(':', 1)[1]).stdout.split()[0]
-
-    def normalized_rules(text):
-        return '\n'.join(re.sub(r'\[\d+:\d+\]', '[COUNTERS]', line) for line in text.splitlines() if line and not line.startswith('#'))
 
     args.output.mkdir(parents=True, exist_ok=True)
     run_id = str(uuid.uuid4())
@@ -192,8 +223,9 @@ def main():
                     adb('shell', binary, '-w', '5', '-X', chain)
                 after = adb('shell', binary + '-save').stdout
                 (run / (binary + '-after.txt')).write_text(after)
-                if normalized_rules(after) != normalized_rules(state['before']):
-                    raise RuntimeError('Firewall rules differ from prior state')
+                network_changes = firewall_cleanup_changes(state['before'], after, chain)
+                if network_changes:
+                    result.setdefault('independent_android_network_changes', {})[binary] = network_changes
             except Exception as error:
                 cleanup_errors.append(binary + ': ' + repr(error))
     result.update({'failure': failure, 'cleanup_errors': cleanup_errors, 'network_and_lease_restored': not cleanup_errors,

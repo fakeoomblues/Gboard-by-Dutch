@@ -60,6 +60,44 @@ public final class ExternalTelemetry {
     private static Double nativeSpeed,nativeLimit;
     private static WeakReference<Activity> foreground=new WeakReference<>(null);
     private static CompactSpeedView widget;
+    private static final java.util.Set<Object> carSessions=java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
+    private static final Map<Object,WeakReference<ViewGroup>> carRoots=new java.util.WeakHashMap<>();
+    private static final Map<Object,int[]> carViewportSizes=new java.util.WeakHashMap<>();
+    private static final Map<Object,CompactSpeedView> carWidgets=new java.util.WeakHashMap<>();
+    private static boolean carActive(){return !carSessions.isEmpty();}
+    /** Called only by an actual resumed native projection session; independent of its surface. */
+    public static void carSession(Context context,Object owner,boolean visible){
+        if(context==null||owner==null)return;
+        Runnable change=()->{if(visible)carSessions.add(owner);else{carSessions.remove(owner);removeCarWidget(owner);carRoots.remove(owner);carViewportSizes.remove(owner);}refresh(context);};
+        if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
+    }
+    /** The original Maps Presentation supplies this real host-bound decor, never a phone mirror. */
+    public static void carSurface(Object owner,ViewGroup root){carSurface(owner,root,root==null?0:root.getWidth(),root==null?0:root.getHeight());}
+    public static void carSurface(Object owner,ViewGroup root,int width,int height){carSurface(owner,root,new android.graphics.Rect(0,0,width,height));}
+    public static void carSurface(Object owner,ViewGroup root,android.graphics.Rect area){
+        final android.graphics.Rect viewport=area==null?new android.graphics.Rect():new android.graphics.Rect(area);
+        if(owner==null)return;Runnable change=()->{
+            WeakReference<ViewGroup> old=carRoots.get(owner);
+            if(old==null||old.get()!=root)removeCarWidget(owner);
+            if(root==null){carRoots.remove(owner);carViewportSizes.remove(owner);}else{carRoots.put(owner,new WeakReference<>(root));carViewportSizes.put(owner,new int[]{viewport.left,viewport.top,viewport.right,viewport.bottom});}renderCar();
+        };if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
+    }
+    private static void removeCarWidget(Object owner){CompactSpeedView value=carWidgets.remove(owner);if(value!=null&&value.getParent() instanceof ViewGroup)((ViewGroup)value.getParent()).removeView(value);}
+    private static void renderCar(){
+        for(Object owner:new ArrayList<>(carRoots.keySet())){
+            ViewGroup root=carRoots.get(owner).get();
+            if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
+            CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
+            float density=root.getResources().getDisplayMetrics().density;
+            value.refresh(Shapes.navDarkScheme());
+            int[] bounds=carViewportSizes.get(owner);int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
+            int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();int width=right-left,height=bottom-top;
+            int margin=Math.round(16*density);value.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0,width-2*margin),View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(Math.max(0,height-2*margin),View.MeasureSpec.AT_MOST));
+            FrameLayout.LayoutParams layout=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.TOP|Gravity.START);
+            layout.leftMargin=Math.max(left+margin,right-value.getMeasuredWidth()-margin);layout.topMargin=Math.max(top+margin,bottom-value.getMeasuredHeight()-margin);value.setLayoutParams(layout);value.bringToFront();
+        }
+    }
+
     private static View hiddenBadge;
     private static String pinSignature="";
 
@@ -88,7 +126,7 @@ public final class ExternalTelemetry {
             warningPreferences=new WarningPreferences(prefs(app),true);
             final MapsWarningSpeaker speaker=nativeSpeaker;
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
-                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||foreground.get()!=null||startup!=null&&startup.activeSession());}
+                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||carActive()||foreground.get()!=null||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){return WarningPassage.passed(event,fix,now);}
@@ -111,7 +149,7 @@ public final class ExternalTelemetry {
             });
             startup=new nl.johninnl.navigation.startup.NavigationClient(app,semantic);
         }
-        startup.select(source,navigating);
+        startup.select(source,navigating||carActive());
         if(modern()&&!registered){
             IntentFilter filter=new IntentFilter(ACTION);
             if(Build.VERSION.SDK_INT>=33)app.registerReceiver(RECEIVER,filter,Context.RECEIVER_EXPORTED);else app.registerReceiver(RECEIVER,filter);
@@ -192,7 +230,7 @@ public final class ExternalTelemetry {
     }
     private static void update(){
         if(!modern())return;
-        if(startup!=null)startup.select(source,navigating);
+        if(startup!=null)startup.select(source,navigating||carActive());
         TelemetryStore.View v=view();RoadWarningEngine.Fix position=fix==null?null:new RoadWarningEngine.Fix(fix.getLatitude(),fix.getLongitude(),fix.hasBearing()?fix.getBearing():Double.NaN,fix.hasSpeed()?fix.getSpeed():Double.NaN,fixAt);
         // A kind disabled for map pins is disabled for warnings too.
         RoadWarningEngine.Warning ahead=warnings.update(filteredView(v),position,SystemClock.elapsedRealtime());
@@ -201,10 +239,10 @@ public final class ExternalTelemetry {
         if(nativeWarning!=null)warning="Flitsmeister\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
         if(semantic!=null&&semantic.advertisesEvents(source))eventAudioManaged=true;
         boolean legacyAudio=!TelemetryStore.FLITSMEISTER.equals(source)||!eventAudioManaged;
-        if(ahead!=null&&legacyAudio&&WazeAlerts.CHIME&&(navigating||foreground.get()!=null)&&warnings.shouldSpeak(ahead,SystemClock.elapsedRealtime())){
+        if(ahead!=null&&legacyAudio&&WazeAlerts.CHIME&&(navigating||carActive()||foreground.get()!=null)&&warnings.shouldSpeak(ahead,SystemClock.elapsedRealtime())){
             Chime.alert();if(app!=null)Toast.makeText(app,warningLabel(ahead.kind)+" "+(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" ahead",Toast.LENGTH_LONG).show();
         }
-        if(navigating||foreground.get()!=null)SpeedAlerts.onTelemetry();
+        if(navigating||carActive()||foreground.get()!=null)SpeedAlerts.onTelemetry();
         StringBuilder signature=new StringBuilder(source).append(':').append(publisherSession).append(':').append(suppressNativeFlock());
         for(TelemetryStore.RoadAlert a:v.alerts)signature.append('|').append(a.id).append(':').append(a.kind).append(':').append(a.latitude).append(':').append(a.longitude).append(':').append(a.title);
         String pins=signature.toString();if(!pins.equals(pinSignature)){pinSignature=pins;SavedOnMap.refresh();}
@@ -241,6 +279,7 @@ public final class ExternalTelemetry {
         widget=null;if(hiddenBadge!=null){hiddenBadge.setAlpha(1f);hiddenBadge=null;}
     }
     private static void render(){
+        renderCar();
         Activity activity=foreground.get();if(!modern()||activity==null||!widgetEnabled(activity)){removeWidget();return;}
         ViewGroup content=activity.findViewById(android.R.id.content);if(!(content instanceof FrameLayout))return;
         if(widget==null){widget=new CompactSpeedView(activity);widget.setOnClickListener(v->activity.startActivity(Screens.intent(activity,CustomizationActivity.class).putExtra(CustomizationActivity.EXTRA_PAGE,CustomizationActivity.PAGE_WAZE)));content.addView(widget);}
