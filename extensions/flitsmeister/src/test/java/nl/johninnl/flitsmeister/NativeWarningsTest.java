@@ -110,6 +110,17 @@ public class NativeWarningsTest {
         NativeWarnings.reports(Collections.emptyList());
         assertEquals("CLEAR",last().getString("operation"));
     }
+    @Test public void acceptedNativeRepeatAfterStateExpiryDoesNotReuseItsAuthorityKey(){
+        Incident report=new Incident();
+        NativeWarnings.regular(null,report,true,false,"Wrong-way driver",null);
+        Bundle first=new Bundle(last());
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(31));
+        NativeWarnings.regular(null,report,true,false,"Wrong-way driver",null);
+        assertEquals(first.getString("warning_id"),last().getString("warning_id"));
+        assertEquals(first.getString("phase"),last().getString("phase"));
+        assertTrue("A new accepted native announcement needs a distinct authority after cached state expires",
+                last().getLong("announcement_index")>first.getLong("announcement_index"));
+    }
     @Test public void reportSnapshotPreservesUnknownLanguageOfRetainedFreeText(){
         Incident report=new Incident();NativeWarnings.regular(null,report,true,false,report.getVoiceOnlyText(),null);
         Bundle original=new Bundle(last());assertEquals("und",original.getString("language_tag"));

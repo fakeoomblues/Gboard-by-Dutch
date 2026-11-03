@@ -47,6 +47,9 @@ public final class NativeWarnings {
     private static Consumer<Bundle> testSink;
     private static String presentationId;
     private static boolean captureEnabled;
+    // State expires independently of native warning identity. Keep accepted
+    // announcements distinct for this process/session without retaining expired models.
+    private static long announcementCounter;
     private static final class Record {
         Bundle fields; long revision=1,index; boolean listed;
     }
@@ -281,7 +284,7 @@ public final class NativeWarnings {
             fields.putString("language_tag",source.selectedLanguage);fields.putString("language_origin","native_free_text_where");
         }
         if(record.fields!=null&&semanticChange(record.fields,fields))record.revision++;
-        if(announce)record.index++;
+        if(announce)record.index=++announcementCounter;
         long now=SystemClock.elapsedRealtime();
         fields.putString("warning_id",id);fields.putLong("revision",record.revision);fields.putLong("announcement_index",record.index);
         fields.putString("phase",phase);fields.putString("operation",announce?"ANNOUNCE":"UPSERT");
@@ -411,9 +414,9 @@ public final class NativeWarnings {
     private static String language(){if(app!=null){android.os.LocaleList locales=app.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
     private static String contextLanguage(Context context){if(context!=null){android.os.LocaleList locales=context.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
     private static void resetCits(){convertingCits.remove();citsAliases.clear();citsFacts.clear();}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();}
     static synchronized void setEndpointForTest(WarningEndpoint value){
         if(endpoint!=null&&endpoint!=value)endpoint.close();endpoint=value;app=null;testSink=null;captureEnabled=false;
-        records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();
+        announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();
     }
 }
