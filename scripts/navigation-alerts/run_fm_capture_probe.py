@@ -52,8 +52,9 @@ def main():
     parser.add_argument('--target-apk', type=Path, required=True)
     parser.add_argument('--probe-apk', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--scenarios', nargs='+', choices=['sound', 'point', 'voice', 'cits_direct', 'early_bus', 'impact', 'vri', 'cits', 'integrated_trigger', 'integrated_matrix', 'integrated_handover'], default=['sound'])
+    parser.add_argument('--scenarios', nargs='+', choices=['sound', 'point', 'voice', 'cits_direct', 'early_bus', 'impact', 'vri', 'cits', 'integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'], default=['sound'])
     parser.add_argument('--receiver-package', default='com.google.android.apps.maps')
+    parser.add_argument('--death-owner', choices=['app.vela','com.google.android.apps.maps'], default='app.vela')
     parser.add_argument('--hold-seconds', type=int, choices=range(10, 31), default=20)
     parser.add_argument('--native-id', help='Controlled native model ID; expected warning ID is SpeedCam:<native-id>')
     parser.add_argument('--receiver-wait-seconds', '--confirm-wait-seconds', dest='receiver_wait_seconds', type=int, choices=range(30, 121), default=120)
@@ -151,6 +152,7 @@ def main():
             guard()
             instrument = ['shell', 'am', 'instrument', '-w', '-r', '-e', 'scenario', scenario,
                           '-e', 'receiver_package', args.receiver_package, '-e', 'hold_seconds', str(args.hold_seconds),
+                          '-e', 'death_owner', args.death_owner,
                           '-e', 'native_id', args.native_id or ('probe-integrated-' + run_id),
                           '-e', 'receiver_wait_seconds', str(args.receiver_wait_seconds),
                           '-e', 'trigger_family', args.trigger_family, '-e', 'trigger_pattern', args.trigger_pattern,
@@ -158,12 +160,12 @@ def main():
                           '-e', 'native_spacing_ms', str(args.native_spacing_ms),
                           '-e', 'post_warmup_no_gps_delay_ms', str(args.post_warmup_no_gps_delay_ms),
                           'nl.johninnl.warningprobe.fm.capture/nl.johninnl.warningprobe.NativeFmCaptureProbe']
-            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover'):
+            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'):
                 # Stream the genuine source-ready/native-event statuses so the coordinator can
                 # launch the real receiver while this source process remains alive.
                 process = subprocess.Popen([str(args.adb), '-s', serial, *instrument], stdout=subprocess.PIPE,
                                            stderr=subprocess.STDOUT, text=True, bufsize=1)
-                duration = args.matrix_timeout_seconds if scenario in ('integrated_matrix', 'integrated_handover') else args.hold_seconds
+                duration = args.matrix_timeout_seconds if scenario in ('integrated_matrix', 'integrated_handover', 'integrated_death_recovery') else args.hold_seconds
                 timeout = threading.Timer(args.receiver_wait_seconds + duration + 45, process.kill)
                 timeout.start()
                 try:
@@ -181,11 +183,14 @@ def main():
             if report is not None:
                 # Preserve actual outcomes from failed native paths as well as successes.
                 result['scenarios'][scenario] = report
+            partial = next((row for row in output.splitlines() if row.startswith('INSTRUMENTATION_RESULT: fm_capture_partial_result=')), None)
+            if partial:
+                result.setdefault('partial_scenarios', {})[scenario] = json.loads(partial.split('=', 1)[1])
             if line is None or 'INSTRUMENTATION_CODE: -1' not in output or 'fm_capture_cleanup_error=' in output:
                 raise RuntimeError('Actual native capture failed: ' + scenario)
             if not report.get('probe_completed') or report['process_uid'] != uid or not report['managed_mute_verified']:
                 raise RuntimeError('Native capture/mute assertion failed: ' + scenario)
-            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover'):
+            if scenario in ('integrated_trigger', 'integrated_matrix', 'integrated_handover', 'integrated_death_recovery'):
                 if not report.get('production_endpoint_used') or report.get('test_sink_used') or report.get('raw_packet_emitted') or report.get('coverage_override_used') or not report.get('provider_native_queue_empty'):
                     raise RuntimeError('Integrated native trigger bypassed production or provider mute')
             elif report['max_active_playbacks'] != 0:

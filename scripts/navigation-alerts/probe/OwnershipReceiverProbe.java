@@ -22,13 +22,13 @@ public final class OwnershipReceiverProbe extends Instrumentation {
         JSONObject report=new JSONObject(); Bundle output=new Bundle(); Activity activity=null;
         SharedPreferences prefs=null; Map<String,Object> before=null;
         Map<String,Map<?,?>> archive=new LinkedHashMap<>(); List<JSONObject> states=new ArrayList<>();
-        File off=null,stop=null; Object connection=null;
+        File off=null,stop=null,on=null; Object connection=null;
         try {
             check("true".equals(args.getString("reviewed_synthetic_choices")),"Reviewed choices required");
             Context context=getTargetContext();String pkg=context.getPackageName();vela=pkg.equals("app.vela");check(vela||pkg.equals("com.google.android.apps.maps"),"Unexpected target");
             String token=args.getString("control_token","");check(token.matches("[A-Za-z0-9_-]{1,80}"),"Fresh private control token required");
             File folder=new File(context.getExternalFilesDir(null),"native-warning-ownership");check(folder.exists()||folder.mkdirs(),"Control folder");
-            off=new File(folder,token+"-off");stop=new File(folder,token+"-stop");check(!off.exists()&&!stop.exists(),"Reused controls");
+            off=new File(folder,token+"-off");on=new File(folder,token+"-on");stop=new File(folder,token+"-stop");check(!off.exists()&&!stop.exists()&&!on.exists(),"Reused controls");
             ClassLoader loader=context.getClassLoader();telemetry=loader.loadClass(vela?"nl.johninnl.vela.TelemetryRuntime":"org.ungoogled.ui.ExternalTelemetry");diagnostics=loader.loadClass("nl.johninnl.navigation.alerts.WarningDiagnostics");
             prefs=vela?context.getSharedPreferences("vela_settings",0):(SharedPreferences)method(telemetry,"prefs",Context.class).invoke(null,context);
             before=copy(prefs.getAll());if(vela)check(prefs.edit().putString("voice_engine","com.google.android.tts").putBoolean("car_speed_on",true).commit(),"Native voice choice");
@@ -39,7 +39,8 @@ public final class OwnershipReceiverProbe extends Instrumentation {
             onMain(()->{Object settings=field(telemetry,"warningPreferences").get(null);Class<?> modes=loader.loadClass("nl.johninnl.navigation.alerts.WarningAudioOwner$Mode");Object voice=null;for(Object v:modes.getEnumConstants())if(v.toString().equals("VOICE"))voice=v;method(settings.getClass(),"mode",modes).invoke(settings,voice);method(settings.getClass(),"categories",int.class).invoke(settings,127);method(settings.getClass(),"confirm").invoke(settings);select("nl.flitsmeister");});
             boolean selected=true;String previous="";until=SystemClock.elapsedRealtime()+180000;
             while(SystemClock.elapsedRealtime()<until&&!stop.exists()){
-                if(selected&&off.exists()){onMain(()->select(""));selected=false;status("RECEIVER_SOURCE_OFF",new JSONObject().put("package",pkg));}
+                if(selected&&off.exists()){check(off.delete(),"Off control consumption");onMain(()->select(""));selected=false;status("RECEIVER_SOURCE_OFF",new JSONObject().put("package",pkg));}
+                if(!selected&&on.exists()){check(on.delete(),"On control consumption");onMain(()->select("nl.flitsmeister"));selected=true;status("RECEIVER_SOURCE_ON",new JSONObject().put("package",pkg));}
                 Object semantic=field(telemetry,"semantic").get(null),scheduler=field(telemetry,"scheduler").get(null);
                 if(semantic!=null){Object current=method(semantic.getClass(),"connection").invoke(semantic);if(current!=null)connection=current;}
                 String session=semantic==null?"off":String.valueOf(method(semantic.getClass(),"state").invoke(semantic));
@@ -47,6 +48,7 @@ public final class OwnershipReceiverProbe extends Instrumentation {
                 String signature=session+":"+audio;
                 if(!signature.equals(previous)){previous=signature;JSONObject row=new JSONObject().put("elapsed_ms",SystemClock.elapsedRealtime()).put("package",pkg).put("session",session).put("audio",audio);states.add(row);status("RECEIVER_STATE",row);}
                 for(Object value:(List<?>)method(diagnostics,"snapshot").invoke(null)){Map<?,?> row=(Map<?,?>)value;archive.putIfAbsent(row.toString(),new HashMap<>(row));}check(archive.size()<=1024,"Archive bound");
+                if(archive.size()>report.optInt("archived_rows",-1)){report.put("archived_rows",archive.size());JSONObject progress=new JSONObject().put("package",pkg).put("uid",android.os.Process.myUid()).put("states",new JSONArray(states)).put("diagnostics",new JSONArray(archive.values()));try(java.io.FileOutputStream stream=new java.io.FileOutputStream(new File(folder,token+"-progress.json"))){stream.write(progress.toString().getBytes("UTF-8"));}}
                 SystemClock.sleep(20);
             }
             check(stop.exists(),"Ownership controller deadline");report.put("status","observed");
@@ -54,7 +56,7 @@ public final class OwnershipReceiverProbe extends Instrumentation {
         finally{
             try{if(telemetry!=null){onMain(()->select(""));boolean quiet=false;long until=SystemClock.elapsedRealtime()+8000;while(SystemClock.elapsedRealtime()<until){Object scheduler=field(telemetry,"scheduler").get(null),speaker=field(telemetry,"nativeSpeaker").get(null);boolean idle=scheduler==null||field(scheduler.getClass(),"active").get(scheduler)==null&&field(scheduler.getClass(),"grantRequests").getInt(scheduler)==0;boolean pending=connection!=null&&(field(connection.getClass(),"outputOutstanding").getBoolean(connection)||field(connection.getClass(),"grantRequestPending").getBoolean(connection));if(idle&&!pending&&(speaker==null||field(speaker.getClass(),"active").get(speaker)==null)){quiet=true;break;}SystemClock.sleep(20);}put(report,"output_quiescent",quiet);check(quiet,"Receiver output not quiescent");}}catch(Throwable error){put(report,"cleanup_error",android.util.Log.getStackTraceString(error));put(report,"status","blocked");}
             try{if(activity!=null){Activity actual=activity;onMain(actual::finish);}if(prefs!=null&&before!=null){restore(prefs,before);boolean exact=copy(prefs.getAll()).equals(before);put(report,"preferences_restored_exactly",exact);check(exact,"Preference restore differs");}}catch(Throwable error){put(report,"restore_error",android.util.Log.getStackTraceString(error));put(report,"status","blocked");}
-            if(off!=null&&off.exists())off.delete();if(stop!=null&&stop.exists())stop.delete();put(report,"states",new JSONArray(states));put(report,"diagnostics",new JSONArray(archive.values()));put(report,"probe_completed",true);
+            if(on!=null&&on.exists())on.delete();if(off!=null&&off.exists())off.delete();if(stop!=null&&stop.exists())stop.delete();put(report,"states",new JSONArray(states));put(report,"diagnostics",new JSONArray(archive.values()));put(report,"probe_completed",true);
             output.putString("ownership_receiver_result",report.toString());finish("observed".equals(report.optString("status"))?Activity.RESULT_OK:Activity.RESULT_CANCELED,output);
         }
     }
