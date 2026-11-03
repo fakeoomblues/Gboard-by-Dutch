@@ -17,6 +17,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.WarningEvent;
+import nl.johninnl.navigation.alerts.WarningPassage;
+import android.location.Location;
 
 /** Native Maps queue hold. Never writes mute preferences or stream volume. */
 public final class MapsGuidanceCoordinator {
@@ -26,6 +28,8 @@ public final class MapsGuidanceCoordinator {
     private static WeakReference<Object> route=new WeakReference<>(null);
     private static MapsGuidanceCoordinator current;
     private static int nativeFocusInFlight;
+    private static Object cachedPolyline;
+    private static RoadWarningEngine.Route cachedWarningRoute;
     private final Handler main=new Handler(Looper.getMainLooper());
     private final Context app;
     private Object manager;
@@ -129,8 +133,24 @@ public final class MapsGuidanceCoordinator {
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }
     public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;}});}
-    public static void captureRoute(Object owner){synchronized(LOCK){route=new WeakReference<>(owner);}}
-    public static void routeEnded(Object owner){synchronized(LOCK){if(route.get()==owner)route.clear();}}
+    public static void captureRoute(Object owner){synchronized(LOCK){route=new WeakReference<>(owner);cachedPolyline=null;cachedWarningRoute=null;}}
+    public static void routeEnded(Object owner){synchronized(LOCK){if(route.get()==owner){route.clear();cachedPolyline=null;cachedWarningRoute=null;}}}
+    /** Directed native route takes precedence over a straight heading, including around bends. */
+    public static boolean passed(WarningEvent event,Location fix,long now){
+        if(!event.relevance.equals("point_ahead")||event.latitude==null||event.longitude==null||fix==null)return false;
+        Object owner;synchronized(LOCK){owner=route.get();}
+        if(owner!=null)try{if(navigationActive(owner)){RoadWarningEngine.Route shape=warningRoute(owner);return shape!=null&&WarningPassage.passedOnRoute(event,fix,now,shape.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));}}catch(ReflectiveOperationException|RuntimeException unavailable){return false;}
+        return WarningPassage.passed(event,fix,now);
+    }
+    private static RoadWarningEngine.Route warningRoute(Object owner)throws ReflectiveOperationException{
+        Object model=routeField(owner,"e").get(owner);if(model==null)return null;
+        ClassLoader loader=owner.getClass().getClassLoader();Class<?> routeModel=Class.forName("blot",false,loader),pathType=Class.forName("yap",false,loader),polylineType=Class.forName("bjix",false,loader),pointType=Class.forName("bjis",false,loader);
+        if(!routeModel.isInstance(model))return null;Field pathField=field(routeModel,"b");if(pathField.getType()!=pathType)return null;Object path=pathField.get(model);if(path==null)return null;Field geometry=field(pathType,"k");if(geometry.getType()!=polylineType)return null;Object polyline=geometry.get(path);if(polyline==null)return null;
+        synchronized(LOCK){if(polyline==cachedPolyline)return cachedWarningRoute;}
+        int count=((Number)method(polylineType,"g").invoke(polyline)).intValue();if(count<2||count>50000)return null;double[] latitudes=new double[count],longitudes=new double[count];Method point=method(polylineType,"n",int.class),latitude=method(pointType,"b"),longitude=method(pointType,"d");
+        for(int i=0;i<count;i++){Object value=point.invoke(polyline,i);latitudes[i]=((Number)latitude.invoke(value)).doubleValue();longitudes[i]=((Number)longitude.invoke(value)).doubleValue();if(!Double.isFinite(latitudes[i])||!Double.isFinite(longitudes[i])||Math.abs(latitudes[i])>90||Math.abs(longitudes[i])>180)return null;}
+        RoadWarningEngine.Route snapshot=new RoadWarningEngine.Route(latitudes,longitudes);synchronized(LOCK){if(route.get()==owner){cachedPolyline=polyline;cachedWarningRoute=snapshot;}}return snapshot;
+    }
     private static Class<?> routeBase(Object owner)throws ClassNotFoundException {
         Class<?> base=Class.forName("bmia",false,owner.getClass().getClassLoader());
         if(!base.isInstance(owner))throw new IllegalArgumentException("ROUTE_OWNER");return base;

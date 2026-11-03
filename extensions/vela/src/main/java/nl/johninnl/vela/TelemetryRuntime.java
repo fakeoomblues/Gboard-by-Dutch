@@ -78,7 +78,7 @@ public final class TelemetryRuntime {
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){
                     RoadWarningEngine.Route route=nativeRoute();Location fix=lastFix;
-                    if(route!=null&&fix!=null&&event.latitude!=null&&event.longitude!=null)return WarningPassage.passedOnRoute(event,fix,now,route.signedDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude));
+                    if(route!=null&&fix!=null&&event.latitude!=null&&event.longitude!=null)return WarningPassage.passedOnRoute(event,fix,now,route.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));
                     return WarningPassage.passed(event,fix,now);
                 }
             },new WarningScheduler.Speaker(){

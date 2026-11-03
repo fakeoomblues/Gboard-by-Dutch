@@ -15,7 +15,7 @@ class MapsWarningVoiceTest {
         val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
         val classes=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }
         val original=validateMapsWarningVoice(classes)
-        assertEquals(36,original.size)
+        assertEquals(42,original.size)
         val methods=original.mapValues { MutableMethod(it.value) }
         bindMapsNativeVoice(methods)
         val dispatch=methods.getValue("Lbmtf;->b(Ljava/lang/Object;)V")

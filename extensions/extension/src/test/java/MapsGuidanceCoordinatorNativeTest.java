@@ -92,6 +92,9 @@ final class bmtf {final Object b,a;final int $cid;bmtf(Object parent,Object play
 class bmia {ybc o;blot e;bmhh c;ybc lastPull;public void u(ybc step){lastPull=step;}}
 final class anys extends bmia {final boolean o=true;}
 final class ybc{}
-final class blot{}
+final class blot{yap b;}
+final class yap{bjix k;}
+final class bjix{final double[] lat,lon;bjix(double[] a,double[] b){lat=a;lon=b;}public int g(){return lat.length;}public bjis n(int i){return new bjis(lat[i],lon[i]);}}
+final class bjis{final double latitude,longitude;bjis(double a,double b){latitude=a;longitude=b;}public double b(){return latitude;}public double d(){return longitude;}}
 interface bmhh {boolean bv();}
 final class RouteController implements bmhh {public boolean bv(){return true;}}

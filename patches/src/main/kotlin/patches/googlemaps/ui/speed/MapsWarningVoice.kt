@@ -19,6 +19,12 @@ import java.security.MessageDigest
 private const val COORDINATOR="Lorg/ungoogled/ui/MapsGuidanceCoordinator;"
 internal data class MapsVoiceContract(val registers:Int,val count:Int,val flags:Int,val hash:String)
 internal val mapsVoiceContracts=mapOf(
+    "Lbjis;->b()D" to MapsVoiceContract(3, 4, 17, "d37441c1cdd598e06556c4be17b2ef89aff77ff6f7ea349e2ca9596a27ea64d3"),
+    "Lbjis;->d()D" to MapsVoiceContract(3, 4, 17, "4970475f59e7b11ee1269fa01446e2a335fdbb9f04b27519fa2571fee9d53d41"),
+    "Lbjix;->g()I" to MapsVoiceContract(1, 4, 17, "7748607af06abd2aa78ab1626fdd545cb538c81de5e803c69a45d9796ef1c9e0"),
+    "Lbjix;->n(I)Lbjis;" to MapsVoiceContract(7, 16, 17, "1ca6ab4a273501354a404d95038c88274fc3a3e238bd48a5366dbcd78e3ac7ad"),
+    "Lblot;-><init>(Lblos;)V" to MapsVoiceContract(4, 43, 65537, "3a4c2c327dd341bfaa53f6114f3ac5a60a658618e6dc745797654c991662e268"),
+    "Lyap;-><init>(Lyak;)V" to MapsVoiceContract(20, 465, 65537, "bb627003996140e08c5a426c37953704c8fff380651bc1594a023303b17c8747"),
     "Lbmrq;->g(Lbmuk;I)Z" to MapsVoiceContract(7, 66, 17, "b398d5071ccefea508c0cc6b32b93b01a22e86f70cea02e4666783726567ba02"),
     "Lbmrc;->q(Lbmug;Lbmub;)V" to MapsVoiceContract(3, 5, 8, "ad2ab4bd67b399136a4576e64a4e9c9745cc8cc2a078dd1d95fc0e252e5bcbb0"),
     "Lbmtl;->e(Lbmuc;)V" to MapsVoiceContract(3, 5, 17, "e1f9b5a8933e5f0fdd9f66bc20b3772d9f77e10c25f87dec0fa917453303ef42"),
@@ -100,6 +106,9 @@ internal fun mapsVoiceFingerprint(method:Method):String {
 
 internal fun validateMapsWarningVoice(classes:Iterable<ClassDef>):Map<String,Method> {
     val byType=classes.associateBy { it.type }
+    listOf(Triple("Lblot;","b","Lyap;"),Triple("Lyap;","k","Lbjix;")).forEach { (owner,name,type) ->
+        check(byType.getValue(owner).fields.count { it.name==name && it.type==type }==1) { "Changed Maps native route geometry field $owner->$name" }
+    }
     return mapsVoiceContracts.mapValues { (descriptor,c) ->
         val m=byType.getValue(descriptor.substringBefore("->")).methods.single { it.toString()==descriptor }
         check(m.accessFlags==c.flags && m.implementation?.registerCount==c.registers && m.implementation!!.instructions.count()==c.count && mapsVoiceFingerprint(m)==c.hash) { "Changed or already patched Maps warning voice $descriptor" }

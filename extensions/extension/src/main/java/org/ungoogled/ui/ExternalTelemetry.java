@@ -129,7 +129,7 @@ public final class ExternalTelemetry {
                 public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||carActive()||foreground.get()!=null||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
-                public boolean passed(WarningEvent event,long now){return WarningPassage.passed(event,fix,now);}
+                public boolean passed(WarningEvent event,long now){return MapsGuidanceCoordinator.passed(event,fix,now);}
             },new WarningScheduler.Speaker(){
                 public void prepare(String language){speaker.prepare(language);}
                 public void prepare(String language,WarningAudioOwner.Mode mode){speaker.prepare(language,mode);}
