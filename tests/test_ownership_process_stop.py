@@ -10,11 +10,12 @@ PACKAGE = 'org.ungoogled.android.apps.maps'
 
 
 class ProcessStopTest(unittest.TestCase):
+    script = SCRIPT
     def test_failed_stop_still_cleans_other_app_preferences(self):
-        tree = ast.parse(SCRIPT.read_text())
+        tree = ast.parse(self.script.read_text())
         main = next(node for node in tree.body if isinstance(node, ast.Try) and node.finalbody)
-        branch = next(node for node in main.finalbody if isinstance(node, ast.If))
-        loop = next(node for node in branch.body if isinstance(node, ast.For))
+        loop = next(node for statement in main.finalbody for node in ast.walk(statement)
+                    if isinstance(node, ast.For) and isinstance(node.iter, ast.Name) and node.iter.id == 'inputs')
         cleaned = []
         def device(*args):
             if args[-1] == PACKAGE:
@@ -26,14 +27,14 @@ class ProcessStopTest(unittest.TestCase):
                      'device': device, 'assert_stopped': lambda *args, **kwargs: None,
                      'restore_preferences': restore, 'record': {}, 'failure': None}
         try:
-            exec(compile(ast.Module(body=[loop], type_ignores=[]), str(SCRIPT), 'exec'), namespace)
+            exec(compile(ast.Module(body=[loop], type_ignores=[]), str(self.script), 'exec'), namespace)
         except RuntimeError as error:
             self.fail(f'One failed app stop skipped remaining cleanup: {error}')
         self.assertEqual(['nl.flitsmeister', 'app.vela'], cleaned)
         self.assertIn('fixture process could not stop', namespace['failure'])
 
     def barrier(self, snapshots):
-        function = next(node for node in ast.parse(SCRIPT.read_text()).body
+        function = next(node for node in ast.parse(self.script.read_text()).body
                         if isinstance(node, ast.FunctionDef) and node.name == 'assert_stopped')
         clock = SimpleNamespace(now=0.0)
         calls = []
@@ -49,7 +50,7 @@ class ProcessStopTest(unittest.TestCase):
 
         namespace = {'device': device, 'record': record,
                      'time': SimpleNamespace(monotonic=lambda: clock.now, sleep=sleep)}
-        exec(compile(ast.Module(body=[function], type_ignores=[]), str(SCRIPT), 'exec'), namespace)
+        exec(compile(ast.Module(body=[function], type_ignores=[]), str(self.script), 'exec'), namespace)
         return namespace['assert_stopped'], clock, calls, record
 
     def test_delayed_exit_after_force_stop_is_observed_before_success(self):
@@ -90,6 +91,10 @@ class ProcessStopTest(unittest.TestCase):
         stop, _, _, _ = self.barrier([
             f'UID PID STAT NAME\n10194 13647 S {PACKAGE}.other\n'])
         stop(PACKAGE)
+
+
+class ProviderProcessStopTest(ProcessStopTest):
+    script = SCRIPT.with_name('run_provider_restart_probe.py')
 
 
 if __name__ == '__main__':

@@ -82,9 +82,18 @@ def snapshot_preferences(package,label):
    data=tar.extractfile(item).read();state['files'][name]={'sha256':hashlib.sha256(data).hexdigest(),'uid':item.uid,'gid':item.gid,'mode':item.mode}
  return state
 preferences_before={}
-def assert_stopped(package):
- lines=device('shell','ps','-A','-o','UID,PID,NAME').stdout.splitlines()
- assert not any(line.split() and (line.split()[-1]==package or line.split()[-1].startswith(package+':')) for line in lines),package+' process is still alive'
+def assert_stopped(package,wait_seconds=0):
+ started=time.monotonic();deadline=started+wait_seconds
+ observation={'package':package,'stopped':False,'samples':[]}
+ record.setdefault('process_stop_observations',[]).append(observation)
+ while True:
+  lines=device('shell','ps','-A','-o','UID,PID,STAT,NAME').stdout.splitlines()
+  matching=[line for line in lines if line.split() and (line.split()[-1]==package or line.split()[-1].startswith(package+':'))]
+  now=time.monotonic();observation['samples'].append({'elapsed_seconds':now-started,'processes':matching})
+  if not matching:
+   observation['stopped']=True;return
+  assert now<deadline,package+' process is still alive'
+  time.sleep(min(.05,deadline-now))
 for pkg in inputs:
  assert_stopped(pkg);preferences_before[pkg]=snapshot_preferences(pkg,pkg+'-before')
 record['preferences_before']=preferences_before
@@ -116,7 +125,7 @@ base='probe-restart-'+token
 source_details={}
 
 def source(name,scenario,**expectations):
- command=[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/name,'--scenarios',scenario,'--death-owner',receiver_package,'--native-id',base,'--warning-suite-cases',args.warning_suite_cases,'--matrix-timeout-seconds','240']
+ command=[sys.executable,'-u','scripts/navigation-alerts/run_fm_capture_probe.py','--adb',adb,'--serial',serial,'--target-apk',inputs['nl.flitsmeister'],'--probe-apk',helpers['source'],'--output',output/name,'--scenarios',scenario,'--receiver-package',args.maps_package,'--death-owner',receiver_package,'--native-id',base,'--warning-suite-cases',args.warning_suite_cases,'--matrix-timeout-seconds','240']
  for key,value in expectations.items():command.extend(['--'+key.replace('_','-'),value])
  launch(name,command)
 def receiver(role):
@@ -181,7 +190,21 @@ def prepare_vela_ui():
   if 'Settings' in labels or 'Open settings' in labels:break
   if attempt==8:raise RuntimeError('Original Vela map/settings UI not reached after reviewed onboarding')
   time.sleep(.5)
- ui_picture('after-onboarding');device('shell','am','force-stop','app.vela');assert_stopped('app.vela');working_preferences['app.vela']=snapshot_preferences('app.vela','vela-reviewed-ui-baseline');record['working_vela_ui_preferences']=working_preferences['app.vela']
+ ui_picture('after-onboarding');device('shell','am','force-stop','app.vela');assert_stopped('app.vela',wait_seconds=5);working_preferences['app.vela']=snapshot_preferences('app.vela','vela-reviewed-ui-baseline');record['working_vela_ui_preferences']=working_preferences['app.vela']
+
+def find_vela_status_ui(expected,max_seconds=75):
+ deadline=time.monotonic()+max_seconds;previous=None;unchanged=0
+ for attempt in range(36):
+  if time.monotonic()>=deadline:break
+  tree=ui_dump('fenced-navigation-'+str(attempt));nodes=[node for node in tree.iter('node') if node.get('package')=='app.vela']
+  labels=[node.get('text') or node.get('content-desc') for node in nodes]
+  if any(value and expected in value for value in labels):
+   ui_picture('actual-vela-uncertainty-status');record['visible_vela_uncertainty_status']={'text':expected,'xml':str(output/('fenced-navigation-'+str(attempt)+'.xml')),'screenshot':str(output/'actual-vela-uncertainty-status.png')};return
+  signature=tuple((node.get('text'),node.get('content-desc'),node.get('bounds')) for node in nodes)
+  unchanged=unchanged+1 if signature==previous else 0;previous=signature
+  assert unchanged<2,'Actual Vela settings scroll surface unchanged before recovery status'
+  ui_scroll(tree)
+ raise AssertionError('Actual Vela uncertainty status not visible in navigation settings')
 
 def inspect_vela_status_ui():
  tree=ui_dump('fenced-map-ui');ui_picture('fenced-map-ui');labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
@@ -192,16 +215,11 @@ def inspect_vela_status_ui():
   if 'Navigation' in labels:ui_click(tree,'Navigation');time.sleep(.2);opened=True;break
   ui_scroll(tree)
  assert opened,'Actual Navigation settings section not reached'
- expected='Waiting for previous audio to stop';found=False
- for attempt in range(18):
-  tree=ui_dump('fenced-navigation-'+str(attempt));labels={node.get('text') or node.get('content-desc') for node in tree.iter('node') if node.get('package')=='app.vela'}
-  if any(value and expected in value for value in labels):found=True;ui_picture('actual-vela-uncertainty-status');record['visible_vela_uncertainty_status']={'text':expected,'xml':str(output/('fenced-navigation-'+str(attempt)+'.xml')),'screenshot':str(output/'actual-vela-uncertainty-status.png')};break
-  ui_scroll(tree)
- assert found,'Actual Vela uncertainty status not visible in navigation settings'
+ find_vela_status_ui('Waiting for previous audio to stop')
 
 def stop_and_verify_outputs():
  for pkg in [args.maps_package,'app.vela','com.google.android.tts']:
-  device('shell','am','force-stop',pkg);assert_stopped(pkg)
+  device('shell','am','force-stop',pkg);assert_stopped(pkg,wait_seconds=5)
  for pkg in [args.maps_package,'app.vela']:record.setdefault('pre_recovery_preferences_cleanup',{})[pkg]=restore_preferences(pkg,working_preferences[pkg])
  audio=device('shell','dumpsys','audio').stdout;(output/'audio-before-parked-reset.txt').write_text(audio);players=audio.split('  players:',1)[1].split('  ducked players',1)[0]
  relevant={int(re.search(r'uid:(\d+)',device('shell','pm','list','packages','-U',pkg).stdout)[1]) for pkg in [*inputs,'com.google.android.tts']}
@@ -265,7 +283,7 @@ try:
    if name=='seed-source' and 'fm_capture_stage=restart_seed_started' in line:
     detail=source_details[name];pending=detail['pending'];assert pending['stored_started'] and pending['stored_attempt']==pending['pending_attempt'];record['seed_started']=detail
     # Deliberately kill both real processes after the source durably acknowledged native STARTED.
-    for package in [receiver_package,'nl.flitsmeister']:device('shell','am','force-stop',package);assert_stopped(package)
+    for package in [receiver_package,'nl.flitsmeister']:device('shell','am','force-stop',package);assert_stopped(package,wait_seconds=5)
     processes['seed-source'].wait(timeout=20)
     for thread in threads:thread.join(timeout=.1)
     path,seed=source_report('seed-source');assert not seed['probe_completed'];record['expected_killed_source_result']=str(path)
@@ -313,8 +331,10 @@ finally:
   except subprocess.TimeoutExpired:failure=(failure or '')+'; '+name+' remains live; verified cleanup pending'
  for package in inputs:
   if package=='nl.flitsmeister' and any(name.endswith('source') and process.poll() is None for name,process in processes.items()):failure=(failure or '')+'; preserve source preferences while source runner is live';continue
-  device('shell','am','force-stop',package)
-  try:record.setdefault('final_preferences_cleanup',{})[package]=restore_preferences(package)
+  try:
+   device('shell','am','force-stop',package)
+   assert_stopped(package,wait_seconds=5)
+   record.setdefault('final_preferences_cleanup',{})[package]=restore_preferences(package)
   except Exception as error:failure=(failure or '')+'; preference cleanup '+repr(error)
  if hidden_policy_before is not None:
   current=device('shell','settings','get','global','hidden_api_policy').stdout.strip()
