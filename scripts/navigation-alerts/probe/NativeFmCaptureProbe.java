@@ -62,7 +62,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
     @Override public void onStart(){
         Bundle output=new Bundle();JSONObject report=new JSONObject();
         try{
-            String scenario=arguments.getString("scenario","sound");boolean integrated=scenario.equals("integrated_trigger")||scenario.equals("integrated_matrix");
+            String scenario=arguments.getString("scenario","sound");boolean integrated=scenario.equals("integrated_trigger")||scenario.equals("integrated_matrix")||scenario.equals("integrated_handover");
             context=getTargetContext();check(context.getPackageName().equals("nl.flitsmeister"),"Unexpected target");
             check(context.getApplicationInfo().uid==Process.myUid(),"Target UID mismatch");bootstrap();
             preferences=(SharedPreferences)type("androidx.preference.PreferenceManager").getMethod("getDefaultSharedPreferences",Context.class).invoke(null,context);
@@ -83,6 +83,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
             else if(scenario.equals("cits"))cits(report);
             else if(scenario.equals("integrated_trigger"))realEndpointTrigger(report);
             else if(scenario.equals("integrated_matrix"))realEndpointMatrix(report);
+            else if(scenario.equals("integrated_handover"))realEndpointHandover(report);
             else throw new IllegalArgumentException("Unknown native capture scenario");
             waitForIdleSync();SystemClock.sleep(300);assertMuted();observePlayback(manager.getActivePlaybackConfigurations());
             if(!integrated)check(maxActive.get()==0,"Active playback occurred during managed native capture");check(initialVolume==manager.getStreamVolume(AudioManager.STREAM_MUSIC),"Device stream volume changed");
@@ -253,6 +254,36 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         onMain(()->call(nativeService,"J",camera,false));report.put("production_endpoint_used",true);report.put("test_sink_used",false);report.put("raw_packet_emitted",false);report.put("coverage_override_used",false);report.put("source_dispositions",outcomes);report.put("source_process_hold_seconds",hold);report.put("provider_native_clear_called",true);
         Object sound=singleton("s6i","f"),queue=call(sound,"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Provider native queue is not muted/empty");report.put("provider_native_queue_empty",true);
         status("native_trigger_complete",new JSONObject().put("source_dispositions",outcomes).put("provider_muted",true));
+    }
+    /** Observe two real consumers and trigger original native models; never create a lease or grant. */
+    private void realEndpointHandover(JSONObject report)throws Exception{
+        Field sink=capture.getDeclaredField("testSink");sink.setAccessible(true);check(sink.get(null)==null,"Production handover forbids a test sink");
+        Object endpoint=capture.getMethod("init",Context.class).invoke(null,context),profile=read(endpoint,"profile");check(Boolean.TRUE.equals(read(profile,"complete")),"Incomplete native profile");
+        type("nl.johninnl.flitsmeister.NavigationBroadcasts").getMethod("init",Context.class).invoke(null,context);
+        String first="com.google.android.apps.maps",second="app.vela",session=String.valueOf(call(endpoint,"sourceSession")),base=arguments.getString("native_id");
+        status("production_endpoint_ready",new JSONObject().put("provider_session",session).put("receiver_package",first));
+        long end=SystemClock.elapsedRealtime()+120000;while(SystemClock.elapsedRealtime()<end&&(!productionReceiverSynced(endpoint,first)||!first.equals(productionOwnerPackage(endpoint)))){assertMuted();SystemClock.sleep(20);}
+        check(first.equals(productionOwnerPackage(endpoint)),"First actual receiver never owned audio");status("handover_first_owner_ready",new JSONObject().put("owner",first));
+        end=SystemClock.elapsedRealtime()+60000;while(SystemClock.elapsedRealtime()<end&&!productionReceiverSynced(endpoint,second)){assertMuted();SystemClock.sleep(20);}check(productionReceiverSynced(endpoint,second),"Second receiver never synced");
+        SystemClock.sleep(1500);check(first.equals(productionOwnerPackage(endpoint)),"Second receiver stole first ready owner");
+        report.put("both_confirmed_before_first_warning",productionReceiverSynced(endpoint,first)&&productionReceiverSynced(endpoint,second));
+        Object service=singleton("fc0","S1");call(service,"P");JSONArray rows=new JSONArray();
+        for(int index=1;index<=2;index++){
+            String expected=index==1?first:second;
+            if(index==2){end=SystemClock.elapsedRealtime()+20000;while(SystemClock.elapsedRealtime()<end&&(productionReceiverSynced(endpoint,first)||!second.equals(productionOwnerPackage(endpoint)))){assertMuted();SystemClock.sleep(20);}check(!productionReceiverSynced(endpoint,first)&&second.equals(productionOwnerPackage(endpoint)),"Actual release did not hand ownership to Vela");}
+            String id=base+"-"+index;Object model=camera("SPEED_50",id);controlledFix();onMain(()->call(service,"J",model,true));roots.add("Lfc0;->J");Object event=awaitProductionEvent(endpoint,session,id,0);
+            activateEvent(event);Set<String> seen=new HashSet<>();JSONArray outcomes=new JSONArray();status("native_event_in_production_journal",new JSONObject((Map<?,?>)call(event,"fields")));awaitTerminal(endpoint,seen,outcomes,SystemClock.elapsedRealtime()+15000,false);
+            check("COMPLETED".equals(lastTerminalState),"Handover native speech not completed");check(expected.equals(productionOwnerPackage(endpoint)),"Wrong receiver owned terminal output");
+            if(index==1){java.io.File barrier=new java.io.File(context.getExternalFilesDir(null),"native-warning-ownership/"+base+"-contender-busy");end=SystemClock.elapsedRealtime()+15000;while(!barrier.exists()&&SystemClock.elapsedRealtime()<end){assertMuted();check(first.equals(productionOwnerPackage(endpoint)),"First owner changed before release");SystemClock.sleep(20);}check(barrier.exists(),"Second genuine speaker never reported BUSY");check(barrier.delete(),"Private BUSY barrier cleanup");report.put("contender_busy_observed_before_release",true);}
+            onMain(()->call(service,"J",model,false));JSONObject row=new JSONObject().put("index",index).put("owner",expected).put("authority",new JSONObject((Map<?,?>)call(event,"fields"))).put("source_dispositions",outcomes);rows.put(row);report.put("handover_records",rows);status(index==1?"handover_first_complete":"handover_second_complete",row);
+        }
+        end=SystemClock.elapsedRealtime()+20000;while(SystemClock.elapsedRealtime()<end){productionOutcomes(endpoint,new HashSet<>());if(!ownerPresent&&!pendingPresent&&((Set<?>)call(endpoint,"capablePackages")).isEmpty())break;assertMuted();SystemClock.sleep(20);}
+        check(!ownerPresent&&!pendingPresent&&((Set<?>)call(endpoint,"capablePackages")).isEmpty(),"Actual receivers did not release and quiesce");
+        Object queue=call(singleton("s6i","f"),"d");check(((java.util.Queue<?>)queue.getClass().getField("f").get(queue)).isEmpty(),"Source queue not muted");
+        report.put("production_endpoint_used",true).put("test_sink_used",false).put("raw_packet_emitted",false).put("coverage_override_used",false).put("provider_native_queue_empty",true).put("receiver_source_off_and_quiescent",true).put("real_terminal_ack_observed",true).put("handover_records",rows);
+    }
+    private String productionOwnerPackage(Object endpoint)throws Exception{
+        java.util.concurrent.ExecutorService actor=(java.util.concurrent.ExecutorService)read(endpoint,"actor");return actor.submit(()->{Object owner=read(endpoint,"audio");check(owner!=null,"Actual owner storage missing");Object snapshot=call(owner,"snapshot",SystemClock.elapsedRealtime()),lease=read(snapshot,"owner");return lease!=null&&Boolean.TRUE.equals(read(lease,"ready"))?String.valueOf(read(lease,"packageName")):"";}).get(3,TimeUnit.SECONDS);
     }
     private Object productionEvent(Object endpoint,String session,String id)throws Exception{
         return productionEventAfter(endpoint,session,id,0);

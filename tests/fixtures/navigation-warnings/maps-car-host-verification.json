@@ -37,8 +37,10 @@
   "cleanup": {
     "receiver_preferences_restored_exactly": true,
     "receiver_output_quiescent": true,
+    "source_network_and_lease_restored": true,
+    "source_location_permissions_restored_exactly": true,
     "receiver_location_permissions_restored_exactly": true,
-    "source_network_and_lease_restored": true
+    "receiver_location_cleanup_record": ".analysis/native-warning-bindings/maps-car-isolated-02/receiver-location-cleanup.json"
   },
   "remaining": [
     "Actual Android Auto/DHU projection",
