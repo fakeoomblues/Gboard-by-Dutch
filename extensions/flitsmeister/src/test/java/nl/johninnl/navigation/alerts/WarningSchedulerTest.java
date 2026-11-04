@@ -118,6 +118,21 @@ public class WarningSchedulerTest {
     @Test public void mutedPreviewDoesNotCreateAnAuthorityOrInitializeOutput(){
         policy.mode=WarningAudioOwner.Mode.SILENT;assertEquals("USER_MUTED",scheduler.preview("nl").join());assertEquals(0,speaker.calls);assertEquals(0,sequence);
     }
+    @Test public void sustainedOrdinaryAuthoritiesCrossSequenceSixteenWithoutCancellation(){sustainedAuthorities(1);}
+    @Test public void sustainedUrgentAuthoritiesCrossSequenceSixteenWithoutCancellation(){sustainedAuthorities(0);}
+    private void sustainedAuthorities(int priority){
+        for(int i=0;i<7;i++){
+            WarningEvent authority=event("sustained-"+i,priority,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+            assertEquals(i+1,speaker.calls);PlaybackGrant grant=speaker.grant;
+            Bundle fields=WarningCodec.encode(event("sustained-"+i,priority,2,WarningEvent.Operation.UPSERT));fields.putString("message",authority.message);
+            WarningEvent update=WarningCodec.decode(fields,time.now);source.add(update);scheduler.events(source,Collections.singletonList(update));
+            time.now+=100;speaker.callback.started(grant);time.now+=1500;scheduler.refresh();
+            speaker.callback.finished(grant,PlaybackGrant.Outcome.COMPLETED,true);assertNull(source.pending);
+            WarningEvent clear=event("sustained-"+i,priority,3,WarningEvent.Operation.CLEAR);source.add(clear);scheduler.events(source,Collections.singletonList(clear));
+            assertEquals("Identical state updates and the transport sequence boundary must not cancel valid speech",0,speaker.cancels);
+        }
+        assertTrue(sequence>16);assertEquals(7,Collections.frequency(observed,PlaybackGrant.Outcome.COMPLETED));
+    }
     WarningConnection.Snapshot snapshot(List<WarningConnection.Candidate> candidates){return new WarningConnection.Snapshot(session,sequence,false,true,"UNOWNED",new ArrayList<>(),new ArrayList<>(),candidates,new ArrayList<>());}
     WarningEvent event(String id,int priority,long revision,WarningEvent.Operation operation){
         Bundle b=new Bundle();b.putInt("protocol_version",1);b.putString("provider_session",session);b.putLong("sequence",++sequence);b.putString("operation",operation.name());b.putString("warning_id",id);b.putLong("revision",revision);b.putLong("announcement_index",1);b.putString("phase","notice");b.putString("native_type","Incident");b.putString("category","road_danger");b.putInt("priority",priority);b.putString("message","Native "+id+" revision "+revision);b.putString("language_tag","en");b.putString("message_origin","native_text");b.putString("relevance","notice");b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",time.now);b.putLong("issued_elapsed_ms",time.now);b.putLong("state_until_elapsed_ms",time.now+30000);if(operation==WarningEvent.Operation.ANNOUNCE)b.putLong("announce_until_elapsed_ms",time.now+(priority==0?5000:10000));return WarningCodec.decode(b,time.now);

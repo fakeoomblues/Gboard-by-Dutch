@@ -30,6 +30,9 @@ import org.json.JSONObject;
 public final class IntegratedMapsReceiverProbe extends Instrumentation {
     private Bundle args;
     private IntegratedMapsPcmObserver pcm;
+    private File cancelFile;
+    private boolean controllerCancelled;
+    private void checkCancellation(){if(cancelFile!=null&&cancelFile.exists()){controllerCancelled=true;throw new IllegalStateException("CONTROLLER_CANCELLED: source validation failed; partial evidence retained");}}
     @Override public void onCreate(Bundle args){super.onCreate(args);this.args=args==null?new Bundle():args;start();}
     @Override public void onStart(){
         JSONObject report=new JSONObject();Bundle output=new Bundle();Activity activity=null;SharedPreferences prefs=null;Map<String,Object> original=null;
@@ -45,10 +48,11 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             report.put("preferences_before_sha256",fingerprint(original)).put("process_uid",android.os.Process.myUid()).put("target_uid",context.getApplicationInfo().uid).put("target_package",pkg);
             report.put("choices",new JSONObject().put("provider","nl.flitsmeister").put("mode",mode).put("categories","ALL").put("reviewed",true).put("widget",true));
             folder=new File(context.getExternalFilesDir(null),"native-warning-integrated");if(!folder.exists()&&!folder.mkdirs())throw new IllegalStateException("Output folder");
+            String cancelToken=args.getString("cancel_token","");if(!cancelToken.isEmpty()){if(!cancelToken.matches("[a-f0-9]{32}"))throw new IllegalArgumentException("Invalid private cancellation token");cancelFile=new File(folder,"cancel-"+cancelToken+".request");}
             Intent launch=context.getPackageManager().getLaunchIntentForPackage(pkg);if(launch==null)throw new IllegalStateException("No genuine launcher Activity");launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity=startActivitySync(launch);final Activity actualActivity=activity;final Class<?> actualTelemetry=telemetry;
             long initUntil=SystemClock.elapsedRealtime()+10000;
-            while(SystemClock.elapsedRealtime()<initUntil&&field(telemetry,"scheduler").get(null)==null)SystemClock.sleep(20);
+            while(SystemClock.elapsedRealtime()<initUntil&&field(telemetry,"scheduler").get(null)==null){checkCancellation();SystemClock.sleep(20);}
             if(field(telemetry,"scheduler").get(null)==null)throw new IllegalStateException("Genuine Activity lifecycle did not initialize the receiver graph");
             onMain(()->{
                 Object choices=field(actualTelemetry,"warningPreferences").get(null);Class<?> modes=Class.forName("nl.johninnl.navigation.alerts.WarningAudioOwner$Mode",true,loader);
@@ -58,7 +62,7 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             });
             report.put("selection_at_elapsed_ms",SystemClock.elapsedRealtime()).put("activity",activity.getClass().getName());
             boolean ready=false;long readyUntil=SystemClock.elapsedRealtime()+20000;
-            while(SystemClock.elapsedRealtime()<readyUntil){Object session=field(telemetry,"semantic").get(null);if(session!=null&&"ready".equals(method(session.getClass(),"state").invoke(session))){report.put("capture_complete",method(session.getClass(),"captureComplete").invoke(session));if(report.optBoolean("capture_complete")){ready=true;break;}}SystemClock.sleep(20);}
+            while(SystemClock.elapsedRealtime()<readyUntil){checkCancellation();Object session=field(telemetry,"semantic").get(null);if(session!=null&&"ready".equals(method(session.getClass(),"state").invoke(session))){report.put("capture_complete",method(session.getClass(),"captureComplete").invoke(session));if(report.optBoolean("capture_complete")){ready=true;break;}}SystemClock.sleep(20);}
             report.put("connection",state(telemetry));if(!ready)throw new IllegalStateException("Production WarningSession did not become ready with legitimate complete coverage");
             Object realSession=field(telemetry,"semantic").get(null),realConnection=method(realSession.getClass(),"connection").invoke(realSession);
             productionConnection=realConnection;
@@ -69,6 +73,7 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             else {
             long observeAfter=report.getLong("selection_at_elapsed_ms"),until=SystemClock.elapsedRealtime()+30000;Object observedAttempt=null,observedAuthority=null;String eventKey="",terminalStage="";boolean terminal=false,started=false,uiCaptured=false;
             while(SystemClock.elapsedRealtime()<until){
+                checkCancellation();
                 Object display=field(telemetry,"nativeWarnings").get(null);synchronized(display){Map<?,?> values=(Map<?,?>)field(display.getClass(),"values").get(display);for(Object value:values.values())if(matches(value,type)){observedAuthority=value;report.put("received_display_event",event(value));}}
                 Object scheduler=field(telemetry,"scheduler").get(null),active=scheduler==null?null:field(scheduler.getClass(),"active").get(scheduler);
                 if(active!=null){Object pending=field(active.getClass(),"pending").get(active),authority=field(pending.getClass(),"authority").get(pending);
@@ -106,7 +111,7 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             if(!report.getJSONObject("final_state").optBoolean("provider_audio_muted"))throw new IllegalStateException("Production startup status did not observe source mute");
             report.put("status","observed");
             }
-        }catch(Throwable error){reportPut(report,"status","blocked");reportPut(report,"exception",android.util.Log.getStackTraceString(error));}
+        }catch(Throwable error){reportPut(report,"status","blocked");reportPut(report,"exception",android.util.Log.getStackTraceString(error));if(controllerCancelled){reportPut(report,"controller_cancelled",true);reportPut(report,"partial",true);}}
         finally{
             try{if(telemetry!=null&&activity!=null){final Class<?> real=telemetry;final Context context=getTargetContext();onMain(()->method(real,"select",Context.class,String.class).invoke(null,context,""));
                 long until=SystemClock.elapsedRealtime()+8000;boolean quiet=false;while(SystemClock.elapsedRealtime()<until){final boolean[] idle={false};onMain(()->{Object scheduler=field(real,"scheduler").get(null),speaker=field(real,"nativeSpeaker").get(null);idle[0]=(scheduler==null||field(scheduler.getClass(),"active").get(scheduler)==null&&field(scheduler.getClass(),"grantRequests").getInt(scheduler)==0)&&(speaker==null||field(speaker.getClass(),"active").get(speaker)==null);});boolean pending=productionConnection!=null&&(field(productionConnection.getClass(),"outputOutstanding").getBoolean(productionConnection)||field(productionConnection.getClass(),"grantRequestPending").getBoolean(productionConnection));if(idle[0]&&!pending){quiet=true;break;}SystemClock.sleep(20);}reportPut(report,"cleanup_output_quiescent",quiet);if(!quiet)reportPut(report,"status","blocked");}}
@@ -114,6 +119,7 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             if(pcm!=null)try{onMain(()->pcm.restore());report.put("private_pcm_observer",pcm.report(folder));}catch(Throwable failure){reportPut(report,"pcm_observer_error",android.util.Log.getStackTraceString(failure));reportPut(report,"status","blocked");}
             try{if(activity!=null){final Activity done=activity;onMain(done::finish);onMain(()->{});}if(prefs!=null&&original!=null){restore(prefs,original);boolean equal=copy(prefs.getAll()).equals(original);reportPut(report,"preferences_restored_exactly",equal);reportPut(report,"preferences_after_sha256",fingerprint(copy(prefs.getAll())));if(!equal)reportPut(report,"status","blocked");}}
             catch(Throwable failure){reportPut(report,"restore_exception",android.util.Log.getStackTraceString(failure));reportPut(report,"status","blocked");}
+            if(cancelFile!=null&&cancelFile.exists())reportPut(report,"private_cancel_sentinel_removed",cancelFile.delete());
             reportPut(report,"probe_completed",true);reportPut(report,"scope","Actual Maps Activity/preferences/session/connection/scheduler/speaker/UI; producer must trigger original native callbacks into its real endpoint. No packet, grant, source-complete or test-sink override.");
             if(diagnostics!=null)try{report.put("diagnostics_after_cleanup",new JSONArray((List<?>)method(diagnostics,"snapshot").invoke(null)));}catch(Throwable ignored){}
             if(args.containsKey("matrix_count")&&folder!=null)try{File file=new File(folder,"matrix-result.json");byte[] bytes=report.toString().getBytes("UTF-8");try(FileOutputStream stream=new FileOutputStream(file)){stream.write(bytes);}output.putString("integrated_receiver_manifest",new JSONObject().put("file",file.getAbsolutePath()).put("sha256",hex(MessageDigest.getInstance("SHA-256").digest(bytes))).put("status",report.optString("status")).put("probe_completed",true).toString());}catch(Throwable error){output.putString("integrated_receiver_error",android.util.Log.getStackTraceString(error));}
@@ -127,7 +133,8 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
         java.util.LinkedHashMap<String,Map<String,Object>> archive=new java.util.LinkedHashMap<>();java.util.IdentityHashMap<Map<String,Object>,Boolean> seenRows=new java.util.IdentityHashMap<>();java.util.LinkedHashMap<String,Object> authorities=new java.util.LinkedHashMap<>();java.util.Map<String,String> terminal=new java.util.HashMap<>();java.util.Map<String,Integer> startedCounts=new java.util.HashMap<>();java.util.Set<String> started=new java.util.HashSet<>(),succeeded=new java.util.HashSet<>();java.util.Map<String,JSONObject> speakerAttempts=new java.util.LinkedHashMap<>();
         long deadline=SystemClock.elapsedRealtime()+Long.parseLong(args.getString("matrix_timeout_seconds","900"))*1000L;String providerSession=null;boolean screenshot=false;int lastProgress=-1;
         Class<?> eventType=Class.forName("nl.johninnl.navigation.alerts.WarningEvent",false,getTargetContext().getClassLoader()),grantType=Class.forName("nl.johninnl.navigation.alerts.PlaybackGrant",false,getTargetContext().getClassLoader());Method key=method(grantType,"key",eventType);
-        while(SystemClock.elapsedRealtime()<deadline){
+        try{while(SystemClock.elapsedRealtime()<deadline){
+            checkCancellation();
             Object display=field(telemetry,"nativeWarnings").get(null);synchronized(display){for(Object value:((Map<?,?>)field(display.getClass(),"values").get(display)).values())if(matrixMatches(value,prefix,count,type)){String identity=(String)key.invoke(null,value);if(!authorities.containsKey(identity)||"ANNOUNCE".equals(String.valueOf(field(value.getClass(),"operation").get(value))))authorities.put(identity,value);}}
             final Object[] actual={null};onMain(()->{Object scheduler=field(telemetry,"scheduler").get(null),active=field(scheduler.getClass(),"active").get(scheduler);if(active!=null){Object pending=field(active.getClass(),"pending").get(active);actual[0]=field(pending.getClass(),"authority").get(pending);}Object speaker=field(telemetry,"nativeSpeaker").get(null);if(pcm!=null)pcm.install(speaker);Object spoken=field(speaker.getClass(),"active").get(speaker);if(spoken!=null){Object payload=field(spoken.getClass(),"payload").get(spoken);if(matrixMatches(payload,prefix,count,type)){Object grant=field(spoken.getClass(),"grant").get(spoken);String id=String.valueOf(field(spoken.getClass(),"id").get(spoken));speakerAttempts.put(id,new JSONObject().put("utterance_id",id).put("attempt_id",field(grant.getClass(),"attemptId").get(grant)).put("event_key",key.invoke(null,payload)).put("payload",event(payload)));}}});
             if(actual[0]!=null&&matrixMatches(actual[0],prefix,count,type))authorities.put((String)key.invoke(null,actual[0]),actual[0]);
@@ -155,9 +162,11 @@ public final class IntegratedMapsReceiverProbe extends Instrumentation {
             }
             SystemClock.sleep(20);
         }
+        }finally{
         JSONArray events=new JSONArray();for(Map.Entry<String,Object> entry:authorities.entrySet())events.put(new JSONObject().put("event_key",entry.getKey()).put("event",event(entry.getValue())).put("started",started.contains(entry.getKey())).put("started_count",startedCounts.getOrDefault(entry.getKey(),0)).put("terminal",terminal.get(entry.getKey())));
         JSONArray measured=new JSONArray();for(Map<String,Object> row:archive.values())if(authorities.containsKey(String.valueOf(row.get("event_key"))))measured.put(new JSONObject(row));
         report.put("matrix_expected_authorities",expected).put("matrix_measured_authorities",authorities.size()).put("matrix_terminal_authorities",terminal.size()).put("matrix_succeeded_authorities",succeeded.size()).put("matrix_provider_session",providerSession).put("matrix_events",events).put("matrix_speaker_attempts",new JSONArray(speakerAttempts.values())).put("diagnostics",measured).put("diagnostics_all_including_warmup",new JSONArray(archive.values())).put("measured_event_keys",new JSONArray(authorities.keySet())).put("diagnostic_archive_private",true).put("production_ring_unchanged",true).put("final_state",state(telemetry));
+        }
         if(authorities.size()!=expected||succeeded.size()!=expected||started.size()!=expected)throw new IllegalStateException("Incomplete real warm matrix; no missing sample is excluded");
         for(String identity:authorities.keySet())if(startedCounts.getOrDefault(identity,0)!=1)throw new IllegalStateException("Duplicate actual STARTED under one ANNOUNCE authority; all callbacks retained");report.put("status","observed");
     }

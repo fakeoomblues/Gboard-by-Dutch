@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import threading
+import time
 import uuid
 
 
@@ -73,7 +74,9 @@ def main():
     parser.add_argument('--matrix-timeout-seconds', type=int, choices=range(60, 901), default=600)
     parser.add_argument('--native-spacing-ms', type=int, choices=range(1000, 5001), default=1000)
     parser.add_argument('--post-warmup-no-gps-delay-ms', type=int, default=0)
+    parser.add_argument('--trace-token', help='32-hex Frida ready/lost barrier token; no stimuli before attached observation')
     args = parser.parse_args()
+    if args.trace_token and not re.fullmatch(r'[a-f0-9]{32}',args.trace_token):parser.error('Invalid Frida trace token')
     if not 0 <= args.post_warmup_no_gps_delay_ms <= 12000:
         parser.error('Post-warmup no-GPS delay must be 0..12000 ms')
     if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+', args.receiver_package):
@@ -172,6 +175,7 @@ def main():
                           'nl.johninnl.warningprobe.fm.capture/nl.johninnl.warningprobe.NativeFmCaptureProbe']
             if args.reviewed_stopped_output:
                 instrument[-1:-1] = ['-e', 'reviewed_stopped_output', 'true']
+            if args.trace_token:instrument[-1:-1]=['-e','trace_token',args.trace_token]
             for key, value in [('expected_pending_attempt', args.expected_pending_attempt), ('expected_old_session', args.expected_old_session)]:
                 if value:
                     instrument[-1:-1] = ['-e', key, value]
@@ -210,6 +214,14 @@ def main():
                     raise RuntimeError('Integrated native trigger bypassed production or provider mute')
             elif report['max_active_playbacks'] != 0:
                 raise RuntimeError('Native provider active playback observed: ' + scenario)
+            if args.trace_token:
+                # This marker is created only after native completion/mute/queue assertions.
+                # It identifies the runner's deliberate terminal stop, never an app crash.
+                terminal='/sdcard/Android/data/nl.flitsmeister/files/native-warning-integrated/trace-terminal-'+args.trace_token+'.request'
+                adb('shell','touch',terminal)
+                result['successful_capture_terminal_marker_created']=True
+                result['source_stop_intent_monotonic_ns']=time.monotonic_ns()
+                result['source_stop_intent_host_unix_ms']=time.time_ns()//1000000
             adb('shell', 'am', 'force-stop', 'nl.flitsmeister')
     except Exception as error:
         failure = repr(error)

@@ -58,6 +58,17 @@ public final class NativeFmCaptureProbe extends Instrumentation {
     private boolean startedTerminalObserved;
     private String lastStartedTerminalState;
     private String lastTerminalState;
+    private java.io.File traceReady,traceLost;
+    private void awaitTrace(JSONObject report)throws Exception{
+        String token=arguments.getString("trace_token","");if(token.isEmpty())return;
+        check(token.matches("[a-f0-9]{32}"),"Invalid owned trace token");
+        java.io.File folder=new java.io.File(context.getExternalFilesDir(null),"native-warning-integrated");check(folder.isDirectory()||folder.mkdirs(),"Trace barrier folder");
+        traceReady=new java.io.File(folder,"trace-ready-"+token+".request");traceLost=new java.io.File(folder,"trace-lost-"+token+".request");
+        long deadline=SystemClock.elapsedRealtime()+30000;
+        while(!traceReady.exists()&&SystemClock.elapsedRealtime()<deadline){assertMuted();SystemClock.sleep(20);}
+        check(traceReady.exists()&&!traceLost.exists(),"Required Frida observation is not ready; no test stimulus admitted");
+        report.put("frida_barrier_passed_at_elapsed_ms",SystemClock.elapsedRealtime());
+    }
     private final AudioManager.AudioPlaybackCallback playback=new AudioManager.AudioPlaybackCallback(){
         @Override public void onPlaybackConfigChanged(List<AudioPlaybackConfiguration> configs){observePlayback(configs);}
     };
@@ -140,7 +151,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         check(globals.getField(field).get(null)==value,"Original native configuration bootstrap failed");
     }
     private void renew()throws Exception{type("nl.johninnl.navigation.startup.ProviderEngineService").getMethod("renewLease",Context.class).invoke(null,context);assertMuted();}
-    private void assertMuted()throws Exception{check(Boolean.TRUE.equals(audio.getMethod("muted").invoke(null)),"Managed ProviderAudio lease is not active");}
+    private void assertMuted()throws Exception{check(traceLost==null||!traceLost.exists(),"Required Frida observation lost; no further test stimuli permitted");check(Boolean.TRUE.equals(audio.getMethod("muted").invoke(null)),"Managed ProviderAudio lease is not active");}
     // The public unprivileged active-playback view must stay empty. Do not rely on
     // hidden player-state/UID accessors or change platform hidden-API policy.
     private void observePlayback(List<AudioPlaybackConfiguration> configs){maxActive.accumulateAndGet(configs.size(),Math::max);}
@@ -890,6 +901,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         String receiver=arguments.getString("receiver_package","com.google.android.apps.maps"),session=String.valueOf(call(endpoint,"sourceSession")),base=arguments.getString("native_id","probe-matrix-"+java.util.UUID.randomUUID()),family=arguments.getString("trigger_family","ordinary"),pattern=arguments.getString("trigger_pattern","single");
         int count=Integer.parseInt(arguments.getString("event_count","1")),limit=Integer.parseInt(arguments.getString("matrix_timeout_seconds","600"));check(count>=1&&count<=100&&limit>=60&&limit<=900,"Invalid bounded native matrix");check(family.equals("ordinary")||family.equals("p0"),"Unknown native family");check(java.util.Arrays.asList("single","update","clear","repeat").contains(pattern),"Unknown native matrix pattern");
         status("production_endpoint_ready",new JSONObject().put("provider_session",session).put("receiver_package",receiver).put("producer_complete",true).put("test_sink_present",false).put("target_classloader_used",true).put("native_id_base",base).put("trigger_family",family).put("trigger_pattern",pattern).put("event_count",count).put("native_id_rule",count==1?"base":"base-001 through base-NNN"));
+        awaitTrace(report);
         int startup=Integer.parseInt(arguments.getString("receiver_wait_seconds","120"));check(startup>=30&&startup<=120,"Invalid matrix receiver wait");long startupEnd=SystemClock.elapsedRealtime()+startup*1000L;while(!productionReceiverSynced(endpoint,receiver)&&SystemClock.elapsedRealtime()<startupEnd){assertMuted();SystemClock.sleep(25);}check(productionReceiverSynced(endpoint,receiver),"Matrix real receiver never confirmed/synced");
         Object service=singleton("fc0","S1");clearNativeReports(service);JSONArray rows=new JSONArray();long matrixEnd=SystemClock.elapsedRealtime()+limit*1000L;
         // A real native warning prepares the actual receiver language. Keep its authority
@@ -907,6 +919,7 @@ public final class NativeFmCaptureProbe extends Instrumentation {
         }
         int spacing=Integer.parseInt(arguments.getString("native_spacing_ms","1000"));check(spacing>=1000&&spacing<=5000,"Invalid controlled native input spacing");long previousNative=-1;
         for(int index=1;index<=count;index++){
+            assertMuted();
             while(previousNative>=0&&SystemClock.elapsedRealtime()-previousNative<spacing){assertMuted();SystemClock.sleep(10);}
             check(SystemClock.elapsedRealtime()<matrixEnd,"Native matrix overall deadline");String id=count==1?base:base+"-"+String.format(java.util.Locale.ROOT,"%03d",index);Object model=matrixModel(family,id);boolean ready=productionOwnerReady(endpoint);
             previousNative=SystemClock.elapsedRealtime();onMain(()->{matrixInput(family);call(service,"J",model,true);});Object nativeEvent=awaitProductionEvent(endpoint,session,id,0);JSONObject row=matrixRow(nativeEvent,index,family,pattern,ready);JSONArray outcomes=new JSONArray();activateEvent(nativeEvent);Set<String> seen=new HashSet<>();
