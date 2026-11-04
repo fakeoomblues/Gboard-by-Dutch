@@ -184,6 +184,12 @@ public class NativeWarningsTest {
         NativeWarnings.segments(new SegmentUpdate(Collections.singletonList(s)));
         assertTrue(last().getBoolean("native_segment_correlated"));assertEquals(1,NativeWarnings.familyStatus().getBundle("segments").getInt("current_state_count"));assertEquals(0,announcements());
     }
+    @Test public void removingALinkedSegmentRetiresOnlyItsMetadataWithoutRearmingTheAlerter(){
+        Descriptor d=new Descriptor("42","PERMANENT_HAZARD",0);repository(d);NativeWarnings.sound(d.id);long index=last().getLong("announcement_index"),observed=last().getLong("observed_elapsed_ms");String id=last().getString("warning_id");
+        Segment s=new Segment("SPEED_BUMP");s.links=Collections.singletonList(new Link(42,"uuid-42","PERMANENT_HAZARD"));NativeWarnings.segments(new SegmentUpdate(Collections.singletonList(s)));assertTrue(last().getBoolean("native_segment_correlated"));
+        NativeWarnings.segments(new SegmentUpdate(Collections.emptyList()));assertEquals(id,last().getString("warning_id"));assertEquals("UPSERT",last().getString("operation"));assertFalse(last().containsKey("native_segment_correlated"));assertFalse(last().containsKey("native_segment_distance_m"));
+        assertEquals(index,last().getLong("announcement_index"));assertEquals(observed,last().getLong("observed_elapsed_ms"));assertEquals(1,announcements());assertEquals(0,NativeWarnings.familyStatus().getBundle("segments").getInt("current_state_count"));assertEquals(1,NativeWarnings.familyStatus().getBundle("alerters").getInt("current_state_count"));
+    }
 
     @Test public void notificationAddIsVisualAndUnknownFeaturesDoNotExportPrivateText(){
         Notification n=new Notification("FEATURE_CYCLISTS");NativeWarnings.notificationAdded(n);

@@ -201,6 +201,13 @@ public final class NativeWarnings {
             }else{String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_SEGMENT");}
         }
         // Validate the complete native update before emitting even a linked state change.
+        for(Map.Entry<String,Record> entry:new ArrayList<>(records.entrySet())){
+            Bundle previous=entry.getValue().fields;
+            if(previous==null||"CLEAR".equals(previous.getString("operation"))||!previous.getBoolean("native_segment_correlated")||correlated.containsKey(entry.getKey()))continue;
+            Bundle fields=new Bundle(previous);
+            for(String key:new ArrayList<>(fields.keySet()))if(key.startsWith("native_segment_"))fields.remove(key);
+            put(fields,false,previous.getLong("observed_elapsed_ms"),"native_segment_removed_state");
+        }
         for(Bundle fields:correlated.values())put(fields,false,fields.getLong("observed_elapsed_ms"),"native_segment_correlated_state");
         for(String id:new ArrayList<>(segments))if(!parsed.containsKey(id))clear(id);
         segments.clear();segments.addAll(parsed.keySet());long now=SystemClock.elapsedRealtime();segmentsAt=now;if(routeContext)routeContextAt=now;

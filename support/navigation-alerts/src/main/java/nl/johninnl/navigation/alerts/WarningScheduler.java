@@ -206,9 +206,14 @@ public final class WarningScheduler {
         if(!policy.active()){endPreview("PAUSED");if(active!=null)cancel(active,false);setStatus("PAUSED");return;}
         WarningAudioOwner.Mode mode=speaker.effective(policy.mode());
         // Missing spatial context must not head-of-line block a nonspatial emergency.
-        Pending next=null;boolean contextHeld=false;
+        Pending next=null,audible=null,urgent=null;boolean contextHeld=false;
         for(Pending candidate:queue.values()){
-            if(mode!=WarningAudioOwner.Mode.SILENT&&policy.enabled(candidate.payload)&&relevance(candidate.payload,now)==WarningPassage.Relevance.CONTEXT_UNVERIFIED){contextHeld=true;continue;}
+            boolean enabled=policy.enabled(candidate.payload);WarningPassage.Relevance relevant=relevance(candidate.payload,now);
+            if(mode!=WarningAudioOwner.Mode.SILENT&&enabled&&relevant==WarningPassage.Relevance.RELEVANT){
+                if(audible==null||ORDER.compare(candidate,audible)<0)audible=candidate;
+                if(candidate.authority.priority==WarningEvent.Priority.P0&&(urgent==null||ORDER.compare(candidate,urgent)<0))urgent=candidate;
+            }
+            if(mode!=WarningAudioOwner.Mode.SILENT&&enabled&&relevant==WarningPassage.Relevance.CONTEXT_UNVERIFIED){contextHeld=true;continue;}
             if(next==null||ORDER.compare(candidate,next)<0)next=candidate;
         }
         if(active!=null) {
@@ -216,20 +221,19 @@ public final class WarningScheduler {
                     || lease==null || now>=lease.until || !Boolean.TRUE.equals(active.pending.payload.fields().get("is_preview"))&&!policy.enabled(active.pending.payload)
                     || !active.started && now>=active.pending.authority.announceUntil)cancel(active,false);
             else if(!active.started&&relevance(active.pending.payload,now)!=WarningPassage.Relevance.RELEVANT)cancel(active,relevance(active.pending.payload,now)==WarningPassage.Relevance.CONTEXT_UNVERIFIED);
-            else if(next!=null && next.authority.priority==WarningEvent.Priority.P0 && active.pending.authority.priority!=WarningEvent.Priority.P0
-                    &&relevance(next.payload,now)==WarningPassage.Relevance.RELEVANT)cancel(active,true);
+            else if(urgent!=null && active.pending.authority.priority!=WarningEvent.Priority.P0)cancel(active,true);
         }
         if(!coverage){endPreview("COVERAGE_INCOMPLETE");setStatus("COVERAGE_INCOMPLETE");return;}
         if(unknownOutput){setStatus("AUDIO_UNCERTAIN");return;}
         if(next==null&&contextHeld&&active==null){setStatus("CONTEXT_UNVERIFIED");return;}
         if(controlBusy)return;
-        String language=next!=null?next.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
+        String language=audible!=null?audible.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
         boolean changedPreparation=!language.equals(preparedLanguage)||preparedMode!=mode;
         boolean retryPreparation=active==null&&(next!=null||previewRequested)&&mode!=WarningAudioOwner.Mode.SILENT&&!language.isEmpty()&&!language.equals("und")
                 &&now>=nextPrepare&&!speaker.ready(language,mode);
         if(changedPreparation||retryPreparation){preparedLanguage=language;preparedMode=mode;nextPrepare=now+PREPARE_RETRY_MS;speaker.prepare(language,mode);}
         boolean ready=mode==WarningAudioOwner.Mode.SILENT || active!=null && active.accepted && !active.cancelled ||
-                (next==null?speaker.ready(language,mode):speaker.ready(next.payload,mode));
+                (audible==null?speaker.ready(language,mode):speaker.ready(audible.payload,mode));
         if(lease!=null && now>=lease.until){lease=null;if(active!=null)cancel(active,false);}
         if(lease!=null && lease.mode!=mode)nextClaim=0;
         if(lease==null || now>=nextRenew || lease.mode!=mode) {
@@ -253,7 +257,7 @@ public final class WarningScheduler {
             }));return;
         }
         if(next==null){if(contextHeld&&active==null)setStatus("CONTEXT_UNVERIFIED");return;}
-        if(active!=null || grantRequests>0 || now<next.retryAt)return;
+        if(grantRequests>0 || now<next.retryAt)return;
         boolean example=Boolean.TRUE.equals(next.payload.fields().get("is_preview"));
         PlaybackGrant.Outcome decision=!example&&!policy.enabled(next.payload)?PlaybackGrant.Outcome.USER_FILTERED:
                 mode==WarningAudioOwner.Mode.SILENT?PlaybackGrant.Outcome.USER_MUTED:
@@ -263,6 +267,7 @@ public final class WarningScheduler {
             if(decision==PlaybackGrant.Outcome.REJECTED){WarningPassage.Relevance relevant=relevance(next.payload,now);WarningDiagnostics.event(next.authority,"RELEVANCE_"+relevant.name(),now);setStatus(relevant.name());}
             recordDecision(next,decision);return;
         }
+        if(active!=null)return;
         if(!ready){setStatus("SPEAKER_UNAVAILABLE");return;}
         begin(next);
     }
