@@ -58,6 +58,14 @@ On 2026-11-04 the complete `scripts/local-release/verify.cjs` command set passed
 
 The verification checkout and all its build/dependency storage were removed after process quiescence; the receipt records `cleanupRequired=false`. Compact logs and test results remain in the ignored `verification-3d2790b` directory and are referenced by the delivery manifest. The product source is unchanged from the signed `02a75d5` candidate; `3d2790b` only records its artifact evidence. This closes the complete local verification gate for that revision, not installed runtime or physical/car acceptance.
 
+## State-only semantic text correction
+
+Offline inspection of the retained-repeat trace found a state-only zone message containing `100 km/h on the null` when the private native model had no road name. The report-list path bypassed `NativeWarningText` and preferred a generic native UI subtitle. That separate path also lost a weather hazard title and the actual free-text instruction/language of an early-warning report arriving before speech.
+
+New state entries now use the existing audited model-aware formatter. Existing entries retain their previously captured announcement text and language. State updates remain UPSERT-only with no new announcement authority; native detection, eligibility, routing, mute and deadlines are unchanged. The duplicate generic text helper was removed.
+
+Two regressions added to the existing component tests use its existing weather and early-warning models. All 178 FM component tests pass, including retained-announcement text and native-repeat identity regressions. This source correction is not yet in the signed `02a75d5` candidate. Its rebuild and applicable final verification remain open; the earlier complete workflow result stays bound to `3d2790b`. No new validation tool or runtime session was used for the correction.
+
 ## Earlier delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.

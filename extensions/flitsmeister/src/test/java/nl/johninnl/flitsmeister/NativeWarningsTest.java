@@ -129,6 +129,14 @@ public class NativeWarningsTest {
         for(String key:new String[]{"message","message_origin","language_tag","native_text_key"})assertEquals(key,original.getString(key),last().getString(key));
         assertEquals(original.getLong("announcement_index"),last().getLong("announcement_index"));
     }
+    @Test public void stateOnlyEarlyWarningPreservesInstructionAndUnknownLanguageWithoutSpeechAuthority(){
+        EarlyWarningReport report=new EarlyWarningReport();
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(0,last().getLong("announcement_index"));
+        assertEquals(report.getFreeText(),last().getString("message"));
+        assertEquals("native_text",last().getString("message_origin"));assertEquals("und",last().getString("language_tag"));
+        assertEquals("AMBULANCE",last().getString("native_subtype"));
+    }
     @Test public void serviceSubtypeAndAuditedNativeResourceFallbackSurvive() {
         NativeWarnings.regular(null,new ServiceVehicle(),true,false,null,null);
         assertEquals("TOW_SERVICE",last().getString("native_subtype"));
@@ -354,6 +362,16 @@ public class NativeWarningsTest {
     @Test public void actualWeatherSubtypeAndHazardTitleAreNotReducedToACareSubtitle(){
         NativeWarnings.regular(null,new CitsWeather(),true,false,null,null);
         assertEquals("ICE_ON_THE_ROAD",last().getString("native_subtype"));assertEquals("weather",last().getString("category"));assertEquals("Ice on the road. Watch your speed",last().getString("message"));
+    }
+    @Test public void stateOnlyWeatherUsesHazardAndInstructionInsteadOfGenericUiDescription(){
+        CitsWeather report=new CitsWeather();
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(0,last().getLong("announcement_index"));
+        assertEquals("Ice on the road. Watch your speed",last().getString("message"));
+        assertEquals("native_resource",last().getString("message_origin"));
+        assertEquals("ICE_ON_THE_ROAD",last().getString("native_subtype"));assertEquals("weather",last().getString("category"));
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals(2,events.size());assertTrue(events.stream().allMatch(value->"UPSERT".equals(value.getString("operation"))));
     }
     @Test public void overCapacityNativeSnapshotFaultsInsteadOfClearingAnUnseenAcceptedWarning() throws Exception {
         nl.johninnl.navigation.alerts.WarningEndpoint endpoint=nl.johninnl.navigation.alerts.WarningEndpointFixtures.empty();NativeWarnings.setEndpointForTest(endpoint);NativeWarnings.resetForTest(app,events::add);

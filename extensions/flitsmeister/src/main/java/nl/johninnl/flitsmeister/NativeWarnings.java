@@ -224,14 +224,17 @@ public final class NativeWarnings {
                 Bundle fields=describe(report);String id=identity(report,fields);seen.add(id);
                 Record old=records.get(id);
                 boolean current=old!=null&&!"CLEAR".equals(old.fields.getString("operation"));
-                String text=!current?nativeText(report):old.fields.getString("message","");
-                String origin=!current?"native_resource":old.fields.getString("message_origin","native_resource");
+                // A generic UI subtitle may omit the warning kind or format a missing road as
+                // "null". State-only arrivals use the same audited model-aware text as speech.
+                NativeWarningText.Text initial=current?null:NativeWarningText.resolve(app,report,"active",null);
+                String text=current?old.fields.getString("message",""):initial.value;
+                String origin=current?old.fields.getString("message_origin","native_resource"):initial.origin;
                 String phase=!current?"active":old.fields.getString("phase","active");
                 if(current){
                     fields.putString("language_tag",old.fields.getString("language_tag","und"));
                     copyNativeTextFields(old.fields,fields);
                     for(String key:new String[]{"native_text_key","template_id"})if(old.fields.containsKey(key))fields.putString(key,old.fields.getString(key));
-                }
+                }else fields.putString("language_tag",initial.language);
                 update(id,fields,text,origin,phase,false,false,"report_state",true);
             }
             for(String id:new ArrayList<>(records.keySet())){
@@ -398,13 +401,6 @@ public final class NativeWarnings {
         if(type.equals("SPEED_CAM")||type.equals("SPEED_TRAP")||type.equals("POLICEHOTSPOT"))return "point_ahead";
         if(fields.getBoolean("native_point_target",false))return "point_ahead";
         return "notice";
-    }
-    private static String nativeText(Object model){
-        for(String method:new String[]{"getShortDescription","reportTitleText"}){
-            if(app==null)break;try{Object result=model.getClass().getMethod(method,Context.class).invoke(model,app);String text=string(result);if(!text.trim().isEmpty())return text;}catch(ReflectiveOperationException ignored){}
-        }
-        for(String method:new String[]{"getFreeText","getFreetext","getDescription","getTitle"}){String text=value(model,method);if(!text.trim().isEmpty())return text;}
-        return "";
     }
     private static boolean isFamily(Object object,String name){for(Class<?> c=object.getClass();c!=null;c=c.getSuperclass())if(c.getSimpleName().equals(name))return true;return false;}
     private static Object optional(Object object,String method){if(object==null)return null;try{return object.getClass().getMethod(method).invoke(object);}catch(ReflectiveOperationException ignored){return null;}}
