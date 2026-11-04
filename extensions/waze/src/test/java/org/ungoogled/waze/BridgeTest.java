@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -24,6 +25,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 32, manifest = Config.NONE)
 public class BridgeTest {
     private Application app;
+    private nl.johninnl.navigation.alerts.WarningEndpoint endpoint;
 
     private static void field(Class<?> cls, String name, Object value) throws Exception {
         Field f = cls.getDeclaredField(name);
@@ -42,7 +44,20 @@ public class BridgeTest {
         field(Bridge.class, "lastKey", "");
         field(Bridge.class, "lastSentAt", 0L);
         field(Bridge.class, "beating", false);
+        field(Bridge.class, "eventSuspended", false);
+        field(NativeWarnings.class,"endpoint",null);
         Bridge.init(app);
+    }
+    @After public void cleanup()throws Exception{if(endpoint!=null)endpoint.close();field(NativeWarnings.class,"endpoint",null);}
+
+    private void exclusive(boolean value)throws Exception{
+        if(endpoint==null){
+            endpoint=new nl.johninnl.navigation.alerts.WarningEndpoint(app,uid->null,new nl.johninnl.navigation.alerts.WarningCapabilities(nl.johninnl.navigation.alerts.WazeWarningTypes.MANIFEST_DIGEST,nl.johninnl.navigation.alerts.WazeWarningTypes.required(),false));
+            endpoint.close();Field actor=endpoint.getClass().getDeclaredField("actor");actor.setAccessible(true);
+            assertTrue(((java.util.concurrent.ThreadPoolExecutor)actor.get(endpoint)).awaitTermination(2,java.util.concurrent.TimeUnit.SECONDS));
+            field(NativeWarnings.class,"endpoint",endpoint);
+        }
+        Field state=endpoint.getClass().getDeclaredField("exclusive");state.setAccessible(true);state.setBoolean(endpoint,value);
     }
 
     private void send() throws Exception {
@@ -78,5 +93,25 @@ public class BridgeTest {
         send();
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMinutes(2));
         assertEquals(afterDisable, broadcasts().size());
+    }
+
+    @Test public void eventOwnershipClearsAndSuspendsTheLegacyChannelWithoutChangingItsSavedSwitch()throws Exception{
+        send();assertEquals(1,broadcasts().size());exclusive(true);Bridge.refreshWarningOwnership();
+        assertEquals(0,broadcasts().get(broadcasts().size()-1).getIntArrayExtra("type").length);
+        assertTrue(Customization.on("shareAlerts"));int cleared=broadcasts().size();
+        send();app.sendBroadcast(new Intent(Bridge.ACTION_REQUEST));shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMinutes(2));
+        assertEquals(cleared,broadcasts().size());
+        exclusive(false);Bridge.refreshWarningOwnership();assertEquals(cleared,broadcasts().size());
+        send();assertEquals(cleared+1,broadcasts().size());assertEquals(1,broadcasts().get(cleared).getIntArrayExtra("type").length);
+    }
+
+    @Test public void theLastBroadcastGateRejectsAnUpdateDecodedBeforeOwnershipChanged()throws Exception{
+        send();exclusive(true);
+        Method broadcast=Bridge.class.getDeclaredMethod("broadcast",Intent.class,int.class);broadcast.setAccessible(true);
+        broadcast.invoke(null,new Intent(Bridge.ACTION).putExtra("type",new int[]{10}),1);
+        assertEquals(2,broadcasts().size());assertEquals(0,broadcasts().get(1).getIntArrayExtra("type").length);
+        Customization.setForTest("shareAlerts",false);exclusive(false);Bridge.refreshWarningOwnership();int count=broadcasts().size();
+        send();shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMinutes(2));assertEquals(count,broadcasts().size());
+        assertFalse(Customization.on("shareAlerts"));
     }
 }

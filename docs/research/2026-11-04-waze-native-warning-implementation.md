@@ -47,3 +47,27 @@ The native converter reads `AlerterInfo.getSubType()` directly into the UI model
 4. Rebuild/sign intended combinations, then perform bounded all-four-pairing acceptance with the required Frida coverage, provider silence and exact cleanup. Current capture, UI-free production, route relevance, speech/output, phone/car and full-scope acceptance remain unproved for this extension.
 
 The existing validation-tooling freeze remains in force. New probes, runners, observers, fixtures or framework changes require explicit named approval. No such tooling was created or changed for this checkpoint, and no runtime claim follows from the static findings above.
+
+## Implemented checkpoint and actual-input patching
+
+`94d6d1382fbbd433e53807c500df958a3c8a1178` connects Waze native descriptors, sound decisions, zone selection/exit, segment state and notification lifecycle to the existing FM warning endpoint. Maps and Vela now select the provider's profile and preferences while retaining their original speakers and navigation. A repository snapshot or notification ADD remains state rather than an announcement. Zone selection and the original UI sound callback correlate to one entry decision in either order.
+
+The next connected batch applies FM's disjoint schema-1 views to Waze: confirmed event clients retain the full display feed; legacy recipients receive speed/limit/active-zone fields with report/approach announcements disabled during exclusive or uncertain output. The independently optional Share alerts bridge clears cached pins and heartbeats while suspended, without changing its saved setting. Endpoint startup begins fenced until the durable output ledger is loaded, preventing a legacy delivery window before uncertainty is known.
+
+The original complete APKM was patched with Morphe Desktop 1.19.1 using FULL DEX compilation and fingerprint validation. All 21 selected patches applied with no failures, including Broadcast navigation data, Share alerts with Maps, Average speed zone bar, Native camera and hazard controls, Speed limit controls, and Speed camera sound at any speed. This is a real split-input patch/rebuild check, not just a patch-library build. The unchanged public Morphe signing identity verifies the bundle; SDK apksigner and zipalign verify the test-signed APK. Nothing was installed on a phone or emulator.
+
+| Retained acceptance input | SHA-256 |
+| --- | --- |
+| Signed MPP, compatibility/startup-fence batch | `2c13af05a8e04d2be0de6e044139927a5ed68adae96c68199e15337656b12677` |
+| Test-signed patched Waze APK | `9860136bfc79e1ab39f58bd4022f0e8e8ded9c3cfcea50c98a24338193ab95f6` |
+
+The local `checkpoint-20261104-c` and `checkpoint-20261104-d` receipts retain exact base/source-file digests, per-module outcomes and quiescent process-group cleanup. Unaffected passing checks from the preceding complete `verify.cjs` checkpoint are reused; the affected FM and Waze tests were rerun after the test-handshake correction. Both build checkouts and all patching scratch are removed. Only compact evidence, the signed bundle and patched APK needed for the pending acceptance session remain.
+
+## Remaining gates
+
+- **Coverage is deliberately incomplete:** Waze's profile still advertises `complete=false`. Structural bindings and the successful APK rebuild do not authorize an exclusive first-class voice claim.
+- **Native semantics:** finish the remaining-family classification, urgency mapping and per-family availability account. SOS/personal-safety road scope remains unproven. Optional route/ETA/lane-guidance features remain outside this batch under the user's clarified scope.
+- **Receiving relevance:** audit fresh point warnings against the receiver's active directed route, including ambiguous/missing context; the reused passage checks alone do not prove this broader gate.
+- **Overlap:** native/OSM events retain separate provenance and explicitly unresolved equivalence when directed-road evidence is absent. No radius-only equivalence or successful duplicate suppression is claimed.
+- **Runtime:** establish actual UI-free controller production, warning/message correlation, silent source output, receiver speech outcomes, source switches and phone/car acceptance for the required pairings. The existing observer hardcodes Flitsmeister and cannot cover Waze; explicit approval for the named observer adaptation is pending under the tooling freeze. No observer or probe was changed in these implementation batches.
+- **Delivery:** finish review and acceptance before marking coverage complete or promoting a stable release. The retained signed candidate is an engineering acceptance input, not a published release.

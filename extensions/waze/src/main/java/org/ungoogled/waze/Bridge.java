@@ -65,6 +65,18 @@ public final class Bridge {
     private static String lastKey = "";
     private static long lastSentAt, lastAskedAt;
     private static boolean beating;
+    private static volatile boolean eventSuspended;
+
+    /** Preserve the saved switch while exclusive event output suppresses this older channel. */
+    static synchronized void refreshWarningOwnership() {
+        if(app==null)return; // The independently optional Share alerts patch is not installed.
+        nl.johninnl.navigation.alerts.WarningEndpoint warnings=NativeWarnings.endpoint();
+        boolean next=warnings!=null&&warnings.exclusiveAudio();
+        if(next==eventSuspended)return;
+        eventSuspended=next;
+        if(next)switched(false); // Also clear already displayed pins and pending heartbeat state.
+    }
+    private static boolean sharingEnabled(){refreshWarningOwnership();return Customization.on("shareAlerts")&&!eventSuspended;}
 
     /** From WazeMobileApplication.onCreate. */
     public static void init(Application a) {
@@ -88,7 +100,7 @@ public final class Bridge {
     /** From AlerterNativeManager.updateAlertersRepository: [update] is Waze's NativeAlertRepositoryUpdate. */
     public static void alerts(Object update) {
         try {
-            if (update == null || !Customization.on("shareAlerts")) return;
+            if (update == null || !sharingEnabled()) return;
             Object descriptors = call(update, "getDescriptorsList");
             int n = descriptors instanceof List ? ((List<?>) descriptors).size() : 0;
             int[] type = new int[n], sub = new int[n], lat = new int[n], lng = new int[n], trigger = new int[n],
@@ -149,7 +161,7 @@ public final class Bridge {
         long now = SystemClock.elapsedRealtime();
         synchronized (Bridge.class) {
             // An update may have been decoded while the switch was being turned off.
-            if (!Customization.on("shareAlerts")) return;
+            if (!sharingEnabled()) return;
             if (key.equals(lastKey) && now - lastSentAt < SAME_AGAIN_MS) return;
             last = i;
             lastKey = key;
@@ -169,7 +181,7 @@ public final class Bridge {
             int count;
             synchronized (Bridge.class) {
                 beating = false;
-                if (!Customization.on("shareAlerts")) return;
+                if (!sharingEnabled()) return;
                 int[] type = last == null ? null : last.getIntArrayExtra("type");
                 count = type == null ? 0 : type.length;
                 if (count == 0) return;
@@ -185,7 +197,7 @@ public final class Bridge {
 
     /** Stop sharing immediately, including cached heartbeats and outstanding Maps pins. */
     static synchronized void switched(boolean on) {
-        if (on) return;
+        if (on) { refreshWarningOwnership();return; }
         MAIN.removeCallbacks(BEAT);
         beating = false;
         last = null;
@@ -210,7 +222,7 @@ public final class Bridge {
         @Override
         public void onReceive(Context c, Intent in) {
             try {
-                if (!Customization.on("shareAlerts")) return;
+                if (!sharingEnabled()) return;
                 Intent again;
                 int count;
                 synchronized (Bridge.class) {
@@ -244,7 +256,7 @@ public final class Bridge {
 
     private static synchronized void broadcast(Intent i, int count) {
         // Serialize against switched(false), so queued sends cannot republish a stale list.
-        if (count > 0 && !Customization.on("shareAlerts")) return;
+        if (count > 0 && !sharingEnabled()) return;
         Context c = context();
         if (c == null) {
             Log.w("UA", "Waze alerts bridge: no context yet");

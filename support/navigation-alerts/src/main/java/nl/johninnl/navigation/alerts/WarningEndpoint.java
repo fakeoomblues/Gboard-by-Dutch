@@ -56,8 +56,10 @@ public final class WarningEndpoint implements Closeable {
     private final Map<String,Registration> registrations=new LinkedHashMap<>();
     private final Slot[] slots=new Slot[MAX_CLIENTS];
     private final Object ingress=new Object();
-    private volatile boolean closed,captureFault,exclusive;
-    private volatile String audioStatus="UNOWNED";
+    // Loading the durable ledger is asynchronous. Until it is known, legacy delivery
+    // must not escape a fence that a previous process left for uncertain playback.
+    private volatile boolean closed,captureFault,exclusive=true;
+    private volatile String audioStatus="INITIALIZING";
     private volatile Set<String> capable=Collections.emptySet();
     private WarningAudioOwner audio;
     private final WarningLegacyClients legacyClients=new WarningLegacyClients();
@@ -77,7 +79,7 @@ public final class WarningEndpoint implements Closeable {
         this.sourceUid=uid;this.access=access;this.profile=profile;this.clock=clock;this.caller=caller;
         for(int i=0;i<slots.length;i++)slots[i]=new Slot(i);
         actor.execute(()-> {
-            try { storage=factory.open();audio=new WarningAudioOwner(storage.boot,session,journal,storage.store,profile); }
+            try { storage=factory.open();audio=new WarningAudioOwner(storage.boot,session,journal,storage.store,profile);refresh(); }
             catch(IOException | RuntimeException error) { exclusive=true;audioStatus="STORAGE_FAILED"; }
         });
         timer.scheduleAtFixedRate(()->post(this::maintenance),1,1,TimeUnit.SECONDS);

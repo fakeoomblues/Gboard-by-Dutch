@@ -20,6 +20,19 @@ public class WarningEndpointTest {
                 ()->new WarningEndpoint.Storage("boot-count:7",new PlaybackStore(){PlaybackGrant value;public PlaybackGrant load(){return value;}public void save(PlaybackGrant g){value=g;}},null),clock::get,uid::get);
     }
     @After public void cleanup() { if(source!=null)source.close(); }
+    @Test public void storageInitializationFencesLegacyOutputUntilTheDurableStateIsKnown()throws Exception{
+        source.close();CountDownLatch entered=new CountDownLatch(1),release=new CountDownLatch(1);
+        source=new WarningEndpoint(20000,u->"app.client"+u,new WarningCapabilities(repeat('a',64),caps,true),()->{
+            entered.countDown();try{if(!release.await(3,TimeUnit.SECONDS))throw new java.io.IOException("STORAGE_WAIT");}catch(InterruptedException error){Thread.currentThread().interrupt();throw new java.io.IOException("STORAGE_INTERRUPTED");}
+            return new WarningEndpoint.Storage("boot-count:7",new PlaybackStore(){public PlaybackGrant load(){return null;}public void save(PlaybackGrant value){}},null);
+        },clock::get,uid::get);
+        try{
+            assertTrue(entered.await(2,TimeUnit.SECONDS));assertTrue(source.exclusiveAudio());assertEquals("INITIALIZING",source.audioStatus());
+        }finally{release.countDown();}
+        confirmed(new Callback());
+        assertFalse("Only an initialized empty ledger permits legacy delivery",source.exclusiveAudio());
+        assertNotEquals("INITIALIZING",source.audioStatus());
+    }
     Bundle call(int code,Bundle b) throws Exception {
         Parcel in=Parcel.obtain(),out=Parcel.obtain();try { in.writeInterfaceToken(WarningWire.DESCRIPTOR);in.writeBundle(b);source.binder().transact(code,in,out,0);out.readException();return out.readBundle(null); }finally{in.recycle();out.recycle();}
     }

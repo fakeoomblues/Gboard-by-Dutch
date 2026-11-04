@@ -211,6 +211,7 @@ public final class NavigationBroadcasts {
     private static final Runnable TICK = new Runnable() {
         @Override public void run() {
             if (!isEnabled()) { switched(false); return; }
+            Bridge.refreshWarningOwnership();
             NavigationState.Snapshot n = STATE.snapshot(SystemClock.elapsedRealtime());
             if (dirty || n.currentStatus.equals("valid") || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") || ALERTS.fresh(SystemClock.elapsedRealtime()) ||
                     !ALERTS.status(SystemClock.elapsedRealtime()).equals(lastAlertsStatus) ||
@@ -228,11 +229,30 @@ public final class NavigationBroadcasts {
         boolean transition = !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
                     !n.currentStatus.equals(lastCurrentStatus) || !ALERTS.status(now).equals(lastAlertsStatus);
         if (!force && !transition && now - lastSent < (dirty ? 1000 : 5000)) return;
-        NavigationProtocol.send(app, snapshot(n, now), receiverPackage());
+        sendWarningsView(snapshot(n, now));
         lastAlertsStatus=ALERTS.status(now); lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; lastCurrentStatus = n.currentStatus; dirty = false;
     }
 
     static Intent snapshot(NavigationState.Snapshot n, long now) {
         return ALERTS.append(NavigationProtocol.snapshot(ACTION, app == null ? "com.waze" : app.getPackageName(), SESSION, ++sequence, n, now),now);
+    }
+
+    /** Reuse FM's disjoint event/legacy views while output is owned or uncertain. */
+    private static void sendWarningsView(Intent snapshot) {
+        Bridge.refreshWarningOwnership();
+        nl.johninnl.navigation.alerts.WarningEndpoint warnings=NativeWarnings.endpoint();
+        if(warnings==null||!warnings.exclusiveAudio()){NavigationProtocol.send(app,snapshot,receiverPackage());return;}
+        java.util.Set<String> capable=warnings.capablePackages();String restriction=receiverPackage();
+        String[] destinations=restriction.isEmpty()?new String[]{"app.vela","com.google.android.apps.maps",
+            "org.ungoogled.android.apps.maps","org.ungoogled.android.apps.maps.microg"}:new String[]{restriction};
+        Intent compatibility=new Intent(snapshot);
+        for(String key:new ArrayList<>(compatibility.getExtras().keySet()))
+            if(key.startsWith("alert_")||(key.startsWith("zone_approach_")&&!key.equals("zone_approach_updated_elapsed_ms")&&!key.equals("zone_approach_max_age_ms")))compatibility.removeExtra(key);
+        compatibility.putExtra("alerts_status","disabled").putExtra("zone_approach_status","disabled");
+        for(String destination:destinations){
+            try{app.getPackageManager().getApplicationInfo(destination,0);}
+            catch(android.content.pm.PackageManager.NameNotFoundException absent){continue;}
+            NavigationProtocol.send(app,new Intent(capable.contains(destination)?snapshot:compatibility),destination);
+        }
     }
 }
