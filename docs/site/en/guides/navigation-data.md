@@ -59,7 +59,7 @@ Selecting native data or ending the receiving session releases its startup conne
 1. Open the account menu, then **Waze & external data source**.
 2. Open **Navigation data source** and choose **De-Waze · navigation data** or **Flitsmeister · navigation data**.
 3. Enable **Compact speed and average-speed control** if you want the speed, limit and active-zone details together.
-4. Open **Road alert types** and select the categories you want. Only police reports start selected.
+4. For De-Waze and legacy alerts, open **Road alert types** and select the categories you want; only police reports start selected there. Native Flitsmeister warning audio has its own category/output review, described [below](#native-flitsmeister-warning-audio).
 5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Only reports with known positions become map pins.
 6. Check **Source now** for the provider status. Tap it to request an available snapshot. Automatic startup uses the separate provider API; a snapshot request never makes an old observation fresh.
 
@@ -80,7 +80,7 @@ Flitsmeister keeps Vela's independent Flock display, voice and detour choices ac
 
 ## Native Flitsmeister warning audio
 
-These warning controls are part of the development change and are still being validated. Flitsmeister 15.0's warning models and native event capture have passed their provider checks. Earlier moving/delayed receiver checks used 14.17; full integrated, moving-warning and car acceptance for 15.0 remain open. A running provider or successful preview does not establish complete warning support.
+These warning controls remain a development feature. Flitsmeister 15.0's models and native capture passed their provider checks. Earlier FM15 development builds also passed controlled delivery, moving-camera, delayed-replay and zone checks with both receivers. The current candidate contains later text, recovery and readiness corrections and still needs final installed, timing and phone/car acceptance. A running provider or successful preview does not establish complete warning support.
 
 This development warning mode targets **Flitsmeister 14.17 (version code 1287)** and now **15.0 (version code 1289)** with matching updated provider and receiver patches. Existing FM15 core support does not make an older installed bundle a native-warning build. Update both sides together when this change is available. An older receiver can still use its legacy feed, but must be updated or have its Flitsmeister source disabled before another map takes exclusive warning audio.
 
@@ -103,11 +103,13 @@ A warning received after reconnecting keeps its original deadline. A clearly pas
 | **Waiting for previous audio to stop** | Keep the vehicle parked, stop both receiving maps and their speech engine, then use parked recovery after confirming that no output remains. |
 | **Update the other receiving map** | Update the other map's patch or disable its FM source. An older active receiver prevents exclusive warning audio. |
 
+If the selected engine or voice becomes available, a still-valid waiting warning can retry preparation. Expired warnings are not replayed after a voice download or engine recovery. Keep the explicit Voice/Tone/Silent choice you want; recovery does not override native mute.
+
 ## 4. Check reception before relying on it
 
 After one-time provider setup, while parked, open the receiving map app with an external source selected. Check that the chosen source is listed and that it reports fresh data when observations are available. Leave the provider in the background and confirm reception continues. A stationary speed of zero is valid; a missing speed or limit must remain unknown or use the map's native fallback.
 
-Changing provider, leaving a zone or losing fresh zone observations clears the partial average. The two providers' values are kept separate. Android 14 and newer let the receiving app verify which installed provider sent an update; older versions lack that Android sender verification.
+Changing provider, leaving a zone or losing fresh zone observations clears the partial average. The two providers' values are kept separate. Android 14 and newer let the receiving app verify the sender of the shared broadcast feed; older versions lack that Android broadcast-sender check. The separate native FM warning channel authenticates both apps through Binder on all supported Android versions.
 
 | Problem | Check |
 | --- | --- |

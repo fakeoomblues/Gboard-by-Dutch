@@ -120,3 +120,15 @@ Location grants and Android foreground-service restrictions still apply. The int
 ### Provider audio during managed sessions
 
 The startup lease also makes the selected provider a quiet data source. Waze and Flitsmeister speech and alert playback are suppressed before requesting audio focus, while native completion callbacks continue. Queued provider sounds are cleared with completion/cleanup; owned player volume is gated per instance and restored when the lease expires. Direct TTS, system sounds and the Waze patch's own camera chime follow the same gate. Saved provider sound preferences and the phone's stream volumes are not rewritten. Maps/Vela audio runs in its own process and retains its existing warning/voice settings. The API optionally reports `audio_muted`.
+
+## Native Flitsmeister warning events
+
+The development native-warning integration adds `WARNINGS_V1` beside this schema-1 broadcast feed and `STARTUP_V1`. Its version is independent. The startup STATUS response advertises the optional `warning_api` Binder endpoint and `warning_protocols`; matching FM and receiving-map patches negotiate it before claiming native warning audio. Waze and older compatible builds retain their existing data/legacy paths without gaining complete native FM warning support.
+
+This authenticated channel carries native `ANNOUNCE`, state-only `UPSERT` and `CLEAR` events with provider session, sequence, warning/revision/announcement identity, semantic content and separate state/audio deadlines. State snapshots and their revisions do not invent announcements. A changed unsaid instruction retains its original authority/deadline; CLEAR cancels it, including when received through resynchronization. A new announcement index requires another actual native announcement.
+
+Provider and callback UIDs, registration challenge, configured receiver package and ownership/grant identities protect this Binder channel on every supported Android version. The pre-Android-14 broadcast-sender limitation documented above remains specific to schema 1. One receiving app owns audio; a display-only recipient cannot infer playback permission from event reception.
+
+Voice/Tone/Silent choices remain capped by the receiving app's native mute. Readiness, acceptance, actual audio start and completion are separate states, and completion is not proof of physical audibility or car routing. Uncertain old output fences replacement grants until positive quiescence or the source-owned parked recovery flow. An engine becoming available does not revive expired announcements. Managed FM silence remains independent of receiver output failure.
+
+See the [protocol core](../support/navigation-alerts/README.md), [reviewed design](superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md) and [artifact/evidence inventory](research/2026-11-03-native-warning-implementation-review.md) for bounds, ownership, replay, compatibility and current proof limits. Final installed, timing and phone/car acceptance remain open; this section does not claim a completed release.

@@ -34,7 +34,7 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-De koppeling met native FM-gebeurtenissen en spraak wordt nog integraal gevalideerd. Flitsmeister 15.0 / 1289 is nu ook een doelversie van dit ontwikkelwerk: de waarschuwingsmodellen en opname van oorspronkelijke gebeurtenissen hebben de dekkingscontroles doorstaan. Volledige ontvanger-, bewegings- en autocontroles voor 15.0 staan nog open. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
+De koppeling met native FM-gebeurtenissen en spraak blijft een ontwikkelfunctie. Flitsmeister 15.0 / 1289 heeft de dekkingscontroles voor modellen en opname doorstaan. Eerdere FM15-ontwikkelversies doorstonden met beide kaartapps gecontroleerde levering, bewegende cameracontroles en trajectcontroles. De huidige kandidaat bevat latere verbeteringen aan tekst, herstel en spraakgereedheid; de uiteindelijke controles van de geïnstalleerde apps, timing en telefoon/auto staan nog open. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
 
 Het herstelde opstart-/nativeprofiel richt zich op ARM64. Op een Android 16-telefoon zijn kaartstart, HUD, pictogram wijzigen en opnieuw openen, de profielbadge en het verbergen van soundpack-aanbiedingen gecontroleerd. Serverrechten en een fysieke Android Auto-headunit blijven afzonderlijke controles.
 

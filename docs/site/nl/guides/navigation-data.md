@@ -59,7 +59,7 @@ Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreek
 1. Open het accountmenu en daarna **Waze & external data source**.
 2. Open **Navigation data source** en kies **De-Waze · navigation data** of **Flitsmeister · navigation data**.
 3. Zet **Compact speed and average-speed control** aan als je snelheid, limiet en actieve trajectgegevens samen wilt zien.
-4. Kies de gewenste categorieën onder **Road alert types**. Alleen politie staat standaard geselecteerd.
+4. Open voor De-Waze en oudere meldingen **Road alert types** en kies de gewenste categorieën; daar zijn aanvankelijk alleen politiemeldingen geselecteerd. Native Flitsmeister-waarschuwingsaudio heeft een eigen categorie-/audiokeuze, [hieronder beschreven](#native-waarschuwingsaudio-van-flitsmeister).
 5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Alleen meldingen met bekende posities krijgen kaartspelden.
 6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen. Automatisch starten gebruikt de aparte bron-API; een momentopname maakt oude waarnemingen nooit vers.
 
@@ -80,7 +80,7 @@ Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en om
 
 ## Native waarschuwingsaudio van Flitsmeister
 
-Deze waarschuwingsopties horen bij de ontwikkelversie en worden nog gevalideerd. De waarschuwingsmodellen van Flitsmeister 15.0 en de opname van oorspronkelijke gebeurtenissen hebben de broncontroles doorstaan. Eerdere ontvangercontroles tijdens beweging en bij vertraagde levering gebruikten 14.17; volledige integratie-, bewegings- en autocontroles voor 15.0 staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
+Deze waarschuwingsopties blijven een ontwikkelfunctie. De modellen van Flitsmeister 15.0 en de opname van oorspronkelijke gebeurtenissen hebben de broncontroles doorstaan. Eerdere FM15-ontwikkelversies doorstonden met beide kaartapps ook gecontroleerde levering, bewegende cameracontroles, vertraagde herlevering en trajectcontroles. De huidige kandidaat bevat latere verbeteringen aan tekst, herstel en gereedheid. De uiteindelijke controles van de geïnstalleerde apps, timing en telefoon/auto staan nog open. Een actieve bron of geslaagd voorbeeld bewijst geen volledige waarschuwingsdekking.
 
 Deze waarschuwingsmodus in ontwikkeling richt zich op **Flitsmeister 14.17 (versiecode 1287)** en nu ook **15.0 (versiecode 1289)**, met bijbehorende bijgewerkte bron- en ontvangerpatches. Bestaande basisondersteuning voor FM15 maakt een oudere geïnstalleerde bundel nog geen versie met native waarschuwingen. Werk beide kanten samen bij zodra deze wijziging beschikbaar is. Een oudere kaartapp kan haar oudere koppeling blijven gebruiken. Werk die kaartapp bij of schakel daar Flitsmeister uit voordat een andere kaart de waarschuwingsaudio overneemt.
 
@@ -105,11 +105,13 @@ Maps toont de onderstaande statussen in het Engels. Vela kan de Nederlandse teks
 | **Wacht op bevestiging dat vorige audio is gestopt** / **Waiting for previous audio to stop** | Blijf geparkeerd, stop beide kaartapps en hun spraakengine en gebruik herstel pas nadat je hebt gecontroleerd dat niets meer speelt of wacht. |
 | **Werk de andere ontvangende kaartapp bij** / **Update the other receiving map** | Werk de patch van de andere kaart bij of schakel daar FM uit. Een oudere actieve ontvanger verhindert exclusieve waarschuwingsaudio. |
 
+Wanneer de gekozen spraakengine of stem beschikbaar komt, kan een nog geldige wachtende waarschuwing de voorbereiding opnieuw proberen. Verlopen waarschuwingen worden na een stemdownload of engineherstel niet alsnog afgespeeld. Houd zelf de gewenste keuze Spraak/Toon/Stil aan; herstel verandert de eigen dempstand niet.
+
 ## 4. Controleer de ontvangst
 
 Open na de eenmalige broninstellingen, terwijl je geparkeerd staat, de ontvangende kaartapp met een externe bron geselecteerd. Controleer of de gekozen bron wordt vermeld en verse gegevens meldt wanneer er waarnemingen zijn. Laat de bron op de achtergrond en controleer of de ontvangst doorgaat. Stilstand met snelheid nul is geldig; een ontbrekende snelheid of limiet moet onbekend blijven of terugvallen op de eigen kaartgegevens.
 
-Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen verwijdert het gedeeltelijke gemiddelde. De waarden van beide bronnen blijven gescheiden. Vanaf Android 14 kan de ontvanger via Android controleren welke geïnstalleerde bron een update verstuurde; oudere versies hebben die afzendercontrole niet.
+Een bronwissel, het verlaten van een traject of verlopen trajectwaarnemingen verwijdert het gedeeltelijke gemiddelde. De waarden van beide bronnen blijven gescheiden. Vanaf Android 14 kan de ontvanger de afzender van de gedeelde broadcast controleren; oudere versies bieden die Android-controle niet. Het afzonderlijke kanaal voor native FM-waarschuwingen controleert beide apps via Binder op alle ondersteunde Android-versies.
 
 | Probleem | Controleer |
 | --- | --- |

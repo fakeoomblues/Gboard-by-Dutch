@@ -34,7 +34,7 @@ Blocking measurement does not block every function from the same provider. Essen
 
 ## Before using
 
-The native FM event/speech upgrade is still under integrated validation. Flitsmeister 15.0 / 1289 is now also a target of this development work: its warning models and native event capture have passed their coverage checks. Full receiver, moving-warning and car acceptance for 15.0 remain open. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
+The native FM event/speech upgrade remains a development feature. Flitsmeister 15.0 / 1289 has passed model/capture coverage checks, and earlier FM15 development builds passed controlled delivery, moving-camera and zone checks with both receivers. The current candidate includes later text, recovery and speech-readiness corrections; its final installed, timing and phone/car acceptance remain open. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
 
 The recovered startup/native profile targets ARM64. On an Android 16 phone, map startup, HUD, icon changes/reopening, the profile badge and soundpack-offer removal have been checked. Backend entitlements and a physical Android Auto head unit remain separate checks.
 
