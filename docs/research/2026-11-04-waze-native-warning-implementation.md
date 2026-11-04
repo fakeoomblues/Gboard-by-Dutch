@@ -1,6 +1,6 @@
 # Waze native-warning implementation checkpoint
 
-This task extends the existing **Broadcast navigation data** patch into the [reviewed four-app design](../superpowers/specs/2026-11-02-navigation-provider-warnings-design.md), reusing the implemented FM transport, ownership, scheduler and Maps/Vela speakers. It does not replace Maps/Vela navigation with a Waze route. All required standalone Waze warning families remain in scope; optional supplemental-provider mode and source-route enrichment retain the design's separate prerequisites.
+This task extends the existing **Broadcast navigation data** patch into the [reviewed four-app design](../superpowers/specs/2026-11-02-navigation-provider-warnings-design.md), reusing the implemented FM transport, ownership, scheduler and Maps/Vela speakers. It does not replace Maps/Vela navigation with a Waze route. The user's clarified goal is integration parity: recover warnings dropped by the current Waze bridge, without assuming Waze offers warnings that FM lacks. Preserve Waze's native distinctions in the shared protocol; route, ETA and lane-guidance enrichment are outside this implementation batch.
 
 ## Recovered design and current base
 

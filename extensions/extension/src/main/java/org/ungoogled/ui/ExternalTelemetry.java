@@ -30,6 +30,7 @@ import nl.johninnl.navigation.alerts.WarningEvent;
 import nl.johninnl.navigation.alerts.PlaybackGrant;
 import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.WarningStatus;
+import nl.johninnl.navigation.alerts.WarningProviders;
 
 /** Local navigation observations shared with De-Waze and Flitsmeister, serialized on the UI thread. */
 public final class ExternalTelemetry {
@@ -53,7 +54,7 @@ public final class ExternalTelemetry {
     private static TelemetryStore store=new TelemetryStore();
     private static final RoadWarningEngine warnings=new RoadWarningEngine();
     private static Context app;
-    private static String source="",publisherSession="",warning="";
+    private static String source="",publisherSession="",warning="",legacyWarning="";
     private static boolean registered,navigating;
     private static Location fix;
     private static long fixAt=-1,nativeSpeedAt=-1,nativeLimitAt=-1;
@@ -89,7 +90,7 @@ public final class ExternalTelemetry {
             if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
             float density=root.getResources().getDisplayMetrics().density;
-            value.refresh(Shapes.navDarkScheme());
+            value.bind(view(),speedMps(),limitKmh(),PowerSaving.miles(),Shapes.navDarkScheme(),compactCarWarning());
             int[] bounds=carViewportSizes.get(owner);int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
             int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();int width=right-left,height=bottom-top;
             int margin=Math.round(16*density);value.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0,width-2*margin),View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(Math.max(0,height-2*margin),View.MeasureSpec.AT_MOST));
@@ -120,13 +121,13 @@ public final class ExternalTelemetry {
         app=context.getApplicationContext();
         String next=source(context);
         boolean changed=!next.equals(source);
-        if(changed){source=next;store=new TelemetryStore();store.select(source);publisherSession="";warnings.reset();nativeWarnings.clear();eventAudioManaged=false;if(semantic!=null)semantic.resetEventNegotiation();warning="";WazeAlerts.resetSource();}
+        if(changed){source=next;warningPreferences=new WarningPreferences(prefs(app),true,WarningProviders.supported(source)?source:WarningProviders.FLITSMEISTER);store=new TelemetryStore();store.select(source);publisherSession="";warnings.reset();nativeWarnings.clear();eventAudioManaged=false;if(semantic!=null)semantic.resetEventNegotiation();warning="";legacyWarning="";WazeAlerts.resetSource();}
         if(startup==null){
             nativeSpeaker=new MapsWarningSpeaker(app);
-            warningPreferences=new WarningPreferences(prefs(app),true);
+            warningPreferences=new WarningPreferences(prefs(app),true,WarningProviders.supported(source)?source:WarningProviders.FLITSMEISTER);
             final MapsWarningSpeaker speaker=nativeSpeaker;
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
-                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(source)&&(navigating||carActive()||foreground.get()!=null||startup!=null&&startup.activeSession());}
+                public boolean active(){return warningPreferences.reviewed()&&WarningProviders.supported(source)&&(navigating||carActive()||foreground.get()!=null||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){return MapsGuidanceCoordinator.passed(event,fix,now);}
@@ -201,15 +202,15 @@ public final class ExternalTelemetry {
         update();
     }
     static void navigating(boolean active){navigating=active;if(startup!=null)startup.select(source,active);update();}
-    static String provider(){return TelemetryStore.FLITSMEISTER.equals(source)?"Flitsmeister":TelemetryStore.WAZE.equals(source)?"De-Waze":LEGACY.equals(source)?"Waze":"Google Maps";}
+    static String provider(){return WarningProviders.supported(source)?WarningProviders.displayName(source):LEGACY.equals(source)?"Waze":"Google Maps";}
     static String status(){
         if(!modern())return LEGACY.equals(source)?WazeAlerts.legacyStatus():"Off · Google Maps";
         TelemetryStore.View v=view();
         String out=provider()+(v.external?" · connected":" unavailable · Google Maps fallback");
         if(startup!=null)out+=" · "+startup.statusLabel(false);
-        if(semantic!=null&&TelemetryStore.FLITSMEISTER.equals(source)&&"ready".equals(semantic.state()))
+        if(semantic!=null&&WarningProviders.supported(source)&&"ready".equals(semantic.state()))
             out+=semantic.captureComplete()?" · warnings connected":" · warning coverage incomplete";
-        if(TelemetryStore.FLITSMEISTER.equals(source)&&warningPreferences!=null)out+=" · "+warningAudioStatus();
+        if(WarningProviders.supported(source)&&warningPreferences!=null)out+=" · "+warningAudioStatus();
         if(v.external&&(v.currentKmh==null||v.limitKmh==null))out+=" · Maps where needed";
         if(v.zoneActive)out+="\n"+(v.averageKmh==null?"Observed partial average pending":String.format(Locale.getDefault(),"Observed partial average %.0f km/h",v.averageKmh))+String.format(Locale.getDefault()," · %s%.0f%% · %s remaining",v.progressEstimated?"≈":"",v.progressPercent,distance(v.remainingMeters,PowerSaving.miles()));
         else if(v.approachDistanceMeters!=null)out+="\nAverage-speed zone "+(v.approachEstimated?"≈":"")+distance(v.approachDistanceMeters,PowerSaving.miles())+" ahead";
@@ -220,6 +221,10 @@ public final class ExternalTelemetry {
         return meters>=1000?String.format(Locale.getDefault(),"%.1f km",meters/1000):Math.round(meters)+" m";
     }
     static String compactWarning(){return warning;}
+    static String compactCarWarning(){
+        String messages=nativeWarnings.carMessages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        return messages.isEmpty()?legacyWarning:provider()+"\n"+messages;
+    }
     static int kind(String kind){
         switch(kind){case "police":return WazeAlerts.POLICE;case "crash":return WazeAlerts.CRASH;case "hazard":return WazeAlerts.HAZARD;case "jam":return WazeAlerts.JAM;case "closure":return WazeAlerts.CLOSURE;case "camera":case "mobile_camera":return WazeAlerts.CAMERA;case "average_speed_zone":return WazeAlerts.ZONE;case "flock":return WazeAlerts.FLOCK;default:return WazeAlerts.OTHER;}
     }
@@ -235,10 +240,11 @@ public final class ExternalTelemetry {
         // A kind disabled for map pins is disabled for warnings too.
         RoadWarningEngine.Warning ahead=warnings.update(filteredView(v),position,SystemClock.elapsedRealtime());
         warning=ahead==null?"":(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" · "+warningLabel(ahead.kind);
+        legacyWarning=warning;
         nl.johninnl.navigation.alerts.WarningEvent nativeWarning=nativeWarnings.current(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
-        if(nativeWarning!=null)warning="Flitsmeister\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        if(nativeWarning!=null)warning=provider()+"\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
         if(semantic!=null&&semantic.advertisesEvents(source))eventAudioManaged=true;
-        boolean legacyAudio=!TelemetryStore.FLITSMEISTER.equals(source)||!eventAudioManaged;
+        boolean legacyAudio=!eventAudioManaged;
         if(ahead!=null&&legacyAudio&&WazeAlerts.CHIME&&(navigating||carActive()||foreground.get()!=null)&&warnings.shouldSpeak(ahead,SystemClock.elapsedRealtime())){
             Chime.alert();if(app!=null)Toast.makeText(app,warningLabel(ahead.kind)+" "+(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" ahead",Toast.LENGTH_LONG).show();
         }
@@ -251,7 +257,8 @@ public final class ExternalTelemetry {
     private static TelemetryStore.View filteredView(TelemetryStore.View original){
         return original.withAlerts(alert->(WazeAlerts.KINDS&(1<<kind(alert.kind)))!=0,(WazeAlerts.KINDS&(1<<WazeAlerts.ZONE))!=0);
     }
-    static WarningPreferences warningPreferences(Context context){return warningPreferences!=null?warningPreferences:new WarningPreferences(prefs(context),true);}
+    static WarningPreferences warningPreferences(Context context){String selected=source(context);return warningPreferences(context,WarningProviders.supported(selected)?selected:WarningProviders.FLITSMEISTER);}
+    static WarningPreferences warningPreferences(Context context,String provider){return new WarningPreferences(prefs(context),true,provider);}
     static void warningChoicesChanged(){if(scheduler!=null)scheduler.refresh();update();}
     static void previewWarning(Activity activity){
         boolean dutch=activity.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
@@ -263,8 +270,8 @@ public final class ExternalTelemetry {
     }
     static void recoverWarningAudio(Activity activity){
         android.app.PendingIntent action=semantic==null?null:semantic.recoveryAction();
-        if(action==null){Toast.makeText(activity,"Connect an updated Flitsmeister patch first",Toast.LENGTH_LONG).show();return;}
-        try{action.send();}catch(android.app.PendingIntent.CanceledException error){Toast.makeText(activity,"Recovery is unavailable; reconnect Flitsmeister",Toast.LENGTH_LONG).show();}
+        if(action==null){Toast.makeText(activity,"Connect an updated "+provider()+" patch first",Toast.LENGTH_LONG).show();return;}
+        try{action.send();}catch(android.app.PendingIntent.CanceledException error){Toast.makeText(activity,"Recovery is unavailable; reconnect "+provider(),Toast.LENGTH_LONG).show();}
     }
     static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return "Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker==null?requested:nativeSpeaker.effectiveMode(requested),"Google Maps",false)+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),false);}
     private static String warningLabel(String kind){switch(kind){case "average_speed_zone":return "Average-speed zone";case "mobile_camera":return "Mobile camera";case "camera":return "Speed camera";case "police":return "Police";case "closure":return "Road closure";case "jam":return "Traffic jam";case "flock":return "Flock camera";case "crash":return "Crash";default:return "Hazard";}}

@@ -26,6 +26,7 @@ import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.PlaybackGrant;
 import nl.johninnl.navigation.alerts.WarningPassage;
 import nl.johninnl.navigation.alerts.WarningStatus;
+import nl.johninnl.navigation.alerts.WarningProviders;
 
 /** One process-wide consumer shared by the native phone and car UI. No network or GPS requests. */
 public final class TelemetryRuntime {
@@ -35,6 +36,7 @@ public final class TelemetryRuntime {
     private static final VelaWarningSpeaker nativeSpeaker=new VelaWarningSpeaker();
     private static WarningScheduler scheduler;
     private static WarningPreferences warningPreferences;
+    private static boolean changingSource;
     private static boolean eventAudioManaged;
     private static final Runnable SEMANTIC_RENDER=()->publish(true);
     private static void semanticRender(){MAIN.removeCallbacks(SEMANTIC_RENDER);MAIN.post(SEMANTIC_RENDER);}
@@ -71,9 +73,9 @@ public final class TelemetryRuntime {
         main(()->{
             if(app!=null)return;
             app=context.getApplicationContext();prefs=app.getSharedPreferences("vela_settings",Context.MODE_PRIVATE);changed=onChanged;
-            warningPreferences=new WarningPreferences(prefs,false);
+            warningPreferences=new WarningPreferences(prefs,false,warningProvider(prefs.getString("morphe_telemetry_provider","")));
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
-                public boolean active(){return warningPreferences.reviewed()&&TelemetryStore.FLITSMEISTER.equals(selected())&&(nativeGuidance()||carActive()||SystemClock.elapsedRealtime()-phoneAt<=5000||startup!=null&&startup.activeSession());}
+                public boolean active(){return warningPreferences.reviewed()&&WarningProviders.supported(selected())&&(nativeGuidance()||carActive()||SystemClock.elapsedRealtime()-phoneAt<=5000||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){
@@ -103,7 +105,19 @@ public final class TelemetryRuntime {
             });
             startup=new nl.johninnl.navigation.startup.NavigationClient(app,semantic);
             store.select(prefs.getString("morphe_telemetry_provider",""));
-            preferenceListener=(p,key)->{if(key!=null&&(key.startsWith("morphe_")||key.startsWith("flock_")||key.equals("car_speed_on")||key.equals("speed_cam_warn")))main(()->{String next=prefs.getString("morphe_telemetry_provider","");if(!next.equals(selected())){eventAudioManaged=false;semantic.resetEventNegotiation();}store.select(next);scheduler.refresh();publish(true);});};
+            preferenceListener=(p,key)->{if(key!=null&&(key.startsWith("morphe_")||key.startsWith("flock_")||key.equals("car_speed_on")||key.equals("speed_cam_warn")))main(()->{
+                if(changingSource)return;
+                changingSource=true;
+                try{
+                    String next=prefs.getString("morphe_telemetry_provider","");
+                    if(!next.equals(selected())){
+                        store.select(next);eventAudioManaged=false;nativeWarnings.clear();WARNINGS.reset();warning="";semantic.resetEventNegotiation();
+                        warningPreferences=new WarningPreferences(prefs,false,warningProvider(store.selected()));
+                    }
+                    store.select(next);
+                }finally{changingSource=false;}
+                scheduler.refresh();publish(true);
+            });};
             prefs.registerOnSharedPreferenceChangeListener(preferenceListener);
             receiver=new BroadcastReceiver() {
                 @Override public void onReceive(Context c,Intent intent) {
@@ -131,9 +145,16 @@ public final class TelemetryRuntime {
     public static void select(String provider) {
         main(()->{
             if(prefs==null)return;
-            store.select(provider);warning="";WARNINGS.reset();nativeWarnings.clear();eventAudioManaged=false;
-            if(semantic!=null)semantic.resetEventNegotiation();
-            prefs.edit().putString("morphe_telemetry_provider",store.selected()).apply();
+            changingSource=true;
+            try{
+                String previous=store.selected();store.select(provider);
+                if(!previous.equals(store.selected())){
+                    warningPreferences=new WarningPreferences(prefs,false,warningProvider(store.selected()));warning="";WARNINGS.reset();nativeWarnings.clear();eventAudioManaged=false;
+                    if(semantic!=null)semantic.resetEventNegotiation();
+                }
+                // Publish once the selected profile and its persisted source agree.
+                prefs.edit().putString("morphe_telemetry_provider",store.selected()).apply();
+            }finally{changingSource=false;}
             if(!store.selected().isEmpty())request(store.selected());
             publish(true);
         });
@@ -219,15 +240,16 @@ public final class TelemetryRuntime {
         if(!spokenEnabled()||voice==null)return false;
         try{return !voice.getClass().getField("n").getBoolean(voice)||voice.getClass().getField("o").getBoolean(voice);}catch(ReflectiveOperationException e){return false;}
     }
-    public static String providerName() { return TelemetryStore.WAZE.equals(selected())?"De-Waze":TelemetryStore.FLITSMEISTER.equals(selected())?"Flitsmeister":"Vela"; }
+    public static String providerName() { return WarningProviders.supported(selected())?WarningProviders.displayName(selected()):"Vela"; }
     public static String statusText() {
         if(selected().isEmpty())return "Vela";
         TelemetryStore.View v=view();
-        if(!v.external)return providerName()+(dutch()?" niet beschikbaar · Vela-gegevens":" unavailable · Vela data")+(startup==null?"":" · "+startup.statusLabel(dutch()));
-        String status=providerName()+((v.currentKmh==null||v.limitKmh==null)?(dutch()?" · Vela waar nodig":" · Vela fallback where needed"):"");
-        if(semantic!=null&&TelemetryStore.FLITSMEISTER.equals(selected())&&"ready".equals(semantic.state()))
+        String status=providerName()+(v.external?((v.currentKmh==null||v.limitKmh==null)?(dutch()?" · Vela waar nodig":" · Vela fallback where needed"):"")
+                :(dutch()?" niet beschikbaar · Vela-gegevens":" unavailable · Vela data"));
+        if(startup!=null)status+=" · "+startup.statusLabel(dutch());
+        if(semantic!=null&&WarningProviders.supported(selected())&&"ready".equals(semantic.state()))
             status+=semantic.captureComplete()?(dutch()?" · waarschuwingen verbonden":" · warnings connected"):(dutch()?" · waarschuwingen nog onvolledig":" · warning coverage incomplete");
-        if(TelemetryStore.FLITSMEISTER.equals(selected())&&warningPreferences!=null)status+=" · "+warningAudioStatus();
+        if(WarningProviders.supported(selected())&&warningPreferences!=null)status+=" · "+warningAudioStatus();
         return status;
     }
     public static String zoneText() {
@@ -238,7 +260,11 @@ public final class TelemetryRuntime {
     public static String warningText() { return warning; }
     public static String compactWarningText() {
         nl.johninnl.navigation.alerts.WarningEvent semanticWarning=nativeWarnings.current(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
-        if(semanticWarning!=null)return "Flitsmeister\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        if(semanticWarning!=null)return providerName()+"\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
+        return compactLegacyWarningText();
+    }
+    static String compactCarWarningText(){String messages=nativeWarnings.carMessages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));return messages.isEmpty()?compactLegacyWarningText():providerName()+"\n"+messages;}
+    private static String compactLegacyWarningText(){
         RoadWarningEngine.Warning w=currentWarning;if(w==null)return "";
         String icon;
         switch(w.kind){case "average_speed_zone":icon="⌀";break;case "police":icon="🚓";break;case "camera":case "mobile_camera":icon="📷";break;case "closure":icon="⛔";break;case "jam":icon="↔";break;case "flock":icon="◉";break;default:icon="⚠";}
@@ -246,10 +272,10 @@ public final class TelemetryRuntime {
     }
     /** Native semantic warnings only; the independent car layer never promotes legacy estimates. */
     static String nativeCarWarningText() {
-        if(!TelemetryStore.FLITSMEISTER.equals(selected()))return "";
+        if(!WarningProviders.supported(selected()))return "";
         long now=SystemClock.elapsedRealtime();
-        nl.johninnl.navigation.alerts.WarningEvent event=nativeWarnings.current(now,value->warningPreferences==null||warningPreferences.enabled(value));
-        return event==null?"":"Flitsmeister\n"+nativeWarnings.messages(now,value->warningPreferences==null||warningPreferences.enabled(value));
+        String messages=nativeWarnings.carMessages(now,value->warningPreferences==null||warningPreferences.enabled(value));
+        return messages.isEmpty()?"":providerName()+"\n"+messages;
     }
     public static void setWarning(String value) { main(()->{warning=value==null?"":value;publish(false);}); }
     public static void fix(Location original) { nativeSample(original); }
@@ -350,9 +376,9 @@ public final class TelemetryRuntime {
         currentWarning=ahead;
         warning=ahead==null?"":warningLabel(ahead);
         nl.johninnl.navigation.alerts.WarningEvent semanticWarning=nativeWarnings.current(now,event->warningPreferences==null||warningPreferences.enabled(event));
-        if(semanticWarning!=null)warning="Flitsmeister\n"+nativeWarnings.messages(now,event->warningPreferences==null||warningPreferences.enabled(event));
+        if(semanticWarning!=null)warning=providerName()+"\n"+nativeWarnings.messages(now,event->warningPreferences==null||warningPreferences.enabled(event));
         if(semantic!=null&&semantic.advertisesEvents(selected()))eventAudioManaged=true;
-        boolean legacyAudio=!TelemetryStore.FLITSMEISTER.equals(selected())||!eventAudioManaged;
+        boolean legacyAudio=!eventAudioManaged;
         if(legacyAudio&&voiceAvailable()&&(nativeGuidance()||carActive()||now-phoneAt<=5000)&&ahead!=null&&WARNINGS.shouldSpeak(ahead,now))speakWarning(warningLabel(ahead));
         String key=(startup==null?"":startup.state())+":"+selected()+":"+v.currentKmh+":"+v.limitKmh+":"+v.zoneId+":"+v.zoneSession+":"+v.averageKmh+":"+v.progressPercent+":"+v.remainingMeters+":"+v.external+":"+suppressNativeFlock()+":"+carEnabled()+":"+spokenEnabled()+":"+warning+":"+freshNativeSpeed()+":"+(freshNativeSpeed()&&own!=null?own.getSpeed():null)+":"+phoneNativeLimit;
         if(force||!key.equals(lastKey)){lastKey=key;changed.run();CarUi.changed();}
@@ -375,6 +401,7 @@ public final class TelemetryRuntime {
         return label+" · "+(w.estimated?"≈":"")+NativeUi.distance(w.distanceMeters,NativeUi.imperial());
     }
     private static final Runnable TICK=new Runnable(){public void run(){if(app==null)return;publish(false);MAIN.postDelayed(this,1000);}};
+    private static String warningProvider(String value){return WarningProviders.supported(value)?value:WarningProviders.FLITSMEISTER;}
     public static WarningPreferences warningPreferences(){return warningPreferences;}
     public static void warningChoicesChanged(){if(scheduler!=null)scheduler.refresh();publish(true);}
     public static void previewWarning(){
@@ -388,15 +415,15 @@ public final class TelemetryRuntime {
     public static void recoverWarningAudio(){
         android.app.Activity activity=startup==null?null:startup.foregroundActivity();android.app.PendingIntent action=semantic==null?null:semantic.recoveryAction();
         if(activity==null)return;
-        if(action==null){android.widget.Toast.makeText(activity,dutch()?"Verbind eerst een bijgewerkte Flitsmeister-patch":"Connect an updated Flitsmeister patch first",android.widget.Toast.LENGTH_LONG).show();return;}
-        try{action.send();}catch(android.app.PendingIntent.CanceledException error){android.widget.Toast.makeText(activity,dutch()?"Herstel niet beschikbaar; verbind Flitsmeister opnieuw":"Recovery unavailable; reconnect Flitsmeister",android.widget.Toast.LENGTH_LONG).show();}
+        if(action==null){android.widget.Toast.makeText(activity,dutch()?"Verbind eerst een bijgewerkte "+providerName()+"-patch":"Connect an updated "+providerName()+" patch first",android.widget.Toast.LENGTH_LONG).show();return;}
+        try{action.send();}catch(android.app.PendingIntent.CanceledException error){android.widget.Toast.makeText(activity,dutch()?"Herstel niet beschikbaar; verbind "+providerName()+" opnieuw":"Recovery unavailable; reconnect "+providerName(),android.widget.Toast.LENGTH_LONG).show();}
     }
     public static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return dutch()?"Waarschuwingskeuzes controleren":"Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker.effectiveMode(requested),"Vela",dutch())+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),dutch());}
     static void resetForTest() {
         carObservers.clear();visibleCarSessions.clear();
         if(startup!=null){startup.close();startup=null;}
         if(semantic!=null){semantic.close();semantic=null;}nativeWarnings.clear();nativeSpeaker.bind(null);
-        if(scheduler!=null){scheduler.disconnected();scheduler=null;}warningPreferences=null;eventAudioManaged=false;
+        if(scheduler!=null){scheduler.disconnected();scheduler=null;}warningPreferences=null;changingSource=false;eventAudioManaged=false;
         MAIN.removeCallbacksAndMessages(null);
         if(app!=null&&receiver!=null)try{app.unregisterReceiver(receiver);}catch(IllegalArgumentException ignored){}
         if(prefs!=null&&preferenceListener!=null)prefs.unregisterOnSharedPreferenceChangeListener(preferenceListener);

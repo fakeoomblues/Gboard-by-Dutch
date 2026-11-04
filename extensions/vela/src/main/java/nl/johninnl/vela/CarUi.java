@@ -186,7 +186,7 @@ public final class CarUi {
                     String.valueOf(Math.max(0, Math.round(mps * (imperial ? 2.236936 : 3.6)))));
             Double limit = TelemetryRuntime.carLimitKmh((Double)field(renderer, "r"));
             TelemetryStore.View view = TelemetryRuntime.view();
-            String warning = TelemetryRuntime.compactWarningText();
+            String warning = TelemetryRuntime.compactCarWarningText();
             float radius = Math.max(22f, Math.min(46f,
                     Math.min(((Number)field(renderer,"h")).intValue(), ((Number)field(renderer,"i")).intValue()) / 18f));
             Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), view.zoneActive, warning.isEmpty()?0:Math.min(4,warning.split("\n").length));

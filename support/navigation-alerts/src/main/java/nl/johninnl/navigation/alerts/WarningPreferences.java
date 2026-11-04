@@ -10,10 +10,14 @@ public final class WarningPreferences {
     public static final int[] CATEGORIES={CAMERA,ZONE,ROAD_DANGER,EMERGENCY,TRAFFIC,POLICE,OTHER};
     public static final String[] LABELS={"Speed cameras and mobile controls","Average-speed zones","Road danger","Emergency vehicles","Traffic and advice","Police controls","Other native warnings"};
     public static final String[] LABELS_NL={"Flitspalen en mobiele controles","Trajectcontroles","Gevaar op de weg","Hulpdiensten","Verkeer en advies","Politiecontroles","Overige bronwaarschuwingen"};
-    private static final String PREFIX="morphe_native_warnings_";
+    private static final String FM_PREFIX="morphe_native_warnings_";
+    private final String PREFIX;
     private final SharedPreferences prefs;
-    public WarningPreferences(SharedPreferences prefs,boolean maps){
+    public WarningPreferences(SharedPreferences prefs,boolean maps){this(prefs,maps,WarningProviders.FLITSMEISTER);}
+    public WarningPreferences(SharedPreferences prefs,boolean maps,String provider){
+        if(!WarningProviders.supported(provider))throw new IllegalArgumentException("UNSUPPORTED_WARNING_PROVIDER");
         this.prefs=prefs;
+        PREFIX=WarningProviders.WAZE.equals(provider)?"morphe_native_warnings_waze_":FM_PREFIX;
         if(prefs.getBoolean(PREFIX+"initialized",false))return;
         WarningAudioOwner.Mode mode=WarningAudioOwner.Mode.VOICE;int categories=RECOMMENDED;
         String origin="recommended";SharedPreferences.Editor edit=prefs.edit();
@@ -54,12 +58,20 @@ public final class WarningPreferences {
         return (reviewed()?"":(nl?"Keuzes controleren · ":"Review choices · "))+output;
     }
     public static int categoryOf(WarningEvent e){
+        // Waze's emergency-vehicle hazard is a point report, not a moving responder.
+        if(e.nativeType.equals("HAZARD")&&(e.nativeSubtype.equals("HAZARD_TYPE_EMERGENCY_VEHICLE")||e.nativeSubtype.equals("HAZARD_SUB_TYPE_EMERGENCY_VEHICLE")))return ROAD_DANGER;
         if(e.category.equals("emergency_vehicle") || e.relevance.equals("moving_emergency"))return EMERGENCY;
-        if(e.nativeType.equals("AVG_SPEED_CHECK"))return ZONE;
+        if(e.category.equals("average_speed_zone")||e.nativeType.equals("AVG_SPEED_CHECK")||e.nativeType.equals("AVERAGE_SPEED_CAMERA"))return ZONE;
+        if(e.nativeSubtype.equals("POLICE_TYPE_MOBILE_CAMERA"))return CAMERA;
+        if(e.nativeType.equals("POLICE"))return POLICE;
         if(e.category.equals("police_control")||e.nativeType.equals("POLICEHOTSPOT") || e.nativeType.equals("POLICE_HOTSPOT") || e.nativeSubtype.equals("POLICE") || e.nativeSubtype.startsWith("POLICE_"))return POLICE;
-        if(e.category.equals("speed_control")||e.category.equals("traffic_camera"))return CAMERA;
-        if(e.category.equals("traffic")||e.category.equals("speed_advice"))return TRAFFIC;
-        if((e.category.equals("road_danger")||e.category.equals("roadworks")||e.category.equals("closure")||e.category.equals("weather")||e.category.equals("service_vehicle")||e.category.equals("slow_vehicle")) && !e.nativeType.equals("UNKNOWN"))return ROAD_DANGER;
+        if(e.category.equals("speed_control")||e.category.equals("traffic_camera")||e.nativeType.equals("CAMERA"))return CAMERA;
+        if(e.category.equals("traffic")||e.category.equals("speed_advice")||e.nativeType.equals("TRAFFIC_JAM")||e.nativeType.equals("TRAFFIC_INFO")||e.nativeType.equals("SPEED_LIMIT_DECREASE"))return TRAFFIC;
+        switch(e.nativeType){
+            case "HAZARD":case "ACCIDENT":case "CONSTRUCTION":case "CLOSURE":case "BLOCKED_LANE":case "BAD_WEATHER":case "PERMANENT_HAZARD":case "ANIMAL":case "SUDDEN_SLOWDOWN":case "SPEED_BUMP":case "DANGEROUS_CURVE":case "SCHOOL_ZONE":return ROAD_DANGER;
+            default:break;
+        }
+        if((e.category.equals("road_danger")||e.category.equals("road_feature")||e.category.equals("roadworks")||e.category.equals("closure")||e.category.equals("weather")||e.category.equals("service_vehicle")||e.category.equals("slow_vehicle")) && !e.nativeType.equals("UNKNOWN"))return ROAD_DANGER;
         return OTHER;
     }
     private static int legacyCategories(int types){
@@ -75,6 +87,8 @@ public final class WarningPreferences {
         switch(categoryOf(e)){
             case POLICE:return 0;case TRAFFIC:return 3;case CAMERA:return 5;case ZONE:return 7;
             case ROAD_DANGER:
+                if(e.nativeType.equals("ACCIDENT"))return 1;
+                if(e.nativeType.equals("CONSTRUCTION")||e.nativeType.equals("CLOSURE"))return 4;
                 String type=e.nativeSubtype.toUpperCase(Locale.ROOT);
                 if(type.contains("ACCIDENT") || type.contains("CRASH"))return 1;
                 if(type.contains("CLOSURE") || type.contains("ROAD_WORK") || type.contains("ROADWORK"))return 4;

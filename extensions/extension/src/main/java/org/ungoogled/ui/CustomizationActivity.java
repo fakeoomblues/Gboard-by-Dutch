@@ -402,32 +402,40 @@ public final class CustomizationActivity extends Activity {
         }
     }
 
-    /** Source controls are shared by the patched page and its rendered UI regression check. */
-    void buildExternalDataControls(LinearLayout body) {
-            LinearLayout sourceRow=rowBase("Navigation data source", ExternalTelemetry.LABELS[ExternalTelemetry.sourceIndex(this)]);
-            TextView sourceSub=(TextView)((LinearLayout)sourceRow.getChildAt(0)).getChildAt(1);
-            sourceRow.setOnClickListener(v->choose("Navigation data source",ExternalTelemetry.LABELS,ExternalTelemetry.sourceIndex(this),which->{ExternalTelemetry.select(this,ExternalTelemetry.SOURCES[which]);sourceSub.setText(ExternalTelemetry.LABELS[which]);}));
-            body.addView(sourceRow);
-            body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
-            nl.johninnl.navigation.alerts.WarningPreferences nativeChoices=ExternalTelemetry.warningPreferences(this);
-            LinearLayout outputRow=rowBase("Flitsmeister warning audio",nativeChoices.summary(false));
+    private void buildNativeWarningControls(LinearLayout body) {
+        String selected=ExternalTelemetry.source(this);
+        if(!nl.johninnl.navigation.alerts.WarningProviders.supported(selected))return;
+        String provider=nl.johninnl.navigation.alerts.WarningProviders.displayName(selected);
+        nl.johninnl.navigation.alerts.WarningPreferences nativeChoices=ExternalTelemetry.warningPreferences(this,selected);
+            LinearLayout outputRow=rowBase(provider+" warning audio",nativeChoices.summary(false));
             TextView outputSub=(TextView)((LinearLayout)outputRow.getChildAt(0)).getChildAt(1);
-            outputRow.setOnClickListener(v->choose("Flitsmeister warning audio",new String[]{"Voice","Tone","Silent"},nativeChoices.mode().ordinal(),which->{nativeChoices.mode(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.values()[which]);ExternalTelemetry.warningChoicesChanged();outputSub.setText(nativeChoices.summary(false));}));
+            outputRow.setOnClickListener(v->choose(provider+" warning audio",new String[]{"Voice","Tone","Silent"},nativeChoices.mode().ordinal(),which->{nativeChoices.mode(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.values()[which]);ExternalTelemetry.warningChoicesChanged();outputSub.setText(nativeChoices.summary(false));}));
             body.addView(outputRow);
-            LinearLayout audioTypes=rowBase("Flitsmeister warning categories","Choose audible warnings independently of map pins");
-            audioTypes.setOnClickListener(v->chooseMany("Flitsmeister warning categories",nl.johninnl.navigation.alerts.WarningPreferences.LABELS,nativeChoices.categories(),mask->{nativeChoices.categories(mask);ExternalTelemetry.warningChoicesChanged();}));
+            LinearLayout audioTypes=rowBase(provider+" warning categories","Choose audible warnings independently of map pins");
+            audioTypes.setOnClickListener(v->chooseMany(provider+" warning categories",nl.johninnl.navigation.alerts.WarningPreferences.LABELS,nativeChoices.categories(),mask->{nativeChoices.categories(mask);ExternalTelemetry.warningChoicesChanged();}));
             body.addView(audioTypes);
             LinearLayout previewRow=rowBase("Parked audio preview","Play a labelled synthetic example using your current output and native mute settings");
             previewRow.setOnClickListener(v->ExternalTelemetry.previewWarning(this));body.addView(previewRow);
-            LinearLayout recoveryRow=rowBase("Recover warning audio while parked","Open Flitsmeister's confirmation after stopping the previous receiver and speech engine");
+            LinearLayout recoveryRow=rowBase("Recover warning audio while parked","Open "+provider+"'s confirmation after stopping the previous receiver and speech engine");
             recoveryRow.setOnClickListener(v->ExternalTelemetry.recoverWarningAudio(this));body.addView(recoveryRow);
             if(!nativeChoices.reviewed()){
-                LinearLayout review=rowBase("Review Flitsmeister warnings","Your previous explicit mute and alert choices are preserved. Choose categories and output, then enable these choices.");
+                LinearLayout review=rowBase("Review "+provider+" warnings","Your previous explicit mute and alert choices are preserved. Choose categories and output, then enable these choices.");
                 review.setOnClickListener(v->new android.app.AlertDialog.Builder(this).setTitle("Use these warning choices?")
-                    .setMessage("Output: "+nativeChoices.mode().name()+". Your selected categories apply to warning audio. Google Maps mute settings still apply. Complete warning coverage also requires an updated Flitsmeister patch.")
+                    .setMessage("Output: "+nativeChoices.mode().name()+". Your selected categories apply to warning audio. Google Maps mute settings still apply. Complete warning coverage also requires an updated "+provider+" patch.")
                     .setPositiveButton("Use these choices",(dialog,which)->{nativeChoices.confirm();ExternalTelemetry.warningChoicesChanged();outputSub.setText(nativeChoices.summary(false));review.setVisibility(View.GONE);})
                     .setNegativeButton("Cancel",null).show());body.addView(review);
             }
+    }
+
+    /** Source controls are shared by the patched page and its rendered UI regression check. */
+    void buildExternalDataControls(LinearLayout body) {
+            LinearLayout nativeControls=new LinearLayout(this);nativeControls.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout sourceRow=rowBase("Navigation data source", ExternalTelemetry.LABELS[ExternalTelemetry.sourceIndex(this)]);
+            TextView sourceSub=(TextView)((LinearLayout)sourceRow.getChildAt(0)).getChildAt(1);
+            sourceRow.setOnClickListener(v->choose("Navigation data source",ExternalTelemetry.LABELS,ExternalTelemetry.sourceIndex(this),which->{ExternalTelemetry.select(this,ExternalTelemetry.SOURCES[which]);sourceSub.setText(ExternalTelemetry.LABELS[which]);nativeControls.removeAllViews();buildNativeWarningControls(nativeControls);}));
+            body.addView(sourceRow);
+            body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
+            buildNativeWarningControls(nativeControls);body.addView(nativeControls);
             LinearLayout kindsRow = rowBase("Map-pin and legacy alert types", WazeAlerts.kindsSummary(this));
             TextView kindsSub = (TextView) ((LinearLayout) kindsRow.getChildAt(0)).getChildAt(1);
             kindsRow.setOnClickListener(v -> chooseMany("Road alert types", WazeAlerts.KIND_LABELS, WazeAlerts.kinds(this), mask -> {

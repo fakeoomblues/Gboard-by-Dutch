@@ -31,6 +31,16 @@ public class PhoneWarningGateTest {
         assertEquals("Flitsmeister\nAmbulance approaching",TelemetryRuntime.compactWarningText());
         assertNull(TelemetryRuntime.lastFix());assertNull(TelemetryRuntime.phoneSpeedValue());
     }
+    @Test public void wazeWarningsUseSelectedAttributionAndIndependentChoicesWithoutGps(){
+        choices.mode(WarningAudioOwner.Mode.SILENT);warning();
+        TelemetryRuntime.select(TelemetryStore.WAZE);assertEquals("",TelemetryRuntime.nativeCarWarningText());
+        WarningPreferences waze=TelemetryRuntime.warningPreferences();assertFalse(waze.reviewed());waze.categories(WarningPreferences.ROAD_DANGER);waze.mode(WarningAudioOwner.Mode.TONE);waze.confirm();
+        Bundle b=WarningCodec.encode(event());long now=SystemClock.elapsedRealtime();b.putString("native_type","HAZARD");b.putString("native_subtype","HAZARD_TYPE_EMERGENCY_VEHICLE");b.putString("category","road_danger");b.putString("relevance","notice");b.putString("message","Emergency vehicle ahead");
+        warnings.events(Collections.singletonList(WarningCodec.decode(b,now)));
+        assertEquals("De-Waze\nEmergency vehicle ahead",TelemetryRuntime.compactWarningText());assertEquals("De-Waze\nEmergency vehicle ahead",TelemetryRuntime.nativeCarWarningText());assertTrue(TelemetryRuntime.showSpeed(false));
+        TelemetryRuntime.select(TelemetryStore.FLITSMEISTER);assertTrue(TelemetryRuntime.warningPreferences().reviewed());assertEquals(WarningAudioOwner.Mode.SILENT,TelemetryRuntime.warningPreferences().mode());assertEquals("",TelemetryRuntime.nativeCarWarningText());
+        TelemetryRuntime.select(TelemetryStore.WAZE);assertEquals(WarningAudioOwner.Mode.TONE,TelemetryRuntime.warningPreferences().mode());assertTrue(TelemetryRuntime.warningPreferences().reviewed());
+    }
     public static class MutedGuide { public boolean n=true,o=false; }
     @Test public void nativeFullMuteDoesNotHideSemanticWarning()throws Exception{
         warning();TelemetryRuntime.bindVoice(new MutedGuide());

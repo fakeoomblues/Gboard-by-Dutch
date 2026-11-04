@@ -41,4 +41,38 @@ public class WarningDisplayAndPassageTest {
         b.putString("category","traffic_camera");assertEquals(WarningPreferences.CAMERA,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
         b.putString("category","police_control");assertEquals(WarningPreferences.POLICE,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
     }
+    @Test public void wazeWarningCategoriesPreserveZoneRoadFeaturesAndStaticEmergencyHazards(){
+        Bundle b=WarningCodec.encode(state("waze",1,1));
+        b.putString("native_type","AVERAGE_SPEED_CAMERA");b.putString("category","average_speed_zone");
+        assertEquals(WarningPreferences.ZONE,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("native_type","NOTIFICATION");b.putString("category","road_feature");
+        assertEquals(WarningPreferences.ROAD_DANGER,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("native_type","HAZARD");b.putString("category","road_danger");b.putString("native_subtype","HAZARD_TYPE_EMERGENCY_VEHICLE");
+        assertEquals(WarningPreferences.ROAD_DANGER,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("native_type","POLICE");b.putString("category","police_control");b.putString("native_subtype","POLICE_TYPE_MOBILE_CAMERA");
+        assertEquals(WarningPreferences.CAMERA,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("native_subtype","POLICE_TYPE_HIDDEN");assertEquals(WarningPreferences.POLICE,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        b.putString("category","other_native");b.putString("native_subtype","");
+        for(String type:new String[]{"HAZARD","ACCIDENT","CONSTRUCTION","CLOSURE","BLOCKED_LANE","BAD_WEATHER","PERMANENT_HAZARD","ANIMAL","SUDDEN_SLOWDOWN","SPEED_BUMP","DANGEROUS_CURVE","SCHOOL_ZONE"}){
+            b.putString("native_type",type);assertEquals(type,WarningPreferences.ROAD_DANGER,WarningPreferences.categoryOf(WarningCodec.decode(b,1000)));
+        }
+    }
+
+    @Test public void wazeLegacyFineCategoryChoicesKeepCrashAndClosureMeaningWithoutASubtype(){
+        android.content.SharedPreferences prefs=org.robolectric.RuntimeEnvironment.getApplication().getSharedPreferences("waze-legacy-types",0);prefs.edit().clear().putInt("waze_alerts_kinds",1<<1).commit();
+        WarningPreferences choices=new WarningPreferences(prefs,true,WarningProviders.WAZE);Bundle b=WarningCodec.encode(state("waze-legacy",1,1));b.putString("native_subtype","");b.putString("native_type","ACCIDENT");
+        assertTrue(choices.enabled(WarningCodec.decode(b,1000)));b.putString("native_type","HAZARD");assertFalse(choices.enabled(WarningCodec.decode(b,1000)));
+        prefs.edit().putInt("morphe_native_warnings_waze_legacy_types",1<<4).commit();b.putString("native_type","CONSTRUCTION");assertTrue(choices.enabled(WarningCodec.decode(b,1000)));b.putString("native_type","CLOSURE");assertTrue(choices.enabled(WarningCodec.decode(b,1000)));
+    }
+
+    @Test public void nativeCarVariantsAndExclusionsDoNotChangePhoneTextOrOrdinaryWarnings(){
+        WarningView view=new WarningView();Bundle b=WarningCodec.encode(state("notification",1,1));b.putString("native_type","NOTIFICATION");b.putString("message","Phone cyclist title and detail");b.putBoolean("native_car_available",true);b.putString("native_car_title","Cyclist ahead");b.putString("native_car_body","Use caution");
+        view.events(Collections.singletonList(WarningCodec.decode(b,1000)));
+        assertEquals("Phone cyclist title and detail",view.messages(1000,event->true));assertEquals("Cyclist ahead: Use caution",view.carMessages(1000,event->true));
+        view.clear();b.putBoolean("native_car_available",false);view.events(Collections.singletonList(WarningCodec.decode(b,1000)));
+        assertEquals("Phone cyclist title and detail",view.messages(1000,event->true));assertEquals("",view.carMessages(1000,event->true));
+        view.events(Collections.singletonList(state("camera",1,1)));assertEquals("Native camera revision 1",view.carMessages(1000,event->true));
+        assertEquals("",view.carMessages(1000,event->false));
+    }
+
 }

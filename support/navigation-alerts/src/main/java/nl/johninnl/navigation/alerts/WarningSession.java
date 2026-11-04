@@ -20,6 +20,7 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
     private final Map<String,ThreadPoolExecutor> workers=new HashMap<>();
     private WarningConnection connection;
     private IBinder binder;
+    private String connectionSource="";
     private Object callbackIdentity;
     private long generation=-1,minimumGeneration;
     private boolean closed;
@@ -27,12 +28,15 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
     private volatile boolean captureComplete;
     private volatile String eventSource="";
     private volatile PendingIntent recovery;
+    private volatile String controllerState="",sourceRouteState="";
+    public String controllerState(){return controllerState;}
+    public String sourceRouteState(){return sourceRouteState;}
     public WarningSession(Context context,WarningConnection.Listener listener) { app=context.getApplicationContext();this.listener=listener; }
     public String state() { return state; }
     public boolean captureComplete() { return captureComplete; }
     public boolean advertisesEvents(String source){return source!=null&&source.equals(eventSource);}
     /** Only an explicit source change permits returning to deliberately selected legacy behavior. */
-    public void resetEventNegotiation(){eventSource="";recovery=null;}
+    public synchronized void resetEventNegotiation(){eventSource="";recovery=null;controllerState="";sourceRouteState="";}
     public PendingIntent recoveryAction(){return recovery;}
     public synchronized WarningConnection connection() { return connection; }
     /** Recheck after posting a callback to an app UI queue, where a source switch may intervene. */
@@ -50,8 +54,12 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
         final boolean reuse;
         synchronized(this) {
             if(closed || ticket<minimumGeneration)return false;
+            if(!WarningProviders.supported(source)){detach();state="incompatible";return false;}
+            controllerState=status.getString("warning_controller_state","");
+            sourceRouteState=status.getString("warning_source_route_state","");
+            if(api!=null||protocols!=null&&protocols.length>0)eventSource=source;
             if(api==null) {
-                if(v1) { detach();state="incompatible";return false; }
+                if(protocols!=null&&protocols.length>0) { detach();state="incompatible";return false; }
                 detach();state="legacy";generation=ticket;return true;
             }
             if(!v1) { detach();state="incompatible";return false; }
@@ -60,10 +68,10 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
             if(action!=null&&source.equals(action.getCreatorPackage())&&action.getCreatorUid()==app.getPackageManager().getApplicationInfo(source,0).uid
                     &&(android.os.Build.VERSION.SDK_INT<31||action.isImmutable()))recovery=action;
             else recovery=null;
-            reuse=connection!=null && binder==api && generation==ticket && "ready".equals(state);
+            reuse=connection!=null && binder==api && source.equals(connectionSource) && generation==ticket && "ready".equals(state);
             if(reuse)selected=connection;
             else {
-            detach();generation=ticket;binder=api;state="connecting";
+            detach();generation=ticket;binder=api;connectionSource=source;state="connecting";
             final long active=ticket;
             final Object activeCallback=new Object();callbackIdentity=activeCallback;
             ThreadPoolExecutor worker=workers.get(source);
@@ -71,7 +79,7 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
                 if(workers.size()>=2) { state="incompatible";return false; }
                 worker=WarningConnection.controlWorker();workers.put(source,worker);
             }
-            connection=new WarningConnection(app,FlitsmeisterWarningTypes.required(),EnumSet.allOf(WarningAudioOwner.Mode.class),new WarningConnection.Listener() {
+            connection=new WarningConnection(app,WarningProviders.required(source),EnumSet.allOf(WarningAudioOwner.Mode.class),new WarningConnection.Listener() {
                 // A STATUS poll can replace the endpoint without changing the startup ticket.
                 // Fence both the check and delivery, including late retirement/death callbacks.
                 private boolean current() { return !closed && connection!=null && callbackIdentity==activeCallback
@@ -90,11 +98,11 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
         }
     }
     @Override public synchronized void disconnected(long nextGeneration) {
-        minimumGeneration=Math.max(minimumGeneration,nextGeneration);generation=-1;detach();state="off";
+        minimumGeneration=Math.max(minimumGeneration,nextGeneration);generation=-1;detach();controllerState="";sourceRouteState="";state="off";
     }
     private void detach() {
-        captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;callbackIdentity=null;
+        captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;connectionSource="";callbackIdentity=null;
         if(previous!=null) { previous.retire();listener.disconnected("SOURCE_DISCONNECTED"); }
     }
-    @Override public synchronized void close() { closed=true;generation=-1;detach();state="off";for(ThreadPoolExecutor worker:workers.values())worker.shutdown(); }
+    @Override public synchronized void close() { closed=true;generation=-1;detach();controllerState="";sourceRouteState="";state="off";for(ThreadPoolExecutor worker:workers.values())worker.shutdown(); }
 }

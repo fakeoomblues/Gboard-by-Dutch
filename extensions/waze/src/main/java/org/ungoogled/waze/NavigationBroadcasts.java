@@ -51,6 +51,7 @@ public final class NavigationBroadcasts {
         main(() -> {
             if (installed) return;
             app = application; installed = true;
+            if(NativeWarnings.supportsEventProtocol(application))NativeWarnings.init(application);
             IntentFilter filter = new IntentFilter(REQUEST);
             filter.addAction(NavigationProtocol.REQUEST);
             BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -66,7 +67,7 @@ public final class NavigationBroadcasts {
             try {
                 // Apply keep-alive when native initialization finishes, even without a server sync.
                 Class.forName("com.waze.NativeManager").getMethod("runOnNativeManagerReady", Runnable.class)
-                        .invoke(null, (Runnable) () -> { if (isEnabled()) Customization.onConfigSynced(); });
+                        .invoke(null, (Runnable) () -> { if (isEnabled()) { Customization.onConfigSynced();NativeWarnings.prepareControllers(); } });
             } catch (ReflectiveOperationException e) { Log.w("UA", "Navigation background initialization", e); }
         });
     }
@@ -76,6 +77,7 @@ public final class NavigationBroadcasts {
             if (!installed) return;
             MAIN.removeCallbacks(TICK);
             STATE.reset(on); ALERTS.reset(on); REPORTS.clear(); REPORT_TIMES.clear(); dirty = true; publish(true); // clearing snapshot is sent even on disable
+            if(!on)NativeWarnings.stopped();else NativeWarnings.prepareControllers();
             if (on) MAIN.postDelayed(TICK, 1000);
         });
     }
@@ -121,6 +123,7 @@ public final class NavigationBroadcasts {
     }
 
     public static void insights(Object update) {
+        if(update!=null&&isEnabled())NativeWarnings.segments(update);
         final long at = SystemClock.elapsedRealtime();
         main(() -> {
             if (!isEnabled() || update == null) return;
@@ -149,6 +152,7 @@ public final class NavigationBroadcasts {
     /** Native repository reports, independently of the legacy Maps sharing toggle. */
     public static void alerts(Object update) {
         if(update==null || !isEnabled()) return;
+        NativeWarnings.repository(update);
         final long at=SystemClock.elapsedRealtime();
         try {
             List<NavigationAlerts.Alert> reports=new ArrayList<>();
@@ -176,6 +180,7 @@ public final class NavigationBroadcasts {
         }
     }
     static void reports(String source,List<NavigationAlerts.Alert> reports,long at) {
+        if(source.equals("flockCameras")||source.equals("speedCameras"))NativeWarnings.osmSnapshot(source,reports);
         main(()->{if(!isEnabled() || at<0 || at>SystemClock.elapsedRealtime())return; List<NavigationAlerts.Alert> timed=new ArrayList<>();
             for(NavigationAlerts.Alert a:reports)timed.add(new NavigationAlerts.Alert(a.id,a.kind,a.title,a.distance,a.trigger,a.latitude,a.longitude,at));
             REPORTS.put(source,timed);

@@ -22,7 +22,7 @@ public class WarningConnectionTest {
     @After public void close(){if(client!=null)client.close();if(source!=null)source.close();}
     @Test public void retiredSessionCallbacksCannotInvalidateReplacementWithSameStartupTicket() throws Exception {
         ShadowProcess.setUid(20000);Context context=RuntimeEnvironment.getApplication();
-        PackageInfo info=new PackageInfo();info.packageName="app.provider";info.applicationInfo=new ApplicationInfo();info.applicationInfo.packageName=info.packageName;info.applicationInfo.uid=20000;
+        PackageInfo info=new PackageInfo();info.packageName="nl.flitsmeister";info.applicationInfo=new ApplicationInfo();info.applicationInfo.packageName=info.packageName;info.applicationInfo.uid=20000;
         Shadows.shadowOf(context.getPackageManager()).installPackage(info);
         char[] hash=new char[64];Arrays.fill(hash,'a');
         WarningCapabilities caps=new WarningCapabilities(new String(hash),FlitsmeisterWarningTypes.required(),true);
@@ -37,12 +37,12 @@ public class WarningConnectionTest {
         });WarningEndpoint replacement=new WarningEndpoint(20000,u->u==20000?"app.consumer":null,caps,
                 ()->new WarningEndpoint.Storage("boot-count:7",new PlaybackStore(){public PlaybackGrant load(){return null;}public void save(PlaybackGrant g){}},null),SystemClock::elapsedRealtime,()->20000)) {
             Bundle status=new Bundle();status.putBinder("warning_api",source.binder());status.putIntArray("warning_protocols",new int[]{1});
-            assertTrue(session.prepare("app.provider",status,7));
+            assertTrue(session.prepare("nl.flitsmeister",status,7));
             WarningConnection old=session.connection();
             java.lang.reflect.Field field=WarningConnection.class.getDeclaredField("listener");field.setAccessible(true);
             WarningConnection.Listener retired=(WarningConnection.Listener)field.get(old);
             status.putBinder("warning_api",replacement.binder());
-            assertTrue(session.prepare("app.provider",status,7));
+            assertTrue(session.prepare("nl.flitsmeister",status,7));
             assertNotSame(old,session.connection());assertEquals("ready",session.state());assertTrue(session.captureComplete());
             assertEquals("Retirement cancels old output once",1,Collections.frequency(outcomes,"disconnected"));
             outcomes.clear();
@@ -59,7 +59,7 @@ public class WarningConnectionTest {
     }
     @Test public void incompatibleStatusRetiresPreviouslyReadyWarningConnection() throws Exception {
         ShadowProcess.setUid(20000);Context context=RuntimeEnvironment.getApplication();
-        PackageInfo info=new PackageInfo();info.packageName="app.provider";info.applicationInfo=new ApplicationInfo();info.applicationInfo.packageName=info.packageName;info.applicationInfo.uid=20000;
+        PackageInfo info=new PackageInfo();info.packageName="nl.flitsmeister";info.applicationInfo=new ApplicationInfo();info.applicationInfo.packageName=info.packageName;info.applicationInfo.uid=20000;
         Shadows.shadowOf(context.getPackageManager()).installPackage(info);
         char[] hash=new char[64];Arrays.fill(hash,'a');
         source=new WarningEndpoint(20000,u->u==20000?"app.consumer":null,new WarningCapabilities(new String(hash),FlitsmeisterWarningTypes.required(),true),
@@ -72,14 +72,42 @@ public class WarningConnectionTest {
             public void disconnected(String reason){outcomes.add(reason);}
         })) {
             Bundle status=new Bundle();status.putBinder("warning_api",source.binder());status.putIntArray("warning_protocols",new int[]{1});
-            assertTrue(session.prepare("app.provider",status,7));
+            assertTrue(session.prepare("nl.flitsmeister",status,7));
             String oldSession=session.connection().providerSession();
             status.remove("warning_protocols");
-            assertFalse(session.prepare("app.provider",status,7));
+            assertFalse(session.prepare("nl.flitsmeister",status,7));
             assertNull(session.connection());assertFalse(session.accepts(oldSession));assertFalse(session.captureComplete());
             assertEquals("incompatible",session.state());assertEquals(1,outcomes.size());
             status.remove("warning_api");status.putIntArray("warning_protocols",new int[]{1});
-            assertFalse(session.prepare("app.provider",status,7));assertEquals(1,outcomes.size());
+            assertFalse(session.prepare("nl.flitsmeister",status,7));assertEquals(1,outcomes.size());
+        }
+    }
+    @Test public void wazeNegotiatesItsOwnProfileWithoutClaimingCompleteCapture() throws Exception {
+        ShadowProcess.setUid(20000);Context context=RuntimeEnvironment.getApplication();
+        PackageInfo info=new PackageInfo();info.packageName=WarningProviders.WAZE;info.applicationInfo=new ApplicationInfo();info.applicationInfo.packageName=info.packageName;info.applicationInfo.uid=20000;
+        Shadows.shadowOf(context.getPackageManager()).installPackage(info);
+        source=new WarningEndpoint(20000,u->u==20000?"app.consumer":null,new WarningCapabilities(WazeWarningTypes.MANIFEST_DIGEST,WazeWarningTypes.required(),false),
+                ()->new WarningEndpoint.Storage("boot-count:7",new PlaybackStore(){public PlaybackGrant load(){return null;}public void save(PlaybackGrant g){}},null),SystemClock::elapsedRealtime,()->20000);
+        try(WarningSession session=new WarningSession(context,new WarningConnection.Listener(){
+            public void snapshot(WarningConnection.Snapshot value){}public void events(List<WarningEvent> values){}public void ownerRevoked(long epoch){}public void disconnected(String reason){}
+        })) {
+            Bundle status=new Bundle();status.putBinder("warning_api",source.binder());status.putIntArray("warning_protocols",new int[]{1});
+            status.putString("warning_controller_state","unproved");status.putString("warning_source_route_state","not_active");
+            assertTrue(session.prepare(WarningProviders.WAZE,status,7));assertTrue(session.advertisesEvents(WarningProviders.WAZE));assertFalse(session.captureComplete());
+            assertEquals("unproved",session.controllerState());assertEquals("not_active",session.sourceRouteState());
+            assertFalse(session.advertisesEvents(WarningProviders.FLITSMEISTER));
+            session.disconnected(8);assertEquals("",session.controllerState());assertEquals("",session.sourceRouteState());
+        }
+    }
+    @Test public void legacyWazeRemainsLegacyUntilItAdvertisesAnEventProtocol() throws Exception {
+        Context context=RuntimeEnvironment.getApplication();
+        try(WarningSession session=new WarningSession(context,new WarningConnection.Listener(){
+            public void snapshot(WarningConnection.Snapshot value){}public void events(List<WarningEvent> values){}public void ownerRevoked(long epoch){}public void disconnected(String reason){}
+        })) {
+            Bundle status=new Bundle();assertTrue(session.prepare(WarningProviders.WAZE,status,1));assertEquals("legacy",session.state());assertFalse(session.advertisesEvents(WarningProviders.WAZE));
+            status.putIntArray("warning_protocols",new int[]{2});assertFalse(session.prepare(WarningProviders.WAZE,status,1));assertTrue(session.advertisesEvents(WarningProviders.WAZE));
+            status.remove("warning_protocols");assertTrue(session.prepare(WarningProviders.WAZE,status,1));assertTrue("A downgrade cannot silently resume duplicate legacy audio",session.advertisesEvents(WarningProviders.WAZE));
+            session.resetEventNegotiation();assertFalse(session.advertisesEvents(WarningProviders.WAZE));
         }
     }
     @Test public void authenticatedHandshakeConsumesSnapshotBeforeLiveDelivery() throws Exception {

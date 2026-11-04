@@ -113,6 +113,7 @@ final class OsmCameras {
     private final Map<Long, List<Camera>> tiles = new ConcurrentHashMap<>();
     private final Set<Long> fresh = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Map<Long, Long> alerted = new HashMap<>();
+    private final Map<String,Long> nativeAlerted=new HashMap<>();
     private final ExecutorService net;
 
     private volatile boolean busy;
@@ -248,6 +249,12 @@ final class OsmCameras {
             if (d * Math.sin(Math.toRadians(off)) > 60) continue;    // not on the line we are driving
             exported.add(new NavigationAlerts.Alert("osm:"+feature+":"+cam.id,feature.equals("flockCameras")?"flock":"camera",
                 kind.label(cam),(int)Math.round(d),(int)Math.round(reach),cam.lat,cam.lng));
+            long nativeNow=android.os.SystemClock.elapsedRealtime(),nativeObserved=l.getElapsedRealtimeNanos()/1_000_000;String nativeKey=cam.id+":"+cam.kind;
+            if(nativeObserved>0&&nativeObserved<=nativeNow&&nativeNow-nativeObserved<=5000&&nl.johninnl.navigation.startup.ProviderAudio.muted()){
+                nativeAlerted.values().removeIf(at->nativeNow-at>=5*60*1000L);boolean announce=!nativeAlerted.containsKey(nativeKey);
+                if(announce&&nativeAlerted.size()>=200)NativeWarnings.overflow();
+                else if(NativeWarnings.osm(feature,cam.id,cam.kind,kind.label(cam),cam.lat,cam.lng,d,reach,nativeObserved,announce)&&announce)nativeAlerted.put(nativeKey,nativeNow);
+            }
             if (d < bestDistance) {
                 best = cam;
                 bestDistance = d;

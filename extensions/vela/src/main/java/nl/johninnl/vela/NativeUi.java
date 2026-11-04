@@ -113,22 +113,22 @@ public final class NativeUi {
             if(!TelemetryRuntime.selected().isEmpty()) {
                 hint(TelemetryRuntime.statusText(),composer);
                 toggle(text("spoken","Spoken road warnings"),TelemetryRuntime.spokenEnabled(),toggleAction("spoken",TelemetryRuntime::setSpokenEnabled),text("spoken_hint","Uses Vela's voice and mute settings"),composer);
-                if(TelemetryStore.FLITSMEISTER.equals(TelemetryRuntime.selected())){
+                if(nl.johninnl.navigation.alerts.WarningProviders.supported(TelemetryRuntime.selected())){
                     nl.johninnl.navigation.alerts.WarningPreferences choices=TelemetryRuntime.warningPreferences();
                     if(choices!=null){
-                        title(text("warning_output","Flitsmeister warning audio"),composer);
+                        title(TelemetryRuntime.providerName()+" · "+text("warning_output","Warning audio"),composer);
                         for(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode mode:nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.values()){
                             String label=mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.VOICE?text("warning_voice","Voice"):mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.TONE?text("warning_tone","Tone"):text("warning_silent","Silent");
-                            row(label,choices.mode()==mode,action("warning_mode_"+mode,()->{choices.mode(mode);TelemetryRuntime.warningChoicesChanged();}),composer);
+                            row(label,choices.mode()==mode,action("warning_mode_"+TelemetryRuntime.selected()+"_"+mode,()->{choices.mode(mode);TelemetryRuntime.warningChoicesChanged();}),composer);
                         }
                         String[] labels=java.util.Locale.getDefault().getLanguage().equals("nl")?nl.johninnl.navigation.alerts.WarningPreferences.LABELS_NL:nl.johninnl.navigation.alerts.WarningPreferences.LABELS;
                         for(int i=0;i<labels.length;i++){
                             final int category=nl.johninnl.navigation.alerts.WarningPreferences.CATEGORIES[i];
-                            toggle(labels[i],(choices.categories()&category)!=0,toggleAction("warning_category_"+category,value->{choices.category(category,value);TelemetryRuntime.warningChoicesChanged();}),null,composer);
+                            toggle(labels[i],(choices.categories()&category)!=0,toggleAction("warning_category_"+TelemetryRuntime.selected()+"_"+category,value->{choices.category(category,value);TelemetryRuntime.warningChoicesChanged();}),null,composer);
                         }
                         if(!choices.reviewed()){
                             hint(text("warning_review_hint","Review categories and output. Previous mute choices are preserved; Vela's native mute still applies."),composer);
-                            row(text("warning_confirm","Use these warning choices"),false,action("warning_confirm",()->{choices.confirm();TelemetryRuntime.warningChoicesChanged();}),composer);
+                            row(text("warning_confirm","Use these warning choices"),false,action("warning_confirm_"+TelemetryRuntime.selected(),()->{choices.confirm();TelemetryRuntime.warningChoicesChanged();}),composer);
                         }
                         hint(TelemetryRuntime.warningAudioStatus(),composer);
                         row(text("warning_preview","Parked audio preview"),false,action("warning_preview",TelemetryRuntime::previewWarning),composer);
