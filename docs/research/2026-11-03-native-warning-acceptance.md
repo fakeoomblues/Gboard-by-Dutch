@@ -27,6 +27,16 @@ The later receiver reconnect correction fences retired event callbacks by connec
 
 The complete local verification command set subsequently passed in a clean checkout of `3d2790b`, with 215 release/publishing tests, 563 Python tests (47 skips), 608 Android tests (14 skips), Medium checks and the strict bilingual documentation/site checks. No failures occurred; the checkout was removed with `cleanupRequired=false`. The product source matches the signed `02a75d5` candidate. This closes local verification for the recorded revision; all named installed runtime and physical/car gates remain separate.
 
+## Retained-repeat session: failed, no retry
+
+On 2026-11-04 the existing paired retained-repeat runner was executed unchanged on owned emulator 5590, using its pinned FM15 `19d40560…`, Maps `3285d836…` and Vela `958bd90f…` artifacts. It does not validate the subsequently rebuilt APKs. Frida observation was enabled before stimuli, and guest media output stayed at zero. The Maps case failed, so Vela was not started and no retry was performed.
+
+The retained report input survived the original FM refresh: the generated candidate still contained the exact fixture model, and the provider/engine/service/configuration identities remained unchanged through failure. The first native zone entry and exit each produced one authority, with announcement indices 1 and 2 and matching source GRANTED/STARTED/COMPLETED outcomes. The later return pass produced state updates, but this run proves no new native repeat announcement.
+
+The source probe failed its existing consumed-location freshness gate: after a five-second wait, its last consumed fix was 7,559 ms old, exceeding the 2,500 ms bound. The retained trace records the source instrumentation finishing with this assertion. The observer also reported `ProcessNotFoundError` for PID 6331 and marked coverage lost. The required source/receiver PIDs were 5049/5152; this error does not establish a crash of either product process. Neither condition is relabelled as a pass or as a proven product defect.
+
+The original app state, settings, audio and emulator launch were restored. The emulator is stopped; recovery snapshot, helpers, Frida server, forwarding and remote scratch are removed. Compact evidence is archived in ignored `retained-repeat-pair-01/evidence.tar.gz` (536,740 bytes, SHA-256 `b502cb51a32a8f432dfb00a294e0c022aaa96d204ee3b3c93744114ec6dce216`); raw per-run storage was removed after process quiescence. `cleanupRequired=false`. Runner, observer, agent and helper code were not changed. Native-repeat acceptance remains open under the tooling freeze.
+
 ## Earlier artifact evidence
 
 Implementation remains in progress against the full [reviewed design](../superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). Producer capture coverage has now been reconciled and enabled for the pinned artifact; full integrated runtime/delivery acceptance remains unproved.
