@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/bafac0db70c27c52198a3ed5f68ec295f925fa32/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0-dev.3.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [bafac0db70c2](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0-dev.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.2...v1.28.0-dev.3) (2026-11-04)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** keep native controls clear of host overlays ([bafac0d](https://gitlab.com/johninnld/nl-morphe-patches/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/add9b1148db454926dc6ef60f62d2b2b3ee2af08/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.28.0-dev.2.**

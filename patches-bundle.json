@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-11-03T03:41:21",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/add9b1148db454926dc6ef60f62d2b2b3ee2af08/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.28.0-dev.2.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [add9b1148db4](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/add9b1148db454926dc6ef60f62d2b2b3ee2af08). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.28.0-dev.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.1...v1.28.0-dev.2) (2026-11-03)\n\n### 🐛 Bug Fixes\n\n* **ci:** migrate development publishing to GitLab.com ([ffe484c](https://gitlab.com/johninnld/nl-morphe-patches/commit/ffe484c3f032e1d229b2d58c1c2208dc83f42acf))",
-  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.28.0-dev.2/downloads/patches-1.28.0-dev.2.mpp",
+  "created_at": "2026-11-04T00:00:30",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/bafac0db70c27c52198a3ed5f68ec295f925fa32/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.28.0-dev.3.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [bafac0db70c2](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.28.0-dev.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.2...v1.28.0-dev.3) (2026-11-04)\n\n### 🐛 Bug Fixes\n\n* **Google Maps:** keep native controls clear of host overlays ([bafac0d](https://gitlab.com/johninnld/nl-morphe-patches/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32))",
+  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.28.0-dev.3/downloads/patches-1.28.0-dev.3.mpp",
   "signature_download_url": "",
-  "version": "1.28.0-dev.2",
+  "version": "1.28.0-dev.3",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }
