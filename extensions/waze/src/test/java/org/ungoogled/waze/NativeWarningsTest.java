@@ -210,6 +210,20 @@ public class NativeWarningsTest {
         NativeWarnings.zoneSelected(controller);NativeWarnings.zonePresented(controller);NativeWarnings.sound(new Id("uuid-zone",""));assertEquals(1,announcements());
     }
 
+    @Test public void freshNativeRepeatDoesNotFreshenCachedMeasurementClocks(){
+        Descriptor d=new Descriptor("measurement-age","CAMERA",0);repository(d);long observed=last().getLong("distance_observed_elapsed_ms");
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));NativeWarnings.sound(d.id);Bundle announcement=last();
+        assertEquals("ANNOUNCE",announcement.getString("operation"));assertTrue(announcement.getLong("observed_elapsed_ms")>observed);
+        assertEquals(observed,announcement.getLong("distance_observed_elapsed_ms"));assertEquals(observed,announcement.getLong("trigger_observed_elapsed_ms"));assertEquals(observed,announcement.getLong("position_observed_elapsed_ms"));assertEquals(observed,announcement.getLong("native_validation_observed_elapsed_ms"));
+        assertEquals(Long.valueOf(observed),decoded(announcement).distanceObservedAt);assertEquals(1,announcements());
+        repository(d);assertTrue(last().getLong("distance_observed_elapsed_ms")>observed);
+    }
+    @Test public void nativeZoneDecisionKeepsRepositoryMeasurementAge(){
+        Descriptor d=new Descriptor("zone-measurement-age","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);long observed=last().getLong("position_observed_elapsed_ms");
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));
+        assertEquals("ANNOUNCE",last().getString("operation"));assertEquals(observed,last().getLong("position_observed_elapsed_ms"));assertEquals(observed,last().getLong("distance_observed_elapsed_ms"));assertTrue(decoded(last()).observedAt>observed);
+    }
+
     @Test public void selectorAndRealUiZoneSoundAreOneDecisionInEitherOrder(){
         Descriptor d=new Descriptor("zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
         Controller c=new Controller(d.id,State.InZone);

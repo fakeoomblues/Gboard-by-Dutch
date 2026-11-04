@@ -621,7 +621,8 @@
     "native_osm_equivalence": "only_exact_type_and_verified_directed_road_context; insufficient_context_remains_unresolved",
     "native_zone_phase_authority": "Native valid selected zone entry/exit publication, independent of UI queue insertion or presentation acknowledgement; preserve original native callbacks and deduplicate selector/presentation observations.",
     "expired_zone_queue_reconciliation": "Retire only tracked zone identities after real native exit/removal, on the main looper, while API-managed and without started source Activities or a live source car service. Recheck that the current native model is absent or LeftZone before removing its local queue ID. Temporary invalidity/silence is not retirement authority. Never invoke native presentation/start/timeout acknowledgements.",
-    "uuidless_native_sound_identity": "Preserve full provider/unique/UUID event identity. A native sound request omitting UUID may correlate only a unique current provider+unique match, or its synchronous captured zone controller; reject ambiguity and conflicting explicit UUIDs."
+    "uuidless_native_sound_identity": "Preserve full provider/unique/UUID event identity. A native sound request omitting UUID may correlate only a unique current provider+unique match, or its synchronous captured zone controller; reject ambiguity and conflicting explicit UUIDs.",
+    "native_measurement_clocks": "A new native sound/zone decision creates fresh announcement authority, not a fresh distance, trigger, position or validation measurement. Preserve the latest real repository observation clock for cached descriptor fields, including decisions after display-state expiry."
   },
   "family_account": {
     "enforcement": {
