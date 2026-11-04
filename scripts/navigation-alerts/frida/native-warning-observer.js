@@ -1,7 +1,17 @@
 import Java from 'frida-java-bridge';
 // Observation only: each wrapper calls the original once and returns/throws unchanged.
 let count=0,exhausted=false;const limit=12000;const installed=[];const patched=new Set();
-function emit(event,fields={}){if(count++<limit)send({event,pid:Process.id,host_clock_ms:Date.now(),...fields});else if(!exhausted){exhausted=true;send({event:'observer-budget-exhausted',pid:Process.id});}}
+const readinessPolls=new Map();
+function emit(event,fields={}){
+ const polling=event.includes('WarningScheduler!pumpOne():')||event.includes('WarningSpeaker!isReady(')||Object.prototype.hasOwnProperty.call(fields,'policy_active');
+ if(polling){
+  const values={...fields};delete values.elapsed_ms;
+  const fingerprint=JSON.stringify(values),now=Date.now(),previous=readinessPolls.get(event);
+  if(previous&&previous.fingerprint===fingerprint&&now-previous.at<1000)return;
+  readinessPolls.set(event,{fingerprint,at:now});
+ }
+ if(count++<limit)send({event,pid:Process.id,host_clock_ms:Date.now(),...fields});else if(!exhausted){exhausted=true;send({event:'observer-budget-exhausted',pid:Process.id});}
+}
 function field(o,name){if(o===null||o===undefined)return null;let c=o.getClass();while(c!==null){try{const f=c.getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(_){c=c.getSuperclass();}}return null;}
 function scalar(o){if(o===null||o===undefined)return null;try{const n=o.getClass().getName().toString();if(n==='java.lang.Boolean')return o.toString().toString()==='true';if(['java.lang.Long','java.lang.Integer'].includes(n))return Number(o.toString());if(n==='java.lang.String')return o.toString().slice(0,100);if(o.getClass().isEnum())return o.toString().toString();}catch(_){}return null;}
 function get(o,n){return scalar(field(o,n));}

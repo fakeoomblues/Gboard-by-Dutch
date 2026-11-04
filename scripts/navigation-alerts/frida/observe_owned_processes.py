@@ -94,11 +94,18 @@ try:
                     if name in providers:marker(name,'trace-ready')
                     metadata['ready_pids']=dict(ready)
             elif code in ['hooks-failed','observer-error','observer-budget-exhausted']:fail('Observation coverage failed in '+name+': '+str(code))
+            elif code and code.startswith('java.lang.Thread!dispatchUncaughtException('):fail('Observed uncaught Java exception in '+name)
             elif code and 'Instrumentation!finish' in code:finished.add(pid)
             if not barrier and not lost and all(x in ready for x in [a.provider,a.receiver]):
                 marker(a.provider,'trace-ready');barrier=True;metadata['barrier_released']=True;metadata['required_pids']={name:ready[name] for name in [a.provider,a.receiver]};write({'event':'both-required-processes-hooked-before-stimuli','pids':dict(metadata['required_pids'])})
         elif kind=='detach':
             reason,crash=body
+            if not stopping and not a.stop_file.exists():
+                try:
+                    evidence=adb('shell','dumpsys','activity','exit-info',target(name))
+                    filename='exit-info-'+str(pid)+'.txt';(a.output/filename).write_text(evidence[-65536:])
+                    metadata.setdefault('exit_info',[]).append({'pid':pid,'process':name,'path':filename})
+                except Exception as error:metadata.setdefault('exit_info_errors',[]).append({'pid':pid,'error':repr(error)})
             terminal=False;requested_stop=False
             if target(name) is not None and crash is None and reason=='process-terminated':
                 path='/sdcard/Android/data/'+target(name)+'/files/native-warning-integrated/trace-terminal-'+a.token+'.request'

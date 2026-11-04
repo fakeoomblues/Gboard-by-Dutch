@@ -72,6 +72,8 @@ class SelectedReceiverTest(unittest.TestCase):
                         symbols = ['java.lang.Thread!dispatchUncaughtException(', 'android.app.Instrumentation!callActivityOnResume(']
                     package = other if fault == 'package' and self.pid == 102 else names[self.pid]
                     self.callback({'type': 'send', 'payload': {'event': 'hooks-ready', 'package': package, 'installed': symbols}}, None)
+                    if self.pid == 102 and fault == 'java-uncaught':
+                        self.callback({'type': 'send', 'payload': {'event': 'java.lang.Thread!dispatchUncaughtException(java.lang.Throwable):enter', 'exception_class': 'java.lang.IllegalStateException'}}, None)
 
             class Session:
                 def __init__(self, pid):
@@ -220,6 +222,7 @@ class SelectedReceiverTest(unittest.TestCase):
         record, _, touches = self.run_watcher(fault='detach')
         self.assertTrue(record['coverage_lost'])
         self.assertIn('Unexpected process detach', record['coverage_failure'])
+        self.assertTrue(any(item['pid'] == 102 for item in record['exit_info']))
         self.assertTrue(any(path.endswith('-seed-receiver-stop') for path in touches))
 
     def test_crash_cannot_be_hidden_by_terminal_marker(self):
@@ -227,6 +230,36 @@ class SelectedReceiverTest(unittest.TestCase):
         self.assertTrue(record['coverage_lost'])
         self.assertEqual(102, record['crashes'][0]['pid'])
         self.assertTrue(next(row for row in log if row.get('event') == 'detached')['crash_present'])
+
+    def test_uncaught_java_exception_stops_before_custom_handler_can_hide_process_crash(self):
+        record, _, _ = self.run_watcher(fault='java-uncaught')
+        self.assertTrue(record['coverage_lost'])
+        self.assertIn('uncaught Java exception', record['coverage_failure'])
+
+    @unittest.skipUnless(shutil.which('node'), 'Node required for actual observer message sampling check')
+    def test_unchanged_readiness_polls_are_sampled_but_changes_and_warning_events_are_retained(self):
+        source = ROOT / 'scripts/navigation-alerts/frida/native-warning-observer.js'
+        script = r'''
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync(process.argv[1],'utf8').replace("import Java from 'frida-java-bridge';",'').split('Java.performNow')[0];
+let now=0;const events=[];const context={Process:{id:1},Date:{now:()=>now},send:e=>events.push(e)};
+vm.createContext(context);vm.runInContext(source,context);
+const poll='org.ungoogled.ui.MapsWarningSpeaker!isReady(java.lang.String,Mode):return';
+for(let i=0;i<20000;i++)context.emit(poll,{elapsed_ms:i,ready:true,language:'nl'});
+assert.strictEqual(events.length,1,'Elapsed clock changes must not exhaust logging budget');
+context.emit(poll,{elapsed_ms:20001,ready:false,language:'nl'});
+assert.strictEqual(events.length,2,'Readiness changes must be immediate');
+now=1000;context.emit(poll,{elapsed_ms:21001,ready:false,language:'nl'});
+assert.strictEqual(events.length,3,'Unchanged readiness retains a one-second heartbeat');
+for(let i=0;i<100;i++)context.emit('NativeWarnings!emit(android.os.Bundle):enter',{operation:'ANNOUNCE',sequence:i});
+assert.strictEqual(events.length,103,'Every native warning event must remain visible');
+context.emit('original-exception',{method:poll,error_type:'fixture'});
+assert.strictEqual(events.at(-1).event,'original-exception');
+assert(!events.some(e=>e.event==='observer-budget-exhausted'));
+process.stdout.write('quiet readiness and critical evidence retained');
+'''
+        result = subprocess.run(['node', '-e', script, str(source)], capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
 
     @unittest.skipUnless(shutil.which('node'), 'Node required for Java binding readiness check')
     def test_partial_application_binding_waits_for_loaded_apk(self):
