@@ -20,6 +20,7 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
     private final Map<String,ThreadPoolExecutor> workers=new HashMap<>();
     private WarningConnection connection;
     private IBinder binder;
+    private Object callbackIdentity;
     private long generation=-1,minimumGeneration;
     private boolean closed;
     private volatile String state="off";
@@ -50,10 +51,10 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
         synchronized(this) {
             if(closed || ticket<minimumGeneration)return false;
             if(api==null) {
-                if(v1) { state="incompatible";return false; }
+                if(v1) { detach();state="incompatible";return false; }
                 detach();state="legacy";generation=ticket;return true;
             }
-            if(!v1) { state="incompatible";return false; }
+            if(!v1) { detach();state="incompatible";return false; }
             eventSource=source;
             PendingIntent action=status.getParcelable("warning_recovery");
             if(action!=null&&source.equals(action.getCreatorPackage())&&action.getCreatorUid()==app.getPackageManager().getApplicationInfo(source,0).uid
@@ -64,17 +65,21 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
             else {
             detach();generation=ticket;binder=api;state="connecting";
             final long active=ticket;
+            final Object activeCallback=new Object();callbackIdentity=activeCallback;
             ThreadPoolExecutor worker=workers.get(source);
             if(worker==null) {
                 if(workers.size()>=2) { state="incompatible";return false; }
                 worker=WarningConnection.controlWorker();workers.put(source,worker);
             }
             connection=new WarningConnection(app,FlitsmeisterWarningTypes.required(),EnumSet.allOf(WarningAudioOwner.Mode.class),new WarningConnection.Listener() {
-                private boolean current() { synchronized(WarningSession.this) { return !closed && generation==active && active>=minimumGeneration; } }
-                public void snapshot(WarningConnection.Snapshot value) { if(current()) { captureComplete=value.captureComplete;listener.snapshot(value); } }
-                public void events(List<WarningEvent> values) { if(current())listener.events(values); }
-                public void ownerRevoked(long epoch) { if(current())listener.ownerRevoked(epoch); }
-                public void disconnected(String reason) { if(current()) { state="disconnected";listener.disconnected(reason); } }
+                // A STATUS poll can replace the endpoint without changing the startup ticket.
+                // Fence both the check and delivery, including late retirement/death callbacks.
+                private boolean current() { return !closed && connection!=null && callbackIdentity==activeCallback
+                        && generation==active && active>=minimumGeneration; }
+                public void snapshot(WarningConnection.Snapshot value) { synchronized(WarningSession.this) { if(current()) { captureComplete=value.captureComplete;listener.snapshot(value); } } }
+                public void events(List<WarningEvent> values) { synchronized(WarningSession.this) { if(current())listener.events(values); } }
+                public void ownerRevoked(long epoch) { synchronized(WarningSession.this) { if(current())listener.ownerRevoked(epoch); } }
+                public void disconnected(String reason) { synchronized(WarningSession.this) { if(current()) { state="disconnected";listener.disconnected(reason); } } }
             },worker,false);selected=connection;
             }
         }
@@ -85,10 +90,11 @@ public final class WarningSession implements NavigationClient.Capabilities,Close
         }
     }
     @Override public synchronized void disconnected(long nextGeneration) {
-        boolean active=connection!=null;
         minimumGeneration=Math.max(minimumGeneration,nextGeneration);generation=-1;detach();state="off";
-        if(active)listener.disconnected("SOURCE_DISCONNECTED");
     }
-    private void detach() { captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;if(previous!=null)previous.retire(); }
+    private void detach() {
+        captureComplete=false;WarningConnection previous=connection;connection=null;binder=null;callbackIdentity=null;
+        if(previous!=null) { previous.retire();listener.disconnected("SOURCE_DISCONNECTED"); }
+    }
     @Override public synchronized void close() { closed=true;generation=-1;detach();state="off";for(ThreadPoolExecutor worker:workers.values())worker.shutdown(); }
 }

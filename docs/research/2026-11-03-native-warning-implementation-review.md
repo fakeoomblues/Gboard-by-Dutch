@@ -29,6 +29,14 @@ The producer's bounded warning-state cache previously owned its announcement cou
 
 The expiry regression failed before the correction. All 172 FM component tests pass afterward. The replacement producer also applies all nine intended FM15 patches through FULL validation and independent emitted-APK checks.
 
+## Receiver reconnect correction
+
+The subsequent source review found that `WarningSession` fenced callbacks only by the startup ticket. Replacing an event endpoint within the same ticket could let the retired connection's later close, owner-revocation, event or snapshot callback affect the replacement scheduler/view. Incompatible event declarations also left the previous connection attached until the startup client completed its asynchronous disconnect.
+
+The session now binds callbacks to the specific connection and serializes the validity check with delivery. Detachment invalidates that identity before retiring transport and cancels old output once. An incompatible event declaration detaches immediately. This preserves the retired transport's terminal/release IPC for outstanding output; it does not erase grants or claim that uncertain audio stopped.
+
+Two regressions in the existing `WarningConnectionTest` exercise real endpoint handshakes, same-ticket replacement and incompatible negotiation, then deliver callbacks retained from the old connection. All 100 shared warning unit tests pass, and both Maps and Vela release Java compilation pass in the same offline checkpoint. No runtime session or validation-tooling change was performed. This correction is not included in the older signed candidate below; new receiver artifacts and remaining acceptance are still required.
+
 ## Delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.
