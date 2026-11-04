@@ -11,6 +11,16 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 - Run an early diagnostic only for a specific unresolved fact blocking meaningful progress, or at the user's request. State the reason and run the smallest diagnostic that resolves it.
 - Retain all required verification and mandatory gates. Batching changes their sequence and frequency, not whether the outcome must be verified.
 
+## Android runtime observation
+
+- Keep Frida attached to every exercised producer/receiver process during short reproductions and longer Android validation sessions. Static checks and JVM unit tests do not require a device attachment.
+- Establish required hooks before generating test stimuli, verify attachment coverage throughout the session, and stop further stimuli after an unexpected detach, hook failure or missing coverage. Mark incomplete coverage explicitly; do not treat an untraced failure as a passing run.
+- Retain bounded Frida messages, Java/native crash or detach evidence, relevant Android logs and process-exit observations. Capture available tombstones for the exercised processes when needed. Record exact APK, Frida and script identities; protect private data and keep raw diagnostics out of releases.
+- Preserve original method results, exceptions and application policy in observation hooks. Label tracing overhead in timing results. Do not change warning eligibility, speaker readiness, grants or native callbacks to obtain a passing result.
+- Keep repeated speech tests inaudible through an explicitly recorded test environment, preserve genuine Android voice/PCM/callback checks, and restore original device audio state. Do not change the Mac or physical phone's audio settings for an emulator test.
+- Scope sessions to explicitly owned/authorized devices and process identities. A connected phone alone does not authorize installing, granting permissions or attaching instrumentation to it.
+- On every terminal run, unload/detach scripts, resume any task-paused spawns, stop owned tracing servers/forwards/helpers, and clean scratch storage after retaining compact evidence. Report incomplete cleanup as a failure.
+
 ## HARD REQUIREMENT: johninnl identity only
 
 Git attribution remains `johninnl`; the live publisher is the GitLab account `johninnld`. The former GitHub account is retired. Do not require a GitHub login, GitHub token-owner check, `gh api user` or the legacy `verify_identity.cjs --local` path for local commits, pushes, CI or releases.
