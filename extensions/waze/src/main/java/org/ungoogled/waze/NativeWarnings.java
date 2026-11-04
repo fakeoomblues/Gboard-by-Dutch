@@ -89,9 +89,10 @@ public final class NativeWarnings {
             String[] packages=app.getPackageManager().getPackagesForUid(uid);String configured=NavigationBroadcasts.receiverPackage();
             if(!StartupProtocol.allowed(packages,configured))return null;
             for(String name:packages)if(StartupProtocol.allowed(new String[]{name},configured))return name;return null;
-        },new WarningCapabilities(WazeWarningTypes.MANIFEST_DIGEST,WazeWarningTypes.required(),false));
-        // The structural inventory/guards are not a headless capture/playback audit.
-        // Keep coverage incomplete until the required Waze capture gates are evidenced.
+        },new WarningCapabilities(WazeWarningTypes.MANIFEST_DIGEST,WazeWarningTypes.required(),bound()));
+        // The pinned cohort passed UI-free native capture and lifecycle acceptance.
+        // Bare extension code remains incomplete until the native binder sets bound().
+        // Live family availability and receiving playback readiness remain independent.
         return endpoint;
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}
