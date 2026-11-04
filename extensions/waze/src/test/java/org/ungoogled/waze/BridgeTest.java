@@ -145,4 +145,15 @@ public class BridgeTest {
         assertNull(fixtureValidation(new Intent()).validation);
     }
 
+    public static final class FixtureIdentity { }
+    public static final class FixtureIdentityHolder {
+        FixtureIdentity id;
+        public FixtureIdentityHolder setAlertId(FixtureIdentity value){id=value;return this;}
+    }
+    @Test public void nativeFixtureGivesOrdinaryAndZoneModelsTheSameIdentity()throws Exception{
+        Method method=Class.forName(Bridge.class.getName()+"$SelfTest").getDeclaredMethod("identity",Object.class,Object.class,Class.class,Object.class);
+        method.setAccessible(true);FixtureIdentity id=new FixtureIdentity();FixtureIdentityHolder info=new FixtureIdentityHolder(),descriptor=new FixtureIdentityHolder();
+        method.invoke(null,info,descriptor,FixtureIdentity.class,id);assertSame(id,info.id);assertSame(id,descriptor.id);
+    }
+
 }

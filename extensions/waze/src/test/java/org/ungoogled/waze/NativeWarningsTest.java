@@ -149,6 +149,14 @@ public class NativeWarningsTest {
         NativeWarnings.sound(d.id);assertEquals(2,announcements());assertTrue(decoded(last()).message.contains("New native detail"));
     }
 
+    @Test public void distinctNativePhaseControllersRetainOneEntryAndOneExitWithoutUiPresentation(){
+        Descriptor d=new Descriptor("headless-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
+        Controller enter=new Controller(d.id,State.InZone);NativeWarnings.zoneSelected(enter);NativeWarnings.zoneSelected(enter);
+        assertEquals(1,announcements());assertEquals("enter",last().getString("phase"));
+        d.zone=new Zone("LeftZone");repository(d);Controller exit=new Controller(d.id,State.LeftZone);
+        NativeWarnings.zoneSelected(exit);NativeWarnings.zoneExit(exit);assertEquals(2,announcements());assertEquals("exit",last().getString("phase"));
+    }
+
     @Test public void selectorAndRealUiZoneSoundAreOneDecisionInEitherOrder(){
         Descriptor d=new Descriptor("zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
         Controller c=new Controller(d.id,State.InZone);

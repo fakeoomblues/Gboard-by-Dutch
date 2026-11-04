@@ -8,6 +8,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
@@ -15,6 +16,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 internal const val WAZE_WARNINGS = "Lorg/ungoogled/waze/NativeWarnings;"
 internal const val WAZE_SOUND_ROOT = "Lcom/waze/alerters/AlerterNativeManagerBase;->h(Lcom/waze/jni/protos/alerters/AlerterId;)V"
 internal const val WAZE_ZONE_EXIT_ROOT = "Lcom/waze/alerters/b/i;->k()V"
+internal const val WAZE_ZONE_PHASE_ROOT = "Lcom/waze/alerters/b/o;->d(Lcom/waze/alerters/b/o;Lcom/waze/alerters/b/h;)Lcom/waze/alerters/b/h;"
 internal const val WAZE_ZONE_SELECTED_ROOT = "Lcom/waze/alerters/b/i;->i()V"
 internal const val WAZE_NOTIFICATION_ADD_ROOT = "Lcom/waze/insights_infra/NotificationInsightsNativeManager;->a(Lcom/waze/jni/protos/insights_infra/Notification;)V"
 internal const val WAZE_NOTIFICATION_REMOVE_ROOT = "Lcom/waze/insights_infra/NotificationInsightsNativeManager;->b(Lcom/waze/jni/protos/insights_infra/NotificationId;)V"
@@ -53,6 +55,13 @@ internal fun bindWazeNativeWarnings(methods: Map<String, MutableMethod>) {
     val sound = methods.getValue(WAZE_SOUND_ROOT)
     val zoneExit = methods.getValue(WAZE_ZONE_EXIT_ROOT)
     val zoneSelected = methods.getValue(WAZE_ZONE_SELECTED_ROOT)
+    val zonePhases = methods.getValue(WAZE_ZONE_PHASE_ROOT)
+    val phasePublications = zonePhases.instructions.withIndex().filter {
+        (it.value as? ReferenceInstruction)?.reference?.toString() == "Lcom/waze/alerters/a/i;->c(Lcom/waze/alerters/a/c;)Z"
+    }
+    check(phasePublications.map { it.index } == listOf(38, 79))
+    check(phasePublications.map { (it.value as FiveRegisterInstruction).registerD } == listOf(6, 2))
+    check(phasePublications.all { it.value.opcode == Opcode.INVOKE_INTERFACE && (it.value as FiveRegisterInstruction).registerCount == 2 })
     val add = methods.getValue(WAZE_NOTIFICATION_ADD_ROOT)
     val remove = methods.getValue(WAZE_NOTIFICATION_REMOVE_ROOT)
     val anchor = zoneExit.instructions[7]
@@ -71,6 +80,14 @@ internal fun bindWazeNativeWarnings(methods: Map<String, MutableMethod>) {
         (identityRead as TwoRegisterInstruction).registerA == 2 && identityRead.registerB == 2)
     check((zoneExit.instructions[16] as ReferenceInstruction).reference.toString() == "Lcom/waze/alerters/a/l;->d(Lcom/waze/j;)V" &&
         (zoneExit.instructions[19] as ReferenceInstruction).reference.toString() == "Lcom/waze/alerters/a/l;->f(Lcom/waze/j;)V")
+
+    // Native zone state has already selected and validated this phase. Observe after
+    // publication without requiring a UI card acknowledgement. The service's boolean
+    // only reports insertion of its UI queue ID; a previous phase can retain that ID.
+    for (site in phasePublications.reversed()) {
+        val register = (site.value as FiveRegisterInstruction).registerD
+        zonePhases.addInstruction(site.index + 1, "invoke-static/range {v$register .. v$register}, $WAZE_WARNINGS->zoneSelected(Ljava/lang/Object;)V")
+    }
 
     // This native request precedes JNI playback and every managed local audio mute.
     // Managed speech intentionally uses Maps/Vela choices, upstream of Waze's own

@@ -618,7 +618,8 @@
     "receiving_point_relevance": "fresh_and_replayed_directed_route_check; ambiguous_context_waits_within_original_deadline",
     "nonspatial_warnings": "exempt_from_point_geometry_and_minimum_speed",
     "native_priority": "preserved_as_metadata; card_preemption_is_not_speech_urgency",
-    "native_osm_equivalence": "only_exact_type_and_verified_directed_road_context; insufficient_context_remains_unresolved"
+    "native_osm_equivalence": "only_exact_type_and_verified_directed_road_context; insufficient_context_remains_unresolved",
+    "native_zone_phase_authority": "Native valid selected zone entry/exit publication, independent of UI queue insertion or presentation acknowledgement; preserve original native callbacks and deduplicate selector/presentation observations."
   },
   "family_account": {
     "enforcement": {
@@ -1612,6 +1613,13 @@
       "instructions": 170,
       "access_flags": 17,
       "instruction_sha256": "fa86d832f03bab0699af75d157a3dbb8778b430c9ef430f76f12a7059835b958"
+    },
+    {
+      "method": "Lcom/waze/alerters/b/o;->d(Lcom/waze/alerters/b/o;Lcom/waze/alerters/b/h;)Lcom/waze/alerters/b/h;",
+      "registers": 14,
+      "instructions": 84,
+      "access_flags": 4121,
+      "instruction_sha256": "9865a60869044ebcb03b61367eca647702652c3dbeebc42556acc28509c6f20e"
     }
   ],
   "accepted_prior_edits": [

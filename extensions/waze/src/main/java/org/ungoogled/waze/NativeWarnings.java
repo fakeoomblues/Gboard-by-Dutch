@@ -156,7 +156,7 @@ public final class NativeWarnings {
         try{Field state=controller.getClass().getDeclaredField("b");state.setAccessible(true);Object value=state.get(controller);int ordinal=((Enum<?>)value).ordinal();return ordinal==1?"enter":ordinal==2?"exit":"approach";}
         catch(ReflectiveOperationException|ClassCastException incompatible){throw new IllegalStateException("WAZE_ZONE_STATE_ABI",incompatible);}
     }
-    /** Native selector acceptance; no native shown/start/timeout acknowledgement is forged. */
+    /** Native zone phase decision or selected controller; no native UI acknowledgement is forged. */
     public static void zoneSelected(Object controller){capture(()->zoneDecision(controller,zonePhase(controller),"native_zone_selection"));}
     public static void zonePresented(Object controller){capture(()->{
         presentation.remove();if(zonePhase(controller).equals("enter"))presentation.set(controller);

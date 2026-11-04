@@ -9,6 +9,7 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.dexbacked.DexBackedDexFile
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -100,7 +101,7 @@ class WazeNativeWarningHooksTest {
         assertEquals(2, enterRead.registerB)
         originals.forEach { (signature, method) ->
             assertEquals(nativeReferences(method), nativeReferences(changed.getValue(signature)))
-            if (signature !in expected) assertEquals(wazeWarningFingerprint(method), wazeWarningFingerprint(changed.getValue(signature)))
+            if (signature !in expected && signature != WAZE_ZONE_PHASE_ROOT) assertEquals(wazeWarningFingerprint(method), wazeWarningFingerprint(changed.getValue(signature)))
         }
         val pool = DexPool(Opcodes.forApi(29))
         val owners = changed.values.map { it.definingClass }.toSet()
@@ -113,6 +114,26 @@ class WazeNativeWarningHooksTest {
         val assembled = roots(DexBackedDexFile.fromInputStream(Opcodes.forApi(29), ByteArrayInputStream(bytes)).classes)
         assertEquals(originals.keys, assembled.keys)
         originals.forEach { (signature, method) -> assertEquals(nativeReferences(method), nativeReferences(assembled.getValue(signature))) }
+    }
+
+    @Test fun nativeZonePhasesCaptureAfterBothPublicationsWithoutUiAcknowledgement() {
+        val originals = roots(original())
+        val changed = originals.mapValues { MutableMethod(it.value) }
+        bindWazeNativeWarnings(changed)
+        val body = changed.getValue(WAZE_ZONE_PHASE_ROOT).implementation!!.instructions.toList()
+        val publications = body.withIndex().filter {
+            (it.value as? ReferenceInstruction)?.reference?.toString() == "Lcom/waze/alerters/a/i;->c(Lcom/waze/alerters/a/c;)Z"
+        }
+        assertEquals(2, publications.size)
+        assertEquals(listOf(6, 2), publications.map { (it.value as FiveRegisterInstruction).registerD })
+        for ((index, instruction) in publications) {
+            val capture = body[index + 1]
+            assertEquals(Opcode.INVOKE_STATIC_RANGE, capture.opcode)
+            assertEquals("$WAZE_WARNINGS->zoneSelected(Ljava/lang/Object;)V", (capture as ReferenceInstruction).reference.toString())
+            assertEquals((instruction as FiveRegisterInstruction).registerD, (capture as RegisterRangeInstruction).startRegister)
+            assertEquals(1, capture.registerCount)
+        }
+        assertEquals(nativeReferences(originals.getValue(WAZE_ZONE_PHASE_ROOT)), nativeReferences(changed.getValue(WAZE_ZONE_PHASE_ROOT)))
     }
 
     @Test fun changedAbiOrRepeatedBindingFailsBeforeAnyOtherMethodChanges() {

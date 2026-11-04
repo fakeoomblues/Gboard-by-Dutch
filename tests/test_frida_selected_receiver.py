@@ -177,6 +177,24 @@ class SelectedReceiverTest(unittest.TestCase):
         self.assertEqual(102, record['crashes'][0]['pid'])
         self.assertTrue(next(row for row in log if row.get('event') == 'detached')['crash_present'])
 
+    @unittest.skipUnless(shutil.which('node'), 'Node required for Java binding readiness check')
+    def test_partial_application_binding_waits_for_loaded_apk(self):
+        source = ROOT / 'scripts/navigation-alerts/frida/native-warning-observer.js'
+        script = r"""
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync(process.argv[1],'utf8').replace("import Java from 'frida-java-bridge';",'');
+const events=[],timers=[],method={call(){}};
+const context={Process:{id:1},send:e=>events.push(e),setImmediate:f=>f(),setTimeout:(f,delay)=>timers.push({f,delay}),
+ Java:{performNow:f=>f(),classFactory:{},use:name=>name==='java.lang.Thread'?{dispatchUncaughtException:{overload:()=>method}}:{currentActivityThread:()=>({mBoundApplication:{value:{info:{value:null}}}})}}};
+vm.createContext(context);vm.runInContext(source,context);
+assert.strictEqual(timers.length,1);assert.strictEqual(timers[0].delay,25);
+assert(!events.some(e=>e.event==='hooks-failed'||e.event==='hooks-ready'));
+process.stdout.write('partial binding deferred');
+"""
+        result = subprocess.run(['node', '-e', script, str(source)], capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn('partial binding deferred', result.stdout)
+
     @unittest.skipUnless(shutil.which('node'), 'Node required for actual JavaScript wrapper check')
     def test_actual_javascript_wrappers_preserve_result_exception_and_single_original_call(self):
         source = ROOT / 'scripts/navigation-alerts/frida/native-warning-observer.js'

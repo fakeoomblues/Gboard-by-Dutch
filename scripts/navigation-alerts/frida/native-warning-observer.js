@@ -3,7 +3,7 @@ import Java from 'frida-java-bridge';
 let count=0,exhausted=false;const limit=12000;const installed=[];const patched=new Set();
 function emit(event,fields={}){if(count++<limit)send({event,pid:Process.id,host_clock_ms:Date.now(),...fields});else if(!exhausted){exhausted=true;send({event:'observer-budget-exhausted',pid:Process.id});}}
 function field(o,name){if(o===null||o===undefined)return null;let c=o.getClass();while(c!==null){try{const f=c.getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(_){c=c.getSuperclass();}}return null;}
-function scalar(o){if(o===null||o===undefined)return null;try{const n=o.getClass().getName().toString();if(n==='java.lang.Boolean')return o.toString().toString()==='true';if(['java.lang.Long','java.lang.Integer'].includes(n))return Number(o.toString());if(n==='java.lang.String')return o.toString().slice(0,100);if(o.name)return o.name().toString();}catch(_){}return null;}
+function scalar(o){if(o===null||o===undefined)return null;try{const n=o.getClass().getName().toString();if(n==='java.lang.Boolean')return o.toString().toString()==='true';if(['java.lang.Long','java.lang.Integer'].includes(n))return Number(o.toString());if(n==='java.lang.String')return o.toString().slice(0,100);if(o.getClass().isEnum())return o.toString().toString();}catch(_){}return null;}
 function get(o,n){return scalar(field(o,n));}
 function klass(o){try{return o===null?null:o.getClass().getName().toString();}catch(_){return null;}}
 function state(o){const a=field(o,'active'),p=a===null?null:field(a,'pending'),g=a===null?null:field(a,'grant'),e=p===null?null:field(p,'authority'),lease=field(o,'lease');return {status:get(o,'status'),generation:get(o,'generation'),lease_until:lease===null?null:get(lease,'until'),lease_epoch:lease===null?null:get(lease,'epoch'),active:a!==null,started:a===null?null:get(a,'started'),cancelled:a===null?null:get(a,'cancelled'),attempt:g===null?null:get(g,'attemptId'),event_key:g===null?null:get(g,'eventKey'),authority_sequence:e===null?null:get(e,'sequence'),deadline:e===null?null:get(e,'announceUntil')};}
@@ -20,10 +20,10 @@ function warningEvents(values){const out=[];for(let i=0;i<Math.min(Number(values
 Java.performNow(()=>{try{hook('java.lang.Thread','dispatchUncaughtException',['java.lang.Throwable'],(_,a)=>({exception_class:klass(a[0])}));}catch(e){emit('hook-optional-error',{where:'uncaught-exception',error_type:e.name});}});
 const attachDeadline=Date.now()+20000;
 function installApplicationHooks(){Java.performNow(()=>{try{
- const AT=Java.use('android.app.ActivityThread'),thread=AT.currentActivityThread(),bound=thread===null?null:thread.mBoundApplication.value;
- if(bound===null){if(Date.now()<attachDeadline){setTimeout(installApplicationHooks,25);return;}throw new Error('APPLICATION_BINDING_UNAVAILABLE');}
+ const AT=Java.use('android.app.ActivityThread'),thread=AT.currentActivityThread(),bound=thread===null?null:thread.mBoundApplication.value,info=bound===null?null:bound.info.value;
+ if(bound===null||info===null){if(Date.now()<attachDeadline){setTimeout(installApplicationHooks,25);return;}throw new Error('APPLICATION_BINDING_UNAVAILABLE');}
  // Instrumentation targets do not follow the ordinary Application.onCreate barrier.
- Java.classFactory.loader=bound.info.value.getClassLoader();
+ Java.classFactory.loader=info.getClassLoader();
  const pkg=AT.currentProcessName().toString();
  for(const method of ['callActivityOnPause','callActivityOnResume','callActivityOnStop','callActivityOnDestroy'])hook('android.app.Instrumentation',method,['android.app.Activity'],(_,a)=>({activity:klass(a[0])}));
  hook('android.media.AudioManager','requestAudioFocus',['android.media.AudioFocusRequest'],(_,a)=>{focusListener(a[0]);return {};},(_,a,r)=>({result:Number(r)}));
@@ -35,6 +35,7 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook('nl.johninnl.flitsmeister.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
   hook('nl.johninnl.flitsmeister.NavigationBroadcasts','engineRunning',[],null,(_,a,r)=>({engine_running:!!r}));
  }else if(pkg==='com.waze'){
+  hook('java.lang.IllegalArgumentException','$init',['java.lang.String'],(_,a)=>{const frames=stack();if(frames.some(f=>f.includes('NativeWarnings')))emit('waze-capture-exception',{reason:String(a[0]).slice(0,240),stack:frames});return {};});
   hook('nl.johninnl.navigation.alerts.WarningEndpoint','handle',['int','int','java.lang.String','android.os.Bundle'],null,(_,a,r)=>({code:a[0],caller_uid:a[1],status:r===null?null:r.getString('status'),audio_status:r===null?null:r.getString('audio_status')}));
   hook('org.ungoogled.waze.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
   hook('org.ungoogled.waze.NavigationStartup','running',[],null,(_,a,r)=>({engine_running:!!r}));

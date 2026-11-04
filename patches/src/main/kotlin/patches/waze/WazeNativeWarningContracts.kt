@@ -158,6 +158,7 @@ internal val wazeWarningContracts = mapOf(
     "Lcom/waze/alerters/b/i;->i()V" to WazeWarningContract(1, 1, 17, "e3048e9287e27d266e29057b4db257dd107ecf925d9e05e55b38c65159cd8b07"),
     "Lkotlinx/coroutines/a/ab;->l(Ljava/lang/Class;)Ljava/lang/Object;" to WazeWarningContract(2, 6, 25, "499c8c8b834ca3ce3002df03eeacba1f05cf2f4dbef35b32a8cc605f2f405414"),
     "Lcom/waze/alerters/b/j;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;" to WazeWarningContract(8, 170, 17, "fa86d832f03bab0699af75d157a3dbb8778b430c9ef430f76f12a7059835b958"),
+    "Lcom/waze/alerters/b/o;->d(Lcom/waze/alerters/b/o;Lcom/waze/alerters/b/h;)Lcom/waze/alerters/b/h;" to WazeWarningContract(14, 84, 4121, "9865a60869044ebcb03b61367eca647702652c3dbeebc42556acc28509c6f20e"),
 )
 
 internal fun validateWazeWarningMethods(methods: Map<String, Method>) {

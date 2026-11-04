@@ -342,8 +342,8 @@ public final class Bridge {
                     String identity = in.getStringExtra("id");
                     set(id, "setUniqueId", String.class, (identity == null ? "ua-test" : identity) + "-" + k);
                     Object descriptor = descriptorClass.getMethod("newBuilder").invoke(null);
+                    identity(info, descriptor, idClass, build(id));
                     set(descriptor, "setInfo", infoClass, build(info));
-                    set(descriptor, "setAlertId", idClass, build(id));
                     set(descriptor, "setTriggerDistanceMeters", int.class, 500);
                     if (in.hasExtra("valid")) {
                         Class<?> priorityClass = Class.forName("com.waze.jni.protos.InsightPriority");
@@ -378,6 +378,12 @@ public final class Bridge {
             } catch (Throwable t) {
                 Log.w("UA", "Waze alerts bridge: self-test", t);
             }
+        }
+
+        private static void identity(Object info, Object descriptor, Class<?> idClass, Object id) throws Exception {
+            // The ordinary holder reads the descriptor ID; zone holders read the info ID.
+            set(info, "setAlertId", idClass, id);
+            set(descriptor, "setAlertId", idClass, id);
         }
 
         // Only the debug self-test supplies this fixture. Native selectors remain responsible
