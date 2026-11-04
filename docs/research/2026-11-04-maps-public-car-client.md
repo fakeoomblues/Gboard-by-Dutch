@@ -137,3 +137,84 @@ Do not describe this port as complete until these gates and capability limits
 are explicitly resolved. Stop owned runtimes and remove owned build/scratch
 storage after retaining compact evidence; preserve original inputs and FM's
 protected phone-test candidate.
+
+## Genuine AA17 admission findings, 2026-11-05
+
+GitLab `main` was fetched again and remains
+`483eb84b594af17c4ee441ddecf81616ac34b9fe` (v1.38.0); it is an ancestor of
+the current feature head. The primary local checkout's older `main` is not
+the release baseline for this feature.
+
+The review index in `Downloads/Android-Auto-Waze-validation/README.md` now
+separates DriveDeck acceptance, partial genuine-AA screenshots and unverified
+cases. Earlier garbled head-unit frames and the stock Maps home screenshot
+are excluded from patched-app rendering acceptance.
+
+In the observed `aa17-waze-10` run, normal Waze phone setup completed. A settled
+tap on genuine AA's Continue reached the native terms acknowledgement at
+00:05:32 and advanced the preflight requirement from 1 to 3. The Welcome UI
+remained visible. Requirement 3 is notification-listener access: in the exact
+AA17 source, `mqh.a()` returns 3, `mqh.e()` checks `mln.a().d()`, and its
+fragment is `mov`. Android's normal notification-access Settings listed Android
+Auto under Not allowed. The bounded consent window ended before the access
+switch was enabled. This run therefore does not accept car navigation.
+
+The early requirement-transition lines were observed live but rolled out of
+the guest log before terminal archiving. The qualified receipt records that
+retention limit; the retained filtered log contains the later repeated terms
+acknowledgements. Coverage remained intact and baseline restoration/cleanup
+passed. Complete this normal Settings review before starting the next DHU
+connection; do not force a native completion callback or change policy.
+
+`aa17-waze-11` stopped before stimuli when Frida timed out attaching to an
+already-running AA `:car` process. Its trace records the failed PID and timeout.
+The next fixture cold-starts AA under the unchanged spawn observer. An attach
+failure remains a failed admission gate; no app acceptance is inferred from it.
+
+`aa17-waze-12` completed normal notification-access review before connection.
+Genuine AA then logged `onAllRequirementsComplete`, `projectionAuthorized: true`
+and `PREFLIGHT->CONNECTED`. Those transition lines are retained separately.
+The normal 800×480/160dpi launcher rendered and its down control exposed the
+separate Ungoogled Maps and Vela tiles. Screenshots in the review folder prove
+that bounded launcher/scrolling observation, not navigation acceptance.
+
+The run stopped after Waze PID 5204 terminated. The retained native log at
+00:17:37.750 says `ShutdownManager` satisfied its shutdown constraints and
+started shutdown. Android exit info reports SIGNALED/status 9, with no crash
+report. The shipped Java chain is `NativeManager.onNativeLayerShutDown(boolean)`
+→ `com.waze.ifs.ui.aa.d()` → stop service/remove tasks/kill own process. This
+establishes Waze's explicit termination path; its upstream native trigger is
+still unproven. Do not suppress the final kill after the native engine has
+already shut down.
+
+REA inspection of the exact tested Waze APK (SHA-256
+`81c817f7f4ec1c0274fdb4ee8d424df7c986cd3403e06c86864489667fb91613`)
+confirms `ConfigManager.uaOverrides()` contains the background timeout
+`10800000` ms. Evidence ID:
+`ev_7458b6de35f9728139e3ca2da251a46ff2100f58bb5579dca1406cef3ef442d1`.
+This rules out an omitted keep-alive dependency; it does not prove the native
+value was applied or which shutdown condition fired. Existing endpoint traces
+showed unowned audio and SPEAKER_UNAVAILABLE claim replies during fixture
+startup. Establish whether a managed receiving session owns the source when
+tracing the upstream shutdown request. The entire app acceptance run remains
+failed; restoration, stopped runtimes and cleanup were verified.
+
+The connected product correction wraps the original
+`com.waze.car_lib.platform.af.b()` car-service keep-alive result with
+`NavigationBroadcasts.keepAliveAfterCarSession(boolean)`. An initialized,
+enabled navigation feed retains the native engine when the host releases the
+car service. Disabling broadcasting preserves the original native decision.
+The original body and its boolean result remain in place. Manual native shutdown
+and the phone idle timeout are unchanged; this does not suppress the final
+process kill after native shutdown.
+
+`waze-car-session-checkpoint-01` passed canonical verification, with 760 Android
+test cases, zero failures/errors and 33 skips. Both new bytecode tests ran
+against the supplied original APK. Runtime-toggle tests cover broadcasting on,
+off, re-enabled and uninitialized while retaining a native true result. Morphe
+applied all 21 selected patches to the original APKM, followed by signature and
+alignment verification. The temporary checkout was removed. Bundle SHA-256:
+`6822821ddae0545f3a8adafc1184a8d08ebc30e8fa716cca7c8c0f5827fe5374`;
+Waze APK SHA-256:
+`44a1141a98e03ee446ff74314a53c932087bf756e551d24224eb91927faeb1a3`.
+The corrected candidate still requires genuine-DHU runtime acceptance.

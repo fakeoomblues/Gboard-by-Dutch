@@ -42,6 +42,11 @@ public final class NavigationBroadcasts {
 
     static boolean isEnabled() { return installed && Customization.on("navigationBroadcasts"); }
 
+    /** A car host releasing its UI must not terminate an enabled phone data feed. */
+    public static boolean keepAliveAfterCarSession(boolean nativeKeepAlive) {
+        return nativeKeepAlive || isEnabled();
+    }
+
     private static void main(Runnable action) {
         if (Looper.myLooper() == Looper.getMainLooper()) action.run(); else MAIN.post(action);
     }

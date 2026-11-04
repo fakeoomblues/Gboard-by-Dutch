@@ -2,12 +2,15 @@ package patches.waze
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction30t
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.stringOption
@@ -15,6 +18,22 @@ import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
 private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze", warningRecovery = true)
+
+/** The native car-service teardown consults this separately from the phone idle timeout. */
+internal fun preserveBroadcastsAfterCarSession(method: MutableMethod) {
+    val body = method.instructions
+    check(method.definingClass == "Lcom/waze/car_lib/platform/af;" && method.name == "b" &&
+        method.parameterTypes.isEmpty() && method.returnType == "Z") { "Changed Waze car keep-alive ABI" }
+    check(body.count { it.opcode == Opcode.RETURN } == 1 && body.last().opcode == Opcode.RETURN &&
+        body.count { (it as? ReferenceInstruction)?.reference.toString() == "Ljava/lang/Boolean;->booleanValue()Z" } == 1 &&
+        body.count { (it as? ReferenceInstruction)?.reference.toString() == "$NAVIGATION_BROADCASTS->keepAliveAfterCarSession(Z)Z" } == 0
+    ) { "Changed or already bound Waze car keep-alive decision" }
+    val register = (body.last() as OneRegisterInstruction).registerA
+    val index = body.lastIndex
+    method.replaceInstruction(index,
+        "invoke-static/range {v$register .. v$register}, $NAVIGATION_BROADCASTS->keepAliveAfterCarSession(Z)Z")
+    method.addInstructions(index + 1, "move-result v$register\nreturn v$register")
+}
 
 /** Application startup also runs for a cold service bind. Old tasks must not force a UI restart. */
 internal fun suppressTaskRelaunch(method: MutableMethod) {
@@ -69,6 +88,10 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         bindWazeNativeWarnings()
         suppressTaskRelaunch(Fingerprint(definingClass = "Lcom/waze/ls;", name = "onCreate", parameters = emptyList(), returnType = "V").method)
         bindWazeNavigationAudio()
+        Fingerprint(definingClass = NAVIGATION_BROADCASTS, name = "keepAliveAfterCarSession",
+            parameters = listOf("Z"), returnType = "Z").method
+        preserveBroadcastsAfterCarSession(Fingerprint(definingClass = "Lcom/waze/car_lib/platform/af;",
+            name = "b", parameters = emptyList(), returnType = "Z").method)
         val target = receiverPackage.orEmpty().trim()
         if (target.isNotEmpty() && !Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+").matches(target)) {
             throw PatchException("Receiver package is not an Android package name")

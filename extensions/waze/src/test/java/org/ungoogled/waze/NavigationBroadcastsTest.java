@@ -46,6 +46,19 @@ public class NavigationBroadcastsTest {
     }
     private Intent last() { List<Intent> list = events(); return list.get(list.size() - 1); }
 
+    @Test public void carSessionTeardownKeepsAnEnabledBackgroundFeedAlive() throws Exception {
+        assertTrue(NavigationBroadcasts.keepAliveAfterCarSession(false));
+        assertTrue(NavigationBroadcasts.keepAliveAfterCarSession(true));
+        Customization.setForTest("navigationBroadcasts", false);
+        assertFalse(NavigationBroadcasts.keepAliveAfterCarSession(false));
+        assertTrue(NavigationBroadcasts.keepAliveAfterCarSession(true));
+        Customization.setForTest("navigationBroadcasts", true);
+        assertTrue(NavigationBroadcasts.keepAliveAfterCarSession(false));
+        field(NavigationBroadcasts.class, "installed", false);
+        assertFalse(NavigationBroadcasts.keepAliveAfterCarSession(false));
+        assertTrue(NavigationBroadcasts.keepAliveAfterCarSession(true));
+    }
+
     @Test public void roadDataDoesNotNeedAnActivityOrZoneOverlay() {
         NavigationBroadcasts.speed("mph", 65);
         assertEquals(104.60736, last().getDoubleExtra("road_speed_limit_kmh", -1), 0.00001);
