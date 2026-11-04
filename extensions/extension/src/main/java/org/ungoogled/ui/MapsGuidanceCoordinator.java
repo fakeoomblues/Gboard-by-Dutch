@@ -33,8 +33,8 @@ public final class MapsGuidanceCoordinator {
     private final Handler main=new Handler(Looper.getMainLooper());
     private final Context app;
     private Object manager;
-    private volatile boolean bound,fault,holding;
-    private long generation;
+    private volatile boolean bound,fault,holding,waiting;
+    private volatile long generation;
     private volatile boolean regenerate;
     private String holdToken;
 
@@ -74,17 +74,37 @@ public final class MapsGuidanceCoordinator {
         main.post(()->acquireMain(token,priority,deadline,callback));
     }
     private void acquireMain(String token,WarningEvent.Priority priority,long deadline,Ready callback) {
-        if(!isReady() || holding || SystemClock.elapsedRealtime()>=deadline){callback.complete(false,"GUIDANCE_UNAVAILABLE");return;}
-        synchronized(LOCK){holding=true;}holdToken=token;regenerate=false;long version=++generation;
+        if(!isReady() || holding || waiting || SystemClock.elapsedRealtime()>=deadline){callback.complete(false,"GUIDANCE_UNAVAILABLE");return;}
+        long version;
+        synchronized(LOCK){holdToken=token;regenerate=false;waiting=priority!=WarningEvent.Priority.P0;holding=priority==WarningEvent.Priority.P0;version=++generation;}
+        inspectGap(version,priority,deadline,callback);
+    }
+    private void inspectGap(long version,WarningEvent.Priority priority,long deadline,Ready callback) {
+        if(version!=generation || !(holding||waiting))return;
+        if(SystemClock.elapsedRealtime()>=deadline){abandon(version,callback,"GUIDANCE_DEADLINE");return;}
         try {
             Executor serial=(Executor)field(manager.getClass(),"j").get(manager);
             serial.execute(()-> {
                 try {
-                    Object active=field(manager.getClass(),"p").get(manager),pending=field(manager.getClass(),"q").get(manager);
+                    Object active,pending;
+                    synchronized(LOCK){
+                        if(version!=generation || !(holding||waiting))return;
+                        if(SystemClock.elapsedRealtime()>=deadline){main.post(()->abandon(version,callback,"GUIDANCE_DEADLINE"));return;}
+                        active=field(manager.getClass(),"p").get(manager);pending=field(manager.getClass(),"q").get(manager);
+                        // Reserve the actual gap on the native serial executor, not later
+                        // from a stale snapshot on main. Queue/focus hooks see it atomically.
+                        if(active==null&&pending==null){holding=true;waiting=false;}
+                    }
                     main.post(()-> {
-                        if(version!=generation || !holding)return;
+                        if(version!=generation || !(holding||waiting))return;
+                        if(SystemClock.elapsedRealtime()>=deadline){abandon(version,callback,"GUIDANCE_DEADLINE");return;}
                         if(active!=null || pending!=null) {
-                            if(priority!=WarningEvent.Priority.P0 || !canRegenerate()) { abandon(version,callback,"GUIDANCE_BUSY");return; }
+                            if(priority!=WarningEvent.Priority.P0){
+                                // Keep native queue/focus/dispatch unheld while waiting for its
+                                // own instruction to finish. Never extend the warning deadline.
+                                main.postDelayed(()->inspectGap(version,priority,deadline,callback),50);return;
+                            }
+                            if(!canRegenerate()){abandon(version,callback,"GUIDANCE_BUSY");return;}
                             regenerate=true;
                             try {
                                 if(active!=null)cancel(active);
@@ -93,7 +113,7 @@ public final class MapsGuidanceCoordinator {
                         }
                         awaitQuiet(version,deadline,callback);
                     });
-                }catch(ReflectiveOperationException | RuntimeException error){main.post(()->{fault=true;abandon(version,callback,"GUIDANCE_STATE_FAILED");});}
+                }catch(ReflectiveOperationException | RuntimeException error){main.post(()->{if(version==generation){fault=true;abandon(version,callback,"GUIDANCE_STATE_FAILED");}});}
             });
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;abandon(version,callback,"GUIDANCE_EXECUTOR_FAILED");}
     }
@@ -103,6 +123,7 @@ public final class MapsGuidanceCoordinator {
     }
     private void awaitQuiet(long version,long deadline,Ready callback) {
         if(version!=generation || !holding)return;
+        if(SystemClock.elapsedRealtime()>=deadline){abandon(version,callback,"GUIDANCE_DEADLINE");return;}
         boolean quiet=true;
         synchronized(LOCK) {
             if(nativeFocusInFlight!=0)quiet=false;
@@ -118,9 +139,12 @@ public final class MapsGuidanceCoordinator {
     }
     public void release(String token){main.post(()->releaseMain(token));}
     private void releaseMain(String token) {
-        if(!holding || token==null || !token.equals(holdToken))return;
-        synchronized(LOCK){holding=false;}holdToken=null;generation++;
-        boolean restore=regenerate;regenerate=false;
+        boolean restore;
+        synchronized(LOCK){
+            if(!(holding||waiting) || token==null || !token.equals(holdToken))return;
+            holding=false;waiting=false;holdToken=null;generation++;
+            restore=regenerate;regenerate=false;
+        }
         if(restore)regenerateCurrent();
     }
     private boolean canRegenerate(){synchronized(LOCK){Object owner=route.get();if(owner==null)return false;try{return routeField(owner,"o").get(owner)!=null&&routeField(owner,"e").get(owner)!=null&&navigationActive(owner);}catch(ReflectiveOperationException | RuntimeException error){return false;}}}

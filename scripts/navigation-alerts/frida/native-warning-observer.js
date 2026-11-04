@@ -58,7 +58,13 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook(W,'selectVoice',['java.lang.String'],(_,a)=>({language:String(a[0])}),(o,a,r)=>({language:String(a[0]),selected:!!r,prepared_language:get(o,'preparedLanguage')}));
   hook(W,'isReady',['java.lang.String','nl.johninnl.navigation.alerts.WarningAudioOwner$Mode'],null,(o,a,r)=>({language:String(a[0]),mode:a[1].name().toString(),ready:!!r,closed:get(o,'closed'),initialized:get(o,'initialized'),prepared_language:get(o,'preparedLanguage')}));
   hook(W,'finish',[WA,'nl.johninnl.navigation.alerts.PlaybackGrant$Outcome','boolean'],(o,a)=>({attempt:get(field(a[0],'grant'),'attemptId'),cancelled:get(a[0],'cancelled'),started:get(a[0],'started'),outcome:a[1].name().toString(),quiescent:!!a[2]}));
+  const GPS=Java.use('org.ungoogled.ui.WazeAlerts');
+  hook('android.location.LocationManager','removeUpdates',['android.location.LocationListener'],(_,a)=>({listener_class:klass(a[0]),stack:stack()}));
+  hook('android.location.LocationManager','requestLocationUpdates',['java.lang.String','long','float','android.location.LocationListener','android.os.Looper'],(_,a)=>({provider:String(a[0]),interval_ms:Number(a[1]),listener_class:klass(a[3])}));
+  hook('org.ungoogled.ui.WazeAlerts','listen',[],null,()=>({listening:!!GPS.listening.value,resumed:Number(GPS.resumed.value),navigating:!!GPS.navigating.value}));
+  hook('org.ungoogled.ui.ExternalTelemetry','fix',['android.location.Location'],(_,a)=>({fix_elapsed_ms:a[0]===null?null:Number(a[0].getElapsedRealtimeNanos())/1000000,latitude:a[0]===null?null:Number(a[0].getLatitude()),longitude:a[0]===null?null:Number(a[0].getLongitude())}));
   const C='org.ungoogled.ui.MapsGuidanceCoordinator';
+  hook(C,'relevance',['nl.johninnl.navigation.alerts.WarningEvent','android.location.Location','long','boolean'],null,(_,a,r)=>({warning_id:get(a[0],'warningId'),announcement_index:get(a[0],'announcementIndex'),relevance:scalar(r),navigating:!!a[3]}));
   hook(C,'abandon',['long',C+'$Ready','java.lang.String'],(o,a)=>({reason:String(a[2]),holding:get(o,'holding'),fault:get(o,'fault')}));
   hook(C,'acquireMain',['java.lang.String','nl.johninnl.navigation.alerts.WarningEvent$Priority','long',C+'$Ready'],o=>{const m=field(o,'manager');return {bound:get(o,'bound'),fault:get(o,'fault'),holding:get(o,'holding'),native_active_class:m===null?null:klass(field(m,'p')),native_pending_class:m===null?null:klass(field(m,'q'))};});
   hook(C,'canRegenerate',[],null,(_,a,r)=>({can_regenerate:!!r}));
