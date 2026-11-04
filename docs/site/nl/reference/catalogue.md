@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.37.0**
+**Patchbundel: 1.38.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
