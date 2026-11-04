@@ -16,7 +16,7 @@ WATCHER = ROOT / 'scripts/navigation-alerts/frida/observe_owned_processes.py'
 
 
 class SelectedReceiverTest(unittest.TestCase):
-    def run_watcher(self, receiver='app.vela', fault=None, contract='ownership', provider='nl.flitsmeister'):
+    def run_watcher(self, receiver='app.vela', fault=None, contract='ownership', provider='nl.flitsmeister', additional_provider=None):
         with tempfile.TemporaryDirectory(prefix='frida-fixture-') as directory:
             root = Path(directory)
             agent = root / 'agent.js'
@@ -25,6 +25,7 @@ class SelectedReceiverTest(unittest.TestCase):
             sessions, calls, attached, resumed = {}, [], [], []
             original_queue = queue.Queue
             names = {101: provider, 102: receiver, 103: 'com.google.android.tts'}
+            if additional_provider: names[105] = additional_provider
             other = 'org.ungoogled.android.apps.maps' if receiver == 'app.vela' else 'app.vela'
 
             class Events(original_queue):
@@ -56,7 +57,9 @@ class SelectedReceiverTest(unittest.TestCase):
                     self.callback = callback
 
                 def load(self):
-                    symbols = ['WarningEndpoint!handle('] if self.pid == 101 else []
+                    symbols = ['WarningEndpoint!handle('] if self.pid == 101 or self.pid == 105 and fault != 'additional-missing' else []
+                    if self.pid == 105 and additional_provider == 'com.waze':
+                        symbols += ['NativeWarnings!prepareControllers(', 'NativeWarnings!repository(', 'NativeWarnings!sound(']
                     if self.pid == 101 and provider == 'com.waze' and fault != 'missing-source':
                         symbols += ['NativeWarnings!prepareControllers(', 'NativeWarnings!repository(', 'NativeWarnings!sound(']
                     if self.pid == 102:
@@ -123,11 +126,12 @@ class SelectedReceiverTest(unittest.TestCase):
                 return subprocess.CompletedProcess(command, code, result, '')
 
             argv = [str(WATCHER), '--adb', '/fixture/adb', '--agent', str(agent), '--token', 'a' * 32, '--output', str(output), '--stop-file', str(stop), '--provider', provider, '--receiver', receiver, '--receiver-cancel-contract', contract]
+            if additional_provider: argv += ['--additional-provider', additional_provider]
             with patch.dict(sys.modules, {'frida': fake_frida}), patch.object(sys, 'argv', argv), patch.object(subprocess, 'run', side_effect=adb), patch.object(queue, 'Queue', return_value=events), patch('signal.signal'):
                 runpy.run_path(str(WATCHER), run_name='__main__')
             record = json.loads((output / 'result.json').read_text())
             log = [json.loads(line) for line in (output / 'events.jsonl').read_text().splitlines()]
-            self.assertEqual([101, 102, 103], attached, 'Unselected receiver must never be attached')
+            self.assertEqual([101, 102, 103] + ([105] if additional_provider else []), attached, 'Unselected receiver must never be attached')
             if not record['coverage_lost']:
                 self.assertIn(999, resumed, 'Unrelated gated spawns must always resume')
             self.assertFalse(record['cleanup_required'])
@@ -150,6 +154,15 @@ class SelectedReceiverTest(unittest.TestCase):
         self.assertTrue(record['coverage_lost'])
         self.assertNotIn('barrier_released', record)
         self.assertTrue(any('/com.waze/' in path and 'trace-lost-' in path for path in touches))
+
+    def test_both_native_producers_are_observed_for_source_switches(self):
+        record, _, touches = self.run_watcher(provider='com.waze', additional_provider='nl.flitsmeister')
+        self.assertFalse(record['coverage_lost'])
+        self.assertIn('com.waze', record['ready_pids'])
+        self.assertIn('nl.flitsmeister', record['ready_pids'])
+        self.assertTrue(any('/nl.flitsmeister/' in path and 'trace-ready-' in path for path in touches))
+        record, _, _ = self.run_watcher(provider='com.waze', additional_provider='nl.flitsmeister', fault='additional-missing')
+        self.assertTrue(record['coverage_lost'])
 
     def test_maps_selected_behavior_is_preserved(self):
         record, _, _ = self.run_watcher('org.ungoogled.android.apps.maps', contract='integrated')

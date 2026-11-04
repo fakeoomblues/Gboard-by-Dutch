@@ -7,6 +7,7 @@ import frida
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--adb',type=Path,required=True);p.add_argument('--agent',type=Path,required=True);p.add_argument('--token',required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--stop-file',type=Path,required=True)
 p.add_argument('--provider',choices=['nl.flitsmeister','com.waze'],default='nl.flitsmeister')
+p.add_argument('--additional-provider',choices=['nl.flitsmeister','com.waze'])
 p.add_argument('--receiver',choices=['org.ungoogled.android.apps.maps','com.google.android.apps.maps','app.vela'],default='org.ungoogled.android.apps.maps')
 p.add_argument('--receiver-cancel-contract',choices=['integrated','ownership'],default='integrated')
 p.add_argument('--duration-seconds',type=int,choices=[240,300],default=240)
@@ -16,8 +17,9 @@ def adb(*args):return subprocess.run([str(a.adb),'-s','emulator-5590',*map(str,a
 if adb('emu','avd','name').splitlines()[0]!='native_warnings_ui_api34' or adb('shell','getprop','ro.build.version.sdk')!='34' or adb('shell','id','-u')!='0':raise SystemExit('Wrong owned tracing target')
 forwards=adb('forward','--list').splitlines()
 if not any(row.split()==['emulator-5590','tcp:28101','tcp:27283'] for row in forwards):raise SystemExit('Expected owned loopback forward is absent')
+providers=list(dict.fromkeys([a.provider]+([a.additional_provider] if a.additional_provider else [])))
 a.output.mkdir(parents=True,exist_ok=True);events=queue.Queue();sessions={};ready={};finished=set();gated=set();stopping=False;lost=False;barrier=False
-source=a.agent.read_text();metadata={'frida_version':frida.__version__,'agent_sha256':hashlib.sha256(source.encode()).hexdigest(),'targets':[a.provider,a.receiver,'com.google.android.tts'],'selected_provider':a.provider,'selected_receiver':a.receiver,'receiver_cancel_contract':a.receiver_cancel_contract,'duration_seconds':a.duration_seconds,'attachments':[],'cleanup_errors':[]}
+source=a.agent.read_text();metadata={'frida_version':frida.__version__,'agent_sha256':hashlib.sha256(source.encode()).hexdigest(),'targets':providers+[a.receiver,'com.google.android.tts'],'selected_provider':a.provider,'selected_receiver':a.receiver,'receiver_cancel_contract':a.receiver_cancel_contract,'duration_seconds':a.duration_seconds,'attachments':[],'cleanup_errors':[]}
 manager=frida.get_device_manager();device=manager.add_remote_device('127.0.0.1:28101')
 log=(a.output/'events.jsonl').open('w')
 def write(event):
@@ -39,7 +41,8 @@ def fail(reason):
     global lost
     if lost:return
     lost=True;metadata['coverage_failure']=reason;write({'event':'coverage-failed','reason':reason})
-    marker(a.provider,'trace-lost');receiver_cancel_marker()
+    for provider in providers:marker(provider,'trace-lost')
+    receiver_cancel_marker()
 def attach(pid,name):
     if pid in sessions:return
     write({'event':'attach-start','pid':pid,'process':name})
@@ -75,15 +78,18 @@ try:
             if code=='hooks-ready':
                 installed=payload.get('installed',[])
                 required=[]
-                if name==a.provider:
+                if name in providers:
                     required=['WarningEndpoint!handle(']
-                    if a.provider=='com.waze':required+=['NativeWarnings!prepareControllers(', 'NativeWarnings!repository(', 'NativeWarnings!sound(']
+                    if name=='com.waze':required+=['NativeWarnings!prepareControllers(', 'NativeWarnings!repository(', 'NativeWarnings!sound(']
                 elif name==a.receiver:
                     required=['WarningScheduler!cancel(']
                     if a.receiver=='app.vela':required+=['VelaWarningSpeaker!dispatch(','VelaWarningSpeaker!beforeSpeech(','VelaWarningSpeaker!finish(','VelaWarningSpeaker!utteranceStopped(']
                 if payload.get('package')!=name:fail('Hooks-ready process/package mismatch: '+name)
                 elif any(not any(symbol in hook for hook in installed) for symbol in required):fail('Required selected-process hooks absent: '+name)
-                else:ready[name]=pid
+                else:
+                    ready[name]=pid
+                    if name in providers:marker(name,'trace-ready')
+                    metadata['ready_pids']=dict(ready)
             elif code in ['hooks-failed','observer-error','observer-budget-exhausted']:fail('Observation coverage failed in '+name+': '+str(code))
             elif code and 'Instrumentation!finish' in code:finished.add(pid)
             if not barrier and not lost and all(x in ready for x in [a.provider,a.receiver]):
@@ -91,7 +97,7 @@ try:
         elif kind=='detach':
             reason,crash=body
             terminal=False
-            if name in [a.provider,a.receiver] and crash is None and reason=='process-terminated':
+            if name in providers+[a.receiver] and crash is None and reason=='process-terminated':
                 path='/sdcard/Android/data/'+name+'/files/native-warning-integrated/trace-terminal-'+a.token+'.request'
                 check=subprocess.run([str(a.adb),'-s','emulator-5590','shell','test','-f',path],capture_output=True,timeout=10)
                 if check.returncode not in [0,1]:raise RuntimeError('Cannot verify selected-process terminal marker')
@@ -116,7 +122,7 @@ finally:
         try:session.detach()
         except frida.InvalidOperationError:pass
         except Exception as error:metadata['cleanup_errors'].append('Detach: '+repr(error))
-    for package in [a.provider,a.receiver]:
+    for package in providers+[a.receiver]:
         folder='/sdcard/Android/data/'+package+'/files/native-warning-integrated/'
         for prefix in ['trace-ready','trace-lost','trace-terminal','cancel']:
             try:adb('shell','rm','-f',folder+prefix+'-'+a.token+'.request')
