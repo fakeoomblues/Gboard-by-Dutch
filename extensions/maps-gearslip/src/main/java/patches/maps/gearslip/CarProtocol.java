@@ -1,5 +1,6 @@
 package patches.maps.gearslip;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -8,6 +9,8 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.Surface;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /** The stable Car App Library wire schema; no duplicate AndroidX classes enter Maps. */
 final class CarProtocol {
@@ -51,10 +54,74 @@ final class CarProtocol {
     }
 
     static Bundle emptyList() {
+        return list(Collections.emptyList());
+    }
+
+    static Bundle list(List<Bundle> values) {
         Bundle bundle = new Bundle();
         bundle.putInt("tag_class_type", 4);
-        bundle.putParcelableArrayList("tag_value", new ArrayList<Bundle>());
+        bundle.putParcelableArrayList("tag_value", new ArrayList<>(values));
         return bundle;
+    }
+
+    static Bundle text(String value) {
+        Bundle text = object("androidx.car.app.model.CarText");
+        field(text, "mText", primitive(value));
+        field(text, "mSpans", emptyList());
+        field(text, "mTextVariants", emptyList());
+        field(text, "mSpansForVariants", emptyList());
+        return text;
+    }
+
+    private static Bundle click(IBinder callback) {
+        Bundle delegate = object("androidx.car.app.model.OnClickDelegateImpl");
+        field(delegate, "mIsParkedOnly", primitive(false));
+        field(delegate, "mListener", interfaceBinder("androidx.car.app.model.IOnClickListener$Stub", callback));
+        return delegate;
+    }
+
+    private static Bundle icon(Bitmap bitmap) {
+        Bundle compat = new Bundle();
+        compat.putInt("type", 1); // IconCompat.TYPE_BITMAP, serialized by the public Bundler IMAGE type.
+        compat.putParcelable("obj", bitmap);
+        compat.putInt("int1", 0); compat.putInt("int2", 0);
+        Bundle image = new Bundle(); image.putInt("tag_class_type", 6); image.putBundle("tag_value", compat);
+        Bundle icon = object("androidx.car.app.model.CarIcon");
+        field(icon, "mType", primitive(1));
+        field(icon, "mIcon", image);
+        Bundle tint = object("androidx.car.app.model.CarColor");
+        field(tint, "mType", primitive(1)); // CarColor.DEFAULT lets the host choose its contrast.
+        field(icon, "mTint", tint);
+        return icon;
+    }
+
+    static Bundle action(String title, Bitmap bitmap, IBinder callback) {
+        Bundle action = object("androidx.car.app.model.Action");
+        field(action, "mType", primitive(1));
+        field(action, "mIsEnabled", primitive(true));
+        if (title != null) field(action, "mTitle", text(title));
+        field(action, "mIcon", icon(bitmap));
+        field(action, "mOnClickDelegate", click(callback));
+        return action;
+    }
+
+    static Bundle panAction() {
+        Bundle action = object("androidx.car.app.model.Action");
+        field(action, "mType", primitive(65540)); // Action.PAN: standard host pan mode, not a private command.
+        field(action, "mIsEnabled", primitive(true));
+        Bundle icon = object("androidx.car.app.model.CarIcon");
+        field(icon, "mType", primitive(7));
+        field(action, "mIcon", icon);
+        return action;
+    }
+
+    static Bundle controlRow(String title, IBinder callback) {
+        Bundle row = object("androidx.car.app.model.Row");
+        field(row, "mTitle", text(title)); field(row, "mTexts", emptyList());
+        field(row, "mIsEnabled", primitive(true)); field(row, "mNumericDecoration", primitive(-1));
+        field(row, "mMetadata", object("androidx.car.app.model.Metadata"));
+        field(row, "mOnClickDelegate", click(callback));
+        return row;
     }
 
     static Bundle binder(IBinder value) {
@@ -81,12 +148,21 @@ final class CarProtocol {
     }
 
     static Bundle template(Throwable failure) {
+        return template(failure, Collections.emptyList(), Collections.emptyList());
+    }
+
+    static Bundle template(Throwable failure, List<Bundle> actions, List<Bundle> mapActions) {
         Bundle template;
         if (failure == null) {
             Bundle strip = object("androidx.car.app.model.ActionStrip");
-            field(strip, "mActions", emptyList());
+            field(strip, "mActions", list(actions));
             template = object("androidx.car.app.navigation.model.NavigationTemplate");
             field(template, "mActionStrip", strip);
+            if (!mapActions.isEmpty()) {
+                Bundle mapStrip = object("androidx.car.app.model.ActionStrip");
+                field(mapStrip, "mActions", list(mapActions));
+                field(template, "mMapActionStrip", mapStrip);
+            }
         } else {
             Throwable cause = failure;
             for (int i = 0; i < 8 && cause.getCause() != null && cause.getCause() != cause; i++) cause = cause.getCause();
@@ -102,6 +178,16 @@ final class CarProtocol {
             field(template, "mActionList", emptyList());
         }
         return wrap(template, failure == null ? "morphe-maps-native" : "morphe-maps-error");
+    }
+
+    static Bundle controlsTemplate(String title, List<Bundle> rows) {
+        Bundle items = object("androidx.car.app.model.ItemList");
+        field(items, "mItems", list(rows));
+        Bundle back = object("androidx.car.app.model.Action"); field(back, "mType", primitive(65539));
+        Bundle template = object("androidx.car.app.model.ListTemplate");
+        field(template, "mTitle", text(title)); field(template, "mHeaderAction", back);
+        field(template, "mSingleList", items); field(template, "mSectionedLists", emptyList());
+        return wrap(template, "morphe-maps-controls");
     }
 
     static Bundle searchTemplate(String query, String hint, IBinder callback) {

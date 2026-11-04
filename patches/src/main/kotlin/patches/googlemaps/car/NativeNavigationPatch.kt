@@ -95,7 +95,7 @@ private val nativeNavigationResources = resourcePatch {
 @Suppress("unused")
 val nativeCarNavigationPatch = bytecodePatch(
     name = "Native navigation for Gearslip and Android Auto",
-    description = "Shows this patched Maps app's original Android Auto map and navigation UI through a native navigation service. Requires the full Android Auto app for its car UI resources.",
+    description = "Shows this patched Maps app's live native map with standard Android Auto controls that compatible hosts can arrange. Requires the full Android Auto app for its car UI resources.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
@@ -118,6 +118,8 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lbemm;", "k", "Lbenb;")
         requireField("Lbemm;", "C", "Lcom/google/android/gms/car/DrawingSpec;")
         requireField("Lbemm;", "o", "Landroid/content/res/Configuration;")
+        requireField("Lbemm;", "v", "Landroid/graphics/Rect;")
+        requireMethod("Lbemz;", "A", listOf("Landroid/graphics/Rect;"), "V")
         requireField("Lbemz;", "h", "Lbemu;")
         requireMethod("Lbemu;", "f", listOf("Landroid/view/Surface;"), "V")
         requireMethod("Lbemm;", "v", emptyList(), "V")

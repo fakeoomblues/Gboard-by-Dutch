@@ -5,11 +5,20 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import androidx.car.app.OnDoneCallback;
+import androidx.car.app.model.Action;
+import androidx.car.app.model.CarColor;
+import androidx.car.app.model.ListTemplate;
+import androidx.car.app.model.Row;
 import androidx.car.app.model.SearchTemplate;
 import androidx.car.app.model.TemplateWrapper;
+import androidx.car.app.navigation.model.NavigationTemplate;
 import androidx.car.app.serialization.Bundleable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -18,12 +27,60 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 32)
 public final class CarProtocolTest {
-    @Test public void navigationTemplateLeavesAllMapControlsToTheOriginalRenderer() {
-        Bundle template = CarProtocol.member(CarProtocol.template(null), "mTemplate");
-        assertEquals("androidx.car.app.navigation.model.NavigationTemplate", template.getString("tag_class_name"));
-        Bundle strip = CarProtocol.member(template, "mActionStrip");
-        assertTrue(CarProtocol.member(strip, "mActions").getParcelableArrayList("tag_value").isEmpty());
-        assertFalse(template.containsKey("androidx.car.app.navigation.model.NavigationTemplatemNavigationInfo"));
+    @Test public void nativeControlsDecodeAsStandardHostActionsAndMapActions() throws Exception {
+        Bitmap icon = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888); icon.eraseColor(Color.BLUE);
+        NavigationTemplate template = (NavigationTemplate) decode(CarProtocol.template(null,
+                Collections.singletonList(CarProtocol.action("Settings", icon, clickListener())),
+                Arrays.asList(CarProtocol.panAction(), CarProtocol.action(null, icon, clickListener()))));
+        Action settings = template.getActionStrip().getActions().get(0);
+        assertEquals("Settings", settings.getTitle().toString()); assertTrue(settings.isEnabled());
+        assertEquals(Color.BLUE, settings.getIcon().getIcon().getBitmap().getPixel(0, 0));
+        assertEquals(CarColor.DEFAULT, settings.getIcon().getTint());
+        assertNotNull(settings.getOnClickDelegate());
+        assertEquals(Action.TYPE_PAN, template.getMapActionStrip().getActions().get(0).getType());
+        assertNull(template.getMapActionStrip().getActions().get(1).getTitle());
+        // Exercise the real library's constraints, not only our own field encoder.
+        new NavigationTemplate.Builder().setActionStrip(template.getActionStrip())
+                .setMapActionStrip(template.getMapActionStrip()).build();
+    }
+
+    @Test public void standardActionDelegateCallsTheOriginalActionAndCompletesTheHostCallback() throws Exception {
+        Bitmap icon = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
+        NavigationTemplate template = (NavigationTemplate) decode(CarProtocol.template(null,
+                Collections.singletonList(CarProtocol.action("Settings", icon, clickListener())), Collections.emptyList()));
+        boolean[] completed = {false};
+        template.getActionStrip().getActions().get(0).getOnClickDelegate().sendClick(new OnDoneCallback() {
+            @Override public void onSuccess(Bundleable response) { completed[0] = true; }
+            @Override public void onFailure(Bundleable error) { throw new AssertionError("Standard action failed"); }
+        });
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        assertTrue(completed[0]);
+    }
+
+    @Test public void overflowUsesAStandardListTemplateWithClickableNativeActions() throws Exception {
+        ListTemplate template = (ListTemplate) decode(CarProtocol.controlsTemplate("Map controls",
+                Collections.singletonList(CarProtocol.controlRow("Sound", clickListener()))));
+        assertEquals("Map controls", template.getTitle().toString());
+        assertEquals(Action.TYPE_BACK, template.getHeaderAction().getType());
+        Row row = (Row) template.getSingleList().getItems().get(0);
+        assertEquals("Sound", row.getTitle().toString()); assertTrue(row.isEnabled());
+        assertNotNull(row.getOnClickDelegate()); assertNotNull(row.getMetadata());
+        new ListTemplate.Builder().setTitle(template.getTitle().toString()).setHeaderAction(template.getHeaderAction())
+                .setSingleList(template.getSingleList()).build();
+    }
+
+    private static Object decode(Bundle value) throws Exception {
+        Parcel wire = Parcel.obtain();
+        try { wire.writeBundle(value); wire.setDataPosition(0); return ((TemplateWrapper) Bundleable.CREATOR.createFromParcel(wire).get()).getTemplate(); }
+        finally { wire.recycle(); }
+    }
+    private static Binder clickListener() {
+        return new Binder() {
+            @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
+                if (CarProtocol.basic("androidx.car.app.model.IOnClickListener", code, data, reply)) return true;
+                assertEquals(2, code); CarProtocol.complete(data.readStrongBinder(), null, null); return true;
+            }
+        };
     }
 
     @Test public void originalRendererFailureProducesAnErrorScreenWithTheActualCause() {

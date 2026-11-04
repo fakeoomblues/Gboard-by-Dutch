@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import java.lang.ref.WeakReference;
@@ -30,6 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 /** Runs the patched app's original Android Auto activity on the host's surface. */
@@ -54,6 +57,9 @@ public final class ProjectionRenderer {
     private boolean bound, created, resumed, closed, failed;
     private volatile boolean keyboardRequested;
     private KeyboardListener keyboardListener;
+    private NativeControls controls;
+    private Runnable controlsChanged = () -> {};
+    private Rect visibleArea, stableArea, appliedInsets;
     private long downTime;
     private float touchX, touchY;
     private final Runnable endScroll = () -> guard(this::finishTouch);
@@ -99,6 +105,22 @@ public final class ProjectionRenderer {
     }
 
     public void setKeyboardListener(KeyboardListener listener) { keyboardListener = listener; }
+    void setControlsChangedListener(Runnable listener) { controlsChanged = listener; }
+    List<NativeControls.Control> controls() throws Exception {
+        attachControls();
+        return controls == null ? Collections.emptyList() : controls.snapshot();
+    }
+    String controlsTitle() { return controls == null ? "More controls" : controls.moreTitle(); }
+    void performControl(NativeControls.Control control) throws Exception {
+        attachControls();
+        if (controls == null) throw new SecurityException("Maps controls are unavailable");
+        controls.invoke(control);
+    }
+    private void attachControls() throws Exception {
+        View view = decor();
+        if (controls != null && !controls.owns(view)) { controls.close(); controls = null; }
+        if (controls == null && view instanceof ViewGroup) controls = new NativeControls((ViewGroup) view, () -> controlsChanged.run());
+    }
 
     public void create(Intent value, Configuration config) {
         guard(() -> {
@@ -120,6 +142,7 @@ public final class ProjectionRenderer {
         closed = true;
         main.removeCallbacks(bindTimeout);
         main.removeCallbacks(endScroll);
+        if (controls != null) { controls.close(); controls = null; }
         try { destroySurface(); } catch (Exception error) { Log.w("MapsNativeCar", "Native car cleanup failed", error); }
         if (bound) {
             try { service.unbindService(connection); } catch (IllegalArgumentException ignored) {}
@@ -127,6 +150,8 @@ public final class ProjectionRenderer {
         bound = false;
         controller = null;
         keyboardListener = null;
+        controlsChanged = () -> {};
+        visibleArea = stableArea = appliedInsets = null;
     }
     public void newIntent(Intent value) {
         guard(() -> {
@@ -144,6 +169,7 @@ public final class ProjectionRenderer {
                 call(controller, "t", new Class<?>[]{android.content.res.Resources.class}, service.getResources());
                 Object activity = field(controller, "J");
                 if (activity != null) call(activity, "b", new Class<?>[]{Configuration.class}, configuration);
+                attachControls();
             }
         });
     }
@@ -160,8 +186,25 @@ public final class ProjectionRenderer {
         });
     }
     public void surfaceDestroyed() { guard(this::detachSurface); }
-    public void visibleArea(Rect area) {}
-    public void stableArea(Rect area) {}
+    public void visibleArea(Rect area) { guard(() -> { visibleArea = area == null ? null : new Rect(area); applyAreas(); }); }
+    public void stableArea(Rect area) { guard(() -> { stableArea = area == null ? null : new Rect(area); applyAreas(); }); }
+    private Rect insets(int w, int h) {
+        Rect canvas = new Rect(0, 0, w, h), safe = visibleArea == null ? null : new Rect(visibleArea);
+        if (safe == null || safe.isEmpty() || !safe.intersect(canvas)) safe = stableArea == null ? null : new Rect(stableArea);
+        if (safe == null || safe.isEmpty() || !safe.intersect(canvas)) return new Rect();
+        return new Rect(safe.left, safe.top, w - safe.right, h - safe.bottom);
+    }
+    private void applyAreas() throws Exception {
+        if (!created || controller == null) return;
+        Rect insets = insets(nativeWidth, nativeHeight);
+        if (insets.equals(appliedInsets)) return;
+        Object presentation = field(controller, "k");
+        if (presentation == null) return;
+        ((Rect) controller.getClass().getField("v").get(controller)).set(insets);
+        call(presentation, "A", new Class<?>[]{Rect.class}, insets);
+        if (surface != null && surface.isValid()) controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+        appliedInsets = new Rect(insets);
+    }
     public void back() {
         guard(() -> {
             finishTouch();
@@ -227,6 +270,8 @@ public final class ProjectionRenderer {
             Object holder = field(field(controller, "k"), "h");
             call(holder, "f", new Class<?>[]{Surface.class}, surface);
             controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+            applyAreas();
+            attachControls();
             return;
         }
         Object drawing = drawing(width, height, dpi);
@@ -235,11 +280,13 @@ public final class ProjectionRenderer {
         call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, new Bundle());
         nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
         created = true;
+        appliedInsets = null; applyAreas();
+        attachControls();
         if (resumed) lifecycle(5);
     }
     private Object drawing(int w, int h, int density) throws Exception {
         return type("com.google.android.gms.car.DrawingSpec").getConstructor(int.class, int.class, int.class, Surface.class, Rect.class, int.class, int.class, Bundle.class)
-                .newInstance(w, h, density, surface, new Rect(), 0, 0, new Bundle());
+                .newInstance(w, h, density, surface, insets(w, h), 0, 0, new Bundle());
     }
     private void lifecycle(int state) throws Exception { call(controller, "m", new Class<?>[]{int.class, boolean.class}, state, false); }
     private void detachSurface() throws Exception {
@@ -255,6 +302,7 @@ public final class ProjectionRenderer {
     }
     private void destroySurface() throws Exception {
         finishTouch();
+        if (controls != null) { controls.close(); controls = null; }
         if (controller != null && created) {
             lifecycle(0);
             call(controller, "k", new Class<?>[0]);
@@ -262,6 +310,7 @@ public final class ProjectionRenderer {
         created = false;
         nativeWidth = nativeHeight = nativeDpi = 0;
         keyboardRequested = false;
+        appliedInsets = null;
         if (surface != null) surface.release();
         surface = null;
     }
