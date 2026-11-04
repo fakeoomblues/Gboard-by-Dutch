@@ -51,6 +51,7 @@ public final class NavigationBroadcasts {
         main(() -> {
             if (installed) return;
             app = application; installed = true;
+            if(NativeWarnings.supportsEventProtocol(application))NativeWarnings.init(application);
             IntentFilter filter = new IntentFilter(REQUEST);
             filter.addAction(NavigationProtocol.REQUEST);
             BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -66,7 +67,7 @@ public final class NavigationBroadcasts {
             try {
                 // Apply keep-alive when native initialization finishes, even without a server sync.
                 Class.forName("com.waze.NativeManager").getMethod("runOnNativeManagerReady", Runnable.class)
-                        .invoke(null, (Runnable) () -> { if (isEnabled()) Customization.onConfigSynced(); });
+                        .invoke(null, (Runnable) () -> { if (isEnabled()) { Customization.onConfigSynced();NativeWarnings.prepareControllers(); } });
             } catch (ReflectiveOperationException e) { Log.w("UA", "Navigation background initialization", e); }
         });
     }
@@ -76,6 +77,7 @@ public final class NavigationBroadcasts {
             if (!installed) return;
             MAIN.removeCallbacks(TICK);
             STATE.reset(on); ALERTS.reset(on); REPORTS.clear(); REPORT_TIMES.clear(); dirty = true; publish(true); // clearing snapshot is sent even on disable
+            if(!on)NativeWarnings.stopped();else NativeWarnings.prepareControllers();
             if (on) MAIN.postDelayed(TICK, 1000);
         });
     }
@@ -121,6 +123,7 @@ public final class NavigationBroadcasts {
     }
 
     public static void insights(Object update) {
+        if(update!=null&&isEnabled())NativeWarnings.segments(update);
         final long at = SystemClock.elapsedRealtime();
         main(() -> {
             if (!isEnabled() || update == null) return;
@@ -149,6 +152,7 @@ public final class NavigationBroadcasts {
     /** Native repository reports, independently of the legacy Maps sharing toggle. */
     public static void alerts(Object update) {
         if(update==null || !isEnabled()) return;
+        NativeWarnings.repository(update);
         final long at=SystemClock.elapsedRealtime();
         try {
             List<NavigationAlerts.Alert> reports=new ArrayList<>();
@@ -176,6 +180,7 @@ public final class NavigationBroadcasts {
         }
     }
     static void reports(String source,List<NavigationAlerts.Alert> reports,long at) {
+        if(source.equals("flockCameras")||source.equals("speedCameras"))NativeWarnings.osmSnapshot(source,reports);
         main(()->{if(!isEnabled() || at<0 || at>SystemClock.elapsedRealtime())return; List<NavigationAlerts.Alert> timed=new ArrayList<>();
             for(NavigationAlerts.Alert a:reports)timed.add(new NavigationAlerts.Alert(a.id,a.kind,a.title,a.distance,a.trigger,a.latitude,a.longitude,at));
             REPORTS.put(source,timed);
@@ -206,6 +211,7 @@ public final class NavigationBroadcasts {
     private static final Runnable TICK = new Runnable() {
         @Override public void run() {
             if (!isEnabled()) { switched(false); return; }
+            Bridge.refreshWarningOwnership();
             NavigationState.Snapshot n = STATE.snapshot(SystemClock.elapsedRealtime());
             if (dirty || n.currentStatus.equals("valid") || n.roadStatus.equals("valid") || n.zoneStatus.equals("active") || ALERTS.fresh(SystemClock.elapsedRealtime()) ||
                     !ALERTS.status(SystemClock.elapsedRealtime()).equals(lastAlertsStatus) ||
@@ -223,11 +229,30 @@ public final class NavigationBroadcasts {
         boolean transition = !n.roadStatus.equals(lastRoadStatus) || !n.zoneStatus.equals(lastZoneStatus) ||
                     !n.currentStatus.equals(lastCurrentStatus) || !ALERTS.status(now).equals(lastAlertsStatus);
         if (!force && !transition && now - lastSent < (dirty ? 1000 : 5000)) return;
-        NavigationProtocol.send(app, snapshot(n, now), receiverPackage());
+        sendWarningsView(snapshot(n, now));
         lastAlertsStatus=ALERTS.status(now); lastSent = now; lastRoadStatus = n.roadStatus; lastZoneStatus = n.zoneStatus; lastCurrentStatus = n.currentStatus; dirty = false;
     }
 
     static Intent snapshot(NavigationState.Snapshot n, long now) {
         return ALERTS.append(NavigationProtocol.snapshot(ACTION, app == null ? "com.waze" : app.getPackageName(), SESSION, ++sequence, n, now),now);
+    }
+
+    /** Reuse FM's disjoint event/legacy views while output is owned or uncertain. */
+    private static void sendWarningsView(Intent snapshot) {
+        Bridge.refreshWarningOwnership();
+        nl.johninnl.navigation.alerts.WarningEndpoint warnings=NativeWarnings.endpoint();
+        if(warnings==null||!warnings.exclusiveAudio()){NavigationProtocol.send(app,snapshot,receiverPackage());return;}
+        java.util.Set<String> capable=warnings.capablePackages();String restriction=receiverPackage();
+        String[] destinations=restriction.isEmpty()?new String[]{"app.vela","com.google.android.apps.maps",
+            "org.ungoogled.android.apps.maps","org.ungoogled.android.apps.maps.microg"}:new String[]{restriction};
+        Intent compatibility=new Intent(snapshot);
+        for(String key:new ArrayList<>(compatibility.getExtras().keySet()))
+            if(key.startsWith("alert_")||(key.startsWith("zone_approach_")&&!key.equals("zone_approach_updated_elapsed_ms")&&!key.equals("zone_approach_max_age_ms")))compatibility.removeExtra(key);
+        compatibility.putExtra("alerts_status","disabled").putExtra("zone_approach_status","disabled");
+        for(String destination:destinations){
+            try{app.getPackageManager().getApplicationInfo(destination,0);}
+            catch(android.content.pm.PackageManager.NameNotFoundException absent){continue;}
+            NavigationProtocol.send(app,new Intent(capable.contains(destination)?snapshot:compatibility),destination);
+        }
     }
 }

@@ -65,6 +65,18 @@ public final class Bridge {
     private static String lastKey = "";
     private static long lastSentAt, lastAskedAt;
     private static boolean beating;
+    private static volatile boolean eventSuspended;
+
+    /** Preserve the saved switch while exclusive event output suppresses this older channel. */
+    static synchronized void refreshWarningOwnership() {
+        if(app==null)return; // The independently optional Share alerts patch is not installed.
+        nl.johninnl.navigation.alerts.WarningEndpoint warnings=NativeWarnings.endpoint();
+        boolean next=warnings!=null&&warnings.exclusiveAudio();
+        if(next==eventSuspended)return;
+        eventSuspended=next;
+        if(next)switched(false); // Also clear already displayed pins and pending heartbeat state.
+    }
+    private static boolean sharingEnabled(){refreshWarningOwnership();return Customization.on("shareAlerts")&&!eventSuspended;}
 
     /** From WazeMobileApplication.onCreate. */
     public static void init(Application a) {
@@ -88,7 +100,7 @@ public final class Bridge {
     /** From AlerterNativeManager.updateAlertersRepository: [update] is Waze's NativeAlertRepositoryUpdate. */
     public static void alerts(Object update) {
         try {
-            if (update == null || !Customization.on("shareAlerts")) return;
+            if (update == null || !sharingEnabled()) return;
             Object descriptors = call(update, "getDescriptorsList");
             int n = descriptors instanceof List ? ((List<?>) descriptors).size() : 0;
             int[] type = new int[n], sub = new int[n], lat = new int[n], lng = new int[n], trigger = new int[n],
@@ -149,7 +161,7 @@ public final class Bridge {
         long now = SystemClock.elapsedRealtime();
         synchronized (Bridge.class) {
             // An update may have been decoded while the switch was being turned off.
-            if (!Customization.on("shareAlerts")) return;
+            if (!sharingEnabled()) return;
             if (key.equals(lastKey) && now - lastSentAt < SAME_AGAIN_MS) return;
             last = i;
             lastKey = key;
@@ -169,7 +181,7 @@ public final class Bridge {
             int count;
             synchronized (Bridge.class) {
                 beating = false;
-                if (!Customization.on("shareAlerts")) return;
+                if (!sharingEnabled()) return;
                 int[] type = last == null ? null : last.getIntArrayExtra("type");
                 count = type == null ? 0 : type.length;
                 if (count == 0) return;
@@ -185,7 +197,7 @@ public final class Bridge {
 
     /** Stop sharing immediately, including cached heartbeats and outstanding Maps pins. */
     static synchronized void switched(boolean on) {
-        if (on) return;
+        if (on) { refreshWarningOwnership();return; }
         MAIN.removeCallbacks(BEAT);
         beating = false;
         last = null;
@@ -210,7 +222,7 @@ public final class Bridge {
         @Override
         public void onReceive(Context c, Intent in) {
             try {
-                if (!Customization.on("shareAlerts")) return;
+                if (!sharingEnabled()) return;
                 Intent again;
                 int count;
                 synchronized (Bridge.class) {
@@ -244,7 +256,7 @@ public final class Bridge {
 
     private static synchronized void broadcast(Intent i, int count) {
         // Serialize against switched(false), so queued sends cannot republish a stale list.
-        if (count > 0 && !Customization.on("shareAlerts")) return;
+        if (count > 0 && !sharingEnabled()) return;
         Context c = context();
         if (c == null) {
             Log.w("UA", "Waze alerts bridge: no context yet");
@@ -300,8 +312,9 @@ public final class Bridge {
         @Override
         public void onReceive(Context c, Intent in) {
             try {
+                if (nativeFamily(in)) return;
                 double lat = in.getDoubleExtra("lat", 0), lng = in.getDoubleExtra("lng", 0);
-                int type = in.getIntExtra("type", 1), count = Math.max(1, Math.min(20, in.getIntExtra("count", 1)));
+                int type = in.getIntExtra("type", 1), count = in.getBooleanExtra("clear", false) ? 0 : Math.max(1, Math.min(20, in.getIntExtra("count", 1)));
                 String title = in.getStringExtra("title");
                 if (title == null) title = "TEST alert from the Waze bridge";
                 Class<?> positionClass = Class.forName("com.waze.jni.protos.Position$IntPosition");
@@ -320,22 +333,37 @@ public final class Bridge {
                     set(info, "setDescription", String.class, "Self-test of the Waze alerts bridge");
                     set(info, "setPosition", positionClass, build(position));
                     set(info, "setReportId", int.class, 424242 + k);
+                    if (in.hasExtra("subtype")) set(info, "setSubType", int.class, in.getIntExtra("subtype", 0));
+                    if (in.hasExtra("valid")) {
+                        Class<?> validationClass = Class.forName("com.waze.jni.protos.alerters.AlertValidationResult");
+                        Object validation = validationClass.getMethod("newBuilder").invoke(null);
+                        validation(info, validation, validationClass, in);
+                    }
                     Object id = idClass.getMethod("newBuilder").invoke(null);
-                    set(id, "setUniqueId", String.class, "ua-test-" + k);
+                    String identity = in.getStringExtra("id");
+                    set(id, "setUniqueId", String.class, (identity == null ? "ua-test" : identity) + "-" + k);
+                    if (in.hasExtra("uuid")) set(id, "setUuid", String.class, in.getStringExtra("uuid"));
                     Object descriptor = descriptorClass.getMethod("newBuilder").invoke(null);
+                    identity(info, descriptor, idClass, build(id));
                     set(descriptor, "setInfo", infoClass, build(info));
-                    set(descriptor, "setAlertId", idClass, build(id));
                     set(descriptor, "setTriggerDistanceMeters", int.class, 500);
+                    if (in.hasExtra("valid")) {
+                        Class<?> priorityClass = Class.forName("com.waze.jni.protos.InsightPriority");
+                        Object priority = priorityClass.getMethod("newBuilder").invoke(null);
+                        set(priority, "setValue", int.class, 100);
+                        set(descriptor, "setInsightPriority", priorityClass, build(priority));
+                    }
+                    if (in.hasExtra("zone_state")) {
+                        Class<?> zoneClass = Class.forName("com.waze.jni.protos.alerters.ZoneAlertData");
+                        Object zone = zoneClass.getMethod("newBuilder").invoke(null);
+                        set(zone, "setStateValue", int.class, in.getIntExtra("zone_state", 0));
+                        set(descriptor, "setZoneAlertData", zoneClass, build(zone));
+                    }
                     set(update, "addDescriptors", descriptorClass, build(descriptor));
                 }
                 Object built = build(update);
                 if (in.getBooleanExtra("real", false)) {
-                    Class<?> manager = Class.forName("com.waze.alerters.AlerterNativeManager");
-                    // Same service lookup used by NativeManager.initNativeManagers in 5.26.90.901.
-                    Object instance = Class.forName("kotlinx.coroutines.a.ab").getMethod("l", Class.class).invoke(null, manager);
-                    Method m = manager.getDeclaredMethod("b", updateClass);
-                    m.setAccessible(true);
-                    m.invoke(instance, built);
+                    dispatch("com.waze.alerters.AlerterNativeManager", "b", updateClass, built);
                     Log.d("UA", "Waze alerts bridge: self-test through AlerterNativeManager, " + count + " alerts");
                 } else {
                     synchronized (Bridge.class) {
@@ -347,6 +375,59 @@ public final class Bridge {
             } catch (Throwable t) {
                 Log.w("UA", "Waze alerts bridge: self-test", t);
             }
+        }
+
+        private static boolean nativeFamily(Intent in) throws Exception {
+            String family=in.getStringExtra("family");
+            if(family==null||family.equals("alerter"))return false;
+            if(!family.equals("segments")&&!family.equals("notification"))throw new IllegalArgumentException("UNKNOWN_NATIVE_FIXTURE_FAMILY");
+            if(!in.getBooleanExtra("real",false))throw new IllegalArgumentException("NATIVE_FIXTURE_REQUIRES_REAL");
+            if(family.equals("segments")){
+                Class<?> updateClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightUpdate"),infoClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightInfo"),idClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightInfo$Id");
+                Object update=updateClass.getMethod("newBuilder").invoke(null);
+                if(!in.getBooleanExtra("clear",false))for(int type=0;type<9;type++){
+                    Object id=idClass.getMethod("newBuilder").invoke(null),info=infoClass.getMethod("newBuilder").invoke(null);
+                    set(id,"setSegmentId",String.class,"fixture-segment-"+type);set(id,"setSegmentTypeValue",int.class,type);
+                    set(info,"setId",idClass,build(id));set(info,"setPositionRelativeToSegmentValue",int.class,1);
+                    set(info,"setRemainingDistanceMeters",int.class,500);set(info,"setRemainingDurationSeconds",int.class,60);
+                    set(update,"addInfo",infoClass,build(info));
+                }
+                dispatch("com.waze.insights_infra.InsightsInfraNativeManager","c",updateClass,build(update));
+            }else{
+                Class<?> idClass=Class.forName("com.waze.jni.protos.insights_infra.NotificationId"),notificationClass=Class.forName("com.waze.jni.protos.insights_infra.Notification");
+                Object id=idClass.getMethod("newBuilder").invoke(null);set(id,"setId",String.class,"fixture-cyclists");set(id,"setFeatureValue",int.class,1);Object builtId=build(id);
+                if(in.getBooleanExtra("clear",false))dispatch("com.waze.insights_infra.NotificationInsightsNativeManager","b",idClass,builtId);
+                else{
+                    Object notification=notificationClass.getMethod("newBuilder").invoke(null);set(notification,"setId",idClass,builtId);
+                    set(notification,"setTitle",String.class,"Cyclist fixture");set(notification,"setBody",String.class,"Cyclists on the road");set(notification,"setTimeoutMs",long.class,30000L);
+                    set(notification,"addInCarTitleVariants",String.class,"Cyclists");set(notification,"addInCarBodyVariants",String.class,"Cyclists on the road");
+                    dispatch("com.waze.insights_infra.NotificationInsightsNativeManager","a",notificationClass,build(notification));
+                }
+            }
+            Log.d("UA","Waze alerts bridge: native self-test family="+family);return true;
+        }
+        private static void dispatch(String managerName,String method,Class<?> argumentClass,Object value)throws Exception{
+            // Same service lookup used by NativeManager.initNativeManagers in the pinned APK.
+            Class<?> manager=Class.forName(managerName);Object instance=Class.forName("kotlinx.coroutines.a.ab").getMethod("l",Class.class).invoke(null,manager);
+            Method callback=manager.getDeclaredMethod(method,argumentClass);callback.setAccessible(true);callback.invoke(instance,value);
+        }
+
+        private static void identity(Object info, Object descriptor, Class<?> idClass, Object id) throws Exception {
+            // The ordinary holder reads the descriptor ID; zone holders read the info ID.
+            set(info, "setAlertId", idClass, id);
+            set(descriptor, "setAlertId", idClass, id);
+        }
+
+        // Only the debug self-test supplies this fixture. Native selectors remain responsible
+        // for sound requests; neither this builder nor the receiver invokes them directly.
+        private static void validation(Object info, Object builder, Class<?> resultClass, Intent in) throws Exception {
+            if (!in.hasExtra("valid")) return;
+            set(builder, "setIsValid", boolean.class, in.getBooleanExtra("valid", false));
+            if (in.hasExtra("distance_m")) set(builder, "setDistanceMeters", int.class, in.getIntExtra("distance_m", 0));
+            if (in.hasExtra("time_sec")) set(builder, "setTimeToAlertSec", int.class, in.getIntExtra("time_sec", 0));
+            set(info, "setValidationResult", resultClass, build(builder));
+            set(info, "setIsApproachingWithValidation", boolean.class, in.getBooleanExtra("approaching", true));
+            set(info, "setRequireDistanceInRange", boolean.class, true);
         }
 
         private static void set(Object builder, String name, Class<?> type, Object value) throws Exception {

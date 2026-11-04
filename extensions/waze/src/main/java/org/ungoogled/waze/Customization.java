@@ -273,6 +273,14 @@ public final class Customization {
 
     private static volatile Context app;
     private static WeakReference<Activity> resumed = new WeakReference<>(null);
+    private static final java.util.LinkedHashSet<Activity> resumedActivities=new java.util.LinkedHashSet<>();
+    private static final java.util.Set<Activity> startedActivities=new java.util.HashSet<>();
+    static boolean activityVisible(){return !startedActivities.isEmpty();}
+    private static void paused(Activity activity){
+        resumedActivities.remove(activity);
+        if(resumed.get()==activity){Activity latest=null;for(Activity current:resumedActivities)latest=current;resumed=new WeakReference<>(latest);}
+        NativeWarnings.reconcileZoneQueue();
+    }
 
     // ---- start-up -------------------------------------------------------------------------
 
@@ -284,13 +292,13 @@ public final class Customization {
         applyPins();
         try {
             a.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-                @Override public void onActivityResumed(Activity x) { resumed = new WeakReference<>(x); }
-                @Override public void onActivityPaused(Activity x) {}
+                @Override public void onActivityResumed(Activity x) { resumedActivities.remove(x);resumedActivities.add(x);resumed = new WeakReference<>(x); }
+                @Override public void onActivityPaused(Activity x) { paused(x); }
                 @Override public void onActivityCreated(Activity x, Bundle b) {}
-                @Override public void onActivityStarted(Activity x) {}
-                @Override public void onActivityStopped(Activity x) {}
+                @Override public void onActivityStarted(Activity x) { startedActivities.add(x); }
+                @Override public void onActivityStopped(Activity x) { startedActivities.remove(x);paused(x); }
                 @Override public void onActivitySaveInstanceState(Activity x, Bundle b) {}
-                @Override public void onActivityDestroyed(Activity x) {}
+                @Override public void onActivityDestroyed(Activity x) { startedActivities.remove(x);paused(x); }
             });
         } catch (Throwable t) {
             Log.w("UA", "Waze customization", t);

@@ -20,7 +20,7 @@ public final class NavigationStartup {
         Object completion = Proxy.newProxyInstance(continuation.getClassLoader(), new Class<?>[]{continuation}, (proxy, method, args) -> {
             switch (method.getName()) {
                 case "getContext": return context;
-                case "resumeWith": return null;
+                case "resumeWith": NativeWarnings.prepareControllers();return null;
                 case "toString": return "NavigationStartup";
                 case "hashCode": return System.identityHashCode(proxy);
                 case "equals": return proxy == args[0];

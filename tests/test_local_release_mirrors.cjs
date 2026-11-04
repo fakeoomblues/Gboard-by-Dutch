@@ -67,24 +67,24 @@ function fixture(t,branch="main"){
 }
 function options(f,more={}){return {cwd:f.cwd,env:f.env,git:f.git,request:f.request,download:f.download,canonicalDownload:f.canonicalDownload,...more};}
 
-test("read-only preflight checks the owner/project and compatible refs without uploads or pushes",async t=>{
+test("read-only preflight checks both owners/projects and compatible refs without uploads or pushes",async t=>{
   const f=fixture(t);assert.equal((await api().preflight(options(f))).complete,true);
-  assert.equal(f.calls.filter(row=>row.kind==="api"&&row.endpoint==="/user").length,1);
+  assert.equal(f.calls.filter(row=>row.kind==="api"&&row.endpoint==="/user").length,2);
   assert.ok(!f.calls.some(row=>row.method&&row.method!=="GET"||row.kind==="git"&&row.args[0]==="push"));
 });
-test("the active mirror publishes identical signed bytes without rewriting metadata",async t=>{
+test("both mirrors start in parallel and retry identical signed bytes without rewriting metadata",async t=>{
   const f=fixture(t);const started=[];let release;const barrier=new Promise(resolve=>{release=resolve;});
-  const request=async(name,endpoint,options)=>{if(endpoint==="/user"){started.push(name);if(started.length===1)release();await barrier;}return f.request(name,endpoint,options);};
-  const result=await api().mirrorReleases(options(f,{request}));assert.equal(result.complete,true);assert.deepEqual(started.sort(),["codeberg"]);
-  assert.deepEqual(Object.keys(result.targets).sort(),["codeberg"]);assert.ok(Object.values(result.targets).every(row=>row.status==="fulfilled"));
+  const request=async(name,endpoint,options)=>{if(endpoint==="/user"){started.push(name);if(started.length===2)release();await barrier;}return f.request(name,endpoint,options);};
+  const result=await api().mirrorReleases(options(f,{request}));assert.equal(result.complete,true);assert.deepEqual(started.sort(),["codeberg","gitgud"]);
+  assert.deepEqual(Object.keys(result.targets).sort(),["codeberg","gitgud"]);assert.ok(Object.values(result.targets).every(row=>row.status==="fulfilled"));
   const before=f.calls.filter(row=>row.method&&row.method!=="GET"||row.kind==="git"&&row.args[0]==="push").length;
   await api().mirrorReleases(options(f));assert.equal(f.calls.filter(row=>row.method&&row.method!=="GET"||row.kind==="git"&&row.args[0]==="push").length,before);
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(f.cwd,"patches-bundle.json"))),f.manifest);
   assert.equal(JSON.parse(fs.readFileSync(path.join(f.cwd,"build/release-safety/mirrors-result.json"))).complete,true);
 });
-test("a failed target records a durable rejected result without leaking details",async t=>{
+test("one failed target cannot hide the other target's completion or its durable result",async t=>{
   const f=fixture(t);const result=await api().mirrorReleases(options(f,{request:async(name,endpoint,options)=>{if(name==="codeberg")throw new Error("codeberg-fixture failed");return f.request(name,endpoint,options);}}));
-  assert.equal(result.complete,false);assert.equal(result.targets.codeberg.status,"rejected");
+  assert.equal(result.complete,false);assert.equal(result.targets.codeberg.status,"rejected");assert.equal(result.targets.gitgud.status,"fulfilled");
   const text=fs.readFileSync(path.join(f.cwd,"build/release-safety/mirrors-result.json"),"utf8");assert.ok(!text.includes("codeberg-fixture"));assert.deepEqual(JSON.parse(text),result);
 });
 test("conflicting tags and non-fast-forward branches are refused before publishing",async t=>{
@@ -94,9 +94,11 @@ test("conflicting tags and non-fast-forward branches are refused before publishi
   const git=(args,opts)=>{if(args[0]==="merge-base")throw new Error("not ancestor");return f.git(args,opts);};
   assert.equal((await api().preflight(options(f,{git}))).targets.codeberg.status,"rejected");
 });
-test("wrong owners and feature/channel mismatches are rejected",async t=>{
+test("wrong owners, insufficient GitGud scope and feature/channel mismatches are rejected",async t=>{
   const f=fixture(t);const request=async(name,endpoint,options)=>endpoint==="/user"?{login:"bot",username:"bot"}:f.request(name,endpoint,options);
   assert.equal((await api().preflight(options(f,{request}))).complete,false);
+  const scoped=async(name,endpoint,options)=>endpoint==="/personal_access_tokens/self"?{scopes:["read_api"]}:f.request(name,endpoint,options);
+  assert.equal((await api().preflight(options(f,{request:scoped}))).targets.gitgud.status,"rejected");
   const git=(args,opts)=>args[0]==="branch"?"feature/work":f.git(args,opts);await assert.rejects(api().mirrorReleases(options(f,{git})),/main.*dev/);
   fs.writeFileSync(path.join(f.cwd,"build/release-safety/gitlab-result.json"),JSON.stringify({...f.receipt,branch:"dev"}));await assert.rejects(api().mirrorReleases(options(f)),/channel|branch/);
 });
@@ -189,21 +191,21 @@ test("GitGud accepts fine-grained token metadata bound to the authenticated owne
       if(name==="gitgud"&&endpoint==="/personal_access_tokens/self")return {active:true,revoked:false,user_id:42,...granular};
       return value;
     };
-    assert.equal((await api().preflight(options(f,{request,targets:["gitgud"]})) ).complete,true);
+    assert.equal((await api().preflight(options(f,{request}))).complete,true);
   }
 });
 test("typed fine-grained metadata denial is optional after owner and Maintainer checks",async t=>{
   const f=fixture(t),metadata=api().createRequest({env:f.env,fetcher:async()=>({status:403,ok:false,json:async()=>({error:"insufficient_granular_scope",error_description:"fixture-sensitive-detail"})})});
   await assert.rejects(metadata("gitgud","/personal_access_tokens/self"),error=>error.status===403&&error.errorCode==="insufficient_granular_scope"&&!error.message.includes("fixture-sensitive-detail"));
   const request=async(name,endpoint,options)=>name==="gitgud"&&endpoint==="/personal_access_tokens/self"?metadata(name,endpoint,options):f.request(name,endpoint,options);
-  assert.equal((await api().preflight(options(f,{request,targets:["gitgud"]}))).complete,true);
+  assert.equal((await api().preflight(options(f,{request}))).complete,true);
   for(const failure of ["owner","maintainer"]){
     const denied=async(name,endpoint,options)=>{
       if(name==="gitgud"&&endpoint==="/user"&&failure==="owner")return {username:"other-user"};
       if(name==="gitgud"&&endpoint.startsWith("/projects/")&&failure==="maintainer")return {path_with_namespace:"JohninNL/nl-morphe-patches",namespace:{path:"JohninNL"},permissions:{project_access:{access_level:30}}};
       return request(name,endpoint,options);
     };
-    assert.equal((await api().preflight(options(f,{request:denied,targets:["gitgud"]}))).targets.gitgud.status,"rejected");
+    assert.equal((await api().preflight(options(f,{request:denied}))).targets.gitgud.status,"rejected");
   }
 });
 test("opaque metadata 403 responses remain failures without leaking response bodies",async t=>{
@@ -211,7 +213,7 @@ test("opaque metadata 403 responses remain failures without leaking response bod
     const f=fixture(t),metadata=api().createRequest({env:f.env,fetcher:async()=>({status:403,ok:false,json})});
     await assert.rejects(metadata("gitgud","/personal_access_tokens/self"),error=>error.status===403&&error.errorCode===undefined&&!error.message.includes("fixture-sensitive-detail"));
     const request=async(name,endpoint,options)=>name==="gitgud"&&endpoint==="/personal_access_tokens/self"?metadata(name,endpoint,options):f.request(name,endpoint,options);
-    const result=await api().preflight(options(f,{request,targets:["gitgud"]}));assert.equal(result.complete,false);assert.equal(result.targets.gitgud.status,"rejected");
+    const result=await api().preflight(options(f,{request}));assert.equal(result.complete,false);assert.equal(result.targets.gitgud.status,"rejected");
   }
 });
 test("inactive, revoked, foreign-user and read-api-only metadata are rejected",async t=>{
@@ -220,6 +222,6 @@ test("inactive, revoked, foreign-user and read-api-only metadata are rejected",a
       if(name==="gitgud"&&endpoint==="/personal_access_tokens/self")return metadata;
       const value=await f.request(name,endpoint,options);return name==="gitgud"&&endpoint==="/user"?{...value,id:42}:value;
     };
-    assert.equal((await api().preflight(options(f,{request,targets:["gitgud"]}))).targets.gitgud.status,"rejected");
+    assert.equal((await api().preflight(options(f,{request}))).targets.gitgud.status,"rejected");
   }
 });

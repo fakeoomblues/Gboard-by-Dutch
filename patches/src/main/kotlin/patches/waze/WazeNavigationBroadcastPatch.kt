@@ -14,7 +14,7 @@ import app.morphe.patcher.patch.stringOption
 import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
-private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze")
+private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze", warningRecovery = true)
 
 /** Application startup also runs for a cold service bind. Old tasks must not force a UI restart. */
 internal fun suppressTaskRelaunch(method: MutableMethod) {
@@ -66,6 +66,7 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "isAppStarted", parameters = emptyList(), returnType = "Z").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "getInitializedStatus", parameters = emptyList(), returnType = "Z").method
         check(mutableClassDefBy("Lg/d/k;").fields.any { it.name == "a" && it.type == "Lg/d/k;" })
+        bindWazeNativeWarnings()
         suppressTaskRelaunch(Fingerprint(definingClass = "Lcom/waze/ls;", name = "onCreate", parameters = emptyList(), returnType = "V").method)
         bindWazeNavigationAudio()
         val target = receiverPackage.orEmpty().trim()

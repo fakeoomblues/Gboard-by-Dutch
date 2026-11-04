@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -21,11 +22,13 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 32, manifest = Config.NONE)
 public class NavigationBroadcastsTest {
     private Application app;
+    private nl.johninnl.navigation.alerts.WarningEndpoint warningEndpoint;
     private void field(Class<?> c, String name, Object value) throws Exception {
         Field f = c.getDeclaredField(name); f.setAccessible(true); f.set(null, value);
     }
     @Before public void setup() throws Exception {
         app = RuntimeEnvironment.getApplication();
+        field(NativeWarnings.class,"endpoint",null);
         app.getSharedPreferences("ungoogled_waze", 0).edit().clear().putBoolean("zoneBar", false)
                 .putBoolean("stayAwake", false).commit();
         field(Customization.class, "app", app);
@@ -36,6 +39,7 @@ public class NavigationBroadcastsTest {
         field(NavigationBroadcasts.class, "lastSent", -5000L);
         NavigationBroadcasts.init(app);
     }
+    @After public void cleanup()throws Exception{if(warningEndpoint!=null)warningEndpoint.close();field(NativeWarnings.class,"endpoint",null);}
     private List<Intent> events() {
         return shadowOf(app).getBroadcastIntents().stream().filter(i -> NavigationBroadcasts.ACTION.equals(i.getAction()))
                 .collect(Collectors.toList());
@@ -48,6 +52,24 @@ public class NavigationBroadcastsTest {
         assertEquals(1, last().getIntExtra("schema_version", 0));
         assertFalse(last().hasExtra("zone_average_speed_kmh"));
         assertTrue(Customization.on("stayAwake"));
+    }
+
+    @Test public void exclusiveWarningViewsPreserveSpeedAndDistributeFullDataOnlyToEventClients()throws Exception{
+        for(String name:new String[]{"app.vela","com.google.android.apps.maps"}){
+            android.content.pm.PackageInfo info=new android.content.pm.PackageInfo();info.packageName=name;info.applicationInfo=new android.content.pm.ApplicationInfo();info.applicationInfo.packageName=name;info.applicationInfo.uid=name.equals("app.vela")?10001:10002;shadowOf(app.getPackageManager()).installPackage(info);
+        }
+        warningEndpoint=new nl.johninnl.navigation.alerts.WarningEndpoint(app,uid->null,new nl.johninnl.navigation.alerts.WarningCapabilities(nl.johninnl.navigation.alerts.WazeWarningTypes.MANIFEST_DIGEST,nl.johninnl.navigation.alerts.WazeWarningTypes.required(),false));
+        warningEndpoint.close();Field actor=warningEndpoint.getClass().getDeclaredField("actor");actor.setAccessible(true);assertTrue(((java.util.concurrent.ThreadPoolExecutor)actor.get(warningEndpoint)).awaitTermination(2,java.util.concurrent.TimeUnit.SECONDS));
+        Field exclusive=warningEndpoint.getClass().getDeclaredField("exclusive");exclusive.setAccessible(true);exclusive.setBoolean(warningEndpoint,true);
+        Field capable=warningEndpoint.getClass().getDeclaredField("capable");capable.setAccessible(true);capable.set(warningEndpoint,java.util.Collections.singleton("com.google.android.apps.maps"));field(NativeWarnings.class,"endpoint",warningEndpoint);
+        NavigationBroadcasts.reports("native",java.util.Collections.singletonList(new nl.johninnl.navigation.NavigationAlerts.Alert("camera","camera","Camera",100,500,52,4)),android.os.SystemClock.elapsedRealtime());
+        NavigationBroadcasts.speed("km/h",100,72);
+        List<Intent> values=events();Intent maps=values.stream().filter(i->"com.google.android.apps.maps".equals(i.getPackage())).reduce((a,b)->b).get();Intent vela=values.stream().filter(i->"app.vela".equals(i.getPackage())).reduce((a,b)->b).get();
+        assertEquals("valid",maps.getStringExtra("alerts_status"));assertArrayEquals(new String[]{"camera"},maps.getStringArrayExtra("alert_ids"));
+        assertEquals("disabled",vela.getStringExtra("alerts_status"));assertEquals("disabled",vela.getStringExtra("zone_approach_status"));assertFalse(vela.hasExtra("alert_ids"));
+        assertEquals(maps.getLongExtra("sequence",-1),vela.getLongExtra("sequence",-2));assertEquals(100,vela.getDoubleExtra("road_speed_limit_kmh",-1),0);assertEquals(72,vela.getDoubleExtra("current_speed_kmh",-1),0);
+        int before=events().size();exclusive.setBoolean(warningEndpoint,false);app.sendBroadcast(new Intent(NavigationBroadcasts.REQUEST));shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(2));
+        assertTrue(events().subList(before,events().size()).stream().anyMatch(i->i.getPackage()==null&&"valid".equals(i.getStringExtra("alerts_status"))));
     }
     @Test public void requestsAndHeartbeatCannotMakeOldObservationsFresh() {
         NavigationBroadcasts.speed("km/h", 100);

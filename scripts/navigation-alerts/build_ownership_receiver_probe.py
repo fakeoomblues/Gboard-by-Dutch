@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--sdk',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--key',type=Path,required=True)
+    parser.add_argument('--key-alias',default='native-warning-test')
     parser.add_argument('--target',choices=['maps','vela'],required=True)
     parser.add_argument('--maps-package',choices=['com.google.android.apps.maps','org.ungoogled.android.apps.maps'],default='com.google.android.apps.maps')
     args=parser.parse_args();target=args.maps_package if args.target=='maps' else 'app.vela';helper='nl.johninnl.warningprobe.owner.'+args.target;args.output.mkdir(parents=True,exist_ok=True)
@@ -28,7 +29,7 @@ def main():
         with zipfile.ZipFile(raw,'a',zipfile.ZIP_DEFLATED) as archive:
             for path in dex.glob('classes*.dex'):archive.write(path,path.name)
         run(tools/'zipalign','-f','4',raw,apk)
-        run(tools/'apksigner','sign','--ks',args.key,'--ks-key-alias','native-warning-test','--ks-pass','pass:android','--key-pass','pass:android',apk)
+        run(tools/'apksigner','sign','--ks',args.key,'--ks-key-alias',args.key_alias,'--ks-pass','pass:android','--key-pass','pass:android',apk)
         run(tools/'apksigner','verify',apk)
     source=Path(__file__).with_name("probe")/"OwnershipReceiverProbe.java"
     support_sources={name:hashlib.sha256((Path(__file__).with_name('probe')/name).read_bytes()).hexdigest() for name in ['MapsVoiceProbe.java','MapsRouteReadinessProbe.java','VelaRouteReadinessProbe.java']}
