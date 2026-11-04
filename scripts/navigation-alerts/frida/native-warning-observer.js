@@ -45,7 +45,7 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook(N,'emit',['android.os.Bundle'],(_,a)=>({operation:a[0].getString('operation'),warning_id:a[0].getString('warning_id'),category:a[0].getString('category'),native_type:a[0].getString('native_type'),phase:a[0].getString('phase'),origin:a[0].getString('announcement_origin'),revision:Number(a[0].getLong('revision')),announcement_index:Number(a[0].getLong('announcement_index'))}));
  }else if(pkg==='org.ungoogled.android.apps.maps'||pkg==='com.google.android.apps.maps'){
   const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant';
-  hook(S,'events',['java.util.List'],(_,a)=>warningEvents(a[0]));
+  hook(S,'events',[S+'$Transport','java.util.List'],(_,a)=>warningEvents(a[1]));
   hook(S,'pumpOne',[],o=>{policy(o);return {};});
   hook(S,'cancel',[A,'boolean'],(o,a)=>({...state(o),retry:!!a[1],stack:stack()}));
   hook(S,'finish',[A,'nl.johninnl.navigation.alerts.PlaybackGrant$Outcome','boolean'],(o,a)=>({...state(o),outcome:a[1].name().toString(),quiescent:!!a[2]}));
@@ -62,7 +62,7 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook(C,'canRegenerate',[],null,(_,a,r)=>({can_regenerate:!!r}));
  }else if(pkg==='app.vela'){
   const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant',O=G+'$Outcome',M='nl.johninnl.navigation.alerts.WarningAudioOwner$Mode',E='nl.johninnl.navigation.alerts.WarningEvent';
-  hook(S,'events',['java.util.List'],(_,a)=>warningEvents(a[0]));
+  hook(S,'events',[S+'$Transport','java.util.List'],(_,a)=>warningEvents(a[1]));
   hook(S,'pumpOne',[],o=>{policy(o);return {};});
   hook(S,'cancel',[A,'boolean'],(o,a)=>({...state(o),retry:!!a[1],stack:stack()}));
   hook(S,'finish',[A,O,'boolean'],(o,a)=>({...state(o),outcome:a[1].name().toString(),quiescent:!!a[2]}));
