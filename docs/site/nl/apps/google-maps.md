@@ -30,7 +30,7 @@ Native zoeken, een route starten, navigeren en opnieuw verbinden zijn gecontrole
 
 Onze uitbreiding op **Waze alerts** laat je gepatchte Waze of Flitsmeister kiezen als lokale bron van navigatiegegevens. Naast wegmeldingen op de kaart kan deze koppeling actuele snelheid, de maximumsnelheid en een waargenomen gemiddelde tijdens een trajectcontrole tonen, met voortgang en resterende afstand. Beschikbare meldingen kunnen ook voorwaarschuwingen geven.
 
-Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen de gewone Waze of Flitsmeister installeren is niet voldoende. De oorspronkelijke Waze-modus **Share alerts with Maps** blijft als aparte keuze voor het delen van meldingen beschikbaar.
+Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen de gewone Waze of Flitsmeister installeren is niet voldoende. De oorspronkelijke Waze-modus **Share Waze Alerts with external applications** blijft als aparte keuze voor het delen van meldingen beschikbaar.
 
 [Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 

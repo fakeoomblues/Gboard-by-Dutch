@@ -127,8 +127,8 @@ public final class Customization {
                 "One sign style in every country"});
         LABELS.put("skipConsent", new String[]{"Skip consent screens",
                 "Answers privacy and terms silently; declines personalized ads"});
-        LABELS.put("shareAlerts", new String[]{"Share alerts with Maps",
-                "Shows Waze alerts in Ungoogled Maps"});
+        LABELS.put("shareAlerts", new String[]{"Share Waze alerts",
+                "Shares them with patched apps such as Ungoogled Maps and Vela Maps"});
         LABELS.put("navigationBroadcasts", new String[]{"Broadcast navigation data",
                 "Road limit and zone data for other apps; keeps Waze active in the background"});
         LABELS.put("stayAwake", new String[]{"Stay awake in the background",

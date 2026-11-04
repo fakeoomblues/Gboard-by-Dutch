@@ -63,7 +63,7 @@ Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreek
 5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Alleen meldingen met bekende posities krijgen kaartspelden.
 6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen. Automatisch starten gebruikt de aparte bron-API; een momentopname maakt oude waarnemingen nooit vers.
 
-**Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share alerts with Maps** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
+**Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share Waze Alerts with external applications** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
 
 Maps pauzeert zijn eigen Flock-spelden en geluiden zolang de gekozen moderne bron bruikbare verse gegevens levert. Je Flock-voorkeuren blijven bewaard en Flock-routevermijding houdt zijn aparte cameragegevens.
 
