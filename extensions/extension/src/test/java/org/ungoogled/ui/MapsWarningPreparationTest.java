@@ -32,4 +32,13 @@ public class MapsWarningPreparationTest {
         speaker.prepare("en-US");idle();TextToSpeech tts=ShadowTextToSpeech.getLastTextToSpeechInstance();
         speaker.prepare("nl-NL");idle();Shadows.shadowOf(tts).getOnInitListener().onInit(TextToSpeech.SUCCESS);idle();assertEquals("nl-NL",prepared());
     }
+    @Test public void repeatedPreparationKeepsInitializingEngineButReplacesFailedInstance()throws Exception{
+        speaker.prepare("en-US");idle();TextToSpeech first=ShadowTextToSpeech.getLastTextToSpeechInstance();
+        speaker.prepare("en-US");idle();assertSame(first,ShadowTextToSpeech.getLastTextToSpeechInstance());
+        Shadows.shadowOf(first).getOnInitListener().onInit(TextToSpeech.ERROR);idle();
+        speaker.prepare("en-US");idle();TextToSpeech replacement=ShadowTextToSpeech.getLastTextToSpeechInstance();assertNotSame(first,replacement);
+        Shadows.shadowOf(replacement).getOnInitListener().onInit(TextToSpeech.SUCCESS);idle();assertEquals("en-US",prepared());
+        Shadows.shadowOf(first).getOnInitListener().onInit(TextToSpeech.ERROR);idle();assertEquals("en-US",prepared());
+        speaker.prepare("en-US");idle();assertSame(replacement,ShadowTextToSpeech.getLastTextToSpeechInstance());
+    }
 }

@@ -80,6 +80,67 @@ public class WarningSchedulerTest {
         assertEquals(0,speaker.calls);scheduler.disconnected();source.beginReply.complete(source.delayedReply);
         assertEquals(0,speaker.calls);assertNull(source.pending);assertTrue(observed.contains(PlaybackGrant.Outcome.NOT_STARTED));
     }
+    @Test public void sameConnectionResyncClearCancelsAcceptedUnsaidOutputBeforeAnythingElse(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant grant=speaker.grant;WarningScheduler.Callback callback=speaker.callback;
+        WarningEvent clear=event("road",1,2,WarningEvent.Operation.CLEAR);source.add(clear);
+        scheduler.connected(source,new WarningConnection.Snapshot(session,sequence,true,true,"BUSY:app.client",Collections.emptyList(),Collections.singletonList(clear),Collections.emptyList(),Collections.singletonList(source.pending)));
+        assertEquals(1,speaker.cancels);assertEquals(1,speaker.calls);assertTrue(grant.sameIdentity(source.pending));
+        callback.finished(grant,PlaybackGrant.Outcome.NOT_STARTED,true);time.now+=250;scheduler.refresh();
+        assertNull(source.pending);assertEquals("CLEAR must never retry its old authority",1,speaker.calls);
+    }
+    @Test public void sameConnectionResyncRevisionCancelsUnsaidAudioAndRetainsAuthorityDeadline(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant grant=speaker.grant;WarningScheduler.Callback callback=speaker.callback;
+        WarningEvent changed=event("road",1,2,WarningEvent.Operation.UPSERT);source.add(changed);
+        scheduler.connected(source,new WarningConnection.Snapshot(session,sequence,true,true,"BUSY:app.client",Collections.singletonList(changed),Collections.singletonList(changed),Collections.emptyList(),Collections.singletonList(source.pending)));
+        assertEquals(1,speaker.cancels);assertEquals(1,speaker.calls);
+        callback.finished(grant,PlaybackGrant.Outcome.NOT_STARTED,true);time.now+=250;scheduler.refresh();
+        assertEquals(2,speaker.calls);assertEquals(changed.message,speaker.event.message);assertEquals(changed.revision,speaker.event.revision);
+        assertEquals(authority.announceUntil,speaker.deadline);
+    }
+    @Test public void clearDuringRevisionCancellationPreventsResyncStateFromRearmingOldAuthority(){
+        WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        PlaybackGrant grant=speaker.grant;WarningScheduler.Callback callback=speaker.callback;
+        WarningEvent revision=event("road",1,2,WarningEvent.Operation.UPSERT);source.add(revision);scheduler.events(source,Collections.singletonList(revision));
+        WarningEvent clear=event("road",1,2,WarningEvent.Operation.CLEAR);source.add(clear);
+        WarningEvent state=event("road",1,3,WarningEvent.Operation.UPSERT);source.add(state);
+        scheduler.connected(source,new WarningConnection.Snapshot(session,sequence,true,true,"BUSY:app.client",Collections.singletonList(state),Arrays.asList(clear,state),Collections.emptyList(),Collections.singletonList(source.pending)));
+        callback.finished(grant,PlaybackGrant.Outcome.NOT_STARTED,true);time.now+=250;scheduler.refresh();
+        assertEquals(1,speaker.cancels);assertEquals(1,speaker.calls);assertNull(source.pending);
+    }
+    @Test public void oldResyncClearDoesNotCancelAnAuthorityAlreadyReceivedAfterIt(){
+        WarningEvent clear=event("road",1,1,WarningEvent.Operation.CLEAR);source.add(clear);scheduler.events(source,Collections.singletonList(clear));
+        WarningEvent authority=event("road",1,2,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        scheduler.connected(source,new WarningConnection.Snapshot(session,sequence,true,true,"BUSY:app.client",Collections.singletonList(authority),Arrays.asList(clear,authority),Collections.emptyList(),Collections.singletonList(source.pending)));
+        assertEquals(0,speaker.cancels);assertEquals(1,speaker.calls);
+    }
+    @Test public void synchronousStopAcknowledgementCannotPumpBeforeAllResyncClearsAreApplied(){
+        Speaker immediate=new Speaker(){@Override public void cancel(PlaybackGrant grant){super.cancel(grant);callback.finished(grant,PlaybackGrant.Outcome.NOT_STARTED,true);}};
+        scheduler=new WarningScheduler(time,policy,immediate,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent e,PlaybackGrant.Outcome o){}});
+        scheduler.connected(source,snapshot(Collections.emptyList()));
+        WarningEvent first=event("first",1,1,WarningEvent.Operation.ANNOUNCE);source.add(first);scheduler.events(source,Collections.singletonList(first));
+        WarningEvent second=event("second",1,1,WarningEvent.Operation.ANNOUNCE);source.add(second);scheduler.events(source,Collections.singletonList(second));assertEquals(1,immediate.calls);
+        WarningEvent clearFirst=event("first",1,2,WarningEvent.Operation.CLEAR);source.add(clearFirst);
+        WarningEvent clearSecond=event("second",1,2,WarningEvent.Operation.CLEAR);source.add(clearSecond);
+        scheduler.connected(source,new WarningConnection.Snapshot(session,sequence,true,true,"BUSY:app.client",Collections.emptyList(),Arrays.asList(clearFirst,clearSecond),Collections.emptyList(),Collections.singletonList(source.pending)));
+        assertEquals(1,immediate.cancels);assertEquals("Second warning was also cleared before the first stop ACK",1,immediate.calls);assertNull(source.pending);
+    }
+    @Test public void failedOrColdPreparationRetriesAtMostOncePerSecondUntilReady(){
+        speaker.ready=false;WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));int attempts=speaker.prepares;
+        for(int i=0;i<9;i++){time.now+=100;scheduler.refresh();}assertEquals(attempts,speaker.prepares);
+        time.now+=100;scheduler.refresh();assertEquals(attempts+1,speaker.prepares);
+        speaker.ready=true;scheduler.refresh();assertEquals(1,speaker.calls);speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);
+        speaker.ready=false;time.now+=1000;WarningEvent next=event("next",1,1,WarningEvent.Operation.ANNOUNCE);source.add(next);scheduler.events(source,Collections.singletonList(next));
+        assertEquals(attempts+2,speaker.prepares);assertEquals(1,speaker.calls);
+        speaker.ready=true;time.now+=WarningAudioOwner.RENEW_INTERVAL_MS;scheduler.refresh();assertEquals(2,speaker.calls);
+    }
+    @Test public void unavailablePreparationDoesNotKeepRetryingAfterItsWarningExpires(){
+        speaker.ready=false;WarningEvent authority=event("road",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);scheduler.events(source,Collections.singletonList(authority));
+        time.now+=1000;scheduler.refresh();int attempts=speaker.prepares;
+        time.now=authority.announceUntil+1;scheduler.refresh();time.now+=1000;scheduler.refresh();
+        assertEquals(attempts,speaker.prepares);assertEquals(0,speaker.calls);assertTrue(observed.contains(PlaybackGrant.Outcome.EXPIRED));
+    }
     @Test public void silentOwnerAndFilteredCategoriesNeverInvokeSpeaker(){
         policy.mode=WarningAudioOwner.Mode.SILENT;policy.enabled=false;
         WarningEvent e=event("filtered",0,1,WarningEvent.Operation.ANNOUNCE);source.add(e);scheduler.events(source,Arrays.asList(e));assertEquals(0,speaker.calls);assertTrue(observed.contains(PlaybackGrant.Outcome.USER_FILTERED));
@@ -139,7 +200,7 @@ public class WarningSchedulerTest {
     }
     static class Time implements WarningScheduler.Time {long now=1000;public long now(){return now;}public void execute(Runnable task){task.run();}public void after(Runnable task,long ms){} }
     static class Policy implements WarningScheduler.Policy {boolean enabled=true;WarningAudioOwner.Mode mode=WarningAudioOwner.Mode.VOICE;public boolean active(){return true;}public WarningAudioOwner.Mode mode(){return mode;}public boolean enabled(WarningEvent event){return enabled;}public boolean passed(WarningEvent event,long now){return false;} }
-    static class Speaker implements WarningScheduler.Speaker {boolean ready=true;int calls,cancels;WarningScheduler.Callback callback;PlaybackGrant grant;WarningEvent event;long deadline;public void prepare(String language){}public boolean ready(String language,WarningAudioOwner.Mode mode){return ready||mode==WarningAudioOwner.Mode.SILENT;}public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return mode;}public boolean speak(WarningEvent e,PlaybackGrant g,long until,WarningScheduler.Callback cb){calls++;event=e;grant=g;callback=cb;deadline=until;return true;}public void cancel(PlaybackGrant g){cancels++;} }
+    static class Speaker implements WarningScheduler.Speaker {boolean ready=true;int calls,cancels,prepares;WarningScheduler.Callback callback;PlaybackGrant grant;WarningEvent event;long deadline;public void prepare(String language){prepares++;}public boolean ready(String language,WarningAudioOwner.Mode mode){return ready||mode==WarningAudioOwner.Mode.SILENT;}public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return mode;}public boolean speak(WarningEvent e,PlaybackGrant g,long until,WarningScheduler.Callback cb){calls++;event=e;grant=g;callback=cb;deadline=until;return true;}public void cancel(PlaybackGrant g){cancels++;} }
     class Source implements WarningScheduler.Transport {
         PlaybackGrant pending;boolean delayBegin;CompletableFuture<WarningConnection.Attempt> beginReply;WarningConnection.Attempt delayedReply;
         final WarningJournal journal=new WarningJournal(session);final WarningCapabilities profile=new WarningCapabilities(repeat('a',64),Collections.singleton("native_text"),true);

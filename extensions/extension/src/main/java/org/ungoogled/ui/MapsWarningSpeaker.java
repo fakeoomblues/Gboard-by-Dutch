@@ -32,6 +32,8 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private TextToSpeech tts;
     private AudioFocusRequest focus;
     private volatile boolean initialized,closed;
+    private boolean initializing;
+    private long initializationGeneration;
     private volatile String preparedLanguage="";
     private String requestedLanguage="";
     private Attempt active;
@@ -50,8 +52,12 @@ public final class MapsWarningSpeaker implements AutoCloseable {
         main.post(()-> {
             if(closed)return;
             requestedLanguage=language==null?"":language;
+            if(tts!=null&&!initialized&&!initializing&&active==null){tts.shutdown();tts=null;}
             if(tts==null) {
+                initializing=true;long initialization=++initializationGeneration;
                 tts=new TextToSpeech(app,result->main.post(()-> {
+                    if(closed||initialization!=initializationGeneration)return;
+                    initializing=false;
                     initialized=result==TextToSpeech.SUCCESS;
                     if(initialized && !closed) { tts.setAudioAttributes(attributes);tts.setOnUtteranceProgressListener(progress);selectVoice(requestedLanguage); }
                 }));

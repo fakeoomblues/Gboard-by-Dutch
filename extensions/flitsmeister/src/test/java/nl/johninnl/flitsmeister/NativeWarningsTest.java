@@ -129,6 +129,19 @@ public class NativeWarningsTest {
         for(String key:new String[]{"message","message_origin","language_tag","native_text_key"})assertEquals(key,original.getString(key),last().getString(key));
         assertEquals(original.getLong("announcement_index"),last().getLong("announcement_index"));
     }
+    @Test public void sameIdVoiceOnlyRevisionUpdatesUnsaidTextWithoutNewAuthority(){
+        String[] instruction={"Person on road"};
+        Incident report=new Incident(){@Override public String getIncidentType(){return "VOICE_ONLY";}@Override public String getVoiceOnlyText(){return instruction[0];}};
+        NativeWarnings.regular(null,report,true,false,instruction[0],null);Bundle first=new Bundle(last());
+        instruction[0]="Person on road, keep left";
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(instruction[0],last().getString("message"));
+        assertEquals(first.getLong("announcement_index"),last().getLong("announcement_index"));
+        assertTrue(last().getLong("revision")>first.getLong("revision"));assertNotEquals(first.getString("native_text_key"),last().getString("native_text_key"));
+        assertEquals("und",last().getString("language_tag"));long revision=last().getLong("revision");
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));assertEquals(revision,last().getLong("revision"));
+        assertEquals(1,events.stream().filter(value->"ANNOUNCE".equals(value.getString("operation"))).count());
+    }
     @Test public void stateOnlyEarlyWarningPreservesInstructionAndUnknownLanguageWithoutSpeechAuthority(){
         EarlyWarningReport report=new EarlyWarningReport();
         NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
@@ -372,6 +385,14 @@ public class NativeWarningsTest {
         assertEquals("ICE_ON_THE_ROAD",last().getString("native_subtype"));assertEquals("weather",last().getString("category"));
         NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
         assertEquals(2,events.size());assertTrue(events.stream().allMatch(value->"UPSERT".equals(value.getString("operation"))));
+    }
+    @Test public void changedFormattedNativeInstructionRefreshesEvenWithoutRawFreeText(){
+        String[] instruction={"Watch your speed"};CitsWeather report=new CitsWeather(){@Override public String getSubtitle(Context c){return instruction[0];}};
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));Bundle first=new Bundle(last());
+        instruction[0]="Keep left";NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        assertEquals("Ice on the road. Keep left",last().getString("message"));assertEquals("UPSERT",last().getString("operation"));
+        assertEquals(0,last().getLong("announcement_index"));assertTrue(last().getLong("revision")>first.getLong("revision"));
+        assertNotEquals(first.getString("native_text_key"),last().getString("native_text_key"));
     }
     @Test public void overCapacityNativeSnapshotFaultsInsteadOfClearingAnUnseenAcceptedWarning() throws Exception {
         nl.johninnl.navigation.alerts.WarningEndpoint endpoint=nl.johninnl.navigation.alerts.WarningEndpointFixtures.empty();NativeWarnings.setEndpointForTest(endpoint);NativeWarnings.resetForTest(app,events::add);

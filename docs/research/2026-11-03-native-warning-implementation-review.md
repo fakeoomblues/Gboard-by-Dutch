@@ -79,6 +79,16 @@ Maps, its car bridge and Vela MPEs are byte-identical to the `02a75d5` bundle, a
 
 Two collection/check mistakes remain explicit in the ignored receipts: the initial bundle selector included source/documentation bundles after verification had passed, and a blanket original-library comparison incorrectly included the intentional MapLibre replacement. Runtime-bundle collection was recovered without repeating the test suites; all temporary build/scratch storage is cleaned. The updated manifest references canonical files and exact reuse evidence. No emulator or phone was run for this rebuild. Installed runtime, phone/car and final review gates remain open; this is an unpublished development candidate.
 
+## Focused review correction batch
+
+The subsequent read-only source review confirmed three P2 defects. Same-ID native report updates could retain obsolete text; same-connection resync ignored missed CLEAR/revision records for already accepted unsaid audio; preparation was cached even when a cold guide or unavailable engine could not prepare. The preliminary standalone late-grant/CLEAR concern was suppressed because the real connection's serial worker preserves that ordering.
+
+The product corrections now refresh changed model text/instructions and language while retaining native announcement identity, reconcile snapshot cancellation/revisions before scheduling retained authorities, and retry idle preparation at most once per second while a valid warning or preview waits. CLEAR also removes revision-retry intent, so later state cannot rearm a cancelled authority. Unchanged captured announcement text remains intact. The text fingerprint includes formatted model content, covering context-formatted subtitle changes without new free text. Maps replaces a failed TTS initialization while retaining initializing instances and fencing obsolete initialization callbacks; Vela's native initialization guard is unchanged.
+
+The grouped checkpoint passed 186 FM, 82 Maps and 90 Vela component tests and all three release Java compilations. A final retry-bound refinement then passed all 23 scheduler tests and the three release Java compilations; unchanged passing component evidence is retained. The first checkpoint's new test incorrectly compared serialized grant objects by Java reference; its failure is preserved, and the corrected assertion checks protocol identity. Focused read-only re-review found the three original source findings addressed with no concrete residual defect in those changes.
+
+Compact test/review receipts are retained in ignored `review-fixes`; each terminal build's owned outputs were removed after quiescence with `cleanupRequired=false`. No tooling code, probe, runner, observer or framework was changed, and no emulator or phone session ran. This batch is not yet in the signed `9889c38` candidate; complete verification, a rebuilt candidate and remaining installed/physical acceptance are still required.
+
 ## Earlier delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.

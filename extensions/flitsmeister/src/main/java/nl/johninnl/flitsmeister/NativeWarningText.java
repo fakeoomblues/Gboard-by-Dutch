@@ -85,12 +85,14 @@ final class NativeWarningText {
         return new Text(value,"native_resource",language(context));
     }
     static boolean family(Object object,String name){if(object==null)return false;for(Class<?> c=object.getClass();c!=null;c=c.getSuperclass())if(c.getSimpleName().equals(name))return true;return false;}
-    static String fingerprint(Object model){
+    static String fingerprint(Object model){return fingerprint(model,null);}
+    static String fingerprint(Object model,Context context){
         Object notification=family(model,"EarlyWarningReport")?call(model,"getNotification"):null;if(notification!=null)model=notification;
         String free=text(call(model,"getFreeText"));if(free.isEmpty())free=text(call(model,"getFreetext"));
+        Text formatted=resolve(context,model,"active",null);
         try{
             java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();java.io.DataOutputStream out=new java.io.DataOutputStream(bytes);
-            for(String part:new String[]{free,text(call(model,"getDescription")),text(call(model,"getTitle")),text(call(model,"getVoiceOnlyText"))}){byte[] encoded=part.getBytes(java.nio.charset.StandardCharsets.UTF_8);out.writeInt(encoded.length);out.write(encoded);}
+            for(String part:new String[]{free,text(call(model,"getDescription")),text(call(model,"getTitle")),text(call(model,"getVoiceOnlyText")),formatted.value,formatted.language}){byte[] encoded=part.getBytes(java.nio.charset.StandardCharsets.UTF_8);out.writeInt(encoded.length);out.write(encoded);}
             return hex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes.toByteArray()));
         }catch(java.io.IOException|java.security.NoSuchAlgorithmException error){throw new IllegalStateException(error);}
     }

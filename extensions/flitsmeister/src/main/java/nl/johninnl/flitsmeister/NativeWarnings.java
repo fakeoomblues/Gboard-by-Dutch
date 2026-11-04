@@ -224,13 +224,20 @@ public final class NativeWarnings {
                 Bundle fields=describe(report);String id=identity(report,fields);seen.add(id);
                 Record old=records.get(id);
                 boolean current=old!=null&&!"CLEAR".equals(old.fields.getString("operation"));
+                boolean sameText=current&&java.util.Objects.equals(fields.getString("native_text_key"),old.fields.getString("native_text_key"))
+                        &&java.util.Objects.equals(fields.getString("native_type"),old.fields.getString("native_type"))
+                        &&java.util.Objects.equals(fields.getString("native_subtype"),old.fields.getString("native_subtype"));
                 // A generic UI subtitle may omit the warning kind or format a missing road as
                 // "null". State-only arrivals use the same audited model-aware text as speech.
-                NativeWarningText.Text initial=current?null:NativeWarningText.resolve(app,report,"active",null);
-                String text=current?old.fields.getString("message",""):initial.value;
-                String origin=current?old.fields.getString("message_origin","native_resource"):initial.origin;
+                NativeWarningText.Text initial=sameText?null:NativeWarningText.resolve(app,report,"active",null);
+                if(!sameText){
+                    if(current&&old.fields.containsKey("native_announced_text"))initial=new NativeWarningText.Text(old.fields.getString("native_announced_text"),"native_text",old.fields.getString("native_announced_language_tag","und"));
+                    initial=citsInstruction(report,fields,initial,"active");
+                }
+                String text=sameText?old.fields.getString("message",""):initial.value;
+                String origin=sameText?old.fields.getString("message_origin","native_resource"):initial.origin;
                 String phase=!current?"active":old.fields.getString("phase","active");
-                if(current){
+                if(sameText){
                     fields.putString("language_tag",old.fields.getString("language_tag","und"));
                     copyNativeTextFields(old.fields,fields);
                     for(String key:new String[]{"native_text_key","template_id"})if(old.fields.containsKey(key))fields.putString(key,old.fields.getString(key));
@@ -327,7 +334,7 @@ public final class NativeWarnings {
         else if(isFamily(report,"ServiceVehicle"))sub=value(report,"getType");
         if(type.isEmpty())type=family;
         b.putString("native_type",type);if(!sub.isEmpty())b.putString("native_subtype",sub);
-        b.putString("native_text_key",NativeWarningText.fingerprint(report));
+        b.putString("native_text_key",NativeWarningText.fingerprint(report,app));
         b.putString("category",category(type,sub));b.putInt("priority",priority(type,sub));
         // This is the native early emergency model, distinct from an ordinary road-service incident.
         if(sub.equals("ROAD_SERVICE")&&(isFamily(report,"EarlyWarningReport")||isFamily(report,"EarlyWarningNotification"))){b.putString("category","emergency_vehicle");b.putInt("priority",0);}

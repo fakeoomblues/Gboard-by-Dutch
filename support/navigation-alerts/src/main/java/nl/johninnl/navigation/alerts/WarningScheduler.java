@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /** Shared receiving scheduler. All mutable state belongs to Time's serial dispatcher. */
 public final class WarningScheduler {
     public static final int MAX_PENDING=16,MAX_HANDLED=128,MAX_ATTEMPTS=2;
+    private static final long PREPARE_RETRY_MS=1000;
     public interface Time { long now();void execute(Runnable task);void after(Runnable task,long delay); }
     public interface Policy {
         boolean active();WarningAudioOwner.Mode mode();boolean enabled(WarningEvent event);
@@ -59,9 +60,9 @@ public final class WarningScheduler {
     private WarningConnection.Lease lease;
     private Active active;
     private WarningAudioOwner.Mode preparedMode;
-    private long generation,cursor,nextClaim,nextRenew,ticker,nextResync;
+    private long generation,cursor,nextClaim,nextRenew,ticker,nextResync,nextPrepare;
     private int grantRequests;
-    private boolean coverage,controlBusy,pumping,again,unknownOutput;
+    private boolean coverage,controlBusy,pumping,again,unknownOutput,reconcilingSnapshot;
     private CompletableFuture<String> previewResult;
     private String previewLanguage,previewNonce;
     private long previewDeadline;
@@ -87,6 +88,7 @@ public final class WarningScheduler {
     public void connected(Transport source,WarningConnection.Snapshot snapshot){time.execute(()->connect(source,snapshot));}
     private void connect(Transport source,WarningConnection.Snapshot snapshot) {
         if(transport==source && session.equals(snapshot.providerSession) && snapshot.headSequence<cursor)return;
+        long previousCursor=cursor;
         boolean changed=transport!=source || !session.equals(snapshot.providerSession);
         if(changed) {
             generation++;queue.clear();handled.clear();lease=null;controlBusy=false;nextClaim=0;
@@ -104,7 +106,19 @@ public final class WarningScheduler {
             }
         }
         if(active!=null && active.source.identity().equals(source.identity()))active.source=source;
-        // A snapshot's current-state/record list is display data. Only retained authorities schedule audio.
+        if(!changed){
+            // Resync can replace missed live CLEAR/revision messages. Reconcile existing work
+            // before accepting new authorities; state alone must never create speech.
+            reconcilingSnapshot=true;
+            try{
+                for(WarningEvent event:snapshot.records)if(event.sequence>previousCursor){
+                    if(event.operation==WarningEvent.Operation.CLEAR)clear(event.warningId);
+                    else if(event.operation==WarningEvent.Operation.UPSERT)revise(event);
+                }
+                for(WarningEvent event:snapshot.state)if(event.operation!=WarningEvent.Operation.CLEAR)revise(event);
+            }finally{reconcilingSnapshot=false;}
+        }
+        // Only retained announcement authorities may add new playback work.
         for(WarningConnection.Candidate candidate:snapshot.announcements)enqueue(candidate.authority,candidate.payload,true);
         long token=++ticker;time.after(()->tick(token),100);
         if(recover!=null&&active==null){
@@ -163,7 +177,7 @@ public final class WarningScheduler {
     }
     private void revise(WarningEvent event) {
         for(Pending p:queue.values())if(sameWarning(p.authority,event) && event.revision>=p.payload.revision)p.payload=event;
-        if(active!=null && !active.started && sameWarning(active.pending.authority,event) && event.revision>active.pending.payload.revision) {
+        if(active!=null && !active.started && (!active.cancelled||active.retry) && sameWarning(active.pending.authority,event) && event.revision>active.pending.payload.revision) {
             // Retain the submitted immutable revision when only state/geometry changed.
             // Cancelling identical audio can consume retries or interrupt a late real start.
             if(!active.accepted || !sameSpeech(active.pending.payload,event)){active.pending.payload=event;cancel(active,true);}
@@ -174,13 +188,13 @@ public final class WarningScheduler {
                 &&a.category.equals(b.category)&&a.nativeType.equals(b.nativeType)&&java.util.Objects.equals(a.nativeSubtype,b.nativeSubtype);
     }
     private static boolean sameWarning(WarningEvent a,WarningEvent b){return a.warningId.equals(b.warningId) && a.phase==b.phase && a.announcementIndex==b.announcementIndex;}
-    private void clear(String id){for(Pending p:new ArrayList<>(queue.values()))if(p.authority.warningId.equals(id)){queue.remove(p.key);terminal(p,PlaybackGrant.Outcome.CANCELLED);}if(active!=null && active.pending.authority.warningId.equals(id))cancel(active,false);}
+    private void clear(String id){for(Pending p:new ArrayList<>(queue.values()))if(p.authority.warningId.equals(id)){queue.remove(p.key);terminal(p,PlaybackGrant.Outcome.CANCELLED);}if(active!=null && active.pending.authority.warningId.equals(id)){active.retry=false;cancel(active,false);}}
     private void prune(){
         long now=time.now();handled.entrySet().removeIf(e->e.getValue()<=now);
         for(Pending p:new ArrayList<>(queue.values()))if(now>=p.authority.announceUntil){queue.remove(p.key);terminal(p,PlaybackGrant.Outcome.EXPIRED);}
     }
     private void pump(){
-        if(pumping){again=true;return;}pumping=true;
+        if(pumping||reconcilingSnapshot){again=true;return;}pumping=true;
         try{do{again=false;pumpOne();}while(again);}finally{pumping=false;}
     }
     private void pumpOne(){
@@ -201,7 +215,10 @@ public final class WarningScheduler {
         if(unknownOutput){setStatus("AUDIO_UNCERTAIN");return;}
         if(controlBusy)return;
         String language=next!=null?next.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
-        if(!language.equals(preparedLanguage) || preparedMode!=mode){preparedLanguage=language;preparedMode=mode;speaker.prepare(language,mode);}
+        boolean changedPreparation=!language.equals(preparedLanguage)||preparedMode!=mode;
+        boolean retryPreparation=active==null&&(next!=null||previewRequested)&&mode!=WarningAudioOwner.Mode.SILENT&&!language.isEmpty()&&!language.equals("und")
+                &&now>=nextPrepare&&!speaker.ready(language,mode);
+        if(changedPreparation||retryPreparation){preparedLanguage=language;preparedMode=mode;nextPrepare=now+PREPARE_RETRY_MS;speaker.prepare(language,mode);}
         boolean ready=mode==WarningAudioOwner.Mode.SILENT || active!=null && active.accepted && !active.cancelled ||
                 (next==null?speaker.ready(language,mode):speaker.ready(next.payload,mode));
         if(lease!=null && now>=lease.until){lease=null;if(active!=null)cancel(active,false);}
