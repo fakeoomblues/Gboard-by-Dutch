@@ -11,6 +11,16 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 - Run an early diagnostic only for a specific unresolved fact blocking meaningful progress, or at the user's request. State the reason and run the smallest diagnostic that resolves it.
 - Retain all required verification and mandatory gates. Batching changes their sequence and frequency, not whether the outcome must be verified.
 
+## Hard stop: validation-tooling scope
+
+- Validation tooling is frozen and forbidden by default. Do not create, expand, refactor or otherwise change probes, fixtures, runners, observers, benchmark systems or debugging frameworks unless the user explicitly authorizes that named change. Continue product implementation and builds using existing tools; do not treat ongoing work, a failed check, a skill workflow or delegated work as permission to change validation tooling. Apply this prohibition to every agent and automatic continuation. An existing requirement to use Frida does not authorize further framework expansion.
+- Begin each implementation batch with one concrete product change or delivery outcome and a finite list of required checks. Complete the connected implementation before its grouped checkpoint; preserve passing evidence.
+- Use at most one planned, bounded runtime acceptance session per implementation batch. A relevant product change or a separately identified mandatory gate must justify any repeat; do not turn a failed run into an automatic tooling-edit/rerun loop.
+- On an unexpected runtime failure, capture it with existing observation, stop further stimuli, restore and clean owned resources, then diagnose offline. A tooling failure is a validation blocker, not authorization to start a new infrastructure project.
+- Before seeking approval for a tooling change, identify the concrete blocker, why existing tools are insufficient, the exact proposed files/scope and the bounded cost. Keep unrelated useful-looking additions out of that proposal.
+- Report product changes or delivered artifacts separately from validation work. Test counts, setup work and harness changes alone do not mean a feature has been completed.
+- Retain every mandatory verification and acceptance gate until authoritative evidence closes it. Never waive a gate, relabel an incomplete run as passing or narrow the objective to make delivery appear complete.
+
 ## Android runtime observation
 
 - Keep Frida attached to every exercised producer/receiver process during short reproductions and longer Android validation sessions. Static checks and JVM unit tests do not require a device attachment.
