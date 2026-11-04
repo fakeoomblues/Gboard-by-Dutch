@@ -8,10 +8,10 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--adb',type=Path,required=True);p.add_argument('--agent',type=Path,required=True);p.add_argument('--token',required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--stop-file',type=Path,required=True)
 p.add_argument('--provider',choices=['nl.flitsmeister','com.waze'],default='nl.flitsmeister')
 p.add_argument('--additional-provider',choices=['nl.flitsmeister','com.waze'])
-p.add_argument('--additional-host',choices=['app.johninnl.drivedeck.dev','com.google.android.projection.gearhead'])
+p.add_argument('--additional-host',choices=['app.johninnl.drivedeck.dev','com.google.android.projection.gearhead'],action='append',default=[])
 p.add_argument('--receiver',choices=['org.ungoogled.android.apps.maps','com.google.android.apps.maps','app.vela'],default='org.ungoogled.android.apps.maps')
 p.add_argument('--receiver-cancel-contract',choices=['integrated','ownership'],default='integrated')
-p.add_argument('--duration-seconds',type=int,choices=[240,300],default=240)
+p.add_argument('--duration-seconds',type=int,choices=[240,300,900],default=240)
 a=p.parse_args()
 if not re.fullmatch('[a-f0-9]{32}',a.token):raise SystemExit('Invalid owned tracing token')
 def adb(*args):return subprocess.run([str(a.adb),'-s','emulator-5590',*map(str,args)],check=True,capture_output=True,text=True,timeout=10).stdout.strip()
@@ -20,7 +20,7 @@ forwards=adb('forward','--list').splitlines()
 if not any(row.split()==['emulator-5590','tcp:28101','tcp:27283'] for row in forwards):raise SystemExit('Expected owned loopback forward is absent')
 providers=list(dict.fromkeys([a.provider]+([a.additional_provider] if a.additional_provider else [])))
 a.output.mkdir(parents=True,exist_ok=True);events=queue.Queue();sessions={};ready={};finished=set();gated=set();stopping=False;lost=False;barrier=False
-source=a.agent.read_text();metadata={'frida_version':frida.__version__,'agent_sha256':hashlib.sha256(source.encode()).hexdigest(),'targets':providers+[a.receiver,'com.google.android.tts']+([a.additional_host] if a.additional_host else []),'selected_provider':a.provider,'selected_receiver':a.receiver,'receiver_cancel_contract':a.receiver_cancel_contract,'duration_seconds':a.duration_seconds,'attachments':[],'cleanup_errors':[]}
+source=a.agent.read_text();metadata={'frida_version':frida.__version__,'agent_sha256':hashlib.sha256(source.encode()).hexdigest(),'targets':providers+[a.receiver,'com.google.android.tts']+list(dict.fromkeys(a.additional_host)),'selected_provider':a.provider,'selected_receiver':a.receiver,'receiver_cancel_contract':a.receiver_cancel_contract,'duration_seconds':a.duration_seconds,'attachments':[],'cleanup_errors':[]}
 manager=frida.get_device_manager();device=manager.add_remote_device('127.0.0.1:28101')
 log=(a.output/'events.jsonl').open('w')
 def write(event):
@@ -85,7 +85,7 @@ try:
                 elif name==a.receiver:
                     required=['WarningScheduler!cancel(']
                     if a.receiver=='app.vela':required+=['VelaWarningSpeaker!dispatch(','VelaWarningSpeaker!beforeSpeech(','VelaWarningSpeaker!finish(','VelaWarningSpeaker!utteranceStopped(']
-                elif name==a.additional_host:
+                elif target(name) in a.additional_host:
                     required=['java.lang.Thread!dispatchUncaughtException(', 'android.app.Instrumentation!callActivityOnResume(']
                 if payload.get('package')!=name:fail('Hooks-ready process/package mismatch: '+name)
                 elif any(not any(symbol in hook for hook in installed) for symbol in required):fail('Required selected-process hooks absent: '+name)

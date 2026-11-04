@@ -26,7 +26,8 @@ class SelectedReceiverTest(unittest.TestCase):
             original_queue = queue.Queue
             names = {101: provider, 102: receiver, 103: 'com.google.android.tts'}
             if additional_provider: names[105] = additional_provider
-            if additional_host: names[106] = additional_host
+            hosts = [additional_host] if isinstance(additional_host, str) else additional_host or []
+            for pid, host in enumerate(hosts, 106): names[pid] = host + (':car' if host == 'com.google.android.projection.gearhead' else '')
             other = 'org.ungoogled.android.apps.maps' if receiver == 'app.vela' else 'app.vela'
 
             class Events(original_queue):
@@ -67,7 +68,7 @@ class SelectedReceiverTest(unittest.TestCase):
                         symbols = ['WarningScheduler!cancel(']
                         if receiver == 'app.vela' and fault != 'missing':
                             symbols += ['VelaWarningSpeaker!dispatch(', 'VelaWarningSpeaker!beforeSpeech(', 'VelaWarningSpeaker!finish(', 'VelaWarningSpeaker!utteranceStopped(']
-                    if self.pid == 106 and fault != 'host-missing':
+                    if self.pid >= 106 and fault != 'host-missing':
                         symbols = ['java.lang.Thread!dispatchUncaughtException(', 'android.app.Instrumentation!callActivityOnResume(']
                     package = other if fault == 'package' and self.pid == 102 else names[self.pid]
                     self.callback({'type': 'send', 'payload': {'event': 'hooks-ready', 'package': package, 'installed': symbols}}, None)
@@ -130,12 +131,12 @@ class SelectedReceiverTest(unittest.TestCase):
 
             argv = [str(WATCHER), '--adb', '/fixture/adb', '--agent', str(agent), '--token', 'a' * 32, '--output', str(output), '--stop-file', str(stop), '--provider', provider, '--receiver', receiver, '--receiver-cancel-contract', contract]
             if additional_provider: argv += ['--additional-provider', additional_provider]
-            if additional_host: argv += ['--additional-host', additional_host]
+            for host in hosts: argv += ['--additional-host', host]
             with patch.dict(sys.modules, {'frida': fake_frida}), patch.object(sys, 'argv', argv), patch.object(subprocess, 'run', side_effect=adb), patch.object(queue, 'Queue', return_value=events), patch('signal.signal'):
                 runpy.run_path(str(WATCHER), run_name='__main__')
             record = json.loads((output / 'result.json').read_text())
             log = [json.loads(line) for line in (output / 'events.jsonl').read_text().splitlines()]
-            self.assertEqual([101, 102, 103] + ([105] if additional_provider else []) + ([106] if additional_host else []), attached, 'Only selected sources, receiver and host may be attached')
+            self.assertEqual([101, 102, 103] + ([105] if additional_provider else []) + list(range(106, 106 + len(hosts))), attached, 'Only selected sources, receiver and hosts may be attached')
             if not record['coverage_lost']:
                 self.assertIn(999, resumed, 'Unrelated gated spawns must always resume')
             self.assertFalse(record['cleanup_required'])
@@ -178,7 +179,7 @@ class SelectedReceiverTest(unittest.TestCase):
             with self.subTest(host=host):
                 record, _, _ = self.run_watcher(additional_host=host)
                 self.assertFalse(record['coverage_lost'])
-                self.assertEqual(106, record['ready_pids'][host])
+                self.assertEqual(106, record['ready_pids'][host + (':car' if host == 'com.google.android.projection.gearhead' else '')])
                 record, _, _ = self.run_watcher(additional_host=host, fault='host-missing')
                 self.assertTrue(record['coverage_lost'])
 
@@ -191,6 +192,13 @@ class SelectedReceiverTest(unittest.TestCase):
         record, _, _ = self.run_watcher(fault='requested-stop-crash')
         self.assertTrue(record['coverage_lost'])
         self.assertEqual(102, record['crashes'][0]['pid'])
+
+    def test_both_hosts_can_be_observed_without_loading_two_agents_into_receivers(self):
+        record, _, _ = self.run_watcher(additional_host=['com.google.android.projection.gearhead', 'app.johninnl.drivedeck.dev'])
+        self.assertFalse(record['coverage_lost'])
+        self.assertEqual(106, record['ready_pids']['com.google.android.projection.gearhead:car'])
+        self.assertEqual(107, record['ready_pids']['app.johninnl.drivedeck.dev'])
+        self.assertEqual(1, sum(row['process'] == 'app.vela' for row in record['attachments']))
 
     def test_car_host_exit_and_crash_remain_fail_closed_except_requested_stop(self):
         host = 'com.google.android.projection.gearhead'
