@@ -1,6 +1,7 @@
 package nl.johninnl.navigation.startup;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Application;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -25,7 +26,14 @@ import java.util.concurrent.TimeUnit;
 
 /** Shared Maps/Vela client. All lifecycle state lives on main; synchronous IPC never does. */
 public final class NavigationClient implements Application.ActivityLifecycleCallbacks {
+    public interface Capabilities {
+        /** Runs on the provider's health worker before a cold engine start or running response. */
+        boolean prepare(String source, Bundle status, long generation) throws Exception;
+        /** Runs on main; enqueue cleanup and cancel local output without remote IPC. */
+        void disconnected(long generation);
+    }
     private final Application app;
+    private final Capabilities capabilities;
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Set<Activity> visible = Collections.newSetFromMap(new IdentityHashMap<>());
     private final StartupPolicy recovery = new StartupPolicy();
@@ -39,10 +47,16 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
     private ServiceConnection connection;
 
     public NavigationClient(Context context) {
+        this(context, null);
+    }
+    public NavigationClient(Context context, Capabilities capabilities) {
         app = (Application) context.getApplicationContext();
+        this.capabilities = capabilities;
         app.registerActivityLifecycleCallbacks(this);
     }
     public String state() { return state; }
+    public boolean activeSession(){return active();}
+    public Activity foregroundActivity(){return visible.isEmpty()?null:visible.iterator().next();}
     public String statusLabel(boolean dutch) {
         switch (state) {
             case "running": return dutch ? "motor actief" + (providerMuted ? " · bron gedempt" : "") : "engine running" + (providerMuted ? " · provider muted" : "");
@@ -69,6 +83,7 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
     private boolean active() { return !closed && !provider.isEmpty() && (navigation || !visible.isEmpty()); }
     private void disconnect() {
         generation++; pending = false; binder = null;
+        if (capabilities != null) capabilities.disconnected(generation);
         if (bound && connection != null) try { app.unbindService(connection); } catch (IllegalArgumentException ignored) { }
         bound = false; connection = null;
         for (ThreadPoolExecutor worker : workers.values()) worker.getQueue().clear();
@@ -97,7 +112,7 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
                 main.removeCallbacks(tick); tick.run();
             }
             @Override public void onServiceDisconnected(ComponentName name) {
-                if (token == generation) { binder = null; pending = false; state = "reconnecting"; pollAt = 0; connectionAt = SystemClock.elapsedRealtime(); }
+                if (token == generation) { disconnect(); state = "reconnecting"; pollAt = 0; }
             }
             @Override public void onBindingDied(ComponentName name) {
                 if (token == generation) { disconnect(); state = "reconnecting"; pollAt = 0; }
@@ -109,7 +124,11 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
         connection = candidate;
         state = "connecting";
         try {
-            bound = app.bindService(new Intent().setClassName(selected, StartupProtocol.controlClass(selected)), candidate, Context.BIND_AUTO_CREATE);
+            int flags = Context.BIND_AUTO_CREATE;
+            // Target-R+ clients must explicitly share their existing while-in-use capabilities.
+            // Android still checks both the client's current capability and the provider's grants.
+            if (Build.VERSION.SDK_INT >= 29) flags |= Context.BIND_INCLUDE_CAPABILITIES;
+            bound = app.bindService(new Intent().setClassName(selected, StartupProtocol.controlClass(selected)), candidate, flags);
             if (!bound) { connection = null; state = "unavailable"; pollAt = now + 30000; }
         } catch (RuntimeException error) { connection = null; bound = false; state = "unavailable"; pollAt = now + 30000; }
     }
@@ -124,8 +143,15 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
             Parcel input = Parcel.obtain(), output = Parcel.obtain();
             try {
                 input.writeInterfaceToken(StartupProtocol.DESCRIPTOR);
+                if(capabilities!=null)input.writeInt(1);
                 if (!service.transact(StartupProtocol.STATUS, input, output, 0)) failure = "incompatible";
-                else { output.readException(); response = output.readBundle(PendingIntent.class.getClassLoader()); }
+                else {
+                    output.readException(); response = output.readBundle(PendingIntent.class.getClassLoader());
+                    if (response != null && response.getInt("version") == 1 && capabilities != null
+                            && !capabilities.prepare(selected, response, token)) {
+                        response = null; failure = "reconnecting";
+                    }
+                }
             } catch (SecurityException error) { failure = "not_authorized"; }
             catch (Exception error) { failure = "reconnecting"; }
             finally { input.recycle(); output.recycle(); }
@@ -148,10 +174,24 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
                             || start.getCreatorUid() != app.getPackageManager().getApplicationInfo(selected, 0).uid
                             || (Build.VERSION.SDK_INT >= 31 && !start.isForegroundService())) { state = "incompatible"; return; }
                     recovery.attempted(at);
-                    start.send(); state = "starting"; pollAt = at + 2000;
+                    sendStart(start); state = "starting"; pollAt = at + 2000;
                 } catch (Exception denied) { state = "start_blocked"; }
             });
         });
+    }
+    private void sendStart(PendingIntent start) throws PendingIntent.CanceledException {
+        // Modern senders otherwise transfer only FGS-start permission, which does not make
+        // the background provider eligible for a location FGS with while-in-use grants.
+        // Opt in only through the authenticated foreground-service capability
+        // while an actual receiving Activity is resumed; never grant a background sender
+        // privileges it does not have. No provider Activity is launched here.
+        if (Build.VERSION.SDK_INT >= 34 && !visible.isEmpty()) {
+            ActivityOptions options = ActivityOptions.makeBasic();
+            options.setPendingIntentBackgroundActivityStartMode(Build.VERSION.SDK_INT >= 36
+                ? ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_IF_VISIBLE
+                : ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED);
+            start.send(app, 0, null, null, null, null, options.toBundle());
+        } else start.send();
     }
     private final Runnable tick = new Runnable() {
         @Override public void run() {

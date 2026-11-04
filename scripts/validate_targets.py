@@ -397,13 +397,24 @@ def patch_selections(patches: dict[str, list[str]], requested: list[str] | None)
 def decoded_destination(out: Path, name: str, compact: bool):
     if compact:
         destination = Path(tempfile.mkdtemp(prefix=f"decoded-{name}-", dir=out))
+        failure = None
         try:
             yield destination
-        except BaseException:
-            print(f"Retained failed validation output: {destination}", file=sys.stderr)
+        except BaseException as error:
+            failure = error
             raise
-        else:
-            shutil.rmtree(destination)
+        finally:
+            # Logs live beside the scratch tree; terminal failures keep those diagnostics.
+            try:
+                shutil.rmtree(destination)
+            except OSError as cleanup_error:
+                message = f'Owned validation scratch cleanup required: {destination}: {cleanup_error}'
+                if failure is None:
+                    cleanup_error.cleanupRequired = True
+                    cleanup_error.add_note(message)
+                    raise
+                failure.cleanupRequired = True
+                failure.add_note(message)
     else:
         yield out / f"decoded-{name}"
 

@@ -16,6 +16,12 @@ public final class RoadWarningEngine {
     public static final class Route {
         private final double[] latitudes,longitudes,along;
         private final Map<Coordinate,Projection> targets=new LinkedHashMap<>();
+        private final Map<Coordinate,Projection> passageTargets=new LinkedHashMap<>();
+        private double passageCorridor=-1;
+        private Coordinate warningOwn;
+        private Projection warningOwnProjection;
+        private double warningOwnCorridor=-1;
+        private boolean warningOwnValid;
         public Route(double[] latitudes,double[] longitudes) {
             boolean valid=latitudes!=null&&longitudes!=null&&latitudes.length==longitudes.length&&latitudes.length>=2;
             if(valid)for(int i=0;i<latitudes.length;i++)if(!position(latitudes[i],longitudes[i])){valid=false;break;}
@@ -37,7 +43,7 @@ public final class RoadWarningEngine {
                 double lateral=Math.hypot(x1+fraction*dx,y1+fraction*dy);
                 if(lateral<nearest){nearest=lateral;progress=along[i-1]+fraction*length;}
             }
-            return nearest<=60?new Projection(progress):null;
+            return nearest<=60?new Projection(progress,nearest):null;
         }
         private synchronized Projection target(double latitude,double longitude) {
             Coordinate key=new Coordinate(latitude,longitude);
@@ -47,6 +53,45 @@ public final class RoadWarningEngine {
             // Cache off-route misses too: unchanged reports must not repeatedly scan a long route.
             targets.put(key,result);return result;
         }
+        public Double signedDistance(double ownLatitude,double ownLongitude,double targetLatitude,double targetLongitude){
+            Projection own=project(ownLatitude,ownLongitude),next=target(targetLatitude,targetLongitude);
+            return own==null||next==null?null:next.along-own.along;
+        }
+        /** Strict projection for stale-point passage; nearby parallel legs remain unknown. */
+        public synchronized Double passageDistance(double ownLatitude,double ownLongitude,double targetLatitude,double targetLongitude,double corridor){
+            if(!Double.isFinite(corridor)||corridor<0||corridor>30)return null;corridor=Math.max(12,corridor);
+            Projection own=project(ownLatitude,ownLongitude);if(own==null||own.lateral>corridor||ambiguous(ownLatitude,ownLongitude,own.along,corridor))return null;
+            if(passageCorridor!=corridor){passageTargets.clear();passageCorridor=corridor;}
+            Coordinate key=new Coordinate(targetLatitude,targetLongitude);Projection next;
+            if(passageTargets.containsKey(key))next=passageTargets.get(key);else{next=project(targetLatitude,targetLongitude);if(next!=null&&(next.lateral>corridor||ambiguous(targetLatitude,targetLongitude,next.along,corridor)))next=null;if(passageTargets.size()>=512)passageTargets.remove(passageTargets.keySet().iterator().next());passageTargets.put(key,next);}
+            return next==null?null:next.along-own.along;
+        }
+        /** Classify a native point against this directed route without guessing between nearby legs. */
+        public synchronized nl.johninnl.navigation.alerts.WarningPassage.Relevance warningRelevance(double ownLatitude,double ownLongitude,double targetLatitude,double targetLongitude,double accuracy){
+            nl.johninnl.navigation.alerts.WarningPassage.Relevance unknown=nl.johninnl.navigation.alerts.WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+            if(!Double.isFinite(accuracy)||accuracy<0||accuracy>30||!position(targetLatitude,targetLongitude))return unknown;
+            double corridor=Math.max(12,accuracy);Coordinate ownKey=new Coordinate(ownLatitude,ownLongitude);
+            if(!ownKey.equals(warningOwn)||warningOwnCorridor!=corridor){
+                warningOwn=ownKey;warningOwnCorridor=corridor;warningOwnProjection=project(ownLatitude,ownLongitude);
+                warningOwnValid=warningOwnProjection!=null&&warningOwnProjection.lateral<=corridor&&!ambiguous(ownLatitude,ownLongitude,warningOwnProjection.along,corridor);
+            }
+            if(!warningOwnValid)return unknown;Projection own=warningOwnProjection;
+            Projection next=target(targetLatitude,targetLongitude);
+            if(next==null||next.lateral>Math.max(30,accuracy*2))return nl.johninnl.navigation.alerts.WarningPassage.Relevance.OFF_ROUTE;
+            if(passageCorridor!=corridor){passageTargets.clear();passageCorridor=corridor;}
+            Coordinate key=new Coordinate(targetLatitude,targetLongitude);
+            if(!passageTargets.containsKey(key)){
+                if(passageTargets.size()>=512)passageTargets.remove(passageTargets.keySet().iterator().next());
+                passageTargets.put(key,next.lateral>corridor||ambiguous(targetLatitude,targetLongitude,next.along,corridor)?null:next);
+            }
+            if(passageTargets.get(key)==null)return unknown;
+            if(next.along-own.along < -Math.max(40,accuracy*2))return nl.johninnl.navigation.alerts.WarningPassage.Relevance.PASSED;
+            return nl.johninnl.navigation.alerts.WarningPassage.Relevance.RELEVANT;
+        }
+        private boolean ambiguous(double latitude,double longitude,double progress,double corridor){
+            double scale=6371000*Math.PI/180,cos=Math.cos(Math.toRadians(latitude));
+            for(int i=1;i<latitudes.length;i++){double length=along[i]-along[i-1];if(length<=0)continue;double x1=longitudeDifference(longitudes[i-1],longitude)*scale*cos,y1=(latitudes[i-1]-latitude)*scale,x2=longitudeDifference(longitudes[i],longitude)*scale*cos,y2=(latitudes[i]-latitude)*scale,dx=x2-x1,dy=y2-y1,squared=dx*dx+dy*dy;if(squared<=0)continue;double fraction=Math.max(0,Math.min(1,-(x1*dx+y1*dy)/squared));if(Math.hypot(x1+fraction*dx,y1+fraction*dy)<=corridor&&Math.abs(along[i-1]+fraction*length-progress)>80)return true;}return false;
+        }
     }
     private static final class Coordinate {
         final long latitude,longitude;
@@ -55,8 +100,8 @@ public final class RoadWarningEngine {
         @Override public int hashCode() {return 31*Long.hashCode(latitude)+Long.hashCode(longitude);}
     }
     private static final class Projection {
-        final double along;
-        Projection(double along) {this.along=along;}
+        final double along,lateral;
+        Projection(double along,double lateral) {this.along=along;this.lateral=lateral;}
     }
     public static final class Warning {
         public final String id,kind;
