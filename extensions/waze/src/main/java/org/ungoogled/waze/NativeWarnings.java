@@ -129,8 +129,11 @@ public final class NativeWarnings {
         if(zones.size()>=MAX_WARNINGS)throw new IllegalArgumentException("NATIVE_ZONE_BOUND");
         fields.putString("phase",phase);fields.putString("relevance",phase.equals("exit")?"exit":"zone");fields.putString("announcement_origin",origin);
         if(phase.equals("exit")){
-            boolean nl=WazeWarningModels.language(app).startsWith("nl"),danger=fields.getString("native_type","").equals("DANGER_ZONE");
-            fields.putString("message",danger?(nl?"Einde van de gevarenzone.":"End of danger zone."):(nl?"Einde van de controlezone.":"End of control zone."));
+            boolean nl=WazeWarningModels.language(app).startsWith("nl");String type=fields.getString("native_type","");
+            String message=type.equals("DANGER_ZONE")?(nl?"Einde van de gevarenzone.":"End of danger zone."):
+                type.equals("CAMERA")?(nl?"Einde van de controlezone.":"End of control zone."):
+                type.equals("GUARDIAN")?(nl?"Einde van de zone met ongevalshistorie.":"End of crash-history zone."):(nl?"Einde van de zone.":"End of zone.");
+            fields.putString("message",message);
             fields.putString("message_origin","template");fields.putString("template_id","waze_native_zone_exit_v1");fields.putString("language_tag",nl?"nl":"en");
         }
         put(fields,true,SystemClock.elapsedRealtime(),"native_zone");zones.put(controller,new ZoneDecision(id,phase));

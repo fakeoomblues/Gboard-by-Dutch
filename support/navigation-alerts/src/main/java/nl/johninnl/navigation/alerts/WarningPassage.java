@@ -5,6 +5,13 @@ import android.location.Location;
 /** Conservative delayed point check. Never infer passage for moving/nonspatial native warnings. */
 public final class WarningPassage {
     private WarningPassage(){}
+    public enum Relevance { RELEVANT, PASSED, OFF_ROUTE, CONTEXT_UNVERIFIED }
+    /** Route checks need a real recent fix; asking for status cannot refresh it. */
+    public static boolean freshFix(Location fix,long now){
+        if(fix==null||!fix.hasAccuracy()||!Float.isFinite(fix.getAccuracy())||fix.getAccuracy()<0||fix.getAccuracy()>30
+                ||!Double.isFinite(fix.getLatitude())||Math.abs(fix.getLatitude())>90||!Double.isFinite(fix.getLongitude())||Math.abs(fix.getLongitude())>180)return false;
+        long at=fix.getElapsedRealtimeNanos()/1000000;return at>0&&at<=now&&now-at<=5000;
+    }
     public static boolean passed(WarningEvent event,Location fix,long now){
         if(!event.relevance.equals("point_ahead") || event.latitude==null || event.longitude==null || fix==null
                 || !fix.hasBearing() || !fix.hasSpeed() || fix.getSpeed()<1.5 || !fix.hasAccuracy() || fix.getAccuracy()>30)return false;

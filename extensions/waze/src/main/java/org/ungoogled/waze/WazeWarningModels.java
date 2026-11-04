@@ -183,15 +183,21 @@ final class WazeWarningModels {
         else if(type.equals("BAD_WEATHER"))b.putString("category","weather");
         else if(type.equals("CLOSURE")||type.equals("BLOCKED_LANE"))b.putString("category","closure");
         else if(type.equals("TRAFFIC_JAM")||type.equals("TRAFFIC_INFO")){b.putString("category","traffic");b.putInt("priority",2);}
-        else if(type.equals("PERMANENT_HAZARD")||type.equals("SPEED_LIMIT_DECREASE")){b.putString("category","road_feature");b.putInt("priority",2);}
-        else if(type.equals("CHITCHAT")||type.equals("PARKING")||type.equals("PARKED")||type.equals("GUARDIAN")||type.equals("ECO")||type.equals("REROUTE")||type.equals("SOS")||type.equals("PERSONAL_SAFETY")){
+        else if(type.equals("PERMANENT_HAZARD")||type.equals("SPEED_LIMIT_DECREASE")||type.equals("GUARDIAN")){b.putString("category","road_feature");b.putInt("priority",2);}
+        else if(type.equals("SOS")){b.putString("category","road_danger");b.putInt("priority",2);b.putString("native_scope","roadside_assistance");}
+        else if(type.equals("PERSONAL_SAFETY")){b.putString("category","road_danger");b.putString("native_scope","reported_safety_incident");}
+        else if(type.equals("OTHER")||type.equals("DYNAMIC")||type.equals("UNRECOGNIZED")){b.putString("category","other_native");b.putInt("priority",2);b.putString("native_scope","native_text_fallback");}
+        else if(type.equals("CHITCHAT")||type.equals("PARKING")||type.equals("PARKED")||type.equals("ECO")||type.equals("REROUTE")){
             b.putString("category","display_only");b.putString("capture_exclusion","social_parking_or_personal_route");b.putString("message","");b.remove("native_title");b.remove("native_description");
-            if(type.equals("SOS")||type.equals("PERSONAL_SAFETY"))b.putString("capture_diagnostic","PERSONAL_ROAD_SCOPE_UNPROVEN");
         }
-        if(b.getBoolean("source_preemptive")&&(type.equals("HAZARD")||type.equals("BLOCKED_LANE")||type.equals("SUDDEN_SLOWDOWN")||type.equals("BAD_WEATHER")||type.equals("ACCIDENT")))b.putInt("priority",0);
+        // Native preemption orders Waze's selected cards. Preserve it without treating
+        // every weather/accident card as authority to interrupt Maps/Vela guidance.
+        b.putString("priority_origin","waze_semantic_family_v1");
         if(present(descriptor,"ZoneAlertData")){
             Object zone=call(descriptor,"getZoneAlertData");String state=string(call(zone,"getState"));b.putString("native_zone_state",state);b.putInt("native_zone_percent",number(zone,"ZonePercent"));
-            b.putString("category",type.equals("DANGER_ZONE")?"road_danger":"average_speed_zone");b.putString("relevance","zone");b.putString("phase",state.equals("BeforeZone")?"approach":state.equals("InZone")?"enter":state.equals("LeftZone")?"exit":"notice");
+            if(type.equals("CAMERA"))b.putString("category","enforcement_zone");
+            b.putString("relevance","zone");b.putString("phase",state.equals("BeforeZone")?"approach":state.equals("InZone")?"enter":state.equals("LeftZone")?"exit":"notice");
+            if(state.equals("LeftZone"))b.putInt("priority",2);
         }
         return b;
     }

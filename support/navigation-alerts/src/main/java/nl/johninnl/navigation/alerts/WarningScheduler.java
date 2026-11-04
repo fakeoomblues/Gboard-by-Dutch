@@ -23,6 +23,7 @@ public final class WarningScheduler {
         boolean active();WarningAudioOwner.Mode mode();boolean enabled(WarningEvent event);
         /** Only positive, fresh evidence of passage; unknown GPS/relationship is not passage. */
         boolean passed(WarningEvent event,long now);
+        default WarningPassage.Relevance relevance(WarningEvent event,long now){return passed(event,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;}
     }
     public interface Speaker {
         void prepare(String language);boolean ready(String language,WarningAudioOwner.Mode mode);
@@ -204,15 +205,23 @@ public final class WarningScheduler {
         if(transport==null)return;
         if(!policy.active()){endPreview("PAUSED");if(active!=null)cancel(active,false);setStatus("PAUSED");return;}
         WarningAudioOwner.Mode mode=speaker.effective(policy.mode());
-        Pending next=queue.values().stream().min(ORDER).orElse(null);
+        // Missing spatial context must not head-of-line block a nonspatial emergency.
+        Pending next=null;boolean contextHeld=false;
+        for(Pending candidate:queue.values()){
+            if(mode!=WarningAudioOwner.Mode.SILENT&&policy.enabled(candidate.payload)&&relevance(candidate.payload,now)==WarningPassage.Relevance.CONTEXT_UNVERIFIED){contextHeld=true;continue;}
+            if(next==null||ORDER.compare(candidate,next)<0)next=candidate;
+        }
         if(active!=null) {
             if(active.generation!=generation || !session.equals(active.grant.providerSession) || mode!=active.grant.mode
                     || lease==null || now>=lease.until || !Boolean.TRUE.equals(active.pending.payload.fields().get("is_preview"))&&!policy.enabled(active.pending.payload)
                     || !active.started && now>=active.pending.authority.announceUntil)cancel(active,false);
-            else if(next!=null && next.authority.priority==WarningEvent.Priority.P0 && active.pending.authority.priority!=WarningEvent.Priority.P0)cancel(active,true);
+            else if(!active.started&&relevance(active.pending.payload,now)!=WarningPassage.Relevance.RELEVANT)cancel(active,relevance(active.pending.payload,now)==WarningPassage.Relevance.CONTEXT_UNVERIFIED);
+            else if(next!=null && next.authority.priority==WarningEvent.Priority.P0 && active.pending.authority.priority!=WarningEvent.Priority.P0
+                    &&relevance(next.payload,now)==WarningPassage.Relevance.RELEVANT)cancel(active,true);
         }
         if(!coverage){endPreview("COVERAGE_INCOMPLETE");setStatus("COVERAGE_INCOMPLETE");return;}
         if(unknownOutput){setStatus("AUDIO_UNCERTAIN");return;}
+        if(next==null&&contextHeld&&active==null){setStatus("CONTEXT_UNVERIFIED");return;}
         if(controlBusy)return;
         String language=next!=null?next.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
         boolean changedPreparation=!language.equals(preparedLanguage)||preparedMode!=mode;
@@ -243,12 +252,17 @@ public final class WarningScheduler {
                 enqueue(candidate.authority,candidate.payload,false);pump();
             }));return;
         }
-        if(next==null || active!=null || grantRequests>0 || now<next.retryAt)return;
+        if(next==null){if(contextHeld&&active==null)setStatus("CONTEXT_UNVERIFIED");return;}
+        if(active!=null || grantRequests>0 || now<next.retryAt)return;
         boolean example=Boolean.TRUE.equals(next.payload.fields().get("is_preview"));
         PlaybackGrant.Outcome decision=!example&&!policy.enabled(next.payload)?PlaybackGrant.Outcome.USER_FILTERED:
                 mode==WarningAudioOwner.Mode.SILENT?PlaybackGrant.Outcome.USER_MUTED:
-                (next.replay || now-next.authority.issuedAt>1000) && policy.passed(next.payload,now)?PlaybackGrant.Outcome.REJECTED:null;
-        if(decision!=null){queue.remove(next.key);terminal(next,decision);recordDecision(next,decision);return;}
+                relevance(next.payload,now)==WarningPassage.Relevance.PASSED||relevance(next.payload,now)==WarningPassage.Relevance.OFF_ROUTE?PlaybackGrant.Outcome.REJECTED:null;
+        if(decision!=null){
+            queue.remove(next.key);terminal(next,decision);
+            if(decision==PlaybackGrant.Outcome.REJECTED){WarningPassage.Relevance relevant=relevance(next.payload,now);WarningDiagnostics.event(next.authority,"RELEVANCE_"+relevant.name(),now);setStatus(relevant.name());}
+            recordDecision(next,decision);return;
+        }
         if(!ready){setStatus("SPEAKER_UNAVAILABLE");return;}
         begin(next);
     }
@@ -269,6 +283,8 @@ public final class WarningScheduler {
                 if(superseded){attempt.retry=true;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                 if(version!=generation || source!=transport || lease==null || !lease.token.equals(permission.token) || lease.epoch!=permission.epoch
                         || !policy.active() || !Boolean.TRUE.equals(p.payload.fields().get("is_preview"))&&!policy.enabled(p.payload) || speaker.effective(policy.mode())!=reply.grant.mode || time.now()>=p.authority.announceUntil){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
+                WarningPassage.Relevance relevant=relevance(p.payload,time.now());
+                if(relevant!=WarningPassage.Relevance.RELEVANT){attempt.retry=relevant==WarningPassage.Relevance.CONTEXT_UNVERIFIED;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                 unsubmitted.remove(nonce);unknownReplies.remove(nonce);p.attempts++;
                 boolean accepted=speaker.speak(p.payload,reply.grant,p.authority.announceUntil,new Callback(){
                     public void started(PlaybackGrant grant){time.execute(()->onStarted(attempt,grant));}
@@ -310,7 +326,7 @@ public final class WarningScheduler {
             if(active==attempt && (error!=null || !"OK".equals(code)))cancel(attempt,false);
         }));
         if(attempt.cancelled || attempt.generation!=generation || transport==null || lease==null || lease.epoch!=grant.ownerEpoch
-                || time.now()>=attempt.pending.authority.announceUntil){cancel(attempt,false);return;}
+                || time.now()>=attempt.pending.authority.announceUntil||relevance(attempt.pending.payload,time.now())!=WarningPassage.Relevance.RELEVANT){cancel(attempt,false);return;}
         setStatus("STARTED");
     }
     private void finish(Active attempt,PlaybackGrant.Outcome outcome,boolean quiet){
@@ -349,6 +365,10 @@ public final class WarningScheduler {
         source.decide(lease,p.payload,UUID.randomUUID().toString(),decision).whenComplete((reply,error)->time.execute(()-> {
             if(version!=generation || source!=transport)return;controlBusy=false;if(error!=null)setStatus("DELIVERY_INTERRUPTED");pump();
         }));
+    }
+    private WarningPassage.Relevance relevance(WarningEvent event,long now){
+        if(Boolean.TRUE.equals(event.fields().get("is_preview"))||!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
+        return policy.relevance(event,now);
     }
     private void terminal(Pending p,PlaybackGrant.Outcome outcome){remember(p);observe(p.authority,outcome);}
     private void observe(WarningEvent event,PlaybackGrant.Outcome outcome){WarningDiagnostics.event(event,"SCHEDULER_"+outcome.name(),time.now());observer.outcome(event,outcome);}

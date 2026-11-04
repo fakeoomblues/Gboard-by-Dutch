@@ -61,7 +61,7 @@ public final class WarningPreferences {
         // Waze's emergency-vehicle hazard is a point report, not a moving responder.
         if(e.nativeType.equals("HAZARD")&&(e.nativeSubtype.equals("HAZARD_TYPE_EMERGENCY_VEHICLE")||e.nativeSubtype.equals("HAZARD_SUB_TYPE_EMERGENCY_VEHICLE")))return ROAD_DANGER;
         if(e.category.equals("emergency_vehicle") || e.relevance.equals("moving_emergency"))return EMERGENCY;
-        if(e.category.equals("average_speed_zone")||e.nativeType.equals("AVG_SPEED_CHECK")||e.nativeType.equals("AVERAGE_SPEED_CAMERA"))return ZONE;
+        if(e.category.equals("average_speed_zone")||e.category.equals("enforcement_zone")||e.nativeType.equals("AVG_SPEED_CHECK")||e.nativeType.equals("AVERAGE_SPEED_CAMERA"))return ZONE;
         if(e.nativeSubtype.equals("POLICE_TYPE_MOBILE_CAMERA"))return CAMERA;
         if(e.nativeType.equals("POLICE"))return POLICE;
         if(e.category.equals("police_control")||e.nativeType.equals("POLICEHOTSPOT") || e.nativeType.equals("POLICE_HOTSPOT") || e.nativeSubtype.equals("POLICE") || e.nativeSubtype.startsWith("POLICE_"))return POLICE;

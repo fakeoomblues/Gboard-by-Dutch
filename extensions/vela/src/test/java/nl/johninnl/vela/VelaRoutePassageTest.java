@@ -20,6 +20,8 @@ public class VelaRoutePassageTest {
     public static class Flow {public State value=new State();public Object getValue(){return value;}}
     public static class State {public boolean a=true,b=false,c=false;public Object d;}
     public static class ShortRoute {public List<Object> getPolyline(){return Collections.emptyList();}}
+    public static class Point {private final double latitude,longitude;Point(double latitude,double longitude){this.latitude=latitude;this.longitude=longitude;}public double getLat(){return latitude;}public double getLng(){return longitude;}}
+    public static class DirectedRoute {public List<Point> getPolyline(){return Arrays.asList(new Point(0,0),new Point(.01,0));}}
     private WarningScheduler.Policy policy;
     @Before public void setup()throws Exception{
         TelemetryRuntime.resetForTest();TelemetryRuntime.init(RuntimeEnvironment.getApplication(),()->{});
@@ -36,4 +38,17 @@ public class VelaRoutePassageTest {
     @Test public void activeRouteWithShortGeometryLeavesPassageUnknown(){Session session=new Session();session.f.value.d=new ShortRoute();TelemetryRuntime.bindNavSession(session);assertFalse(policy.passed(event(),SystemClock.elapsedRealtime()));}
     @Test public void activeRouteWithUnreadableGeometryLeavesPassageUnknown(){Session session=new Session();session.f.value.d=new Object();TelemetryRuntime.bindNavSession(session);assertFalse(policy.passed(event(),SystemClock.elapsedRealtime()));}
     @Test public void unreadableSessionCannotProveNoActiveRoute(){TelemetryRuntime.bindNavSession(new Object());assertFalse(policy.passed(event(),SystemClock.elapsedRealtime()));}
+    @Test public void schedulerPolicyHoldsUnknownRouteContextButExemptsNonspatialWarnings(){
+        TelemetryRuntime.bindNavSession(new Session());assertEquals(WarningPassage.Relevance.CONTEXT_UNVERIFIED,policy.relevance(event(),SystemClock.elapsedRealtime()));
+        Bundle b=WarningCodec.encode(event());b.putString("relevance","moving_emergency");b.putLong("announce_until_elapsed_ms",b.getLong("issued_elapsed_ms")+5000);assertEquals(WarningPassage.Relevance.RELEVANT,policy.relevance(WarningCodec.decode(b,SystemClock.elapsedRealtime()),SystemClock.elapsedRealtime()));
+    }
+    @Test public void installedPolicyClassifiesFreshRoutePointsAndCannotRefreshAStaleFix(){
+        Session session=new Session();session.f.value.d=new DirectedRoute();TelemetryRuntime.bindNavSession(session);
+        assertEquals(WarningPassage.Relevance.PASSED,policy.relevance(event(),SystemClock.elapsedRealtime()));
+        Bundle b=WarningCodec.encode(event());b.putDouble("latitude",.002);WarningEvent ahead=WarningCodec.decode(b,SystemClock.elapsedRealtime());
+        assertEquals(WarningPassage.Relevance.RELEVANT,policy.relevance(ahead,SystemClock.elapsedRealtime()));
+        b.putDouble("longitude",.001);assertEquals(WarningPassage.Relevance.OFF_ROUTE,policy.relevance(WarningCodec.decode(b,SystemClock.elapsedRealtime()),SystemClock.elapsedRealtime()));
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(6));
+        assertEquals(WarningPassage.Relevance.CONTEXT_UNVERIFIED,policy.relevance(ahead,SystemClock.elapsedRealtime()));
+    }
 }

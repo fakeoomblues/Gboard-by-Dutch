@@ -16,6 +16,9 @@ public final class WarningStatus {
             case "READY":return nl?"Audio gereed":"Audio ready";
             case "STARTED":return nl?"Waarschuwing wordt afgespeeld":"Warning playing";
             case "QUEUED":return nl?"Waarschuwing wacht op audio":"Warning waiting for audio";
+            case "CONTEXT_UNVERIFIED":return nl?"Wacht op de routepositie voor deze waarschuwing":"Waiting to verify this warning on your route";
+            case "OFF_ROUTE":return nl?"Waarschuwing ligt buiten uw route":"Warning is outside your route";
+            case "PASSED":return nl?"Waarschuwingspunt al gepasseerd":"Warning point already passed";
             case "COMPLETED":return nl?"Waarschuwing afgespeeld":"Warning playback completed";
             case "USER_MUTED":return nl?"Waarschuwingsaudio gedempt":"Warning audio muted";
             case "COVERAGE_INCOMPLETE":return nl?"Bronwaarschuwingen nog onvolledig":"Provider warning coverage incomplete";

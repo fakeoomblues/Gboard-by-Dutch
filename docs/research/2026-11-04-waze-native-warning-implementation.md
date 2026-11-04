@@ -66,8 +66,32 @@ The local `checkpoint-20261104-c` and `checkpoint-20261104-d` receipts retain ex
 ## Remaining gates
 
 - **Coverage is deliberately incomplete:** Waze's profile still advertises `complete=false`. Structural bindings and the successful APK rebuild do not authorize an exclusive first-class voice claim.
-- **Native semantics:** finish the remaining-family classification, urgency mapping and per-family availability account. SOS/personal-safety road scope remains unproven. Optional route/ETA/lane-guidance features remain outside this batch under the user's clarified scope.
-- **Receiving relevance:** audit fresh point warnings against the receiver's active directed route, including ambiguous/missing context; the reused passage checks alone do not prove this broader gate.
+- **Native semantics:** retain a per-family availability account and prove the bound native decisions at runtime. The artifact-backed roadside/safety/crash-history classification and conservative urgency mapping are described below. Optional route/ETA/lane-guidance features remain outside this batch under the user's clarified scope.
+- **Receiving relevance:** the scheduler now checks fresh point warnings against the receiver's active directed route, including ambiguous/missing context and a changed context at grant reply. Runtime acceptance of those checks remains open.
 - **Overlap:** native/OSM events retain separate provenance and explicitly unresolved equivalence when directed-road evidence is absent. No radius-only equivalence or successful duplicate suppression is claimed.
 - **Runtime:** establish actual UI-free controller production, warning/message correlation, silent source output, receiver speech outcomes, source switches and phone/car acceptance for the required pairings. The existing observer hardcodes Flitsmeister and cannot cover Waze; explicit approval for the named observer adaptation is pending under the tooling freeze. No observer or probe was changed in these implementation batches.
 - **Delivery:** finish review and acceptance before marking coverage complete or promoting a stable release. The retained signed candidate is an engineering acceptance input, not a published release.
+
+## Native family policy and receiving route checks
+
+REA resource decoding on the supplied original base (`ev_ae7a32e7d3ffe7dbc30f55f960da5f719a6942182a228c5a86fd58fa5aed005e`) resolves the formerly unproven family names. `ALERT_TITLE_PERSONAL_SAFETY` is a safety-incident warning, the five SOS titles describe roadside assistance, and `ALERT_TITLE_GUARDIAN_PS_PS` describes crash history. The complete retained resource evidence includes the target digest and decoding limits: smali was skipped, one markup entry was omitted, and the default string table is limited to the first 2,000 of 4,364 entries. These specific resource entries were present; absence elsewhere in that bounded table is not evidence of absence in the APK.
+
+| Pinned native types | Adapter policy |
+| --- | --- |
+| POLICE, CAMERA | Native enforcement subtype/text, P1 |
+| ACCIDENT, HAZARD, CONSTRUCTION, CLOSURE, BLOCKED_LANE, BAD_WEATHER, ANIMAL, SUDDEN_SLOWDOWN | Native road-warning subtype/text, P1 |
+| TRAFFIC_JAM, TRAFFIC_INFO | Native traffic subtype/text, P2 |
+| PERMANENT_HAZARD, SPEED_LIMIT_DECREASE, GUARDIAN | Native road-feature or crash-history text, P2 |
+| PERSONAL_SAFETY | Native reported safety-incident text, P1; no route action exported |
+| SOS | Native roadside-assistance subtype/text, P2 |
+| DANGER_ZONE and descriptors with ZoneAlertData | Native selected zone phase and message; exit template retains explicit template provenance |
+| OTHER, DYNAMIC, UNRECOGNIZED | Native-text fallback with original type/raw subtype, P2; no inferred urgency |
+| CHITCHAT, PARKING, PARKED, ECO, REROUTE | Social, personal parking or separate source-route content excluded from road-warning speech |
+
+All audible rows still require native validity, absence of silent activation, current identity correlation and an actual native sound/selection decision. The native priority/preemptive values remain metadata. Waze's card-preemption flag alone does not authorize P0 speech or interruption of receiving navigation guidance. Unknown types without usable native content remain unsupported rather than receiving invented text.
+
+The shared scheduler applies receiver relevance to fresh as well as replayed `point_ahead` events. Both receivers use their original directed route geometry and a genuinely fresh, accurate location fix. Clearly passed/off-route points are rejected; parallel/ambiguous legs, unavailable geometry or stale/missing fixes yield CONTEXT_UNVERIFIED and wait only within the original native announcement window. Nonspatial native warnings and explicit speech previews are exempt from point geometry. A held point cannot block a nonspatial emergency behind it in the queue. Context is checked again after the asynchronous playback grant and before speaker submission; a route change also cancels accepted but unstarted output. These checks neither start Waze navigation nor create later announcement authority.
+
+The resulting four-app engineering candidate uses signed MPP SHA-256 `fa431fd1d01352ebfaeb4b5510250c736f893c940bea74bf0fad9c8057afe4fd`. Actual-input patching applied 21 Waze, nine FM, four Maps and one Vela patch with zero failures. Every APK passed SDK signature and alignment checks. Exact input/output hashes, patch reports and cleanup receipts are retained under `.analysis/waze-native-warnings/checkpoint-20261104-g/`; this is the pending acceptance input, not a published release. Passing evidence from the grouped checkpoint is retained, with only affected failed tests rerun after correcting their test data. Runtime acceptance and the incomplete Waze coverage flag remain unchanged.
+
+The cached native startup trace also shows `com.waze.ls` launching `com.waze.ci` case 15 in its Application-owned coroutine scope; that case resolves `alerters.b.o` and calls its suspending `f()` collector. The collector filters zone descriptors using native validity before producing entry/exit holders. This supports reusing the original headless initialization path rather than creating another zone subscription. It is static evidence, and does not prove that the collector is running in an exercised process.

@@ -24,6 +24,38 @@ public class WarningSchedulerTest {
         speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);assertNull(source.pending);assertTrue(observed.contains(PlaybackGrant.Outcome.COMPLETED));
         scheduler.events(source,Arrays.asList(e));assertEquals(1,speaker.calls);
     }
+    private WarningEvent point(String id,int priority){Bundle b=WarningCodec.encode(event(id,priority,1,WarningEvent.Operation.ANNOUNCE));b.putString("relevance","point_ahead");return WarningCodec.decode(b,time.now);}
+    @Test public void freshPassedPointIsRejectedWithoutWaitingForReplayOrOneSecond(){
+        WarningEvent e=point("passed",1);policy.context.put(e.warningId,WarningPassage.Relevance.PASSED);source.add(e);scheduler.events(source,Collections.singletonList(e));
+        assertEquals(e.issuedAt,time.now);assertEquals(0,speaker.calls);assertTrue(observed.contains(PlaybackGrant.Outcome.REJECTED));
+    }
+    @Test public void freshOffRouteUrgentPointDoesNotInterruptAnExistingWarning(){
+        WarningEvent ordinary=event("ordinary",1,1,WarningEvent.Operation.ANNOUNCE);source.add(ordinary);scheduler.events(source,Collections.singletonList(ordinary));speaker.callback.started(speaker.grant);
+        WarningEvent wrongRoad=point("other-road",0);policy.context.put(wrongRoad.warningId,WarningPassage.Relevance.OFF_ROUTE);source.add(wrongRoad);scheduler.events(source,Collections.singletonList(wrongRoad));
+        assertEquals(0,speaker.cancels);assertEquals(1,speaker.calls);
+        speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);assertEquals(1,speaker.calls);assertTrue(observed.contains(PlaybackGrant.Outcome.REJECTED));
+    }
+    @Test public void unverifiedPointWaitsButCannotBlockANonspatialEmergencyOrExtendItsDeadline(){
+        WarningEvent e=point("unknown-road",0);policy.context.put(e.warningId,WarningPassage.Relevance.CONTEXT_UNVERIFIED);source.add(e);scheduler.events(source,Collections.singletonList(e));
+        assertEquals(0,speaker.calls);assertEquals("CONTEXT_UNVERIFIED",scheduler.status());
+        WarningEvent emergency=event("nonspatial",0,1,WarningEvent.Operation.ANNOUNCE);policy.context.put(emergency.warningId,WarningPassage.Relevance.CONTEXT_UNVERIFIED);source.add(emergency);scheduler.events(source,Collections.singletonList(emergency));
+        assertEquals(1,speaker.calls);assertEquals(emergency.warningId,speaker.event.warningId);
+        speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.COMPLETED,true);time.now+=500;policy.context.remove(e.warningId);scheduler.refresh();
+        assertEquals(2,speaker.calls);assertEquals(e.warningId,speaker.event.warningId);assertEquals(e.announceUntil,speaker.deadline);
+    }
+    @Test public void missingContextAtGrantReplyNeverReachesTheSpeakerAndCanRecoverWithinTheOriginalWindow(){
+        source.delayBegin=true;WarningEvent e=point("grant-race",1);source.add(e);scheduler.events(source,Collections.singletonList(e));
+        policy.context.put(e.warningId,WarningPassage.Relevance.CONTEXT_UNVERIFIED);source.beginReply.complete(source.delayedReply);
+        assertEquals(0,speaker.calls);assertNull(source.pending);
+        source.delayBegin=false;time.now+=250;policy.context.remove(e.warningId);scheduler.refresh();
+        assertEquals(1,speaker.calls);assertEquals(e.announceUntil,speaker.deadline);
+    }
+    @Test public void routeChangeCancelsUnstartedOutputAndExpiryNeverCreatesNewAuthority(){
+        WarningEvent e=point("route-change",1);source.add(e);scheduler.events(source,Collections.singletonList(e));
+        policy.context.put(e.warningId,WarningPassage.Relevance.CONTEXT_UNVERIFIED);scheduler.refresh();assertEquals(1,speaker.cancels);
+        speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.NOT_STARTED,true);time.now=e.announceUntil+1;scheduler.refresh();
+        policy.context.remove(e.warningId);scheduler.refresh();assertEquals(1,speaker.calls);assertTrue(observed.contains(PlaybackGrant.Outcome.EXPIRED));
+    }
     @Test public void p0WaitsForPositiveCancellationAndItsAckBeforeReplacingLowerPriorityAudio(){
         WarningEvent ordinary=event("camera",1,1,WarningEvent.Operation.ANNOUNCE);source.add(ordinary);scheduler.events(source,Arrays.asList(ordinary));speaker.callback.started(speaker.grant);
         WarningScheduler.Callback old=speaker.callback;PlaybackGrant oldGrant=speaker.grant;
@@ -199,7 +231,7 @@ public class WarningSchedulerTest {
         Bundle b=new Bundle();b.putInt("protocol_version",1);b.putString("provider_session",session);b.putLong("sequence",++sequence);b.putString("operation",operation.name());b.putString("warning_id",id);b.putLong("revision",revision);b.putLong("announcement_index",1);b.putString("phase","notice");b.putString("native_type","Incident");b.putString("category","road_danger");b.putInt("priority",priority);b.putString("message","Native "+id+" revision "+revision);b.putString("language_tag","en");b.putString("message_origin","native_text");b.putString("relevance","notice");b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",time.now);b.putLong("issued_elapsed_ms",time.now);b.putLong("state_until_elapsed_ms",time.now+30000);if(operation==WarningEvent.Operation.ANNOUNCE)b.putLong("announce_until_elapsed_ms",time.now+(priority==0?5000:10000));return WarningCodec.decode(b,time.now);
     }
     static class Time implements WarningScheduler.Time {long now=1000;public long now(){return now;}public void execute(Runnable task){task.run();}public void after(Runnable task,long ms){} }
-    static class Policy implements WarningScheduler.Policy {boolean enabled=true;WarningAudioOwner.Mode mode=WarningAudioOwner.Mode.VOICE;public boolean active(){return true;}public WarningAudioOwner.Mode mode(){return mode;}public boolean enabled(WarningEvent event){return enabled;}public boolean passed(WarningEvent event,long now){return false;} }
+    static class Policy implements WarningScheduler.Policy {boolean enabled=true;final Map<String,WarningPassage.Relevance> context=new HashMap<>();WarningAudioOwner.Mode mode=WarningAudioOwner.Mode.VOICE;public boolean active(){return true;}public WarningAudioOwner.Mode mode(){return mode;}public boolean enabled(WarningEvent event){return enabled;}public boolean passed(WarningEvent event,long now){return false;}public WarningPassage.Relevance relevance(WarningEvent event,long now){return context.getOrDefault(event.warningId,WarningPassage.Relevance.RELEVANT);} }
     static class Speaker implements WarningScheduler.Speaker {boolean ready=true;int calls,cancels,prepares;WarningScheduler.Callback callback;PlaybackGrant grant;WarningEvent event;long deadline;public void prepare(String language){prepares++;}public boolean ready(String language,WarningAudioOwner.Mode mode){return ready||mode==WarningAudioOwner.Mode.SILENT;}public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return mode;}public boolean speak(WarningEvent e,PlaybackGrant g,long until,WarningScheduler.Callback cb){calls++;event=e;grant=g;callback=cb;deadline=until;return true;}public void cancel(PlaybackGrant g){cancels++;} }
     class Source implements WarningScheduler.Transport {
         PlaybackGrant pending;boolean delayBegin;CompletableFuture<WarningConnection.Attempt> beginReply;WarningConnection.Attempt delayedReply;

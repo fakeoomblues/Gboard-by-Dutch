@@ -85,6 +85,17 @@ public final class TelemetryRuntime {
                     if(guidance)return route!=null&&fix!=null&&event.latitude!=null&&event.longitude!=null&&WarningPassage.passedOnRoute(event,fix,now,route.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));
                     return WarningPassage.passed(event,fix,now);
                 }
+                public WarningPassage.Relevance relevance(WarningEvent event,long now){
+                    if(!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
+                    Boolean guidance=sessionGuidanceState();if(guidance==null)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+                    Location fix=lastFix;
+                    if(guidance){
+                        RoadWarningEngine.Route route=nativeRoute();
+                        if(route==null||event.latitude==null||event.longitude==null||!WarningPassage.freshFix(fix,now))return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+                        return route.warningRelevance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.getAccuracy());
+                    }
+                    return WarningPassage.passed(event,fix,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;
+                }
             },new WarningScheduler.Speaker(){
                 public void prepare(String language){nativeSpeaker.prepare(language);}
                 public void prepare(String language,WarningAudioOwner.Mode mode){nativeSpeaker.prepare(language,mode);}

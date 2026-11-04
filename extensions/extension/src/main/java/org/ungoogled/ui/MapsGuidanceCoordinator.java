@@ -142,6 +142,19 @@ public final class MapsGuidanceCoordinator {
         if(owner!=null)try{if(navigationActive(owner)){RoadWarningEngine.Route shape=warningRoute(owner);return shape!=null&&WarningPassage.passedOnRoute(event,fix,now,shape.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.hasAccuracy()?fix.getAccuracy():Double.NaN));}}catch(ReflectiveOperationException|RuntimeException unavailable){return false;}
         return WarningPassage.passed(event,fix,now);
     }
+    public static WarningPassage.Relevance relevance(WarningEvent event,Location fix,long now,boolean navigating){
+        if(!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
+        Object owner;synchronized(LOCK){owner=route.get();}
+        try{
+            if(owner!=null&&navigationActive(owner)){
+                if(!WarningPassage.freshFix(fix,now)||event.latitude==null||event.longitude==null)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+                RoadWarningEngine.Route shape=warningRoute(owner);
+                return shape==null?WarningPassage.Relevance.CONTEXT_UNVERIFIED:shape.warningRelevance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.getAccuracy());
+            }
+            if(navigating)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+        }catch(ReflectiveOperationException|RuntimeException unavailable){return WarningPassage.Relevance.CONTEXT_UNVERIFIED;}
+        return WarningPassage.passed(event,fix,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;
+    }
     private static RoadWarningEngine.Route warningRoute(Object owner)throws ReflectiveOperationException{
         Object model=routeField(owner,"e").get(owner);if(model==null)return null;
         ClassLoader loader=owner.getClass().getClassLoader();Class<?> routeModel=Class.forName("blot",false,loader),pathType=Class.forName("yap",false,loader),polylineType=Class.forName("bjix",false,loader),pointType=Class.forName("bjis",false,loader);

@@ -131,6 +131,7 @@ public final class ExternalTelemetry {
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){return MapsGuidanceCoordinator.passed(event,fix,now);}
+                public nl.johninnl.navigation.alerts.WarningPassage.Relevance relevance(WarningEvent event,long now){return MapsGuidanceCoordinator.relevance(event,fix,now,navigating);}
             },new WarningScheduler.Speaker(){
                 public void prepare(String language){speaker.prepare(language);}
                 public void prepare(String language,WarningAudioOwner.Mode mode){speaker.prepare(language,mode);}

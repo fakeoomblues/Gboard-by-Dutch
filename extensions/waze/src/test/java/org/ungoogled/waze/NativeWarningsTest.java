@@ -65,6 +65,33 @@ public class NativeWarningsTest {
         assertEquals("CAMERA_TYPE_REDLIGHT",last().getString("native_subtype"));
     }
 
+    @Test public void artifactRoadsideSafetyAndCrashHistoryAreWarningsRatherThanPersonalContent(){
+        for(String type:new String[]{"SOS","PERSONAL_SAFETY","GUARDIAN"}){
+            Descriptor d=new Descriptor(type,type,type.equals("SOS")?4:1);repository(d);NativeWarnings.sound(d.id);
+            assertEquals(type,decoded(last()).nativeType);assertEquals("ANNOUNCE",last().getString("operation"));
+            assertFalse(last().containsKey("capture_exclusion"));assertFalse(last().getString("message").isEmpty());
+        }
+        assertEquals(3,announcements());
+        Descriptor other=new Descriptor("unknown","DYNAMIC",999);repository(other);NativeWarnings.sound(other.id);
+        assertEquals("other_native",last().getString("category"));assertEquals("UNKNOWN_999",last().getString("native_subtype"));assertEquals(2,last().getInt("priority"));
+        Descriptor social=new Descriptor("social","CHITCHAT",0);repository(social);NativeWarnings.sound(social.id);
+        assertEquals("display_only",last().getString("category"));assertEquals("",last().getString("message"));assertEquals(4,announcements());
+    }
+
+    @Test public void nativeCardPreemptionDoesNotAutomaticallyPromoteWeatherToUrgentSpeech(){
+        Descriptor d=new Descriptor("weather","BAD_WEATHER",11);d.preemptive=true;repository(d);NativeWarnings.sound(d.id);
+        assertTrue(last().getBoolean("source_preemptive"));assertEquals(17,last().getInt("source_priority"));assertEquals(1,last().getInt("priority"));
+        assertEquals("waze_semantic_family_v1",last().getString("priority_origin"));
+    }
+    @Test public void aNativeZoneStateDoesNotTurnCrashHistoryIntoAverageSpeedEnforcement(){
+        Descriptor d=new Descriptor("crash-history","GUARDIAN",1);d.zone=new Zone("InZone");repository(d);Controller c=new Controller(d.id,State.InZone);NativeWarnings.zoneSelected(c);
+        assertEquals("road_feature",last().getString("category"));assertEquals("enter",last().getString("phase"));
+        d.zone=new Zone("LeftZone");c.b=State.LeftZone;repository(d);NativeWarnings.zoneSelected(c);
+        assertEquals("End of crash-history zone.",decoded(last()).message);assertEquals("road_feature",last().getString("category"));
+        d=new Descriptor("camera-zone","CAMERA",0);d.zone=new Zone("InZone");repository(d);NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));
+        assertEquals("enforcement_zone",last().getString("category"));
+    }
+
     @Test public void nativeSilenceAndInvalidityCancelPreviousAuthority(){
         Descriptor d=new Descriptor("2","HAZARD",3);repository(d);NativeWarnings.sound(d.id);
         assertEquals(1,announcements());d.info.silent="Familiar";repository(d);
@@ -101,7 +128,7 @@ public class NativeWarningsTest {
         assertEquals(1,announcements());assertEquals("enter",last().getString("phase"));
         d.zone=new Zone("LeftZone");c.b=State.LeftZone;repository(d);
         NativeWarnings.zoneExit(c);NativeWarnings.zoneSelected(c);assertEquals(2,announcements());
-        assertEquals("exit",last().getString("phase"));assertEquals("template",last().getString("message_origin"));
+        assertEquals("exit",last().getString("phase"));assertEquals(2,last().getInt("priority"));assertEquals("template",last().getString("message_origin"));
         assertEquals("End of danger zone.",decoded(last()).message);
         NativeWarnings.stopped();repository(d=new Descriptor("zone2","DANGER_ZONE",0));
         d.zone=new Zone("InZone");repository(d);c=new Controller(d.id,State.InZone);
@@ -175,11 +202,12 @@ public class NativeWarningsTest {
         public Position getPosition(){return new Position();}
     }
     public static final class Descriptor {
-        final Id id;final Info info;Zone zone;Descriptor(String id,String type,int subtype){this.id=new Id(id);info=new Info(type,subtype);}
+        final Id id;final Info info;Zone zone;boolean preemptive;Descriptor(String id,String type,int subtype){this.id=new Id(id);info=new Info(type,subtype);}
         public boolean hasAlertId(){return true;}public Id getAlertId(){return id;}public boolean hasInfo(){return true;}public Info getInfo(){return info;}
         public boolean getAbortImmediatelyOnRemoval(){return true;}public int getTriggerDistanceMeters(){return 500;}
-        public boolean hasInsightPriority(){return false;}public boolean hasZoneAlertData(){return zone!=null;}public Zone getZoneAlertData(){return zone;}
+        public boolean hasInsightPriority(){return preemptive;}public Priority getInsightPriority(){return new Priority();}public boolean hasZoneAlertData(){return zone!=null;}public Zone getZoneAlertData(){return zone;}
     }
+    public static final class Priority {public int getValue(){return 17;}public boolean getPreemptive(){return true;}}
     public static final class Repository {final List<Descriptor> descriptors;Repository(List<Descriptor> values){descriptors=values;}public List<Descriptor> getDescriptorsList(){return descriptors;}}
     public static final class Zone {final String state;Zone(String state){this.state=state;}public String getState(){return state;}public int getZonePercent(){return 0;}}
     public enum State {BeforeZone,InZone,LeftZone}

@@ -18,6 +18,10 @@ public final class RoadWarningEngine {
         private final Map<Coordinate,Projection> targets=new LinkedHashMap<>();
         private final Map<Coordinate,Projection> passageTargets=new LinkedHashMap<>();
         private double passageCorridor=-1;
+        private Coordinate warningOwn;
+        private Projection warningOwnProjection;
+        private double warningOwnCorridor=-1;
+        private boolean warningOwnValid;
         public Route(double[] latitudes,double[] longitudes) {
             boolean valid=latitudes!=null&&longitudes!=null&&latitudes.length==longitudes.length&&latitudes.length>=2;
             if(valid)for(int i=0;i<latitudes.length;i++)if(!position(latitudes[i],longitudes[i])){valid=false;break;}
@@ -57,6 +61,28 @@ public final class RoadWarningEngine {
             Coordinate key=new Coordinate(targetLatitude,targetLongitude);Projection next;
             if(passageTargets.containsKey(key))next=passageTargets.get(key);else{next=project(targetLatitude,targetLongitude);if(next!=null&&(next.lateral>corridor||ambiguous(targetLatitude,targetLongitude,next.along,corridor)))next=null;if(passageTargets.size()>=512)passageTargets.remove(passageTargets.keySet().iterator().next());passageTargets.put(key,next);}
             return next==null?null:next.along-own.along;
+        }
+        /** Classify a native point against this directed route without guessing between nearby legs. */
+        public synchronized nl.johninnl.navigation.alerts.WarningPassage.Relevance warningRelevance(double ownLatitude,double ownLongitude,double targetLatitude,double targetLongitude,double accuracy){
+            nl.johninnl.navigation.alerts.WarningPassage.Relevance unknown=nl.johninnl.navigation.alerts.WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+            if(!Double.isFinite(accuracy)||accuracy<0||accuracy>30||!position(targetLatitude,targetLongitude))return unknown;
+            double corridor=Math.max(12,accuracy);Coordinate ownKey=new Coordinate(ownLatitude,ownLongitude);
+            if(!ownKey.equals(warningOwn)||warningOwnCorridor!=corridor){
+                warningOwn=ownKey;warningOwnCorridor=corridor;warningOwnProjection=project(ownLatitude,ownLongitude);
+                warningOwnValid=warningOwnProjection!=null&&warningOwnProjection.lateral<=corridor&&!ambiguous(ownLatitude,ownLongitude,warningOwnProjection.along,corridor);
+            }
+            if(!warningOwnValid)return unknown;Projection own=warningOwnProjection;
+            Projection next=target(targetLatitude,targetLongitude);
+            if(next==null||next.lateral>Math.max(30,accuracy*2))return nl.johninnl.navigation.alerts.WarningPassage.Relevance.OFF_ROUTE;
+            if(passageCorridor!=corridor){passageTargets.clear();passageCorridor=corridor;}
+            Coordinate key=new Coordinate(targetLatitude,targetLongitude);
+            if(!passageTargets.containsKey(key)){
+                if(passageTargets.size()>=512)passageTargets.remove(passageTargets.keySet().iterator().next());
+                passageTargets.put(key,next.lateral>corridor||ambiguous(targetLatitude,targetLongitude,next.along,corridor)?null:next);
+            }
+            if(passageTargets.get(key)==null)return unknown;
+            if(next.along-own.along < -Math.max(40,accuracy*2))return nl.johninnl.navigation.alerts.WarningPassage.Relevance.PASSED;
+            return nl.johninnl.navigation.alerts.WarningPassage.Relevance.RELEVANT;
         }
         private boolean ambiguous(double latitude,double longitude,double progress,double corridor){
             double scale=6371000*Math.PI/180,cos=Math.cos(Math.toRadians(latitude));
