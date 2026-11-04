@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.36.1**
+**Patchbundel: 1.37.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -693,7 +693,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Car alerts as notifications | Uit | 5.26.90.901 |
 | Car reconnect grace period | Uit | 5.26.90.901 |
 | Car traffic meter | Uit | 5.26.90.901 |
-| Change app name | Aan | 5.26.90.901 |
+| Change app name and icon | Aan | 5.26.90.901 |
 | Extra map info | Uit | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
@@ -710,7 +710,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Remove sign-in prompts | Aan | 5.26.90.901 |
 | Remove telemetry | Aan | 5.26.90.901 |
 | Report speed limit | Uit | 5.26.90.901 |
-| Share alerts with Maps | Aan | 5.26.90.901 |
+| Share Waze Alerts with external applications | Aan | 5.26.90.901 |
 | Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
 | Speed bump controls | Uit | 5.26.90.901 |

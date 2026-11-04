@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9fc16cb9858be417a82d7838db61754883e81b3e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.37.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9fc16cb9858b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9fc16cb9858be417a82d7838db61754883e81b3e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.37.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.36.1...v1.37.0) (2026-11-04)
+
+### ✨ New Features
+
+* **Waze:** change the app name and launcher icon together ([bc4dcf0](https://gitlab.com/johninnld/nl-morphe-patches/commit/bc4dcf024aef06c951cf5c477872054bedd3b343))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/692c93c4cec0556d98c93967ebc23ee9b2480045/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.36.1.**
