@@ -1,6 +1,6 @@
 import Java from 'frida-java-bridge';
 // Observation only: each wrapper calls the original once and returns/throws unchanged.
-let count=0,exhausted=false;const limit=2500;const installed=[];const patched=new Set();
+let count=0,exhausted=false;const limit=12000;const installed=[];const patched=new Set();
 function emit(event,fields={}){if(count++<limit)send({event,pid:Process.id,host_clock_ms:Date.now(),...fields});else if(!exhausted){exhausted=true;send({event:'observer-budget-exhausted',pid:Process.id});}}
 function field(o,name){if(o===null||o===undefined)return null;let c=o.getClass();while(c!==null){try{const f=c.getDeclaredField(name);f.setAccessible(true);return f.get(o);}catch(_){c=c.getSuperclass();}}return null;}
 function scalar(o){if(o===null||o===undefined)return null;try{const n=o.getClass().getName().toString();if(n==='java.lang.Boolean')return o.toString().toString()==='true';if(['java.lang.Long','java.lang.Integer'].includes(n))return Number(o.toString());if(n==='java.lang.String')return o.toString().slice(0,100);if(o.name)return o.name().toString();}catch(_){}return null;}
@@ -13,6 +13,8 @@ function stack(){return Java.backtrace({limit:10}).frames.map(f=>f.signature);}
 function focusListener(request){const listener=field(request,'mOnAudioFocusChangeListener'),name=klass(listener);if(name)hook(name,'onAudioFocusChange',['int'],(_,a)=>({change:Number(a[0]),stack:stack()}));}
 function policy(o){const p=field(o,'policy'),name=klass(p);if(!name)return;hook(name,'active',[],null,(_,a,r)=>({policy_active:!!r}));}
 function progress(o){const p=field(o,'progress'),name=klass(p);if(!name)return;for(const method of ['onStart','onDone','onError']){try{hook(name,method,['java.lang.String'],(_,a)=>({utterance_id:String(a[0])}));}catch(_){}}try{hook(name,'onStop',['java.lang.String','boolean'],(_,a)=>({utterance_id:String(a[0]),interrupted:!!a[1]}));}catch(_){}}
+function velaAttempt(a){const g=field(a,'grant'),e=field(a,'event');return {attempt:get(g,'attemptId'),event_key:get(g,'eventKey'),authority_sequence:get(e,'sequence'),until:get(a,'announceUntil'),started:get(a,'started'),cancelled:get(a,'cancelled'),submitted:get(a,'submitted'),holding:get(a,'holding'),native_stopped:get(a,'nativeStopped'),quiescent:get(a,'quiescent')};}
+function velaGuide(g){const q=field(g,'g');return {guide_class:klass(g),queue_size:q===null?null:Number(Java.cast(q,Java.use('java.util.Collection')).size()),native_focus_count:get(g,'s'),neural:get(g,'m'),ready:get(g,'e'),system_ready:get(g,'h'),initializing:get(g,'i')};}
 Java.performNow(()=>{try{hook('java.lang.Thread','dispatchUncaughtException',['java.lang.Throwable'],(_,a)=>({exception_class:klass(a[0])}));}catch(e){emit('hook-optional-error',{where:'uncaught-exception',error_type:e.name});}});
 const attachDeadline=Date.now()+20000;
 function installApplicationHooks(){Java.performNow(()=>{try{
@@ -30,6 +32,15 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook('nl.johninnl.navigation.alerts.WarningEndpoint','handle',['int','int','java.lang.String','android.os.Bundle'],null,(_,a,r)=>({code:a[0],caller_uid:a[1],status:r===null?null:r.getString('status'),audio_status:r===null?null:r.getString('audio_status')}));
   hook('nl.johninnl.flitsmeister.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
   hook('nl.johninnl.flitsmeister.NavigationBroadcasts','engineRunning',[],null,(_,a,r)=>({engine_running:!!r}));
+ }else if(pkg==='com.waze'){
+  hook('nl.johninnl.navigation.alerts.WarningEndpoint','handle',['int','int','java.lang.String','android.os.Bundle'],null,(_,a,r)=>({code:a[0],caller_uid:a[1],status:r===null?null:r.getString('status'),audio_status:r===null?null:r.getString('audio_status')}));
+  hook('org.ungoogled.waze.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
+  hook('org.ungoogled.waze.NavigationStartup','running',[],null,(_,a,r)=>({engine_running:!!r}));
+  const N='org.ungoogled.waze.NativeWarnings';
+  hook(N,'prepareControllers',[],()=>({}),()=>({}));
+  hook(N,'familyStatus',[],null,(_,a,r)=>({families:r===null?null:r.keySet().toString().toString()}));
+  for(const method of ['repository','sound','zoneSelected','zonePresented','zoneExit','segments','notificationAdded','notificationRemoved'])hook(N,method,['java.lang.Object'],(_,a)=>({native_class:klass(a[0])}));
+  hook(N,'emit',['android.os.Bundle'],(_,a)=>({operation:a[0].getString('operation'),warning_id:a[0].getString('warning_id'),revision:Number(a[0].getLong('revision')),announcement_index:Number(a[0].getLong('announcement_index'))}));
  }else if(pkg==='org.ungoogled.android.apps.maps'||pkg==='com.google.android.apps.maps'){
   const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant';
   hook(S,'pumpOne',[],o=>{policy(o);return {};});
@@ -46,6 +57,28 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook(C,'abandon',['long',C+'$Ready','java.lang.String'],(o,a)=>({reason:String(a[2]),holding:get(o,'holding'),fault:get(o,'fault')}));
   hook(C,'acquireMain',['java.lang.String','nl.johninnl.navigation.alerts.WarningEvent$Priority','long',C+'$Ready'],o=>{const m=field(o,'manager');return {bound:get(o,'bound'),fault:get(o,'fault'),holding:get(o,'holding'),native_active_class:m===null?null:klass(field(m,'p')),native_pending_class:m===null?null:klass(field(m,'q'))};});
   hook(C,'canRegenerate',[],null,(_,a,r)=>({can_regenerate:!!r}));
+ }else if(pkg==='app.vela'){
+  const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant',O=G+'$Outcome',M='nl.johninnl.navigation.alerts.WarningAudioOwner$Mode',E='nl.johninnl.navigation.alerts.WarningEvent';
+  hook(S,'pumpOne',[],o=>{policy(o);return {};});
+  hook(S,'cancel',[A,'boolean'],(o,a)=>({...state(o),retry:!!a[1],stack:stack()}));
+  hook(S,'finish',[A,O,'boolean'],(o,a)=>({...state(o),outcome:a[1].name().toString(),quiescent:!!a[2]}));
+  hook(S,'disconnected',[],o=>state(o));hook(S,'revoked',['long'],(o,a)=>({...state(o),revoked_epoch:Number(a[0])}));
+  const W='nl.johninnl.vela.VelaWarningSpeaker',WA=W+'$Attempt';
+  hook(W,'speak',[E,G,'long',W+'$Listener'],(o,a)=>({attempt:get(a[1],'attemptId'),language:get(a[0],'languageTag'),until:Number(a[2]),closed:get(o,'closed'),...velaGuide(field(o,'guide'))}),(_,a,r)=>({accepted:!!r}));
+  hook(W,'isReady',['java.lang.String',M],null,(o,a,r)=>({language:String(a[0]),mode:a[1].name().toString(),ready:!!r,closed:get(o,'closed')}));
+  hook(W,'canSpeak',[E,M],null,(_,a,r)=>({can_speak:!!r,language:get(a[0],'languageTag')}));
+  hook(W,'cancel',[G],(o,a)=>({attempt:get(a[0],'attemptId'),stack:stack()}));
+  hook(W,'finish',[WA,O,'boolean'],(_,a)=>({...velaAttempt(a[0]),outcome:a[1].name().toString(),quiescent:!!a[2]}));
+  hook(W,'eligibility',[WA,'boolean'],null,(_,a,r)=>({...velaAttempt(a[0]),checks_focus:!!a[1],refusal:r===null?null:r.name().toString()}));
+  hook(W,'capture',['java.lang.Object'],(_,a)=>({closure_class:klass(a[0])}));
+  hook(W,'dispatch',['java.lang.Object'],(_,a)=>({closure_class:klass(a[0])}),(_,a,r)=>({handled:!!r}));
+  hook(W,'beforeSpeech',['java.lang.Object','boolean'],(_,a)=>({...velaGuide(a[0]),interrupt:!!a[1]}),(_,a,r)=>({held:!!r}));
+  for(const method of ['nativeStop','nativeSpeech','engineChanging','engineChanged','focusRequest'])hook(W,method,['java.lang.Object'],(_,a)=>({...velaGuide(a[0]),stack:stack()}));
+  hook(W,'focusResult',['java.lang.Object','int'],(_,a)=>({...velaGuide(a[0]),result:Number(a[1])}));
+  hook(W,'focusChanged',['java.lang.Object','int'],(_,a)=>({listener_class:klass(a[0]),change:Number(a[1])}));
+  for(const method of ['utteranceStart','utteranceDone','utteranceError'])hook(W,method,['java.lang.Object','java.lang.String'],(_,a)=>({listener_class:klass(a[0]),utterance_id:String(a[1])}));
+  hook(W,'utteranceStopped',['java.lang.Object','java.lang.String','boolean'],(_,a)=>({listener_class:klass(a[0]),utterance_id:String(a[1]),interrupted:!!a[2]}));
+  hook(W,'regenerateInput',['java.lang.Object','java.lang.Object'],(_,a)=>({route_class:klass(a[0]),state_class:klass(a[1])}),(_,a,r)=>({result_class:klass(r)}));
  }
  emit('hooks-ready',{package:pkg,installed});
 }catch(e){emit('hooks-failed',{error_type:e.$className||e.name,error:String(e).slice(0,240),installed});}});}
