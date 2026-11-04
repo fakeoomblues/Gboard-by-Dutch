@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.36.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.38.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1102,7 +1102,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Waze](apps/waze.md)
@@ -1123,7 +1123,7 @@ hide:
 <li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Car reconnect grace period <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Car traffic meter <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Change app name and icon <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Extra map info <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
 <li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
@@ -1140,7 +1140,7 @@ hide:
 <li>Remove sign-in prompts <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Remove telemetry <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Report speed limit <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Share alerts with Maps <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Share Waze Alerts with external applications <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Alle versies</span></li>
 <li>Speed bump controls <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>

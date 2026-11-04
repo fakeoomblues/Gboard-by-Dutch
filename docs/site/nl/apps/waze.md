@@ -19,7 +19,7 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 | Toestemming | Nieuw: **Skip consent screens** beantwoordt privacy- en voorwaardenvragen zonder scherm en weigert gepersonaliseerde advertenties. |
 | Muziek | Nieuw: **SoundCloud in Waze** en **YT Music Morphe in Waze** voegen beide diensten toe aan de ingebouwde audiospeler. |
 | Andere apps | Nieuw: **Broadcast navigation data** deelt snelheids- en trajectgegevens met andere apps en met **Support Gearslip** kan Gearslip Waze draaien, ook een gepatchte Gearslip. |
-| Waarschuwingen delen | **Share alerts with Maps** stopt nu direct als je het uitzet en wist waarschuwingen die al gedeeld waren. |
+| Waarschuwingen delen | **Share Waze Alerts with external applications** stopt nu direct als je het uitzet en wist waarschuwingen die al gedeeld waren. |
 
 De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
 
@@ -43,7 +43,7 @@ De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Fo
 | --- | --- | --- |
 | **Hide ads** | Aan | Verwijdert gesponsorde kaartpictogrammen, advertenties bij stilstand en bijbehorende advertentietracking, plus gesponsorde zoekresultaten en promoties in het hoofdmenu. |
 | **Remove telemetry** | Aan | Stopt de ondersteunde crashrapporten, gebruiksstatistieken en prestatiegegevens, en blokkeert ook het ophalen van de advertentie-ID, wachtende gebruiksgegevens en automatische diagnoselogs. Verkeersmeldingen blijven werken. |
-| **Share alerts with Maps** | Aan | Deelt Waze-waarschuwingen met Ungoogled Maps op dezelfde telefoon. Waze moet open zijn en je moet ingelogd zijn. Zet je dit uit, dan stopt het delen direct. |
+| **Share Waze Alerts with external applications** | Aan | Deelt de wegwijzers en waarschuwingen van Waze met gepatchte apps op dezelfde telefoon, zoals Ungoogled Maps en Vela Maps. Waze moet open zijn en je moet ingelogd zijn. Zet je dit uit, dan stopt het delen direct. |
 
 ### Uit bearinmind patches, overgezet naar 5.26.90.901
 
@@ -54,7 +54,7 @@ De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Fo
 | **Average speed zone bar** | Aan | Toont voortgang en je gemiddelde snelheid bij trajectcontrole. Zet dit na het patchen aan in Customization. |
 | **Bigger alert pins** | Uit | Vergroot waarschuwingspictogrammen op de kaart. |
 | **Bigger speedometer** | Aan | Vergroot de cijfers van de snelheidsmeter en maximumsnelheid. |
-| **Change app name** | Aan | Verandert de appnaam, standaard in De-Waze. Die naam zie je ook in Android Auto. |
+| **Change app name and icon** | Aan | Verandert de appnaam, standaard in De-Waze, en kan het starterpictogram aanpassen: het klassieke Waze-logo, een gedurfd blauw maskot, een maskot op een gevouwen kaart, een cyaan maskot op zwart of een pictogram met cyaanlange schaduw. Zonder keuze houdt Waze z'n eigen pictogram. Die naam zie je ook in Android Auto. |
 | **Flock cameras** | Aan | Geeft een geluid bij een naderende Flock-camera uit OpenStreetMap. Voegt geen kaartpictogrammen of routes toe. Zet dit aan in Customization. |
 | **Full black** | Aan | Maakt de donkere weergave zwart voor AMOLED-schermen. |
 | **Map skin** | Aan | Vergroot kaartlabels en de navigatiepijl en geeft de dagkaart een warme achtergrond. |
@@ -111,6 +111,6 @@ Open na het patchen **Customization** in het zijmenu onder **Shut off**. Daar st
 
 **Skip consent screens** maakt privacy- en voorwaardenkeuzes zonder die schermen te tonen. Gepersonaliseerde advertenties worden geweigerd; verplichte voorwaarden worden geaccepteerd. Laat deze patch uit als je de keuzes zelf wilt lezen en maken. Remove telemetry en Remove permissions beperken de genoemde gegevens; noodzakelijke navigatiediensten blijven actief.
 
-Voor Android Auto volg je de [KingInstaller-stappen met screenshots](../guides/android-auto.md). Door **Change app name** kan Waze als **De-Waze** in de applijst staan. De twee audiopatches zijn niet aan één versie gebonden, maar de overige patches op deze pagina richten zich op 5.26.90.901. Beschikbare audio-inhoud hangt af van je muziekapp en account. Routebegeleiding, waarschuwingen op de weg en elke auto-opstelling zijn hiermee niet volledig getest. Report speed limit is nog onbevestigd.
+Voor Android Auto volg je de [KingInstaller-stappen met screenshots](../guides/android-auto.md). Door **Change app name and icon** kan Waze als **De-Waze** in de applijst staan. De twee audiopatches zijn niet aan één versie gebonden, maar de overige patches op deze pagina richten zich op 5.26.90.901. Beschikbare audio-inhoud hangt af van je muziekapp en account. Routebegeleiding, waarschuwingen op de weg en elke auto-opstelling zijn hiermee niet volledig getest. Report speed limit is nog onbevestigd.
 
 [Installeren](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardkeuzes](../reference/catalogue.md#waze)

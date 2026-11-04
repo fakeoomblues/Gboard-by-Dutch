@@ -111,7 +111,9 @@ public final class NativeUi {
             row("De-Waze",TelemetryStore.WAZE.equals(TelemetryRuntime.selected()),action("waze",()->TelemetryRuntime.select(TelemetryStore.WAZE)),composer);
             row("Flitsmeister",TelemetryStore.FLITSMEISTER.equals(TelemetryRuntime.selected()),action("fm",()->TelemetryRuntime.select(TelemetryStore.FLITSMEISTER)),composer);
             if(!TelemetryRuntime.selected().isEmpty()) {
-                hint(TelemetryRuntime.statusText(),composer);
+                hint(TelemetryRuntime.warningBridgeStatus(),composer);
+                hint(TelemetryRuntime.providerServiceStatus(),composer);
+                hint(TelemetryRuntime.dataStatus(),composer);
                 toggle(text("spoken","Spoken road warnings"),TelemetryRuntime.spokenEnabled(),toggleAction("spoken",TelemetryRuntime::setSpokenEnabled),text("spoken_hint","Uses Vela's voice and mute settings"),composer);
                 if(nl.johninnl.navigation.alerts.WarningProviders.supported(TelemetryRuntime.selected())){
                     nl.johninnl.navigation.alerts.WarningPreferences choices=TelemetryRuntime.warningPreferences();

@@ -23,8 +23,8 @@ private object UpdateAlertersRepositoryFingerprint : Fingerprint(
 
 @Suppress("unused")
 val wazeShareAlertsPatch = bytecodePatch(
-    name = "Share alerts with Maps",
-    description = "Shows Waze alerts in Ungoogled Maps on this phone. Waze must be signed in and open.",
+    name = "Share Waze Alerts with external applications",
+    description = "Shares Waze's road alerts with patched apps on this phone, such as Ungoogled Maps and Vela Maps. Waze must be signed in and open.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
     // The extension, the Application hook and a switch on Waze's Customization screen.

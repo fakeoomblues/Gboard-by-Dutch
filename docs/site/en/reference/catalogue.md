@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.36.0**
+**Patch bundle: 1.38.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -693,7 +693,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Car alerts as notifications | Off | 5.26.90.901 |
 | Car reconnect grace period | Off | 5.26.90.901 |
 | Car traffic meter | Off | 5.26.90.901 |
-| Change app name | On | 5.26.90.901 |
+| Change app name and icon | On | 5.26.90.901 |
 | Extra map info | Off | 5.26.90.901 |
 | Flock cameras | On | 5.26.90.901 |
 | Full black | On | 5.26.90.901 |
@@ -710,7 +710,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Remove sign-in prompts | On | 5.26.90.901 |
 | Remove telemetry | On | 5.26.90.901 |
 | Report speed limit | Off | 5.26.90.901 |
-| Share alerts with Maps | On | 5.26.90.901 |
+| Share Waze Alerts with external applications | On | 5.26.90.901 |
 | Skip consent screens | On | 5.26.90.901 |
 | SoundCloud in Waze | On | Any |
 | Speed bump controls | Off | 5.26.90.901 |

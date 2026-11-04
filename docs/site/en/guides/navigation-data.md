@@ -63,11 +63,13 @@ Selecting native data or ending the receiving session releases its startup conne
 5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Only reports with known positions become map pins.
 6. Check **Source now** for the provider status. Tap it to request an available snapshot. Automatic startup uses the separate provider API; a snapshot request never makes an old observation fresh.
 
-**Off · Google Maps** restores Maps' own data. The alternative **Waze · Share alerts with Maps** uses the older Waze alert bridge: Waze needs **Share alerts with Maps**, must be signed in and must remain running. That mode does not provide the extended speed/limit/zone feed. Select the navigation-data option for this guide.
+**Off · Google Maps** restores Maps' own data. The alternative **Waze · Share alerts with Maps** uses the older Waze alert bridge: Waze needs **Share Waze Alerts with external applications**, must be signed in and must remain running. That mode does not provide the extended speed/limit/zone feed. Select the navigation-data option for this guide.
 
 Flitsmeister keeps Maps' independent Flock choices active. Only a fresh selected De-Waze feed retains the earlier native-Flock handoff; route avoidance keeps its separate camera dataset.
 
 ### Vela Maps
+
+Vela's settings show separate **Warning bridge**, **Background service** and **Data** status lines after choosing a provider. **Warning bridge: connected** confirms the native warning API handshake; **Data: connected** confirms fresh provider observations. Missing speed or road data can still use Vela's own values. Incomplete warning coverage and audio readiness remain separate statuses. The currently released De-Waze provider uses the existing data bridge and reports **data only · native warnings unavailable** for the newer warning API; this does not mean its data connection failed. Repatch Vela, Maps and FM15 together for the native Flitsmeister warning bridge.
 
 1. Open navigation settings, then **Speed and road alerts**.
 2. Choose **De-Waze** or **Flitsmeister**. **Vela (native data)** restores the native source.

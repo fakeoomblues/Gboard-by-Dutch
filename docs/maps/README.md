@@ -14,7 +14,9 @@ The source port retains all 30 upstream Maps patches, including the two alternat
 
 `Waze alerts` also consumes the existing Dutch App Patches navigation broadcast protocol from Waze and Flitsmeister. Its UI reuses the compact Vela speed-limit/current-speed/partial-average display while keeping provider selection and Maps bindings local to Maps.
 
-The legacy `Share alerts with Maps` bridge remains a separate source choice. Extended providers require `Broadcast navigation data`. Data from the selected provider is not mixed with another provider or with legacy bridge values. Missing or expired speed/limit fields can use fresh native Maps values. Partial averages are limited to observed zone coverage and clear when observations expire or the source/zone changes. Only reports with known coordinates become pins. Approach warnings use a supplied distance where available or an explicitly estimated GPS/heading distance; route membership is not established by that estimate.
+The legacy `Share Waze Alerts with external applications` bridge remains a separate source choice. Extended providers require `Broadcast navigation data`. Data from the selected provider is not mixed with another provider or with legacy bridge values. Missing or expired speed/limit fields can use fresh native Maps values. Partial averages are limited to observed zone coverage and clear when observations expire or the source/zone changes. Only reports with known coordinates become pins. Approach warnings use a supplied distance where available or an explicitly estimated GPS/heading distance; route membership is not established by that estimate.
+
+The current development work also targets native warning events from Flitsmeister 15.0 / 1289. Its producer model/capture checks pass; full integrated, moving-warning and car acceptance remain open. Updated Maps and Vela receivers correct the visible-map startup handoff: FM's engine can start with while-in-use location access while FM's screen stays closed. This passed paired Android 14 emulator checks against the captured released FM15 source. Android 16 has unit/platform-source support, with physical-phone acceptance pending. See the [startup evidence and API boundaries](../research/2026-11-03-fm15-background-startup.md) and [current user setup](../site/en/guides/navigation-data.md). This does not change the artifact scope of the historical validation below.
 
 The current development work also targets native warning events from Flitsmeister 15.0 / 1289. Its producer model/capture checks pass; full integrated, moving-warning and car acceptance remain open. Updated Maps and Vela receivers correct the visible-map startup handoff: FM's engine can start with while-in-use location access while FM's screen stays closed. This passed paired Android 14 emulator checks against the captured released FM15 source. Android 16 has unit/platform-source support, with physical-phone acceptance pending. See the [startup evidence and API boundaries](../research/2026-11-03-fm15-background-startup.md) and [current user setup](../site/en/guides/navigation-data.md). This does not change the artifact scope of the historical validation below.
 
@@ -58,7 +60,7 @@ These are controlled consumer replays, not native provider road recordings. The 
 
 ## Publication
 
-Published in [Dutch App Patches v1.25.0](https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
+Published in [Dutch App Patches v1.25.0](https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.25.0), from source `f57abb97c9eb11de5792dc50d66c3bab62d4489a`. The release workflow succeeds under `johninnl`; Morphe's stable discovery manifest points to the uploaded bundle. Its MorpheSig1 Ed25519 signature verifies against the repository public key.
 
 All 184 Maps/shared compiled class and extension entries in the downloaded release are byte-identical to the locally validated bundle. The release bundle SHA-256 is `92263759a8a6694409cff395098d78a04e70da1091e3cc073bfb8f7841af9ee7`. The installed test APK and the current validation APK differ in outer ZIP/signing layout; all 9,299 uncompressed ZIP entries are byte-identical. Their separate whole-file hashes and canonical payload hash are retained in `validation.json`.
 
@@ -67,28 +69,3 @@ All 184 Maps/shared compiled class and extension entries in the downloaded relea
 Keep generated versions and release metadata under semantic-release. Before committing or pushing, run the repository's required login/effective-author/effective-committer/history identity checks. Only the `johninnl` identity is permitted.
 
 The release must contain the Maps extension and 30 Maps controls in the same published bundle as existing app patches. A source copy, successful compilation, a generated catalogue, or a green documentation job alone does not prove that delivery.
-
-## Launcher branding
-
-**Change app name** retains its existing name option and now provides **App icon**.
-The dropdown contains Automatic, Original Google Maps, and twelve supplied-artwork
-variants: Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin,
-and Folded map, each on light or dark backgrounds. Automatic preserves the prior
-Legacy icon behavior. Explicit Original or supplied artwork takes precedence over
-Legacy icon for that patching run. Explicit styles affect the regular and round
-launcher icons; they leave the stock splash in place, while in-app artwork follows other selected patches.
-
-All six transparent PNGs are bundled unchanged. Android drawable layers provide
-#FAFAFA or #171A21 backgrounds and a 25.9259% inset (28/108 of the adaptive canvas).
-The target requires Android 10+, so no legacy-icon rendering path is needed.
-Selections are scoped to each ResourcePatchContext using synchronized weak keys,
-matching the per-run approach of the existing microG selection helper.
-
-Run `scripts/maps/verify_branding.py` against the original supported APK to check
-all variants, Original, Automatic with Legacy icon enabled/disabled, resolved
-labels, compiled resources and unchanged DEX. It removes validated intermediate
-APKs by default to keep disk usage bounded; reports retain their SHA-256 hashes.
-Use `scripts/maps/validate.py --app-icon STYLE --app-name NAME` with each full
-Maps profile to check combined patching, APK signing and Android references.
-`tests/MapsBrandingSelectionRegression.java` checks successive Manager-style
-runs with one loaded bundle, including return to Automatic after explicit choices.

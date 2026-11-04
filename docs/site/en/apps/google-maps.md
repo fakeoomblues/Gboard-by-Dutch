@@ -30,7 +30,7 @@ Native search, route start, guidance and reconnect were checked in Gearslip and 
 
 Our extension to **Waze alerts** lets you choose patched Waze or Flitsmeister as a local navigation-data source. Alongside road-alert pins, it can show current speed, the road limit and an observed average through an average-speed zone, with progress and remaining distance. Available reports can also produce advance warnings.
 
-This uses our **Broadcast navigation data** patch in the provider app. Installing ordinary Waze or Flitsmeister is not enough. The original Waze **Share alerts with Maps** mode remains available as a separate alert-sharing choice.
+This uses our **Broadcast navigation data** patch in the provider app. Installing ordinary Waze or Flitsmeister is not enough. The original Waze **Share Waze Alerts with external applications** mode remains available as a separate alert-sharing choice.
 
 [Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 

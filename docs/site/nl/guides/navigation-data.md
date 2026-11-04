@@ -63,11 +63,13 @@ Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreek
 5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Alleen meldingen met bekende posities krijgen kaartspelden.
 6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen. Automatisch starten gebruikt de aparte bron-API; een momentopname maakt oude waarnemingen nooit vers.
 
-**Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share alerts with Maps** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
+**Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share Waze Alerts with external applications** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.
 
 Flitsmeister laat Maps' onafhankelijke Flock-keuzes actief. Alleen een verse geselecteerde De-Waze-bron houdt de eerdere overname van eigen Flock aan; routevermijding houdt zijn aparte cameragegevens.
 
 ### Vela Maps
+
+Na het kiezen van een bron toont Vela in de instellingen aparte regels voor **Waarschuwingsbrug**, **Achtergrondservice** en **Gegevens**. **Waarschuwingsbrug: verbonden** bevestigt de verbinding met de native waarschuwings-API; **Gegevens: verbonden** bevestigt recente bronwaarnemingen. Ontbrekende snelheid of weggegevens kunnen nog op Vela's eigen waarden terugvallen. Onvolledige waarschuwingsdekking en audiogereedheid blijven aparte statussen. De huidige uitgebrachte De-Waze-bron gebruikt de bestaande gegevenskoppeling en meldt voor de nieuwere waarschuwings-API **alleen gegevens · native waarschuwingen niet beschikbaar**. Dat betekent niet dat de gegevensverbinding is mislukt. Patch Vela, Maps en FM15 samen opnieuw voor de native Flitsmeister-waarschuwingsbrug.
 
 1. Open de navigatie-instellingen en daarna **Snelheid en wegwaarschuwingen**.
 2. Kies **De-Waze** of **Flitsmeister**. **Vela (eigen gegevens)** herstelt de eigen bron.
