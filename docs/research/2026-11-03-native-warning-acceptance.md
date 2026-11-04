@@ -25,6 +25,8 @@ Full FM15 acceptance remains open for delayed point-alert relevance on existing 
 
 The later receiver reconnect correction fences retired event callbacks by connection identity, including same-startup-ticket replacement, and immediately detaches incompatible event endpoints. Its existing Binder/unit test suite passes 100 tests; Maps and Vela release Java compilation also pass. A subsequent offline build at `02a75d5` rebuilt the signed MPP and all three intended APK combinations. Emitted Maps/Vela code contains the correction; these new artifacts have not been installed or run. This is source/component and artifact evidence, not installed acceptance. The [implementation review](2026-11-03-native-warning-implementation-review.md#rebuilt-development-candidate-at-02a75d5) records the exact new hashes while retaining all older runtime identities.
 
+The complete local verification command set subsequently passed in a clean checkout of `3d2790b`, with 215 release/publishing tests, 563 Python tests (47 skips), 608 Android tests (14 skips), Medium checks and the strict bilingual documentation/site checks. No failures occurred; the checkout was removed with `cleanupRequired=false`. The product source matches the signed `02a75d5` candidate. This closes local verification for the recorded revision; all named installed runtime and physical/car gates remain separate.
+
 ## Earlier artifact evidence
 
 Implementation remains in progress against the full [reviewed design](../superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). Producer capture coverage has now been reconciled and enabled for the pinned artifact; full integrated runtime/delivery acceptance remains unproved.

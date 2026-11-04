@@ -52,6 +52,12 @@ The same bundle was applied in FULL mode with fingerprint validation to the supp
 
 Focused REA inspection of both emitted receiver APKs confirms the per-connection callback identity and synchronized callback delivery in their compiled `WarningSession.prepare` implementations. Static inspection does not prove installed behavior. These artifacts have not been installed or run; no phone was changed. Compact build, patch, signature and decompiler receipts are retained in the ignored `candidate-02a75d5` directory, and the delivery manifest references its canonical files. Per-run build directories, unsigned/aligned duplicates and patcher scratch were removed. Remaining integrated, phone/car, review and release-approval gates stay open.
 
+## Complete local verification at `3d2790b`
+
+On 2026-11-04 the complete `scripts/local-release/verify.cjs` command set passed in a clean checkout of `3d2790bdbdccbf8d261a1200672ddd638be3710d`. It includes history/identity checks, 215 release/publishing tests, 563 Python tests (47 skips), 608 Android tests (14 skips), the patch build/catalogue, Medium bundle/tests, and strict bilingual documentation/site checks. There were no test failures. The documentation checks covered 110 app pages, 95 bilingual page pairs and 191 rendered HTML files with local links and anchors verified.
+
+The verification checkout and all its build/dependency storage were removed after process quiescence; the receipt records `cleanupRequired=false`. Compact logs and test results remain in the ignored `verification-3d2790b` directory and are referenced by the delivery manifest. The product source is unchanged from the signed `02a75d5` candidate; `3d2790b` only records its artifact evidence. This closes the complete local verification gate for that revision, not installed runtime or physical/car acceptance.
+
 ## Earlier delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.
