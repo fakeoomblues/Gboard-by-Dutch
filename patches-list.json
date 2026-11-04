@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.36.0",
+  "version": "1.36.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -6817,7 +6817,7 @@
     },
     {
       "name": "Native navigation for Gearslip and Android Auto",
-      "description": "Shows this patched Maps app's original Android Auto map and navigation UI through a native navigation service. Requires the full Android Auto app for its car UI resources.",
+      "description": "Shows this patched Maps app's live native map with standard Android Auto controls that compatible hosts can arrange. Requires the full Android Auto app for its car UI resources.",
       "default": true,
       "category": null,
       "compatiblePackages": [
