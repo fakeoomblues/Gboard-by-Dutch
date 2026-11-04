@@ -148,6 +148,7 @@ final class WazeWarningModels {
         Bundle b=new Bundle();b.putString("provider_package","com.waze");b.putString("provider_profile_version","5.26.90.901/1030746");
         b.putString("native_namespace",namespace);b.putString("native_type",type);b.putString("message",message);b.putString("language_tag",language);
         b.putString("message_origin","native_text");b.putString("relationship","unknown");b.putString("relevance","notice");b.putString("context","current_road");
+        b.putString("managed_output_policy","receiver_choices_v1");
         b.putString("phase","notice");b.putString("category","road_danger");b.putInt("priority",1);return b;
     }
     static String join(String title,String description){

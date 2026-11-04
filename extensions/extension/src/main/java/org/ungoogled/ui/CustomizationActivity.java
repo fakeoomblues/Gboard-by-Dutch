@@ -425,6 +425,7 @@ public final class CustomizationActivity extends Activity {
                     .setPositiveButton("Use these choices",(dialog,which)->{nativeChoices.confirm();ExternalTelemetry.warningChoicesChanged();outputSub.setText(nativeChoices.summary(false));review.setVisibility(View.GONE);})
                     .setNegativeButton("Cancel",null).show());body.addView(review);
             }
+            if(nl.johninnl.navigation.alerts.WarningProviders.WAZE.equals(selected))body.addView(rowBase("Managed Waze output","Managed Waze alerts use these Maps audio choices. Waze's local camera-sound and below-limit settings apply only to Waze's own playback."));
     }
 
     /** Source controls are shared by the patched page and its rendered UI regression check. */

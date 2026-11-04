@@ -93,10 +93,15 @@ public class WarningConnectionTest {
         })) {
             Bundle status=new Bundle();status.putBinder("warning_api",source.binder());status.putIntArray("warning_protocols",new int[]{1});
             status.putString("warning_controller_state","unproved");status.putString("warning_source_route_state","not_active");
+            Bundle families=new Bundle(),row=new Bundle();row.putBoolean("supported_capture",true);row.putString("controller_state","singleton_resolved");row.putString("native_available","unobserved");families.putBundle("alerters",row);status.putBundle("warning_families",families);
             assertTrue(session.prepare(WarningProviders.WAZE,status,7));assertTrue(session.advertisesEvents(WarningProviders.WAZE));assertFalse(session.captureComplete());
             assertEquals("unproved",session.controllerState());assertEquals("not_active",session.sourceRouteState());
+            assertEquals("singleton_resolved",session.familyStatus().getBundle("alerters").getString("controller_state"));
+            row.putString("controller_state","changed_after_delivery");assertEquals("singleton_resolved",session.familyStatus().getBundle("alerters").getString("controller_state"));
+            Bundle copy=session.familyStatus();copy.getBundle("alerters").putString("controller_state","changed_by_reader");assertEquals("singleton_resolved",session.familyStatus().getBundle("alerters").getString("controller_state"));assertFalse(session.captureComplete());
+            row.putDouble("unsupported_field",1.5);assertTrue(session.prepare(WarningProviders.WAZE,status,7));assertTrue(session.familyStatus().isEmpty());assertFalse(session.captureComplete());
             assertFalse(session.advertisesEvents(WarningProviders.FLITSMEISTER));
-            session.disconnected(8);assertEquals("",session.controllerState());assertEquals("",session.sourceRouteState());
+            session.disconnected(8);assertEquals("",session.controllerState());assertEquals("",session.sourceRouteState());assertTrue(session.familyStatus().isEmpty());
         }
     }
     @Test public void legacyWazeRemainsLegacyUntilItAdvertisesAnEventProtocol() throws Exception {

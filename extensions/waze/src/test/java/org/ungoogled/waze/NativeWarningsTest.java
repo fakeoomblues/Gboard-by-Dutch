@@ -83,6 +83,34 @@ public class NativeWarningsTest {
         assertTrue(last().getBoolean("source_preemptive"));assertEquals(17,last().getInt("source_priority"));assertEquals(1,last().getInt("priority"));
         assertEquals("waze_semantic_family_v1",last().getString("priority_origin"));
     }
+    @Test public void familyStatusDoesNotInferAvailabilityOrRefreshObservationClocksFromAnEmptyFeed(){
+        Bundle initial=NativeWarnings.familyStatus();assertEquals(6,initial.size());
+        assertEquals("unobserved",initial.getBundle("alerters").getString("native_available"));assertFalse(initial.getBundle("alerters").containsKey("observed_elapsed_ms"));
+        repository();Bundle empty=NativeWarnings.familyStatus().getBundle("alerters");assertEquals("no_current_state",empty.getString("native_available"));
+        long observed=empty.getLong("observed_elapsed_ms");shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(5));
+        assertEquals(observed,NativeWarnings.familyStatus().getBundle("alerters").getLong("observed_elapsed_ms"));
+        assertEquals("unobserved",empty.getString("source_enabled"));assertEquals("unobserved",empty.getString("host_filtered"));
+        assertEquals("binding_unproven",empty.getString("controller_state"));assertFalse(empty.getBoolean("supported_capture"));
+    }
+
+    @Test public void familyStatusSeparatesNativeStateDecisionsAndVisualOnlyContent(){
+        Descriptor d=new Descriptor("family","CAMERA",0);repository(d);Bundle before=NativeWarnings.familyStatus().getBundle("alerters");
+        assertEquals("state_present",before.getString("native_available"));assertEquals(1,before.getInt("current_state_count"));assertFalse(before.containsKey("decision_elapsed_ms"));
+        NativeWarnings.sound(d.id);Bundle after=NativeWarnings.familyStatus().getBundle("alerters");assertTrue(after.containsKey("decision_elapsed_ms"));
+        assertEquals("receiver_choices_v1",last().getString("managed_output_policy"));assertEquals("receiver_owned",last().getString("local_sound_policy"));
+        NativeWarnings.notificationAdded(new Notification("FEATURE_CYCLISTS"));Bundle notifications=NativeWarnings.familyStatus().getBundle("notifications");
+        assertEquals("visual_only",notifications.getString("output_policy"));assertEquals("none",notifications.getString("audio_control"));assertFalse(notifications.containsKey("decision_elapsed_ms"));
+        after.putString("source_enabled","modified");assertEquals("unobserved",NativeWarnings.familyStatus().getBundle("alerters").getString("source_enabled"));
+        assertTrue(nl.johninnl.navigation.alerts.WarningCodec.encodedSize(NativeWarnings.familyStatus())<8192);
+        NativeWarnings.stopped();Bundle cleared=NativeWarnings.familyStatus();assertFalse(cleared.getBundle("alerters").containsKey("observed_elapsed_ms"));assertEquals(0,cleared.getBundle("alerters").getInt("current_state_count"));
+    }
+    @Test public void unsupportedNativeTextAfterStateExpiryCannotPoisonLaterCallbacksOrStatus(){
+        Descriptor unsupported=new Descriptor("no-text","DYNAMIC",999);unsupported.info.title="";unsupported.info.description="";repository(unsupported);
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));NativeWarnings.sound(unsupported.id);
+        assertEquals(0,announcements());assertEquals(0,NativeWarnings.familyStatus().getBundle("alerters").getInt("current_state_count"));
+        Descriptor valid=new Descriptor("next-camera","CAMERA",0);repository(valid);NativeWarnings.sound(valid.id);
+        assertEquals(1,announcements());assertEquals("CAMERA",decoded(last()).nativeType);assertEquals("ANNOUNCE",last().getString("operation"));
+    }
     @Test public void aNativeZoneStateDoesNotTurnCrashHistoryIntoAverageSpeedEnforcement(){
         Descriptor d=new Descriptor("crash-history","GUARDIAN",1);d.zone=new Zone("InZone");repository(d);Controller c=new Controller(d.id,State.InZone);NativeWarnings.zoneSelected(c);
         assertEquals("road_feature",last().getString("category"));assertEquals("enter",last().getString("phase"));
@@ -148,6 +176,14 @@ public class NativeWarningsTest {
         assertTrue(last().getString("warning_id").startsWith("waze/segment/"));assertEquals("UPSERT",last().getString("operation"));decoded(last());
         NativeWarnings.segments(new SegmentUpdate(Collections.emptyList()));assertEquals("CLEAR",last().getString("operation"));
     }
+    @Test public void invalidSegmentSnapshotCannotPartiallyEnrichStateOrClaimAnObservedFamily(){
+        Descriptor d=new Descriptor("42","PERMANENT_HAZARD",0);repository(d);int count=events.size();
+        Segment s=new Segment("SPEED_BUMP");s.links=Collections.singletonList(new Link(42,"uuid-42","PERMANENT_HAZARD"));
+        NativeWarnings.segments(new SegmentUpdate(Arrays.asList(s,s)));assertEquals(count,events.size());
+        assertFalse(NativeWarnings.familyStatus().getBundle("segments").containsKey("observed_elapsed_ms"));
+        NativeWarnings.segments(new SegmentUpdate(Collections.singletonList(s)));
+        assertTrue(last().getBoolean("native_segment_correlated"));assertEquals(1,NativeWarnings.familyStatus().getBundle("segments").getInt("current_state_count"));assertEquals(0,announcements());
+    }
 
     @Test public void notificationAddIsVisualAndUnknownFeaturesDoNotExportPrivateText(){
         Notification n=new Notification("FEATURE_CYCLISTS");NativeWarnings.notificationAdded(n);
@@ -190,9 +226,9 @@ public class NativeWarningsTest {
     }
     public static final class Position {public int getLatitude(){return 52000000;}public int getLongitude(){return 4000000;}}
     public static final class Info {
-        String type,description="Native detail",silent;int subtype;Validation validation=new Validation();
+        String type,title="Native warning",description="Native detail",silent;int subtype;Validation validation=new Validation();
         Info(String type,int subtype){this.type=type;this.subtype=subtype;}
-        public String getType(){return type;}public int getTypeValue(){return 1;}public String getTitle(){return "Native warning";}
+        public String getType(){return type;}public int getTypeValue(){return 1;}public String getTitle(){return title;}
         public String getDescription(){return description;}public boolean hasSubType(){return true;}public int getSubType(){return subtype;}
         public boolean hasSubtypeTrait(){return false;}public long getSubtypeTrait(){return 0;}
         public boolean hasValidationResult(){return validation!=null;}public Validation getValidationResult(){return validation;}

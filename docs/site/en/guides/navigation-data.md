@@ -105,6 +105,12 @@ A warning received after reconnecting keeps its original deadline. A clearly pas
 
 If the selected engine or voice becomes available, a still-valid waiting warning can retry preparation. Expired warnings are not replayed after a voice download or engine recovery. Keep the explicit Voice/Tone/Silent choice you want; recovery does not override native mute.
 
+### Waze development warning integration
+
+The Waze 5.26.90.901 development integration reuses the same warning client and speakers in Maps/Vela. Its capture coverage remains marked incomplete while runtime acceptance is pending; choosing Voice does not bypass that gate.
+
+In managed Waze event mode, the receiving map's reviewed categories and Voice/Tone/Silent choices govern output. Waze's local camera-sound switches and below-speed-limit restriction apply to Waze's own playback. Native warning enablement, invalidity and familiar/grouped silence still apply to source events. Native visual-only notifications remain visual-only. Maps/Vela continues to provide navigation.
+
 ## 4. Check reception before relying on it
 
 After one-time provider setup, while parked, open the receiving map app with an external source selected. Check that the chosen source is listed and that it reports fresh data when observations are available. Leave the provider in the background and confirm reception continues. A stationary speed of zero is valid; a missing speed or limit must remain unknown or use the map's native fallback.

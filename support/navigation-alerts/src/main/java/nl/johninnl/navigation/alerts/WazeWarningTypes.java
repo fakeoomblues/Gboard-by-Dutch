@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-/** Pinned Waze structural namespaces. This inventory is not a native capture-coverage proof. */
+/** Pinned Waze coverage contract and required receiving semantics; runtime acceptance is separate. */
 public final class WazeWarningTypes {
     private WazeWarningTypes() {}
-    public static final String MANIFEST_DIGEST = "9fd66569b41084594962274c07ffdc7f8522f46becc88a58d223bba13dc4f4fd";
+    public static final String MANIFEST_DIGEST = "4d2aaddcb5102b43e918b3af7c64665e8253594b07dc089565c4b21d50c11dd0";
     private static final Set<String> TYPES = build();
     public static Set<String> required() { return TYPES; }
     private static Set<String> build() {
@@ -30,7 +30,11 @@ public final class WazeWarningTypes {
                 "waze/validation/presence_v1","waze/priority/preemptive_v1","waze/policy/silent_activation_v1",
                 "waze/policy/abort_on_removal_v1","waze/notification/native_text_v1","waze/notification/car_variants_v1",
                 "waze/notification/presence_v1","waze/notification/lifecycle_v1","waze/segment/linked_alerter_v1",
-                "waze/source_route/prerequisites_v1");
+                "waze/source_route/prerequisites_v1",
+                "waze/output/receiver_choices_v1",
+                "waze/semantic/enforcement_zone_v1",
+                "waze/semantic/roadside_safety_crash_history_v1",
+                "waze/relevance/fresh_receiver_route_v1");
         return Collections.unmodifiableSet(values);
     }
     private static void add(Set<String> values,String namespace,String names) {

@@ -117,6 +117,7 @@ public final class NativeUi {
                     nl.johninnl.navigation.alerts.WarningPreferences choices=TelemetryRuntime.warningPreferences();
                     if(choices!=null){
                         title(TelemetryRuntime.providerName()+" · "+text("warning_output","Warning audio"),composer);
+                        if(TelemetryStore.WAZE.equals(TelemetryRuntime.selected()))hint(java.util.Locale.getDefault().getLanguage().equals("nl")?"Beheerde Waze-meldingen gebruiken deze Vela-audiokeuzes. De eigen camera- en snelheidsafhankelijke geluidsinstellingen gelden alleen voor Waze zelf.":"Managed Waze alerts use these Vela audio choices. Waze's local camera-sound and below-limit settings apply only to Waze's own playback.",composer);
                         for(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode mode:nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.values()){
                             String label=mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.VOICE?text("warning_voice","Voice"):mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.TONE?text("warning_tone","Tone"):text("warning_silent","Silent");
                             row(label,choices.mode()==mode,action("warning_mode_"+TelemetryRuntime.selected()+"_"+mode,()->{choices.mode(mode);TelemetryRuntime.warningChoicesChanged();}),composer);

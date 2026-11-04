@@ -23,6 +23,25 @@ import java.io.File
 import java.security.MessageDigest
 
 class WazeNativeWarningHooksTest {
+    @Test fun advertisedCoverageDigestPinsTheActualNativeContractsAndReceivingPolicy() {
+        fun source(path: String) = File(path).takeIf { it.isFile } ?: File("../$path")
+        val file = source("docs/waze/native-warning-coverage.json")
+        val text = file.readText()
+        val digest = MessageDigest.getInstance("SHA-256").digest(file.readBytes())
+            .joinToString("") { "%02x".format(it.toInt() and 255) }
+        val profile = source("support/navigation-alerts/src/main/java/nl/johninnl/navigation/alerts/WazeWarningTypes.java").readText()
+        assertTrue(profile.contains("MANIFEST_DIGEST = \"$digest\""))
+        val block = text.substringAfter("\"exact_native_method_contracts\": [").substringBefore("\"accepted_prior_edits\"")
+        val entries = Regex(""""method":\s*"([^"]+)",\s*"registers":\s*(\d+),\s*"instructions":\s*(\d+),\s*"access_flags":\s*(\d+),\s*"instruction_sha256":\s*"([a-f0-9]{64})"""")
+            .findAll(block).associate { match ->
+                match.groupValues[1] to WazeWarningContract(match.groupValues[2].toInt(), match.groupValues[3].toInt(), match.groupValues[4].toInt(), match.groupValues[5])
+            }
+        assertEquals(wazeWarningContracts, entries)
+        for (name in listOf("waze/output/receiver_choices_v1", "waze/semantic/enforcement_zone_v1",
+            "waze/semantic/roadside_safety_crash_history_v1", "waze/relevance/fresh_receiver_route_v1")) {
+            assertTrue(text.contains("\"$name\""));assertTrue(profile.contains("\"$name\""))
+        }
+    }
     private fun original(): List<ClassDef> {
         val path = System.getenv("WAZE_ORIGINAL_APK")
         assumeNotNull(path)

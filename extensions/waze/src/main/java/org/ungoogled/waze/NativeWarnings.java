@@ -36,6 +36,7 @@ public final class NativeWarnings {
     private static Consumer<Bundle> testSink;
     private static long announcementCounter;
     private static boolean repositoryObserved,controllersResolved;
+    private static long alertersAt=-1,zonesAt=-1,segmentsAt=-1,routeContextAt=-1,notificationsAt=-1,osmAt=-1,soundAt=-1,zoneSoundAt=-1;
     private static String controllerFailure="waiting_for_engine";
     private static final class Record {Bundle fields;long revision=1,index;}
     private static final class ZoneDecision {final String id,phase;ZoneDecision(String id,String phase){this.id=id;this.phase=phase;}}
@@ -60,6 +61,42 @@ public final class NativeWarnings {
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}
     static synchronized String controllerState(){return controllersResolved?(repositoryObserved?"native_updates_observed":"waiting_for_native_updates"):controllerFailure;}
+    /** Optional product status: native callbacks, controller resolution and output policy are distinct. */
+    static synchronized Bundle familyStatus(){
+        Bundle result=new Bundle();long now=SystemClock.elapsedRealtime();int[] current=new int[6];
+        for(Record record:records.values()){
+            Bundle b=record.fields;if(b==null||"CLEAR".equals(b.getString("operation"))||now>=b.getLong("state_until_elapsed_ms"))continue;
+            String id=b.getString("warning_id","");
+            if(id.startsWith("waze/alerter/")){
+                current[b.containsKey("native_zone_state")?1:0]++;
+                if(b.getBoolean("native_segment_correlated")){
+                    String type=b.getString("native_segment_type","");current[type.equals("HOV_LANE")||type.equals("CARPOOL_LANE")||type.equals("BUS_LANE")?3:2]++;
+                }
+            }
+            else if(id.startsWith("waze/segment/"))current[b.getBoolean("requires_source_route")?3:2]++;
+            else if(id.startsWith("waze/notification/"))current[4]++;
+            else if(id.startsWith("waze/osm/"))current[5]++;
+        }
+        String controller=controllersResolved?"singleton_resolved":controllerFailure;
+        result.putBundle("alerters",family(alertersAt,soundAt,current[0],controller,"native_sound_request",false));
+        result.putBundle("zones",family(zonesAt,zoneSoundAt,current[1],controller,"native_zone_selection",false));
+        result.putBundle("segments",family(segmentsAt,-1,current[2],"native_callback_binding","state_only",false));
+        result.putBundle("route_context",family(routeContextAt,-1,current[3],"native_callback_binding","state_only",true));
+        result.putBundle("notifications",family(notificationsAt,-1,current[4],"native_callback_binding","visual_only",false));
+        result.putBundle("osm",family(osmAt,-1,current[5],"optional_layer","patch_owned",false));
+        return result;
+    }
+    private static Bundle family(long observed,long decision,int count,String controller,String output,boolean routeRequired){
+        Bundle b=new Bundle();boolean on=enabled();b.putBoolean("supported_capture",bound());b.putBoolean("integration_enabled",on);
+        b.putString("controller_state",!bound()?"binding_unproven":!on?"integration_disabled":decision>=0?"native_decision_observed":controller);
+        // Neither an empty list nor a resolved singleton proves native category/region/host availability.
+        b.putString("source_enabled","unobserved");b.putString("host_filtered","unobserved");
+        b.putString("native_available",count>0?"state_present":observed>=0?"no_current_state":"unobserved");
+        b.putInt("current_state_count",count);b.putBoolean("requires_source_route",routeRequired);b.putString("output_policy",output);
+        b.putString("audio_control",output.equals("visual_only")||output.equals("state_only")||routeRequired?"none":"receiving_map");
+        if(observed>=0)b.putLong("observed_elapsed_ms",observed);if(decision>=0)b.putLong("decision_elapsed_ms",decision);
+        return b;
+    }
     static void prepareControllers(){
         Context context; synchronized(NativeWarnings.class){context=app;if(controllersResolved||context==null||!bound()||!NavigationBroadcasts.isEnabled())return;}
         try{
@@ -78,15 +115,18 @@ public final class NativeWarnings {
     private static boolean managed(){return testSink!=null||ProviderAudio.muted();}
     private static synchronized void capture(Runnable action){
         if(!enabled())return;
-        long now=SystemClock.elapsedRealtime();records.entrySet().removeIf(e->now>=e.getValue().fields.getLong("state_until_elapsed_ms"));
-        try{action.run();}catch(RuntimeException unavailable){if(endpoint!=null)endpoint.captureOverflow();Log.w("UA","Native warning capture unavailable: "+unavailable.getClass().getSimpleName());}
+        try{
+            long now=SystemClock.elapsedRealtime();records.entrySet().removeIf(e->e.getValue().fields==null||now>=e.getValue().fields.getLong("state_until_elapsed_ms"));
+            action.run();
+        }catch(RuntimeException unavailable){if(endpoint!=null)endpoint.captureOverflow();Log.w("UA","Native warning capture unavailable: "+unavailable.getClass().getSimpleName());}
     }
     public static void repository(Object update){capture(()->{
         Object values=WazeWarningModels.call(update,"getDescriptorsList");if(!(values instanceof Collection)||((Collection<?>)values).size()>MAX_WARNINGS)throw new IllegalArgumentException("NATIVE_REPOSITORY_BOUND");
         Map<String,Bundle> parsed=new LinkedHashMap<>();Map<String,Object> models=new LinkedHashMap<>();
         for(Object model:(Collection<?>)values){Bundle fields=WazeWarningModels.descriptor(app,model);String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_NATIVE_ID");models.put(id,model);}
         for(String id:new ArrayList<>(nativeModels.keySet()))if(!models.containsKey(id))clear(id);
-        nativeModels.clear();nativeModels.putAll(models);nativeLinks.clear();repositoryObserved=true;
+        nativeModels.clear();nativeModels.putAll(models);nativeLinks.clear();repositoryObserved=true;alertersAt=SystemClock.elapsedRealtime();
+        if(parsed.values().stream().anyMatch(b->b.containsKey("native_zone_state")))zonesAt=alertersAt;
         for(Bundle fields:parsed.values()){String key=fields.getString("native_link_key"),id=fields.getString("warning_id");String old=nativeLinks.get(key);nativeLinks.put(key,old==null||old.equals(id)?id:"");}
         long now=SystemClock.elapsedRealtime();for(Bundle fields:parsed.values()){
             if(!fields.getBoolean("native_valid")||fields.containsKey("native_silent_activation")){
@@ -105,8 +145,12 @@ public final class NativeWarnings {
         Object model=nativeModels.get(id);if(model==null)throw new IllegalStateException("UNCORRELATED_NATIVE_SOUND");
         Bundle fields=WazeWarningModels.descriptor(app,model);
         if(!fields.getBoolean("native_valid")||fields.containsKey("native_silent_activation")||"display_only".equals(fields.getString("category")))return;
+        soundAt=SystemClock.elapsedRealtime();
         if(!managed())return; // Do not replay independent Waze playback into a later receiving session.
-        fields.putString("announcement_origin","native_sound_intent");put(fields,true,SystemClock.elapsedRealtime(),"native_sound");
+        // Managed output uses the receiving map's reviewed choices. Waze's later
+        // per-camera speaker/underspeed gates remain local to its own playback.
+        fields.putString("announcement_origin","native_sound_intent");fields.putString("local_sound_policy","receiver_owned");
+        put(fields,true,SystemClock.elapsedRealtime(),"native_sound");
     });}
     private static String zonePhase(Object controller){
         try{Field state=controller.getClass().getDeclaredField("b");state.setAccessible(true);Object value=state.get(controller);int ordinal=((Enum<?>)value).ordinal();return ordinal==1?"enter":ordinal==2?"exit":"approach";}
@@ -136,13 +180,14 @@ public final class NativeWarnings {
             fields.putString("message",message);
             fields.putString("message_origin","template");fields.putString("template_id","waze_native_zone_exit_v1");fields.putString("language_tag",nl?"nl":"en");
         }
-        put(fields,true,SystemClock.elapsedRealtime(),"native_zone");zones.put(controller,new ZoneDecision(id,phase));
+        zoneSoundAt=SystemClock.elapsedRealtime();put(fields,true,zoneSoundAt,"native_zone");zones.put(controller,new ZoneDecision(id,phase));
     }
     public static void segments(Object update){capture(()->{
         Object values=WazeWarningModels.call(update,"getInfoList");if(!(values instanceof Collection)||((Collection<?>)values).size()>MAX_WARNINGS)throw new IllegalArgumentException("SEGMENT_BOUND");
-        Map<String,Bundle> parsed=new LinkedHashMap<>();long observed=SystemClock.elapsedRealtime();
+        Map<String,Bundle> parsed=new LinkedHashMap<>(),correlated=new LinkedHashMap<>();Set<String> seen=new HashSet<>();long observed=SystemClock.elapsedRealtime();boolean routeContext=false;
         for(Object info:(Collection<?>)values){
-            Bundle fields=WazeWarningModels.segment(app,info);String linked=null;boolean ambiguous=false;
+            Bundle fields=WazeWarningModels.segment(app,info);if(fields.getBoolean("requires_source_route"))routeContext=true;String linked=null;boolean ambiguous=false;
+            if(!seen.add(fields.getString("warning_id")))throw new IllegalArgumentException("DUPLICATE_SEGMENT");
             for(int i=0;i<fields.getInt("source_alert_count");i++){
                 String candidate=nativeLinks.get(fields.getString("source_alert_"+i+"_link_key"));Record record=candidate==null?null:records.get(candidate);
                 if(candidate!=null&&!candidate.isEmpty()&&record!=null&&fields.getString("source_alert_"+i+"_type").equals(record.fields.getString("native_type"))){if(linked!=null&&!linked.equals(candidate))ambiguous=true;else linked=candidate;}
@@ -152,18 +197,21 @@ public final class NativeWarnings {
                 nativeFields.putString("native_segment_type",fields.getString("native_type"));nativeFields.putString("native_segment_phase",fields.getString("native_segment_phase"));
                 nativeFields.putString("native_segment_key",fields.getString("native_segment_key"));nativeFields.putBoolean("native_segment_correlated",true);
                 if(fields.containsKey("distance_m")){nativeFields.putInt("native_segment_distance_m",fields.getInt("distance_m"));nativeFields.putLong("native_segment_observed_ms",observed);}
-                put(nativeFields,false,nativeFields.getLong("observed_elapsed_ms"),"native_segment_correlated_state");
+                correlated.put(linked,nativeFields);
             }else{String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_SEGMENT");}
         }
+        // Validate the complete native update before emitting even a linked state change.
+        for(Bundle fields:correlated.values())put(fields,false,fields.getLong("observed_elapsed_ms"),"native_segment_correlated_state");
         for(String id:new ArrayList<>(segments))if(!parsed.containsKey(id))clear(id);
-        segments.clear();segments.addAll(parsed.keySet());long now=SystemClock.elapsedRealtime();for(Bundle fields:parsed.values())put(fields,false,now,"native_segment_state");
+        segments.clear();segments.addAll(parsed.keySet());long now=SystemClock.elapsedRealtime();segmentsAt=now;if(routeContext)routeContextAt=now;
+        for(Bundle fields:parsed.values())put(fields,false,now,"native_segment_state");
     });}
     public static void notificationAdded(Object notification){capture(()->{
         Bundle fields=WazeWarningModels.notification(app,notification);String id=fields.getString("warning_id");
         if(notifications.size()>=MAX_WARNINGS&&!notifications.contains(id))throw new IllegalArgumentException("NOTIFICATION_BOUND");
-        notifications.add(id);put(fields,false,SystemClock.elapsedRealtime(),"native_notification_state");
+        notifications.add(id);notificationsAt=SystemClock.elapsedRealtime();put(fields,false,notificationsAt,"native_notification_state");
     });}
-    public static void notificationRemoved(Object identity){capture(()->{String id=WazeWarningModels.notificationIdentity(identity);notifications.remove(id);clear(id);});}
+    public static void notificationRemoved(Object identity){capture(()->{String id=WazeWarningModels.notificationIdentity(identity);notifications.remove(id);notificationsAt=SystemClock.elapsedRealtime();clear(id);});}
     static boolean osm(String feature,long id,int subtype,String label,double latitude,double longitude,double distance,double trigger,long observed,boolean announce){boolean[] accepted={false};capture(()->{
         Bundle fields=WazeWarningModels.base("org.ungoogled.waze.OsmCameras",feature.equals("flockCameras")?"FLOCK_CAMERA":"CAMERA",label,"en");
         fields.putString("warning_id","waze/osm/"+WazeWarningModels.hash(feature+":"+id+":"+subtype));fields.putString("native_osm_feature",feature);fields.putString("native_osm_legacy_id","osm:"+feature+":"+id);
@@ -172,7 +220,7 @@ public final class NativeWarnings {
         fields.putString("relevance","point_ahead");fields.putInt("distance_m",(int)Math.round(distance));fields.putInt("trigger_m",(int)Math.round(trigger));fields.putBoolean("distance_estimated",true);fields.putBoolean("trigger_estimated",true);fields.putBoolean("position_estimated",false);
         // The existing layer proves its ahead-on-current-motion decision. Its input does not
         // prove equivalence to a native directed-road camera, so never merge merely by radius.
-        fields.putString("dedup_status","unresolved_without_directed_road_equivalence");if(managed()){put(fields,announce,observed,"patch_owned_osm");accepted[0]=true;}
+        fields.putString("dedup_status","unresolved_without_directed_road_equivalence");osmAt=observed;if(managed()){put(fields,announce,observed,"patch_owned_osm");accepted[0]=true;}
     });return accepted[0];}
     static void osmSnapshot(String feature,java.util.List<nl.johninnl.navigation.NavigationAlerts.Alert> values){capture(()->{
         Set<String> present=new HashSet<>();for(nl.johninnl.navigation.NavigationAlerts.Alert value:values)present.add(value.id);
@@ -181,13 +229,15 @@ public final class NativeWarnings {
     static void overflow(){capture(()->{throw new IllegalStateException("SOURCE_CAPTURE_BOUND");});}
     static synchronized void stopped(){
         for(String id:new ArrayList<>(records.keySet()))clear(id);nativeModels.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();presentation.remove();repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";
+        alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;
     }
     private static void put(Bundle source,boolean announce,long observed,String path){
         String id=source.getString("warning_id");long now=SystemClock.elapsedRealtime();if(observed<0||observed>now||now-observed>=30000)return;
+        if(announce&&source.getString("message","").trim().isEmpty())throw new IllegalArgumentException("MISSING_NATIVE_TEXT");
         Record record=records.get(id);if(record==null){if(records.size()>=MAX_WARNINGS)throw new IllegalArgumentException("WARNING_BOUND");record=new Record();records.put(id,record);}
         Bundle fields=new Bundle(source);
         if(record.fields!=null&&!sameContent(record.fields,fields))record.revision++;
-        if(announce){if(fields.getString("message","").trim().isEmpty())throw new IllegalArgumentException("MISSING_NATIVE_TEXT");record.index=++announcementCounter;}
+        if(announce)record.index=++announcementCounter;
         fields.putLong("revision",record.revision);fields.putLong("announcement_index",record.index);fields.putString("operation",announce?"ANNOUNCE":"UPSERT");
         fields.putLong("observed_elapsed_ms",observed);long until=observed+30000;
         if(fields.containsKey("native_timeout_ms")&&fields.getLong("native_timeout_ms")>0)until=observed+Math.min(30000,fields.getLong("native_timeout_ms"));
@@ -202,5 +252,5 @@ public final class NativeWarnings {
     }
     private static void clear(String id){Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;Bundle b=new Bundle();b.putString("warning_id",id);b.putString("operation","CLEAR");b.putLong("revision",record.revision);b.putLong("announcement_index",record.index);long now=SystemClock.elapsedRealtime();b.putLong("observed_elapsed_ms",now);b.putLong("state_until_elapsed_ms",now+30000);record.fields=b;emit(b);}
     private static void emit(Bundle fields){if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
 }

@@ -73,6 +73,8 @@ internal fun bindWazeNativeWarnings(methods: Map<String, MutableMethod>) {
         (zoneExit.instructions[19] as ReferenceInstruction).reference.toString() == "Lcom/waze/alerters/a/l;->f(Lcom/waze/j;)V")
 
     // This native request precedes JNI playback and every managed local audio mute.
+    // Managed speech intentionally uses Maps/Vela choices, upstream of Waze's own
+    // per-camera sound and below-limit playback preferences.
     sound.addInstruction(0, "invoke-static/range {p1 .. p1}, $WAZE_WARNINGS->sound(Ljava/lang/Object;)V")
     // The native selector invokes this callback independently of UI presentation.
     // Observe its selected controller without calling k() or any native acknowledgement.

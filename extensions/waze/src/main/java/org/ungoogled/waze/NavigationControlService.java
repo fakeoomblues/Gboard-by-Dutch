@@ -9,6 +9,7 @@ public final class NavigationControlService extends ProviderControlService {
         if(!NativeWarnings.supportsEventProtocol(this))return;
         response.putBinder("warning_api",NativeWarnings.init(this).binder());response.putIntArray("warning_protocols",new int[]{1});
         response.putString("warning_controller_state",NativeWarnings.controllerState());response.putString("warning_source_route_state","unobserved");
+        response.putBundle("warning_families",NativeWarnings.familyStatus());
         response.putParcelable("warning_recovery",android.app.PendingIntent.getActivity(this,29174,new android.content.Intent(this,WarningRecoveryActivity.class),android.app.PendingIntent.FLAG_IMMUTABLE|android.app.PendingIntent.FLAG_UPDATE_CURRENT));
     }
     @Override protected boolean enabled() { return NavigationBroadcasts.isEnabled(); }

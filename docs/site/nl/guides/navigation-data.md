@@ -107,6 +107,12 @@ Maps toont de onderstaande statussen in het Engels. Vela kan de Nederlandse teks
 
 Wanneer de gekozen spraakengine of stem beschikbaar komt, kan een nog geldige wachtende waarschuwing de voorbereiding opnieuw proberen. Verlopen waarschuwingen worden na een stemdownload of engineherstel niet alsnog afgespeeld. Houd zelf de gewenste keuze Spraak/Toon/Stil aan; herstel verandert de eigen dempstand niet.
 
+### Waze-waarschuwingen in ontwikkeling
+
+De ontwikkelkoppeling voor Waze 5.26.90.901 hergebruikt dezelfde waarschuwingsontvanger en spraakpaden in Maps/Vela. De brondekking blijft als onvolledig gemarkeerd zolang de runtime-acceptatie openstaat; Spraak kiezen omzeilt die blokkade niet.
+
+Bij beheerde Waze-gebeurtenissen bepalen de gecontroleerde categorieën en Spraak/Toon/Stil-keuze van de ontvangende kaart de uitvoer. Wazes eigen camerageluidsschakelaars en beperking onder de snelheidslimiet gelden voor Wazes eigen audio. Uitgeschakelde bronwaarschuwingen, ongeldige meldingen en stille activatie voor bekende of gegroepeerde meldingen blijven van toepassing op brongebeurtenissen. Native meldingen die alleen visueel zijn blijven visueel. Maps/Vela blijft de navigatie verzorgen.
+
 ## 4. Controleer de ontvangst
 
 Open na de eenmalige broninstellingen, terwijl je geparkeerd staat, de ontvangende kaartapp met een externe bron geselecteerd. Controleer of de gekozen bron wordt vermeld en verse gegevens meldt wanneer er waarnemingen zijn. Laat de bron op de achtergrond en controleer of de ontvangst doorgaat. Stilstand met snelheid nul is geldig; een ontbrekende snelheid of limiet moet onbekend blijven of terugvallen op de eigen kaartgegevens.
