@@ -4,6 +4,8 @@
 
 The FM15.0/1289 port uses its own guarded contracts and manifest. Records below this checkpoint describe earlier candidates unless they explicitly name FM15. They remain regression evidence and do not establish acceptance on the new artifacts.
 
+The latest built candidate is committed `c521111`, including the three review corrections. Complete local verification passed (215 release/publishing tests, 563 Python tests with 47 skips, 620 Android tests with 14 skips, Medium and strict bilingual documentation/site checks), and the signed MPP plus all three intended APK combinations were rebuilt. The [implementation review](2026-11-03-native-warning-implementation-review.md#verified-three-app-candidate-at-c521111) records their exact hashes. These current APKs have not been installed or run; none of the historical runtime identities below is silently relabelled as current acceptance.
+
 The current controlled FM15 integration binds source APK `13dc9673fa32e662b20c7e3afadd03d3e230a18814027cd1d86a45ea19eef765`, renamed Maps APK `3285d836bfb7caefd361fec42d7ed080017021f885eabf331b02b88287fb8839`, and Vela APK `958bd90f477c45d8210f797b34e8649162d4153238419ab2ab7af856cd9edf19` to signed MPP `86728ba08899b61de807e16da8f80a45f0ed67f041ac3c779e7f495824e71064`.
 
 | Boundary | Current FM15 evidence | Limit |

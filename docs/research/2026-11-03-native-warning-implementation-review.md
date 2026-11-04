@@ -1,6 +1,6 @@
 # Native warning implementation review
 
-Review checkpoint: `d0bc0d1`, after the FM15 port, background-start correction, recovery work and local-CI sync. This is a code review and delivery inventory. It does not mark the design's remaining runtime or physical acceptance complete.
+Latest development source/build checkpoint: `c521111`, with all three subsequent review findings corrected, the complete local workflow passing and all three APKs rebuilt. Installed runtime and physical/car acceptance remain incomplete. The original review checkpoint was `d0bc0d1`; earlier artifact records below retain their own identities.
 
 ## Product scope
 
@@ -88,6 +88,21 @@ The product corrections now refresh changed model text/instructions and language
 The grouped checkpoint passed 186 FM, 82 Maps and 90 Vela component tests and all three release Java compilations. A final retry-bound refinement then passed all 23 scheduler tests and the three release Java compilations; unchanged passing component evidence is retained. The first checkpoint's new test incorrectly compared serialized grant objects by Java reference; its failure is preserved, and the corrected assertion checks protocol identity. Focused read-only re-review found the three original source findings addressed with no concrete residual defect in those changes.
 
 Compact test/review receipts are retained in ignored `review-fixes`; each terminal build's owned outputs were removed after quiescence with `cleanupRequired=false`. No tooling code, probe, runner, observer or framework was changed, and no emulator or phone session ran. This batch is not yet in the signed `9889c38` candidate; complete verification, a rebuilt candidate and remaining installed/physical acceptance are still required.
+
+## Verified three-app candidate at `c521111`
+
+The review correction batch is now included in the signed MPP and all three rebuilt APKs from `c521111fa48a4beb0c06e2c6d7e69233d9923639`. Complete local verification passed in a clean checkout: 215 release/publishing tests, 563 Python tests (47 skips), 620 Android tests (14 skips), Medium checks and strict bilingual documentation/site checks. The source-specific component counts are FM 187, Maps 82 and Vela 90. All failures/errors were zero; skips remain explicit.
+
+| Current development artifact | SHA-256 |
+| --- | --- |
+| Signed MPP | `a89a3f1bd157a3ebee5d12dcccedaf06e58a51ed817413156ee24b5b336050cc` |
+| FM15 APK | `75bf9e7c24b8145a012cdc88990d59095c9cd973b324aa0c646aac8ffadedddb` |
+| Renamed Maps APK | `cc7ca78fc08729d5263912d2aaad945f2266d96ad3f71506f472f787fae41e2a` |
+| Vela APK | `8c12f91e855e7efed70966bef19dec8388d6c0918de06436814f1787289de55a` |
+
+The same signed bundle applied the exact intended combinations: nine FM15, four Maps and one Vela patches, with FULL bytecode/fingerprint validation and no failed patches. Morphe signing and the existing APK test signer, emitted package/version declarations and unchanged application files through signing were verified. FM native libraries match its existing startup contract. All receivers were rebuilt because the shared scheduler changed.
+
+The verification checkout, dependencies/build outputs, patcher scratch and unsigned/aligned copies were removed; `cleanupRequired=false`. Canonical artifacts, source archive and compact receipts remain under ignored `candidate-c521111`, referenced by the delivery manifest. No tooling changes or emulator/phone session occurred for this build. These APKs have not been installed or run. Earlier runtime results remain tied to their original artifacts; all remaining named runtime, timing/output, phone/car, final evidence-review and stable-promotion gates stay open.
 
 ## Earlier delivery artifacts and evidence reuse
 
