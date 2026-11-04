@@ -39,6 +39,7 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook('nl.johninnl.navigation.alerts.WarningEndpoint','handle',['int','int','java.lang.String','android.os.Bundle'],null,(_,a,r)=>({code:a[0],caller_uid:a[1],status:r===null?null:r.getString('status'),audio_status:r===null?null:r.getString('audio_status')}));
   hook('org.ungoogled.waze.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
   hook('org.ungoogled.waze.NavigationStartup','running',[],null,(_,a,r)=>({engine_running:!!r}));
+  hook('com.waze.alerters.a.aa','b',['com.waze.j'],(_,a)=>({identity_class:klass(a[0])}));
   const N='org.ungoogled.waze.NativeWarnings';
   hook(N,'prepareControllers',[],()=>({}),()=>({}));
   hook(N,'familyStatus',[],null,(_,a,r)=>({families:familyStatus(r)}));

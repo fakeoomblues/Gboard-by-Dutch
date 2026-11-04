@@ -619,7 +619,9 @@
     "nonspatial_warnings": "exempt_from_point_geometry_and_minimum_speed",
     "native_priority": "preserved_as_metadata; card_preemption_is_not_speech_urgency",
     "native_osm_equivalence": "only_exact_type_and_verified_directed_road_context; insufficient_context_remains_unresolved",
-    "native_zone_phase_authority": "Native valid selected zone entry/exit publication, independent of UI queue insertion or presentation acknowledgement; preserve original native callbacks and deduplicate selector/presentation observations."
+    "native_zone_phase_authority": "Native valid selected zone entry/exit publication, independent of UI queue insertion or presentation acknowledgement; preserve original native callbacks and deduplicate selector/presentation observations.",
+    "expired_zone_queue_reconciliation": "Retire only tracked zone identities after real native exit/removal, on the main looper, while API-managed and without started source Activities or a live source car service. Recheck that the current native model is absent or LeftZone before removing its local queue ID. Temporary invalidity/silence is not retirement authority. Never invoke native presentation/start/timeout acknowledgements.",
+    "uuidless_native_sound_identity": "Preserve full provider/unique/UUID event identity. A native sound request omitting UUID may correlate only a unique current provider+unique match, or its synchronous captured zone controller; reject ambiguity and conflicting explicit UUIDs."
   },
   "family_account": {
     "enforcement": {
@@ -729,7 +731,9 @@
   "abstract_and_field_abi": [
     "Lcom/waze/alerters/b/a;->a()Lcom/waze/alerters/b/b;",
     "Lcom/waze/alerters/b/b;->a()Lkotlinx/coroutines/b/cc;",
-    "Lcom/waze/alerters/b/i;->b:Lcom/waze/alerters/a/ab;"
+    "Lcom/waze/alerters/b/i;->b:Lcom/waze/alerters/a/ab;",
+    "Lcom/waze/alerters/a/i;->b(Lcom/waze/j;)V",
+    "Lcom/waze/alerters/a/i;->c(Lcom/waze/alerters/a/c;)Z"
   ],
   "exact_native_method_contracts": [
     {
@@ -1620,6 +1624,27 @@
       "instructions": 84,
       "access_flags": 4121,
       "instruction_sha256": "9865a60869044ebcb03b61367eca647702652c3dbeebc42556acc28509c6f20e"
+    },
+    {
+      "method": "Lcom/waze/alerters/a/aa;->b(Lcom/waze/j;)V",
+      "registers": 8,
+      "instructions": 42,
+      "access_flags": 17,
+      "instruction_sha256": "4a6af478a468e2d1fcd6fd260a9f79f4199895357335914b2686a3e972378728"
+    },
+    {
+      "method": "Lcom/waze/car_lib/WazeCarAppService;->onCreate()V",
+      "registers": 6,
+      "instructions": 87,
+      "access_flags": 17,
+      "instruction_sha256": "8492ba8de006cee955ebd711841c12946aa1c714a0b987eeb8002a2498018e24"
+    },
+    {
+      "method": "Lcom/waze/car_lib/WazeCarAppService;->onDestroy()V",
+      "registers": 3,
+      "instructions": 6,
+      "access_flags": 17,
+      "instruction_sha256": "c9a507fde973ff6e0df9d7400cae9e1ef12cbc93488f0a365b026d1d90eee388"
     }
   ],
   "accepted_prior_edits": [

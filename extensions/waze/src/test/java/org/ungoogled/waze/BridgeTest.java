@@ -156,4 +156,13 @@ public class BridgeTest {
         method.invoke(null,info,descriptor,FixtureIdentity.class,id);assertSame(id,info.id);assertSame(id,descriptor.id);
     }
 
+    @Test public void additionalNativeFixtureFamiliesRequireExplicitRealCallbacks()throws Exception{
+        Method method=Class.forName(Bridge.class.getName()+"$SelfTest").getDeclaredMethod("nativeFamily",Intent.class);method.setAccessible(true);
+        assertEquals(Boolean.FALSE,method.invoke(null,new Intent()));
+        var disabled=assertThrows(java.lang.reflect.InvocationTargetException.class,()->method.invoke(null,new Intent().putExtra("family","segments")));
+        assertEquals("NATIVE_FIXTURE_REQUIRES_REAL",disabled.getCause().getMessage());
+        var unknown=assertThrows(java.lang.reflect.InvocationTargetException.class,()->method.invoke(null,new Intent().putExtra("family","unknown").putExtra("real",true)));
+        assertEquals("UNKNOWN_NATIVE_FIXTURE_FAMILY",unknown.getCause().getMessage());
+    }
+
 }

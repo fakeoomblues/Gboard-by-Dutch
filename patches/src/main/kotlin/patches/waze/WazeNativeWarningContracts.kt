@@ -12,13 +12,18 @@ internal const val WAZE_SEGMENT_ROOT = "Lcom/waze/insights_infra/InsightsInfraNa
 /** Exactly Average speed zone bar's existing single entry observer, when that patch runs first. */
 internal const val WAZE_SEGMENT_ZONE_BAR_HASH = "ccb4455b0197dc4213b0f776e50ffdc686dee2c5ed7c9ba94be89f5d70e282f3"
 
-internal val wazeWarningClassAbi = setOf("Lcom/waze/alerters/b/i;", "Lcom/waze/alerters/b/a;", "Lcom/waze/alerters/b/b;")
+internal val wazeWarningClassAbi = setOf("Lcom/waze/alerters/b/i;", "Lcom/waze/alerters/b/a;", "Lcom/waze/alerters/b/b;", "Lcom/waze/alerters/a/i;")
 
 /** Abstract selector ABI has no body to hash; its declared descriptors/flags remain exact. */
 internal fun validateWazeWarningClassAbi(classes: Map<String, ClassDef>) {
     check(classes.keys == wazeWarningClassAbi) { "Missing Waze warning selector ABI" }
     val state = classes.getValue("Lcom/waze/alerters/b/i;").fields.single { it.name == "b" }
     check(state.type == "Lcom/waze/alerters/a/ab;" && state.accessFlags == 18) { "Changed Waze native zone state field" }
+    val queue = classes.getValue("Lcom/waze/alerters/a/i;")
+    val remove = queue.methods.single { it.name == "b" }
+    check(queue.accessFlags == 1537 && remove.toString() == "Lcom/waze/alerters/a/i;->b(Lcom/waze/j;)V" && remove.accessFlags == 1025 && remove.implementation == null) { "Changed Waze zone queue ABI" }
+    val append = queue.methods.single { it.name == "c" }
+    check(append.toString() == "Lcom/waze/alerters/a/i;->c(Lcom/waze/alerters/a/c;)Z" && append.accessFlags == 1025 && append.implementation == null) { "Changed Waze zone queue insertion ABI" }
     mapOf("Lcom/waze/alerters/b/a;" to "Lcom/waze/alerters/b/b;",
         "Lcom/waze/alerters/b/b;" to "Lkotlinx/coroutines/b/cc;").forEach { (owner, result) ->
         val cls = classes.getValue(owner)
@@ -159,6 +164,9 @@ internal val wazeWarningContracts = mapOf(
     "Lkotlinx/coroutines/a/ab;->l(Ljava/lang/Class;)Ljava/lang/Object;" to WazeWarningContract(2, 6, 25, "499c8c8b834ca3ce3002df03eeacba1f05cf2f4dbef35b32a8cc605f2f405414"),
     "Lcom/waze/alerters/b/j;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;" to WazeWarningContract(8, 170, 17, "fa86d832f03bab0699af75d157a3dbb8778b430c9ef430f76f12a7059835b958"),
     "Lcom/waze/alerters/b/o;->d(Lcom/waze/alerters/b/o;Lcom/waze/alerters/b/h;)Lcom/waze/alerters/b/h;" to WazeWarningContract(14, 84, 4121, "9865a60869044ebcb03b61367eca647702652c3dbeebc42556acc28509c6f20e"),
+    "Lcom/waze/alerters/a/aa;->b(Lcom/waze/j;)V" to WazeWarningContract(8, 42, 17, "4a6af478a468e2d1fcd6fd260a9f79f4199895357335914b2686a3e972378728"),
+    "Lcom/waze/car_lib/WazeCarAppService;->onCreate()V" to WazeWarningContract(6, 87, 17, "8492ba8de006cee955ebd711841c12946aa1c714a0b987eeb8002a2498018e24"),
+    "Lcom/waze/car_lib/WazeCarAppService;->onDestroy()V" to WazeWarningContract(3, 6, 17, "c9a507fde973ff6e0df9d7400cae9e1ef12cbc93488f0a365b026d1d90eee388"),
 )
 
 internal fun validateWazeWarningMethods(methods: Map<String, Method>) {

@@ -25,8 +25,15 @@ import org.robolectric.annotation.Config;
 @Config(sdk=32, manifest=Config.NONE)
 public class NativeWarningsTest {
     private final List<Bundle> events=new ArrayList<>();
-    @Before public void setup(){NativeWarnings.resetForTest(RuntimeEnvironment.getApplication(),events::add);}
-    @After public void teardown(){NativeWarnings.resetForTest(null,null);}
+    @Before public void setup()throws Exception{NativeWarnings.resetForTest(RuntimeEnvironment.getApplication(),events::add);sourceActivity(null);}
+    private void sourceActivity(android.app.Activity activity)throws Exception{
+        java.lang.reflect.Field field=Customization.class.getDeclaredField("resumed");field.setAccessible(true);field.set(null,new java.lang.ref.WeakReference<>(activity));
+        for(String name:new String[]{"resumedActivities","startedActivities"}){java.lang.reflect.Field visible=Customization.class.getDeclaredField(name);visible.setAccessible(true);java.util.Set<android.app.Activity> set=(java.util.Set<android.app.Activity>)visible.get(null);set.clear();if(activity!=null)set.add(activity);}
+    }
+    private List<Object> retirements()throws Exception{
+        List<Object> out=new ArrayList<>();java.lang.reflect.Field field=NativeWarnings.class.getDeclaredField("testRetire");field.setAccessible(true);field.set(null,(java.util.function.Consumer<Object>)out::add);return out;
+    }
+    @After public void teardown()throws Exception{NativeWarnings.resetForTest(null,null);sourceActivity(null);}
     private Bundle last(){return events.get(events.size()-1);}
     private long announcements(){return events.stream().filter(e->"ANNOUNCE".equals(e.getString("operation"))).count();}
     private void repository(Descriptor...values){NativeWarnings.repository(new Repository(Arrays.asList(values)));}
@@ -157,6 +164,52 @@ public class NativeWarningsTest {
         NativeWarnings.zoneSelected(exit);NativeWarnings.zoneExit(exit);assertEquals(2,announcements());assertEquals("exit",last().getString("phase"));
     }
 
+    @Test public void nativeExitRetiresOnlyItsTrackedUiQueueIdentity()throws Exception{
+        List<Object> removed=retirements();Descriptor d=new Descriptor("retire-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
+        NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());
+        d.zone=new Zone("LeftZone");repository(d);NativeWarnings.zoneSelected(new Controller(d.id,State.LeftZone));
+        shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList(d.id),removed);assertEquals(2,announcements());
+    }
+    @Test public void removedNativeZoneIsRetiredButAnOrdinaryClearIsNot()throws Exception{
+        List<Object> removed=retirements();Descriptor d=new Descriptor("gone-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
+        NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));repository();shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList(d.id),removed);
+        removed.clear();repository(new Descriptor("ordinary-clear","POLICE",0));repository();shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());
+    }
+    @Test public void foregroundAndCarUiDeferExpiryCleanupUntilTheirLifecycleEnds()throws Exception{
+        List<Object> removed=retirements();Descriptor d=new Descriptor("foreground-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
+        NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();sourceActivity(activity);
+        d.zone=new Zone("LeftZone");repository(d);Controller exit=new Controller(d.id,State.LeftZone);NativeWarnings.zoneSelected(exit);
+        shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());Object car=new Object();NativeWarnings.carUiStarted(car);sourceActivity(null);NativeWarnings.zoneSelected(exit);
+        shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());NativeWarnings.carUiStopped(car);shadowOf(Looper.getMainLooper()).idle();assertEquals(Collections.singletonList(d.id),removed);assertEquals(2,announcements());
+    }
+    @Test public void deferredOldExitCannotRemoveAReactivatedCurrentZone()throws Exception{
+        List<Object> removed=retirements();Descriptor d=new Descriptor("reactivated-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
+        NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));d.zone=new Zone("LeftZone");repository(d);NativeWarnings.zoneSelected(new Controller(d.id,State.LeftZone));
+        d.zone=new Zone("InZone");repository(d);shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());
+    }
+
+    @Test public void stillPresentInvalidOrSilentZoneDoesNotAuthorizeQueueRetirement()throws Exception{
+        List<Object> removed=retirements();Descriptor d=new Descriptor("still-present","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);NativeWarnings.zoneSelected(new Controller(d.id,State.InZone));
+        d.info.validation.valid=false;repository(d);shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());
+        d.info.validation.valid=true;d.info.silent="Familiar";repository(d);shadowOf(Looper.getMainLooper()).idle();assertTrue(removed.isEmpty());
+    }
+    @Test public void uuidlessNativeSoundCorrelatesOnlyAnUnambiguousCurrentIdentity(){
+        Descriptor d=new Descriptor("uuid-sound","CAMERA",0);repository(d);NativeWarnings.sound(new Id("uuid-sound",""));
+        assertEquals(1,announcements());assertEquals(WazeWarningModels.identity(d.id),last().getString("warning_id"));
+        Descriptor other=new Descriptor("uuid-sound","CAMERA",0);other.id.uuid="different-uuid";repository(d,other);long before=announcements();NativeWarnings.sound(new Id("uuid-sound",""));assertEquals(before,announcements());
+    }
+    @Test public void uuidlessDirectMatchCannotBypassMixedUuidAmbiguity(){
+        Descriptor empty=new Descriptor("mixed-uuid","POLICE",0),full=new Descriptor("mixed-uuid","POLICE",0);empty.id.uuid="";repository(empty,full);
+        NativeWarnings.sound(empty.id);assertEquals(0,announcements());
+    }
+    @Test public void aDifferentExplicitUuidCannotBorrowAnotherWarningIdentity(){
+        Descriptor d=new Descriptor("uuid-mismatch","POLICE",0);repository(d);NativeWarnings.sound(new Id("uuid-mismatch","wrong-uuid"));assertEquals(0,announcements());
+    }
+    @Test public void uuidlessUiZoneSoundRemainsTheSameNativePhaseDecision(){
+        Descriptor d=new Descriptor("uuid-zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);Controller controller=new Controller(d.id,State.InZone);
+        NativeWarnings.zoneSelected(controller);NativeWarnings.zonePresented(controller);NativeWarnings.sound(new Id("uuid-zone",""));assertEquals(1,announcements());
+    }
+
     @Test public void selectorAndRealUiZoneSoundAreOneDecisionInEitherOrder(){
         Descriptor d=new Descriptor("zone","DANGER_ZONE",0);d.zone=new Zone("InZone");repository(d);
         Controller c=new Controller(d.id,State.InZone);
@@ -230,8 +283,8 @@ public class NativeWarningsTest {
     }
 
     public static final class Id {
-        final String unique;Id(String id){unique=id;}public String getProviderId(){return "native";}
-        public String getUniqueId(){return unique;}public String getUuid(){return "uuid-"+unique;}
+        final String unique;String uuid;Id(String id){this(id,"uuid-"+id);}Id(String id,String uuid){unique=id;this.uuid=uuid;}public String getProviderId(){return "native";}
+        public String getUniqueId(){return unique;}public String getUuid(){return uuid;}
     }
     public static final class Validation {
         boolean valid=true;Integer distance=100,time=10;public boolean getIsValid(){return valid;}

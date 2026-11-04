@@ -70,7 +70,8 @@ class WazeNativeWarningHooksTest {
         val changed = originals.mapValues { MutableMethod(it.value) }
         bindWazeNativeWarnings(changed)
         val expected = mapOf(WAZE_SOUND_ROOT to "sound", WAZE_ZONE_EXIT_ROOT to "zoneExit", WAZE_ZONE_SELECTED_ROOT to "zoneSelected",
-            WAZE_NOTIFICATION_ADD_ROOT to "notificationAdded", WAZE_NOTIFICATION_REMOVE_ROOT to "notificationRemoved")
+            WAZE_NOTIFICATION_ADD_ROOT to "notificationAdded", WAZE_NOTIFICATION_REMOVE_ROOT to "notificationRemoved",
+            WAZE_CAR_CREATED_ROOT to "carUiStarted", WAZE_CAR_DESTROYED_ROOT to "carUiStopped")
         expected.forEach { (signature, name) ->
             val method = changed.getValue(signature)
             val hooks = method.implementation!!.instructions.withIndex().filter {

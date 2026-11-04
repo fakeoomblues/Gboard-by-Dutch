@@ -16,6 +16,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 internal const val WAZE_WARNINGS = "Lorg/ungoogled/waze/NativeWarnings;"
 internal const val WAZE_SOUND_ROOT = "Lcom/waze/alerters/AlerterNativeManagerBase;->h(Lcom/waze/jni/protos/alerters/AlerterId;)V"
 internal const val WAZE_ZONE_EXIT_ROOT = "Lcom/waze/alerters/b/i;->k()V"
+internal const val WAZE_CAR_CREATED_ROOT = "Lcom/waze/car_lib/WazeCarAppService;->onCreate()V"
+internal const val WAZE_CAR_DESTROYED_ROOT = "Lcom/waze/car_lib/WazeCarAppService;->onDestroy()V"
 internal const val WAZE_ZONE_PHASE_ROOT = "Lcom/waze/alerters/b/o;->d(Lcom/waze/alerters/b/o;Lcom/waze/alerters/b/h;)Lcom/waze/alerters/b/h;"
 internal const val WAZE_ZONE_SELECTED_ROOT = "Lcom/waze/alerters/b/i;->i()V"
 internal const val WAZE_NOTIFICATION_ADD_ROOT = "Lcom/waze/insights_infra/NotificationInsightsNativeManager;->a(Lcom/waze/jni/protos/insights_infra/Notification;)V"
@@ -33,7 +35,7 @@ internal fun bindWazeNativeWarnings() {
     }
     // Resolve the complete extension ABI before changing any native method.
     val extension = listOf("bound" to "Z", "sound" to "V", "zoneExit" to "V", "zoneSelected" to "V", "zonePresented" to "V",
-        "notificationAdded" to "V", "notificationRemoved" to "V").associate { (name, result) ->
+        "notificationAdded" to "V", "notificationRemoved" to "V", "carUiStarted" to "V", "carUiStopped" to "V").associate { (name, result) ->
         val method = Fingerprint(definingClass = WAZE_WARNINGS, name = name, returnType = result,
             parameters = if (name == "bound") emptyList() else listOf("Ljava/lang/Object;")).method
         check((method.accessFlags and 9) == 9 && method.implementation != null) { "Changed Waze warning extension ABI $name" }
@@ -88,6 +90,9 @@ internal fun bindWazeNativeWarnings(methods: Map<String, MutableMethod>) {
         val register = (site.value as FiveRegisterInstruction).registerD
         zonePhases.addInstruction(site.index + 1, "invoke-static/range {v$register .. v$register}, $WAZE_WARNINGS->zoneSelected(Ljava/lang/Object;)V")
     }
+
+    methods.getValue(WAZE_CAR_CREATED_ROOT).addInstruction(0, "invoke-static/range {p0 .. p0}, $WAZE_WARNINGS->carUiStarted(Ljava/lang/Object;)V")
+    methods.getValue(WAZE_CAR_DESTROYED_ROOT).addInstruction(0, "invoke-static/range {p0 .. p0}, $WAZE_WARNINGS->carUiStopped(Ljava/lang/Object;)V")
 
     // This native request precedes JNI playback and every managed local audio mute.
     // Managed speech intentionally uses Maps/Vela choices, upstream of Waze's own

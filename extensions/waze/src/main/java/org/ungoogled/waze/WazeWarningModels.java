@@ -135,6 +135,15 @@ final class WazeWarningModels {
         if(unique.isEmpty()&&uuid.isEmpty())throw new IllegalArgumentException("MISSING_NATIVE_ID");
         return "waze/alerter/"+hash(provider.length()+":"+provider+unique.length()+":"+unique+uuid.length()+":"+uuid);
     }
+    static String uuid(Object id){return string(call(id,id.getClass().getName().equals("com.waze.j")?"c":"getUuid"));}
+    static String soundKey(Object id){
+        boolean ui=id.getClass().getName().equals("com.waze.j");String provider=string(call(id,ui?"a":"getProviderId")),unique=string(call(id,ui?"b":"getUniqueId"));
+        return unique.isEmpty()?"":hash(provider.length()+":"+provider+unique.length()+":"+unique);
+    }
+    static boolean matchesSoundIdentity(Object sound,Object controller){
+        if(identity(sound).equals(identity(controller)))return true;
+        String key=soundKey(sound);return uuid(sound).isEmpty()&&!key.isEmpty()&&key.equals(soundKey(controller));
+    }
     static String link(String unique,String uuid){return hash(unique.length()+":"+unique+uuid.length()+":"+uuid);}
     static String subtype(String type,long value){return SUBTYPES.getOrDefault(type+"/"+value,"UNKNOWN_"+value);}
     static String language(Context context){

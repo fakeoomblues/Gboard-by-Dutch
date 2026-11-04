@@ -312,6 +312,7 @@ public final class Bridge {
         @Override
         public void onReceive(Context c, Intent in) {
             try {
+                if (nativeFamily(in)) return;
                 double lat = in.getDoubleExtra("lat", 0), lng = in.getDoubleExtra("lng", 0);
                 int type = in.getIntExtra("type", 1), count = in.getBooleanExtra("clear", false) ? 0 : Math.max(1, Math.min(20, in.getIntExtra("count", 1)));
                 String title = in.getStringExtra("title");
@@ -341,6 +342,7 @@ public final class Bridge {
                     Object id = idClass.getMethod("newBuilder").invoke(null);
                     String identity = in.getStringExtra("id");
                     set(id, "setUniqueId", String.class, (identity == null ? "ua-test" : identity) + "-" + k);
+                    if (in.hasExtra("uuid")) set(id, "setUuid", String.class, in.getStringExtra("uuid"));
                     Object descriptor = descriptorClass.getMethod("newBuilder").invoke(null);
                     identity(info, descriptor, idClass, build(id));
                     set(descriptor, "setInfo", infoClass, build(info));
@@ -361,12 +363,7 @@ public final class Bridge {
                 }
                 Object built = build(update);
                 if (in.getBooleanExtra("real", false)) {
-                    Class<?> manager = Class.forName("com.waze.alerters.AlerterNativeManager");
-                    // Same service lookup used by NativeManager.initNativeManagers in 5.26.90.901.
-                    Object instance = Class.forName("kotlinx.coroutines.a.ab").getMethod("l", Class.class).invoke(null, manager);
-                    Method m = manager.getDeclaredMethod("b", updateClass);
-                    m.setAccessible(true);
-                    m.invoke(instance, built);
+                    dispatch("com.waze.alerters.AlerterNativeManager", "b", updateClass, built);
                     Log.d("UA", "Waze alerts bridge: self-test through AlerterNativeManager, " + count + " alerts");
                 } else {
                     synchronized (Bridge.class) {
@@ -378,6 +375,41 @@ public final class Bridge {
             } catch (Throwable t) {
                 Log.w("UA", "Waze alerts bridge: self-test", t);
             }
+        }
+
+        private static boolean nativeFamily(Intent in) throws Exception {
+            String family=in.getStringExtra("family");
+            if(family==null||family.equals("alerter"))return false;
+            if(!family.equals("segments")&&!family.equals("notification"))throw new IllegalArgumentException("UNKNOWN_NATIVE_FIXTURE_FAMILY");
+            if(!in.getBooleanExtra("real",false))throw new IllegalArgumentException("NATIVE_FIXTURE_REQUIRES_REAL");
+            if(family.equals("segments")){
+                Class<?> updateClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightUpdate"),infoClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightInfo"),idClass=Class.forName("com.waze.jni.protos.insights_infra.SegmentInsightInfo$Id");
+                Object update=updateClass.getMethod("newBuilder").invoke(null);
+                if(!in.getBooleanExtra("clear",false))for(int type=0;type<9;type++){
+                    Object id=idClass.getMethod("newBuilder").invoke(null),info=infoClass.getMethod("newBuilder").invoke(null);
+                    set(id,"setSegmentId",String.class,"fixture-segment-"+type);set(id,"setSegmentTypeValue",int.class,type);
+                    set(info,"setId",idClass,build(id));set(info,"setPositionRelativeToSegmentValue",int.class,1);
+                    set(info,"setRemainingDistanceMeters",int.class,500);set(info,"setRemainingDurationSeconds",int.class,60);
+                    set(update,"addInfo",infoClass,build(info));
+                }
+                dispatch("com.waze.insights_infra.InsightsInfraNativeManager","c",updateClass,build(update));
+            }else{
+                Class<?> idClass=Class.forName("com.waze.jni.protos.insights_infra.NotificationId"),notificationClass=Class.forName("com.waze.jni.protos.insights_infra.Notification");
+                Object id=idClass.getMethod("newBuilder").invoke(null);set(id,"setId",String.class,"fixture-cyclists");set(id,"setFeatureValue",int.class,1);Object builtId=build(id);
+                if(in.getBooleanExtra("clear",false))dispatch("com.waze.insights_infra.NotificationInsightsNativeManager","b",idClass,builtId);
+                else{
+                    Object notification=notificationClass.getMethod("newBuilder").invoke(null);set(notification,"setId",idClass,builtId);
+                    set(notification,"setTitle",String.class,"Cyclist fixture");set(notification,"setBody",String.class,"Cyclists on the road");set(notification,"setTimeoutMs",long.class,30000L);
+                    set(notification,"addInCarTitleVariants",String.class,"Cyclists");set(notification,"addInCarBodyVariants",String.class,"Cyclists on the road");
+                    dispatch("com.waze.insights_infra.NotificationInsightsNativeManager","a",notificationClass,build(notification));
+                }
+            }
+            Log.d("UA","Waze alerts bridge: native self-test family="+family);return true;
+        }
+        private static void dispatch(String managerName,String method,Class<?> argumentClass,Object value)throws Exception{
+            // Same service lookup used by NativeManager.initNativeManagers in the pinned APK.
+            Class<?> manager=Class.forName(managerName);Object instance=Class.forName("kotlinx.coroutines.a.ab").getMethod("l",Class.class).invoke(null,manager);
+            Method callback=manager.getDeclaredMethod(method,argumentClass);callback.setAccessible(true);callback.invoke(instance,value);
         }
 
         private static void identity(Object info, Object descriptor, Class<?> idClass, Object id) throws Exception {

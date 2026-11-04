@@ -42,6 +42,8 @@ public class CustomizationControlsTest {
         Field appField = Customization.class.getDeclaredField("app");
         appField.setAccessible(true);
         appField.set(null, app);
+        for(String name:new String[]{"startedActivities","resumedActivities"}){Field visible=Customization.class.getDeclaredField(name);visible.setAccessible(true);((Set<?>)visible.get(null)).clear();}
+        Field resumed=Customization.class.getDeclaredField("resumed");resumed.setAccessible(true);resumed.set(null,new java.lang.ref.WeakReference<Activity>(null));
         for (String name : new String[]{"declared", "values"}) {
             Field f = Customization.class.getDeclaredField(name);
             f.setAccessible(true);
@@ -50,6 +52,23 @@ public class CustomizationControlsTest {
             else ((Map<?, ?>) value).clear();
         }
         activity = Robolectric.buildActivity(Activity.class).setup().get();
+    }
+
+    @Test public void onlyTheCurrentResumedActivityProtectsNativeUiState(){
+        Customization.init(RuntimeEnvironment.getApplication());
+        var first=Robolectric.buildActivity(Activity.class).setup();var second=Robolectric.buildActivity(Activity.class).setup();
+        assertSame(second.get(),Customization.activity());first.pause();assertSame(second.get(),Customization.activity());
+        second.pause();assertNull(Customization.activity());
+    }
+
+    @Test public void anotherResumedActivityKeepsSourceUiProtectedWhenTheLatestPauses(){
+        Customization.init(RuntimeEnvironment.getApplication());var first=Robolectric.buildActivity(Activity.class).setup();var second=Robolectric.buildActivity(Activity.class).setup();
+        second.pause();assertTrue(Customization.activityVisible());assertSame(first.get(),Customization.activity());first.pause();assertTrue(Customization.activityVisible());first.stop();second.stop();assertFalse(Customization.activityVisible());assertNull(Customization.activity());
+    }
+
+    @Test public void pausedButVisibleActivityProtectsNativeQueueUntilStopped(){
+        Customization.init(RuntimeEnvironment.getApplication());var screen=Robolectric.buildActivity(Activity.class).setup();screen.pause();
+        assertNull(Customization.activity());assertTrue(Customization.activityVisible());screen.stop();assertFalse(Customization.activityVisible());
     }
 
     private <T extends View> T find(View view, Class<T> type, String text) {

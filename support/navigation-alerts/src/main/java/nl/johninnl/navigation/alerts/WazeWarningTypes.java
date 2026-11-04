@@ -7,7 +7,7 @@ import java.util.TreeSet;
 /** Pinned Waze coverage contract and required receiving semantics; runtime acceptance is separate. */
 public final class WazeWarningTypes {
     private WazeWarningTypes() {}
-    public static final String MANIFEST_DIGEST = "26c2062ee4a9ea464a37320c3bcb06d48d2ca9b5eb44146dc998abc5855ac56d";
+    public static final String MANIFEST_DIGEST = "8a9a5118aa634290cf627bb1be9b01a89e4ee382cac323dc301d093d7c4f0b44";
     private static final Set<String> TYPES = build();
     public static Set<String> required() { return TYPES; }
     private static Set<String> build() {
