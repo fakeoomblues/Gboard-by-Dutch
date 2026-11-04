@@ -66,6 +66,19 @@ New state entries now use the existing audited model-aware formatter. Existing e
 
 Two regressions added to the existing component tests use its existing weather and early-warning models. All 178 FM component tests pass, including retained-announcement text and native-repeat identity regressions. This source correction is not yet in the signed `02a75d5` candidate. Its rebuild and applicable final verification remain open; the earlier complete workflow result stays bound to `3d2790b`. No new validation tool or runtime session was used for the correction.
 
+## Rebuilt state-message candidate at `9889c38`
+
+The correction is now included in a new signed MPP and FM15 APK from committed `9889c383adf574b6ef9d8309a6e526cb4a0ce218`. Complete `scripts/local-release/verify.cjs` execution passed in a clean checkout: 215 release/publishing tests, 563 Python tests (47 skips), 610 Android tests (14 skips), Medium checks and strict bilingual documentation/site checks. The checkout was removed with `cleanupRequired=false`.
+
+| Updated development artifact | SHA-256 |
+| --- | --- |
+| Signed MPP | `96c1ecd5ff09ca589b415a4a75eeb21f6340ca4969b2c18f00351150d951c4c4` |
+| FM15 APK | `8a7143971b6cd05714bdab128746794aa3b7fd624a866630f4b9b41762209b01` |
+
+Maps, its car bridge and Vela MPEs are byte-identical to the `02a75d5` bundle, and their patch/shared source is unchanged. The signed Maps and Vela APKs recorded above are reused. FM15 applied exactly the nine intended patches in FULL mode with fingerprint validation and no failures. Signing preserves application files. Its native libraries match the existing startup contract: MapLibre is the intentionally restored pinned upstream library, while the other libraries match the original input.
+
+Two collection/check mistakes remain explicit in the ignored receipts: the initial bundle selector included source/documentation bundles after verification had passed, and a blanket original-library comparison incorrectly included the intentional MapLibre replacement. Runtime-bundle collection was recovered without repeating the test suites; all temporary build/scratch storage is cleaned. The updated manifest references canonical files and exact reuse evidence. No emulator or phone was run for this rebuild. Installed runtime, phone/car and final review gates remain open; this is an unpublished development candidate.
+
 ## Earlier delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.
