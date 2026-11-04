@@ -43,6 +43,20 @@ public class MapsGuidanceCoordinatorNativeTest {
         MapsGuidanceCoordinator.terminal(new bmth(first),a);assertSame(a,players().get(first));
         a.l();MapsGuidanceCoordinator.terminal(new bmth(first),a);assertFalse(players().containsKey(first));assertSame(b,players().get(second));assertEquals(0,first.neverPlayed);assertEquals(0,second.neverPlayed);
     }
+    @Test public void nativeNonAudioPlayersDoNotPoisonTheAudioQuiescenceFence()throws Exception{
+        for(bmuc player:new bmuc[]{new bmtp(),new bmty()}){
+            bmtl job=new bmtl();MapsGuidanceCoordinator.dispatch(job,player,new bmua(){});
+            assertSame(player,players().get(job));
+            MapsGuidanceCoordinator.terminal(new bmth(job),player);
+            assertFalse(players().containsKey(job));assertFalse(field(MapsGuidanceCoordinator.class,"fault").getBoolean(coordinator));
+            assertEquals(0,job.neverPlayed);
+        }
+    }
+    @Test public void unknownPlayersStillFailClosedInsteadOfInventingQuiescence()throws Exception{
+        bmtl job=new bmtl();bmuc unknown=new bmuc(){public void d(bmua callback){}public void l(){}};
+        MapsGuidanceCoordinator.dispatch(job,unknown,new bmua(){});MapsGuidanceCoordinator.terminal(new bmth(job),unknown);
+        assertSame(unknown,players().get(job));assertTrue(field(MapsGuidanceCoordinator.class,"fault").getBoolean(coordinator));
+    }
     @Test public void nativeFocusCannotStealTheOwnedWarningHold()throws Exception{
         field(MapsGuidanceCoordinator.class,"holding").setBoolean(coordinator,true);
         // Null would throw if the guarded native focus API were actually called.
@@ -70,6 +84,8 @@ public class MapsGuidanceCoordinatorNativeTest {
 }
 interface bmua{}
 interface bmuc{void d(bmua callback);void l();}
+final class bmtp implements bmuc{public void d(bmua callback){}public void l(){throw new AssertionError("An audio observer must not mutate a native sentinel");}}
+final class bmty implements bmuc{public void d(bmua callback){}public void l(){throw new AssertionError("An audio observer must not cancel native haptics");}}
 final class bmsk implements bmuc {
     final java.util.List<String> lifecycle=new java.util.ArrayList<>();
     final PreparedMedia resource=new PreparedMedia(lifecycle);Object a=resource;int plays,stops,releases;boolean fail;bmua callback;

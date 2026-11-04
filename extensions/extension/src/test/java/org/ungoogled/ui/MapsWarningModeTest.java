@@ -11,6 +11,19 @@ import org.robolectric.annotation.LooperMode;
 
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE) @LooperMode(LooperMode.Mode.PAUSED)
 public class MapsWarningModeTest {
+    public enum NativeMode{UNMUTED}
+    public static final class Mute{public NativeMode c(){return NativeMode.UNMUTED;}}
+    public static final class Manager{public Mute f=new Mute();}
+    private static void set(Object target,String name,Object value)throws Exception{java.lang.reflect.Field f=target.getClass().getDeclaredField(name);f.setAccessible(true);f.set(target,value);}
+    @Test @Config(shadows=MapsGuidanceGapTest.BoundHooks.class)
+    public void initializedEngineWithoutAPreparedLanguageCannotClaimVoiceReadiness()throws Exception{
+        MapsWarningSpeaker speaker=new MapsWarningSpeaker(RuntimeEnvironment.getApplication());
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        java.lang.reflect.Field f=MapsWarningSpeaker.class.getDeclaredField("guidance");f.setAccessible(true);Object guidance=f.get(speaker);
+        set(guidance,"manager",new Manager());set(guidance,"bound",true);set(guidance,"fault",false);set(speaker,"initialized",true);
+        assertFalse(speaker.isReady("",Mode.VOICE));assertFalse(speaker.isReady("und",Mode.VOICE));assertFalse(speaker.isReady(null,Mode.VOICE));
+        set(speaker,"preparedLanguage","en-US");assertTrue(speaker.isReady("en-US",Mode.VOICE));assertFalse(speaker.isReady("nl-NL",Mode.VOICE));speaker.close();
+    }
     @Test public void unavailableBindingPreservesOutputIntentAndReportsNotReady(){
         MapsWarningSpeaker speaker=new MapsWarningSpeaker(RuntimeEnvironment.getApplication());
         assertEquals(Mode.VOICE,speaker.effectiveMode(Mode.VOICE));assertEquals(Mode.TONE,speaker.effectiveMode(Mode.TONE));

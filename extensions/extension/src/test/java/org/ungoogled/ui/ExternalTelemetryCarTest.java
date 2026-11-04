@@ -26,7 +26,7 @@ public class ExternalTelemetryCarTest {
         assertFalse(active());session(first,true);assertTrue(active());session(second,true);session(first,false);assertTrue(active());session(second,false);assertFalse(active());
     }
     @Test public void temporarySurfaceLossDoesNotEndCarSessionAndFinalCloseRemovesWidget()throws Exception{
-        FrameLayout root=new FrameLayout(app);session(first,true);surface(first,root);assertEquals(1,root.getChildCount());
+        FrameLayout root=new FrameLayout(app);root.layout(0,0,800,480);session(first,true);surface(first,root);assertEquals(1,root.getChildCount());
         surface(first,null);assertTrue(active());assertEquals(0,root.getChildCount());surface(first,root);assertEquals(1,root.getChildCount());session(first,false);assertFalse(active());assertEquals(0,root.getChildCount());
     }
     @Test public void widgetFitsActualCarSurfaceWhenNativeDecorExtendsBelowVisibleViewport()throws Exception{
@@ -34,6 +34,13 @@ public class ExternalTelemetryCarTest {
         ExternalTelemetry.class.getMethod("carSurface",Object.class,ViewGroup.class,int.class,int.class).invoke(null,first,root,800,424);Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(1,root.getChildCount());android.view.View value=root.getChildAt(0);FrameLayout.LayoutParams lp=(FrameLayout.LayoutParams)value.getLayoutParams();
         assertTrue("Warning panel must end above the real supplied surface bottom",lp.topMargin+value.getMeasuredHeight()<=424);
+    }
+    @Test public void unknownSafeAreaWithholdsWidgetUntilHostReportsIt()throws Exception{
+        FrameLayout root=new FrameLayout(app);root.layout(0,0,800,480);session(first,true);
+        Method target=ExternalTelemetry.class.getMethod("carSurface",Object.class,ViewGroup.class,android.graphics.Rect.class);
+        target.invoke(null,first,root,new android.graphics.Rect());Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(0,root.getChildCount());assertTrue(active());
+        target.invoke(null,first,root,new android.graphics.Rect(40,20,780,424));Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(1,root.getChildCount());
+        target.invoke(null,first,root,new android.graphics.Rect());Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(0,root.getChildCount());assertTrue(active());
     }
 
 }

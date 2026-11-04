@@ -20,7 +20,7 @@ Our **Native navigation for Gearslip and Android Auto** patch runs the patched a
 
 Waze exposes a standard Android for Cars navigation service that car hosts can discover. The examined Maps version uses Google's private projection service instead. After renaming, Gearslip could mistake its notification capability for a messaging app and open an empty messages screen. Adding a navigation label would not make those two interfaces communicate.
 
-We built a navigation adapter that connects Gearslip and Android Auto to the patched copy's own projection service and original car renderer. Maps also loads part of its car interface from the full Android Auto installation, which is why that app must be installed even when using Gearslip.
+We built a navigation adapter that connects Gearslip and Android Auto to the patched copy's own projection service and original car renderer. The development candidate replaces the external AppDecor dependency with an app-owned layout and controllers. Android Auto remains the host when connecting to a car; Gearslip can host the client independently. Acceptance of this replacement is tracked in the [public car client report](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
 
 Signing the patched APK creates another problem: Google's optional private vehicle-data client rejects the new signing certificate. We isolated that client so it cannot crash the map, while retaining GPS navigation. Search needed a separate bridge between the host's keyboard and Maps' native editor. The map and editor also have to survive display resizing, keyboard changes and reconnects.
 
@@ -46,7 +46,7 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. Requires the full Android Auto app for its car UI resources. |
+| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The development candidate owns its car UI resources; see the acceptance limits above. |
 
 ### Extended by this project
 
@@ -104,7 +104,7 @@ Keep **Change package name** selected to install beside stock Maps; the default 
 
 In **Change app name**, use **App icon** to choose Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin, or Folded map, each on a light or dark background. **Automatic** follows the **Legacy icon** patch; **Original Google Maps** keeps Google’s original launcher icon. An explicit choice takes precedence over Legacy icon. These choices apply to the regular and round launcher icons. Explicit choices leave the stock splash screen in place; in-app artwork still follows your other selected patches, such as Blue pin. With Automatic, Legacy icon keeps its existing splash-screen behavior. Name and icon can be configured independently, and changing them requires patching again.
 
-For native car navigation, keep **Native navigation for Gearslip and Android Auto** selected, install the full Android Auto app and grant the patched Maps app precise location access. Gearslip then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
+For native car navigation, keep **Native navigation for Gearslip and Android Auto** selected and grant the patched Maps app precise location access. Gearslip then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
 
 Open the account menu’s **Customization** and **Waze & external data source** rows to configure the selected patches. A patch marked **On** above is selected by default when patching; camera layers and external sources still require enabling in the app. **120 refresh rate** also starts off in Customization.
 

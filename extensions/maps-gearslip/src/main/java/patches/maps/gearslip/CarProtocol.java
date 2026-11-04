@@ -30,6 +30,8 @@ final class CarProtocol {
         if (value instanceof Integer) bundle.putInt("tag_value", (Integer) value);
         else if (value instanceof String) bundle.putString("tag_value", (String) value);
         else if (value instanceof Boolean) bundle.putBoolean("tag_value", (Boolean) value);
+        else if (value instanceof Long) bundle.putLong("tag_value", (Long)value);
+        else if (value instanceof Double) bundle.putDouble("tag_value", (Double)value);
         else throw new IllegalArgumentException("Unsupported protocol primitive");
         return bundle;
     }
@@ -147,6 +149,32 @@ final class CarProtocol {
         return info;
     }
 
+    static Bundle trip(NativeGuidance.Snapshot value,long now){
+        Bundle trip=object("androidx.car.app.navigation.model.Trip");
+        field(trip,"mDestinations",emptyList());field(trip,"mDestinationTravelEstimates",emptyList());
+        boolean loading=value.cue==null||value.cue.isEmpty()||value.meters<0||value.seconds<0;
+        field(trip,"mIsLoading",primitive(loading));
+        if(loading){field(trip,"mSteps",emptyList());field(trip,"mStepTravelEstimates",emptyList());return trip;}
+        Bundle step=object("androidx.car.app.navigation.model.Step");
+        field(step,"mCue",text(value.cue));field(step,"mLanes",emptyList());
+        Bundle distance=object("androidx.car.app.model.Distance");
+        field(distance,"mDisplayDistance",primitive((double)value.meters));field(distance,"mDisplayUnit",primitive(1));
+        Bundle arrival=object("androidx.car.app.model.DateTimeWithZone");
+        long arrivalMillis=now+value.seconds*1000L;
+        java.util.TimeZone zone=java.util.TimeZone.getDefault();
+        field(arrival,"mTimeSinceEpochMillis",primitive(arrivalMillis));
+        field(arrival,"mZoneOffsetSeconds",primitive(zone.getOffset(arrivalMillis)/1000));
+        field(arrival,"mZoneShortName",primitive(zone.getDisplayName(zone.inDaylightTime(new java.util.Date(arrivalMillis)),java.util.TimeZone.SHORT)));
+        Bundle estimate=object("androidx.car.app.navigation.model.TravelEstimate");
+        field(estimate,"mRemainingDistance",distance);field(estimate,"mRemainingTimeSeconds",primitive((long)value.seconds));
+        field(estimate,"mArrivalTimeAtDestination",arrival);
+        Bundle color=object("androidx.car.app.model.CarColor");field(color,"mType",primitive(1));
+        field(estimate,"mRemainingDistanceColor",color);field(estimate,"mRemainingTimeColor",color);
+        field(trip,"mSteps",list(Collections.singletonList(step)));
+        field(trip,"mStepTravelEstimates",list(Collections.singletonList(estimate)));
+        return trip;
+    }
+
     static Bundle template(Throwable failure) {
         return template(failure, Collections.emptyList(), Collections.emptyList());
     }
@@ -212,8 +240,29 @@ final class CarProtocol {
         field(wrapper, "mTemplate", template);
         field(wrapper, "mId", primitive(id));
         field(wrapper, "mCurrentTaskStep", primitive(1));
-        field(wrapper, "mTemplateInfoForScreenStack", emptyList());
+        screenStack(wrapper, false);
         return wrapper;
+    }
+
+    /** Public CAL screen metadata is top first, matching the local Back path. */
+    static void screenStack(Bundle wrapper, boolean controlsParent) {
+        String id=member(wrapper,"mId").getString("tag_value");
+        String type=member(wrapper,"mTemplate").getString("tag_class_name");
+        List<Bundle> stack=new ArrayList<>();
+        stack.add(templateInfo(type,id));
+        if("morphe-maps-input".equals(id)&&controlsParent)
+            stack.add(templateInfo("androidx.car.app.model.ListTemplate","morphe-maps-controls"));
+        if("morphe-maps-input".equals(id)||"morphe-maps-controls".equals(id))
+            stack.add(templateInfo("androidx.car.app.navigation.model.NavigationTemplate","morphe-maps-native"));
+        field(wrapper,"mTemplateInfoForScreenStack",list(stack));
+        field(wrapper,"mCurrentTaskStep",primitive(stack.size()));
+    }
+
+    private static Bundle templateInfo(String type,String id){
+        Bundle info=object("androidx.car.app.model.TemplateInfo");
+        Bundle clazz=new Bundle();clazz.putInt("tag_class_type",8);clazz.putString("tag_value",type);
+        field(info,"mTemplateClass",clazz);field(info,"mTemplateId",primitive(id));
+        return info;
     }
 
     static Bundle failure(Throwable failure) {

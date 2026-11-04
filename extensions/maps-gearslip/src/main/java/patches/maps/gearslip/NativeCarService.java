@@ -30,6 +30,8 @@ public final class NativeCarService extends Service {
     private static final String APP = "androidx.car.app.IAppManager";
     private static final String SURFACE = "androidx.car.app.ISurfaceCallback";
     private static final String APP_HOST = "androidx.car.app.IAppHost";
+    private static final String NAVIGATION_HOST="androidx.car.app.navigation.INavigationHost";
+    private static final String NAVIGATION_MANAGER="androidx.car.app.navigation.INavigationManager";
     private final Handler main = new Handler(Looper.getMainLooper());
     private final Object lock = new Object();
     private final Map<Intent.FilterComparison, Binding> bindings = new HashMap<>();
@@ -48,7 +50,11 @@ public final class NativeCarService extends Service {
         final int generation;
         volatile boolean closed;
         ProjectionRenderer renderer;
-        IBinder host, appHost;
+        IBinder host, appHost,navigationHost;
+        NativeGuidance guidance;
+        boolean navigating;
+        final List<IBinder> stopCallbacks=new ArrayList<>();
+        Runnable stopTimeout;
         IBinder.DeathRecipient death;
         Throwable failure;
         volatile NativeKeyboard keyboard;
@@ -169,6 +175,11 @@ public final class NativeCarService extends Service {
     }
 
     private void close(Session session) {
+        if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
+        for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,new IllegalStateException("Car session closed before navigation stopped"));
+        session.stopCallbacks.clear();
+        if(session.guidance!=null){try{session.guidance.close();}catch(Exception error){Log.w("MapsNativeCar","Native guidance listener cleanup failed",error);}session.guidance=null;}
+        endNavigation(session);
         clearKeyboard(session);
         if (session.host != null && session.death != null) session.host.unlinkToDeath(session.death, 0);
         session.host = null;
@@ -176,6 +187,7 @@ public final class NativeCarService extends Service {
         if (session.renderer != null) session.renderer.close();
         session.renderer = null;
         session.appHost = null;
+        session.navigationHost=null;
     }
 
     private void failed(Session session, Throwable error) {
@@ -183,6 +195,11 @@ public final class NativeCarService extends Service {
         if (active != session || session.closed || session.failure != null) return;
         session.failure = error;
         clearKeyboard(session);
+        endNavigation(session);
+        if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
+        for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,error);
+        session.stopCallbacks.clear();
+        if(session.guidance!=null){try{session.guidance.close();}catch(Exception cleanup){error.addSuppressed(cleanup);}session.guidance=null;}
         Log.e("MapsNativeCar", "Maps car renderer failed", error);
         if (session.renderer != null) session.renderer.close();
         invalidate(session);
@@ -210,6 +227,36 @@ public final class NativeCarService extends Service {
 
     private interface Action { void run() throws Exception; }
 
+    private void endNavigation(Session session){
+        if(!session.navigating)return;session.navigating=false;
+        try{if(session.navigationHost!=null)CarProtocol.send(session.navigationHost,NAVIGATION_HOST,3,data->{});}
+        catch(RemoteException|RuntimeException disconnected){Log.w("MapsNativeCar","Navigation host disconnected",disconnected);}
+    }
+    private void navigation(Session session,NativeGuidance.Snapshot snapshot){
+        if(active!=session||session.closed||session.failure!=null)return;
+        try{
+            if(!snapshot.guiding){
+                endNavigation(session);
+                if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
+                for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,null);
+                session.stopCallbacks.clear();return;
+            }
+            if(!session.navigating){CarProtocol.send(session.navigationHost,NAVIGATION_HOST,2,data->{});session.navigating=true;}
+            Bundle trip=CarProtocol.trip(snapshot,System.currentTimeMillis());
+            CarProtocol.send(session.navigationHost,NAVIGATION_HOST,4,data->{data.writeInt(1);data.writeBundle(trip);});
+        }catch(Exception error){failed(session,error);}
+    }
+
+    private IBinder hostService(IBinder host,String name)throws Exception{
+        Parcel request=Parcel.obtain(),reply=Parcel.obtain();
+        try{
+            request.writeInterfaceToken("androidx.car.app.ICarHost");request.writeString(name);
+            if(!host.transact(3,request,reply,0))throw new RemoteException("Car host service unavailable: "+name);
+            reply.readException();IBinder result=reply.readStrongBinder();
+            if(result==null)throw new IllegalStateException("Car host has no "+name+" service");return result;
+        }finally{reply.recycle();request.recycle();}
+    }
+
     private void dispatch(Session session, IBinder callback, boolean needsRenderer, Action action) {
         main.post(() -> {
             try {
@@ -232,15 +279,15 @@ public final class NativeCarService extends Service {
             session.host = host;
             session.death = () -> release(session);
             host.linkToDeath(session.death, 0);
-            Parcel request = Parcel.obtain(), reply = Parcel.obtain();
-            try {
-                request.writeInterfaceToken("androidx.car.app.ICarHost"); request.writeString("app");
-                if (!host.transact(3, request, reply, 0)) throw new RemoteException("Car host app service unavailable");
-                reply.readException(); session.appHost = reply.readStrongBinder();
-            } finally { reply.recycle(); request.recycle(); }
-            if (session.appHost == null) throw new IllegalStateException("Car host has no app service");
+            session.appHost=hostService(host,"app");
+            session.navigationHost=hostService(host,"navigation");
             session.renderer = new ProjectionRenderer(this, error -> failed(session, error));
             session.renderer.setControlsChangedListener(() -> invalidate(session));
+            session.renderer.setToastListener((text,duration)->{
+                if(active!=session||session.closed)return;
+                try{CarProtocol.send(session.appHost,APP_HOST,3,data->{data.writeInt(1);android.text.TextUtils.writeToParcel(text,data,0);data.writeInt(duration);});}
+                catch(RemoteException|RuntimeException error){release(session);}
+            });
             session.renderer.setKeyboardListener(new ProjectionRenderer.KeyboardListener() {
                 @Override public void show(IBinder input, EditorInfo editor) { showKeyboard(session, input, editor); }
                 @Override public void hide() {
@@ -251,6 +298,10 @@ public final class NativeCarService extends Service {
             session.renderer.create(intent, configuration);
             if (session.failure == null) CarProtocol.send(session.appHost, APP_HOST, 4,
                     data -> data.writeStrongBinder(new SurfaceBinder(session)));
+            if(session.failure==null){
+                session.guidance=new NativeGuidance(this,main,snapshot->navigation(session,snapshot),error->failed(session,error));
+                if(session.failure!=null){session.guidance.close();session.guidance=null;}
+            }
         });
     }
 
@@ -293,7 +344,9 @@ public final class NativeCarService extends Service {
                     }
                     case 9: {
                         String name = data.readString(); callback = data.readStrongBinder(); Session session = owned(binding, uid);
-                        CarProtocol.complete(callback, "app".equals(name) ? CarProtocol.interfaceBinder("androidx.car.app.IAppManager$Stub", new AppBinder(session)) : null, null); return true;
+                        Bundle manager="app".equals(name)?CarProtocol.interfaceBinder("androidx.car.app.IAppManager$Stub",new AppBinder(session))
+                                :"navigation".equals(name)?CarProtocol.interfaceBinder("androidx.car.app.navigation.INavigationManager$Stub",new NavigationBinder(session)):null;
+                        CarProtocol.complete(callback,manager,null);return true;
                     }
                     case 12:
                         callback = data.readStrongBinder(); owned(binding, uid); CarProtocol.complete(callback, null, null); return true;
@@ -305,6 +358,35 @@ public final class NativeCarService extends Service {
 
     private void requireSession(Session session) {
         if (owned(session.binding, Binder.getCallingUid()) != session) throw new SecurityException("Car session replaced");
+    }
+
+    private final class NavigationBinder extends Binder{
+        final Session session;
+        NavigationBinder(Session session){this.session=session;}
+        @Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            if(CarProtocol.basic(NAVIGATION_MANAGER,code,data,reply))return true;
+            if(code!=2)return false;
+            IBinder callback=data.readStrongBinder();
+            try{
+                requireSession(session);
+                main.post(()->{
+                    try{
+                        if(active!=session||session.closed||session.failure!=null)throw new IllegalStateException("Car navigation session closed");
+                        if(!session.navigating){CarProtocol.complete(callback,null,null);return;}
+                        if(session.stopCallbacks.isEmpty()){
+                            Intent stop=new Intent().setClassName(getPackageName(),"com.google.android.libraries.geo.navcore.service.base.NavigationService").putExtra("abortcurrentsession",true);
+                            if(startService(stop)==null)throw new IllegalStateException("Maps native navigation stop service unavailable");
+                            session.stopTimeout=()->{
+                                for(IBinder pending:session.stopCallbacks)CarProtocol.complete(pending,null,new IllegalStateException("Maps did not confirm navigation stopped"));session.stopCallbacks.clear();
+                            };
+                            main.postDelayed(session.stopTimeout,10000);
+                        }
+                        session.stopCallbacks.add(callback);
+                    }catch(Exception error){CarProtocol.complete(callback,null,error);}
+                });
+            }catch(Exception error){CarProtocol.complete(callback,null,error);}
+            return true;
+        }
     }
 
     private final class AppBinder extends Binder {
@@ -325,12 +407,14 @@ public final class NativeCarService extends Service {
                                 Bundle template = session.failure != null ? CarProtocol.template(session.failure)
                                         : input != null ? CarProtocol.searchTemplate(input.text(), input.hint(), new SearchBinder(session, input))
                                         : controlsTemplate(session);
+                                CarProtocol.screenStack(template,session.controlsOpen);
                                 CarProtocol.complete(callback, template, null);
                             } catch (Exception error) { failed(session, error); CarProtocol.complete(callback, null, error); }
                         }
                     });
                 } else if (code == 3) dispatch(session, callback, true, () -> {
-                    if (session.controlsOpen) session.controlsOpen = false;
+                    if(session.keyboard!=null){clearKeyboard(session);session.renderer.back();}
+                    else if (session.controlsOpen) session.controlsOpen = false;
                     else { clearKeyboard(session); session.renderer.back(); }
                     invalidate(session);
                 });

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.hardware.display.VirtualDisplay;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,6 +61,7 @@ public final class ProjectionRenderer {
     private KeyboardListener keyboardListener;
     private NativeControls controls;
     private Runnable controlsChanged = () -> {};
+    private java.util.function.BiConsumer<CharSequence,Integer> toast=(text,duration)->{};
     private Rect visibleArea, stableArea, appliedInsets;
     private long downTime;
     private float touchX, touchY;
@@ -107,6 +109,7 @@ public final class ProjectionRenderer {
 
     public void setKeyboardListener(KeyboardListener listener) { keyboardListener = listener; }
     void setControlsChangedListener(Runnable listener) { controlsChanged = listener; }
+    void setToastListener(java.util.function.BiConsumer<CharSequence,Integer> listener){toast=listener;}
     List<NativeControls.Control> controls() throws Exception {
         attachControls();
         return controls == null ? Collections.emptyList() : controls.snapshot();
@@ -126,6 +129,7 @@ public final class ProjectionRenderer {
     public void create(Intent value, Configuration config) {
         guard(() -> {
             intent = nativeIntent(value);
+            LocalCarUiSession.attach(this,next->main.post(()->newIntent(next)),(text,duration)->main.post(()->{if(!closed&&!failed)toast.accept(text,duration);}));
             configuration = config == null ? new Configuration(service.getResources().getConfiguration()) : new Configuration(config);
             if (!bound) {
                 bound = service.bindService(new Intent(Intent.ACTION_MAIN).setComponent(originalComponent()), connection, Context.BIND_AUTO_CREATE);
@@ -141,6 +145,7 @@ public final class ProjectionRenderer {
     public void close() {
         if (closed) return;
         closed = true;
+        LocalCarUiSession.detach(this);
         telemetrySession(false);
         main.removeCallbacks(bindTimeout);
         main.removeCallbacks(endScroll);
@@ -163,7 +168,7 @@ public final class ProjectionRenderer {
     }
     public void configurationChanged(Configuration value) {
         if (value == null) return;
-        configuration = new Configuration(value);
+        configuration = created ? canvasConfiguration(value,nativeWidth,nativeHeight,nativeDpi) : new Configuration(value);
         guard(() -> {
             if (created) {
                 controller.getClass().getField("o").set(controller, configuration);
@@ -181,9 +186,9 @@ public final class ProjectionRenderer {
             // A host can replace/hide its surface just to display its keyboard. The Maps
             // activity and native editor must survive that target change.
             boolean sameCanvas = nativeWidth == w && nativeHeight == h && nativeDpi == density;
-            if (created && !sameCanvas && !keyboardRequested) destroySurface();
-            else if (surface != null && surface != value) detachSurface();
+            if (surface != null && surface != value) detachSurface();
             surface = value; width = w; height = h; dpi = density;
+            if (created && !sameCanvas) resizeCanvas(w, h, density);
             showSurface();
         });
     }
@@ -209,9 +214,51 @@ public final class ProjectionRenderer {
     }
     static Rect warningViewport(int width,int height,Rect visible,Rect stable){
         Rect result=new Rect(0,0,Math.max(0,width),Math.max(0,height));
-        if(visible!=null&&!visible.isEmpty())result.intersect(visible);
-        if(stable!=null&&!stable.isEmpty())result.intersect(stable);
+        // Empty callbacks mean unknown, not a promise that host chrome leaves the
+        // full surface unobscured. Keep drawing the map, but withhold its overlay.
+        boolean known=false;
+        for(Rect area:new Rect[]{visible,stable}){
+            if(area==null||area.isEmpty())continue;
+            known=true;
+            if(!result.intersect(area)){result.setEmpty();return result;}
+        }
+        if(!known)result.setEmpty();
         return result;
+    }
+
+    private void resizeCanvas(int w,int h,int density) throws Exception {
+        finishTouch();
+        Object holder=field(field(controller,"k"),"h");
+        Object target=field(holder,"b");
+        if(!(target instanceof VirtualDisplay))throw new IllegalStateException("Maps virtual display ABI changed");
+        // Resize the existing display/window, including while a host keyboard is
+        // open. Recreating the activity would invalidate its native editor.
+        controller.getClass().getField("C").set(controller,drawing(w,h,density));
+        ((VirtualDisplay)target).resize(w,h,density);
+        nativeWidth=w;nativeHeight=h;nativeDpi=density;
+        Configuration updated=canvasConfiguration(configuration,w,h,density);
+        configurationChanged(updated);
+        appliedInsets=null;
+    }
+
+    static Configuration canvasConfiguration(Configuration previous,int w,int h,int density){
+        // CAL hosts may pass their phone Activity configuration. A full copy
+        // carries its hidden WindowConfiguration bounds into the car display
+        // (for example 1080px inside a 1280px Surface). Carry only public policy
+        // and input values; the real car Surface owns all display geometry.
+        Configuration value=new Configuration();
+        value.setLocales(previous.getLocales());
+        value.fontScale=previous.fontScale>0?previous.fontScale:1;
+        value.uiMode=previous.uiMode;value.touchscreen=previous.touchscreen;
+        value.navigation=previous.navigation;value.navigationHidden=previous.navigationHidden;
+        value.keyboard=previous.keyboard;value.keyboardHidden=previous.keyboardHidden;value.hardKeyboardHidden=previous.hardKeyboardHidden;
+        value.mcc=previous.mcc;value.mnc=previous.mnc;
+        value.densityDpi=density;
+        value.screenWidthDp=Math.round(w*160f/density);
+        value.screenHeightDp=Math.round(h*160f/density);
+        value.smallestScreenWidthDp=Math.min(value.screenWidthDp,value.screenHeightDp);
+        value.orientation=w>=h?Configuration.ORIENTATION_LANDSCAPE:Configuration.ORIENTATION_PORTRAIT;
+        return value;
     }
     public void back() {
         guard(() -> {
@@ -284,6 +331,7 @@ public final class ProjectionRenderer {
             return;
         }
         Object drawing = drawing(width, height, dpi);
+        configuration=canvasConfiguration(configuration,width,height,dpi);
         Object display = type("com.google.android.gms.car.display.CarDisplayId").getConstructor(int.class).newInstance(0);
         Object region = type("com.google.android.gms.car.display.CarRegionId").getConstructor(int.class, display.getClass()).newInstance(0, display);
         call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, new Bundle());

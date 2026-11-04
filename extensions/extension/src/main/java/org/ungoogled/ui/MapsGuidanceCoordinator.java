@@ -46,12 +46,18 @@ public final class MapsGuidanceCoordinator {
     private static boolean hooksInstalled(){return false;}
     private void bind() {
         try {
-            Object component=method(app.getClass(),"rJ").invoke(app);
+            Object component=applicationComponent(app);
             Object provider=field(component.getClass(),"hU").get(component);
             Object actual=method(provider.getClass(),"a").invoke(provider);
             if(!actual.getClass().getName().equals("bmrc"))throw new IllegalStateException("NATIVE_MANAGER");
             manager=actual;bound=true;
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
+    }
+    static Object applicationComponent(Object application)throws ReflectiveOperationException{
+        // This Maps build exposes its generated component manager through rI;
+        // rJ belongs to that manager, not GoogleMapsApplication itself.
+        Object manager=method(application.getClass(),"rI").invoke(application);
+        return method(manager.getClass(),"rJ").invoke(manager);
     }
     public boolean isReady(){return hooksInstalled()&&bound&&!fault;}
     public WarningAudioOwner.Mode effectiveMode(WarningAudioOwner.Mode requested) {
@@ -279,6 +285,8 @@ public final class MapsGuidanceCoordinator {
             case "bmtu":Object leaf=field(player.getClass(),"a").get(player);return leaf==null || released(leaf,depth+1);
             case "bmsh":for(Object leafPlayer:(Object[])field(player.getClass(),"a").get(player))if(!released(leafPlayer,depth+1))return false;return true;
             case "bmsi":return true; // Native non-audio silence timer.
+            case "bmtp":return true; // Native no-op sentinel: callbacks only, no audio resource.
+            case "bmty":return true; // Native vibration/wearable transport, not a local audio player.
             default:throw new IllegalArgumentException("PLAYER_UNSUPPORTED");
         }
     }

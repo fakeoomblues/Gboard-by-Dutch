@@ -88,10 +88,12 @@ public final class ExternalTelemetry {
         for(Object owner:new ArrayList<>(carRoots.keySet())){
             ViewGroup root=carRoots.get(owner).get();
             if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
+            int[] bounds=carViewportSizes.get(owner);
+            if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
             float density=root.getResources().getDisplayMetrics().density;
             value.bind(view(),speedMps(),limitKmh(),PowerSaving.miles(),Shapes.navDarkScheme(),compactCarWarning());
-            int[] bounds=carViewportSizes.get(owner);int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
+            int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
             int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();int width=right-left,height=bottom-top;
             int margin=Math.round(16*density);value.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0,width-2*margin),View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(Math.max(0,height-2*margin),View.MeasureSpec.AT_MOST));
             FrameLayout.LayoutParams layout=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.TOP|Gravity.START);

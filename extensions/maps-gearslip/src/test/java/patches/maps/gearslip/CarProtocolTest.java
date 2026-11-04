@@ -27,6 +27,25 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 32)
 public final class CarProtocolTest {
+    @Test public void tripDecodesNativeCueAndPairedProgressWithoutInventingDestinations()throws Exception{
+        Parcel wire=Parcel.obtain();
+        try{
+            wire.writeBundle(CarProtocol.trip(new NativeGuidance.Snapshot(true,"Turn right",120,15),1700000000000L));wire.setDataPosition(0);
+            androidx.car.app.navigation.model.Trip trip=(androidx.car.app.navigation.model.Trip)Bundleable.CREATOR.createFromParcel(wire).get();
+            assertFalse(trip.isLoading());assertTrue(trip.getDestinations().isEmpty());assertTrue(trip.getDestinationTravelEstimates().isEmpty());
+            assertEquals("Turn right",trip.getSteps().get(0).getCue().toString());assertNull(trip.getSteps().get(0).getManeuver());
+            assertEquals(120,trip.getStepTravelEstimates().get(0).getRemainingDistance().getDisplayDistance(),0);
+            assertEquals(15,trip.getStepTravelEstimates().get(0).getRemainingTimeSeconds());
+            assertEquals(1700000015000L,trip.getStepTravelEstimates().get(0).getArrivalTimeAtDestination().getTimeSinceEpochMillis());
+        }finally{wire.recycle();}
+    }
+    @Test public void loadingTripContainsNoFabricatedSteps()throws Exception{
+        Parcel wire=Parcel.obtain();
+        try{wire.writeBundle(CarProtocol.trip(new NativeGuidance.Snapshot(true,null,0,0),0));wire.setDataPosition(0);
+            androidx.car.app.navigation.model.Trip trip=(androidx.car.app.navigation.model.Trip)Bundleable.CREATOR.createFromParcel(wire).get();
+            assertTrue(trip.isLoading());assertTrue(trip.getSteps().isEmpty());assertTrue(trip.getStepTravelEstimates().isEmpty());
+        }finally{wire.recycle();}
+    }
     @Test public void nativeControlsDecodeAsStandardHostActionsAndMapActions() throws Exception {
         Bitmap icon = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888); icon.eraseColor(Color.BLUE);
         NavigationTemplate template = (NavigationTemplate) decode(CarProtocol.template(null,
@@ -73,6 +92,21 @@ public final class CarProtocolTest {
         Parcel wire = Parcel.obtain();
         try { wire.writeBundle(value); wire.setDataPosition(0); return ((TemplateWrapper) Bundleable.CREATOR.createFromParcel(wire).get()).getTemplate(); }
         finally { wire.recycle(); }
+    }
+
+    @Test public void realLibraryDecodesTheTopFirstScreenStackAndClassFields() throws Exception {
+        Bundle encoded=CarProtocol.searchTemplate("Amst","Find",clickListener());
+        CarProtocol.screenStack(encoded,true);
+        Parcel wire=Parcel.obtain();
+        try{
+            wire.writeBundle(encoded);wire.setDataPosition(0);
+            TemplateWrapper wrapper=(TemplateWrapper)Bundleable.CREATOR.createFromParcel(wire).get();
+            assertEquals(3,wrapper.getTemplateInfosForScreenStack().size());
+            assertEquals(SearchTemplate.class,wrapper.getTemplateInfosForScreenStack().get(0).getTemplateClass());
+            assertEquals(ListTemplate.class,wrapper.getTemplateInfosForScreenStack().get(1).getTemplateClass());
+            assertEquals(NavigationTemplate.class,wrapper.getTemplateInfosForScreenStack().get(2).getTemplateClass());
+            assertEquals("morphe-maps-input",wrapper.getTemplateInfosForScreenStack().get(0).getTemplateId());
+        }finally{wire.recycle();}
     }
     private static Binder clickListener() {
         return new Binder() {

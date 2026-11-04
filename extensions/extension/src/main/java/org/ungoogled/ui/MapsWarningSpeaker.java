@@ -81,6 +81,9 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     public boolean isReady(String language){return isReady(language,WarningAudioOwner.Mode.VOICE);}
     public boolean isReady(String language,WarningAudioOwner.Mode mode) {
         if(mode==WarningAudioOwner.Mode.SILENT)return true;
+        // An initialized engine with no selected voice is not a usable voice
+        // capability. In particular, two empty language strings must not match.
+        if(mode==WarningAudioOwner.Mode.VOICE&&(language==null||language.isEmpty()||language.equals("und")))return false;
         WarningAudioOwner.Mode effective=effectiveMode(mode);
         if(closed || !guidance.isReady() || effective!=mode)return false;
         if(mode==WarningAudioOwner.Mode.TONE)return audio!=null&&tone.ready();

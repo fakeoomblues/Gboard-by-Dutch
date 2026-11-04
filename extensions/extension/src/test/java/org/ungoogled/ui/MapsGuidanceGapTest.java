@@ -29,6 +29,13 @@ public class MapsGuidanceGapTest {
         public Executor j=Runnable::run;
         public Object p,q;
     }
+    public static final class ComponentManager{final Object component=new Object();public Object rJ(){return component;}}
+    public static final class MapsApplication{final ComponentManager manager=new ComponentManager();public ComponentManager rI(){return manager;}}
+    @Test public void resolvesTheComponentThroughTheRealApplicationManagerContract()throws Exception{
+        MapsApplication application=new MapsApplication();
+        assertSame(application.manager.component,MapsGuidanceCoordinator.applicationComponent(application));
+        try{MapsApplication.class.getDeclaredMethod("rJ");fail("Fixture must not supply the obsolete direct accessor");}catch(NoSuchMethodException expected){}
+    }
     private MapsGuidanceCoordinator coordinator;
     private NativeQueue manager;
     private static Field field(String name)throws Exception{Field f=MapsGuidanceCoordinator.class.getDeclaredField(name);f.setAccessible(true);return f;}

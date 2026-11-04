@@ -2,6 +2,10 @@ package org.ungoogled.patches.maps.car
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
@@ -95,7 +99,7 @@ private val nativeNavigationResources = resourcePatch {
 @Suppress("unused")
 val nativeCarNavigationPatch = bytecodePatch(
     name = "Native navigation for Gearslip and Android Auto",
-    description = "Shows this patched Maps app's live native map with standard Android Auto controls that compatible hosts can arrange. Requires the full Android Auto app for its car UI resources.",
+    description = "Shows this patched Maps app's live native map with app-owned car UI and standard navigation controls that Android Auto and compatible hosts can arrange.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
@@ -111,6 +115,57 @@ val nativeCarNavigationPatch = bytecodePatch(
             if (classDefBy(type).fields.none { it.name == name && it.type == fieldType })
                 throw PatchException("Maps' native car field changed: $type->$name")
         }
+        // These six SDK policy lookups are the complete resource cohort used by
+        // the native facade. Own them locally instead of resolving foreign AA
+        // resources (or adding unrelated resource-table entries to Maps).
+        requireField("Lluj;","d","Ljava/lang/String;")
+        requireField("Lluk;","d","Ljava/lang/String;")
+        requireMethod("Ljbb;","c",listOf("Lluk;","Landroid/content/Context;","Landroid/content/res/Resources;"),"I")
+        requireMethod("Ljbb;","d",listOf("Lluj;","Landroid/content/Context;","Landroid/content/res/Resources;"),"Z")
+        val dimension=mutableClassDefBy("Ljbb;").methods.single{it.name=="c"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lluk;","Landroid/content/Context;","Landroid/content/res/Resources;")}
+        val flag=mutableClassDefBy("Ljbb;").methods.single{it.name=="d"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lluj;","Landroid/content/Context;","Landroid/content/res/Resources;")}
+        if(dimension.implementation!!.registerCount<=3||flag.implementation!!.registerCount<=3)
+            throw PatchException("Maps' car SDK lookups have no scratch register")
+        dimension.addInstructions(0,"""
+            iget-object v0, p0, Lluk;->d:Ljava/lang/String;
+            invoke-static {p1, v0}, Lpatches/maps/gearslip/LocalCarUiResources;->dimension(Landroid/content/Context;Ljava/lang/String;)I
+            move-result v0
+            return v0
+        """)
+        flag.addInstructions(0,"""
+            iget-object v0, p0, Lluj;->d:Ljava/lang/String;
+            invoke-static {v0}, Lpatches/maps/gearslip/LocalCarUiResources;->flag(Ljava/lang/String;)Z
+            move-result v0
+            return v0
+        """)
+        // Only the native car SDK context constructor is changed; other merged nnd
+        // constructors and every unrelated package-context lookup remain untouched.
+        requireMethod("Lnnd;", "<init>", listOf("Landroid/content/Context;"), "V")
+        requireField("Lnnd;", "a", "Ljava/lang/Object;")
+        requireField("Lnnd;", "b", "Ljava/lang/Object;")
+        val sdkContext=mutableClassDefBy("Lnnd;").methods.single{
+            it.name=="<init>"&&it.parameterTypes.map(CharSequence::toString)==listOf("Landroid/content/Context;")
+        }
+        sdkContext.addInstructions(1,"""
+            iput-object p1, p0, Lnnd;->a:Ljava/lang/Object;
+            iput-object p1, p0, Lnnd;->b:Ljava/lang/Object;
+            return-void
+        """)
+        val decorFactory=mutableClassDefBy("Llui;").methods.single{
+            it.name=="<init>"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lnnd;","[Ljava/lang/Object;")
+        }
+        val entryConstants=decorFactory.implementation!!.instructions.withIndex().filter{
+            (((it.value as? ReferenceInstruction)?.reference) as? StringReference)?.string=="com.google.android.gearhead.appdecor.CarUiEntry"
+        }
+        if(entryConstants.size!=1)throw PatchException("Maps' car decor factory changed")
+        val entry=entryConstants.single()
+        decorFactory.replaceInstruction(entry.index,"const-string v${(entry.value as OneRegisterInstruction).registerA}, \"patches.maps.gearslip.LocalCarUiEntry\"")
+        // Google's demand-space microphone belongs to its private host. Do not
+        // display an action which a repackaged public CAL client cannot execute.
+        // Native typed search and its genuine editor remain available.
+        requireMethod("Ltoi;","r",emptyList(),"Z")
+        mutableClassDefBy("Ltoi;").methods.single{it.name=="r"&&it.parameterTypes.isEmpty()&&it.returnType=="Z"}
+            .addInstructions(0,"const/4 v0, 0x0\nreturn v0")
         requireMethod("L$ORIGINAL;".replace('.', '/'), "b", emptyList(), "Ljava/lang/Class;")
         requireField("Lbeiy;", "a", "Ljava/lang/ref/WeakReference;")
         requireField("Lbemm;", "H", "I")
@@ -122,6 +177,22 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireMethod("Lbemz;", "A", listOf("Landroid/graphics/Rect;"), "V")
         requireField("Lbemz;", "h", "Lbemu;")
         requireMethod("Lbemu;", "f", listOf("Landroid/view/Surface;"), "V")
+        requireField("Lbemu;", "b", "Ljava/lang/Object;")
+        requireMethod("Lnrw;","rI",emptyList(),"Lcqou;")
+        requireMethod("Lcqnq;","rJ",emptyList(),"Ljava/lang/Object;")
+        requireField("Lnjj;","bR","Lcqpf;")
+        requireMethod("Lbllk;","a",listOf("Lblku;","Ljava/util/concurrent/Executor;"),"V")
+        requireMethod("Lbllk;","c",listOf("Lblku;"),"V")
+        requireField("Lbllk;","b","Lblkr;")
+        requireField("Lblkr;","c","Lblky;")
+        requireField("Lblkr;","b","Lbllg;")
+        requireField("Lbllg;","a","Lbmad;")
+        requireMethod("Lbmad;","e",emptyList(),"Lblot;")
+        requireField("Lblot;","d","Lybc;")
+        requireField("Lblot;","i","I")
+        requireField("Lblot;","j","I")
+        requireField("Lybc;","q","Landroid/text/Spanned;")
+        requireMethod("Lcom/google/android/libraries/geo/navcore/service/base/NavigationService;","onStartCommand",listOf("Landroid/content/Intent;","I","I"),"I")
         requireMethod("Lbemm;", "v", emptyList(), "V")
         requireMethod("Lbemm;", "t", listOf("Landroid/content/res/Resources;"), "V")
         requireMethod("Lltu;", "b", listOf("Landroid/content/res/Configuration;"), "V")

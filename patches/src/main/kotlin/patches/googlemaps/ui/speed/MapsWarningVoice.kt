@@ -19,6 +19,10 @@ import java.security.MessageDigest
 private const val COORDINATOR="Lorg/ungoogled/ui/MapsGuidanceCoordinator;"
 internal data class MapsVoiceContract(val registers:Int,val count:Int,val flags:Int,val hash:String)
 internal val mapsVoiceContracts=mapOf(
+    "Lbmtp;->d(Lbmua;)V" to MapsVoiceContract(2, 4, 17, "347be37a03f590ec9810170037aa68adbac77f2fb71a282a0461eee5c3f0d9c4"),
+    "Lbmtp;->l()V" to MapsVoiceContract(1, 1, 17, "68765955a2c6d9354c6580a44f21ae36aecd36ae0a9cd37eb19693b31b2a6fdd"),
+    "Lbmty;->d(Lbmua;)V" to MapsVoiceContract(5, 22, 17, "8d08158534bc3827b3abc7a58ea201614e8414179e0190a04affdb7f9ce0c9a1"),
+    "Lbmty;->l()V" to MapsVoiceContract(1, 1, 17, "68765955a2c6d9354c6580a44f21ae36aecd36ae0a9cd37eb19693b31b2a6fdd"),
     "Lbjis;->b()D" to MapsVoiceContract(3, 4, 17, "d37441c1cdd598e06556c4be17b2ef89aff77ff6f7ea349e2ca9596a27ea64d3"),
     "Lbjis;->d()D" to MapsVoiceContract(3, 4, 17, "4970475f59e7b11ee1269fa01446e2a335fdbb9f04b27519fa2571fee9d53d41"),
     "Lbjix;->g()I" to MapsVoiceContract(1, 4, 17, "7748607af06abd2aa78ab1626fdd545cb538c81de5e803c69a45d9796ef1c9e0"),
@@ -118,6 +122,12 @@ internal fun validateMapsWarningVoice(classes:Iterable<ClassDef>):Map<String,Met
 
 context(context:BytecodePatchContext)
 internal fun bindMapsWarningVoice() {
+    // The application exposes a component manager. rJ is on that manager;
+    // calling it directly on GoogleMapsApplication permanently faults warning audio.
+    listOf(Triple("Lnrw;","rI","Lcqou;"),Triple("Lcqnq;","rJ","Ljava/lang/Object;")).forEach { (owner,name,result) ->
+        check(context.classDefBy(owner).methods.count { it.name==name&&it.parameterTypes.isEmpty()&&it.returnType==result }==1) { "Changed Maps warning application component accessor $owner->$name" }
+    }
+    check(context.classDefBy("Lnjj;").fields.count { it.name=="hU"&&it.type=="Lcqpf;" }==1) { "Changed Maps native warning manager provider" }
     val classes=mapsVoiceContracts.keys.map { it.substringBefore("->") }.distinct().map { context.classDefBy(it) }
     val originals=validateMapsWarningVoice(classes)
     val methods=originals.keys.associateWith { descriptor -> context.mutableClassDefBy(descriptor.substringBefore("->")).methods.single { it.toString()==descriptor } }

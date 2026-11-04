@@ -97,6 +97,39 @@ public final class NativeCarServiceTest {
         } finally { wire.recycle(); }
     }
 
+    @Test public void navigationManagerUsesTheActualLibraryInterfaceAndRejectsReplacedSessions()throws Exception{
+        handshake(HOST);
+        Response response=call(car,"ICarApp",9,data->data.writeString("navigation"));
+        Parcel wire=Parcel.obtain();
+        try{wire.writeBundle(response.value);wire.setDataPosition(0);assertTrue(Bundleable.CREATOR.createFromParcel(wire).get() instanceof androidx.car.app.navigation.INavigationManager);}
+        finally{wire.recycle();}
+        IBinder navigation=response.value.getBinder("tag_value");handshake(HOST);
+        assertSecurity(call(navigation,"navigation.INavigationManager",2,data->{}));
+    }
+
+    @Test public void nativeGuidanceOwnsNavigationAndStopWaitsForActualNativeConfirmation()throws Exception{
+        handshake(HOST);
+        java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
+        java.util.List<Integer> events=new java.util.ArrayList<>();
+        Binder host=new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            data.enforceInterface("androidx.car.app.navigation.INavigationHost");events.add(code);
+            if(code==4)assertNotNull(CarProtocol.readBundleable(data));reply.writeNoException();return true;
+        }};
+        java.lang.reflect.Field navigationHost=session.getClass().getDeclaredField("navigationHost");navigationHost.setAccessible(true);navigationHost.set(session,host);
+        java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
+        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertTrue(events.isEmpty());
+        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",120,15));assertEquals(java.util.Arrays.asList(2,4),events);
+        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",90,12));assertEquals(java.util.Arrays.asList(2,4,4),events);
+        IBinder navigation=call(car,"ICarApp",9,data->data.writeString("navigation")).value.getBinder("tag_value");
+        Response stopped=new Response();Parcel request=Parcel.obtain();
+        try{request.writeInterfaceToken("androidx.car.app.navigation.INavigationManager");request.writeStrongBinder(stopped);request.setDataPosition(0);assertTrue(navigation.transact(2,request,null,IBinder.FLAG_ONEWAY));}
+        finally{request.recycle();}
+        shadowOf(Looper.getMainLooper()).idle();assertEquals(0,stopped.code);
+        Intent stop=shadowOf(service).getNextStartedService();assertNotNull(stop);
+        assertEquals("com.google.android.libraries.geo.navcore.service.base.NavigationService",stop.getComponent().getClassName());assertTrue(stop.getBooleanExtra("abortcurrentsession",false));
+        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,stopped.code);assertEquals(Integer.valueOf(3),events.get(events.size()-1));
+    }
+
     @Test public void testHostPackageCannotAuthenticateInProduction() throws Exception {
         String testHost = HOST + ".morphetest";
         shadowOf(service.getPackageManager()).setPackagesForUid(HOST_UID, testHost);
