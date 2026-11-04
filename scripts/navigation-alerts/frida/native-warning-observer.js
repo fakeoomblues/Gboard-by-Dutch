@@ -15,6 +15,8 @@ function policy(o){const p=field(o,'policy'),name=klass(p);if(!name)return;hook(
 function progress(o){const p=field(o,'progress'),name=klass(p);if(!name)return;for(const method of ['onStart','onDone','onError']){try{hook(name,method,['java.lang.String'],(_,a)=>({utterance_id:String(a[0])}));}catch(_){}}try{hook(name,'onStop',['java.lang.String','boolean'],(_,a)=>({utterance_id:String(a[0]),interrupted:!!a[1]}));}catch(_){}}
 function velaAttempt(a){const g=field(a,'grant'),e=field(a,'event');return {attempt:get(g,'attemptId'),event_key:get(g,'eventKey'),authority_sequence:get(e,'sequence'),until:get(a,'announceUntil'),started:get(a,'started'),cancelled:get(a,'cancelled'),submitted:get(a,'submitted'),holding:get(a,'holding'),native_stopped:get(a,'nativeStopped'),quiescent:get(a,'quiescent')};}
 function velaGuide(g){const q=field(g,'g');return {guide_class:klass(g),queue_size:q===null?null:Number(Java.cast(q,Java.use('java.util.Collection')).size()),native_focus_count:get(g,'s'),neural:get(g,'m'),ready:get(g,'e'),system_ready:get(g,'h'),initializing:get(g,'i')};}
+function familyStatus(bundle){const result={};if(bundle===null)return result;for(const key of ['alerters','zones','segments','route_context','notifications','osm']){const b=bundle.getBundle(key);if(b!==null)result[key]={controller_state:String(b.getString('controller_state')),native_available:String(b.getString('native_available')),count:Number(b.getInt('current_state_count')),observed_ms:b.containsKey('observed_elapsed_ms')?Number(b.getLong('observed_elapsed_ms')):null};}return result;}
+function warningEvents(values){const out=[];for(let i=0;i<Math.min(Number(values.size()),8);i++){const e=values.get(i);out.push({operation:get(e,'operation'),native_type:get(e,'nativeType'),category:get(e,'category'),sequence:get(e,'sequence'),announcement_index:get(e,'announcementIndex')});}return {event_count:Number(values.size()),warnings:out};}
 Java.performNow(()=>{try{hook('java.lang.Thread','dispatchUncaughtException',['java.lang.Throwable'],(_,a)=>({exception_class:klass(a[0])}));}catch(e){emit('hook-optional-error',{where:'uncaught-exception',error_type:e.name});}});
 const attachDeadline=Date.now()+20000;
 function installApplicationHooks(){Java.performNow(()=>{try{
@@ -38,11 +40,12 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook('org.ungoogled.waze.NavigationStartup','running',[],null,(_,a,r)=>({engine_running:!!r}));
   const N='org.ungoogled.waze.NativeWarnings';
   hook(N,'prepareControllers',[],()=>({}),()=>({}));
-  hook(N,'familyStatus',[],null,(_,a,r)=>({families:r===null?null:r.keySet().toString().toString()}));
+  hook(N,'familyStatus',[],null,(_,a,r)=>({families:familyStatus(r)}));
   for(const method of ['repository','sound','zoneSelected','zonePresented','zoneExit','segments','notificationAdded','notificationRemoved'])hook(N,method,['java.lang.Object'],(_,a)=>({native_class:klass(a[0])}));
-  hook(N,'emit',['android.os.Bundle'],(_,a)=>({operation:a[0].getString('operation'),warning_id:a[0].getString('warning_id'),revision:Number(a[0].getLong('revision')),announcement_index:Number(a[0].getLong('announcement_index'))}));
+  hook(N,'emit',['android.os.Bundle'],(_,a)=>({operation:a[0].getString('operation'),warning_id:a[0].getString('warning_id'),category:a[0].getString('category'),native_type:a[0].getString('native_type'),phase:a[0].getString('phase'),origin:a[0].getString('announcement_origin'),revision:Number(a[0].getLong('revision')),announcement_index:Number(a[0].getLong('announcement_index'))}));
  }else if(pkg==='org.ungoogled.android.apps.maps'||pkg==='com.google.android.apps.maps'){
   const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant';
+  hook(S,'events',['java.util.List'],(_,a)=>warningEvents(a[0]));
   hook(S,'pumpOne',[],o=>{policy(o);return {};});
   hook(S,'cancel',[A,'boolean'],(o,a)=>({...state(o),retry:!!a[1],stack:stack()}));
   hook(S,'finish',[A,'nl.johninnl.navigation.alerts.PlaybackGrant$Outcome','boolean'],(o,a)=>({...state(o),outcome:a[1].name().toString(),quiescent:!!a[2]}));
@@ -59,6 +62,7 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook(C,'canRegenerate',[],null,(_,a,r)=>({can_regenerate:!!r}));
  }else if(pkg==='app.vela'){
   const S='nl.johninnl.navigation.alerts.WarningScheduler',A=S+'$Active',G='nl.johninnl.navigation.alerts.PlaybackGrant',O=G+'$Outcome',M='nl.johninnl.navigation.alerts.WarningAudioOwner$Mode',E='nl.johninnl.navigation.alerts.WarningEvent';
+  hook(S,'events',['java.util.List'],(_,a)=>warningEvents(a[0]));
   hook(S,'pumpOne',[],o=>{policy(o);return {};});
   hook(S,'cancel',[A,'boolean'],(o,a)=>({...state(o),retry:!!a[1],stack:stack()}));
   hook(S,'finish',[A,O,'boolean'],(o,a)=>({...state(o),outcome:a[1].name().toString(),quiescent:!!a[2]}));

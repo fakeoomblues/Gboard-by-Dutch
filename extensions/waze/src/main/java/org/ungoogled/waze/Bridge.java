@@ -313,7 +313,7 @@ public final class Bridge {
         public void onReceive(Context c, Intent in) {
             try {
                 double lat = in.getDoubleExtra("lat", 0), lng = in.getDoubleExtra("lng", 0);
-                int type = in.getIntExtra("type", 1), count = Math.max(1, Math.min(20, in.getIntExtra("count", 1)));
+                int type = in.getIntExtra("type", 1), count = in.getBooleanExtra("clear", false) ? 0 : Math.max(1, Math.min(20, in.getIntExtra("count", 1)));
                 String title = in.getStringExtra("title");
                 if (title == null) title = "TEST alert from the Waze bridge";
                 Class<?> positionClass = Class.forName("com.waze.jni.protos.Position$IntPosition");
@@ -332,12 +332,31 @@ public final class Bridge {
                     set(info, "setDescription", String.class, "Self-test of the Waze alerts bridge");
                     set(info, "setPosition", positionClass, build(position));
                     set(info, "setReportId", int.class, 424242 + k);
+                    if (in.hasExtra("subtype")) set(info, "setSubType", int.class, in.getIntExtra("subtype", 0));
+                    if (in.hasExtra("valid")) {
+                        Class<?> validationClass = Class.forName("com.waze.jni.protos.alerters.AlertValidationResult");
+                        Object validation = validationClass.getMethod("newBuilder").invoke(null);
+                        validation(info, validation, validationClass, in);
+                    }
                     Object id = idClass.getMethod("newBuilder").invoke(null);
-                    set(id, "setUniqueId", String.class, "ua-test-" + k);
+                    String identity = in.getStringExtra("id");
+                    set(id, "setUniqueId", String.class, (identity == null ? "ua-test" : identity) + "-" + k);
                     Object descriptor = descriptorClass.getMethod("newBuilder").invoke(null);
                     set(descriptor, "setInfo", infoClass, build(info));
                     set(descriptor, "setAlertId", idClass, build(id));
                     set(descriptor, "setTriggerDistanceMeters", int.class, 500);
+                    if (in.hasExtra("valid")) {
+                        Class<?> priorityClass = Class.forName("com.waze.jni.protos.InsightPriority");
+                        Object priority = priorityClass.getMethod("newBuilder").invoke(null);
+                        set(priority, "setValue", int.class, 100);
+                        set(descriptor, "setInsightPriority", priorityClass, build(priority));
+                    }
+                    if (in.hasExtra("zone_state")) {
+                        Class<?> zoneClass = Class.forName("com.waze.jni.protos.alerters.ZoneAlertData");
+                        Object zone = zoneClass.getMethod("newBuilder").invoke(null);
+                        set(zone, "setStateValue", int.class, in.getIntExtra("zone_state", 0));
+                        set(descriptor, "setZoneAlertData", zoneClass, build(zone));
+                    }
                     set(update, "addDescriptors", descriptorClass, build(descriptor));
                 }
                 Object built = build(update);
@@ -359,6 +378,18 @@ public final class Bridge {
             } catch (Throwable t) {
                 Log.w("UA", "Waze alerts bridge: self-test", t);
             }
+        }
+
+        // Only the debug self-test supplies this fixture. Native selectors remain responsible
+        // for sound requests; neither this builder nor the receiver invokes them directly.
+        private static void validation(Object info, Object builder, Class<?> resultClass, Intent in) throws Exception {
+            if (!in.hasExtra("valid")) return;
+            set(builder, "setIsValid", boolean.class, in.getBooleanExtra("valid", false));
+            if (in.hasExtra("distance_m")) set(builder, "setDistanceMeters", int.class, in.getIntExtra("distance_m", 0));
+            if (in.hasExtra("time_sec")) set(builder, "setTimeToAlertSec", int.class, in.getIntExtra("time_sec", 0));
+            set(info, "setValidationResult", resultClass, build(builder));
+            set(info, "setIsApproachingWithValidation", boolean.class, in.getBooleanExtra("approaching", true));
+            set(info, "setRequireDistanceInRange", boolean.class, true);
         }
 
         private static void set(Object builder, String name, Class<?> type, Object value) throws Exception {

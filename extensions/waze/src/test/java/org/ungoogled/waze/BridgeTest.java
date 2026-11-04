@@ -114,4 +114,35 @@ public class BridgeTest {
         send();shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMinutes(2));assertEquals(count,broadcasts().size());
         assertFalse(Customization.on("shareAlerts"));
     }
+    public static final class FixtureValidation {
+        boolean valid; Integer distance, seconds;
+        public FixtureValidation setIsValid(boolean value){valid=value;return this;}
+        public FixtureValidation setDistanceMeters(int value){distance=value;return this;}
+        public FixtureValidation setTimeToAlertSec(int value){seconds=value;return this;}
+        public FixtureValidation build(){return this;}
+    }
+    public static final class FixtureInfo {
+        FixtureValidation validation; boolean approaching, requireDistance;
+        public FixtureInfo setValidationResult(FixtureValidation value){validation=value;return this;}
+        public FixtureInfo setIsApproachingWithValidation(boolean value){approaching=value;return this;}
+        public FixtureInfo setRequireDistanceInRange(boolean value){requireDistance=value;return this;}
+    }
+    private FixtureInfo fixtureValidation(Intent input)throws Exception{
+        Method method=Class.forName(Bridge.class.getName()+"$SelfTest").getDeclaredMethod("validation",Object.class,Object.class,Class.class,Intent.class);
+        method.setAccessible(true);FixtureInfo info=new FixtureInfo();
+        method.invoke(null,info,new FixtureValidation(),FixtureValidation.class,input);return info;
+    }
+    @Test public void nativeFixturePreservesExplicitValidationAndObservedDistances()throws Exception{
+        FixtureInfo info=fixtureValidation(new Intent().putExtra("valid",true).putExtra("distance_m",125).putExtra("time_sec",8));
+        assertTrue(info.validation.valid);assertEquals(Integer.valueOf(125),info.validation.distance);assertEquals(Integer.valueOf(8),info.validation.seconds);
+        assertTrue(info.approaching);assertTrue(info.requireDistance);
+    }
+    @Test public void invalidFixtureDoesNotBecomeEligibleAndMissingMeasurementsStayAbsent()throws Exception{
+        FixtureInfo info=fixtureValidation(new Intent().putExtra("valid",false).putExtra("approaching",false));
+        assertFalse(info.validation.valid);assertFalse(info.approaching);assertNull(info.validation.distance);assertNull(info.validation.seconds);
+    }
+    @Test public void oldFixtureWithoutNativeValidationRemainsUnvalidated()throws Exception{
+        assertNull(fixtureValidation(new Intent()).validation);
+    }
+
 }
