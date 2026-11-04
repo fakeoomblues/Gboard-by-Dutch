@@ -35,9 +35,24 @@ The subsequent source review found that `WarningSession` fenced callbacks only b
 
 The session now binds callbacks to the specific connection and serializes the validity check with delivery. Detachment invalidates that identity before retiring transport and cancels old output once. An incompatible event declaration detaches immediately. This preserves the retired transport's terminal/release IPC for outstanding output; it does not erase grants or claim that uncertain audio stopped.
 
-Two regressions in the existing `WarningConnectionTest` exercise real endpoint handshakes, same-ticket replacement and incompatible negotiation, then deliver callbacks retained from the old connection. All 100 shared warning unit tests pass, and both Maps and Vela release Java compilation pass in the same offline checkpoint. No runtime session or validation-tooling change was performed. This correction is not included in the older signed candidate below; new receiver artifacts and remaining acceptance are still required.
+Two regressions in the existing `WarningConnectionTest` exercise real endpoint handshakes, same-ticket replacement and incompatible negotiation, then deliver callbacks retained from the old connection. All 100 shared warning unit tests pass, and both Maps and Vela release Java compilation pass in the same offline checkpoint. No runtime session or validation-tooling change was performed. The rebuilt candidate below includes the correction; installed acceptance is still required.
 
-## Delivery artifacts and evidence reuse
+## Rebuilt development candidate at `02a75d5`
+
+The offline build at `02a75d58388d8df53b49fe0c3f8593aa2ff27f1c` produced a signed MPP with the unchanged Morphe signing identity. Patch tests report 54 tests with nine skips; FM, Maps and Vela component suites report 176, 81 and 90 tests respectively, with no failures. Skips remain explicit and do not close missing acceptance gates.
+
+The same bundle was applied in FULL mode with fingerprint validation to the supplied FM15 split input, pinned Maps APK and pinned Vela APK. Their intended combinations applied exactly nine, four and one patches, with no failed patches. All three APKs retain the existing owned-emulator signer. Package/version declarations and application-file preservation through signing were checked independently. The initial FM comparison counted two empty ZIP directory records removed by the signer; its failure and the exact directory-only difference remain recorded. No application file was added or changed by signing.
+
+| Current development artifact | SHA-256 |
+| --- | --- |
+| Signed MPP | `f6a7d8f7c544a1d04f869ee70de3c8277aa72694a3c823d4c2567f98bfa4c98a` |
+| FM15 APK | `eb86d3b68999524c0a8891e54df92f11a878fb028ea2995adf605f95f54bf7e6` |
+| Renamed Maps APK | `a43e6c9fbec636b3fd321041347d4a8451b02ff9a0467786155837d1a2c35694` |
+| Vela APK | `6ab4dae4f12a19a3127981e103c82a4edea049679d13a32f0735e133cc9b67be` |
+
+Focused REA inspection of both emitted receiver APKs confirms the per-connection callback identity and synchronized callback delivery in their compiled `WarningSession.prepare` implementations. Static inspection does not prove installed behavior. These artifacts have not been installed or run; no phone was changed. Compact build, patch, signature and decompiler receipts are retained in the ignored `candidate-02a75d5` directory, and the delivery manifest references its canonical files. Per-run build directories, unsigned/aligned duplicates and patcher scratch were removed. Remaining integrated, phone/car, review and release-approval gates stay open.
+
+## Earlier delivery artifacts and evidence reuse
 
 These are development validation artifacts built from the working tree containing the identity correction. Their receipt records the build base and dirty fix explicitly. Stable release automation will build from the approved committed head; these files are not a published release.
 
