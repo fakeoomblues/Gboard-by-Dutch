@@ -39,6 +39,14 @@ The source probe failed its existing consumed-location freshness gate: after a f
 
 The original app state, settings, audio and emulator launch were restored. The emulator is stopped; recovery snapshot, helpers, Frida server, forwarding and remote scratch are removed. Compact evidence is archived in ignored `retained-repeat-pair-01/evidence.tar.gz` (536,740 bytes, SHA-256 `b502cb51a32a8f432dfb00a294e0c022aaa96d204ee3b3c93744114ec6dce216`); raw per-run storage was removed after process quiescence. `cleanupRequired=false`. Runner, observer, agent and helper code were not changed. Native-repeat acceptance remains open under the tooling freeze.
 
+## Current-candidate UI admission: stopped before app launch
+
+The current `c521111` FM15, renamed Maps and Vela APKs were installed in owned emulator 5590 and their installed hashes matched the delivery manifest. The original three-app state and settings were saved in a recovery snapshot, and guest media output was set to zero. The planned measured scope was product-UI source selection/readiness and parked preview, not native detection or native-repeat proof.
+
+The unchanged Frida observer failed before reporting observer readiness, with no attachments: `TimedOutError('unexpectedly timed out while waiting for stop from process with PID 2831')`. No app-launch or preview stimulus was issued. No retry or tooling change was made, and no product crash is established by this admission failure. The existing standalone CLI reports Frida 17.9.11, while this pinned server/observer environment uses 17.23.3; no tool installation, upgrade or substitution was performed.
+
+The snapshot restored the original APKs, preferences/permissions, settings and media volume exactly. The snapshot, Frida server, forwarding and remote scratch were removed; the owned emulator and host observation processes are stopped. Raw run storage was archived and removed. The ignored `manual-current-preview-01/evidence.tar.gz` is 5,664 bytes, SHA-256 `38a007cd7c41e3f8f438b82dc8e96325cdbd86acdcd0d494b368808f1863ca7a`; `cleanupRequired=false`. Current-candidate installation is observed, but cold start, parked preview and other runtime acceptance remain unproved. The observer remains frozen under AGENTS.md.
+
 ## Earlier artifact evidence
 
 Implementation remains in progress against the full [reviewed design](../superpowers/specs/2026-11-02-flitsmeister-native-warnings-design.md). Producer capture coverage has now been reconciled and enabled for the pinned artifact; full integrated runtime/delivery acceptance remains unproved.
