@@ -452,7 +452,21 @@ public final class NativeFmCaptureProbe extends Instrumentation {
             return new JSONObject().put("head",read(view,"headSequence")).put("events",rows);
         }).get(3,TimeUnit.SECONDS);
     }
-    /** Original wd6/engine/manager pipeline, private candidate only; no GPS or decision field writes. */
+    private void zone15FailureIdentity(JSONObject trace,String key,
+            nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle handle){
+        AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.IdentityState> state=new AtomicReference<>();
+        AtomicReference<Throwable> inspectionError=new AtomicReference<>();
+        try{
+            // Failure observation must not depend on mute/trace/admission still being healthy.
+            // Inspect cached references only; never initialize, admit or restore input here.
+            runOnMainSync(()->{try{
+                nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle current=handle==null?nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.current():handle;
+                if(current!=null)state.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.inspectIdentity(current));
+            }catch(Throwable error){inspectionError.set(error);}});
+            if(inspectionError.get()!=null)throw inspectionError.get();
+            if(state.get()!=null)trace.put(key,zone15Bean(state.get()));
+        }catch(Throwable error){try{trace.put(key+"_inspection_failure",android.util.Log.getStackTraceString(error));}catch(Exception ignored){}}
+    }
     private void realNativeZone15Suite(JSONObject report)throws Exception{
         check(fm15,"Native zone fixture requires the admitted15 profile");
         Object endpoint=restartEndpoint();String session=String.valueOf(call(endpoint,"sourceSession")),receiver=arguments.getString("death_owner");
@@ -507,11 +521,11 @@ public final class NativeFmCaptureProbe extends Instrumentation {
             check(announcements.length()==2,"Expected actual native zone start and end; preserve any different original result");
             check(announcements.getJSONObject(0).getJSONObject("authority").getString("phase").equals("enter")&&announcements.getJSONObject(1).getJSONObject("authority").getString("phase").equals("exit"),"Unexpected native zone authority phases");
             for(JSONArray acks:outcomes.values()){check(acks.length()==3&&acks.getJSONObject(2).getString("outcome").equals("COMPLETED"),"Actual zone output did not complete exactly once");}
-        }catch(Throwable error){primaryFailure=error;trace.put("failure",android.util.Log.getStackTraceString(error));if(error instanceof Exception)throw (Exception)error;throw (Error)error;}finally{
+        }catch(Throwable error){primaryFailure=error;trace.put("failure",android.util.Log.getStackTraceString(error));zone15FailureIdentity(trace,"identity_after_failure",handle);if(error instanceof Exception)throw (Exception)error;throw (Error)error;}finally{
             Exception cleanupFailure=null;
             AtomicReference<nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.RestoreResult> restored=new AtomicReference<>();
             final nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle owned=handle;
-            try{onMain(()->{nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle current=owned==null?nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.current():owned;if(current!=null)restored.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.restore(current));});}catch(Exception error){trace.put("candidate_restore_failure",android.util.Log.getStackTraceString(error));if(primaryFailure!=null)primaryFailure.addSuppressed(error);else cleanupFailure=error;}
+            try{onMain(()->{nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.Handle current=owned==null?nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.current():owned;if(current!=null)restored.set(nl.johninnl.warningprobe.phasezone.Fm15PrivateZoneInput.restore(current));});}catch(Exception error){trace.put("candidate_restore_failure",android.util.Log.getStackTraceString(error));zone15FailureIdentity(trace,"identity_after_restore_failure",owned);if(primaryFailure!=null)primaryFailure.addSuppressed(error);else cleanupFailure=error;}
             if(restored.get()!=null)trace.put("candidate_restore",zone15Bean(restored.get()));
             java.io.File folder=new java.io.File(context.getExternalFilesDir(null),"native-warning-zones");check(folder.exists()||folder.mkdirs(),"Private zone trace folder");java.io.File file=new java.io.File(folder,id+".json");byte[] bytes=trace.toString().getBytes("UTF-8");try(java.io.FileOutputStream stream=new java.io.FileOutputStream(file)){stream.write(bytes);}
             StringBuilder digest=new StringBuilder();for(byte value:java.security.MessageDigest.getInstance("SHA-256").digest(bytes))digest.append(String.format(java.util.Locale.ROOT,"%02x",value&255));

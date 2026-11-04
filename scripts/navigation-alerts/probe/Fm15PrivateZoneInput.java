@@ -40,11 +40,13 @@ public final class Fm15PrivateZoneInput {
         public final String fixtureId;
         public final String nativeType;
         public final Policy nativePolicyAtEntry;
+        public final String inputBoundary;
         private final Binding binding;
         private final Object model;
         private final Set<?> previous;
         private final Collection<?> previousMembers;
         private final Set<?> inserted;
+        private final RetainedInput retained;
         private boolean lost;
         private boolean restored;
         private boolean everActive;
@@ -52,13 +54,85 @@ public final class Fm15PrivateZoneInput {
 
         private Handle(String id, String type, Binding binding, Object model,
                        Set<?> previous, Collection<?> previousMembers, Set<?> inserted) {
+            this(id,type,binding,model,previous,previousMembers,inserted,null);
+        }
+        private Handle(String id, String type, Binding binding, Object model,
+                       Set<?> previous, Collection<?> previousMembers, Set<?> inserted, RetainedInput retained) {
             fixtureId = id; nativeType = type; this.binding = binding;
             this.model = model; this.previous = previous; this.inserted = inserted;
+            this.retained=retained;
+            inputBoundary=retained==null?"pef.g exact owned final value":"existing y81.d retained native report input";
             this.previousMembers = Collections.unmodifiableList(new ArrayList<Object>(previousMembers));
             nativePolicyAtEntry = binding.policy;
         }
         public boolean isRestored() { return restored; }
         public boolean hasLostOwnership() { return lost; }
+    }
+
+    interface IdReader { String id(Object model) throws Exception; }
+
+    /** Pure ownership guard. Native final-flow refreshes are deliberately outside this ownership. */
+    static final class RetainedInput {
+        final Object owner;
+        final List<?> previous;
+        final List<Object> previousMembers, inserted, insertedMembers;
+        RetainedInput(Object owner,List<?> previous,Object fixture,String fixtureId,IdReader reader)throws Exception {
+            require(owner!=null&&fixture!=null,"Missing retained input owner/model");
+            require(fixtureId!=null&&fixtureId.matches("private-fm15-zone-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:-[A-Za-z0-9._-]{1,24})?"),"Retained input requires a private zone UUID");
+            require(fixtureId.equals(reader.id(fixture)),"Retained fixture identity differs");
+            this.owner=owner;this.previous=previous;
+            previousMembers=new ArrayList<Object>();
+            if(previous!=null)for(Object item:previous){
+                require(item!=null&&!fixtureId.equals(reader.id(item)),"Retained input fixture ID collision");
+                previousMembers.add(item);
+            }
+            ArrayList<Object> values=new ArrayList<Object>(previousMembers);values.add(fixture);
+            inserted=Collections.unmodifiableList(values);
+            insertedMembers=new ArrayList<Object>(inserted);
+        }
+        void requireOwned(Object currentOwner,Object currentValue) {
+            require(currentOwner==owner,"Retained native input owner changed");
+            require(currentValue==inserted,"Retained native input list was replaced; no overwrite permitted");
+            require(sameList(inserted,insertedMembers),"Retained input membership changed");
+            require(previous==null||sameList(previous,previousMembers),"Original retained input changed in place; no restoration permitted");
+        }
+        void install(Field input)throws Exception {
+            synchronized(owner){
+                require(input.get(owner)==previous,"Retained input changed before admission");
+                require(previous==null||sameList(previous,previousMembers),"Original retained input changed before admission");
+                require(compareField(input,owner,previous,inserted),"Native retained input changed during admission; no overwrite performed");
+                require(input.get(owner)==inserted,"Native writer replaced retained admission; no further write permitted");
+            }
+        }
+        void restore(Field input)throws Exception {
+            synchronized(owner){
+                requireOwned(owner,input.get(owner));
+                require(compareField(input,owner,inserted,previous),"Native retained input changed during restoration; no overwrite performed");
+                require(input.get(owner)==previous,"Native writer advanced after retained restoration; no further write permitted");
+            }
+        }
+        private static boolean sameList(List<?> actual,List<?> expected) {
+            if(actual.size()!=expected.size())return false;
+            for(int i=0;i<actual.size();i++)if(actual.get(i)!=expected.get(i))return false;
+            return true;
+        }
+        /** y81.d is not volatile. Fail before writing if this private CAS capability is unavailable. */
+        static boolean compareField(Field input,Object owner,Object expected,Object update)throws Exception {
+            int modifiers=input.getModifiers();
+            require(!input.getType().isPrimitive()&&!java.lang.reflect.Modifier.isStatic(modifiers)
+                    &&!java.lang.reflect.Modifier.isFinal(modifiers),"Field CAS requires a mutable instance reference");
+            require(owner!=null&&input.getDeclaringClass().isInstance(owner),"Field CAS owner type differs");
+            require((expected==null||input.getType().isInstance(expected))&&(update==null||input.getType().isInstance(update)),"Field CAS value type differs");
+            Class<?> unsafeType=Class.forName("sun.misc.Unsafe");Object unsafe=null;
+            for(Field candidate:unsafeType.getDeclaredFields())if(java.lang.reflect.Modifier.isStatic(candidate.getModifiers())&&candidate.getType()==unsafeType){
+                candidate.setAccessible(true);Object found=candidate.get(null);
+                if(found!=null){require(unsafe==null||unsafe==found,"Distinct private field-CAS capabilities; admission refused");unsafe=found;}
+            }
+            require(unsafe!=null,"Private field-CAS capability unavailable; retained admission refused");
+            long offset=((Number)unsafeType.getMethod("objectFieldOffset",Field.class).invoke(unsafe,input)).longValue();
+            return Boolean.TRUE.equals(unsafeType.getMethod("compareAndSwapObject",Object.class,long.class,Object.class,Object.class)
+                    .invoke(unsafe,owner,offset,expected,update));
+        }
     }
 
     /** Values read from the actual existing lef. They are never imposed on it. */
@@ -139,6 +213,8 @@ public final class Fm15PrivateZoneInput {
         public final boolean flowSame, engineSame, alertManagerSame, job1Same, job2Same, configSame;
         public final boolean currentCandidatesSame, currentCandidatesAreSet, fixtureMemberSame, fixtureIdPresent;
         public final int currentCandidateCount;
+        public final boolean retainedInputMode, retainedOwnerSame, retainedListSame;
+        public final int retainedInputCount;
         private IdentityState(Handle handle, Object manager, Object component, Object scoped, Object service,
                               Object lazy, Object provider, Object flow, Object engine, Object alertManager,
                               Object job1, Object job2, Object config, Object candidates) throws Exception {
@@ -159,6 +235,12 @@ public final class Fm15PrivateZoneInput {
                 }
             }
             fixtureMemberSame=member; fixtureIdPresent=id;
+            retainedInputMode=handle.retained!=null;
+            Object retainedOwner=retainedInputMode?cachedRetainedOwner(expected):null;
+            Object retainedValue=retainedOwner==null?null:read(retainedOwner,expected.loader,"y81","d");
+            retainedOwnerSame=retainedInputMode&&retainedOwner==handle.retained.owner;
+            retainedListSame=retainedInputMode&&retainedValue==handle.retained.inserted;
+            retainedInputCount=retainedValue instanceof List?((List<?>)retainedValue).size():-1;
         }
     }
 
@@ -250,6 +332,63 @@ public final class Fm15PrivateZoneInput {
     /** Only for exceptional cleanup if begin throws after attempting its owned write. */
     public static Handle current() { mainThread(); return active; }
 
+    /**
+     * Separate repeat seam: retain an original model at the original provider's upstream input.
+     * The existing singleton must already be cached. Never call TestManager, refresh, sound,
+     * route/speed APIs or write pef.g; only original native refreshes may generate candidates.
+     */
+    public static Handle beginRetainedRepeat(Context target,String fixtureId,
+            double startLatitude,double startLongitude,double endLatitude,double endLongitude)throws Exception {
+        mainThread();require(active==null,"A private input handle is already active");
+        require(fixtureId!=null&&fixtureId.length()<=128&&fixtureId.matches("private-fm15-zone-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:-[A-Za-z0-9._-]{1,24})?"),"Retained input requires a fresh private zone UUID");
+        require(!USED_IDS.contains(fixtureId),"Fixture ID was already admitted in this helper process");
+        require(Double.isFinite(startLatitude)&&Double.isFinite(endLatitude)&&Math.abs(startLatitude)<=90&&Math.abs(endLatitude)<=90
+                &&Double.isFinite(startLongitude)&&Double.isFinite(endLongitude)&&Math.abs(startLongitude)<=180&&Math.abs(endLongitude)<=180,
+                "Invalid retained private zone geometry");
+        require(endLatitude>startLatitude&&Math.abs(endLongitude-startLongitude)<.000001,"Retained input admits only a northbound straight zone");
+        float[] measured=new float[1];Location.distanceBetween(startLatitude,startLongitude,endLatitude,endLongitude,measured);
+        require(measured[0]>=250&&measured[0]<=1500,"Private retained zone must be 250..1500 metres");
+        Binding binding=existing(target,true);freshFix(binding);
+        Object candidates=flowValue(binding);require(candidates instanceof Set,"Native candidate state is not a Set");
+        Class<?> base=type(binding.loader,"nl.flitsmeister.fmcore.data.model.reports.BaseReport");
+        for(Object item:(Set<?>)candidates){
+            require(item!=null&&base.isInstance(item),"Unexpected native candidate type");
+            require(!fixtureId.equals(invoke(base,item,"getId",new Class<?>[0])),"Fixture ID already exists in generated native candidates");
+        }
+        require(!nativeIdPresent(binding,fixtureId),"Fixture ID already exists in native active/relevance state");
+        Object owner=cachedRetainedOwner(binding);exact(owner,binding.loader,"y81");
+        require(read(owner,binding.loader,"y81","a")==binding.application,"Retained input belongs to another application context");
+        Object single=read(owner,binding.loader,"y81","c");
+        require(single==null||base.isInstance(single)&&!fixtureId.equals(invoke(base,single,"getId",new Class<?>[0])),"Fixture ID collides with native single report input");
+        Field input=retainedField(binding.loader);Object prior=input.get(owner);
+        require(prior==null||prior instanceof List,"Original retained report input is not a List");
+        Object model=zone(binding.loader,fixtureId,startLatitude,startLongitude,endLatitude,endLongitude,measured[0]);
+        RetainedInput retained=new RetainedInput(owner,(List<?>)prior,model,fixtureId,item->{
+            require(base.isInstance(item),"Unexpected retained native report type");
+            return (String)invoke(base,item,"getId",new Class<?>[0]);
+        });
+        Binding current=existing(target,true);freshFix(current);
+        require(binding.same(current)&&binding.policy.same(current.policy)&&cachedRetainedOwner(current)==owner,"Native binding changed during retained admission");
+        Handle handle=new Handle(fixtureId,"AVG_SPEED_CHECK",binding,model,(Set<?>)candidates,(Set<?>)candidates,null,retained);
+        active=handle;
+        try{retained.install(input);}catch(Exception error){handle.lost=true;throw error;}
+        USED_IDS.add(fixtureId);return handle;
+    }
+
+    private static Field retainedField(ClassLoader loader)throws Exception {
+        Class<?> owner=type(loader,"y81");Field input=field(loader,"y81","d");int modifiers=input.getModifiers();
+        require(input.getDeclaringClass()==owner&&input.getType()==List.class
+                &&!java.lang.reflect.Modifier.isStatic(modifiers)&&!java.lang.reflect.Modifier.isFinal(modifiers),
+                "Retained native field ABI differs; admission/restoration refused");
+        return input;
+    }
+
+    private static Object cachedRetainedOwner(Binding binding)throws Exception {
+        Object factory=field(binding.loader,"y81","k").get(null);
+        require(type(binding.loader,"ig0").isInstance(factory),"Unexpected retained report singleton factory");
+        return read(factory,binding.loader,"ig0","singletonInstance");
+    }
+
     /** Observe original native decisions after real location pulses; this never drives them. */
     public static Sample check(Handle handle) throws Exception {
         mainThread(); ownedHandle(handle);
@@ -272,7 +411,7 @@ public final class Fm15PrivateZoneInput {
         if (handle.restored) return handle.restoration;
         ownedHandle(handle);
         Binding current = ownedBinding(handle, false); // Stale GPS must not prevent safe owned-input cleanup.
-        if (!sameMembers(handle.previous, handle.previousMembers)) {
+        if (handle.retained==null&&!sameMembers(handle.previous, handle.previousMembers)) {
             handle.lost = true;
             throw new IllegalStateException("Original candidate snapshot changed in place; restoration is refused");
         }
@@ -280,13 +419,16 @@ public final class Fm15PrivateZoneInput {
         before.warningActive = containsModel(read(current.service, current.loader, "wd6", "p1"), current.loader, handle.model);
         before.inGpsPath = containsModel(read(current.service, current.loader, "wd6", "q1"), current.loader, handle.model);
         if (before.warningActive) handle.everActive = true;
-        if (!cas(current, handle.inserted, handle.previous)) {
+        if(handle.retained!=null){
+            try{handle.retained.restore(retainedField(current.loader));}
+            catch(Exception error){handle.lost=true;throw error;}
+        } else if (!cas(current, handle.inserted, handle.previous)) {
             handle.lost = true;
             throw new IllegalStateException("Native producer changed input during restoration; no overwrite performed");
         }
         handle.restoration = new RestoreResult(before, handle.everActive);
         handle.restored = true; active = null;
-        require(flowValue(current) == handle.previous,
+        require(handle.retained!=null||flowValue(current) == handle.previous,
                 "Native input advanced after guarded restoration; no further restoration write is allowed");
         return handle.restoration;
     }
@@ -356,7 +498,10 @@ public final class Fm15PrivateZoneInput {
             handle.lost = true;
             throw new IllegalStateException("Native binding replaced private input; restoration is refused");
         }
-        if (flowValue(current) != handle.inserted) {
+        if(handle.retained!=null){
+            try{Object owner=cachedRetainedOwner(current);handle.retained.requireOwned(owner,owner==null?null:read(owner,current.loader,"y81","d"));}
+            catch(Exception error){handle.lost=true;throw error;}
+        } else if (flowValue(current) != handle.inserted) {
             handle.lost = true;
             throw new IllegalStateException("Native producer replaced candidate set; restoration is refused");
         }
