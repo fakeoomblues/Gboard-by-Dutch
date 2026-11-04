@@ -1,0 +1,49 @@
+# Waze native-warning implementation checkpoint
+
+This task extends the existing **Broadcast navigation data** patch into the [reviewed four-app design](../superpowers/specs/2026-11-02-navigation-provider-warnings-design.md), reusing the implemented FM transport, ownership, scheduler and Maps/Vela speakers. It does not replace Maps/Vela navigation with a Waze route. All required standalone Waze warning families remain in scope; optional supplemental-provider mode and source-route enrichment retain the design's separate prerequisites.
+
+## Recovered design and current base
+
+The expanded design, [Waze research report](2026-11-02-waze-first-class-provider.md) and [model inventory](../waze/native-provider-inventory.json) were recovered from local commit `65a4d8c`. Those three files retain their original contents. Their historical statement that implementation was pending must be read against the current FM implementation.
+
+Implementation starts from `304bbcf66468e517a3a8f48422fe959c154fd21f` on `feat/waze-native-warnings`, in the existing isolated `navigation-startup` worktree. This includes the FM review corrections at `c521111`, whose signed candidate was transferred for user testing. The primary dirty checkout and the frozen, uncommitted Frida work are preserved. No phone or emulator operation has been performed for this Waze task.
+
+## Supplied input: same DEX, different APK envelope
+
+| Input | SHA-256 |
+| --- | --- |
+| Supplied complete Waze APKM | `62418bf0898ea1cc6c6926a136bb08bedcfcbff31de3bbc357afc6ef579db1d3` |
+| Its original base APK | `b1504af4bcbe50325195774a891f50f7189cdef7ad38ee67a2f5b7af00f29e4d` |
+| Retained research base APK | `5ab9853c76a3f83a493e1872f232bbbde96ec61245cbca117aa39e176cdfe9c4` |
+
+All ten `classes*.dex` entries match byte-for-byte between the supplied and retained bases. The existing decompiled corpus and method discoveries can therefore be reused. The supplied base declares `com.waze`, version `5.26.90.901`, version code `1030746`, min SDK 29 and target SDK 36. SDK/manifest/resource handling remains variant-specific; equal DEX does not make every APK entry identical.
+
+SDK `apksigner verify` succeeds and the publisher certificate SHA-256 is `03637f6c5d8f604e6fdb79a6ffbfa578de4e318f8da22fc6106665247f8807d7`, matching the recovered research. The complete 28-split archive is preserved for eventual Manager-equivalent merging and patching. The extracted base and retained decompiled corpus are reusable inputs for this active task, not per-run build scratch. Exact DEX hashes, archive entries, input and REA receipts are retained under ignored `.analysis/waze-native-warnings/`.
+
+## Existing implementation versus required changes
+
+| Area | Existing behavior | Required extension |
+| --- | --- | --- |
+| Waze report export | `NavigationBroadcasts.alerts` reduces descriptor types to broad schema-1 kinds, drops native current validation distance, priority/silence and subtype/trait details | A separate native event adapter preserves meaning, presence-qualified fields and source policy without turning repository snapshots into speech |
+| Segment insights | The exporter filters to segment type 7 for average-speed zones | Cover every required segment family and correlate linked alerters without duplicate speech |
+| Notifications | No event-channel notification capture | Add/remove, native text/car variants and expiry; ADD remains state unless native audible intent or explicitly negotiated advisory policy authorizes speech |
+| Waze control service | Startup/health only; no warning endpoint | Reuse the authenticated warning endpoint and durable audio-owner rules, with Waze's own profile and coverage |
+| Receivers | FM-specific event negotiation, settings/status attribution and event-audio suppression | Generalize provider profiles/settings and retain source attribution, existing FM preferences and legacy Waze compatibility |
+| Speaker/transport core | Implemented and reviewed for FM | Reuse it; do not create another TTS engine, scheduler or startup mechanism |
+
+## Native boundaries re-established
+
+Fresh REA inspection on the supplied base confirms `AlerterNativeManagerBase.h(AlerterId)` dispatches case 9 through the native looper. The matching DEX corpus shows that case invoking `AlerterNativeManager.playSoundNTV(byte[])`. The selector update coroutine calls the selected holder's `i()`, then `alerters.a.m.f(id)` reaches this dispatch. This is a correlated sound-intent candidate; source eligibility, silence and other-family coverage must still be respected. Repository publication and UI `onAlertStartNTV` are different boundaries.
+
+Fresh REA inspection also confirms `alerters.b.g.a()` resolves the lazy selector. Its native DI factory registers `alerters.b.a`, the combined collection, state-holder factory and native manager. The selector constructor subscribes to the native collection with a native coroutine scope; the collection subscribes to native repository updates. Existing code uses `kotlinx.coroutines.a.ab.l(Class)` to resolve native DI singletons. These provide a service-safe path to investigate without constructing a Waze Activity. Singleton resolution alone will not be reported as runtime controller readiness.
+
+The native converter reads `AlerterInfo.getSubType()` directly into the UI model after converting its wire type, while separate subtype enum namespaces differ numerically. Preserve raw namespace/value and verify actual interpretation rather than assuming protobuf hazard or blocked-lane enum values encode that untyped field. Known priority, validity, familiar/grouped silence and native source settings must survive managed local mute.
+
+## Batch sequence and retained gates
+
+1. Implement Waze's semantic capture and native controller/lifecycle bindings, with exact original-method guards and complete required-family accounting.
+2. Connect its endpoint and generalize both receivers' profiles, settings, attribution and legacy-audio suppression while preserving FM behavior.
+3. Complete related product tests alongside each implementation batch, then run grouped static/build/unit checkpoints using the existing verification workflow.
+4. Rebuild/sign intended combinations, then perform bounded all-four-pairing acceptance with the required Frida coverage, provider silence and exact cleanup. Current capture, UI-free production, route relevance, speech/output, phone/car and full-scope acceptance remain unproved for this extension.
+
+The existing validation-tooling freeze remains in force. New probes, runners, observers, fixtures or framework changes require explicit named approval. No such tooling was created or changed for this checkpoint, and no runtime claim follows from the static findings above.
