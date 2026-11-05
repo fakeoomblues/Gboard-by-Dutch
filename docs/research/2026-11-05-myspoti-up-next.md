@@ -104,11 +104,30 @@ Combined APK SHA-256: `2a51c70612b53e8cd46b1bfa040dc8df2042d839865961d447ea8dc1e
 Queue-only APK SHA-256: `ba12a9e2d423c93d8a6e0be6ca1a40a41b458f803d604d9db9a6c8e69b84a4fb`.
 Local MPP SHA-256: `219570f719b2d97122a164c9ebc448c759e7531e75e7e33861ca2e8dc7693f22`.
 
-No app launch, playback control, phone instrumentation or emulator acceptance was
-performed. The user requested installation instead of the proposed new observer;
-that observer was not created. Live playlist/radio queue display and selection remain
-unverified. Local artifacts are in `~/Downloads/Myspoti-Up-Next-2026-11-05`; this is a
-development delivery, with no release or main promotion.
+No agent-controlled app launch, playback control, phone instrumentation or emulator
+acceptance was performed. The user requested installation instead of the proposed new
+observer; that observer was not created. After the update, the user explicitly reported
+"this is confirmed fixed" and approved release on main. This is user acceptance of the
+installed fix, not a claim that the agent traced all playback modes. Local artifacts
+are in `~/Downloads/Myspoti-Up-Next-2026-11-05`.
+
+For release verification, the user separately approved changing only
+`scripts/local-release/flow.cjs` and `tests/test_local_release.cjs` to replace the
+blocking macOS mount scan with bounded native process inspection. The existing
+ownership markers, command-group shutdown, fail-closed scan and cleanup gates remain.
+Native macOS inspection checks the job owner's working directories, vnode file
+descriptors and file-backed memory mappings, including detached processes; Linux
+retains the existing lsof check. No additional Android observer or fixture runner was
+introduced. Release publication and cleanup are recorded separately after verification.
+
+The existing cleanup regression file passes, including live detached cwd, open-file
+and closed-fd memory-mapping holders. Native inspection treats kernel-protected
+internal descriptors of the invoking application and launchd-owned, sealed Apple
+platform services as outside the owned child-job scope; their accessible cwd, file
+descriptors and mappings are still inspected. Permission failures in ordinary user
+job processes remain failures. Missing native APIs, truncated reads, unstable PID
+lists and timeouts also retain the workspace. The duplicate Pages-job scan must use
+the same implementation before the complete main-release cleanup gate can close.
 
 Platform references: [MediaSession queue publication](https://developer.android.com/reference/android/media/session/MediaSession#setQueue(java.util.List))
 and [queue selection callback](https://developer.android.com/reference/android/media/session/MediaSession.Callback#onSkipToQueueItem(long)).
