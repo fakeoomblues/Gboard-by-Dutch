@@ -378,6 +378,76 @@
       "category": null,
       "compatiblePackages": [
         {
+          "packageName": "be.persgroep.android.news.mobilepa",
+          "name": "Parool",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobiletr",
+          "name": "Trouw",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
           "packageName": "be.persgroep.android.news.mobilevk",
           "name": "Volkskrant",
           "description": null,

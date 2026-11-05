@@ -787,7 +787,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="parool be.persgroep.android.news.mobilepa 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="parool be.persgroep.android.news.mobilepa 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [Parool](apps/parool.md)
@@ -795,8 +795,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilepa</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
@@ -938,7 +939,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="trouw be.persgroep.android.news.mobiletr 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="trouw be.persgroep.android.news.mobiletr 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [Trouw](apps/trouw.md)
@@ -946,8 +947,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobiletr</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>

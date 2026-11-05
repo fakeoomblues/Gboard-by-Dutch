@@ -487,6 +487,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |
@@ -582,6 +583,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |
@@ -783,4 +785,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
