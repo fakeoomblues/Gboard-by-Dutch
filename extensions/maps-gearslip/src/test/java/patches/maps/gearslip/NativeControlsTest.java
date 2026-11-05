@@ -148,6 +148,33 @@ public final class NativeControlsTest {
         group.setVisibility(View.GONE); NativeControls.Control control = bind(); controls.invoke(control);
         assertEquals(1, clicks); assertEquals(View.GONE, group.getVisibility());
     }
+    @Test public void frontmostDestinationSearchWinsOverTheOlderMapSearch() {
+        int[] oldClicks={0}, currentClicks={0};
+        ImageView old=new ImageView(context);old.setId(SEARCH);old.setImageDrawable(new ColorDrawable(Color.BLUE));old.setOnClickListener(v->oldClicks[0]++);
+        ImageView current=new ImageView(context);current.setId(INPUT_SEARCH);current.setImageDrawable(new ColorDrawable(Color.RED));current.setOnClickListener(v->currentClicks[0]++);
+        root.addView(old,new FrameLayout.LayoutParams(300,64));root.addView(current,new FrameLayout.LayoutParams(300,64));measure();
+        controls=new NativeControls(root,()->updates++);
+        NativeControls.Control action=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.SEARCH).findFirst().get();
+        assertSame(current,action.source);controls.invoke(action);assertEquals(0,oldClicks[0]);assertEquals(1,currentClicks[0]);
+    }
+    @Test public void editorInsideAnExportedSearchContainerReceivesItsOriginalVisibleClick() {
+        int[] focused={0};FrameLayout search=new FrameLayout(context);search.setId(INPUT_SEARCH);
+        android.widget.EditText editor=new android.widget.EditText(context);editor.setId(EDITOR);editor.setVisibility(View.GONE);
+        editor.setOnClickListener(v->{assertTrue("Only adapter-owned hiding may be restored for native focus",v.isShown());assertTrue(v.requestFocus());focused[0]++;});
+        ImageView icon=new ImageView(context);icon.setImageDrawable(new ColorDrawable(Color.BLUE));search.addView(icon,new FrameLayout.LayoutParams(48,48));search.addView(editor,new FrameLayout.LayoutParams(200,48));
+        search.setOnClickListener(v->{editor.setVisibility(View.VISIBLE);editor.requestFocus();});root.addView(search,new FrameLayout.LayoutParams(300,64));measure();
+        controls=new NativeControls(root,()->updates++);NativeControls.Control action=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.SEARCH).findFirst().get();
+        controls.invoke(action);assertEquals(View.VISIBLE,search.getVisibility());assertTrue(editor.isFocused());measure();root.getViewTreeObserver().dispatchOnPreDraw();
+        assertEquals(1,focused[0]);assertTrue(editor.isFocused());assertEquals(View.VISIBLE,search.getVisibility());
+        editor.setVisibility(View.GONE);measure();assertEquals(View.INVISIBLE,search.getVisibility());
+    }
+    @Test public void nativeHiddenAncestorPreventsEditorFocus() {
+        int[] focused={0};FrameLayout nativeHidden=new FrameLayout(context);nativeHidden.setVisibility(View.GONE);
+        View editor=new View(context);editor.setId(EDITOR);editor.setOnClickListener(v->focused[0]++);nativeHidden.addView(editor,new FrameLayout.LayoutParams(200,48));root.addView(nativeHidden);
+        ImageView search=new ImageView(context);search.setId(SEARCH);search.setImageDrawable(new ColorDrawable(Color.BLUE));search.setOnClickListener(v->{});root.addView(search,new FrameLayout.LayoutParams(300,64));measure();
+        controls=new NativeControls(root,()->updates++);NativeControls.Control action=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.SEARCH).findFirst().get();
+        controls.invoke(action);measure();root.getViewTreeObserver().dispatchOnPreDraw();assertEquals(0,focused[0]);assertEquals(View.GONE,nativeHidden.getVisibility());
+    }
     @Test public void closeRestoresOnlyTheVisibilityOwnedByTheAdapter() {
         bind(); controls.close(); assertEquals(View.VISIBLE, group.getVisibility());
         controls = null; bind(); group.setVisibility(View.GONE); controls.close();

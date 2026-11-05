@@ -402,3 +402,25 @@ action did not open the keyboard in this run, so route/input acceptance was
 not obtained. Native attach and Frida coverage remained intact, the baseline
 was restored and the owned emulator stopped; cleanupRequired=false. Keep the
 existing reconnect and remaining app/profile/voice gates open.
+
+## Native Search owner and editor-focus lifetime
+
+The input batch now visits native children from front to back when matching
+controls, so a destination panel's Search owner replaces the older map Search
+when both remain in the view tree. Old callback identities remain fenced.
+Editor discovery uses logical native visibility, accounting only for visibility
+hidden by the adapter; original hidden ancestors and disabled/detached editors
+are still respected. Adapter-owned hiding is restored while a native editor
+is active, including during the originating click, so re-hiding its ancestor
+cannot immediately clear focus or invalidate asynchronous IME work. Once the
+editor disappears, normal duplicate-control hiding resumes.
+
+Checkpoint16 passed the canonical Android component and real Maps patch/sign
+checks. The focus-lifetime refinement in checkpoint17 reran the changed
+maps-gearslip component and actual APK patch/sign checks, reusing unchanged
+Android module evidence from checkpoint16. Regression checks cover frontmost
+Search selection, retained native editor focus and original hidden ancestors.
+The final full verification remains incomplete at checkpoint15's environmental
+Node/lsof cleanup failure. Genuine-AA Search/keyboard/route acceptance of this
+new input batch remains open; no successful runtime claim is inferred from
+these build/regression results.

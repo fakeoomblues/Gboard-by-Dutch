@@ -96,7 +96,9 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             View source = clickable(view), previous = found.get(role);
             if (source != null && (previous == null || (!nativeShown(previous) && nativeShown(source)))) found.put(role, source);
         }
-        if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) collect(((ViewGroup) view).getChildAt(i), found);
+        // Native destination panels are layered above the map's older controls.
+        // Prefer the frontmost matching owner when both remain in the tree.
+        if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) collect(((ViewGroup) view).getChildAt(i), found);
     }
     private View clickable(View view) {
         if (nativeVisibility(view) == View.GONE) return null;
@@ -142,6 +144,14 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
                 if ("map_buttons_view_container".equals(name(node))) { cover = node; break; }
             }
             if (control.role == Role.SEARCH && parent(cover) != null && parent(cover).getClass().getName().endsWith(".CardView")) cover = parent(cover);
+            View editor = find(cover, "destination_input_keyboard_search_edit_text");
+            if (editor != null) {
+                // Re-hiding an active editor's ancestor would clear native focus
+                // before its asynchronous input-connection/IME work completes.
+                // Return only adapter-owned visibility to the native editor.
+                for (View restored : reveal(editor)) hidden.remove(restored);
+                continue;
+            }
             if (cover.getVisibility() == View.VISIBLE) {
                 hidden.put(cover, View.VISIBLE); cover.setVisibility(View.INVISIBLE);
             }
@@ -165,22 +175,37 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     void invoke(Control control) {
         if (closed || controls.get(control.role) != control || !control.available || !enabled(control.source) || nativeVisibility(control.source) != View.VISIBLE)
             throw new SecurityException("Maps action was retired");
-        List<View> restored = new ArrayList<>();
-        for (View node = control.source; node != null; node = parent(node)) if (hidden.containsKey(node) && node.getVisibility() == View.INVISIBLE) {
-            node.setVisibility(View.VISIBLE); restored.add(node);
-        }
+        List<View> restored = reveal(control.source);
         try {
             if (control.role == Role.SEARCH) focusSearch = true;
             if (!control.source.performClick()) touch(control.source);
         } finally {
             // Both changes occur in one main-thread callback, before any frame is drawn.
-            for (View view : restored) if (view.getVisibility() == View.VISIBLE) view.setVisibility(View.INVISIBLE);
+            conceal(restored);
         }
     }
     private void focusNativeEditor() {
         if (!focusSearch) return;
         View editor = find(root, "destination_input_keyboard_search_edit_text");
-        if (editor != null && editor.isShown()) { focusSearch = false; editor.performClick(); }
+        if (editor != null && editor.isAttachedToWindow() && enabled(editor)) {
+            focusSearch = false;
+            List<View> restored = reveal(editor);
+            try { editor.performClick(); }
+            finally { conceal(restored); }
+        }
+    }
+    private List<View> reveal(View source) {
+        List<View> restored = new ArrayList<>();
+        for (View node = source; node != null; node = parent(node)) if (hidden.containsKey(node) && node.getVisibility() == View.INVISIBLE) {
+            node.setVisibility(View.VISIBLE); restored.add(node);
+        }
+        return restored;
+    }
+    private void conceal(List<View> restored) {
+        for (View view : restored) if (view.getVisibility() == View.VISIBLE) {
+            if (find(view, "destination_input_keyboard_search_edit_text") != null) hidden.remove(view);
+            else view.setVisibility(View.INVISIBLE);
+        }
     }
     private static void touch(View view) {
         if (view.getWidth() <= 0 || view.getHeight() <= 0) throw new SecurityException("Maps action is not ready");
@@ -197,9 +222,9 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         try { return view.getResources().getResourceEntryName(view.getId()); }
         catch (android.content.res.Resources.NotFoundException missing) { return null; }
     }
-    private static View find(View view, String name) {
-        if (name.equals(name(view)) && view.isShown()) return view;
-        if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+    private View find(View view, String name) {
+        if (name.equals(name(view)) && nativeShown(view)) return view;
+        if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) {
             View found = find(((ViewGroup) view).getChildAt(i), name); if (found != null) return found;
         }
         return null;
