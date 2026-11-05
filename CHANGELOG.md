@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.40.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [2c1a0460b1f8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.40.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.1...v1.40.2) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **ci:** retain bounded workspace cleanup failure reasons ([2c1a046](https://gitlab.com/johninnld/nl-morphe-patches/commit/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b))
+* **SoundCloud:** restore car Home and publish Up next ([5632b32](https://gitlab.com/johninnld/nl-morphe-patches/commit/5632b328122c92e5507fcc9e47d62151f3e5b0c9))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/fa55a77890f9778790d0f6b3ec22e3d62d400331/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.40.1.**
