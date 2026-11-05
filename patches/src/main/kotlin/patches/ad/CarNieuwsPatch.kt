@@ -148,10 +148,8 @@ val carNieuws = bytecodePatch(
         rowMethod.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
             .sortedByDescending { it.index }.forEach { (index, instruction) ->
                 val register = (instruction as OneRegisterInstruction).registerA
-                rowMethod.addInstructions(index, """
-                    invoke-static/range {v$register .. v$register}, $NIEUWS->rememberRow(Ljava/lang/Object;)Ljava/lang/Object;
-                    move-result-object v$register
-                """.trimIndent())
+                rowMethod.addInstruction(index,
+                    "invoke-static/range {v$register .. v$register}, $NIEUWS->rememberRow(Ljava/lang/Object;)V")
             }
 
         // 5. Restore the complete queue inside the app when a row is selected:

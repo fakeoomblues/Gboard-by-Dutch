@@ -354,27 +354,25 @@ public final class CarNieuws {
     }
 
     /**
-     * Hooked at the row builder's return: news rows carry the single-item
-     * grid hint so the run renders as the mandated headline-led card shelf
-     * instead of the page-default list row. The current row's news identity
-     * comes from the windowing call on the same thread; other rows are
-     * untouched.
+     * Hooked before the row builder's returns: news rows carry the
+     * single-item grid hint so the run renders as the mandated headline-led
+     * card shelf instead of the page-default list row. The current row's
+     * news identity comes from the windowing call on the same thread; other
+     * rows are untouched. Returns void: the returned row object itself must
+     * stay untouched so the verifier keeps the declared row type.
      */
-    public static Object rememberRow(Object row) {
+    public static void rememberRow(Object row) {
         try {
             String route = slimmedRoute.get();
-            if (route != null) {
-                slimmedRoute.set(null);
-                Object bundle = bundleOf(row);
-                if (bundle != null) {
-                    bundle.getClass().getMethod("putInt", String.class, int.class)
-                        .invoke(bundle, "android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT", 2);
-                }
+            if (route == null) return;
+            slimmedRoute.set(null);
+            Object bundle = bundleOf(row);
+            if (bundle != null) {
+                bundle.getClass().getMethod("putInt", String.class, int.class)
+                    .invoke(bundle, "android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT", 2);
             }
-            return row;
         } catch (Throwable t) {
             log("row styling skipped", t);
-            return row;
         }
     }
 

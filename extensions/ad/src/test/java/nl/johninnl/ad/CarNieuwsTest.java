@@ -197,16 +197,14 @@ public class CarNieuwsTest {
     public void newsRowsAreStyledAsCardsAndOtherRowsPassThrough() throws Exception {
         reset();
         // A news row: slimQueue flags the route, rememberRow consumes the flag
-        // and returns the row unchanged by identity.
+        // without touching the row object or its declared type.
         List<CarAudioQueue.Item> all = new ArrayList<CarAudioQueue.Item>();
         for (int i = 0; i < 25; i++) all.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "s" + i));
         Object queue = new CarAudioQueue(all);
         CarNieuws.slimQueue("s3", queue);
-        Object row = new Object();
-        assertSame(row, CarNieuws.rememberRow(row));
+        CarNieuws.rememberRow(new Object());
         // The flag is consumed: a following non-news row passes through cleanly.
-        Object other = new Object();
-        assertSame(other, CarNieuws.rememberRow(other));
+        CarNieuws.rememberRow(new Object());
     }
 
     @Test
