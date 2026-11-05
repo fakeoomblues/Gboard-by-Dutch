@@ -38,6 +38,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 9.22.0 |
 | Disable tracking | Aan | 9.22.0 |
 | Hide Premium banner | Aan | 9.22.0 |
 | Hide ads | Aan | 9.22.0 |
@@ -197,6 +198,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 2.6.8 |
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
+
+## Gboard
+
+[Wat veranderen de patches?](../apps/gboard.md)
+
+`com.google.android.inputmethod.latin`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Change package name | Aan | 18.5.11.993608717-release-arm64-v8a |
+| Custom branding | Uit | 18.5.11.993608717-release-arm64-v8a |
+| Parakeet voice typing | Aan | 18.5.11.993608717-release-arm64-v8a |
 
 ## Gearslip
 
@@ -785,4 +798,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

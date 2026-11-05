@@ -373,6 +373,41 @@
     },
     {
       "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio from the audio bundles the app itself renders. Selecting a headline restores the full ordered feed inside the app, so playback, Up next and premium entitlement follow the app's own player. The replaced Start content is never shown.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilead",
+          "name": "AD",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.22.0",
+              "versionCodes": {
+                "ARM64_V8A": 9220000,
+                "ARMEABI_V7A": 9220000,
+                "X86_64": 9220000,
+                "X86": 9220000
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
       "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
       "default": true,
       "category": null,
@@ -1183,6 +1218,51 @@
       ]
     },
     {
+      "name": "Change package name",
+      "description": "Installs Gboard under its own package name, alongside the stock Gboard that most phones have built in. On by default, because a patched copy cannot replace the built-in Gboard.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "packageName",
+          "title": "Package name",
+          "description": "The package name to install under. Must be a valid Android package name that differs from com.google.android.inputmethod.latin.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "app.morphe.android.inputmethod.latin",
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Control car display density",
       "description": "Adds a density submenu under Screen for larger text and controls, including hosted navigation apps. Choose the car's density or 160–240 DPI. Keeps resolution unchanged; reconnect to apply.",
       "default": true,
@@ -1213,6 +1293,67 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Custom branding",
+      "description": "Changes Gboard's app name and launcher icon, so a patched copy is easy to tell apart from the stock one. Choose from five bundled icons or keep the original. The name also appears in Android's keyboard list.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher, Android's keyboard list and app information. Leave empty to keep Gboard.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching. Original keeps Gboard's icon.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": {
+            "Original": "original",
+            "3D keys": "glossy_3d",
+            "Classic blue": "classic_blue",
+            "Colourful G": "colourful",
+            "Cartoon outline": "cartoon",
+            "Soft light": "soft_light"
+          }
+        }
+      ]
     },
     {
       "name": "Custom branding",
@@ -7163,6 +7304,41 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Parakeet voice typing",
+      "description": "Adds Gboard settings → Voice typing → Parakeet voice typing. After downloading NVIDIA Parakeet (Moondream's Parakeet Ultra or the original TDT v3), the microphone key transcribes on the phone and recognises Dutch, English and 23 more languages per sentence without switching.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
