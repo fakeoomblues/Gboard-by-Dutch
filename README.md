@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.38.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.38.0)** · 55 apps · 282 patches
+**Patch bundle [v1.39.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.39.0)** · 55 apps · 283 patches
 
 ### Weather
 
@@ -87,7 +87,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Trouw](docs/site/en/apps/trouw.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [Tubantia](docs/site/en/apps/tubantia.md) | Ads · Tracking · Prompts · Articles | 9.23.2 | APKS | 5 |
 | [Voetbal International](docs/site/en/apps/voetbal-international.md) | Ads · Tracking · Prompts · Articles | 5.13.52 | APKS | 4 |
-| [Volkskrant](docs/site/en/apps/volkskrant.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Volkskrant](docs/site/en/apps/volkskrant.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 
 ### Traffic and navigation
 
