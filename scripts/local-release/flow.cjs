@@ -146,7 +146,7 @@ async function cleanupWorkspace({stateDir,workspace,env=process.env}) {
 // Command groups are checked separately; detached cwd, fd and mmap holders also
 // prevent deletion. Unknown/short reads and permission failures remain failures.
 const MAC_WORKSPACE_PROOF=String.raw`
-import ctypes, errno, os, struct, sys
+import ctypes, errno, os, struct, sys, time
 lib=ctypes.CDLL('/usr/lib/libproc.dylib',use_errno=True)
 lib.proc_listpids.argtypes=[ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p,ctypes.c_int]
 lib.proc_pidinfo.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_uint64,ctypes.c_void_p,ctypes.c_int]
@@ -221,7 +221,10 @@ def inspect(pid):
     return False
 try:
     seen=set()
-    for _ in range(3):
+    # New, short-lived processes can appear during each enumeration. Give that
+    # churn a bounded settling window; every newly observed PID is still scanned.
+    deadline=time.monotonic()+20
+    while time.monotonic()<deadline:
         current=pids()
         for pid in current-seen:
             if inspect(pid):print('BUSY');sys.exit(0)
