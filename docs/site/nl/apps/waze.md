@@ -101,6 +101,8 @@ Hide ads en Remove telemetry beperken de ondersteunde advertenties, crashrapport
 
 ## Voor gebruik
 
+**Bekende beperking in deze release:** externe waarschuwingskaarten en gesproken meldingen van Waze/Flitsmeister tijdens Android Auto-navigatie zijn nog experimenteel. Werkende navigatie, brongegevens en een geslaagd geparkeerd voorbeeld bewijzen niet dat iedere waarschuwing verschijnt of klinkt. Gebruik de eigen meldingen van de bronapp wanneer u betrouwbare waarschuwingen nodig hebt. Patch de bronapp en ontvangende kaartapp samen opnieuw voor de bijgewerkte verbinding en het afsluitgedrag.
+
 **Voor automatisch starten vanuit Maps/Vela: zet bij Android App-info → Waze / De-Waze → Machtigingen → Locatie de toegang op ‘Altijd toestaan’. ‘Alleen toestaan bij gebruik van de app’ is onvoldoende voor betrouwbaar stil starten.** Zie de [stappen voor locatietoegang](../guides/navigation-data.md#2-stel-de-bron-eenmaal-in), ook bij **Android blocked background startup**.
 
 Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).

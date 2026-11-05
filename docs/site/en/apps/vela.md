@@ -24,6 +24,8 @@ Road-warning reports can include camera/incident positions. The integration rece
 
 ## Before using
 
+**Known limitation in this release:** external Waze/Flitsmeister warning cards and spoken alerts during Android Auto navigation are still experimental. Native navigation, provider data and a successful parked preview do not prove that every warning will appear or speak. Keep using the provider’s own alerts where you need dependable warning output. Repatch the provider and receiving map together for the updated connection and shutdown behavior.
+
 The native FM event/speech upgrade remains a development feature. Flitsmeister 15.0 / 1289 has passed model/capture coverage checks, and earlier FM15 development builds passed controlled delivery, moving-camera and zone checks with both receivers. The current candidate includes later text, recovery and speech-readiness corrections; its final installed, timing and phone/car acceptance remain open. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
 
 Updated navigation-data patches start the selected provider without opening its screen after one-time setup. For Flitsmeister, update Maps or Vela too: the corrected handoff lets a visible receiving map start FM in the background with location access while using the app. This has been checked on an Android 14 emulator; the Android 16 phone check is pending. Always-on location is not a blanket requirement for this handoff. Keep the receiving map visible while selecting FM and check its source status. See the [navigation-data setup guide](../guides/navigation-data.md).
@@ -38,6 +40,6 @@ Missing or expired values use Vela's own data where available. The provider stat
 
 Selecting Flitsmeister keeps Vela's saved Flock display, voice and detour choices active. General FM speed, limit or warning data does not replace those independent features. De-Waze retains its existing handoff only while the selected Waze feed is fresh; an unselected feed cannot pause native Flock.
 
-Phone settings, background reception, compact phone/car rendering and advance speech were checked on an Android 16 emulator using Gearslip as the car host. Physical driving, a physical head unit and Google’s Android Auto host have not been validated. An already-started native Flock refresh can finish while its display and alerts are paused.
+Phone settings, background reception, compact phone/car rendering and advance speech were checked on an Android 16 emulator using Gearslip as the car host. Native map, Search, route guidance, GPS and native guidance speech were also checked with Google’s Android Auto 17 host and Desktop Head Unit at 1280×480. Physical driving, a physical head unit and external-warning playback during native AA navigation remain unvalidated. An already-started native Flock refresh can finish while its display and alerts are paused.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

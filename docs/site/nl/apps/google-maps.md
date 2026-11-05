@@ -20,7 +20,7 @@ Onze patch **Native navigation for Gearslip and Android Auto** gebruikt in beide
 
 Waze heeft een standaard navigatiedienst voor Android for Cars die autohosts kunnen vinden. De onderzochte Maps-versie gebruikt daarentegen Googles eigen projectiedienst. Na het hernoemen kon Gearslip de meldingsfunctie als berichtenapp herkennen en een leeg berichtenscherm openen. Alleen een navigatielabel toevoegen laat die twee interfaces nog niet met elkaar communiceren.
 
-We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eigen projectiedienst en oorspronkelijke autoweergave van de gepatchte versie. De ontwikkelversie vervangt de externe AppDecor-afhankelijkheid door een eigen indeling en controllers. Android Auto blijft de host bij verbinding met de auto; Gearslip kan de client zelfstandig hosten. De acceptatie van deze vervanging staat in het [rapport over de publieke autoclient](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
+We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eigen projectiedienst en oorspronkelijke autoweergave van de gepatchte versie. De adapter vervangt de externe AppDecor-afhankelijkheid door een eigen indeling en controllers. Android Auto blijft de host bij verbinding met de auto; Gearslip kan de client zelfstandig hosten. De acceptatie van deze vervanging staat in het [rapport over de publieke autoclient](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
 
 Het ondertekenen van de gepatchte APK veroorzaakt nog een probleem: Googles optionele privéclient voor voertuiggegevens weigert het nieuwe ondertekeningscertificaat. We hebben die client geïsoleerd zodat hij de kaart niet laat crashen, terwijl GPS-navigatie blijft werken. Zoeken vroeg om een aparte koppeling tussen het toetsenbord van de host en het native zoekveld van Maps. De kaart en het zoekveld moeten bovendien behouden blijven bij schermwijzigingen, het openen van het toetsenbord en opnieuw verbinden.
 
@@ -46,7 +46,7 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. De ontwikkelversie beheert de eigen auto-interface; zie de acceptatiegrenzen hierboven. |
+| **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. De adapter beheert de eigen auto-interface; zie de acceptatiegrenzen hierboven. |
 
 ### Uitgebreid door dit project
 
@@ -95,6 +95,8 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde telefoon. Cameralagen van OpenStreetMap downloaden cameraposities in de buurt. **Avoid Flock cameras** stuurt het begin en einde van de route naar `brouter.de` wanneer dit aanstaat. Deze functies beginnen uit in de instellingen voor externe gegevens.
 
 ## Voor gebruik
+
+**Bekende beperking in deze release:** externe waarschuwingskaarten en gesproken meldingen van Waze/Flitsmeister tijdens Android Auto-navigatie zijn nog experimenteel. Werkende navigatie, brongegevens en een geslaagd geparkeerd voorbeeld bewijzen niet dat iedere waarschuwing verschijnt of klinkt. Gebruik de eigen meldingen van de bronapp wanneer u betrouwbare waarschuwingen nodig hebt. Patch de bronapp en ontvangende kaartapp samen opnieuw voor de bijgewerkte verbinding en het afsluitgedrag.
 
 De koppeling met native FM-gebeurtenissen en spraak blijft een ontwikkelfunctie. Flitsmeister 15.0 / 1289 heeft de dekkingscontroles voor modellen en opname doorstaan. Eerdere FM15-ontwikkelversies doorstonden met beide kaartapps gecontroleerde levering, bewegende cameracontroles en trajectcontroles. De huidige kandidaat bevat latere verbeteringen aan tekst, herstel en spraakgereedheid; de uiteindelijke controles van de geïnstalleerde apps, timing en telefoon/auto staan nog open. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
 

@@ -20,7 +20,7 @@ Our **Native navigation for Gearslip and Android Auto** patch runs the patched a
 
 Waze exposes a standard Android for Cars navigation service that car hosts can discover. The examined Maps version uses Google's private projection service instead. After renaming, Gearslip could mistake its notification capability for a messaging app and open an empty messages screen. Adding a navigation label would not make those two interfaces communicate.
 
-We built a navigation adapter that connects Gearslip and Android Auto to the patched copy's own projection service and original car renderer. The development candidate replaces the external AppDecor dependency with an app-owned layout and controllers. Android Auto remains the host when connecting to a car; Gearslip can host the client independently. Acceptance of this replacement is tracked in the [public car client report](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
+We built a navigation adapter that connects Gearslip and Android Auto to the patched copy's own projection service and original car renderer. The adapter replaces the external AppDecor dependency with an app-owned layout and controllers. Android Auto remains the host when connecting to a car; Gearslip can host the client independently. Acceptance of this replacement is tracked in the [public car client report](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
 
 Signing the patched APK creates another problem: Google's optional private vehicle-data client rejects the new signing certificate. We isolated that client so it cannot crash the map, while retaining GPS navigation. Search needed a separate bridge between the host's keyboard and Maps' native editor. The map and editor also have to survive display resizing, keyboard changes and reconnects.
 
@@ -46,7 +46,7 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The development candidate owns its car UI resources; see the acceptance limits above. |
+| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The adapter owns its car UI resources; see the acceptance limits above. |
 
 ### Extended by this project
 
@@ -95,6 +95,8 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 External navigation data is received locally from the selected app on the same phone. OpenStreetMap camera layers download nearby camera positions. **Avoid Flock cameras** sends the route’s start and end to `brouter.de` when enabled. These controls start off in the external-data settings.
 
 ## Before using
+
+**Known limitation in this release:** external Waze/Flitsmeister warning cards and spoken alerts during Android Auto navigation are still experimental. Native navigation, provider data and a successful parked preview do not prove that every warning will appear or speak. Keep using the provider’s own alerts where you need dependable warning output. Repatch the provider and receiving map together for the updated connection and shutdown behavior.
 
 The native FM event/speech upgrade remains a development feature. Flitsmeister 15.0 / 1289 has passed model/capture coverage checks, and earlier FM15 development builds passed controlled delivery, moving-camera and zone checks with both receivers. The current candidate includes later text, recovery and speech-readiness corrections; its final installed, timing and phone/car acceptance remain open. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
 

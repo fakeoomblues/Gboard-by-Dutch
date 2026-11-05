@@ -101,6 +101,8 @@ Hide ads and Remove telemetry reduce the supported advertising, crash reporting 
 
 ## Before using
 
+**Known limitation in this release:** external Waze/Flitsmeister warning cards and spoken alerts during Android Auto navigation are still experimental. Native navigation, provider data and a successful parked preview do not prove that every warning will appear or speak. Keep using the provider’s own alerts where you need dependable warning output. Repatch the provider and receiving map together for the updated connection and shutdown behavior.
+
 **For automatic startup from Maps/Vela, open Android App info → Waze / De-Waze → Permissions → Location and select ‘Allow all the time’. ‘Allow only while using the app’ is insufficient for reliable silent startup.** Follow the [location permission steps](../guides/navigation-data.md#2-set-up-the-provider-once), including if you see **Android blocked background startup**.
 
 Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).

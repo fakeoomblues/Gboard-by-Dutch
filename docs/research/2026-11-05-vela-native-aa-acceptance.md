@@ -173,3 +173,33 @@ The private review folder contains `vela-warning-preview60.json`,
 `run60-qualified-events.json`, `run60-observer-result.json` and the run60
 screenshots. Voice/Tone/Silent parked preview proof does not close the remaining
 on-route warning, card, cancellation, profile, DPI or input acceptance gates.
+
+
+## Stable release boundary requested by the owner
+
+The owner explicitly requested a stable main release upgrade before completing
+all remaining acceptance cases. Native Maps/Vela/Waze navigation improvements
+and provider lifecycle corrections are releasable with the documented warning
+limitations; this does not turn incomplete acceptance into a pass.
+
+Run61 stopped before app inputs because existing Frida observation timed out on
+a cached TTS process in do_freezer_trap, TracerPid0. Run62 stopped that idle
+process before unchanged spawn observation; normal Vela initialization then
+started TTS with hooks installed. No freezer policy, observer or runner changed.
+
+Run62 selected Vela in AA before a fresh API-only Waze start. The initial native
+Waze process was intentionally stopped with the existing expected-stop marker,
+which was removed before the new source started. Vela's real North Boat Ramp
+route, turn card and fresh GPS remained visible at1280x480. The existing native
+controlled POLICE input produced UPSERT and native_sound_intent ANNOUNCE; both
+reached Vela's scheduler. No external warning card or playback was accepted.
+Empty-language SPEAKER_UNAVAILABLE observations alone do not identify the cause:
+the scheduler also holds spatially unverified candidates. Native route/context
+analysis remains open. Do not initialize speech through a preview, change
+eligibility, or describe this result as a completed warning-audio fix.
+
+Both attempts restored the baseline, stopped all owned runtimes and archived
+compact evidence before scratch cleanup. CleanupRequired=false. The private
+review receipts are tts-preparation61.json and vela-native-warning-route62.json;
+run62-native-police-delivery.json proves source-to-receiver delivery separately
+from playback. The owner's product-impact issue report follows publication.
