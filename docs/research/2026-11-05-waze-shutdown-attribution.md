@@ -42,3 +42,42 @@ re-signing. Exact member hashes, native-screen proof and bounded run outcome
 are in the review folder's `waze-stock-control-inputs.json` and
 `waze-native-car-login-run44.json`. Keep this login boundary separate from the
 earlier native self-shutdown and the already validated provider integration.
+
+## Original signed control 45: incomplete before car selection
+
+Control 45 installed the original signed base, ARM64, English and density
+splits without modifying or re-signing them. Its normal phone setup reached
+the map and displayed “Using offline maps”. Precise foreground location and
+notification permissions were enabled through ordinary Android UI; background
+location remained ungranted, matching the earlier patched run.
+
+Before selecting stock Waze in the car launcher, the attached original
+process 5371 terminated while backgrounded during AA setup. Android exit info
+records SIGNALED/status 9 at 2026-11-05 15:15:55.834. The caller was not traced;
+this is not proof of intentional shutdown or a patch-independent explanation
+for the earlier car-login error. A later process 7477 was discovered during
+setup. Further input stopped when the missing original-process attachment
+was detected. No stock car-login, route or speech pass is claimed.
+
+The original process used existing Frida CLI 17.9.11 against server 17.23.3,
+without injected-patch hooks. The unchanged observer retained AA/TTS coverage
+and reported no coverage loss; the stock application comparison remains
+incomplete because its CLI session ended. An initial TTS attach timeout was
+preserved separately and resolved with the existing stop-TTS startup step.
+No observer, fixture or runner source was changed.
+
+Retained network configuration reports Android's active network validated,
+no HTTP proxy and no Waze hosts-file override. This does not establish that
+Waze's own backend login works. The original offline-map banner remains an
+unattributed observation.
+
+The emulator's package hashes, audio, debug property, automotive role
+configuration and GPS were restored to the saved snapshot; all owned
+runtimes/server/forwards stopped, the temporary snapshot was removed, and
+202,222,776 bytes of extracted input/system-backup scratch were deleted after
+compact evidence was archived. CleanupRequired=false. Review
+`waze-original-control45.json` and its screenshots/exit-info for the exact
+boundary. A matched car-login control is still required: complete AA setup
+first, then initialize original Waze immediately before car selection to
+avoid consuming its background lifetime on host setup. The broader goal and
+all previously accepted provider/Maps evidence remain unchanged.
