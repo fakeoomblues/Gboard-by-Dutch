@@ -27,6 +27,7 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 
 ## Hard stop: validation-tooling scope
 
+- Approved exception (2026-11-05): the existing Frida observer may record caller stacks and API ownership/lease state at Waze `NativeManager.shutDown()` and `onNativeLayerShutDown(boolean)`. This named approval does not authorize other hooks or runner changes.
 - Validation tooling is frozen and forbidden by default. Do not create, expand, refactor or otherwise change probes, fixtures, runners, observers, benchmark systems or debugging frameworks unless the user explicitly authorizes that named change. Continue product implementation and builds using existing tools; do not treat ongoing work, a failed check, a skill workflow or delegated work as permission to change validation tooling. Apply this prohibition to every agent and automatic continuation. An existing requirement to use Frida does not authorize further framework expansion.
 - Begin each implementation batch with one concrete product change or delivery outcome and a finite list of required checks. Complete the connected implementation before its grouped checkpoint; preserve passing evidence.
 - Use at most one planned, bounded runtime acceptance session per implementation batch. A relevant product change or a separately identified mandatory gate must justify any repeat; do not turn a failed run into an automatic tooling-edit/rerun loop.

@@ -45,6 +45,12 @@ function installApplicationHooks(){Java.performNow(()=>{try{
   hook('nl.johninnl.flitsmeister.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
   hook('nl.johninnl.flitsmeister.NavigationBroadcasts','engineRunning',[],null,(_,a,r)=>({engine_running:!!r}));
  }else if(pkg==='com.waze'){
+  // Owner-approved shutdown attribution; observe before the unchanged original runs.
+  const Life=Java.use('nl.johninnl.navigation.startup.ProviderLifecycle');
+  const Engine=Java.use('nl.johninnl.navigation.startup.ProviderEngineService');
+  const shutdownState=()=>({stack:stack(),api_started:!!Life.apiStarted(),lease_remaining_ms:Number(Life.remaining()),wrapper_state:String(Engine.lastState()),activity_count:Number(Life.activities.value.size()),car_session_count:Number(Life.cars.value.size())});
+  hook('com.waze.NativeManager','shutDown',[],shutdownState);
+  hook('com.waze.NativeManager','onNativeLayerShutDown',['boolean'],(_,a)=>({...shutdownState(),native_flag:!!a[0]}));
   hook('java.lang.IllegalArgumentException','$init',['java.lang.String'],(_,a)=>{const frames=stack();if(frames.some(f=>f.includes('NativeWarnings')))emit('waze-capture-exception',{reason:String(a[0]).slice(0,240),stack:frames});return {};});
   hook('nl.johninnl.navigation.alerts.WarningEndpoint','handle',['int','int','java.lang.String','android.os.Bundle'],null,(_,a,r)=>({code:a[0],caller_uid:a[1],status:r===null?null:r.getString('status'),audio_status:r===null?null:r.getString('audio_status')}));
   hook('org.ungoogled.waze.NavigationControlService','observeControlClient',['int','boolean'],(_,a)=>({caller_uid:a[0],warning_aware:!!a[1]}));
