@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/1a60424cf5b1b58bd7963400b16cf63d2f759af0/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.41.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [1a60424cf5b1](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/1a60424cf5b1b58bd7963400b16cf63d2f759af0). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.41.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.2...v1.41.0) (2026-11-05)
+
+### ✨ New Features
+
+* **Parool:** add the Android Auto news feed ([ef4bd4b](https://gitlab.com/johninnld/nl-morphe-patches/commit/ef4bd4bb6cfdb924753656d8cc56adea9ba6002d))
+* **Trouw:** add the Android Auto news feed ([ef4bd4b](https://gitlab.com/johninnld/nl-morphe-patches/commit/ef4bd4bb6cfdb924753656d8cc56adea9ba6002d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.40.2.**
