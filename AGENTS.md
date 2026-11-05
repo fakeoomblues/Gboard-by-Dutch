@@ -1,5 +1,19 @@
 # Repository instructions
 
+## Startup checkpoint: execution efficiency
+
+Read this checkpoint at task start and after context compaction, before resuming implementation or validation. Apply it to all delegated work as well.
+
+- Reuse the initialized emulator state; stop it between batches.
+- Replay the now-known UI steps instead of rediscovering them.
+- Finish connected code changes, build once, then run one focused acceptance session.
+- Reuse passing evidence; repeat checks only when relevant code changes invalidate it or a separately identified mandatory gate requires a check.
+- Keep validation tooling frozen. Report progress as fixed behaviour, failed behaviour or a concrete blocker, not test counts. Do not add or modify probes, fixtures, runners, observers or validation frameworks without explicit approval for that named change.
+
+Before each batch, identify the concrete behaviour to change, the existing evidence that remains valid and the bounded acceptance steps. After a failed acceptance session, preserve evidence and diagnose offline before the next connected implementation batch. Retain mandatory verification gates.
+
+Preserve the documented reusable emulator baseline and known UI recipe while stopping owned runtimes and cleaning per-job scratch/output storage. Do not claim an initialized baseline exists until it has actually been saved and verified.
+
 ## Global execution: batch implementation, then validate
 
 These rules apply to every task and delegated task, ahead of skills that prescribe frequent implementation/validation switching.

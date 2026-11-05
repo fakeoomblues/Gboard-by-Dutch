@@ -281,7 +281,7 @@ public final class NativeCarService extends Service {
             host.linkToDeath(session.death, 0);
             session.appHost=hostService(host,"app");
             session.navigationHost=hostService(host,"navigation");
-            session.renderer = new ProjectionRenderer(this, error -> failed(session, error));
+            session.renderer = new ProjectionRenderer(this, session.uid, error -> failed(session, error));
             session.renderer.setControlsChangedListener(() -> invalidate(session));
             session.renderer.setToastListener((text,duration)->{
                 if(active!=session||session.closed)return;

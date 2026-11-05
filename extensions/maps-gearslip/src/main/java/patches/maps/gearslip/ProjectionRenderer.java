@@ -44,6 +44,9 @@ public final class ProjectionRenderer {
     private static final String DISPLAY_MANAGER = "com.google.android.gms.car.display.manager.ICarDisplayManager";
     private static final String DISPLAY = "com.google.android.gms.car.display.manager.ICarDisplay";
     private static final String CALLBACK = "com.google.android.gms.car.ICarProjectionCallback";
+    private static final NativeUiStateStore UI_STATES = new NativeUiStateStore(6);
+    private final NativeUiStateStore.Lease uiStateLease;
+    private Bundle initialUiState;
     private final Service service;
     private final Consumer<Throwable> onFailure;
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -97,8 +100,13 @@ public final class ProjectionRenderer {
     };
 
     public ProjectionRenderer(Service service, Consumer<Throwable> onFailure) {
+        this(service, Process.myUid(), onFailure);
+    }
+    public ProjectionRenderer(Service service, int hostUid, Consumer<Throwable> onFailure) {
         this.service = service;
         this.onFailure = onFailure;
+        uiStateLease = UI_STATES.acquire(hostUid);
+        initialUiState = uiStateLease.restored;
     }
 
     /** The car host supplies its keyboard; the original Maps editor owns query handling. */
@@ -335,12 +343,21 @@ public final class ProjectionRenderer {
         configuration=canvasConfiguration(configuration,width,height,dpi);
         Object display = type("com.google.android.gms.car.display.CarDisplayId").getConstructor(int.class).newInstance(0);
         Object region = type("com.google.android.gms.car.display.CarRegionId").getConstructor(int.class, display.getClass()).newInstance(0, display);
-        call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, new Bundle());
+        Bundle state = restoredUiState();
+        call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, state);
+        initialUiState = null;
         nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
         created = true;
         appliedInsets = null; applyAreas();
         attachControls();
         if (resumed) { lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }
+    }
+    Bundle restoredUiState() {
+        // Maps' IntentRouter treats every non-null Bundle as restoration and
+        // skips initial-intent routing. An empty Bundle is not a fresh session.
+        Bundle state = initialUiState == null ? null : initialUiState.deepCopy();
+        if (state != null) state.setClassLoader(service.getClassLoader());
+        return state;
     }
     private Object drawing(int w, int h, int density) throws Exception {
         return type("com.google.android.gms.car.DrawingSpec").getConstructor(int.class, int.class, int.class, Surface.class, Rect.class, int.class, int.class, Bundle.class)
@@ -364,6 +381,10 @@ public final class ProjectionRenderer {
         finishTouch();
         if (controls != null) { controls.close(); controls = null; }
         if (controller != null && created) {
+            // The native STOP transition saves J.e(Bundle) into n. Pull it before
+            // DESTROY clears native fields; its Binder callback may arrive later.
+            lifecycle(2);
+            UI_STATES.save(uiStateLease, (Bundle) field(controller, "n"));
             lifecycle(0);
             call(controller, "k", new Class<?>[0]);
         }
@@ -473,7 +494,11 @@ public final class ProjectionRenderer {
                     if (code == 3) { reply.writeNoException(); reply.writeInt(1); ui().writeToParcel(reply, 0); return true; }
                     if (Arrays.asList(4, 5, 7, 8, 10, 11, 13, 14).contains(code)) { reply.writeNoException(); return true; }
                 } else if (CALLBACK.equals(descriptor)) {
-                    if (code == 16) {
+                    if (code == 12) {
+                        Bundle state = data.readInt() == 0 ? null : Bundle.CREATOR.createFromParcel(data);
+                        if (state != null) state.setClassLoader(service.getClassLoader());
+                        UI_STATES.save(uiStateLease, state);
+                    } else if (code == 16) {
                         IBinder input = data.readStrongBinder();
                         EditorInfo editor = data.readInt() == 0 ? null : EditorInfo.CREATOR.createFromParcel(data);
                         if (input == null || editor == null) throw new IllegalArgumentException("Maps supplied no native editor");
@@ -487,12 +512,13 @@ public final class ProjectionRenderer {
                             if (!closed && keyboardListener != null) keyboardListener.hide();
                         });
                     }
-                    reply.writeNoException(); if (code == 24) reply.writeInt(0); return true;
+                    if (reply != null) { reply.writeNoException(); if (code == 24) reply.writeInt(0); }
+                    return true;
                 }
                 Log.w("MapsNativeCar", "Unsupported native host request " + descriptor + " transaction " + code);
                 return false;
             } catch (Exception error) {
-                reply.writeException(new IllegalStateException("Native Maps host request failed", error));
+                if (reply != null) reply.writeException(new IllegalStateException("Native Maps host request failed", error));
                 main.post(() -> fail(error));
                 return true;
             }

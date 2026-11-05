@@ -173,6 +173,7 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lbemm;", "k", "Lbenb;")
         requireField("Lbemm;", "C", "Lcom/google/android/gms/car/DrawingSpec;")
         requireField("Lbemm;", "o", "Landroid/content/res/Configuration;")
+        requireField("Lbemm;", "n", "Landroid/os/Bundle;")
         requireField("Lbemm;", "v", "Landroid/graphics/Rect;")
         requireMethod("Lbemz;", "A", listOf("Landroid/graphics/Rect;"), "V")
         requireField("Lbemz;", "h", "Lbemu;")

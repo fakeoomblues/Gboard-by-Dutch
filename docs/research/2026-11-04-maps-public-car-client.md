@@ -301,3 +301,59 @@ speed/limit views also duplicate/overlap at lower right. Silent-mode self-test
 produced a native warning toast; semantic card and speech were not accepted.
 Frida coverage remained intact; the original baseline was restored, the emulator
 stopped and cleanupRequired=false. Preserve the passing input/route evidence.
+
+## Native UI saved-state correction
+
+The original bemm.m(int, boolean) STOP transition calls J.e(Bundle), stores
+the result in n, and sends projection callback 12. The adapter previously
+acknowledged that callback without retaining its payload and passed an empty
+Bundle to bemm.o on each fresh presentation. The connected correction retains
+native saved-instance state per authenticated host UID with a bounded six-host
+in-memory store and presentation epochs. Retired callbacks cannot overwrite
+the replacement; bundles are copied and never written to disk. The native
+activity receives its own saved state on the next creation.
+
+Close now performs native STOP, captures n synchronously before native DESTROY
+can clear it, then completes original teardown. Callback 12 also accepts normal
+and one-way parcels. No destination is replayed and no route or voice policy
+is fabricated. The exact input ABI includes n:Bundle. Regression tests cover
+UID isolation, bounded retention, late callbacks, copying and native teardown
+ordering.
+
+Genuine-AA runtime19 rejected this candidate as a guidance-restoration fix:
+the pre-disconnect guidance screen became idle after the 800x480 reconnect,
+including after a fresh GPS update. Native NavigationService remained foreground.
+The existing Frida observer retained coverage; the terminal run restored the
+baseline, stopped its emulator and reported cleanupRequired=false. Preserve
+this failed result and its screenshots in the Downloads review index. A
+foreground service alone does not establish a GUIDING native snapshot; trace
+native screen/intent selection before another implementation batch.
+
+Focused original-APK inspection then established a separate initialization
+contract: `toi.c(Bundle)` passes the state to `qtd.c`, implemented by
+`qsx.c(Intent, Uri, Bundle)`. Only a null Bundle processes the initial intent;
+every non-null Bundle restores postponed intents and skips that initial routing.
+The adapter had manufactured an empty Bundle even for a fresh session. It now
+passes null when no genuine saved state exists and copies only actual restored
+state, with Maps' class loader. The regression covers fresh versus restored
+state and copy isolation. This is a native contract correction; genuine-AA
+guidance restoration still requires acceptance and is not claimed fixed.
+
+Genuine-AA run20 repeated the planned reconnect with checkpoint12. Guidance
+visibly started at 1280x480, and the built-in native car-service dump confirmed
+`navigationMode: GUIDED_NAV`. After reconnecting at 800x480 with current GPS,
+the settled UI was idle and the same native dump reported `FREE_NAV`. This
+narrows the problem to native car mode/lifecycle state rather than only the
+visibility of a guidance card; it does not independently prove navcore stopped.
+Original activity identity changed, both intent routers had zero postponed
+intents and no outstanding intent blocks, and Frida retained coverage. The run
+restored its baseline and stopped its emulator with cleanupRequired=false.
+Preserve these passing route and failed reconnect receipts; do not repeat
+checkpoint12 without a relevant product change.
+
+The run20 disconnected-service dump contains only Room invalidation service;
+native NavigationService and car services are absent. On reconnect the native
+car service is recreated in FREE_NAV. Trace native navigation teardown and
+handover rather than assuming that a retained foreground service proves
+route continuity. No additional runtime session is justified for the unchanged
+checkpoint12 candidate.
