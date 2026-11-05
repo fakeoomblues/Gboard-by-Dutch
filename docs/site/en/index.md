@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patch bundle: 1.41.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">56 apps</span> · Patch bundle: 1.43.2</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -82,7 +82,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [AD](apps/ad.md)
@@ -90,8 +90,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">9.22.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilead</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">9.22.0</span></li>
 <li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>
@@ -343,6 +344,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/ftm.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.5.11.993608717-release-arm64-v8a change package name custom branding parakeet voice typing" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [Gboard](apps/gboard.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">18.5.11.993608717-release-arm64-v8a</span></p>
+<p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Change package name <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
+<li>Custom branding <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a · default off</span></li>
+<li>Parakeet voice typing <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/gboard.md){ .dap-app-card__link }
 
 </article>
 

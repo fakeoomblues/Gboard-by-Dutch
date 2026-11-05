@@ -1,4 +1,76 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a3b108741807b7f02aa4dc26f984d3ceb6fbb951/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [a3b108741807](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/a3b108741807b7f02aa4dc26f984d3ceb6fbb951). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.43.1...v1.43.2) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** keep the row builder's declared return type through the styling hook ([a3b1087](https://gitlab.com/johninnld/nl-morphe-patches/commit/a3b108741807b7f02aa4dc26f984d3ceb6fbb951))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3a5bd57fc759c805f447a5bf579828bef0835468/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [3a5bd57fc759](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/3a5bd57fc759c805f447a5bf579828bef0835468). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.43.0...v1.43.1) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** render the Nieuws shelf as titled headline-led cards ([3a5bd57](https://gitlab.com/johninnld/nl-morphe-patches/commit/3a5bd57fc759c805f447a5bf579828bef0835468))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/ebd57d1ec04c16716f371933bb53da8c69e9394d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [ebd57d1ec04c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/ebd57d1ec04c16716f371933bb53da8c69e9394d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.42.0...v1.43.0) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** render Nieuws as native headline-led cards with article artwork ([8554500](https://gitlab.com/johninnld/nl-morphe-patches/commit/8554500ce9a22b5ebfa388834c5562d3a59e8e01))
+
+### ✨ New Features
+
+* **Gboard:** add on-device Parakeet voice typing ([ebd57d1](https://gitlab.com/johninnld/nl-morphe-patches/commit/ebd57d1ec04c16716f371933bb53da8c69e9394d))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/19778ddbc04cf63741a9ffe27b6e074a0536d418/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.42.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [19778ddbc04c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/19778ddbc04cf63741a9ffe27b6e074a0536d418). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.42.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.41.0...v1.42.0) (2026-11-05)
+
+### ✨ New Features
+
+* **AD:** add the Android Auto news feed ([19778dd](https://gitlab.com/johninnld/nl-morphe-patches/commit/19778ddbc04cf63741a9ffe27b6e074a0536d418))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/1a60424cf5b1b58bd7963400b16cf63d2f759af0/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.41.0.**
