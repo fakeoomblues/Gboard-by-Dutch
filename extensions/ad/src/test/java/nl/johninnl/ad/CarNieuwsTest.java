@@ -29,7 +29,8 @@ public class CarNieuwsTest {
 
     private static AudioBundleTeaserItem item(String urn, String title, int seconds, boolean paid) {
         return new AudioBundleTeaserItem(urn, title, seconds,
-            new Picture("https://img.example.test/" + urn + ".jpg", null), paid, true);
+            new Picture("https://img.example.test/" + urn + ".jpg",
+                "https://img.example.test/cropped-" + urn + ".jpg", null), paid, true);
     }
 
     private static void reset() throws Exception {
@@ -176,6 +177,28 @@ public class CarNieuwsTest {
         assertEquals(0L, CarNieuws.durationMillis(-3));
         assertEquals(7200000L, CarNieuws.durationMillis(7200));
         assertEquals(3_600_000L, CarNieuws.durationMillis(3_600_000L)); // already millis
+    }
+
+    @Test
+    public void artworkPrefersTheCanonicalUrlAndFallsBack() throws Exception {
+        reset();
+        AudioBundleTeaserItem canonical = new AudioBundleTeaserItem("urn:pic1", "Met url", 60,
+            new Picture("https://img.example.test/canonical.jpg", "https://img.example.test/cropped.jpg", null), false, true);
+        AudioBundleTeaserItem fallback = new AudioBundleTeaserItem("urn:pic2", "Zonder url", 60,
+            new Picture(null, "https://img.example.test/fallback.jpg", null), false, true);
+        List<Object> items = new ArrayList<Object>(Arrays.asList(canonical, fallback));
+        CarNieuws.rememberAudioBundle(new AudioBundleTeaser("t", null, items));
+        List<CarNieuws.Item> feed = (List<CarNieuws.Item>) value("feed");
+        assertEquals("https://img.example.test/canonical.jpg", feed.get(0).imageUrl);
+        assertEquals("https://img.example.test/fallback.jpg", feed.get(1).imageUrl);
+    }
+
+    @Test
+    public void onlyTheSynthesizedLaneTitleLosesItsGroupHeader() {
+        assertNull(CarNieuws.groupTitle("Nieuws"));
+        assertNull(CarNieuws.groupTitle(null));
+        assertEquals("Podcasts", CarNieuws.groupTitle("Podcasts"));
+        assertEquals(Integer.valueOf(3), CarNieuws.groupTitle(3));
     }
 
     @Test

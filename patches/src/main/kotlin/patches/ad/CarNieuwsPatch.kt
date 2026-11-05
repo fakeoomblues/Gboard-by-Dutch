@@ -23,7 +23,6 @@ private const val FEED_ADAPTER = "Lcom/kubus/module/network/model/AudioBundleTea
 private const val START_ROUTE = "/start"
 private const val TAB_TITLE = "Nieuws"
 private const val STRING = "Ljava/lang/String;"
-
 /** True when the method body holds the exact string constant. */
 private fun Method.holds(constant: String): Boolean {
     val body = implementation ?: return false
@@ -141,10 +140,16 @@ val carNieuws = bytecodePatch(
         check(rowParams.firstOrNull() == STRING && rowParams.getOrNull(1) == QUEUE) {
             "AD row-builder route/queue parameter contract changed: $rowParams"
         }
+        check(rowParams.size == 8 && rowParams[6] == STRING) {
+            "AD row-builder group-title parameter contract changed: $rowParams"
+        }
         rowMethod.addInstructions(0, """
             invoke-static/range {p1 .. p2}, $NIEUWS->slimQueue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
             move-result-object p2
             check-cast p2, $QUEUE
+            invoke-static/range {p7 .. p7}, $NIEUWS->groupTitle(Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object p7
+            check-cast p7, $STRING
         """.trimIndent())
 
         // 5. Restore the complete queue inside the app when a row is selected:

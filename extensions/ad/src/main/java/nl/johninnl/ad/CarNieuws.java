@@ -50,6 +50,8 @@ public final class CarNieuws {
      * app when a row is selected.
      */
     static final int QUEUE_WINDOW = 20;
+    /** The synthesized Nieuws lane title; also the browse tab title. */
+    private static final String TAB_TITLE = "Nieuws";
     /** Pathological feed bound only; delivery budget is handled per row window. */
     private static final int MAX_ITEMS = 200;
     /** Recent full lanes retained in memory; older ones fall back to disk. */
@@ -149,7 +151,10 @@ public final class CarNieuws {
     private static String pictureUrl(Object element) {
         Object picture = invokeGetter(element, "getPicture");
         if (picture == null || !FEED_ITEM_PICTURE.equals(picture.getClass().getName())) return null;
-        String url = stringGetter(picture, "getCroppedUrl");
+        // The app's own UI reads the canonical getUrl(); the cropped and
+        // domain variants are only fallbacks.
+        String url = stringGetter(picture, "getUrl");
+        if (url == null || url.isEmpty()) url = stringGetter(picture, "getCroppedUrl");
         if (url == null || url.isEmpty()) url = stringGetter(picture, "getImageDomainUrl");
         return url != null && !url.isEmpty() ? url : null;
     }
@@ -345,6 +350,21 @@ public final class CarNieuws {
         if (active != null) pinned.add(active);
         synchronized (playbackQueues) { pinned.addAll(feedIds.keySet()); }
         return pinned;
+    }
+
+    /**
+     * Hooked at the row builder: the synthesized lane's group title would
+     * force a titled list section; dropping it lets the browse content render
+     * as the app's native grid cards — headline-led cards in shelves. Only
+     * the Nieuws lane title we synthesize ourselves is dropped; every other
+     * lane title passes through untouched.
+     */
+    public static Object groupTitle(Object groupTitle) {
+        try {
+            return TAB_TITLE.equals(groupTitle) ? null : groupTitle;
+        } catch (Throwable t) {
+            return groupTitle;
+        }
     }
 
     // ---------------------------------------------------------------- car DTOs
