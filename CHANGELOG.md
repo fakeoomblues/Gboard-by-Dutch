@@ -1,4 +1,50 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9f5c31db276a643c68592571d51e0ff009bee28b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.44.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9f5c31db276a](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9f5c31db276a643c68592571d51e0ff009bee28b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.44.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.43.3...v1.44.0) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** prevent expired provider sessions restarting ([182689e](https://gitlab.com/johninnld/nl-morphe-patches/commit/182689e6fc2ddd642618c23055c69e84f4b7600f))
+* **Flitsmeister:** stop capture-fault snapshot resync loops ([b88566d](https://gitlab.com/johninnld/nl-morphe-patches/commit/b88566d037bb5d727d1b49b2b7a320a92093dc64))
+* **General:** deliver native AA routing fixes with experimental external alert limits ([7807790](https://gitlab.com/johninnld/nl-morphe-patches/commit/78077903ab0344ad5d2eb1db30e95aa702ea2081))
+* **Google Maps:** preserve native car initialization state ([831866c](https://gitlab.com/johninnld/nl-morphe-patches/commit/831866c89d9461f31b9eaecfabb79b5f6adba337))
+* **Google Maps:** preserve native search actions and pan callbacks ([16a00d8](https://gitlab.com/johninnld/nl-morphe-patches/commit/16a00d820fd36578a4fe778ed133b100da3272cc))
+* **Google Maps:** prevent expired provider sessions restarting ([182689e](https://gitlab.com/johninnld/nl-morphe-patches/commit/182689e6fc2ddd642618c23055c69e84f4b7600f))
+* **Google Maps:** restore native guidance after car reconnect ([5d590e3](https://gitlab.com/johninnld/nl-morphe-patches/commit/5d590e3d2d9875f84e891a269b004ae1a776d6cb))
+* **Google Maps:** retain native navigation ownership across car detach ([e822209](https://gitlab.com/johninnld/nl-morphe-patches/commit/e822209fe6b38ccefcee51f63b4113ea9e4f13fa))
+* **Google Maps:** retain the active native search editor ([15f2785](https://gitlab.com/johninnld/nl-morphe-patches/commit/15f2785da8c7a36a882512e727e4070dd6132c9f))
+* **Google Maps:** reuse native speed and limit displays ([c39cbfa](https://gitlab.com/johninnld/nl-morphe-patches/commit/c39cbfaedbfa980d5db556da53ef9939e95fc56a))
+* **Google Maps:** stop capture-fault snapshot resync loops ([b88566d](https://gitlab.com/johninnld/nl-morphe-patches/commit/b88566d037bb5d727d1b49b2b7a320a92093dc64))
+* **release:** keep documentation trailers out of patch update badges ([9f5c31d](https://gitlab.com/johninnld/nl-morphe-patches/commit/9f5c31db276a643c68592571d51e0ff009bee28b))
+* **Vela Maps:** prevent expired provider sessions restarting ([182689e](https://gitlab.com/johninnld/nl-morphe-patches/commit/182689e6fc2ddd642618c23055c69e84f4b7600f))
+* **Vela Maps:** stop capture-fault snapshot resync loops ([b88566d](https://gitlab.com/johninnld/nl-morphe-patches/commit/b88566d037bb5d727d1b49b2b7a320a92093dc64))
+* **Waze:** avoid repeated clears for display-only alerts ([2110052](https://gitlab.com/johninnld/nl-morphe-patches/commit/2110052642f4087bc0cc277d245015d6a3f92bfa))
+* **Waze:** prevent expired provider sessions restarting ([182689e](https://gitlab.com/johninnld/nl-morphe-patches/commit/182689e6fc2ddd642618c23055c69e84f4b7600f))
+* **Waze:** retain background broadcasts when car sessions end ([74d6b24](https://gitlab.com/johninnld/nl-morphe-patches/commit/74d6b24baf5cec5ab7139e2aeab3df76176ff97c))
+* **Waze:** scope broadcast keepalive to car teardown ([9f89c95](https://gitlab.com/johninnld/nl-morphe-patches/commit/9f89c9528fc9424f07973502503d0e08978b2b68))
+* **Waze:** stop capture-fault snapshot resync loops ([b88566d](https://gitlab.com/johninnld/nl-morphe-patches/commit/b88566d037bb5d727d1b49b2b7a320a92093dc64))
+
+### ✨ New Features
+
+* **Flitsmeister:** stop API-owned providers after missed heartbeats ([c5a7aa9](https://gitlab.com/johninnld/nl-morphe-patches/commit/c5a7aa9eedc64850f260ba66a5424f595524fa31))
+* **Google Maps:** own native car UI and restore warning speech ([d6c614f](https://gitlab.com/johninnld/nl-morphe-patches/commit/d6c614fe8a7859ddddd3568d219d2eb00a8f8d65))
+* **Google Maps:** relay native road warnings to Maps and Vela ([f6bff5a](https://gitlab.com/johninnld/nl-morphe-patches/commit/f6bff5aa3dde02f851b76088e7462f978978cc33))
+* **Google Maps:** stop API-owned providers after missed heartbeats ([c5a7aa9](https://gitlab.com/johninnld/nl-morphe-patches/commit/c5a7aa9eedc64850f260ba66a5424f595524fa31))
+* **Vela Maps:** relay native road warnings to Maps and Vela ([f6bff5a](https://gitlab.com/johninnld/nl-morphe-patches/commit/f6bff5aa3dde02f851b76088e7462f978978cc33))
+* **Vela Maps:** stop API-owned providers after missed heartbeats ([c5a7aa9](https://gitlab.com/johninnld/nl-morphe-patches/commit/c5a7aa9eedc64850f260ba66a5424f595524fa31))
+* **Waze:** relay native road warnings to Maps and Vela ([f6bff5a](https://gitlab.com/johninnld/nl-morphe-patches/commit/f6bff5aa3dde02f851b76088e7462f978978cc33))
+* **Waze:** stop API-owned providers after missed heartbeats ([c5a7aa9](https://gitlab.com/johninnld/nl-morphe-patches/commit/c5a7aa9eedc64850f260ba66a5424f595524fa31))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a111071267b760be0ee063825bd911b000cb10d1/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.43.3.**
