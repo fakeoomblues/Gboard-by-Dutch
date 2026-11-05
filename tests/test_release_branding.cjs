@@ -453,6 +453,29 @@ test("an undeclared shared adapter edit still requires the app's scope", () => s
   assert.throws(() => guard.verifyNotes(release(head, bullet("Belgian", head))), /Missing release notes scope for changed app Paper/);
 }));
 
+test("documentation-only historical trailers do not block publication but app edits remain checked", () => releaseRepository(({dir, git, commit}) => {
+  const file = "patches/src/main/kotlin/patches/paper/Compatibility.kt";
+  fs.mkdirSync(path.dirname(path.join(dir, file)), {recursive: true});
+  fs.writeFileSync(path.join(dir, file), 'val app = Compatibility(name = "Paper")\n');
+  git("add", "."); const base = commit("feat: baseline"); git("tag", "v1.0.0");
+  fs.mkdirSync(path.join(dir, "docs/research"), {recursive: true});
+  fs.writeFileSync(path.join(dir, "docs/research/acceptance.md"), "Scoped runtime evidence\n");
+  const message = "docs: record acceptance\n\nUnchanged-Apps: Papr";
+  git("add", "."); const docs = commit(message);
+  const ctx = context("1.0.1"); ctx.cwd = dir;
+  ctx.lastRelease = {version: "1.0.0", gitTag: "v1.0.0", gitHead: base}; ctx.nextRelease.gitHead = docs;
+  assert.deepEqual(plugin().scopeCommits([{hash: docs, message}], ctx), [{hash: docs, message}]);
+  assert.deepEqual(plugin().appImpact(ctx).affected, []);
+  fs.appendFileSync(path.join(dir, "docs/research/acceptance.md"), "Known warning limits\n");
+  const visible = "fix(Paper): document warning limits\n\nRelease-Apps: Paper";
+  git("add", "."); const visibleDocs = commit(visible); ctx.nextRelease.gitHead = visibleDocs;
+  assert.match(plugin().scopeCommits([{hash: visibleDocs, message: visible}], ctx)[0].message, /^fix\(General\):/);
+  assert.deepEqual(plugin().appImpact(ctx).affected, []);
+  fs.appendFileSync(path.join(dir, file), "// Changed patch output\n");
+  git("add", "."); const changed = commit(message); ctx.nextRelease.gitHead = changed;
+  assert.throws(() => plugin().scopeCommits([{hash: changed, message}], ctx), /Unknown Unchanged-Apps/);
+}));
+
 test("Unchanged-Apps rejects unknown apps and apps also declared as affected", () => sharedAdapter(({change, release, bullet}) => {
   for (const [message, error] of [
     ["fix: publish Belgian\n\nRelease-Apps: Belgian\nUnchanged-Apps: Papr", /Unknown Unchanged-Apps/],

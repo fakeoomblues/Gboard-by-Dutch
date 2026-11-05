@@ -140,12 +140,18 @@ function scopeCommits(commits, context) {
     if (impact?.unreleased && !impact.unreleased.has(commit.hash)) return [];
     const match = /^(\w+)(?:\(([^)]+)\))?(!?): (.*)/.exec(commit.message);
     if (!match) return [commit];
+    const files = impact ? git(context, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r", commit.hash).split("\n") : [];
+    // Documentation cannot change patch output or badge an app for repatching.
+    // Hidden docs stay hidden; a visible documentation fix belongs to General.
+    if (files.length && files.every(file => file.startsWith("docs/") || ["AGENTS.md", "PUBLISHING.md"].includes(file))) {
+      return [{...commit, message: match[1] === "docs" ? commit.message
+        : commit.message.replace(match[0], `${match[1]}(General)${match[3]}: ${match[4]}`)}];
+    }
     const apps = /^Release-Apps: (.+)$/mi.exec(commit.message)?.[1].split(",").map(app => app.trim());
     const unchanged = unchangedApps(commit.message);
     if (unchanged.some(app => apps?.includes(app))) throw new Error("An app cannot be both affected and unchanged");
     if (impact && unchanged.some(app => ![...impact.apps.values()].flat().includes(app))) throw new Error("Unknown Unchanged-Apps name");
     if (!apps && ["general", "release", "build", "ci", "deps"].includes(match[2]?.toLowerCase())) return [commit];
-    const files = impact ? git(context, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r", commit.hash).split("\n") : [];
     const relevant = files.filter(file => impact?.changed.includes(file));
     // Only a person can tell whether editing shared code changed each app, so a commit
     // across patch folders has to say. Inferring would badge apps that did not change.
