@@ -143,6 +143,19 @@ public final class NativeCarServiceTest {
         handshake(HOST);
         assertSecurity(call(earlier, "IAppManager", 2, data -> {}));
     }
+    @Test public void panCapabilityRejectsAnotherUidAndAReplacedSessionWithARealCallback() throws Exception {
+        handshake(HOST);
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true);
+        Object session = active.get(service);
+        Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses())
+                .filter(c -> c.getSimpleName().equals("PanBinder")).findFirst().get();
+        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass());
+        constructor.setAccessible(true); IBinder pan = (IBinder) constructor.newInstance(service, session);
+        ShadowBinder.setCallingUid(HOST_UID + 1);
+        assertSecurity(call(pan, "navigation.model.IPanModeListener", 2, data -> data.writeInt(1)));
+        ShadowBinder.setCallingUid(HOST_UID); handshake(HOST);
+        assertSecurity(call(pan, "navigation.model.IPanModeListener", 2, data -> data.writeInt(0)));
+    }
 
     @Test public void unbindingClosesPreviouslyIssuedCapabilities() throws Exception {
         handshake(HOST);
@@ -401,6 +414,10 @@ public final class NativeCarServiceTest {
         assertEquals(4, navigation.getMapActionStrip().getActions().size());
         assertEquals(View.INVISIBLE, group.getVisibility());
         new NavigationTemplate.Builder().setActionStrip(navigation.getActionStrip()).setMapActionStrip(navigation.getMapActionStrip()).build();
+        assertNotNull(navigation.getPanModeDelegate());
+        navigation.getPanModeDelegate().sendPanModeChanged(true, done());
+        navigation.getPanModeDelegate().sendPanModeChanged(false, done());
+        shadowOf(Looper.getMainLooper()).idle();
         navigation.getActionStrip().getActions().get(3).getOnClickDelegate().sendClick(done());
         shadowOf(Looper.getMainLooper()).idle();
         ListTemplate more = (ListTemplate) decodedTemplate(app);

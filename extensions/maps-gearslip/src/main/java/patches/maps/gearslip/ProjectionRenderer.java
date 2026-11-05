@@ -280,6 +280,7 @@ public final class ProjectionRenderer {
             downTime = 0;
         });
     }
+    public void endGesture() { guard(this::finishTouch); }
     public void scroll(float distanceX, float distanceY) {
         guard(() -> {
             if (downTime == 0) {

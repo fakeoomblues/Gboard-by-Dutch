@@ -24,7 +24,7 @@ import java.util.Map;
 /** Native action handlers and icons exported as CAL data; this class never places host controls. */
 final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, ViewTreeObserver.OnPreDrawListener {
     enum Role {
-        SEARCH("Search", "Zoeken", false, "main_suggested_destinations_search_box", "car_search_box"),
+        SEARCH("Search", "Zoeken", false, "main_suggested_destinations_search_box", "destination_input_search_box", "car_search_box"),
         SETTINGS("Settings", "Instellingen", false, "map_buttons_view_settings_button", "one_bar_settings_button_view"),
         SOUND("Sound", "Geluid", false, "map_buttons_view_mute_container"),
         VOICE("Voice search", "Spraakgestuurd zoeken", false, "car_mic_button"),
@@ -100,11 +100,15 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     private View clickable(View view) {
         if (nativeVisibility(view) == View.GONE) return null;
-        if (view.hasOnClickListeners()) return view;
+        // A named container can own its ripple/touch action while its children
+        // expose other actions (profile, clear or collapse). Preserve that owner.
+        if (view.hasOnClickListeners() || view.isClickable()) return view;
         if (view instanceof ViewGroup) for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-            View found = clickable(((ViewGroup) view).getChildAt(i)); if (found != null) return found;
+            View child = ((ViewGroup) view).getChildAt(i);
+            if (nativeVisibility(child) != View.VISIBLE) continue;
+            View found = clickable(child); if (found != null) return found;
         }
-        return view.isClickable() ? view : null;
+        return null;
     }
     private boolean update() {
         boolean updated = false;

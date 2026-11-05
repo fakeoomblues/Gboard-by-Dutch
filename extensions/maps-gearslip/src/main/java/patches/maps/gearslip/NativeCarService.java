@@ -446,7 +446,25 @@ public final class NativeCarService extends Service {
         mapActions.add(CarProtocol.panAction());
         for (NativeControls.Control control : mapControls)
             mapActions.add(CarProtocol.action(null, control.icon, new ActionBinder(session, control)));
-        return CarProtocol.template(null, actions, mapActions);
+        return CarProtocol.template(null, actions, mapActions, new PanBinder(session));
+    }
+
+    /** The host owns pan mode; leaving it must finish any native map drag. */
+    private final class PanBinder extends Binder {
+        private static final String DESCRIPTOR = "androidx.car.app.navigation.model.IPanModeListener";
+        private final Session session;
+        PanBinder(Session session) { this.session = session; attachInterface(null, DESCRIPTOR); }
+        @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
+            if (CarProtocol.basic(DESCRIPTOR, code, data, reply)) return true;
+            if (code != 2) return false;
+            IBinder callback = null;
+            try {
+                boolean panning = data.readInt() != 0; callback = data.readStrongBinder();
+                requireSession(session);
+                dispatch(session, callback, true, () -> { if (!panning) session.renderer.endGesture(); });
+            } catch (Exception error) { CarProtocol.complete(callback, null, error); }
+            return true;
+        }
     }
 
     /** Standard CAL click delegates, owned by the authenticated car Session. */

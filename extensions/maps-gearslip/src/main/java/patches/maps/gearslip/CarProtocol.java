@@ -180,6 +180,10 @@ final class CarProtocol {
     }
 
     static Bundle template(Throwable failure, List<Bundle> actions, List<Bundle> mapActions) {
+        return template(failure, actions, mapActions, null);
+    }
+
+    static Bundle template(Throwable failure, List<Bundle> actions, List<Bundle> mapActions, IBinder panCallback) {
         Bundle template;
         if (failure == null) {
             Bundle strip = object("androidx.car.app.model.ActionStrip");
@@ -190,6 +194,11 @@ final class CarProtocol {
                 Bundle mapStrip = object("androidx.car.app.model.ActionStrip");
                 field(mapStrip, "mActions", list(mapActions));
                 field(template, "mMapActionStrip", mapStrip);
+            }
+            if (panCallback != null) {
+                Bundle pan = object("androidx.car.app.navigation.model.PanModeDelegateImpl");
+                field(pan, "mStub", interfaceBinder("androidx.car.app.navigation.model.IPanModeListener$Stub", panCallback));
+                field(template, "mPanModeDelegate", pan);
             }
         } else {
             Throwable cause = failure;

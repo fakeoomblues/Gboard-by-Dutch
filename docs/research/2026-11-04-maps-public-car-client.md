@@ -267,3 +267,37 @@ engineering MPP and owned-provider-shutdown-validation.json. FM native manual
 takeover remains unaccepted because first-run onboarding independently stopped
 its driving service; a fully initialized manual session must exercise that gate.
 The original AA navigation, speech, input and profile acceptance gates stay open.
+
+## Search and public pan correction
+
+The current original APK still contains the configured search/zoom IDs. Static
+DEX inspection locates main search in rhm.e, destination input in qax.a and zoom
+in rcq.d/ref.a. Native click owners contain other interactive descendants. The
+adapter previously descended into those children before considering a clickable
+named container; it now preserves that owner and ignores invisible descendant
+candidates. The destination_input_search_box resource is also recognized.
+Search continues through the original native handler and input connection.
+
+The NavigationTemplate also now carries the public PanModeDelegateImpl /
+IPanModeListener callback. Leaving host pan mode finishes a pending native drag.
+The capability is bound to the authenticated UID and session, and completes
+rejected stale/foreign callbacks. The supplied AA17 source confirms transaction
+2, boolean then IOnDoneCallback, and the mStub serialized field. Tests decode the
+real library delegate, exercise both transitions, and cover capability rejection
+and nested native search actions. Runtime search/keyboard/input acceptance is
+still required for this batch. No observer or validation framework was changed.
+
+Run 18 accepted native Search action discovery, the public AA keyboard, typed
+query dam, native Dam/Amsterdam preview, route start and admitted moving GPS
+on genuine AA17 at active head-unit geometry 1280x480/160dpi. The app Surface
+is 1200x480 beside the 80px dock. Encoded screenshots remain 1280x720 with
+120px top/bottom margins; console input uses active viewport coordinates.
+The review folder links each state and records exact candidate hashes.
+
+The planned 800x480 reconnect showed an idle car UI, while NavigationService
+remained foreground. Route cancellation is therefore not established; native
+guidance UI restoration needs diagnosis. Optional external speed/HUD and native
+speed/limit views also duplicate/overlap at lower right. Silent-mode self-test
+produced a native warning toast; semantic card and speech were not accepted.
+Frida coverage remained intact; the original baseline was restored, the emulator
+stopped and cleanupRequired=false. Preserve the passing input/route evidence.

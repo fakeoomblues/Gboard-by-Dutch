@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 32)
 public final class NativeControlsTest {
-    private static final int GROUP = 0x7f990001, SETTINGS = 0x7f990002, SEARCH = 0x7f990003, EDITOR = 0x7f990004;
+    private static final int GROUP = 0x7f990001, SETTINGS = 0x7f990002, SEARCH = 0x7f990003, EDITOR = 0x7f990004, INPUT_SEARCH = 0x7f990005;
     private FrameLayout root, group;
     private ImageView button;
     private NativeControls controls;
@@ -38,6 +38,7 @@ public final class NativeControlsTest {
                 if (id == SETTINGS) return "map_buttons_view_settings_button";
                 if (id == SEARCH) return "main_suggested_destinations_search_box";
                 if (id == EDITOR) return "destination_input_keyboard_search_edit_text";
+                if (id == INPUT_SEARCH) return "destination_input_search_box";
                 return super.getResourceEntryName(id);
             }
         };
@@ -118,6 +119,30 @@ public final class NativeControlsTest {
         NativeControls.Control action = controls.snapshot().stream().filter(control -> control.role == NativeControls.Role.SEARCH).findFirst().get();
         controls.invoke(action); measure(); root.getViewTreeObserver().dispatchOnPreDraw();
         assertEquals(0, oldClicks[0]); assertEquals(1, currentClicks[0]);
+    }
+    @Test public void namedSearchContainerKeepsItsRippleActionInsteadOfAnInteractiveChild() {
+        int[] searchClicks = {0}, childClicks = {0};
+        FrameLayout search = new FrameLayout(context); search.setId(SEARCH); search.setClickable(true);
+        search.setOnTouchListener((v, event) -> { if (event.getAction() == MotionEvent.ACTION_UP) searchClicks[0]++; return true; });
+        ImageView child = new ImageView(context); child.setImageDrawable(new ColorDrawable(Color.BLUE));
+        child.setOnClickListener(v -> childClicks[0]++); search.addView(child, new FrameLayout.LayoutParams(48, 48));
+        root.addView(search, new FrameLayout.LayoutParams(300, 64)); measure();
+        controls = new NativeControls(root, () -> updates++);
+        NativeControls.Control action = controls.snapshot().stream().filter(c -> c.role == NativeControls.Role.SEARCH).findFirst().get();
+        assertSame(search, action.source); controls.invoke(action);
+        assertEquals(1, searchClicks[0]); assertEquals(0, childClicks[0]);
+    }
+    @Test public void destinationInputSearchUsesTheNativeContainerAndIgnoresInvisibleChildren() {
+        int[] searchClicks = {0}, childClicks = {0};
+        FrameLayout search = new FrameLayout(context); search.setId(INPUT_SEARCH); search.setClickable(true);
+        search.setOnTouchListener((v, event) -> { if (event.getAction() == MotionEvent.ACTION_UP) searchClicks[0]++; return true; });
+        ImageView child = new ImageView(context); child.setImageDrawable(new ColorDrawable(Color.BLUE));
+        child.setOnClickListener(v -> childClicks[0]++); child.setVisibility(View.INVISIBLE);
+        search.addView(child, new FrameLayout.LayoutParams(48, 48)); root.addView(search, new FrameLayout.LayoutParams(300, 64)); measure();
+        controls = new NativeControls(root, () -> updates++);
+        NativeControls.Control action = controls.snapshot().stream().filter(c -> c.role == NativeControls.Role.SEARCH).findFirst().get();
+        assertSame(search, action.source); controls.invoke(action);
+        assertEquals(1, searchClicks[0]); assertEquals(0, childClicks[0]);
     }
     @Test public void nativeLayoutHidingDoesNotRemoveTheActionFromTheStandardHostInterface() {
         group.setVisibility(View.GONE); NativeControls.Control control = bind(); controls.invoke(control);

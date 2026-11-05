@@ -75,6 +75,26 @@ public final class CarProtocolTest {
         org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
         assertTrue(completed[0]);
     }
+    @Test public void publicPanDelegateDecodesAndAcknowledgesBothModeTransitions() throws Exception {
+        java.util.List<Boolean> modes = new java.util.ArrayList<>();
+        Binder listener = new Binder() {
+            @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
+                if (CarProtocol.basic("androidx.car.app.navigation.model.IPanModeListener", code, data, reply)) return true;
+                assertEquals(2, code); modes.add(data.readInt() != 0);
+                CarProtocol.complete(data.readStrongBinder(), null, null); return true;
+            }
+        };
+        NavigationTemplate template = (NavigationTemplate) decode(CarProtocol.template(null, Collections.emptyList(),
+                Collections.singletonList(CarProtocol.panAction()), listener));
+        assertNotNull(template.getPanModeDelegate());
+        int[] done = {0}; OnDoneCallback callback = new OnDoneCallback() {
+            @Override public void onSuccess(Bundleable response) { done[0]++; }
+            @Override public void onFailure(Bundleable error) { throw new AssertionError("Pan callback failed"); }
+        };
+        template.getPanModeDelegate().sendPanModeChanged(true, callback);
+        template.getPanModeDelegate().sendPanModeChanged(false, callback);
+        assertEquals(Arrays.asList(true, false), modes); assertEquals(2, done[0]);
+    }
 
     @Test public void overflowUsesAStandardListTemplateWithClickableNativeActions() throws Exception {
         ListTemplate template = (ListTemplate) decode(CarProtocol.controlsTemplate("Map controls",
