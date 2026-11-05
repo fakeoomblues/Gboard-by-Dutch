@@ -605,3 +605,14 @@ complete local verifier is still open: checkpoint22 stopped in an unrelated
 Node release-watcher cleanup test before Android verification. No release
 has been published. Do not repeat accepted provider integration or the fixed
 reconnect without a relevant source change or a remaining mandatory gate.
+
+Checkpoint25 subsequently passed the complete canonical verifier on fix commit
+`5d590e3`. GitLab main then advanced to v1.41.0 (`652340c`), incorporated by
+merge `64e4a1e`; none of the Maps/Waze/Vela/FM target code changed in that merge.
+Checkpoint26 passed the complete canonical verifier again on the merged head,
+including the new upstream modules and cleanup correction. Both terminal
+verification jobs archived their evidence and removed owned build storage
+with cleanupRequired=false. The signed engineering bundle from `64e4a1e` is
+SHA-256 `02f9e65be96e257c779398bfcd4012adb157db8511e19f946239b4fd8ec7888f`.
+Its complete verification and unchanged-target runtime reuse are recorded in
+the Downloads review index. The broader all-app acceptance remains open.
