@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.38.0**
+**Patch bundle: 1.39.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -668,6 +668,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |

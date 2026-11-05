@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -336,6 +336,41 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab and lists the latest headlines from the app's home feed with their publisher-supplied spoken audio. Rows render and play through the app's existing car player; premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilevk",
+          "name": "Volkskrant",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Any media app",

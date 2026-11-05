@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.38.0**
+**Patchbundel: 1.39.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -668,6 +668,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1 |
 | Disable tracking | Aan | 7.53.1 |
 | Hide Premium banner | Aan | 7.53.1 |
 | Hide ads | Aan | 7.53.1 |

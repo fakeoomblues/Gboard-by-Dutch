@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.39.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e4c60ea3fe89](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.39.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.38.0...v1.39.0) (2026-11-05)
+
+### ✨ New Features
+
+* **Volkskrant:** add the complete Android Auto news feed ([e4c60ea](https://gitlab.com/johninnld/nl-morphe-patches/commit/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/17bd68809623f6531c74a530b663535fc37f701d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.38.0.**

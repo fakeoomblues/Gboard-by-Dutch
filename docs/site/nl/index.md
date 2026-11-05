@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.38.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">55 apps</span> · Patchbundel: 1.39.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1080,7 +1080,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="volkskrant be.persgroep.android.news.mobilevk 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="volkskrant be.persgroep.android.news.mobilevk 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [Volkskrant](apps/volkskrant.md)
@@ -1088,8 +1088,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilevk</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
