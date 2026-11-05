@@ -194,10 +194,10 @@
   },
   "publication": {
     "version": "1.25.0",
-    "release_url": "https://github.com/johninnl/nl-morphe-patches/releases/tag/v1.25.0",
+    "release_url": "https://codeberg.org/JohninNL/nl-morphe-patches/releases/tag/v1.25.0",
     "source_commit": "f57abb97c9eb11de5792dc50d66c3bab62d4489a",
     "release_commit": "9d2aa53eb8ec8e78e3e1ed47d31f5ceebaf6075f",
-    "release_workflow": "https://github.com/johninnl/nl-morphe-patches/actions/runs/41380498959",
+    "release_workflow": "https://codeberg.org/JohninNL/nl-morphe-patches/actions/runs/41380498959",
     "release_workflow_conclusion": "success",
     "morphe_discovery_verified": true,
     "trusted_ed25519_signature_verified": true,

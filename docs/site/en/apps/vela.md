@@ -6,6 +6,10 @@
 
 Select the complete original APK for this exact version in Morphe Manager.
 
+Use patched Waze or Flitsmeister as a local source for current speed, limits and available road warnings while Vela handles your route. The provider can remain in the background with its overlay off.
+
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button }
+
 ## Patches
 
 | Patch | Default | What it does |
@@ -20,7 +24,11 @@ Road-warning reports can include camera/incident positions. The integration rece
 
 ## Before using
 
-Patch [Waze 5.26.90.901](waze.md) or [Flitsmeister 14.17](flitsmeister.md) with **Broadcast navigation data**, open it once and allow its background location/driving service to remain running. Its overlay can stay off. The provider patch's optional **Receiver package** can be set to `app.vela`. Android 14 and newer allow Vela to verify the sending provider through Android; older versions lack that sender verification.
+The native FM event/speech upgrade remains a development feature. Flitsmeister 15.0 / 1289 has passed model/capture coverage checks, and earlier FM15 development builds passed controlled delivery, moving-camera and zone checks with both receivers. The current candidate includes later text, recovery and speech-readiness corrections; its final installed, timing and phone/car acceptance remain open. Its category/output review, parked preview and recovery controls are described in the [native-warning setup section](../guides/navigation-data.md#native-flitsmeister-warning-audio).
+
+Updated navigation-data patches start the selected provider without opening its screen after one-time setup. For Flitsmeister, update Maps or Vela too: the corrected handoff lets a visible receiving map start FM in the background with location access while using the app. This has been checked on an Android 14 emulator; the Android 16 phone check is pending. Always-on location is not a blanket requirement for this handoff. Keep the receiving map visible while selecting FM and check its source status. See the [navigation-data setup guide](../guides/navigation-data.md).
+
+Patch [Waze 5.26.90.901](waze.md) or [Flitsmeister 14.17 or 15.0](flitsmeister.md) with **Broadcast navigation data**, complete its first-run setup and grant its driving service location access once. Updated patches start its engine automatically when Vela needs it. Its overlay can stay off. The provider patch's optional **Receiver package** can be set to `app.vela`. Android 14 and newer verify the sender of shared broadcast updates; older versions lack that broadcast-sender check. The separate native FM warning channel authenticates both apps through Binder on all supported Android versions.
 
 In Vela's navigation settings, open **Speed and road alerts** and choose **Vela (native data)**, **De-Waze** or **Flitsmeister**. The choice is saved. The same choice is available under **Navigation provider** in Android Auto settings. **Spoken road warnings** follows Vela's voice/mute settings; car details have their own switch.
 
@@ -28,7 +36,7 @@ With an external provider selected, the compact map display keeps current speed 
 
 Missing or expired values use Vela's own data where available. The provider status identifies fallback, and an unavailable current speed shows **—**. Changing provider, leaving a zone or losing its fresh observations removes that partial average. Data from the two providers is kept separate.
 
-When an external provider is selected, Vela temporarily pauses its own Flock display and alerts while **either** supported provider supplies fresh usable data. The pause can continue if the selected provider becomes unavailable but the other one is still advertising. Saved Flock preferences stay intact. When neither supplies fresh usable data, Vela's own Flock behavior resumes according to those saved choices; selecting **Vela (native data)** also restores normal behavior.
+Selecting Flitsmeister keeps Vela's saved Flock display, voice and detour choices active. General FM speed, limit or warning data does not replace those independent features. De-Waze retains its existing handoff only while the selected Waze feed is fresh; an unselected feed cannot pause native Flock.
 
 Phone settings, background reception, compact phone/car rendering and advance speech were checked on an Android 16 emulator using Gearslip as the car host. Physical driving, a physical head unit and Google’s Android Auto host have not been validated. An already-started native Flock refresh can finish while its display and alerts are paused.
 

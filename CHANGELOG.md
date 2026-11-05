@@ -1,106 +1,539 @@
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/bafac0db70c27c52198a3ed5f68ec295f925fa32/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/1a60424cf5b1b58bd7963400b16cf63d2f759af0/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.28.0-dev.3.**
+**Release · patch bundle v1.41.0.**
 
-[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
 
-Source: [bafac0db70c2](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32). Check each app's target versions in the user guide before patching.
-
----
-
-## [1.28.0-dev.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.2...v1.28.0-dev.3) (2026-11-04)
-
-### 🐛 Bug Fixes
-
-* **Google Maps:** keep native controls clear of host overlays ([bafac0d](https://gitlab.com/johninnld/nl-morphe-patches/commit/bafac0db70c27c52198a3ed5f68ec295f925fa32))
-
-<!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/add9b1148db454926dc6ef60f62d2b2b3ee2af08/docs/site/assets/brand/release-banner.png)
-
-**Release · patch bundle v1.28.0-dev.2.**
-
-[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dev/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
-
-Source: [add9b1148db4](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/add9b1148db454926dc6ef60f62d2b2b3ee2af08). Check each app's target versions in the user guide before patching.
+Source: [1a60424cf5b1](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/1a60424cf5b1b58bd7963400b16cf63d2f759af0). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.28.0-dev.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.28.0-dev.1...v1.28.0-dev.2) (2026-11-03)
-
-### 🐛 Bug Fixes
-
-* **ci:** migrate development publishing to GitLab.com ([ffe484c](https://gitlab.com/johninnld/nl-morphe-patches/commit/ffe484c3f032e1d229b2d58c1c2208dc83f42acf))
-
-<!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c2cd274d52659ec34924d27c37f7ac5de66ed584/docs/site/assets/brand/release-banner.png)
-
-**Release · patch bundle v1.28.0-dev.1.**
-
-[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
-
-Source: [c2cd274d5265](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c2cd274d52659ec34924d27c37f7ac5de66ed584). Check each app's target versions in the user guide before patching.
-
----
-
-## [1.28.0-dev.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.27.1...v1.28.0-dev.1) (2026-11-02)
-
-### 🐛 Bug Fixes
-
-* **YouTube Music:** include personal library in one Any-version Gearslip patch ([dc8ce86](https://codeberg.org/JohninNL/nl-morphe-patches/commit/dc8ce86fb149c04a415032aa66b8e7b1d298019c))
-
-<!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6f52bfabce541f237ba817c460e24b8d5de016f3/docs/site/assets/brand/release-banner.png)
-
-**Release · patch bundle v1.27.0-dev.3.**
-
-[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
-
-Source: [6f52bfabce54](https://codeberg.org/JohninNL/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3). Check each app's target versions in the user guide before patching.
-
----
-
-## [1.27.0-dev.3](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.27.0-dev.2...v1.27.0-dev.3) (2026-11-02)
-
-### 🐛 Bug Fixes
-
-* **Gearslip:** show functional music entries and native Maps navigation ([6f52bfa](https://codeberg.org/JohninNL/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3))
-* **Google Maps:** show functional music entries and native Maps navigation ([6f52bfa](https://codeberg.org/JohninNL/nl-morphe-patches/commit/6f52bfabce541f237ba817c460e24b8d5de016f3))
-
-<!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/5b333f79e55763aac4ad2d3c9d4feae68550ef70/docs/site/assets/brand/release-banner.png)
-
-**Release · patch bundle v1.27.0-dev.2.**
-
-[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
-
-Source: [5b333f79e557](https://codeberg.org/JohninNL/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70). Check each app's target versions in the user guide before patching.
-
----
-
-## [1.27.0-dev.2](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.27.0-dev.1...v1.27.0-dev.2) (2026-11-02)
+## [1.41.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.2...v1.41.0) (2026-11-05)
 
 ### ✨ New Features
 
-* **Myspoti:** add personal music browsing for Gearslip ([5b333f7](https://codeberg.org/JohninNL/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70))
-* **YouTube Music:** add personal music browsing for Gearslip ([5b333f7](https://codeberg.org/JohninNL/nl-morphe-patches/commit/5b333f79e55763aac4ad2d3c9d4feae68550ef70))
+* **Parool:** add the Android Auto news feed ([ef4bd4b](https://gitlab.com/johninnld/nl-morphe-patches/commit/ef4bd4bb6cfdb924753656d8cc56adea9ba6002d))
+* **Trouw:** add the Android Auto news feed ([ef4bd4b](https://gitlab.com/johninnld/nl-morphe-patches/commit/ef4bd4bb6cfdb924753656d8cc56adea9ba6002d))
 
 <!-- dap-release-branding:v1 -->
-![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8293a67ea45e27051ed35ab3b3caea1c44c6f11f/docs/site/assets/brand/release-banner.png)
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b/docs/site/assets/brand/release-banner.png)
 
-**Release · patch bundle v1.27.0-dev.1.**
+**Release · patch bundle v1.40.2.**
 
-[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
 
-Source: [8293a67ea45e](https://codeberg.org/JohninNL/nl-morphe-patches/commit/8293a67ea45e27051ed35ab3b3caea1c44c6f11f). Check each app's target versions in the user guide before patching.
+Source: [2c1a0460b1f8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b). Check each app's target versions in the user guide before patching.
 
 ---
 
-## [1.27.0-dev.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.26.0...v1.27.0-dev.1) (2026-11-02)
+## [1.40.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.1...v1.40.2) (2026-11-05)
 
 ### 🐛 Bug Fixes
 
-* **Google Maps:** retain the chosen app name with microG support ([8293a67](https://codeberg.org/JohninNL/nl-morphe-patches/commit/8293a67ea45e27051ed35ab3b3caea1c44c6f11f))
+* **ci:** retain bounded workspace cleanup failure reasons ([2c1a046](https://gitlab.com/johninnld/nl-morphe-patches/commit/2c1a0460b1f82161e3bf9b32645d8e905ad5d04b))
+* **SoundCloud:** restore car Home and publish Up next ([5632b32](https://gitlab.com/johninnld/nl-morphe-patches/commit/5632b328122c92e5507fcc9e47d62151f3e5b0c9))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/fa55a77890f9778790d0f6b3ec22e3d62d400331/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.40.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [fa55a77890f9](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/fa55a77890f9778790d0f6b3ec22e3d62d400331). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.40.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.0...v1.40.1) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **Volkskrant:** continue the ordered news feed from each article ([fa55a77](https://gitlab.com/johninnld/nl-morphe-patches/commit/fa55a77890f9778790d0f6b3ec22e3d62d400331))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/95962baaf1cbed4fcb489a0df3c86d3545a17e4f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.40.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [95962baaf1cb](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/95962baaf1cbed4fcb489a0df3c86d3545a17e4f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.40.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.39.0...v1.40.0) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **ci:** avoid blocking macOS mount scans during release cleanup ([957efa1](https://gitlab.com/johninnld/nl-morphe-patches/commit/957efa1d092811a238149aacbf0a85bd63a52be5))
+* **ci:** reuse owned-process proof for Pages cleanup ([95962ba](https://gitlab.com/johninnld/nl-morphe-patches/commit/95962baaf1cbed4fcb489a0df3c86d3545a17e4f))
+
+### ✨ New Features
+
+* **Myspoti:** publish Android Auto Up next queue ([138d983](https://gitlab.com/johninnld/nl-morphe-patches/commit/138d9834f2358af7f0a726d64f93968f6b120a66))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.39.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e4c60ea3fe89](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.39.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.38.0...v1.39.0) (2026-11-05)
+
+### ✨ New Features
+
+* **Volkskrant:** add the complete Android Auto news feed ([e4c60ea](https://gitlab.com/johninnld/nl-morphe-patches/commit/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/17bd68809623f6531c74a530b663535fc37f701d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.38.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [17bd68809623](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/17bd68809623f6531c74a530b663535fc37f701d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.38.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.37.0...v1.38.0) (2026-11-04)
+
+### ✨ New Features
+
+* **Flitsmeister:** relay native Flitsmeister warnings through Maps and Vela ([17bd688](https://gitlab.com/johninnld/nl-morphe-patches/commit/17bd68809623f6531c74a530b663535fc37f701d))
+* **Google Maps:** relay native Flitsmeister warnings through Maps and Vela ([17bd688](https://gitlab.com/johninnld/nl-morphe-patches/commit/17bd68809623f6531c74a530b663535fc37f701d))
+* **Vela Maps:** relay native Flitsmeister warnings through Maps and Vela ([17bd688](https://gitlab.com/johninnld/nl-morphe-patches/commit/17bd68809623f6531c74a530b663535fc37f701d))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9fc16cb9858be417a82d7838db61754883e81b3e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.37.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9fc16cb9858b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9fc16cb9858be417a82d7838db61754883e81b3e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.37.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.36.1...v1.37.0) (2026-11-04)
+
+### ✨ New Features
+
+* **Waze:** change the app name and launcher icon together ([bc4dcf0](https://gitlab.com/johninnld/nl-morphe-patches/commit/bc4dcf024aef06c951cf5c477872054bedd3b343))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/692c93c4cec0556d98c93967ebc23ee9b2480045/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.36.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [692c93c4cec0](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/692c93c4cec0556d98c93967ebc23ee9b2480045). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.36.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.36.0...v1.36.1) (2026-11-04)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** expose movable controls through standard Android Auto actions ([692c93c](https://gitlab.com/johninnld/nl-morphe-patches/commit/692c93c4cec0556d98c93967ebc23ee9b2480045))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/eadbb826d0abc3af8c29f6424b2ebf23dd369b34/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.36.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [eadbb826d0ab](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/eadbb826d0abc3af8c29f6424b2ebf23dd369b34). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.36.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.35.1...v1.36.0) (2026-11-03)
+
+### 🐛 Bug Fixes
+
+* **ci:** add GitGud release mirroring and native build tools ([333872f](https://gitlab.com/johninnld/nl-morphe-patches/commit/333872f62b2dd9abf2de50d2a480bf080995fcd7))
+* **ci:** install supported Android SDK packages on Forgejo ([dc18b9c](https://gitlab.com/johninnld/nl-morphe-patches/commit/dc18b9cb12bd6de892cc891b8114341e4d04b078))
+* **ci:** split Forgejo release gates into bounded jobs ([bade99a](https://gitlab.com/johninnld/nl-morphe-patches/commit/bade99a08588eec05493615b40369b663e5bc381))
+* **ci:** support signed release mirrors on GitLab.com ([14d181b](https://gitlab.com/johninnld/nl-morphe-patches/commit/14d181b5e22fbfba8433bc3f44b091beeef4ff2f))
+* **ci:** use Python-compatible GitLab build image ([59a4c21](https://gitlab.com/johninnld/nl-morphe-patches/commit/59a4c21938f385965b305c5b98b5dfa221493fdf))
+* **release:** move publishing and source discovery to Codeberg ([36b615a](https://gitlab.com/johninnld/nl-morphe-patches/commit/36b615a695d7929275e5afa7b0c5aef4ead669cd))
+* **release:** publish signed Morphe bundles on GitLab ([eadbb82](https://gitlab.com/johninnld/nl-morphe-patches/commit/eadbb826d0abc3af8c29f6424b2ebf23dd369b34))
+
+### ✨ New Features
+
+* **Flitsmeister:** support version 15.0 with restored runtime callbacks ([0acd087](https://gitlab.com/johninnld/nl-morphe-patches/commit/0acd087c13a49de1e12f9f2ec7d92bdca12354f6))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/4c9028dc425ffe7cc9c141a5d263ef6996cdae13/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.35.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [4c9028dc425f](https://codeberg.org/JohninNL/nl-morphe-patches/commit/4c9028dc425ffe7cc9c141a5d263ef6996cdae13). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.35.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.35.0...v1.35.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** keep custom icons visible at small sizes ([4c9028d](https://codeberg.org/JohninNL/nl-morphe-patches/commit/4c9028dc425ffe7cc9c141a5d263ef6996cdae13))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ea77d2ac29498a959da2168f85527f5367ff9205/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.35.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [ea77d2ac2949](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ea77d2ac29498a959da2168f85527f5367ff9205). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.35.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.34.0...v1.35.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Google Maps:** add light and dark launcher branding ([ea77d2a](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ea77d2ac29498a959da2168f85527f5367ff9205))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.34.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [a4d6f09ee9af](https://codeberg.org/JohninNL/nl-morphe-patches/commit/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.34.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.33.3...v1.34.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** add custom app name and six launcher icons ([a4d6f09](https://codeberg.org/JohninNL/nl-morphe-patches/commit/a4d6f09ee9af37f0a57efeddd87ddd7da3670c9d))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/07967a2b26f03d82afe3fcf6c6ca7fbf7336749f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [07967a2b26f0](https://codeberg.org/JohninNL/nl-morphe-patches/commit/07967a2b26f03d82afe3fcf6c6ca7fbf7336749f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.3](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.33.2...v1.33.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** keep video full width beneath floating audio panels ([508eaad](https://codeberg.org/JohninNL/nl-morphe-patches/commit/508eaad873dc172e4c334fc4dde6c0e01ecd7ef9))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/63d986f85170e51d511e3cc296880c4b46bcdf69/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [63d986f85170](https://codeberg.org/JohninNL/nl-morphe-patches/commit/63d986f85170e51d511e3cc296880c4b46bcdf69). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.2](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.33.1...v1.33.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **2dehands:** accept Manager resource API qualifiers ([63d986f](https://codeberg.org/JohninNL/nl-morphe-patches/commit/63d986f85170e51d511e3cc296880c4b46bcdf69))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/efbe2d6c3d64d63a7424753c46233a5ad99ca44d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [efbe2d6c3d64](https://codeberg.org/JohninNL/nl-morphe-patches/commit/efbe2d6c3d64d63a7424753c46233a5ad99ca44d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.33.0...v1.33.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **2dehands:** accept device-specific native and density splits ([efbe2d6](https://codeberg.org/JohninNL/nl-morphe-patches/commit/efbe2d6c3d64d63a7424753c46233a5ad99ca44d))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/002a241d5542c69196cab4173beec64ce80ab048/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.33.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [002a241d5542](https://codeberg.org/JohninNL/nl-morphe-patches/commit/002a241d5542c69196cab4173beec64ce80ab048). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.33.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.32.0...v1.33.0) (2026-11-02)
+
+### ✨ New Features
+
+* **SoundCloud:** port analytics, consent and local Go controls ([002a241](https://codeberg.org/JohninNL/nl-morphe-patches/commit/002a241d5542c69196cab4173beec64ce80ab048))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.32.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [ec8f3f6e43f2](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.32.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.31.1...v1.32.0) (2026-11-02)
+
+### ✨ New Features
+
+* **SoundCloud:** show the phone Home in Android Auto ([ec8f3f6](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ec8f3f6e43f21d49fa01cfdc95907d8edbcb82dd))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/46992eee656ccf621bdb1a9685520297738f6dda/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.31.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [46992eee656c](https://codeberg.org/JohninNL/nl-morphe-patches/commit/46992eee656ccf621bdb1a9685520297738f6dda). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.31.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.31.0...v1.31.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **General:** name DriveDeck in the trusted music host option ([46992ee](https://codeberg.org/JohninNL/nl-morphe-patches/commit/46992eee656ccf621bdb1a9685520297738f6dda))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c49d2b4569742d7048b16b014b4309c5f98a7e6a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.31.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [c49d2b456974](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.31.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.30.1...v1.31.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Flitsmeister:** accept DriveDeck as a car and music host ([c49d2b4](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Google Maps:** accept DriveDeck as a car and music host ([c49d2b4](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Myspoti:** accept DriveDeck as a car and music host ([c49d2b4](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **Waze:** accept DriveDeck as a car and music host ([c49d2b4](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+* **YouTube Music:** accept DriveDeck as a car and music host ([c49d2b4](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c49d2b4569742d7048b16b014b4309c5f98a7e6a))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/57bc14881b26f8c9b21928b47a186eac931eb6d2/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.30.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [57bc14881b26](https://codeberg.org/JohninNL/nl-morphe-patches/commit/57bc14881b26f8c9b21928b47a186eac931eb6d2). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.30.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.30.0...v1.30.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** match configured Home and simplify DriveDeck browsing ([f56a768](https://codeberg.org/JohninNL/nl-morphe-patches/commit/f56a76876e889849de4539eeb4f654ebb4775b1b))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/03fed3676fb2991d648d992d95d59e40bc4e819e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.30.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [03fed3676fb2](https://codeberg.org/JohninNL/nl-morphe-patches/commit/03fed3676fb2991d648d992d95d59e40bc4e819e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.30.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.29.0...v1.30.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Flitsmeister:** start navigation providers silently with managed audio ([0df2912](https://codeberg.org/JohninNL/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Google Maps:** start navigation providers silently with managed audio ([0df2912](https://codeberg.org/JohninNL/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Vela Maps:** start navigation providers silently with managed audio ([0df2912](https://codeberg.org/JohninNL/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+* **Waze:** start navigation providers silently with managed audio ([0df2912](https://codeberg.org/JohninNL/nl-morphe-patches/commit/0df2912abb50d80062182cd28a94ae4a48c708fd))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/8d0ff1bb142b4bed09396ddb3f0fa140cbc38dfa/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.29.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [8d0ff1bb142b](https://codeberg.org/JohninNL/nl-morphe-patches/commit/8d0ff1bb142b4bed09396ddb3f0fa140cbc38dfa). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.29.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.28.4...v1.29.0) (2026-11-02)
+
+### ✨ New Features
+
+* **WuPlay Mobile:** add Home shelves and capped autoplay ([009a765](https://codeberg.org/JohninNL/nl-morphe-patches/commit/009a765aaff2bb7f5c787ab359c30c51f0018617))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/354a820551073f959a36b367a9da1cff5f9a51dc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.4.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [354a82055107](https://codeberg.org/JohninNL/nl-morphe-patches/commit/354a820551073f959a36b367a9da1cff5f9a51dc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.4](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.28.3...v1.28.4) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Wuplay Android TV:** map configured Home rows and simplify channel setup ([aaecd95](https://codeberg.org/JohninNL/nl-morphe-patches/commit/aaecd95c5a00d008a61d9e29b564c78943c13755))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/3cb2a2d1fa27a92ed25da59567731fb87b59ce00/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.3.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [3cb2a2d1fa27](https://codeberg.org/JohninNL/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.3](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.28.2...v1.28.3) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **WuPlay Mobile:** accept re-signed Gearslip hosts ([3cb2a2d](https://codeberg.org/JohninNL/nl-morphe-patches/commit/3cb2a2d1fa27a92ed25da59567731fb87b59ce00))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.2.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [ac5a2f89a2f9](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.2](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.28.1...v1.28.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Gearslip:** enable native navigation in Gearslip and Android Auto ([ac5a2f8](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5))
+* **Google Maps:** enable native navigation in Gearslip and Android Auto ([ac5a2f8](https://codeberg.org/JohninNL/nl-morphe-patches/commit/ac5a2f89a2f9d1d7ef85811fe17d485cd8fca2e5))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/2869b936cd8c0dad3645df3a21485c8f246b855b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [2869b936cd8c](https://codeberg.org/JohninNL/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.28.0...v1.28.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **YouTube Music:** include personal Home and Library in the Any-version browser patch ([2869b93](https://codeberg.org/JohninNL/nl-morphe-patches/commit/2869b936cd8c0dad3645df3a21485c8f246b855b))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.28.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [b0d9dd619b90](https://codeberg.org/JohninNL/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.28.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.27.1...v1.28.0) (2026-11-02)
+
+### ✨ New Features
+
+* **WuPlay Mobile:** add native Gearslip video interface ([b0d9dd6](https://codeberg.org/JohninNL/nl-morphe-patches/commit/b0d9dd619b90c3fef55f23d04a9bf724f2ab1b48))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [6705d1e9f2a3](https://codeberg.org/JohninNL/nl-morphe-patches/commit/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.27.0...v1.27.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Myspoti:** allow any structurally compatible app version ([6705d1e](https://codeberg.org/JohninNL/nl-morphe-patches/commit/6705d1e9f2a36a80ee3bf77383b1daa5cd5a99be))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/bfdc032e1ee71fc160fc208d48f6aa96f4568e02/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.27.0.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [bfdc032e1ee7](https://codeberg.org/JohninNL/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.27.0](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.26.1...v1.27.0) (2026-11-02)
+
+### ✨ New Features
+
+* **Myspoti:** enable personal libraries in Gearslip ([bfdc032](https://codeberg.org/JohninNL/nl-morphe-patches/commit/bfdc032e1ee71fc160fc208d48f6aa96f4568e02))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/c50dcd8cdd23df060acba8e214d505b65d452eb6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.26.1.**
+
+[Add to Morphe](https://morphe.software/add-source?github=johninnl/nl-morphe-patches) · [User guide](https://johninnl.codeberg.page/nl-morphe-patches/en/)
+
+Source: [c50dcd8cdd23](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.26.1](https://codeberg.org/JohninNL/nl-morphe-patches/compare/v1.26.0...v1.26.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** retain the chosen app name with microG support ([c50dcd8](https://codeberg.org/JohninNL/nl-morphe-patches/commit/c50dcd8cdd23df060acba8e214d505b65d452eb6))
 
 <!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://raw.githubusercontent.com/johninnl/nl-morphe-patches/df28ed2c3b64f0bc68edfa57869b63c18bc3d32f/docs/site/assets/brand/release-banner.png)

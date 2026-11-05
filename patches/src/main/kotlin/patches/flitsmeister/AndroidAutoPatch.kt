@@ -6,7 +6,7 @@ import com.android.tools.smali.dexlib2.Opcode
 /** Exact 14.17 local eligibility operations; genuine providers remain called. */
 internal val androidAutoFeatures = bytecodePatch {
     dependsOn(originalInput)
-    execute { applyPlans(listOf(
+    execute { if (isFlitsmeister15()) applyPlans(androidAutoFeatures15Plans()) else applyPlans(listOf(
     MethodPlan("Lyb2;->onClick()V", 5, 72, listOf(
             Guard(5, Opcode.INVOKE_INTERFACE, listOf(0, 1), "Lsle;->b(Landroid/content/Context;)Z"),
             Guard(6, Opcode.MOVE_RESULT, listOf(0)),
@@ -41,7 +41,7 @@ internal val androidAutoFeatures = bytecodePatch {
 /** Both named controls reference the same dependency object, so overlap applies once. */
 internal val androidAutoNotices = bytecodePatch {
     dependsOn(originalInput)
-    execute { applyPlans(listOf(
+    execute { if (isFlitsmeister15()) applyPlans(androidAutoNotices15Plans()) else applyPlans(listOf(
     MethodPlan("Lfb2;->onCreate(Landroidx/lifecycle/LifecycleOwner;)V", 20, 206, listOf(
             Guard(8, Opcode.IGET_OBJECT, listOf(3, 0), "Lfb2;->q:Lsle;"),
             Guard(9, Opcode.INVOKE_INTERFACE, listOf(3, 2), "Lsle;->b(Landroid/content/Context;)Z"),

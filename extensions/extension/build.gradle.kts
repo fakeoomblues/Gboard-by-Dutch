@@ -4,6 +4,8 @@ extension {
 
 android {
     namespace = "org.ungoogled.extension"
+    sourceSets.getByName("main").java.srcDir(rootProject.file("support/navigation-startup/src/main/java"))
+    sourceSets.getByName("main").java.srcDir(rootProject.file("support/navigation-alerts/src/main/java"))
     testOptions { unitTests.isIncludeAndroidResources = true }
 
     defaultConfig {

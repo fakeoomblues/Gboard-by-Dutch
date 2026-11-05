@@ -8,7 +8,7 @@ public final class GearslipSupport {
 
     /** Replaced by the patch option; no validation-only package is trusted by default. */
     public static String getConfiguredPackageNames() {
-        return "app.seb3thehacker.gearslip";
+        return "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev";
     }
 
     /** Capability lookup only. Authentication always happens in decision(), using callback UID. */

@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -52,13 +53,14 @@ public final class ProjectionRenderer {
     private Configuration configuration;
     private Surface surface;
     private int width, height, dpi;
+    private final Rect visibleBounds=new Rect(), stableBounds=new Rect();
     private int nativeWidth, nativeHeight, nativeDpi;
-    private long surfaceGeneration;
-    private NativeControlLayout controlLayout;
-    private Rect visibleArea, stableArea, appliedInsets;
     private boolean bound, created, resumed, closed, failed;
     private volatile boolean keyboardRequested;
     private KeyboardListener keyboardListener;
+    private NativeControls controls;
+    private Runnable controlsChanged = () -> {};
+    private Rect visibleArea, stableArea, appliedInsets;
     private long downTime;
     private float touchX, touchY;
     private final Runnable endScroll = () -> guard(this::finishTouch);
@@ -104,6 +106,22 @@ public final class ProjectionRenderer {
     }
 
     public void setKeyboardListener(KeyboardListener listener) { keyboardListener = listener; }
+    void setControlsChangedListener(Runnable listener) { controlsChanged = listener; }
+    List<NativeControls.Control> controls() throws Exception {
+        attachControls();
+        return controls == null ? Collections.emptyList() : controls.snapshot();
+    }
+    String controlsTitle() { return controls == null ? "More controls" : controls.moreTitle(); }
+    void performControl(NativeControls.Control control) throws Exception {
+        attachControls();
+        if (controls == null) throw new SecurityException("Maps controls are unavailable");
+        controls.invoke(control);
+    }
+    private void attachControls() throws Exception {
+        View view = decor();
+        if (controls != null && !controls.owns(view)) { controls.close(); controls = null; }
+        if (controls == null && view instanceof ViewGroup) controls = new NativeControls((ViewGroup) view, () -> controlsChanged.run());
+    }
 
     public void create(Intent value, Configuration config) {
         guard(() -> {
@@ -117,14 +135,16 @@ public final class ProjectionRenderer {
         });
     }
     public void start() {}
-    public void resume() { resumed = true; guard(() -> { if (created) lifecycle(5); }); }
-    public void pause() { resumed = false; guard(() -> { finishTouch(); if (created) lifecycle(3); }); }
-    public void stop() { resumed = false; guard(() -> { finishTouch(); if (created) lifecycle(2); }); }
+    public void resume() { resumed = true; guard(() -> { if (created) lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }); }
+    public void pause() { resumed = false; guard(() -> { telemetrySession(false); finishTouch(); if (created) lifecycle(3); }); }
+    public void stop() { resumed = false; guard(() -> { telemetrySession(false); finishTouch(); if (created) lifecycle(2); }); }
     public void close() {
         if (closed) return;
         closed = true;
+        telemetrySession(false);
         main.removeCallbacks(bindTimeout);
         main.removeCallbacks(endScroll);
+        if (controls != null) { controls.close(); controls = null; }
         try { destroySurface(); } catch (Exception error) { Log.w("MapsNativeCar", "Native car cleanup failed", error); }
         if (bound) {
             try { service.unbindService(connection); } catch (IllegalArgumentException ignored) {}
@@ -132,6 +152,7 @@ public final class ProjectionRenderer {
         bound = false;
         controller = null;
         keyboardListener = null;
+        controlsChanged = () -> {};
         visibleArea = stableArea = appliedInsets = null;
     }
     public void newIntent(Intent value) {
@@ -150,19 +171,13 @@ public final class ProjectionRenderer {
                 call(controller, "t", new Class<?>[]{android.content.res.Resources.class}, service.getResources());
                 Object activity = field(controller, "J");
                 if (activity != null) call(activity, "b", new Class<?>[]{Configuration.class}, configuration);
+                attachControls();
             }
         });
     }
     public void surfaceAvailable(Surface value, int w, int h, int density) {
         guard(() -> {
             if (value == null || !value.isValid() || w <= 0 || h <= 0 || density <= 0) throw new IllegalArgumentException("Invalid car surface");
-            clearControls();
-            surfaceGeneration++;
-            // CAL areas belong to the supplied canvas. A resize must wait for fresh areas;
-            // a same-size target replacement (for example the keyboard) retains them.
-            if (width != 0 && (width != w || height != h || dpi != density)) {
-                visibleArea = stableArea = appliedInsets = null;
-            }
             // A host can replace/hide its surface just to display its keyboard. The Maps
             // activity and native editor must survive that target change.
             boolean sameCanvas = nativeWidth == w && nativeHeight == h && nativeDpi == density;
@@ -172,61 +187,35 @@ public final class ProjectionRenderer {
             showSurface();
         });
     }
-    public void surfaceDestroyed() { guard(() -> { surfaceGeneration++; clearControls(); detachSurface(); }); }
-    SurfaceOcclusionChannel.Info surfaceInfo() {
-        boolean available = !closed && !failed && surface != null && surface.isValid();
-        return new SurfaceOcclusionChannel.Info(surfaceGeneration, available ? width : 0,
-                available ? height : 0, available ? dpi : 0);
+    public void surfaceDestroyed() { guard(this::detachSurface); }
+    public void visibleArea(Rect area) { guard(() -> { visibleArea = area == null ? null : new Rect(area); visibleBounds.set(area == null ? new Rect() : area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
+    public void stableArea(Rect area) { guard(() -> { stableArea = area == null ? null : new Rect(area); stableBounds.set(area == null ? new Rect() : area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
+    private Rect insets(int w, int h) {
+        Rect canvas = new Rect(0, 0, w, h), safe = visibleArea == null ? null : new Rect(visibleArea);
+        if (safe == null || safe.isEmpty() || !safe.intersect(canvas)) safe = stableArea == null ? null : new Rect(stableArea);
+        if (safe == null || safe.isEmpty() || !safe.intersect(canvas)) return new Rect();
+        return new Rect(safe.left, safe.top, w - safe.right, h - safe.bottom);
     }
-    /** Applies measured cover geometry without replacing the map canvas or native activity. */
-    public boolean applyOcclusions(Rect player, List<Rect> covers) {
-        if (closed || failed || !created || surface == null || width != nativeWidth || height != nativeHeight || dpi != nativeDpi) return false;
-        if (player == null || player.isEmpty()) { clearControls(); return true; }
-        try {
-            View root = decor();
-            if (!(root instanceof ViewGroup)) return false;
-            if (controlLayout != null && !controlLayout.owns(root)) clearControls();
-            if (controlLayout == null) {
-                int id = controlsId(root);
-                if (id == 0) return false;
-                controlLayout = new NativeControlLayout((ViewGroup) root, id, service);
-            }
-            return controlLayout.apply(nativeWidth, nativeHeight, player, covers);
-        } catch (RuntimeException error) {
-            Log.w("MapsNativeCar", "Native control reflow is unavailable", error); clearControls(); return false;
-        } catch (Exception error) {
-            Log.w("MapsNativeCar", "Native control hierarchy is unavailable", error); clearControls(); return false;
-        }
+    private void applyAreas() throws Exception {
+        if (!created || controller == null) return;
+        Rect insets = insets(nativeWidth, nativeHeight);
+        if (insets.equals(appliedInsets)) return;
+        Object presentation = field(controller, "k");
+        if (presentation == null) return;
+        ((Rect) controller.getClass().getField("v").get(controller)).set(insets);
+        call(presentation, "A", new Class<?>[]{Rect.class}, insets);
+        if (surface != null && surface.isValid()) controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+        appliedInsets = new Rect(insets);
     }
-    boolean occlusionReady() {
-        if (closed || failed || !created) return false;
-        try {
-            View root = decor();
-            View controls = root == null ? null : root.findViewById(controlsId(root));
-            return controls != null && (controls.isShown() ? controls.getWidth() > 0 :
-                    controls.getLayoutParams() != null && controls.getLayoutParams().width > 0);
-        } catch (Exception pending) { return false; }
-    }
-    private int controlsId(View root) {
-        View named = NativeViews.find(root, "map_buttons_view_container");
-        if (named != null) return named.getId();
-        int id = root.getResources().getIdentifier("map_buttons_view_container", "id", service.getPackageName());
-        return id != 0 ? id : root.getResources().getIdentifier("map_buttons_view_container", "id", "com.google.android.apps.maps");
-    }
-    void clearControls() {
-        if (controlLayout != null) controlLayout.close();
-        controlLayout = null;
-    }
-    public void visibleArea(Rect area) {
-        guard(() -> { visibleArea = area == null ? null : new Rect(area); applyAreas(); });
-    }
-    public void stableArea(Rect area) {
-        guard(() -> { stableArea = area == null ? null : new Rect(area); applyAreas(); });
+    static Rect warningViewport(int width,int height,Rect visible,Rect stable){
+        Rect result=new Rect(0,0,Math.max(0,width),Math.max(0,height));
+        if(visible!=null&&!visible.isEmpty())result.intersect(visible);
+        if(stable!=null&&!stable.isEmpty())result.intersect(stable);
+        return result;
     }
     public void back() {
         guard(() -> {
             finishTouch();
-            if (controlLayout != null && controlLayout.back()) return;
             View view = decor();
             if (view != null) {
                 view.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
@@ -238,7 +227,6 @@ public final class ProjectionRenderer {
         guard(() -> {
             finishTouch();
             downTime = SystemClock.uptimeMillis();
-            if (controlLayout != null && controlLayout.click(x, y, downTime)) { downTime = 0; return; }
             touchX = x; touchY = y;
             touch(MotionEvent.ACTION_DOWN, x, y);
             touch(MotionEvent.ACTION_UP, x, y);
@@ -247,7 +235,6 @@ public final class ProjectionRenderer {
     }
     public void scroll(float distanceX, float distanceY) {
         guard(() -> {
-            if (controlLayout != null && controlLayout.scroll(distanceY)) { finishTouch(); return; }
             if (downTime == 0) {
                 downTime = SystemClock.uptimeMillis();
                 touchX = width / 2f; touchY = height / 2f;
@@ -261,17 +248,13 @@ public final class ProjectionRenderer {
         });
     }
     public void fling(float velocityX, float velocityY) {
-        guard(() -> {
-            if (controlLayout != null && controlLayout.fling(velocityY)) { finishTouch(); return; }
-            scroll(-velocityX / 15f, -velocityY / 15f);
-            finishTouch();
-        });
+        scroll(-velocityX / 15f, -velocityY / 15f);
+        guard(this::finishTouch);
     }
     public void scale(float focusX, float focusY, float factor) {
         guard(() -> {
             if (!Float.isFinite(factor) || factor <= 0) return;
             finishTouch();
-            if (controlLayout != null && controlLayout.back()) return;
             downTime = SystemClock.uptimeMillis();
             float radius = Math.min(width, height) / 8f;
             twoPointers(MotionEvent.ACTION_DOWN, focusX, focusY, radius, 1);
@@ -296,6 +279,8 @@ public final class ProjectionRenderer {
             call(holder, "f", new Class<?>[]{Surface.class}, surface);
             controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
             applyAreas();
+            attachControls();
+            if(resumed)telemetrySurface(decor());
             return;
         }
         Object drawing = drawing(width, height, dpi);
@@ -304,38 +289,17 @@ public final class ProjectionRenderer {
         call(controller, "o", new Class<?>[]{region.getClass(), drawing.getClass(), Intent.class, Configuration.class, Bundle.class}, region, drawing, intent, configuration, new Bundle());
         nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
         created = true;
-        applyAreas();
-        if (resumed) lifecycle(5);
+        appliedInsets = null; applyAreas();
+        attachControls();
+        if (resumed) { lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }
     }
     private Object drawing(int w, int h, int density) throws Exception {
         return type("com.google.android.gms.car.DrawingSpec").getConstructor(int.class, int.class, int.class, Surface.class, Rect.class, int.class, int.class, Bundle.class)
-                .newInstance(w, h, density, surface, areaInsets(w, h), 0, 0, new Bundle());
-    }
-    private Rect areaInsets(int w, int h) {
-        Rect safe = clippedArea(visibleArea, w, h);
-        if (safe == null) safe = clippedArea(stableArea, w, h);
-        return safe == null ? new Rect() : new Rect(safe.left, safe.top, w - safe.right, h - safe.bottom);
-    }
-    private static Rect clippedArea(Rect area, int w, int h) {
-        if (area == null || area.isEmpty() || w <= 0 || h <= 0) return null;
-        Rect result = new Rect(area);
-        return result.intersect(0, 0, w, h) ? result : null;
-    }
-    private void applyAreas() throws Exception {
-        if (!created || controller == null) return;
-        Rect insets = areaInsets(nativeWidth, nativeHeight);
-        if (insets.equals(appliedInsets)) return;
-        // Keep the native controller's drawing snapshot consistent if it recreates its decor.
-        if (surface != null && surface.isValid())
-            controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
-        // This version's presentation dispatches these as WindowInsets. Keep the original
-        // full-size VirtualDisplay, activity, editor and Surface; only request inset layout.
-        ((Rect) field(controller, "v")).set(insets);
-        call(field(controller, "k"), "A", new Class<?>[]{Rect.class}, new Rect(insets));
-        appliedInsets = new Rect(insets);
+                .newInstance(w, h, density, surface, insets(w, h), 0, 0, new Bundle());
     }
     private void lifecycle(int state) throws Exception { call(controller, "m", new Class<?>[]{int.class, boolean.class}, state, false); }
     private void detachSurface() throws Exception {
+        telemetrySurface(null);
         finishTouch();
         if (controller != null && created) {
             // Maps' original VirtualDisplay holder can change its output without destroying
@@ -347,18 +311,30 @@ public final class ProjectionRenderer {
         surface = null;
     }
     private void destroySurface() throws Exception {
-        clearControls();
+        telemetrySurface(null);
         finishTouch();
+        if (controls != null) { controls.close(); controls = null; }
         if (controller != null && created) {
             lifecycle(0);
             call(controller, "k", new Class<?>[0]);
         }
         created = false;
-        appliedInsets = null;
         nativeWidth = nativeHeight = nativeDpi = 0;
         keyboardRequested = false;
+        appliedInsets = null;
         if (surface != null) surface.release();
         surface = null;
+    }
+    private Class<?> telemetryType() throws ClassNotFoundException {return Class.forName("org.ungoogled.ui.ExternalTelemetry",true,service.getClassLoader());}
+    private void telemetrySession(boolean active) {
+        try {telemetryType().getMethod("carSession",Context.class,Object.class,boolean.class).invoke(null,service,this,active);}
+        catch(ClassNotFoundException absent) { /* The warning patch is optional. */ }
+        catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car lifecycle unavailable",error);}
+    }
+    private void telemetrySurface(View root) {
+        try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleBounds,stableBounds));}
+        catch(ClassNotFoundException absent) { /* The warning patch is optional. */ }
+        catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car surface unavailable",error);}
     }
     private View decor() throws Exception {
         if (!created || controller == null) return null;

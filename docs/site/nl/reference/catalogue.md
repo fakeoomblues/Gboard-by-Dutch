@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Ontwikkelbundel: 1.28.0-dev.3**
+**Patchbundel: 1.41.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -38,6 +38,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 9.22.0 |
 | Disable tracking | Aan | 9.22.0 |
 | Hide Premium banner | Aan | 9.22.0 |
 | Hide ads | Aan | 9.22.0 |
@@ -174,14 +175,15 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Broadcast navigation data | Aan | 14.17 |
-| Disable partner services | Aan | 14.17 |
-| Disable tracking | Aan | 14.17 |
-| Fix PairIP startup | Aan | 14.17 |
-| Guest mode | Aan | 14.17 |
-| Hide Pro notices | Aan | 14.17 |
-| Hide ads | Aan | 14.17 |
-| Unlock Pro | Aan | 14.17 |
+| Broadcast navigation data | Aan | 14.17, 15.0 |
+| Disable partner services | Aan | 14.17, 15.0 |
+| Disable tracking | Aan | 14.17, 15.0 |
+| Fix PairIP startup | Aan | 14.17, 15.0 |
+| Guest mode | Aan | 14.17, 15.0 |
+| Hide Pro notices | Aan | 14.17, 15.0 |
+| Hide ads | Aan | 14.17, 15.0 |
+| Support Gearslip and DriveDeck | Aan | 14.17, 15.0 |
+| Unlock Pro | Aan | 14.17, 15.0 |
 
 ## FTM
 
@@ -196,6 +198,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 2.6.8 |
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
+
+## Gboard
+
+[Wat veranderen de patches?](../apps/gboard.md)
+
+`com.google.android.inputmethod.latin`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Change package name | Aan | 18.5.11.993608717-release-arm64-v8a |
+| Custom branding | Uit | 18.5.11.993608717-release-arm64-v8a |
+| Parakeet voice typing | Aan | 18.5.11.993608717-release-arm64-v8a |
 
 ## Gearslip
 
@@ -374,6 +388,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto Up next | Uit | 2.3.0 |
+| Custom branding | Uit | Alle versies |
 | Gearslip personal library | Aan | Alle versies |
 
 ## Nieuwsblad
@@ -484,6 +500,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1 |
 | Disable tracking | Aan | 7.53.1 |
 | Hide Premium banner | Aan | 7.53.1 |
 | Hide ads | Aan | 7.53.1 |
@@ -558,6 +575,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 12.7.1 |
 | Skip consent screens | Aan | 12.7.1 |
 
+## SoundCloud
+
+[Wat veranderen de patches?](../apps/soundcloud.md)
+
+`com.soundcloud.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable analytics | Aan | 2026.10.28-release |
+| Disable consent popup | Aan | 2026.10.28-release |
+| Enable SoundCloud Go | Aan | 2026.10.28-release |
+| Home in Android Auto | Aan | 2026.10.28-release |
+
 ## Trouw
 
 [Wat veranderen de patches?](../apps/trouw.md)
@@ -566,6 +596,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1 |
 | Disable tracking | Aan | 7.53.1 |
 | Hide Premium banner | Aan | 7.53.1 |
 | Hide ads | Aan | 7.53.1 |
@@ -653,6 +684,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1 |
 | Disable tracking | Aan | 7.53.1 |
 | Hide Premium banner | Aan | 7.53.1 |
 | Hide ads | Aan | 7.53.1 |
@@ -678,7 +710,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Car alerts as notifications | Uit | 5.26.90.901 |
 | Car reconnect grace period | Uit | 5.26.90.901 |
 | Car traffic meter | Uit | 5.26.90.901 |
-| Change app name | Aan | 5.26.90.901 |
+| Change app name and icon | Aan | 5.26.90.901 |
 | Extra map info | Uit | 5.26.90.901 |
 | Flock cameras | Aan | 5.26.90.901 |
 | Full black | Aan | 5.26.90.901 |
@@ -695,7 +727,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Remove sign-in prompts | Aan | 5.26.90.901 |
 | Remove telemetry | Aan | 5.26.90.901 |
 | Report speed limit | Uit | 5.26.90.901 |
-| Share alerts with Maps | Aan | 5.26.90.901 |
+| Share Waze Alerts with external applications | Aan | 5.26.90.901 |
 | Skip consent screens | Aan | 5.26.90.901 |
 | SoundCloud in Waze | Aan | Alle versies |
 | Speed bump controls | Uit | 5.26.90.901 |
@@ -746,6 +778,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Publish selected catalog channels | Uit | 0.9.4-beta |
 
+## WuPlay Mobile
+
+[Wat veranderen de patches?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Add Gearslip car interface | Uit | 0.1.9-alpha |
+
 ## YouTube Music
 
 [Wat veranderen de patches?](../apps/youtube-music.md)
@@ -756,4 +798,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

@@ -12,7 +12,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Bigger alert pins | Off | 5.26.90.901 | [WazeMapSkinPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeMapSkinPatch.kt) |
 | Bigger speedometer | On | 5.26.90.901 | [WazeSpeedometerPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeSpeedometerPatch.kt) |
 | Broadcast navigation data | On | 5.26.90.901 | [WazeNavigationBroadcastPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeNavigationBroadcastPatch.kt) |
-| Change app name | On | 5.26.90.901 | [WazeAppNamePatch.kt](../../patches/src/main/kotlin/patches/waze/WazeAppNamePatch.kt) |
+| Change app name and icon | On | 5.26.90.901 | [WazeAppNameAndIconPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeAppNameAndIconPatch.kt) |
 | Flock cameras | On | 5.26.90.901 | [WazeFlockCamerasPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeFlockCamerasPatch.kt) |
 | Full black | On | 5.26.90.901 | [WazeBlackPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeBlackPatch.kt) |
 | Hide ads | On | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
@@ -25,7 +25,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 | Remove sign-in prompts | On | 5.26.90.901 | [WazeRemoveSignInPromptsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeRemoveSignInPromptsPatch.kt) |
 | Remove telemetry | On | 5.26.90.901 | [WazeRemoveTelemetryPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeRemoveTelemetryPatch.kt) |
 | Report speed limit | Off | 5.26.90.901 | [WazeExtrasPatches.kt](../../patches/src/main/kotlin/patches/waze/WazeExtrasPatches.kt) |
-| Share alerts with Maps | On | 5.26.90.901 | [WazeShareAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeShareAlertsPatch.kt) |
+| Share Waze Alerts with external applications | On | 5.26.90.901 | [WazeShareAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeShareAlertsPatch.kt) |
 | Skip consent screens | On | 5.26.90.901 | [WazeConsentScreensPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeConsentScreensPatch.kt) |
 | SoundCloud in Waze | On | Any | [SoundCloudSupportPatch.kt](../../patches/src/main/kotlin/patches/waze/SoundCloudSupportPatch.kt) |
 | Speed camera alerts | On | 5.26.90.901 | [WazeSpeedCameraAlertsPatch.kt](../../patches/src/main/kotlin/patches/waze/WazeSpeedCameraAlertsPatch.kt) |
@@ -49,7 +49,7 @@ The audio patches remain **Any**: their source was unchanged and both applied wi
 
 ## Configuration
 
-Imported patch options and defaults are preserved. The Customization row below Shut off opens switches for applied features and editable sizes, colors and distances. Speed camera alerts, Flock cameras and the average speed zone bar start off inside Waze even when their patches are selected. Change app name defaults to De-Waze. Share alerts with Maps retains the Ungoogled Maps broadcast protocol; a compatible receiver must be installed for Maps to display alerts.
+Imported patch options and defaults are preserved. The Customization row below Shut off opens switches for applied features and editable sizes, colors and distances. Speed camera alerts, Flock cameras and the average speed zone bar start off inside Waze even when their patches are selected. Change app name and icon defaults to De-Waze and Waze's own icon; its launcher-icon option offers five mascot styles on light or dark backgrounds. Share Waze Alerts with external applications retains the Ungoogled Maps broadcast protocol; a compatible receiver such as Ungoogled Maps or Vela Maps must be installed to display alerts.
 
 The eleven optional controls are off by default in Manager. When selected, their switches start on in Customization. Auto zoom offers Off, On and By speed; limit-drop warning distance is editable from 0 to 20,000 m (patch default 1,000 m). Compass/toll prices and limit display/drop warnings have independent switches. The compass-only visibility hook also handles Waze's on-tap controls preference without changing other map buttons. Lane guidance retains Waze's user preference and needs road lane data. Toll prices require route price data. Car notification and traffic-meter presentation depends on the host. These controls add no car settings screen.
 

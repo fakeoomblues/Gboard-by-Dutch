@@ -31,18 +31,29 @@ public final class NavigationBroadcasts {
     private static final String SESSION = UUID.randomUUID().toString();
     private static Context app;
     private static boolean active, dirty;
+    private static volatile boolean drivingEngine;
+    public static boolean engineRunning() { return drivingEngine; }
     private static volatile long generation;
     private static long sequence, lastSent = -5000, lastRequest = -1000;
     private static String lastStatus = "";
     private static BroadcastReceiver requests;
     private static Candidate candidate;
     private static long candidateAt=-1;
+    // The patch selects this profile from its verified publisher version before
+    // the service starts. Old obfuscated names also exist as unrelated15 types.
+    private static volatile boolean version15;
 
     public static String receiverPackage() { return ""; }
+    public static void init15(Context context) {
+        version15 = true;
+        init(context);
+    }
     private static void main(Runnable action) {
         if (Looper.myLooper() == Looper.getMainLooper()) action.run(); else MAIN.post(action);
     }
     public static void init(Context context) {
+        nl.johninnl.navigation.startup.ProviderAudio.init(context);
+        if(NativeWarnings.supportsEventProtocol(context))NativeWarnings.init(context);
         Context application = context.getApplicationContext();
         main(() -> {
             if (app != null) return;
@@ -61,6 +72,8 @@ public final class NavigationBroadcasts {
         });
     }
     public static void started() {
+        if(NativeWarnings.endpoint()!=null)NativeWarnings.started();
+        drivingEngine = true;
         main(() -> { if (app == null || active) return; active = true; STATE.reset(true); ALERTS.reset(true); dirty = true;
             publish(true); MAIN.removeCallbacks(TICK); MAIN.postDelayed(TICK,1000); });
     }
@@ -69,6 +82,8 @@ public final class NavigationBroadcasts {
         main(() -> { if (at<candidateAt) return; candidateAt=at; candidate=null; ALERTS.approach("",-1,false,at); STATE.clear("flitsmeister",at); dirty=true; publish(true); });
     }
     public static void stopped() {
+        NativeWarnings.stopped();
+        drivingEngine = false;
         generation++;
         main(() -> { active = false; candidate = null; candidateAt=SystemClock.elapsedRealtime(); STATE.reset(true); ALERTS.reset(true); STATE.clear("flitsmeister",SystemClock.elapsedRealtime());
             dirty = true; MAIN.removeCallbacks(TICK); publish(true); });
@@ -96,28 +111,41 @@ public final class NavigationBroadcasts {
     /** Called after native RoadInfoService has selected the final road/vehicle/VMS limit. */
     public static void road() {
         try {
-            Class<?> info=Class.forName("hmf");
+            Class<?> info=Class.forName(version15 ? "brf" : "hmf");
             int limit=info.getField("f").getInt(null);
-            int country=Class.forName("r65").getField("b").getInt(null);
+            int country=Class.forName(version15 ? "m65" : "r65").getField("b").getInt(null);
             limit(limit,country==14 ? "imperial" : "metric");
         } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Road source",e); }
     }
     /** Capture a candidate and geometry after native detection; do not use premium sample averages. */
     public static void zone(Object task, Location original) {
         if (original == null || (original.hasAccuracy() && original.getAccuracy()>50)) return;
+        try {
+            observeCandidate(task.getClass().getField("d").get(task), original);
+        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Zone source",e); }
+    }
+    /**15 replaces the old average-speed task with the background lookahead
+     * report-events service. Called immediately after its native candidate write,
+     * while p0 still refers to the service, using that service's measured fix. */
+    public static void zone15(Object task) {
+        try {
+            Object report=Class.forName("hff").getField("b").get(null);
+            Location fix=(Location)task.getClass().getField("v1").get(task);
+            observeCandidate(report, fix);
+        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Lookahead zone source",e); }
+    }
+    private static void observeCandidate(Object report, Location original) throws ReflectiveOperationException {
+        if (original == null || (original.hasAccuracy() && original.getAccuracy()>50)) return;
         final Location fix=new Location(original);
         final long at=fix.getElapsedRealtimeNanos()/1_000_000, received=SystemClock.elapsedRealtime(), token=generation;
-        try {
-            Object report=task.getClass().getField("d").get(task);
-            final Candidate selected=report==null ? null : readCandidate(report,fix);
-            main(() -> {
-                if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
-                if(at<candidateAt) return;
-                candidateAt=at; candidate=selected;
-                if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); } else observe(selected,fix,at);
-                dirty=true; publish(false);
-            });
-        } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Zone source",e); }
+        final Candidate selected=report==null ? null : readCandidate(report,fix);
+        main(() -> {
+            if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
+            if(at<candidateAt) return;
+            candidateAt=at; candidate=selected;
+            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); } else observe(selected,fix,at);
+            dirty=true; publish(false);
+        });
     }
     private static void observe(Candidate c,Location fix,long at) {
         ZoneGeometry.Result p=ZoneGeometry.project(c.path,fix.getLatitude(),fix.getLongitude());
@@ -150,9 +178,9 @@ public final class NavigationBroadcasts {
         if(reportSubscription!=null)return;
         try {
             Object bus=Class.forName("nl.flitsmeister.fmcore.models.eventbuses.AppNotificationBus").getMethod("getBusAlertedReports").invoke(null);
-            Class<?> function=Class.forName("b49");
+            Class<?> function=Class.forName(version15 ? "u39" : "b49");
             Object callback=Proxy.newProxyInstance(function.getClassLoader(),new Class<?>[]{function},(proxy,method,args)->{
-                if(method.getName().equals("invoke")) { reports(args[0]); return Class.forName("tvj").getField("a").get(null); }
+                if(method.getName().equals("invoke")) { reports(args[0]); return Class.forName(version15 ? "l1k" : "tvj").getField("a").get(null); }
                 if(method.getName().equals("hashCode"))return System.identityHashCode(proxy);
                 if(method.getName().equals("equals"))return proxy==args[0];
                 return "NavigationReports";
@@ -162,6 +190,7 @@ public final class NavigationBroadcasts {
     }
     public static void reports(Object value) {
         if(!(value instanceof Collection))return;
+        if(NativeWarnings.endpoint()!=null)NativeWarnings.reports(value);
         final long at=SystemClock.elapsedRealtime(), token=generation;
         List<NavigationAlerts.Alert> reports=new ArrayList<>();
         for(Object entry:(Collection<?>)value) {
@@ -186,6 +215,9 @@ public final class NavigationBroadcasts {
             case "POLICEHOTSPOT":return "police";case "TRAFFIC_JAM":return "jam";case "AVG_SPEED_CHECK":return "average_speed_zone";
             case "CITS_BRIDE_CLOSED":case "CITS_LANE_CLOSED":return "closure";
             case "INCIDENT":
+                // These concrete models report INCIDENT without implementing Incident.
+                for(Class<?> model=report.getClass();model!=null;model=model.getSuperclass())
+                    if(model.getSimpleName().equals("EarlyWarningReport")||model.getSimpleName().equals("CitsBaseReport"))return "hazard";
                 String incident=String.valueOf(call(report,"getIncidentType"));
                 if(incident.equals("ACCIDENT"))return "crash";
                 if(incident.equals("ROAD_CLOSURE") || incident.equals("CLOSURE_WITH_REROUTE"))return "closure";
@@ -216,7 +248,7 @@ public final class NavigationBroadcasts {
         String status=status(n);
         if(!force && status.equals(lastStatus) && now-lastSent<(dirty?1000:5000))return;
         Intent i=ALERTS.append(NavigationProtocol.snapshot(ACTION,app.getPackageName(),SESSION,++sequence,n,now),now);
-        NavigationProtocol.send(app,i,receiverPackage());
+        sendWarningsView(i);
         lastStatus=status; lastSent=now; dirty=false;
     }
     private static final Runnable TICK=new Runnable() {
@@ -227,9 +259,28 @@ public final class NavigationBroadcasts {
             MAIN.postDelayed(this,1000);
         }
     };
+    /** During event ownership, explicit disjoint views prevent a parallel legacy chime. */
+    private static void sendWarningsView(Intent snapshot) {
+        nl.johninnl.navigation.alerts.WarningEndpoint warnings=NativeWarnings.endpoint();
+        if(warnings==null||!warnings.exclusiveAudio()) { NavigationProtocol.send(app,snapshot,receiverPackage());return; }
+        java.util.Set<String> capable=warnings.capablePackages();
+        String restriction=receiverPackage();
+        String[] destinations=restriction.isEmpty()?new String[]{"app.vela","com.google.android.apps.maps",
+            "org.ungoogled.android.apps.maps","org.ungoogled.android.apps.maps.microg"}:new String[]{restriction};
+        Intent compatibility=new Intent(snapshot);
+        for(String key:new ArrayList<>(compatibility.getExtras().keySet()))
+            if(key.startsWith("alert_")||(key.startsWith("zone_approach_")&&!key.equals("zone_approach_updated_elapsed_ms")&&!key.equals("zone_approach_max_age_ms")))compatibility.removeExtra(key);
+        compatibility.putExtra("alerts_status","disabled").putExtra("zone_approach_status","disabled");
+        for(String destination:destinations) {
+            try { app.getPackageManager().getApplicationInfo(destination,0); }
+            catch(android.content.pm.PackageManager.NameNotFoundException absent){continue;}
+            NavigationProtocol.send(app,new Intent(capable.contains(destination)?snapshot:compatibility),destination);
+        }
+    }
     static void resetForTest() {
+        drivingEngine = false;
         MAIN.removeCallbacksAndMessages(null);
         // Robolectric resets receiver registrations between tests.
-        app=null; requests=null; ALERTS.reset(true); reportSubscription=null; active=false; candidate=null; candidateAt=-1; generation++; lastSent=-5000; lastRequest=-1000; lastStatus="";
+        app=null; requests=null; ALERTS.reset(true); reportSubscription=null; active=false; candidate=null; candidateAt=-1; generation++; lastSent=-5000; lastRequest=-1000; lastStatus=""; version15=false;
     }
 }

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">53 apps</span> · Development patch bundle: 1.28.0-dev.3</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">56 apps</span> · Patch bundle: 1.41.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -82,7 +82,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [AD](apps/ad.md)
@@ -90,8 +90,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">9.22.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilead</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">9.22.0</span></li>
 <li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>
@@ -298,24 +299,25 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">14.17</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">14.17, 15.0</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>8 patches</summary>
+<summary>9 patches</summary>
 <ul>
-<li>Broadcast navigation data <span class="dap-app-card__target">14.17</span></li>
-<li>Disable partner services <span class="dap-app-card__target">14.17</span></li>
-<li>Disable tracking <span class="dap-app-card__target">14.17</span></li>
-<li>Fix PairIP startup <span class="dap-app-card__target">14.17</span></li>
-<li>Guest mode <span class="dap-app-card__target">14.17</span></li>
-<li>Hide Pro notices <span class="dap-app-card__target">14.17</span></li>
-<li>Hide ads <span class="dap-app-card__target">14.17</span></li>
-<li>Unlock Pro <span class="dap-app-card__target">14.17</span></li>
+<li>Broadcast navigation data <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Disable partner services <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Disable tracking <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Fix PairIP startup <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Guest mode <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Hide Pro notices <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Unlock Pro <span class="dap-app-card__target">14.17, 15.0</span></li>
 </ul>
 </details>
 
@@ -342,6 +344,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/ftm.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.5.11.993608717-release-arm64-v8a change package name custom branding parakeet voice typing" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [Gboard](apps/gboard.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">18.5.11.993608717-release-arm64-v8a</span></p>
+<p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Change package name <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
+<li>Custom branding <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a · default off</span></li>
+<li>Parakeet voice typing <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/gboard.md){ .dap-app-card__link }
 
 </article>
 
@@ -602,16 +624,18 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable any gearslip personal library" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable 2.3.0 any android auto up next custom branding gearslip personal library" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Myspoti](apps/myspoti.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">2.3.0, Any</span></p>
 <p class="dap-app-card__package">app.myspoti.stable</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>3 patches</summary>
 <ul>
+<li>Android Auto Up next <span class="dap-app-card__target">2.3.0 · default off</span></li>
+<li>Custom branding <span class="dap-app-card__target">Any · default off</span></li>
 <li>Gearslip personal library <span class="dap-app-card__target">Any</span></li>
 </ul>
 </details>
@@ -784,7 +808,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="parool be.persgroep.android.news.mobilepa 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="parool be.persgroep.android.news.mobilepa 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [Parool](apps/parool.md)
@@ -792,8 +816,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilepa</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
@@ -914,7 +939,28 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="trouw be.persgroep.android.news.mobiletr 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.10.28-release disable analytics disable consent popup enable soundcloud go home in android auto" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [SoundCloud](apps/soundcloud.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.10.28-release</span></p>
+<p class="dap-app-card__package">com.soundcloud.android</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable analytics <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Disable consent popup <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Enable SoundCloud Go <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Home in Android Auto <span class="dap-app-card__target">2026.10.28-release</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/soundcloud.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="news" data-search="trouw be.persgroep.android.news.mobiletr 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [Trouw](apps/trouw.md)
@@ -922,8 +968,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobiletr</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
@@ -1057,7 +1104,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="volkskrant be.persgroep.android.news.mobilevk 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="volkskrant be.persgroep.android.news.mobilevk 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [Volkskrant](apps/volkskrant.md)
@@ -1065,8 +1112,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">7.53.1</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilevk</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
@@ -1079,7 +1127,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share alerts with maps skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](apps/waze.md)
@@ -1100,7 +1148,7 @@ hide:
 <li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Car reconnect grace period <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Car traffic meter <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
-<li>Change app name <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Change app name and icon <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Extra map info <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
@@ -1117,7 +1165,7 @@ hide:
 <li>Remove sign-in prompts <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Remove telemetry <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Report speed limit <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
-<li>Share alerts with Maps <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Share Waze Alerts with external applications <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Any</span></li>
 <li>Speed bump controls <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
@@ -1195,6 +1243,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/wuplay.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="wuplay mobile app.wuplay.android 0.1.9-alpha add gearslip car interface" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [WuPlay Mobile](apps/wuplay-mobile.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.1.9-alpha</span></p>
+<p class="dap-app-card__package">app.wuplay.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Add Gearslip car interface <span class="dap-app-card__target">0.1.9-alpha · default off</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/wuplay-mobile.md){ .dap-app-card__link }
 
 </article>
 

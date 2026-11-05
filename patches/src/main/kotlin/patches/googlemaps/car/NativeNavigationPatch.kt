@@ -89,54 +89,13 @@ private val nativeNavigationResources = resourcePatch {
             if ((0 until uses.length).none { (uses.item(it) as Element).getAttribute("name") == "template" })
                 doc.documentElement.appendChild(doc.createElement("uses").apply { setAttribute("name", "template") })
         }
-        val controls = mapOf(
-            "morphe_maps_more_controls" to ("More controls" to "Meer bediening"),
-            "morphe_maps_control_settings" to ("Settings" to "Instellingen"),
-            "morphe_maps_control_sound" to ("Sound" to "Geluid"),
-            "morphe_maps_control_compass" to ("Compass" to "Kompas"),
-            "morphe_maps_control_zoom_in" to ("Zoom in" to "Inzoomen"),
-            "morphe_maps_control_zoom_out" to ("Zoom out" to "Uitzoomen"),
-            "morphe_maps_control_recenter" to ("Recenter" to "Opnieuw centreren"),
-            "morphe_maps_control_pan" to ("Move map" to "Kaart verplaatsen"),
-            "morphe_maps_control_report" to ("Report incident" to "Incident melden"),
-            "morphe_maps_control_charging" to ("Charging filters" to "Laadfilters"),
-        )
-        document("res/values/public.xml").use { doc ->
-            val nodes = doc.getElementsByTagName("public")
-            val entries = (0 until nodes.length).map { nodes.item(it) as Element }
-            if (entries.any { it.getAttribute("name") in controls })
-                throw PatchException("Maps native control labels already exist")
-            val largest = entries.filter { it.getAttribute("type") == "string" }
-                .maxOf { it.getAttribute("id").removePrefix("0x").toLong(16) }
-            if (largest ushr 24 != 0x7fL || (largest and 0xffff) + controls.size > 0xffff)
-                throw PatchException("Maps string resource table has no room for native control labels")
-            controls.keys.forEachIndexed { index, name ->
-                doc.documentElement.appendChild(doc.createElement("public").apply {
-                    setAttribute("type", "string")
-                    setAttribute("name", name)
-                    setAttribute("id", "0x${(largest + index + 1).toString(16)}")
-                })
-            }
-        }
-        for ((qualifier, dutch) in listOf("values" to false, "values-nl" to true)) {
-            // Morphe's incremental encoder assigns a values file to its named type.
-            // Keep these entries in strings.xml rather than a custom values filename.
-            val path = "res/$qualifier/strings.xml"
-            get(path).apply { if (!exists()) { parentFile.mkdirs(); writeText("<resources/>") } }
-            document(path).use { doc ->
-                for ((name, labels) in controls) doc.documentElement.appendChild(doc.createElement("string").apply {
-                    setAttribute("name", name)
-                    textContent = if (dutch) labels.second else labels.first
-                })
-            }
-        }
     }
 }
 
 @Suppress("unused")
 val nativeCarNavigationPatch = bytecodePatch(
     name = "Native navigation for Gearslip and Android Auto",
-    description = "Shows this patched Maps app's original Android Auto map and navigation UI through a native navigation service. Requires the full Android Auto app for its car UI resources.",
+    description = "Shows this patched Maps app's live native map with standard Android Auto controls that compatible hosts can arrange. Requires the full Android Auto app for its car UI resources.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)

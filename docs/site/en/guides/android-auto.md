@@ -74,7 +74,7 @@ If Android reports a signature conflict or says the package conflicts with an ex
 
 1. Open Waze or Flitsmeister on your phone once. Complete its first-run setup and give the permissions it needs for navigation.
 2. Open your phone's **Settings** and search for **Android Auto**. Open the Android Auto settings result.
-3. Tap **Customize launcher** (or **Customise Launcher**). Find **Flitsmeister** or **Waze** and tick its box. If you applied Waze's **Change app name** patch, look for your chosen name; its default is **De-Waze**.
+3. Tap **Customize launcher** (or **Customise Launcher**). Find **Flitsmeister** or **Waze** and tick its box. If you applied Waze's **Change app name and icon** patch, look for your chosen name; its default is **De-Waze**.
 4. Reconnect your phone to the car and check the car's app launcher. Complete this setup while parked.
 
 ![Android Auto settings with Customize launcher](../../assets/images/android-auto/android-auto-settings.webp){ .aa-screenshot loading=lazy }

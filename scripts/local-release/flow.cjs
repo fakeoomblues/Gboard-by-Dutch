@@ -133,20 +133,125 @@ async function cleanupWorkspace({stateDir,workspace,env=process.env}) {
   if(fs.existsSync(repository)&&fs.lstatSync(repository).isSymbolicLink())throw new Error("Workspace Git ownership mismatch");
   if(fs.existsSync(workspace)){
     if(fs.lstatSync(workspace).isSymbolicLink()||path.resolve(workspace,git(["rev-parse","--git-common-dir"],{cwd:workspace,env}))!==repository)throw new Error("Workspace Git ownership mismatch");
-    if(!workspaceQuiescent(workspace,{stateDir:root,env}))throw new Error("Owned workspace quiescence is unproved: live cwd/open handles or incomplete scan; cleanup pending");
+    let proofFailure;
+    if(!workspaceQuiescent(workspace,{stateDir:root,env,onFailure:reason=>{proofFailure=reason;}}))throw new Error("Owned workspace quiescence is unproved: "+(proofFailure||"live cwd/open handles or incomplete scan")+"; cleanup pending");
     git(["worktree","remove","--force",workspace],{cwd:repository,env});
   }
   // Only remove the marked run container; populated worktrees also prove their Git common directory.
   fs.rmSync(directory,{recursive:true});
 }
+// Darwin sys/proc_info.h ABI: vnode_info_path=1176, proc_vnodepathinfo=2352,
+// vnode_fdinfowithpath=1200, proc_regionwithpathinfo=1272 (64-bit macOS).
+// Inspect the job owner's processes directly, without lsof's global mount scan.
+// Command groups are checked separately; detached cwd, fd and mmap holders also
+// prevent deletion. Unknown/short reads and permission failures remain failures.
+const MAC_WORKSPACE_PROOF=String.raw`
+import ctypes, errno, os, struct, sys, time
+lib=ctypes.CDLL('/usr/lib/libproc.dylib',use_errno=True)
+lib.proc_listpids.argtypes=[ctypes.c_uint32,ctypes.c_uint32,ctypes.c_void_p,ctypes.c_int]
+lib.proc_pidinfo.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_uint64,ctypes.c_void_p,ctypes.c_int]
+lib.proc_pidfdinfo.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_int,ctypes.c_void_p,ctypes.c_int]
+lib.proc_pidpath.argtypes=[ctypes.c_int,ctypes.c_void_p,ctypes.c_uint32]
+system=ctypes.CDLL(None,use_errno=True)
+root=os.fsencode(os.path.realpath(sys.argv[1])).rstrip(b'/')
+if ctypes.sizeof(ctypes.c_void_p)!=8 or not root or not os.path.isdir(root):sys.exit(2)
+def within(value):
+    path=value.split(b'\0',1)[0]
+    if len(path)==1024:raise RuntimeError('truncated path')
+    return path==root or path.startswith(root+b'/')
+def pids():
+    values=(ctypes.c_int*65536)()
+    n=lib.proc_listpids(4,os.getuid(),values,ctypes.sizeof(values))
+    if n<=0 or n>=ctypes.sizeof(values) or n%4:raise RuntimeError('incomplete process list')
+    return set(pid for pid in values[:n//4] if pid>0)
+def info(pid,flavor,size,arg=0):
+    value=ctypes.create_string_buffer(size);ctypes.set_errno(0)
+    n=lib.proc_pidinfo(pid,flavor,arg,value,size)
+    return n,value.raw,ctypes.get_errno()
+ancestors=set()
+parent=os.getppid()
+while parent>1 and parent not in ancestors:
+    ancestors.add(parent)
+    n,bsd,error=info(parent,3,136)
+    if n!=136:sys.exit(2)
+    parent=struct.unpack_from('=I',bsd,16)[0]
+def protected_system_service(pid):
+    # Sealed Apple platform services launched by launchd are not owned job
+    # descendants. Do not mistake their protected internal fds for incomplete
+    # observation of a user job. Never exempt an arbitrary EPERM/user binary.
+    # The pre-existing invoking application can also have kernel-protected
+    # credential fds. Its accessible cwd/fds/mappings are still checked. It is
+    # an ancestor of the scan, never a detached descendant of an owned command.
+    if pid in ancestors:return True
+    executable=ctypes.create_string_buffer(4096)
+    if lib.proc_pidpath(pid,executable,4096)<=0 or not executable.value.startswith((b'/System/Library/',b'/usr/libexec/')):return False
+    n,bsd,error=info(pid,3,136)
+    if n!=136 or struct.unpack_from('=I',bsd,16)[0]!=1:return False
+    flags=ctypes.c_uint32()
+    return system.csops(pid,0,ctypes.byref(flags),4)==0 and bool(flags.value&0x04000000)
+def inspect(pid):
+    n,data,error=info(pid,9,2352)
+    if n==0 and error==errno.ESRCH:return False
+    if n!=2352:raise RuntimeError('incomplete cwd scan')
+    if within(data[152:1176]) or within(data[1328:2352]):return True
+    n,data,error=info(pid,1,1048576)
+    if n==0 and error==errno.ESRCH:return False
+    if n<0 or n>=1048576 or n%8 or (n==0 and error):raise RuntimeError('incomplete fd list')
+    for fd,kind in struct.iter_unpack('=iI',data[:n]):
+        if kind!=1:continue
+        value=ctypes.create_string_buffer(1200);ctypes.set_errno(0)
+        size=lib.proc_pidfdinfo(pid,fd,2,value,1200);error=ctypes.get_errno()
+        if size==0 and error in (errno.EBADF,errno.ESRCH,errno.ENOENT):continue
+        if size==0 and error==errno.EPERM and protected_system_service(pid):continue
+        if size!=1200:raise RuntimeError('incomplete fd scan')
+        if within(value.raw[176:1200]):return True
+    address=0
+    for _ in range(65536):
+        n,data,error=info(pid,8,1272,address)
+        # XNU proc_pidregionpathinfo returns EINVAL after the final region.
+        # Only accept it after at least one complete, advancing region read.
+        if n==0 and (error==errno.ESRCH or (error==errno.EINVAL and address>0)):break
+        if n!=1272:raise RuntimeError('incomplete mapping scan')
+        if within(data[248:1272]):return True
+        start,length=struct.unpack_from('=QQ',data,80)
+        following=start+length
+        if following<=address or following>2**64-1:raise RuntimeError('invalid mapping range')
+        address=following
+    else:raise RuntimeError('mapping scan exceeded bound')
+    return False
+try:
+    seen=set()
+    # New, short-lived processes can appear during each enumeration. Give that
+    # churn a bounded settling window; every newly observed PID is still scanned.
+    deadline=time.monotonic()+20
+    while time.monotonic()<deadline:
+        current=pids()
+        for pid in current-seen:
+            if inspect(pid):print('BUSY');sys.exit(0)
+        seen.update(current)
+        if pids()<=seen:print('QUIESCENT');sys.exit(0)
+    raise RuntimeError('unstable process list')
+except Exception as problem:
+    reason=str(problem) if isinstance(problem,RuntimeError) else type(problem).__name__
+    print('workspace-proof: '+reason[:120],file=sys.stderr)
+    sys.exit(2)
+`;
 /** A command group can exit while a detached descendant still holds the checkout. */
-function workspaceQuiescent(workspace,{stateDir=path.dirname(workspace),env=process.env,inspect=execFileSync}={}) {
+function workspaceQuiescent(workspace,{stateDir=path.dirname(workspace),env=process.env,inspect=execFileSync,platform=process.platform,onFailure=()=>{}}={}) {
   try{
-    const output=inspect(process.platform==="darwin"?"/usr/sbin/lsof":"lsof",["-n","-P","+D",workspace],{
+    const mac=platform==="darwin";
+    const output=inspect(mac?"/usr/bin/python3":"lsof",mac?["-c",MAC_WORKSPACE_PROOF,workspace]:["-n","-P","+D",workspace],{
       cwd:stateDir,env:{PATH:env.PATH,HOME:stateDir,LANG:"C",LC_ALL:"C"},encoding:"utf8",stdio:["ignore","pipe","pipe"],timeout:30000,maxBuffer:2*1024*1024,
     });
-    return !String(output).trim();
-  }catch(error){return error.status===1&&!String(error.stdout||"").trim()&&!String(error.stderr||"").trim();}
+    const quiet=mac?String(output).trim()==="QUIESCENT":!String(output).trim();
+    if(!quiet)onFailure(String(output).trim()==="BUSY"?"live workspace holder":"unexpected native scan output");
+    return quiet;
+  }catch(error){
+    if(platform!=="darwin"&&error.status===1&&!String(error.stdout||"").trim()&&!String(error.stderr||"").trim())return true;
+    const reason=/^workspace-proof: ([a-zA-Z0-9 _:-]{1,120})\s*$/.exec(String(error.stderr||""));
+    onFailure(error.code==="ETIMEDOUT"?"native scan timed out":reason?reason[1]:"native scan unavailable");
+    return false;
+  }
 }
 const delay=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
 function groupQuiescent(group) {
@@ -201,9 +306,18 @@ async function command(context,label,args,{timeoutMs=2*60*60*1000,stopTimeoutMs=
   if(failure){Object.assign(failure,captured);throw failure;}
   return captured;
 }
+function pagesInvocation(script,args=[]) {
+  const source=`const {workspaceQuiescent}=require(${JSON.stringify(__filename)});
+const {processAlive}=require(${JSON.stringify(path.join(path.dirname(script),"pages-job.cjs"))});
+require(${JSON.stringify(script)}).main(process.argv.slice(1),{
+  isQuiescent:(workspace,record)=>!processAlive(record.pid)&&workspaceQuiescent(workspace)
+}).catch(error=>{console.error(error.message);process.exitCode=1;});`;
+  return [process.execPath,"-e",source,"--",...args];
+}
 async function cleanupPages(context,{script=path.join(__dirname,"pages.cjs")}={}) {
   let captured,failure,result;
-  try{captured=await command(context,"pages-cleanup",[process.execPath,script,"--cleanup"]);}
+  const invocation=script===path.join(__dirname,"pages.cjs")?pagesInvocation(script,["--cleanup"]):[process.execPath,script,"--cleanup"];
+  try{captured=await command(context,"pages-cleanup",invocation);}
   catch(error){failure=error;captured=error;}
   try{
     if(captured.stdoutTruncated)throw new Error("Pages cleanup result exceeded its diagnostic bound");
@@ -294,7 +408,7 @@ const defaults={
   discover:async context=>command(context,"discovery",[process.execPath,".gitlab/scripts/discovery.cjs"]),
   pages:async context=>{
     const file=path.join(context.workspace,"build/release-safety/pages-result.json");
-    try{await command(context,"pages",[process.execPath,"scripts/local-release/pages.cjs"]);}
+    try{await command(context,"pages",pagesInvocation(path.join(context.workspace,"scripts/local-release/pages.cjs")));}
     finally{
       if(fs.existsSync(file)){
         context.pagesResults=JSON.parse(context.redact(fs.readFileSync(file,"utf8")));
@@ -489,5 +603,5 @@ async function main(argv=process.argv.slice(2)) {
   const result=await runFlow({config,branch:values.branch,publish:values.publish,watchOnce:values["watch-once"],retryFailed:values["retry-failed"]});
   console.log(JSON.stringify(result));
 }
-module.exports={templates,readConfig,environment,ensureApiCredentials,runFlow,cleanupWorkspace,cleanupPages,workspaceQuiescent,command,pruneEvidence,main};
+module.exports={templates,readConfig,environment,ensureApiCredentials,runFlow,cleanupWorkspace,cleanupPages,workspaceQuiescent,pagesInvocation,command,pruneEvidence,main};
 if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1;});

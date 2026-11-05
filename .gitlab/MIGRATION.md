@@ -20,4 +20,6 @@ retained for historical compatibility and is not the GitLab publishing entrypoin
 
 Public Morphe source: `https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json`.
 
-Development branch: automation port only; original app patch sources and version history are preserved. GitLab.com owns both stable and development releases.
+GitLab Pages deploys the verified static documentation after the release job.
+Its public Pages URL is `https://nl-morphe-patches-ed90fa.gitlab.io/`; README
+and in-site metadata use this URL when they are built.

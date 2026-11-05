@@ -77,7 +77,7 @@ patches {
         description = "App-specific controls for advertising, publisher promotions, tracking, onboarding and article delivery in Dutch applications"
         source = "https://gitlab.com/johninnld/nl-morphe-patches"
         author = "johninnl"
-        contact = "https://gitlab.com/johninnld/nl-morphe-patches/issues"
+        contact = "https://gitlab.com/johninnld/nl-morphe-patches/-/issues"
         website = "https://gitlab.com/johninnld/nl-morphe-patches"
         license = "GPLv3"
     }

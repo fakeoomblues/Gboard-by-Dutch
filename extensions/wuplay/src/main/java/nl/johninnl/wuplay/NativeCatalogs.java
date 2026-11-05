@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +23,7 @@ import kotlin.coroutines.jvm.internal.ContinuationImpl;
 final class NativeCatalogs {
     static final class Definition {
         final Object nativeValue;
-        final String key, name, source;
+        final String key, name, source, sourceId;
         final int order;
         final boolean showHome;
         Definition(String profile, Object value) throws Exception {
@@ -27,6 +31,7 @@ final class NativeCatalogs {
             key = CatalogPolicy.channelKey(profile, (Integer) field(value, "id"));
             name = (String) field(value, "name");
             source = (String) field(value, "source");
+            sourceId = (String) field(value, "sourceId");
             order = (Integer) field(value, "homeOrder");
             showHome = (Boolean) field(value, "showHome");
         }
@@ -54,26 +59,43 @@ final class NativeCatalogs {
         Object profile = profiles.get(0);
         String id = (String) field(profile, "id");
         requireDefault(id);
-        List<Definition> definitions = new ArrayList<>();
-        for (Object value : (List<?>) first(field(repository, "definitions"))) {
-            Definition definition = new Definition(id, value);
-            if (CatalogPolicy.homeCatalog(definition.source, definition.showHome)) definitions.add(definition);
-        }
+        List<Definition> definitions = homeDefinitions(id);
         requireDefault(id);
-        definitions.sort(Comparator.comparingInt(d -> d.order));
         return new Snapshot(id, (String) field(profile, "name"), definitions);
+    }
+
+    /** Match BoardViewModel: explicit Home screen rows override legacy flags, even when empty. */
+    private List<Definition> homeDefinitions(String profileId) throws Exception {
+        Map<Integer, Definition> available = new LinkedHashMap<>();
+        for (Object value : (List<?>) first(field(repository, "definitions")))
+            available.put((Integer) field(value, "id"), new Definition(profileId, value));
+        List<?> rowIds = null;
+        for (Object screen : (List<?>) first(field(repository, "screens"))) {
+            if ("home".equals(field(screen, "systemKey"))) {
+                rowIds = (List<?>) field(screen, "rowCatalogIds");
+                break;
+            }
+        }
+        List<Definition> result = new ArrayList<>();
+        if (rowIds != null) {
+            Set<Integer> seen = new HashSet<>();
+            for (Object rowId : rowIds) {
+                Integer id = ((Number) rowId).intValue();
+                Definition definition = available.get(id);
+                if (seen.add(id) && definition != null && CatalogPolicy.contentSource(definition.source)) result.add(definition);
+            }
+        } else {
+            for (Definition definition : available.values())
+                if (CatalogPolicy.homeCatalog(definition.source, definition.showHome)) result.add(definition);
+            result.sort(Comparator.comparingInt(d -> d.order));
+        }
+        return result;
     }
 
     boolean isHome(String profileId, String key) throws Exception {
         requireDefault(profileId);
         boolean eligible = false;
-        for (Object value : (List<?>) first(field(repository, "definitions"))) {
-            Definition definition = new Definition(profileId, value);
-            if (definition.key.equals(key)) {
-                eligible = CatalogPolicy.homeCatalog(definition.source, definition.showHome);
-                break;
-            }
-        }
+        for (Definition definition : homeDefinitions(profileId)) if (definition.key.equals(key)) { eligible = true; break; }
         requireDefault(profileId);
         return eligible;
     }

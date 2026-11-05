@@ -2,6 +2,7 @@
 import argparse
 from collections import defaultdict
 import hashlib
+import io
 from pathlib import Path
 import re
 import zipfile
@@ -320,7 +321,26 @@ def verify_consent(source):
                     assert events == ['reject', 'remove', 'closed']
 
 
-def verify(root, selected, apk):
+def original_libraries(apks):
+    """Read the selected original payloads independently of the production guard."""
+    with zipfile.ZipFile(apks) as archive:
+        if apks.suffix.lower() == '.apk':
+            return {name: hashlib.sha256(archive.read(name)).hexdigest()
+                    for name in archive.namelist() if name.startswith('lib/') and name.endswith('.so')}
+        libraries = {}
+        for name in archive.namelist():
+            if not name.endswith('.apk'):
+                continue
+            with zipfile.ZipFile(io.BytesIO(archive.read(name))) as split:
+                for path in split.namelist():
+                    if path.startswith('lib/') and path.endswith('.so'):
+                        digest = hashlib.sha256(split.read(path)).hexdigest()
+                        assert path not in libraries or libraries[path] == digest, 'Conflicting original native payload'
+                        libraries[path] = digest
+        return libraries
+
+
+def verify(root, selected, apk, original_apks=None):
     assert apk.is_file(), 'Provide the actual original or rebuilt APK'
     assert selected <= {'Hide ads', 'Disable tracking', 'Disable ThreatMetrix', 'Skip consent screens'}
     source = Smali(root)
@@ -382,7 +402,10 @@ def verify(root, selected, apk):
         with zipfile.ZipFile(apk) as archive:
             libraries = {name: hashlib.sha256(archive.read(name)).hexdigest()
                          for name in archive.namelist() if name.startswith('lib/') and name.endswith('.so')}
-        assert libraries == DATA['libraries'], 'Belgian native library inventory changed'
+        expected = DATA['libraries'] if original_apks is None else original_libraries(original_apks)
+        assert expected and all(DATA['libraries'].get(name) == digest for name, digest in expected.items()), \
+            'Unaudited original Belgian native payload'
+        assert libraries == expected, 'Belgian native library inventory changed'
     if 'Disable tracking' in selected or 'Skip consent screens' in selected:
         verify_gemius(source)
         verify_publisher_measurement(source)
@@ -397,9 +420,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('root', type=Path)
     parser.add_argument('--apk', required=True, type=Path)
+    parser.add_argument('--original-apks', type=Path, help='Original applicable split set for native preservation checks')
     parser.add_argument('-e', '--enable', action='append', default=[])
     args = parser.parse_args()
-    verify(args.root, set(args.enable), args.apk)
+    verify(args.root, set(args.enable), args.apk, args.original_apks)
 
 
 if __name__ == '__main__':

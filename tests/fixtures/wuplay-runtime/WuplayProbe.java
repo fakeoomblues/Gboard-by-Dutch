@@ -26,6 +26,9 @@ public final class WuplayProbe extends Instrumentation {
             Context context = getTargetContext();
             ClassLoader loader = context.getClassLoader();
             String action = arguments.getString("action", "snapshot");
+            if (action.equals("pickerLifecycle")) {
+                result.putString("picker", WuplayPickerProbe.run(this)); finish(-1, result); return;
+            }
             if (action.equals("refresh")) {
                 Class<?> channels = loader.loadClass("nl.johninnl.wuplay.CatalogChannels");
                 Method refresh = channels.getDeclaredMethod("refresh", android.app.Application.class); refresh.setAccessible(true);
@@ -52,14 +55,23 @@ public final class WuplayProbe extends Instrumentation {
                 }
             }
             try (Cursor cursor = context.getContentResolver().query(Uri.parse("content://android.media.tv/preview_program"),
-                    new String[]{"_id", "channel_id", "package_name", "internal_provider_id", "title", "intent_uri", "poster_art_uri", "weight"}, null, null, null)) {
+                    new String[]{"_id", "channel_id", "package_name", "internal_provider_id", "title", "intent_uri", "poster_art_uri", "weight", "poster_art_aspect_ratio"}, null, null, null)) {
                 if (cursor == null) throw new AssertionError("Null program cursor");
                 while (cursor.moveToNext()) if (context.getPackageName().equals(cursor.getString(2))) {
                     JSONObject row = new JSONObject(); row.put("id",cursor.getLong(0)); row.put("channel",cursor.getLong(1)); row.put("key",cursor.getString(3));
-                    row.put("title",cursor.getString(4)); row.put("intent",cursor.getString(5)); row.put("art",cursor.getString(6)); row.put("weight",cursor.getInt(7)); programs.put(row);
+                    row.put("title",cursor.getString(4)); row.put("intent",cursor.getString(5)); row.put("art",cursor.getString(6)); row.put("weight",cursor.getInt(7)); row.put("aspect",cursor.getInt(8)); programs.put(row);
                 }
             }
             JSONObject report = new JSONObject(); report.put("channels",channels); report.put("programs",programs);
+            Class<?> nativeClass = loader.loadClass("nl.johninnl.wuplay.NativeCatalogs");
+            Constructor<?> ctor = nativeClass.getDeclaredConstructor(android.app.Application.class); ctor.setAccessible(true);
+            Object snapshot = call(ctor.newInstance(context.getApplicationContext()), "snapshot", new Class<?>[]{});
+            JSONArray home = new JSONArray();
+            for (Object definition : (List<?>) field(snapshot, "definitions")) {
+                JSONObject row = new JSONObject(); row.put("name", field(definition, "name")); row.put("key", field(definition, "key"));
+                row.put("legacyHome", field(definition, "showHome")); home.put(row);
+            }
+            report.put("home", home);
             result.putString("report",report.toString()); finish(-1,result);
         } catch (Throwable failure) {
             result.putString("failure",android.util.Log.getStackTraceString(failure)); finish(0,result);

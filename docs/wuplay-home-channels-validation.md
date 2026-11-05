@@ -4,6 +4,8 @@ Target: original `app.wuplay.androidtv` 0.9.4-beta / 49.
 Original APK SHA-256: `3f6dc351f7aefeb634d55602c4921c1826555153390d7aee0f622ac7a02d0802`.
 Candidate APK SHA-256: `157ced4f87ff203f617b497c795c733c8d66278bf445dae255f36e288cc19269`.
 
+For the subsequent screen-row mapper and Cancel / Done repair, see [phase 3](wuplay-home-mapper-validation.md).
+
 ## Result and scope
 
 **Settings > Catalogs > TV channels** opens an internal D-pad selector. The

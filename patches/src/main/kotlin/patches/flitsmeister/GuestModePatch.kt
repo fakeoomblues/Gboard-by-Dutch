@@ -53,10 +53,10 @@ val guestMode = bytecodePatch(
     default = true,
 ) {
     compatibleWith(flitsmeister)
-    dependsOn(originalInput, startupCompatibility, guestResources)
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, guestResources)
     execute {
         check(guestLabelId != 0) { "Guest label resource patch did not run" }
-        applyPlans(listOf(
+        applyPlans(if (isFlitsmeister15()) guestModePlans15(guestLabelId) else listOf(
             MethodPlan(
                 "Lstb;->b(Lz39;Landroidx/compose/runtime/Composer;I)V", 11, 62,
                 listOf(

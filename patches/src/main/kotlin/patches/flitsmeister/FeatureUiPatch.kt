@@ -5,8 +5,13 @@ import com.android.tools.smali.dexlib2.Opcode
 
 /** Exact 14.17 local eligibility operations; genuine providers remain called. */
 internal val featureUi = bytecodePatch {
-    dependsOn(originalInput, featureEligibility)
-    execute { applyPlans(listOf(
+    dependsOn(originalInput, startupCompatibility, startupCompatibility15, featureEligibility)
+    execute {
+        if (isFlitsmeister15()) {
+            applyPlans(featureUi15Plans() + featureUi15AdditionalPlans() + serviceFeaturePlans15())
+            return@execute
+        }
+        applyPlans(listOf(
     MethodPlan("Lahh;->a(Landroidx/compose/ui/Modifier;Lb49;Lb49;Lb49;Lb49;Lz39;Lm8i\$d;ZLandroidx/compose/runtime/Composer;II)V", 50, 474, listOf(
             Guard(144, Opcode.INVOKE_INTERFACE, listOf(3), "Landroidx/compose/runtime/Composer;->endDefaults()V"),
             Guard(145, Opcode.INVOKE_STATIC, listOf(), "Landroidx/compose/runtime/ComposerKt;->isTraceInProgress()Z"),
@@ -786,4 +791,7 @@ internal val featureUi = bytecodePatch {
             Edit(8, "goto", "", 35)
         ), mapOf("Ljava/lang/Object;->getClass()Ljava/lang/Class;" to 1, "Lljd;->b:Lljd;" to 1, "Lnzb;->a:Lb49;" to 1))
     )) }
+    finalize {
+        if (isFlitsmeister15()) applyProfileBadge15()
+    }
 }

@@ -111,14 +111,39 @@ public final class NativeUi {
             row("De-Waze",TelemetryStore.WAZE.equals(TelemetryRuntime.selected()),action("waze",()->TelemetryRuntime.select(TelemetryStore.WAZE)),composer);
             row("Flitsmeister",TelemetryStore.FLITSMEISTER.equals(TelemetryRuntime.selected()),action("fm",()->TelemetryRuntime.select(TelemetryStore.FLITSMEISTER)),composer);
             if(!TelemetryRuntime.selected().isEmpty()) {
-                hint(TelemetryRuntime.statusText(),composer);
+                hint(TelemetryRuntime.warningBridgeStatus(),composer);
+                hint(TelemetryRuntime.providerServiceStatus(),composer);
+                hint(TelemetryRuntime.dataStatus(),composer);
                 toggle(text("spoken","Spoken road warnings"),TelemetryRuntime.spokenEnabled(),toggleAction("spoken",TelemetryRuntime::setSpokenEnabled),text("spoken_hint","Uses Vela's voice and mute settings"),composer);
+                if(nl.johninnl.navigation.alerts.WarningProviders.supported(TelemetryRuntime.selected())){
+                    nl.johninnl.navigation.alerts.WarningPreferences choices=TelemetryRuntime.warningPreferences();
+                    if(choices!=null){
+                        title(TelemetryRuntime.providerName()+" · "+text("warning_output","Warning audio"),composer);
+                        if(TelemetryStore.WAZE.equals(TelemetryRuntime.selected()))hint(java.util.Locale.getDefault().getLanguage().equals("nl")?"Beheerde Waze-meldingen gebruiken deze Vela-audiokeuzes. De eigen camera- en snelheidsafhankelijke geluidsinstellingen gelden alleen voor Waze zelf.":"Managed Waze alerts use these Vela audio choices. Waze's local camera-sound and below-limit settings apply only to Waze's own playback.",composer);
+                        for(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode mode:nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.values()){
+                            String label=mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.VOICE?text("warning_voice","Voice"):mode==nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.TONE?text("warning_tone","Tone"):text("warning_silent","Silent");
+                            row(label,choices.mode()==mode,action("warning_mode_"+TelemetryRuntime.selected()+"_"+mode,()->{choices.mode(mode);TelemetryRuntime.warningChoicesChanged();}),composer);
+                        }
+                        String[] labels=java.util.Locale.getDefault().getLanguage().equals("nl")?nl.johninnl.navigation.alerts.WarningPreferences.LABELS_NL:nl.johninnl.navigation.alerts.WarningPreferences.LABELS;
+                        for(int i=0;i<labels.length;i++){
+                            final int category=nl.johninnl.navigation.alerts.WarningPreferences.CATEGORIES[i];
+                            toggle(labels[i],(choices.categories()&category)!=0,toggleAction("warning_category_"+TelemetryRuntime.selected()+"_"+category,value->{choices.category(category,value);TelemetryRuntime.warningChoicesChanged();}),null,composer);
+                        }
+                        if(!choices.reviewed()){
+                            hint(text("warning_review_hint","Review categories and output. Previous mute choices are preserved; Vela's native mute still applies."),composer);
+                            row(text("warning_confirm","Use these warning choices"),false,action("warning_confirm_"+TelemetryRuntime.selected(),()->{choices.confirm();TelemetryRuntime.warningChoicesChanged();}),composer);
+                        }
+                        hint(TelemetryRuntime.warningAudioStatus(),composer);
+                        row(text("warning_preview","Parked audio preview"),false,action("warning_preview",TelemetryRuntime::previewWarning),composer);
+                        row(text("warning_recovery","Recover warning audio while parked"),false,action("warning_recovery",TelemetryRuntime::recoverWarningAudio),composer);
+                    }
+                }
                 toggle(text("car","Show details on Android Auto"),TelemetryRuntime.carEnabled(),toggleAction("car",TelemetryRuntime::setCarEnabled),null,composer);
                 row(text("open","Open selected provider"),false,action("open",()->{
                     Context app=TelemetryRuntime.app();Intent launch=app.getPackageManager().getLaunchIntentForPackage(TelemetryRuntime.selected());
                     if(launch!=null)app.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 }),composer);
-                hint(text("flock_hint","Native Flock resumes when both providers stop advertising."),composer);
+                hint(text("flock_hint","Your Flock choices stay active with Flitsmeister. De-Waze may replace native Flock alerts while selected."),composer);
             }
             call("ez3","b",new Class[]{int.class,type("e50")},0,composer);
         }catch(ReflectiveOperationException e){throw new IllegalStateException("Vela native settings binding failed",e);}

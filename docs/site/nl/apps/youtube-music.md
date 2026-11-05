@@ -8,6 +8,8 @@ Selecteer de originele YouTube Music-APK. Morphe kan de geïnstalleerde versie *
 
 De compatibiliteit is **Any** wanneer de browserstructuur en Morphe's bibliotheekstructuur eenduidig worden herkend. De volledige gecombineerde werkwijze is getest met 9.30.53 en Morphe Patches 2.0.0. Bij gewijzigde structuren of ontbrekende vereiste onderdelen stopt het patchen. Morphe's eigen Android Auto-patch moet de gekozen appversie ook ondersteunen.
 
+[Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |
@@ -22,9 +24,9 @@ Deze compatibiliteitspatch verwijdert geen advertenties, tracking, accountvereis
 
 Selecteer de originele app en schakel **Android Auto** uit Morphe Patches samen met **Gearslip music browser support** uit Dutch App Patches in. De Gearslip-patch bevat de persoonlijke bibliotheekintegratie; er is geen tweede bibliotheekpatch om te selecteren. Gebruik de originele invoer ook bij het opnieuw patchen van een bestaande installatie.
 
-Pas op Gearslip **Keep music player entries** toe zodat de spelertegel behouden blijft. Trusted Gearslip packages gebruikt standaard de officiële host; voeg alleen een ander pakket toe voor een versie die je bewust gebruikt.
+Pas op Gearslip **Keep music player entries** toe zodat de spelertegel behouden blijft. **Trusted Gearslip and DriveDeck packages** gebruikt standaard de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies; voeg alleen een ander pakket toe voor een versie die je bewust gebruikt.
 
-Automatische tests controleren de hosttoegang, het opbouwen van de hoofd- en bibliotheekmappen en het gecombineerd patchen van de originele app. Inhoud met een ingelogd account en afspelen moeten voor deze ontwikkelupdate nog op het toestel worden getest.
+Automatische tests controleren de hosttoegang, het opbouwen van de hoofd- en bibliotheekmappen en het gecombineerd patchen van de originele app. De bibliotheekinhoud en het afspelen hangen af van het ingelogde account en de beschikbare inhoud.
 
 Gebruik dezelfde ondertekeningssleutel als de geïnstalleerde app voor een update. Bewaar de ingelogde installatie tijdens het testen.
 

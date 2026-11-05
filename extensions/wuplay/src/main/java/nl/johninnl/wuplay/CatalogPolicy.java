@@ -29,9 +29,8 @@ public final class CatalogPolicy {
     }
 
     public static boolean contentSource(String source) {
-        // Wuplay's BoardViewModel.NON_CONTENT_SOURCES: these use navigation/live-flow paths.
-        return source != null && !source.isEmpty() && !"hub".equals(source) && !"saved_collections".equals(source)
-            && !"library".equals(source) && !"watchlist".equals(source);
+        // Navigation groups have no movie/series tiles. Native fetchContent also handles Library/Watchlist.
+        return source != null && !source.isEmpty() && !"hub".equals(source) && !"saved_collections".equals(source);
     }
 
     public static boolean homeCatalog(String source, boolean showHome) {

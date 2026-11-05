@@ -19,9 +19,11 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | Consent | New: **Skip consent screens** answers privacy and terms prompts without showing them and declines personalized ads. |
 | Music | New: **SoundCloud in Waze** and **YT Music Morphe in Waze** add both services to the built-in audio player. |
 | Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets Gearslip run Waze, including a patched Gearslip. |
-| Alert sharing | **Share alerts with Maps** now stops at once when you switch it off and clears alerts it already shared. |
+| Alert sharing | **Share Waze Alerts with external applications** now stops at once when you switch it off and clears alerts it already shared. |
 
 The eleven optional controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
+
+[Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button }
 
 ## Patches
 
@@ -32,7 +34,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 | **Broadcast navigation data** | On | Shares current speed, road limits, road alerts and approaching/active average-speed zones with other apps while Waze runs in the background. No overlay required. |
 | **Skip consent screens** | On | Answers privacy and terms consent silently and declines ad personalization without showing a screen. |
 | **SoundCloud in Waze** | On | Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included. |
-| **Support Gearslip** | On | Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
+| **Support Gearslip** | On | Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
 | **YT Music Morphe in Waze** | On | Adds YT Music Morphe to Waze's built-in audio player. Show list displays supported Home recommendations and mixes, not your personal Library. Available shelves depend on the installed client. |
 
 ### From bearinmind patches, extended here
@@ -41,7 +43,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 | --- | --- | --- |
 | **Hide ads** | On | Removes sponsored pins, stop ads and ad tracking, plus sponsored search results and main-menu promotions. |
 | **Remove telemetry** | On | No crash reports, usage stats or performance data. Also blocks advertising ID collection, queued usage uploads and automatic diagnostic logs. Traffic reporting stays. |
-| **Share alerts with Maps** | On | Shows Waze alerts in Ungoogled Maps on this phone. Waze must be signed in and open. Switching it off stops sharing at once. |
+| **Share Waze Alerts with external applications** | On | Shares Waze's road alerts with patched apps on this phone, such as Ungoogled Maps and Vela Maps. Waze must be signed in and open. Switching it off stops sharing at once. |
 
 ### From bearinmind patches, ported to 5.26.90.901
 
@@ -52,7 +54,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 | **Average speed zone bar** | On | Bar with progress and your average speed in an average speed zone. Off until switched on. |
 | **Bigger alert pins** | Off | Bigger alert pins on the map. |
 | **Bigger speedometer** | On | Bigger speedometer and speed limit digits. |
-| **Change app name** | On | Renames the app, with De-Waze as the default. Look for that name in Android Auto too. |
+| **Change app name and icon** | On | Renames the app, with De-Waze as the default, and can change the launcher icon: the classic Waze logo, a bold blue mascot, a mascot over a folded map, a cyan mascot on black or a cyan long-shadow icon. Waze's own icon is kept unless you choose one. Look for the name in Android Auto too. |
 | **Flock cameras** | On | Chime when a Flock camera is ahead, from OpenStreetMap. No map pins or routing. Off until switched on. |
 | **Full black** | On | True black dark mode for AMOLED screens. |
 | **Map skin** | On | Bigger map labels, a wider arrow and a warm day background. |
@@ -99,12 +101,16 @@ Hide ads and Remove telemetry reduce the supported advertising, crash reporting 
 
 ## Before using
 
+**For automatic startup from Maps/Vela, open Android App info → Waze / De-Waze → Permissions → Location and select ‘Allow all the time’. ‘Allow only while using the app’ is insufficient for reliable silent startup.** Follow the [location permission steps](../guides/navigation-data.md#2-set-up-the-provider-once), including if you see **Android blocked background startup**.
+
+Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).
+
 After patching, open **Customization** in the side menu below **Shut off** to configure the features you applied. Speed camera alerts, Flock cameras and Average speed zone bar start off there even when their patches are selected. Restart Waze after changing map or alert-pin settings.
 
 **Broadcast navigation data** needs Waze’s native engine and background location access, not a foreground phone Activity. It automatically includes the background keep-alive control (180 minutes by default, configurable). Native approach observations can warn before zone entry. Road reports include available camera, police, hazard, crash, jam and closure alerts, plus enabled Flock/speed-camera layers. Averages cover the observed part of a zone; estimated progress and missing/stale values are identified explicitly. [Broadcast contract](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md).
 
 **Skip consent screens** makes privacy and terms choices without showing those screens. It declines personalized ads and accepts required terms. Leave this patch off if you want to read and make those choices yourself. Remove telemetry and Remove permissions reduce the listed data access; essential navigation services remain active.
 
-For Android Auto, follow the [KingInstaller steps with screenshots](../guides/android-auto.md). With **Change app name**, Waze may appear as **De-Waze** in the app list. The two audio patches are not tied to one version; the other patches on this page target 5.26.90.901. Available audio content depends on your music app and account. Live routing, road alerts and every car setup have not been fully tested. Report speed limit remains unverified.
+For Android Auto, follow the [KingInstaller steps with screenshots](../guides/android-auto.md). With **Change app name and icon**, Waze may appear as **De-Waze** in the app list. The two audio patches are not tied to one version; the other patches on this page target 5.26.90.901. Available audio content depends on your music app and account. Live routing, road alerts and every car setup have not been fully tested. Report speed limit remains unverified.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md#waze)

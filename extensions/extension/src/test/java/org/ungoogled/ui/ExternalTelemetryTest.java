@@ -100,4 +100,10 @@ public class ExternalTelemetryTest {
         SpeedAlerts.onNativeSpeedMps(Float.NaN);assertNull(ExternalTelemetry.speedMps());
         SpeedAlerts.onNativeSpeedMps(Float.POSITIVE_INFINITY);assertNull(ExternalTelemetry.speedMps());
     }
+    @Test public void selectedProviderStartupFollowsNavigationAndOffStopsIt(){
+        ExternalTelemetry.select(app,TelemetryStore.WAZE);assertTrue(ExternalTelemetry.status().contains("paused"));
+        ExternalTelemetry.navigating(true);assertFalse(ExternalTelemetry.status().contains("paused"));
+        ExternalTelemetry.navigating(false);assertTrue(ExternalTelemetry.status().contains("paused"));
+        ExternalTelemetry.select(app,"");assertEquals("Off · Google Maps",ExternalTelemetry.status());
+    }
 }

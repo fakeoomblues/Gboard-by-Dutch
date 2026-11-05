@@ -2,11 +2,15 @@
 
 **Appversie:** 14.17 · **Build:** 1287 · **Origineel bestand:** APKS
 
-[Download originele app](https://buzzheavier.com/1esn82va0l3d){ .md-button .md-button--primary }
+**Ook ondersteund:** 15.0/1289. APKM- en APKS-invoer moeten het volledige splitarchief bevatten.
+
+[Download ondersteund origineel van 14.17](https://buzzheavier.com/1esn82va0l3d){ .md-button .md-button--primary }
 
 [Flitsmeister installeren voor Android Auto: stappen met screenshots](../guides/android-auto.md){ .md-button }
 
-Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
+Selecteer het exacte originele bestand in Morphe Manager. Gebruik voor 15.0 het volledige archief van build 1289; beide onderzochte bundels met minimum-SDK 29 en 32 worden ondersteund. De download hierboven blijft het ondersteunde origineel van 14.17.
+
+[Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button }
 
 ## Patches
 
@@ -18,8 +22,9 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | **Fix PairIP startup** | Aan | Laat de gepatchte app na installatie starten en de ondersteunde functies gebruiken. Laat deze patch aan. |
 | **Guest mode** | Aan | Voegt Doorgaan als gast toe, laat de app zonder inloggen openen en verbergt het grote accountaanmaakblok. |
 | **Hide Pro notices** | Aan | Verbergt automatische Pro/Plus-aanbiedingen, badges en Android Auto-upgradeberichten. |
-| **Hide ads** | Aan | Verwijdert commerciële locatiepromoties, hun afbeeldingen en reclamemeldingen. Verkeerswaarschuwingen blijven. |
-| **Unlock Pro** | Aan | Schakelt lokaal geregelde Pro-opties in. Functies waarvoor accountactivering nodig is blijven afhankelijk van de dienst. |
+| **Hide ads** | Aan | Verwijdert commerciële locatiepromoties, hun afbeeldingen en reclamemeldingen. Verbergt in 15.0 aanbiedingen voor niet-gekochte betaalde soundpacks; bruikbare stemmen blijven selecteerbaar. Verkeerswaarschuwingen blijven. |
+| **Support Gearslip and DriveDeck** | Aan | Accepteert Gearslip en DriveDeck als autohost op pakketnaam, met welke sleutel ze ook zijn ondertekend, zodat DriveDeck werkt zonder dat de originele Gearslip is geïnstalleerd. Andere hosts houden de Android Auto-validatie. |
+| **Unlock Pro** | Aan | Schakelt lokaal geregelde Pro-opties in. De menu-avatar krijgt in 15.0 de eigen PRO-badge van de app als cosmetische wijziging. Functies waarvoor accountactivering nodig is blijven afhankelijk van de dienst. |
 
 ## Advertentie- en trackingdiensten
 
@@ -28,6 +33,12 @@ De advertentie- en trackingpatches beperken de ondersteunde optionele activiteit
 Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakelijke appdiensten kunnen nog verbinding maken.
 
 ## Voor gebruik
+
+De koppeling met native FM-gebeurtenissen en spraak blijft een ontwikkelfunctie. Flitsmeister 15.0 / 1289 heeft de dekkingscontroles voor modellen en opname doorstaan. Eerdere FM15-ontwikkelversies doorstonden met beide kaartapps gecontroleerde levering, bewegende cameracontroles en trajectcontroles. De huidige kandidaat bevat latere verbeteringen aan tekst, herstel en spraakgereedheid; de uiteindelijke controles van de geïnstalleerde apps, timing en telefoon/auto staan nog open. De categorie-/audiokeuze, het geparkeerde voorbeeld en herstel staan in de [instellingen voor native waarschuwingen](../guides/navigation-data.md#native-waarschuwingsaudio-van-flitsmeister).
+
+Het herstelde opstart-/nativeprofiel richt zich op ARM64. Op een Android 16-telefoon zijn kaartstart, HUD, pictogram wijzigen en opnieuw openen, de profielbadge en het verbergen van soundpack-aanbiedingen gecontroleerd. Serverrechten en een fysieke Android Auto-headunit blijven afzonderlijke controles.
+
+Bijgewerkte navigatiegegevenspatches starten de gekozen bron na eenmalige instellingen zonder het bronscherm te openen. Werk voor Flitsmeister ook Maps of Vela bij: met de herstelde overdracht kan een zichtbare kaartapp FM op de achtergrond starten met locatietoegang tijdens appgebruik. Dit is gecontroleerd op een Android 14-emulator; de controle op de Android 16-telefoon staat nog open. Altijd toegestane locatie is geen algemene eis voor deze overdracht. Houd de kaartapp zichtbaar wanneer je FM kiest en controleer de bronstatus. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
 
 **Broadcast navigation data** werkt zolang de rij-/locatiedienst met locatietoegang op de achtergrond draait. De overlay mag uit blijven. Ontvangende apps gebruiken dezelfde actie en velden voor Flitsmeister en Waze. De bron levert geschatte afstand vóór trajectinrit en beschikbare meldingen van vaste/mobiele flitsers, politie, gevaren, ongevallen, files en afsluitingen. Gemiddelden gaan alleen over het waargenomen deel; berekende voortgang wordt als schatting gemarkeerd. [Gedeeld broadcastcontract](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/navigation-broadcasts.md).
 

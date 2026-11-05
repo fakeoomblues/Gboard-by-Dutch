@@ -6,7 +6,7 @@ import com.android.tools.smali.dexlib2.Opcode
 /** Exact 14.17 local eligibility operations; genuine providers remain called. */
 internal val featureSettings = bytecodePatch {
     dependsOn(originalInput)
-    execute { applyPlans(listOf(
+    execute { if (isFlitsmeister15()) applyPlans(featureSettings15Plans()) else applyPlans(listOf(
     MethodPlan("Lgm8;->A(Landroid/content/Context;)Z", 2, 13, listOf(
             Guard(2, Opcode.INVOKE_INTERFACE, listOf(0, 1), "Lsle;->b(Landroid/content/Context;)Z"),
             Guard(3, Opcode.MOVE_RESULT, listOf(0)),

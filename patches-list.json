@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.28.0-dev.3",
+  "version": "1.41.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -59,6 +59,40 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Add Gearslip car interface",
+      "description": "Browse Home poster carousels and season/episode shelves in Gearslip, with automatic direct-source selection within 10 Mbps. Uses your WuPlay profile, add-ons and native playback without root or phone-screen mirroring.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.wuplay.android",
+          "name": "WuPlay Mobile",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "ae406f7d398ae1ae418238f83d07554e6aa6cf5855b66edb9c4c85995d435e7f"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "0.1.9-alpha",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -302,6 +336,180 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Android Auto Up next",
+      "description": "Publishes Myspoti's actual playback queue with titles, artists, artwork and the current occurrence. Android Auto and DriveDeck can display and select upcoming playlist and radio tracks through the existing player.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.myspoti.stable",
+          "name": "Myspoti",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "2b8f54daf60ce32cee1ab9206553c7e5741e96f2f32efdf2545758bf210a2c41"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2.3.0",
+              "versionCodes": {
+                "ARM64_V8A": 1121,
+                "ARMEABI_V7A": 1121,
+                "X86_64": 1121,
+                "X86": 1121
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio from the audio bundles the app itself renders. Selecting a headline restores the full ordered feed inside the app, so playback, Up next and premium entitlement follow the app's own player. The replaced Start content is never shown.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilead",
+          "name": "AD",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.22.0",
+              "versionCodes": {
+                "ARM64_V8A": 9220000,
+                "ARMEABI_V7A": 9220000,
+                "X86_64": 9220000,
+                "X86": 9220000
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilepa",
+          "name": "Parool",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobiletr",
+          "name": "Trouw",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilevk",
+          "name": "Volkskrant",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Any media app",
@@ -634,7 +842,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay.",
+      "description": "Shares current speed, road limits, road alerts and approaching/active average-speed zones with compatible local apps, also in the background without an overlay, with a silent startup and health API for Maps/Vela.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -660,6 +868,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -678,7 +898,7 @@
     },
     {
       "name": "Broadcast navigation data",
-      "description": "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. No overlay required.",
+      "description": "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. Includes a silent startup and health API for patched Maps/Vela; no overlay required.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -838,7 +1058,7 @@
     },
     {
       "name": "Change app name",
-      "description": "Sets the launcher and in-app app name.",
+      "description": "Sets the launcher and app-switcher name, with a choice of launcher icon styles on light or dark backgrounds.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -875,12 +1095,36 @@
           "type": "kotlin.String",
           "default": "Ungoogled Maps",
           "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Automatic follows the Legacy icon patch. Original keeps Google's icon. A supplied light or dark style overrides Legacy icon for the launcher; in-app artwork and splash screen stay unchanged.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "automatic",
+          "values": {
+            "Automatic (follow Legacy icon)": "automatic",
+            "Original Google Maps": "original",
+            "Classic pin - Light": "classic_pin_light",
+            "Classic pin - Dark": "classic_pin_dark",
+            "Outlined pin - Light": "outlined_pin_light",
+            "Outlined pin - Dark": "outlined_pin_dark",
+            "Classic map tile - Light": "classic_map_tile_light",
+            "Classic map tile - Dark": "classic_map_tile_dark",
+            "Raised map pin - Light": "raised_map_pin_light",
+            "Raised map pin - Dark": "raised_map_pin_dark",
+            "Gradient pin - Light": "gradient_pin_light",
+            "Gradient pin - Dark": "gradient_pin_dark",
+            "Folded map - Light": "folded_map_light",
+            "Folded map - Dark": "folded_map_dark"
+          }
         }
       ]
     },
     {
-      "name": "Change app name",
-      "description": "Renames Waze.",
+      "name": "Change app name and icon",
+      "description": "Sets the launcher and app-switcher name, with a choice of launcher icon styles on light or dark backgrounds.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -912,6 +1156,22 @@
           "type": "kotlin.String",
           "default": "De-Waze",
           "values": null
+        },
+        {
+          "key": "launcherIcon",
+          "title": "Launcher icon",
+          "description": "Waze's own icon, or one of five mascot styles on a light or dark background.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "stock",
+          "values": {
+            "Waze (original)": "stock",
+            "Waze logo": "logo",
+            "Bold blue mascot": "bold",
+            "Mascot over folded map": "map",
+            "Cyan mascot on black": "black",
+            "Cyan long shadow": "shadow"
+          }
         }
       ]
     },
@@ -958,6 +1218,51 @@
       ]
     },
     {
+      "name": "Change package name",
+      "description": "Installs Gboard under its own package name, alongside the stock Gboard that most phones have built in. On by default, because a patched copy cannot replace the built-in Gboard.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "packageName",
+          "title": "Package name",
+          "description": "The package name to install under. Must be a valid Android package name that differs from com.google.android.inputmethod.latin.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "app.morphe.android.inputmethod.latin",
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Control car display density",
       "description": "Adds a density submenu under Screen for larger text and controls, including hosted navigation apps. Choose the car's density or 160–240 DPI. Keeps resolution unchanged; reconnect to apply.",
       "default": true,
@@ -988,6 +1293,121 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Custom branding",
+      "description": "Changes Gboard's app name and launcher icon, so a patched copy is easy to tell apart from the stock one. Choose from five bundled icons or keep the original. The name also appears in Android's keyboard list.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher, Android's keyboard list and app information. Leave empty to keep Gboard.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching. Original keeps Gboard's icon.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": {
+            "Original": "original",
+            "3D keys": "glossy_3d",
+            "Classic blue": "classic_blue",
+            "Colourful G": "colourful",
+            "Cartoon outline": "cartoon",
+            "Soft light": "soft_light"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
+      "description": "Changes Myspoti's launcher icon and app name. Choose from six bundled icons or keep the original.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.myspoti.stable",
+          "name": "Myspoti",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep the original name.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching. Original keeps Myspoti's current icon.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "original",
+          "values": {
+            "Original": "original",
+            "Classic Spotify Green": "classic_green",
+            "Elegant dark Spotify": "elegant_dark",
+            "Emerald Spotify on pitch black": "emerald_black",
+            "Dark emerald Spotify glass": "emerald_glass",
+            "Platinum Spotify on charcoal": "platinum_charcoal",
+            "Black Spotify on warm white": "black_warm_white"
+          }
+        }
+      ]
     },
     {
       "name": "Customization screen",
@@ -1160,6 +1580,74 @@
       "options": []
     },
     {
+      "name": "Disable analytics",
+      "description": "Stops SoundCloud's TrackingHandler from storing and dispatching analytics events. Other tracking SDKs and online services remain active.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.10.28-release",
+              "versionCodes": {
+                "ARM64_V8A": 379050,
+                "ARMEABI_V7A": 379050,
+                "X86_64": 379050,
+                "X86": 379050
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable consent popup",
+      "description": "Uses SoundCloud's no-op consent controller to skip the OneTrust popup. Does not grant consent or disable tracking; select Disable analytics separately.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.10.28-release",
+              "versionCodes": {
+                "ARM64_V8A": 379050,
+                "ARMEABI_V7A": 379050,
+                "X86_64": 379050,
+                "X86": 379050
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Disable optional tracking",
       "description": "Disables Medium event collection, queued event uploads, optional analytics startup and advertising identifiers.",
       "default": true,
@@ -1217,6 +1705,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -1591,6 +2091,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -2687,6 +3199,40 @@
       "options": []
     },
     {
+      "name": "Enable SoundCloud Go",
+      "description": "Enables local Go+ plan controls, hides Go upsells and consumer-plan transition screens, and disables client ad requests and display placements. Paid streams, downloads and audio quality still depend on the account's server access.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.10.28-release",
+              "versionCodes": {
+                "ARM64_V8A": 379050,
+                "ARMEABI_V7A": 379050,
+                "X86_64": 379050,
+                "X86": 379050
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable WebView debugging",
       "description": "Diagnostic only: permits local inspection of KIJK's hosted frontend. Disabled by default; use for test builds.",
       "default": false,
@@ -2756,7 +3302,7 @@
     },
     {
       "name": "External speed controls",
-      "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback and provider settings.",
+      "description": "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback, silent provider startup and automatic engine recovery.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -2995,6 +3541,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -3288,11 +3846,11 @@
       "options": [
         {
           "key": "packageNames",
-          "title": "Trusted Gearslip packages",
-          "description": "Comma-separated installed Gearslip host package names. Each caller must own its package under its actual callback UID.",
+          "title": "Trusted Gearslip and DriveDeck packages",
+          "description": "Comma-separated installed Gearslip or DriveDeck host package names. Each caller must own its package under its actual callback UID.",
           "required": true,
           "type": "kotlin.String",
-          "default": "app.seb3thehacker.gearslip",
+          "default": "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev",
           "values": null
         }
       ]
@@ -3325,11 +3883,11 @@
       "options": [
         {
           "key": "packageNames",
-          "title": "Trusted Gearslip packages",
-          "description": "Comma-separated Gearslip host packages. Myspoti retains its UID ownership checks for browsing and search.",
+          "title": "Trusted Gearslip and DriveDeck packages",
+          "description": "Comma-separated Gearslip or DriveDeck host packages. Myspoti retains its UID ownership checks for browsing and search.",
           "required": true,
           "type": "kotlin.String",
-          "default": "app.seb3thehacker.gearslip",
+          "default": "app.seb3thehacker.gearslip,app.seb3thehacker.gearslip.dev,app.johninnl.drivedeck,app.johninnl.drivedeck.dev",
           "values": null
         }
       ]
@@ -3392,6 +3950,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -4288,6 +4858,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -4658,6 +5240,18 @@
                 "ARMEABI_V7A": 1287,
                 "X86_64": 1287,
                 "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
               },
               "isExperimental": false,
               "minSdk": 29,
@@ -6122,6 +6716,40 @@
       "options": []
     },
     {
+      "name": "Home in Android Auto",
+      "description": "Fills the car Home tab with regular cover tiles from the phone's Home, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Publishes the real playback queue for Up next, with queue item selection. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.10.28-release",
+              "versionCodes": {
+                "ARM64_V8A": 379050,
+                "ARMEABI_V7A": 379050,
+                "X86_64": 379050,
+                "X86": 379050
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Individual Wuplay catalog rows",
       "description": "Choose individual published Wuplay catalogs in Monet's Content picker, with Wuplay icons and refresh independent of Recommendations. Requires Wuplay's catalog publisher.",
       "default": false,
@@ -6485,7 +7113,7 @@
     },
     {
       "name": "Native navigation for Gearslip and Android Auto",
-      "description": "Shows this patched Maps app's original Android Auto map and navigation UI through a native navigation service. Requires the full Android Auto app for its car UI resources.",
+      "description": "Shows this patched Maps app's live native map with standard Android Auto controls that compatible hosts can arrange. Requires the full Android Auto app for its car UI resources.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -6676,6 +7304,41 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Parakeet voice typing",
+      "description": "Adds Gboard settings → Voice typing → Parakeet voice typing. After downloading NVIDIA Parakeet (Moondream's Parakeet Ultra or the original TDT v3), the microphone key transcribes on the phone and recognises Dutch, English and 23 more languages per sentence without switching.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.5.11.993608717-release-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176050094,
+                "ARMEABI_V7A": 176050094,
+                "X86_64": 176050094,
+                "X86": 176050094
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
@@ -7530,8 +8193,8 @@
       "options": []
     },
     {
-      "name": "Share alerts with Maps",
-      "description": "Shows Waze alerts in Ungoogled Maps on this phone. Waze must be signed in and open.",
+      "name": "Share Waze Alerts with external applications",
+      "description": "Shares Waze's road alerts with patched apps on this phone, such as Ungoogled Maps and Vela Maps. Waze must be signed in and open.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -9199,7 +9862,7 @@
     },
     {
       "name": "Support Gearslip",
-      "description": "Accepts Gearslip as a car host by package name, whichever key signed it, so a patched Gearslip keeps working. Other hosts keep Android Auto host validation.",
+      "description": "Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so a patched Gearslip keeps working. Other hosts keep Android Auto host validation.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -9217,6 +9880,52 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Support Gearslip and DriveDeck",
+      "description": "Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so DriveDeck works without the original Gearslip installed. Other hosts keep Android Auto host validation.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.flitsmeister",
+          "name": "Flitsmeister",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "ba4fdde5ed7d1082f6ba1af87df2ca39c81b094af20d36ff55b583aa3e3353e6"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "14.17",
+              "versionCodes": {
+                "ARM64_V8A": 1287,
+                "ARMEABI_V7A": 1287,
+                "X86_64": 1287,
+                "X86": 1287
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -9420,6 +10129,18 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
@@ -9428,7 +10149,7 @@
     },
     {
       "name": "Waze alerts",
-      "description": "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. Supports our navigation broadcasts for current speed, speed limits and average-speed zones, plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; external data is off by default. The selected source must be patched, enabled and running.",
+      "description": "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. Supports our navigation broadcasts for current speed, speed limits and average-speed zones, plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
       "default": true,
       "category": null,
       "compatiblePackages": [

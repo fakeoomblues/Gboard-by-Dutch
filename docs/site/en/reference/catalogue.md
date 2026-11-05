@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Development patch bundle: 1.28.0-dev.3**
+**Patch bundle: 1.41.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -38,6 +38,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 9.22.0 |
 | Disable tracking | On | 9.22.0 |
 | Hide Premium banner | On | 9.22.0 |
 | Hide ads | On | 9.22.0 |
@@ -174,14 +175,15 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Broadcast navigation data | On | 14.17 |
-| Disable partner services | On | 14.17 |
-| Disable tracking | On | 14.17 |
-| Fix PairIP startup | On | 14.17 |
-| Guest mode | On | 14.17 |
-| Hide Pro notices | On | 14.17 |
-| Hide ads | On | 14.17 |
-| Unlock Pro | On | 14.17 |
+| Broadcast navigation data | On | 14.17, 15.0 |
+| Disable partner services | On | 14.17, 15.0 |
+| Disable tracking | On | 14.17, 15.0 |
+| Fix PairIP startup | On | 14.17, 15.0 |
+| Guest mode | On | 14.17, 15.0 |
+| Hide Pro notices | On | 14.17, 15.0 |
+| Hide ads | On | 14.17, 15.0 |
+| Support Gearslip and DriveDeck | On | 14.17, 15.0 |
+| Unlock Pro | On | 14.17, 15.0 |
 
 ## FTM
 
@@ -196,6 +198,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 2.6.8 |
 | Read full articles | On | 2.6.8 |
 | Skip consent screens | On | 2.6.8 |
+
+## Gboard
+
+[What do the patches change?](../apps/gboard.md)
+
+`com.google.android.inputmethod.latin`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Change package name | On | 18.5.11.993608717-release-arm64-v8a |
+| Custom branding | Off | 18.5.11.993608717-release-arm64-v8a |
+| Parakeet voice typing | On | 18.5.11.993608717-release-arm64-v8a |
 
 ## Gearslip
 
@@ -374,6 +388,8 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto Up next | Off | 2.3.0 |
+| Custom branding | Off | Any |
 | Gearslip personal library | On | Any |
 
 ## Nieuwsblad
@@ -484,6 +500,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |
@@ -558,6 +575,19 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 12.7.1 |
 | Skip consent screens | On | 12.7.1 |
 
+## SoundCloud
+
+[What do the patches change?](../apps/soundcloud.md)
+
+`com.soundcloud.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable analytics | On | 2026.10.28-release |
+| Disable consent popup | On | 2026.10.28-release |
+| Enable SoundCloud Go | On | 2026.10.28-release |
+| Home in Android Auto | On | 2026.10.28-release |
+
 ## Trouw
 
 [What do the patches change?](../apps/trouw.md)
@@ -566,6 +596,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |
@@ -653,6 +684,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1 |
 | Disable tracking | On | 7.53.1 |
 | Hide Premium banner | On | 7.53.1 |
 | Hide ads | On | 7.53.1 |
@@ -678,7 +710,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Car alerts as notifications | Off | 5.26.90.901 |
 | Car reconnect grace period | Off | 5.26.90.901 |
 | Car traffic meter | Off | 5.26.90.901 |
-| Change app name | On | 5.26.90.901 |
+| Change app name and icon | On | 5.26.90.901 |
 | Extra map info | Off | 5.26.90.901 |
 | Flock cameras | On | 5.26.90.901 |
 | Full black | On | 5.26.90.901 |
@@ -695,7 +727,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Remove sign-in prompts | On | 5.26.90.901 |
 | Remove telemetry | On | 5.26.90.901 |
 | Report speed limit | Off | 5.26.90.901 |
-| Share alerts with Maps | On | 5.26.90.901 |
+| Share Waze Alerts with external applications | On | 5.26.90.901 |
 | Skip consent screens | On | 5.26.90.901 |
 | SoundCloud in Waze | On | Any |
 | Speed bump controls | Off | 5.26.90.901 |
@@ -746,6 +778,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Publish selected catalog channels | Off | 0.9.4-beta |
 
+## WuPlay Mobile
+
+[What do the patches change?](../apps/wuplay-mobile.md)
+
+`app.wuplay.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Add Gearslip car interface | Off | 0.1.9-alpha |
+
 ## YouTube Music
 
 [What do the patches change?](../apps/youtube-music.md)
@@ -756,4 +798,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

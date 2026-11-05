@@ -58,10 +58,8 @@ final class CatalogPublisher {
             String key = CatalogPolicy.tileKey(type, id);
             String title = (String) NativeCatalogs.field(item, "name");
             if (key == null || title == null || title.trim().isEmpty() || tiles.containsKey(key)) continue;
-            String background = (String) NativeCatalogs.field(item, "background");
             String poster = (String) NativeCatalogs.field(item, "poster");
-            boolean landscape = CatalogPolicy.artwork(background);
-            String art = landscape ? background : CatalogPolicy.artwork(poster) ? poster : null;
+            String art = CatalogPolicy.artwork(poster) ? poster : null;
             if (art == null) continue;
             ContentValues values = new ContentValues();
             values.put("internal_provider_id", key);
@@ -69,7 +67,7 @@ final class CatalogPublisher {
             values.put("title", title);
             values.put("short_description", (String) NativeCatalogs.field(item, "description"));
             values.put("poster_art_uri", art);
-            values.put("poster_art_aspect_ratio", landscape ? 0 : 4);
+            values.put("poster_art_aspect_ratio", 4);
             values.put("weight", 100 - tiles.size());
             Intent intent = new Intent(Intent.ACTION_VIEW, new Uri.Builder().scheme("wuplay").authority(type).appendPath(id).build());
             intent.setClassName(context.getPackageName(), "app.wuplay.androidtv.MainActivity");

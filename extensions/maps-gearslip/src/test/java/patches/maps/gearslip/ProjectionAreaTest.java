@@ -79,19 +79,4 @@ public final class ProjectionAreaTest {
         renderer.visibleArea(new Rect(-10, -10, 1400, 600));
         assertEquals(new Rect(), controller.k.insets);
     }
-    @Test public void everyAcceptedTargetReplacementChangesItsGenerationEvenAtTheSameSize() {
-        ProjectionRenderer renderer = new ProjectionRenderer(
-                Robolectric.buildService(HarnessService.class).create().get(), error -> { throw new AssertionError(error); });
-        android.graphics.SurfaceTexture texture = new android.graphics.SurfaceTexture(0);
-        android.view.Surface surface = new android.view.Surface(texture);
-        try {
-            renderer.surfaceAvailable(surface, 1280, 480, 160);
-            assertEquals(1, renderer.surfaceInfo().generation);
-            assertEquals(1280, renderer.surfaceInfo().width);
-            renderer.surfaceAvailable(surface, 1280, 480, 160);
-            assertEquals(2, renderer.surfaceInfo().generation);
-            renderer.surfaceDestroyed();
-            assertEquals(3, renderer.surfaceInfo().generation); assertEquals(0, renderer.surfaceInfo().width);
-        } finally { renderer.close(); surface.release(); texture.release(); }
-    }
 }

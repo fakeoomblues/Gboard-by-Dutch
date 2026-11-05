@@ -1,14 +1,43 @@
 """Genuine-artifact regressions for the Belgian original and retained behavior."""
 import os
+import hashlib
+import io
 from pathlib import Path
 import shutil
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 from verify_dumpert import Smali
-from verify_tweedehands import A, verify
+from verify_tweedehands import A, original_libraries, verify
+
+
+class OriginalLibraryInventoryTests(unittest.TestCase):
+    def test_device_split_inventory_preserves_only_the_supplied_abi(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            original = Path(scratch) / 'device.xapk'
+            split = io.BytesIO()
+            with zipfile.ZipFile(split, 'w') as archive:
+                archive.writestr('lib/arm64-v8a/libsigner.so', b'publisher-native')
+                archive.writestr('AndroidManifest.xml', b'manifest')
+            with zipfile.ZipFile(original, 'w') as archive:
+                archive.writestr('config.arm64_v8a.apk', split.getvalue())
+            self.assertEqual(original_libraries(original), {
+                'lib/arm64-v8a/libsigner.so': hashlib.sha256(b'publisher-native').hexdigest()})
+
+    def test_conflicting_duplicate_library_is_rejected(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            original = Path(scratch) / 'conflicting.apks'
+            with zipfile.ZipFile(original, 'w') as archive:
+                for number, contents in enumerate([b'original', b'changed']):
+                    split = io.BytesIO()
+                    with zipfile.ZipFile(split, 'w') as payload:
+                        payload.writestr('lib/arm64-v8a/libsigner.so', contents)
+                    archive.writestr(f'split{number}.apk', split.getvalue())
+            with self.assertRaisesRegex(AssertionError, 'Conflicting original native payload'):
+                original_libraries(original)
 
 
 @unittest.skipUnless(os.environ.get('TWEEDEHANDS_FIXTURES'),

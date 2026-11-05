@@ -1,7 +1,8 @@
 # 2dehands privacy controls
 
 Inspected original: `be.tweedehands.m` **16.19.0 / 633464**, minimum SDK **32**,
-target SDK **37**. The supplied eight-member XAPK includes Notifications.
+target SDK **37**. Both the earlier eight-member XAPK and the supplied
+ARM64/XHDPI/XXHDPI five-member XAPK include Notifications and are supported.
 Publisher SHA-256: `7c2c46aca6a23f0523b69cac1a21f03078be6fd41b3811874c4be1344c23ba47`.
 Stable publication uses the main release workflow. Signed-in account, incoming-push and checkout acceptance follows publication.
 
@@ -32,7 +33,10 @@ Functional permissions are not auto-granted.
 
 The verifier pins original metadata, manifest meaning, method graphs, translated
 helpers, actual invoked-method/field ABI, the Notifications feature and all
-fourteen native-library hashes. Edited methods are restored before comparison
+native-library hashes for every included ABI. Complete ARM64 and/or ARMv7
+payloads and complete applicable density profiles are accepted; a device-specific
+bundle need not contain every ABI and density. The rebuilt verifier compares
+the native inventory against the selected original split set. Edited methods are restored before comparison
 with original hashes. Behavioral fixtures exercise emitted instructions for
 ordinary/unknown/null/paid items, consent repeats and missing SDK, SDK admission,
 publisher view admission and Firebase headers.

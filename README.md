@@ -6,30 +6,30 @@
 </p>
 
 <p align="center">
-  <a href="https://johninnl.codeberg.page/nl-morphe-patches/en/guides/install/#2-add-the-patch-source">
+  <a href="https://morphe.software/add-source?gitlab=johninnld/nl-morphe-patches">
     <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" width="320">
   </a>
 </p>
 
-<p align="center">Follow the installation guide to add the Codeberg metadata URL in Morphe Manager.</p>
+<p align="center">Tap to add the GitLab source in Morphe Manager · <a href="https://nl-morphe-patches-ed90fa.gitlab.io/">Browse the GitLab Pages site</a></p>
 
 # Dutch App Patches
 
 Community patches for Dutch and Belgian Android apps, compatible with Morphe. Choose which
 ads, tracking and prompts to remove, and read what each patch changes in the
-[Dutch guide](https://johninnl.codeberg.page/nl-morphe-patches/) or
-[English guide](https://johninnl.codeberg.page/nl-morphe-patches/en/).
+[Dutch guide](docs/site/nl/index.md) or
+[English guide](docs/site/en/index.md).
 Independently maintained; not affiliated with Morphe or the app publishers.
 
 Installable bundles are listed on the
-[releases page](https://codeberg.org/JohninNL/nl-morphe-patches/releases).
+[releases page](https://gitlab.com/johninnld/nl-morphe-patches/-/releases).
 All app targets listed below belong to the production patch set.
 
 ## Get started
 
 1. Install [Morphe Manager](https://morphe.software/).
 2. Check your app's guide for the supported version and original download.
-3. Open [Add to Morphe](https://johninnl.codeberg.page/nl-morphe-patches/en/guides/install/#2-add-the-patch-source)
+3. Follow [Add the patch source](docs/site/en/guides/install.md#2-add-the-patch-source)
    on your Android device, then choose your patches in Manager and apply them
    to the original app file.
 
@@ -40,15 +40,15 @@ it does not guarantee anonymity or remove all network traffic.
 
 ### Waze or Flitsmeister missing from Android Auto?
 
-Use the [Android Auto walkthrough with screenshots (Nederlands)](https://johninnl.codeberg.page/nl-morphe-patches/guides/android-auto/)
-or [English](https://johninnl.codeberg.page/nl-morphe-patches/en/guides/android-auto/).
+Use the [Android Auto walkthrough with screenshots (Nederlands)](docs/site/nl/guides/android-auto.md)
+or [English](docs/site/en/guides/android-auto.md).
 It explains why navigation apps need extra installation steps and takes you
 through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.28.0-dev.3](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.28.0-dev.3)** · 53 apps · 275 patches
+**Patch bundle [v1.41.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.41.0)** · 55 apps · 286 patches
 
 ### Weather
 
@@ -64,7 +64,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
-| [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 5 |
+| [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Bright](docs/site/en/apps/bright.md) | Ads · Tracking · Prompts · Articles | 10.181.0 | APKS | 4 |
 | [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [De Tijd](docs/site/en/apps/detijd.md) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 8 |
@@ -82,19 +82,19 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [NU.nl](docs/site/en/apps/nunl.md) | Ads · Tracking · Prompts | 26.9.0 | APKS | 4 |
 | [Omroep Brabant](docs/site/en/apps/omroep-brabant.md) | Ads · Tracking · Prompts | 11.1.0 | APKS | 3 |
 | [Omroep West](docs/site/en/apps/omroep-west.md) | Ads · Tracking · Prompts | 20.1 | APKS | 3 |
-| [Parool](docs/site/en/apps/parool.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Parool](docs/site/en/apps/parool.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 | [RTL Nieuws](docs/site/en/apps/rtl-nieuws.md) | Ads · Tracking · Prompts | 12.7.1 | APKS | 4 |
-| [Trouw](docs/site/en/apps/trouw.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Trouw](docs/site/en/apps/trouw.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 | [Tubantia](docs/site/en/apps/tubantia.md) | Ads · Tracking · Prompts · Articles | 9.23.2 | APKS | 5 |
 | [Voetbal International](docs/site/en/apps/voetbal-international.md) | Ads · Tracking · Prompts · Articles | 5.13.52 | APKS | 4 |
-| [Volkskrant](docs/site/en/apps/volkskrant.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Volkskrant](docs/site/en/apps/volkskrant.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 
 ### Traffic and navigation
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [9292](docs/site/en/apps/9292.md) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
-| [Flitsmeister](docs/site/en/apps/flitsmeister.md) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17 | APKS | 8 |
+| [Flitsmeister](docs/site/en/apps/flitsmeister.md) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17, 15.0 | APKS | 9 |
 | [Gearslip](docs/site/en/apps/gearslip.md) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 3 |
 | [Google Maps](docs/site/en/apps/google-maps.md) | See guide | 26.43.05.1002020710 | APK | 31 |
 | [Rollerbank](docs/site/en/apps/rollerbank.md) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
@@ -108,14 +108,16 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |
-| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | Any | APK | 1 |
+| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, Any | APK | 3 |
 | [NPO Start](docs/site/en/apps/npo-start.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
+| [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.10.28-release | APKM | 4 |
 | [TVgids.nl](docs/site/en/apps/tvgids-nl.md) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](docs/site/en/apps/videoland.md) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](docs/site/en/apps/videoland-android-tv.md) | Ads · Tracking | 1.117.0 | APKS | 3 |
 | [Wuplay Android TV](docs/site/en/apps/wuplay.md) | See guide | 0.9.4-beta | APK | 1 |
+| [WuPlay Mobile](docs/site/en/apps/wuplay-mobile.md) | See guide | 0.1.9-alpha | APK | 1 |
 | [YouTube Music](docs/site/en/apps/youtube-music.md) | See guide | Any | APK | 1 |
 
 ### Other apps
@@ -124,6 +126,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [2dehands](docs/site/en/apps/2dehands.md) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
+| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.5.11.993608717-release-arm64-v8a | APK | 3 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |

@@ -1,6 +1,15 @@
 Morphe NOTICE
 =============
 
+SoundCloud additional controls
+-----------------------------
+
+Adapted from kondratjev/morphe-patches, source snapshot
+f07ca75539b77d760b0507ee90abea44f6069348, licensed under GPL-3.0.
+Ported analytics, consent and local Go plan controls to SoundCloud
+2026.10.28-release by this project. The upstream branding restriction below
+is retained.
+
 Monet Wuplay catalog rows
 ------------------------
 

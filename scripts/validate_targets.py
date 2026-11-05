@@ -147,6 +147,7 @@ APPS = {
         "Hide Premium banner": [], "Read full articles": [],
     },
     "flitsmeister": {
+        "Support Gearslip and DriveDeck": [],
         "Fix PairIP startup": [], "Unlock Pro": [], "Hide Pro notices": [],
         "Broadcast navigation data": [],
         "Disable partner services": [], "Hide ads": [], "Disable tracking": [],
@@ -353,11 +354,13 @@ def verifier_command(app: str, destination: Path, effective: set[str], apk: Path
         command = [sys.executable, "tests/verify_rollerbank.py", str(destination), "--original-root", str(original_reference)]
     elif app == "2dehands":
         command = [sys.executable, "tests/verify_tweedehands.py", str(destination)]
+        if original_input is not None:
+            command += ["--original-apks", str(original_input)]
     elif app in {"detijd", "demorgen", "humo", "hln", "nieuwsblad", "dsnieuws", "hbvl", "gva", "tvgids", "marktplaats", "9292", "weerplaza", "nunl", "volkskrant", "trouw", "parool", "ftm", "flitsmeister", "ad", "tubantia", "ed", "nrc", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"}:
         command = [sys.executable, f"tests/verify_{app}.py", str(destination)]
     else:
         command = [sys.executable, "tests/verify_targets.py", app, str(destination)]
-    if app in {"detijd", "tvgids", "marktplaats", "2dehands", "9292", "dumpert", "rtl", "brabant", "west", "vi", "teletekst"} and apk is not None:
+    if app in {"detijd", "tvgids", "marktplaats", "2dehands", "9292", "dumpert", "rtl", "brabant", "west", "vi", "teletekst", "flitsmeister"} and apk is not None:
         command += ["--apk", str(apk)]
     if app == "tvgids":
         if original_reference is None:
@@ -394,13 +397,24 @@ def patch_selections(patches: dict[str, list[str]], requested: list[str] | None)
 def decoded_destination(out: Path, name: str, compact: bool):
     if compact:
         destination = Path(tempfile.mkdtemp(prefix=f"decoded-{name}-", dir=out))
+        failure = None
         try:
             yield destination
-        except BaseException:
-            print(f"Retained failed validation output: {destination}", file=sys.stderr)
+        except BaseException as error:
+            failure = error
             raise
-        else:
-            shutil.rmtree(destination)
+        finally:
+            # Logs live beside the scratch tree; terminal failures keep those diagnostics.
+            try:
+                shutil.rmtree(destination)
+            except OSError as cleanup_error:
+                message = f'Owned validation scratch cleanup required: {destination}: {cleanup_error}'
+                if failure is None:
+                    cleanup_error.cleanupRequired = True
+                    cleanup_error.add_note(message)
+                    raise
+                failure.cleanupRequired = True
+                failure.add_note(message)
     else:
         yield out / f"decoded-{name}"
 
@@ -494,7 +508,8 @@ def main() -> None:
         run(["apksigner", "verify", str(output)], out / f"signature-{name}.log")
         effective = set(selection) | {dependency for patch in selection for dependency in patches[patch]}
         decode_and_verify(out, args.app, output, name, effective, args.compact,
-                          trusted_decoded or reference, patch_input if trusted_decoded else None)
+                          trusted_decoded or reference,
+                          patch_input if trusted_decoded or args.app == "2dehands" else None)
         print(f"PASS: {args.app} {name}; patch report, signature and decoded effects", flush=True)
         if args.compact and name != "all":
             output.unlink()

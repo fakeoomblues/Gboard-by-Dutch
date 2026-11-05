@@ -74,7 +74,7 @@ Meldt Android een ondertekeningsconflict of een conflict met een bestaand pakket
 
 1. Open Waze of Flitsmeister één keer op je telefoon. Rond de eerste instellingen af en geef de rechten die de app nodig heeft voor navigatie.
 2. Open de **Instellingen** van je telefoon en zoek naar **Android Auto**. Open het resultaat met de Android Auto-instellingen.
-3. Tik op **Launcher aanpassen** (**Customise Launcher** op de screenshots). Zoek **Flitsmeister** of **Waze** en zet het vinkje aan. Heb je Wazes patch **Change app name** toegepast? Zoek dan op de gekozen naam; standaard is dat **De-Waze**.
+3. Tik op **Launcher aanpassen** (**Customise Launcher** op de screenshots). Zoek **Flitsmeister** of **Waze** en zet het vinkje aan. Heb je Wazes patch **Change app name and icon** toegepast? Zoek dan op de gekozen naam; standaard is dat **De-Waze**.
 4. Verbind je telefoon opnieuw met de auto en controleer de applijst op het autoscherm. Doe dit terwijl je geparkeerd staat.
 
 ![Android Auto-instellingen met Customize launcher, oftewel Launcher aanpassen](../../assets/images/android-auto/android-auto-settings.webp){ .aa-screenshot loading=lazy }

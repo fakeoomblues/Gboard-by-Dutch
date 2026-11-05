@@ -6,11 +6,15 @@
 
 Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **Alle versies** wanneer de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. Het patchen en opnieuw bouwen is getest met echte APK-bestanden van 2.2.0 / 1116 en 2.3.0 / 1121. De versie hierboven is het referentiebestand. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
 
+[Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
+| **Custom branding** | Uit | Stelt een eigen appnaam in en kiest een van zes meegeleverde launchericonen in Spotify-stijl, of behoudt het originele icoon. |
 | **Gearslip personal library** | Aan | Laat de ingestelde Gearslip-host de bestaande Home, bibliotheek en downloads van Myspoti bekijken, zoeken en muziek kiezen om af te spelen. |
+| **Android Auto Up next** | Uit | Publiceert het huidige item en de echte wachtrij van afspeellijsten/radio, met metadata en selectie. Vereist de originele APK 2.3.0 / 1121. De gebruiker heeft de oplossing op de telefoon bevestigd. |
 
 ## Advertentie- en trackingdiensten
 
@@ -18,7 +22,11 @@ Deze compatibiliteitspatch verandert de toegang tot de muziekbrowser. De patch v
 
 ## Voor gebruik
 
-Log in bij Myspoti. De optie voor vertrouwde hosts gebruikt standaard het officiële Gearslip-pakket. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
+Selecteer **Android Auto Up next** expliciet bij het patchen van de originele APK 2.3.0 / 1121; combineren met de andere patches is mogelijk. De patch publiceert maximaal 50 echte wachtrij-items inclusief het huidige item en kiest komende items via Myspoti's bestaande wachtrijhandler. De gebruiker heeft bevestigd dat de ontbrekende Up next-weergave is opgelost na installatie van de ondertekende APK als update, met behoud van appgegevens en de bestaande Spotify-naam en het icoon.
+
+Schakel **Custom branding** in om **App name** en de keuzelijst **App icon** te gebruiken. De keuzes zijn Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal en Black Spotify on warm white. Een lege naam behoudt Myspoti. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht. Branding kan samen met **Gearslip personal library** uit dezelfde bundel worden gekozen. De patch verandert de Android-appnaam en het launchericoon; logo’s in de app, het opstartscherm, notificatieafbeeldingen en accounttoegang blijven zoals Myspoti ze levert.
+
+Log in bij Myspoti. De optie voor vertrouwde hosts gebruikt standaard de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
 
 De gebruiker heeft bevestigd dat de patch met Myspoti 2.2.0 in Gearslip werkt en heeft de stabiele release goedgekeurd. Het exacte originele 2.3.0-bestand kan op de desktop worden gepatcht. Een gemelde archiefleesfout in Manager kwam door een beschadigde kopie op de telefoon; zet bij deze fout een nieuw origineel APK-bestand over. Versie 2.3.0 heeft nog niet dezelfde toesteltest met een ingelogd account doorlopen. Een gepatchte APK moet opnieuw worden ondertekend. De door de uitgever ondertekende installatie kan niet met een andere sleutel worden bijgewerkt. Bewaar deze tijdens het testen van een aparte kopie; verwijder de installatie niet alleen om deze patch te proberen.
 

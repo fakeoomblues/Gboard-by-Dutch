@@ -22,5 +22,6 @@ local.properties
 /maps/
 /yt/
 
+# Disposable CI toolchains and Python environment.
 .ci-tools/
 .venv/

@@ -62,10 +62,12 @@ val catalogChannels = bytecodePatch(
                 "userSettingsRepository" to "Lapp/wuplay/androidtv/data/UserSettingsRepositoryImpl;"),
             "Lapp/wuplay/androidtv/data/UserSettingsRepositoryImpl;" to mapOf(
                 "profiles" to "Lkotlinx/coroutines/flow/Flow;", "activeProfileId" to "Lkotlinx/coroutines/flow/Flow;"),
-            "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;" to mapOf("definitions" to "Lkotlinx/coroutines/flow/Flow;"),
+            "Lapp/wuplay/androidtv/data/CatalogRepositoryImpl;" to mapOf("definitions" to "Lkotlinx/coroutines/flow/Flow;", "screens" to "Lkotlinx/coroutines/flow/Flow;"),
+            "Lapp/wuplay/androidtv/domain/model/SidebarScreen;" to mapOf(
+                "systemKey" to "Ljava/lang/String;", "rowCatalogIds" to "Ljava/util/List;"),
             "Lapp/wuplay/androidtv/domain/model/Profile;" to mapOf("id" to "Ljava/lang/String;", "name" to "Ljava/lang/String;"),
             "Lapp/wuplay/androidtv/domain/model/CatalogDefinition;" to mapOf(
-                "id" to "I", "name" to "Ljava/lang/String;", "source" to "Ljava/lang/String;", "homeOrder" to "I", "showHome" to "Z"),
+                "id" to "I", "name" to "Ljava/lang/String;", "source" to "Ljava/lang/String;", "sourceId" to "Ljava/lang/String;", "homeOrder" to "I", "showHome" to "Z"),
             "Lapp/wuplay/androidtv/domain/repository/CatalogContent;" to mapOf("items" to "Ljava/util/List;", "error" to "Ljava/lang/String;"),
             "Lapp/wuplay/androidtv/domain/stremio/MetaPreview;" to listOf("type", "id", "imdbId", "name", "description", "poster", "background")
                 .associateWith { "Ljava/lang/String;" },

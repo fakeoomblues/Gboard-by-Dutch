@@ -4,16 +4,30 @@ import static org.junit.Assert.*;
 import static org.robolectric.Shadows.shadowOf;
 import android.content.Intent;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.res.Resources;
+import android.app.Activity;
 import android.graphics.SurfaceTexture;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
 import android.view.Surface;
+import android.view.View;
+import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import androidx.car.app.IAppManager;
 import androidx.car.app.SurfaceContainer;
 import androidx.car.app.serialization.Bundleable;
+import androidx.car.app.model.TemplateWrapper;
+import androidx.car.app.model.ListTemplate;
+import androidx.car.app.model.Row;
+import androidx.car.app.navigation.model.NavigationTemplate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -283,83 +297,97 @@ public final class NativeCarServiceTest {
         constructor.setAccessible(true); return (IBinder) constructor.newInstance(service, session);
     }
 
-    @Test public void retiredSurfaceCannotApplyAreasToAReplacementSession() throws Exception {
-        handshake(HOST); focusEditor("Amsterdam");
-        IBinder earlier = surfaceCapability();
-        handshake(HOST); focusEditor("Utrecht");
-        assertSecurity(call(earlier, "ISurfaceCallback", 3, data -> {
-            data.writeInt(1); new android.graphics.Rect(0, 0, 920, 396).writeToParcel(data, 0);
-        }));
-        assertEquals(2, call(surfaceCapability(), "ISurfaceCallback", 3, data -> {
-            data.writeInt(1); new android.graphics.Rect(0, 0, 1280, 480).writeToParcel(data, 0);
-        }).code);
+    private IBinder actionCapability() throws Exception {
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true);
+        Object session = active.get(service);
+        java.lang.reflect.Field renderer = session.getClass().getDeclaredField("renderer"); renderer.setAccessible(true);
+        renderer.set(session, new ProjectionRenderer(service, error -> { throw new AssertionError(error); }));
+        Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses())
+                .filter(candidate -> candidate.getSimpleName().equals("ActionBinder")).findFirst().get();
+        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass(), NativeControls.Control.class);
+        constructor.setAccessible(true); return (IBinder) constructor.newInstance(service, session, null);
     }
 
-    @Test public void areaCallbacksRequireTheCapturedHostUid() throws Exception {
-        handshake(HOST); focusEditor("Amsterdam");
-        IBinder surface = surfaceCapability();
+    @Test public void standardActionCallbacksRequireTheAuthenticatedHostUid() throws Exception {
+        handshake(HOST); IBinder action = actionCapability();
         ShadowBinder.setCallingUid(HOST_UID + 1);
-        for (int code : new int[]{3, 4}) assertSecurity(call(surface, "ISurfaceCallback", code, data -> {
-            data.writeInt(1); new android.graphics.Rect(0, 0, 920, 396).writeToParcel(data, 0);
-        }));
-    }
-
-    @Test public void companionBindingIsOwnedByTheCurrentCalSessionAndDoesNotCloseItOnUnbind() throws Exception {
-        handshake(HOST);
-        Intent companion = new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/one"));
-        IBinder capability = service.onBind(companion);
-        assertEquals(SurfaceOcclusionChannel.DESCRIPTOR, capability.getInterfaceDescriptor());
-        assertEquals(SurfaceOcclusionChannel.NO_SURFACE, overlayStatus(capability));
-        ShadowBinder.setCallingUid(HOST_UID + 1);
-        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
+        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
         ShadowBinder.setCallingUid(HOST_UID);
-        service.onUnbind(companion);
-        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
-        assertEquals(2, call(car, "ICarApp", 9, data -> data.writeString("app")).code);
-        handshake(HOST);
-        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability));
+        assertEquals(2, call(action, "model.IOnClickListener", 2, data -> {}).code);
     }
 
-    private static int overlayStatus(IBinder capability) throws Exception {
-        return overlayStatus(capability, 1);
+    @Test public void standardActionCallbacksCannotReviveAReplacedSession() throws Exception {
+        handshake(HOST); IBinder action = actionCapability(); handshake(HOST);
+        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
     }
-    private static int overlayStatus(IBinder capability, int code) throws Exception {
-        return overlayStatus(capability, code, () -> {});
+
+    @Test public void oldNavigationActionsCannotInterruptTheHostKeyboard() throws Exception {
+        handshake(HOST); IBinder action = actionCapability(); ProjectedEditor editor = focusEditor("Amsterdam");
+        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
+        assertEquals("androidx.car.app.model.SearchTemplate", template(manager()).getString("tag_class_name"));
+        assertEquals("Amsterdam", editor.field.getText().toString());
     }
-    private static int overlayStatus(IBinder capability, int code, Runnable beforeDrain) throws Exception {
-        int[] status = {-1};
-        Binder callback = new Binder() {
-            @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) {
-                data.enforceInterface(SurfaceOcclusionChannel.RESULT); data.readLong(); status[0] = data.readInt(); return true;
-            }
+
+    public static final class TemplatePresentation {
+        private final Window window;
+        TemplatePresentation(Window window) { this.window = window; }
+        public Window f() { return window; }
+    }
+    public static final class TemplateController {
+        public final TemplatePresentation k;
+        TemplateController(Window window) { k = new TemplatePresentation(window); }
+        public void m(int state, boolean flag) {}
+        public void k() {}
+    }
+    @Test public void anUnmodifiedCalHostReceivesNativeActionsAndAStandardOverflowList() throws Exception {
+        handshake(HOST);
+        Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
+        java.util.Map<Integer, String> names = new java.util.HashMap<>(); names.put(0x7f990001, "map_buttons_view_container");
+        Resources original = activity.getResources();
+        Resources resources = new Resources(activity.getAssets(), original.getDisplayMetrics(), original.getConfiguration()) {
+            @Override public String getResourceEntryName(int id) { return names.containsKey(id) ? names.get(id) : super.getResourceEntryName(id); }
         };
-        Parcel data = Parcel.obtain();
-        try {
-            data.writeInterfaceToken(SurfaceOcclusionChannel.DESCRIPTOR); data.writeInt(1);
-            data.writeLong(1); data.writeStrongBinder(callback);
-            assertTrue(capability.transact(code, data, null, IBinder.FLAG_ONEWAY));
-            beforeDrain.run();
-            shadowOf(Looper.getMainLooper()).idle();
-            assertTrue(status[0] >= 0); return status[0];
-        } finally { data.recycle(); }
+        Context context = new ContextWrapper(activity) { @Override public Resources getResources() { return resources; } };
+        FrameLayout root = new FrameLayout(context), group = new FrameLayout(context); group.setId(0x7f990001);
+        root.addView(group, new FrameLayout.LayoutParams(640, 480)); activity.setContentView(root);
+        java.util.Map<NativeControls.Role, Integer> clicks = new java.util.EnumMap<>(NativeControls.Role.class);
+        int id = 0x7f990010;
+        for (NativeControls.Role role : NativeControls.Role.values()) {
+            names.put(id, role.names[0]); ImageView view = new ImageView(context); view.setId(id++);
+            view.setImageDrawable(new ColorDrawable(Color.BLUE)); view.setOnClickListener(v -> clicks.merge(role, 1, Integer::sum));
+            group.addView(view, new FrameLayout.LayoutParams(64, 64));
+        }
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
+        ProjectionRenderer renderer = new ProjectionRenderer(service, error -> { throw new AssertionError(error); });
+        java.lang.reflect.Field created = ProjectionRenderer.class.getDeclaredField("created"); created.setAccessible(true); created.set(renderer, true);
+        java.lang.reflect.Field nativeController = ProjectionRenderer.class.getDeclaredField("controller"); nativeController.setAccessible(true);
+        nativeController.set(renderer, new TemplateController(activity.getWindow()));
+        java.lang.reflect.Field current = session.getClass().getDeclaredField("renderer"); current.setAccessible(true); current.set(session, renderer);
+        IBinder app = manager(); NavigationTemplate navigation = (NavigationTemplate) decodedTemplate(app);
+        assertEquals(4, navigation.getActionStrip().getActions().size());
+        assertEquals(4, navigation.getMapActionStrip().getActions().size());
+        assertEquals(View.INVISIBLE, group.getVisibility());
+        new NavigationTemplate.Builder().setActionStrip(navigation.getActionStrip()).setMapActionStrip(navigation.getMapActionStrip()).build();
+        navigation.getActionStrip().getActions().get(3).getOnClickDelegate().sendClick(done());
+        shadowOf(Looper.getMainLooper()).idle();
+        ListTemplate more = (ListTemplate) decodedTemplate(app);
+        Row row = more.getSingleList().getItems().stream().map(item -> (Row) item)
+                .filter(item -> item.getTitle().toString().equals("Report incident")).findFirst().get();
+        row.getOnClickDelegate().sendClick(done()); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(Integer.valueOf(1), clicks.get(NativeControls.Role.REPORT));
+        assertEquals(View.INVISIBLE, group.getVisibility()); assertTrue(decodedTemplate(app) instanceof NavigationTemplate);
     }
-    @Test public void companionReleaseKeepsTheNativeEditorAndRevokesWithItsSession() throws Exception {
-        handshake(HOST); ProjectedEditor editor = focusEditor("Amsterdam");
-        IBinder app = manager(), search = searchCallback(app);
-        IBinder capability = service.onBind(new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/release")));
-        assertEquals(SurfaceOcclusionChannel.ACCEPTED, overlayStatus(capability, 3));
-        assertEquals(2, call(search, "model.ISearchCallback", 2, data -> data.writeString("Utrecht")).code);
-        assertEquals("Utrecht", editor.field.getText().toString());
-        handshake(HOST); assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability, 3));
+    private static androidx.car.app.OnDoneCallback done() {
+        return new androidx.car.app.OnDoneCallback() {
+            @Override public void onSuccess(Bundleable response) {}
+            @Override public void onFailure(Bundleable error) { throw new AssertionError("CAL action was rejected"); }
+        };
     }
-    @Test public void companionUnbindRevokesRequestsAlreadyQueuedWithoutClosingTheEditor() throws Exception {
-        handshake(HOST); ProjectedEditor editor = focusEditor("Amsterdam");
-        IBinder search = searchCallback(manager());
-        Intent companion = new Intent(SurfaceOcclusionChannel.ACTION).setData(android.net.Uri.parse("maps-overlay://session/queued"));
-        IBinder capability = service.onBind(companion);
-        assertEquals(SurfaceOcclusionChannel.DENIED, overlayStatus(capability, 3, () -> service.onUnbind(companion)));
-        assertEquals(2, call(search, "model.ISearchCallback", 2, data -> data.writeString("Utrecht")).code);
-        assertEquals("Utrecht", editor.field.getText().toString());
+    private static Object decodedTemplate(IBinder app) throws Exception {
+        Response response = call(app, "IAppManager", 2, data -> {}); assertEquals(2, response.code);
+        Parcel wire = Parcel.obtain();
+        try { wire.writeBundle(response.value); wire.setDataPosition(0); return ((TemplateWrapper) Bundleable.CREATOR.createFromParcel(wire).get()).getTemplate(); }
+        finally { wire.recycle(); }
     }
 
     private static Bundle nullSurfaceContainer() {

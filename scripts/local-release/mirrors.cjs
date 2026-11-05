@@ -10,6 +10,10 @@ const TARGETS={
   codeberg:{base:"https://codeberg.org",repository:"JohninNL/nl-morphe-patches",owner:"JohninNL",token:"CODEBERG_TOKEN",api:"/api/v1",sshKey:"CODEBERG_SSH_KEY",ssh:"git@codeberg.org:JohninNL/nl-morphe-patches.git"},
   gitgud:{base:"https://gitgud.io",repository:"JohninNL/nl-morphe-patches",owner:"JohninNL",token:"GITGUD_TOKEN",api:"/api/v4",sshKey:"GITGUD_SSH_KEY",ssh:"git@ssh.gitgud.io:JohninNL/nl-morphe-patches.git"},
 };
+// Dropped for now by maintainer decision: releases publish to GitLab and Codeberg only, so preflight
+// and publication iterate this list. The GitGud target, release code and credentials stay available
+// for tests and restoration: add "gitgud" here (or pass options.targets) to republish in parallel.
+const ACTIVE_TARGETS=["codeberg"];
 const CANONICAL={base:"https://gitlab.com",repository:"johninnld/nl-morphe-patches",owner:"johninnld",token:"GITLAB_TOKEN",sshKey:"GITLAB_SSH_KEY",ssh:"git@gitlab.com:johninnld/nl-morphe-patches.git"};
 const SHA=/^[a-f0-9]{40}$/;
 function target(name){const value=TARGETS[name];if(!value)throw new Error("Unknown release mirror");return value;}
@@ -132,14 +136,15 @@ async function checkTarget(name,context){
   }
   return {refs};
 }
-async function settledTargets(context,task){
-  const names=Object.keys(TARGETS),settled=await Promise.allSettled(names.map(name=>task(name)));
+async function settledTargets(context,task,names=ACTIVE_TARGETS){
+  const settled=await Promise.allSettled(names.map(name=>task(name)));
   const targets={};settled.forEach((row,index)=>{targets[names[index]]=row.status==="fulfilled"?{status:"fulfilled",...row.value}:{status:"rejected",error:redact(row.reason?.message||"Mirror failed",context.env)};});
   return {format:1,branch:context.branch,head:context.head,complete:settled.every(row=>row.status==="fulfilled"),targets};
 }
 async function preflight(options={}){
   const context=sourceContext(options);
-  return settledTargets(context,async name=>{await checkTarget(name,context);return {checked:true};});
+  const names=options.targets||ACTIVE_TARGETS;
+  return settledTargets(context,async name=>{await checkTarget(name,context);return {checked:true};},names);
 }
 function canonicalRelease(context){
   const read=file=>JSON.parse(fs.readFileSync(path.join(context.cwd,file),"utf8"));
@@ -222,14 +227,14 @@ async function mirrorReleases(options={}){
   }
   catch(error){
     const result={format:1,complete:false,phase:"validation",targets:{}};
-    for(const name of Object.keys(TARGETS))result.targets[name]={status:"rejected",error:redact(error.message,options.env||process.env)};
+    for(const name of options.targets||ACTIVE_TARGETS)result.targets[name]={status:"rejected",error:redact(error.message,options.env||process.env)};
     saveResult(options.cwd||process.cwd(),result);throw error;
   }
   if(!source){const result={format:1,branch:context.branch,head:context.head,complete:true,skipped:"no-release",targets:{}};saveResult(context.cwd,result);return result;}
   const result=await settledTargets(context,async name=>{
     const {refs}=await checkTarget(name,context);syncRefs(name,context,source,refs);
     return name==="codeberg"?codebergRelease(context,source):gitgudRelease(context,source);
-  });
+  },options.targets||ACTIVE_TARGETS);
   saveResult(context.cwd,result);return result;
 }
 async function main(argv=process.argv.slice(2),options={}){

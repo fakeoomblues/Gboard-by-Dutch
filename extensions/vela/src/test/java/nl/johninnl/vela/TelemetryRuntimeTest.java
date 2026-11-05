@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 import android.app.Application;import android.location.Location;import android.os.Looper;import android.os.SystemClock;
 import org.junit.*;import org.junit.runner.RunWith;import org.robolectric.*;import org.robolectric.annotation.Config;
 import java.time.Duration;
-@RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE)
+@RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE,qualifiers="en-rUS")
 public class TelemetryRuntimeTest {
  Application app;
  @Before public void setup(){app=RuntimeEnvironment.getApplication();app.getSharedPreferences("vela_settings",0).edit().clear().putBoolean("flock_cameras_on",true).commit();TelemetryRuntime.resetForTest();TelemetryRuntime.init(app,()->{});TelemetryRuntime.select("com.waze");org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(40));}
@@ -68,4 +68,90 @@ public class TelemetryRuntimeTest {
   assertTrue("car-only route finds a report around a bend without heading",TelemetryRuntime.warningText().startsWith("Speed camera"));
   assertTrue("active car navigation speaks while phone UI and service are absent",voice.last.startsWith("Speed camera"));
  }
+ @Test public void selectedProviderStartupFollowsNavigationAndNativeSourceStopsIt(){
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(true);
+  assertFalse(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(false);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
+ }
+ @Test public void visibleCarSessionStartsProviderWithoutPhoneActivityOrMapFrame() throws Exception {
+  Object session=new Object();java.lang.reflect.Method visible=TelemetryRuntime.class.getMethod("setCarSessionVisible",Object.class,boolean.class);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,true);
+  assertFalse(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,false);
+  assertTrue(TelemetryRuntime.statusText().contains("paused"));
+ }
+ @Test public void bothProvidersDistinguishIncomingDataFromAnUnconnectedWarningBridge() throws Exception {
+  for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
+   TelemetryRuntime.select(provider);
+   assertTrue(TelemetryRuntime.warningBridgeStatus().contains("not connected"));
+   TelemetryStore store=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"store");
+   assertTrue(store.accept(TelemetryStoreTest.packet(provider,"status-data",1,SystemClock.elapsedRealtime()),provider,SystemClock.elapsedRealtime()));
+   assertTrue(TelemetryRuntime.dataStatus().contains("connected · receiving data"));
+   assertTrue("Telemetry alone must not prove the warning API works",TelemetryRuntime.warningBridgeStatus().contains("not connected"));
+   assertTrue(TelemetryRuntime.statusText().startsWith(TelemetryRuntime.providerName()+" · Warning bridge:"));
+  }
+ }
+ @Test public void realWarningHandshakeIsReportedForEachProviderAndSourceSwitchClearsIt() throws Exception {
+  org.robolectric.shadows.ShadowProcess.setUid(20000);
+  android.provider.Settings.Global.putInt(app.getContentResolver(),android.provider.Settings.Global.BOOT_COUNT,7);
+  for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
+   TelemetryRuntime.select(provider);
+   android.content.pm.PackageInfo info=new android.content.pm.PackageInfo();info.packageName=provider;
+   info.applicationInfo=new android.content.pm.ApplicationInfo();info.applicationInfo.packageName=provider;info.applicationInfo.uid=20000;
+   org.robolectric.Shadows.shadowOf(app.getPackageManager()).installPackage(info);
+   nl.johninnl.navigation.alerts.WarningSession session=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"semantic");
+   nl.johninnl.navigation.startup.NavigationClient startup=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"startup");
+   long generation=org.robolectric.util.ReflectionHelpers.getField(startup,"generation");
+   nl.johninnl.navigation.alerts.WarningCapabilities caps=new nl.johninnl.navigation.alerts.WarningCapabilities(
+     nl.johninnl.navigation.alerts.WazeWarningTypes.MANIFEST_DIGEST,nl.johninnl.navigation.alerts.WarningProviders.required(provider),true);
+   try(nl.johninnl.navigation.alerts.WarningEndpoint endpoint=new nl.johninnl.navigation.alerts.WarningEndpoint(app,uid->uid==20000?app.getPackageName():null,caps)){
+    android.os.Bundle status=new android.os.Bundle();status.putBinder("warning_api",endpoint.binder());status.putIntArray("warning_protocols",new int[]{1});
+    assertTrue(session.prepare(provider,status,generation));
+    assertEquals("Warning bridge: connected",TelemetryRuntime.warningBridgeStatus());
+    assertTrue("A working warning bridge does not require a speed fix",TelemetryRuntime.dataStatus().contains("no fresh data"));
+    org.robolectric.util.ReflectionHelpers.setField(session,"captureComplete",false);
+    assertEquals("Warning bridge: connected · warning coverage incomplete",TelemetryRuntime.warningBridgeStatus());
+    TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
+    TelemetryRuntime.select(provider);assertTrue("The previous session cannot mark a new selection connected",TelemetryRuntime.warningBridgeStatus().contains("not connected"));
+   }
+  }
+ }
+ @Test public void bridgeFailureAndConnectingStatesRemainVisibleWithoutTelemetry() throws Exception {
+  for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
+   TelemetryRuntime.select(provider);
+   nl.johninnl.navigation.alerts.WarningSession session=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"semantic");
+   nl.johninnl.navigation.startup.NavigationClient startup=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"startup");
+   long generation=org.robolectric.util.ReflectionHelpers.getField(startup,"generation");
+   assertTrue(session.prepare(provider,new android.os.Bundle(),generation));
+   assertEquals(TelemetryStore.WAZE.equals(provider)?"Warning bridge: data only · native warnings unavailable":"Warning bridge: unavailable · update the selected provider",TelemetryRuntime.warningBridgeStatus());
+   android.os.Bundle incompatible=new android.os.Bundle();incompatible.putIntArray("warning_protocols",new int[]{2});
+   assertFalse(session.prepare(provider,incompatible,generation));
+   assertEquals("Warning bridge: unavailable · update the selected provider",TelemetryRuntime.warningBridgeStatus());
+   org.robolectric.util.ReflectionHelpers.setField(session,"state","connecting");assertEquals("Warning bridge: connecting",TelemetryRuntime.warningBridgeStatus());
+   org.robolectric.util.ReflectionHelpers.setField(session,"state","disconnected");assertEquals("Warning bridge: disconnected · reconnecting",TelemetryRuntime.warningBridgeStatus());
+  }
+ }
+ @Test public void settingsRepublishBridgeHealthWithoutAChangeInSpeedOrEngineState(){
+  TelemetryRuntime.resetForTest();final int[] changes={0};TelemetryRuntime.init(app,()->changes[0]++);TelemetryRuntime.select(TelemetryStore.FLITSMEISTER);
+  org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));int before=changes[0];
+  nl.johninnl.navigation.alerts.WarningSession session=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"semantic");
+  org.robolectric.util.ReflectionHelpers.setField(session,"state","incompatible");
+  org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+  assertTrue("The settings must observe bridge-state changes even without a snapshot callback",changes[0]>before);
+ }
+ @Test public void telemetryExpiryDoesNotLeaveSettingsClaimingFreshData(){
+  TelemetryStore store=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"store");
+  long now=SystemClock.elapsedRealtime();assertTrue(store.accept(TelemetryStoreTest.packet(TelemetryStore.WAZE,"status-expiry",1,now),TelemetryStore.WAZE,now));
+  assertTrue(TelemetryRuntime.dataStatus().contains("receiving data"));
+  org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(11));
+  assertEquals("Data: no fresh data · using Vela data",TelemetryRuntime.dataStatus());
+ }
+ @Test @Config(qualifiers="nl-rNL") public void dutchSettingsExplainBridgeAndFallbackForBothProviders(){
+  for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
+   TelemetryRuntime.select(provider);
+   assertEquals("Waarschuwingsbrug: niet verbonden",TelemetryRuntime.warningBridgeStatus());
+   assertEquals("Gegevens: geen recente gegevens · Vela-gegevens worden gebruikt",TelemetryRuntime.dataStatus());
+   assertTrue(TelemetryRuntime.providerServiceStatus().startsWith("Achtergrondservice: "));
+  }
+ }
+
 }
