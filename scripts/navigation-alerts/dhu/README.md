@@ -34,5 +34,50 @@ end of a session. No new hooks or observers were added for this setup.
 Receipts and rollback inputs are in the ignored
 `.analysis/android-auto-acceptance/rooted-tooling-setup/` directory. Preserve
 the configured private image and tool inputs when cleaning completed jobs.
-This is a root/tooling baseline; genuine-AA consent and app acceptance have
-not been saved as a reusable initialized baseline.
+A genuine-AA initialized baseline is now retained and verified as described
+below. Full all-app acceptance remains incomplete.
+
+
+## Initialized native AA baseline
+
+The owned AVD retains original AA17 plus its matching splits, native automotive
+role, accepted consent/developer settings, and the exact signed engineering
+Maps/Waze/Vela/FM APKs. The private manifest is
+`.analysis/android-auto-acceptance/reusable-aa17-native51/manifest.json`.
+Original system-stub rollback bytes and the guest-derived permission allowlist
+are retained beside it. Preserve the configured private image, current AVD
+userdata and named `aa17_initialized_native51` snapshot during job cleanup.
+
+The verified reuse path is a **cold boot retaining initialized userdata** with
+`-no-snapshot`, followed by the normal AA wake below. Consent and Waze first-run
+did not recur; native Waze Search/keyboard/results, route and admitted GPS
+worked, and guidance survived DHU reconnects at 1280x480, 800x480 and 1280x720.
+Run51's private review receipt records exact hashes, scope and cleanup. This
+is not a full voice, mode, DPI, rotary or all-app acceptance claim.
+
+Warm snapshot reload verified APK hashes/settings, but its first Frida attach
+failed. Do not label warm runtime replay accepted. A cold boot also exposed
+an AA car process waiting in `do_freezer_trap`: root alone does not thaw a
+cached Android process. Before starting the existing observer, use ordinary
+AA lifecycle entry points, then establish all required hooks before app test
+stimuli:
+
+```bash
+adb -s emulator-5590 shell am start -W -a com.google.android.projection.gearhead.SETTINGS -p com.google.android.projection.gearhead
+adb -s emulator-5590 shell am start-foreground-service -n com.google.android.projection.gearhead/.companion.DeveloperHeadUnitNetworkService
+```
+
+The observed wait changed to `futex_wait`; unchanged Frida observation then
+attached successfully and retained coverage through native routing and both
+reconnects. Do not force-stop AA again between this wake and attachment. Do not
+disable the cached-app freezer globally, change SELinux, override native app
+results or expand observers to work around startup. The existing observer
+accepts only 240, 300 or 900 seconds; retain a separate overall stop deadline.
+`-no-window` can select `qemu-system-aarch64-headless`, so verify the owned
+AVD/serial and actual QEMU PID instead of assuming the non-headless executable.
+
+At a terminal boundary, detach observation, stop the exact owned server,
+remove forwards and token-scoped scratch, restore the initialized baseline's
+APKs/settings/GPS and stop the VM. Preserve failed attachment receipts; only
+the later fully covered app window supplies accepted behavior. No physical
+phone was touched.

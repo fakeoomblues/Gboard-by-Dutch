@@ -129,3 +129,42 @@ native curl, stopped owned runtimes and forwards, and archived/removed per-run
 scratch with cleanupRequired=false. Exact identities, screenshots, limits and
 observer results are in the private review folder's
 `waze-normal-startup-run50.json` and `run50-observer-result.json`.
+
+
+## Native route and aspect-ratio acceptance
+
+Complete canonical local verification passed on committed correction
+`9f89c9528fc9424f07973502503d0e08978b2b68` in checkpoint28. Its signed MPP
+SHA-256 is `08529234a368500be1f0cd7c785d478659ab47f9e0468cf721ac10c5c39cf8ce`.
+All targeted extension payloads and patch DEX are byte-identical to the
+checkpoint27 bundle, so the already patched/signed APK was reused. The complete
+verifier was not replaced with the smaller Android component gate. Its owned
+checkout/process groups were cleaned with cleanupRequired=false.
+
+Run51 then accepted native Waze Search, AA keyboard, real nearby results,
+Go now and active native guidance at 1280x480. Actual Android GPS admission
+reported about 4.002m/s and the native Waze widget displayed 9mph. The route,
+turn card and speed widget remained present after genuine DHU reconnects at
+800x480 and 1280x720. One rotary step visibly focused the launcher without
+activating it. Full rotary/list scrolling, stop/Back, 240dpi and warning/voice
+mode gates remain open; native route audio was not accepted from screenshots.
+The final app window retained continuous unchanged Frida coverage and ended
+inside its recorded deadline.
+
+Setup failures remain separate: an initial inventory/dependency-order mistake
+was recovered before app acceptance, and two pre-input attachment attempts
+timed out on cached AA car processes. Read-only OS evidence showed
+`do_freezer_trap`, no competing tracer, and normal AA settings/server startup
+changed the wait to `futex_wait`. The unchanged observer then attached and
+retained all exercised process coverage. No freezer/SELinux policy, observer,
+runner, native login result or application readiness flag was changed.
+
+The initialized userdata and named snapshot are now retained with an exact
+private manifest and rollback inputs. Cold boot plus normal AA wake is verified;
+warm snapshot runtime replay is not accepted. At termination, baseline APKs,
+audio, debug property, automotive role, native curl and GPS were independently
+verified restored. All owned runtimes/scripts/servers/forwards stopped and
+per-run scratch was archived/removed with cleanupRequired=false. The private
+review index contains `waze-native-route-run51.json`, nine reviewed captures,
+`run51-observer-result.json` and `aa17-initialized-baseline51.json`. No physical
+phone was touched and no stable release or main promotion occurred.
