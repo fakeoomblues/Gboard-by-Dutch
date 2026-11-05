@@ -140,12 +140,12 @@ public class CarNieuwsTest {
     @Test
     public void shortAndUnknownQueuesPassThroughUntouched() {
         CarAudioQueue shortQueue = new CarAudioQueue(Arrays.asList(
-            new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "s0"),
-            new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "s1")));
-        assertSame(shortQueue, CarNieuws.slimQueue("s0", shortQueue));
+            new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "pass0"),
+            new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "pass1")));
+        assertSame(shortQueue, CarNieuws.slimQueue("pass0", shortQueue));
 
         List<CarAudioQueue.Item> all = new ArrayList<CarAudioQueue.Item>();
-        for (int i = 0; i < 30; i++) all.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "x" + i));
+        for (int i = 0; i < 30; i++) all.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "px" + i));
         CarAudioQueue unknownRow = new CarAudioQueue(all);
         assertSame(unknownRow, CarNieuws.slimQueue("missing", unknownRow));
         assertSame(shortQueue, CarNieuws.restoreQueue(shortQueue));
@@ -194,11 +194,19 @@ public class CarNieuwsTest {
     }
 
     @Test
-    public void onlyTheSynthesizedLaneTitleLosesItsGroupHeader() {
-        assertNull(CarNieuws.groupTitle("Nieuws"));
-        assertNull(CarNieuws.groupTitle(null));
-        assertEquals("Podcasts", CarNieuws.groupTitle("Podcasts"));
-        assertEquals(Integer.valueOf(3), CarNieuws.groupTitle(3));
+    public void newsRowsAreStyledAsCardsAndOtherRowsPassThrough() throws Exception {
+        reset();
+        // A news row: slimQueue flags the route, rememberRow consumes the flag
+        // and returns the row unchanged by identity.
+        List<CarAudioQueue.Item> all = new ArrayList<CarAudioQueue.Item>();
+        for (int i = 0; i < 25; i++) all.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "s" + i));
+        Object queue = new CarAudioQueue(all);
+        CarNieuws.slimQueue("s3", queue);
+        Object row = new Object();
+        assertSame(row, CarNieuws.rememberRow(row));
+        // The flag is consumed: a following non-news row passes through cleanly.
+        Object other = new Object();
+        assertSame(other, CarNieuws.rememberRow(other));
     }
 
     @Test

@@ -140,17 +140,19 @@ val carNieuws = bytecodePatch(
         check(rowParams.firstOrNull() == STRING && rowParams.getOrNull(1) == QUEUE) {
             "AD row-builder route/queue parameter contract changed: $rowParams"
         }
-        check(rowParams.size == 8 && rowParams[6] == STRING) {
-            "AD row-builder group-title parameter contract changed: $rowParams"
-        }
         rowMethod.addInstructions(0, """
             invoke-static/range {p1 .. p2}, $NIEUWS->slimQueue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
             move-result-object p2
             check-cast p2, $QUEUE
-            invoke-static/range {p7 .. p7}, $NIEUWS->groupTitle(Ljava/lang/Object;)Ljava/lang/Object;
-            move-result-object p7
-            check-cast p7, $STRING
         """.trimIndent())
+        rowMethod.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
+            .sortedByDescending { it.index }.forEach { (index, instruction) ->
+                val register = (instruction as OneRegisterInstruction).registerA
+                rowMethod.addInstructions(index, """
+                    invoke-static/range {v$register .. v$register}, $NIEUWS->rememberRow(Ljava/lang/Object;)Ljava/lang/Object;
+                    move-result-object v$register
+                """.trimIndent())
+            }
 
         // 5. Restore the complete queue inside the app when a row is selected:
         //    the browse callback decodes the window through the kept queue

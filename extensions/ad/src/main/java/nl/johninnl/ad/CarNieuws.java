@@ -257,6 +257,7 @@ public final class CarNieuws {
                 if (route.equals(uidOf(items.get(i)))) { self = i; break; }
             }
             if (self < 0) return queue;
+            slimmedRoute.set(route);
             Object full = queue;
             String token = NewsFeedStore.save(app, jsonOf(full), pinnedUids());
             List<Object> window = new ArrayList<Object>(items.subList(self,
@@ -353,19 +354,53 @@ public final class CarNieuws {
     }
 
     /**
-     * Hooked at the row builder: the synthesized lane's group title would
-     * force a titled list section; dropping it lets the browse content render
-     * as the app's native grid cards — headline-led cards in shelves. Only
-     * the Nieuws lane title we synthesize ourselves is dropped; every other
-     * lane title passes through untouched.
+     * Hooked at the row builder's return: news rows carry the single-item
+     * grid hint so the run renders as the mandated headline-led card shelf
+     * instead of the page-default list row. The current row's news identity
+     * comes from the windowing call on the same thread; other rows are
+     * untouched.
      */
-    public static Object groupTitle(Object groupTitle) {
+    public static Object rememberRow(Object row) {
         try {
-            return TAB_TITLE.equals(groupTitle) ? null : groupTitle;
+            String route = slimmedRoute.get();
+            if (route != null) {
+                slimmedRoute.set(null);
+                Object bundle = bundleOf(row);
+                if (bundle != null) {
+                    bundle.getClass().getMethod("putInt", String.class, int.class)
+                        .invoke(bundle, "android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT", 2);
+                }
+            }
+            return row;
         } catch (Throwable t) {
-            return groupTitle;
+            log("row styling skipped", t);
+            return row;
         }
     }
+
+    /** The first Android bundle exposed by the row object, found by shape. */
+    private static Object bundleOf(Object row) {
+        if (row == null) return null;
+        try {
+            Class<?> bundleType = Class.forName("android.os.Bundle");
+            for (Field field : row.getClass().getFields()) {
+                if (bundleType.isAssignableFrom(field.getType())) return field.get(row);
+                Object value = field.get(row);
+                if (value == null || field.getType().isPrimitive()) continue;
+                for (Field inner : value.getClass().getFields()) {
+                    if (bundleType.isAssignableFrom(inner.getType())) {
+                        inner.setAccessible(true);
+                        return inner.get(value);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            return null;
+        }
+        return null;
+    }
+
+    private static final ThreadLocal<String> slimmedRoute = new ThreadLocal<String>();
 
     // ---------------------------------------------------------------- car DTOs
 
