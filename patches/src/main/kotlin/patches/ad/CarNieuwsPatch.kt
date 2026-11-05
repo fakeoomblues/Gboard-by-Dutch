@@ -122,6 +122,32 @@ val carNieuws = bytecodePatch(
         val titleRegister = (root.instructions.get(titleIndex) as OneRegisterInstruction).registerA
         root.addInstruction(titleIndex + 1, "const-string v$titleRegister, \"$TAB_TITLE\"")
 
+        // 3b. Match the other news patches' presentation: the Nieuws tab
+        //     renders its feed as list rows (title, small artwork, duration).
+        //     The tab builder is the three-argument route/title call inside
+        //     the root browse method; its returned tab item carries the route
+        //     in its extras, so the runtime only restyles the start tab.
+        val tabBuilderClasses = root.instructions.withIndex().mapNotNull { (index, instruction) ->
+            val reference = (instruction as? ReferenceInstruction)?.reference
+            if (reference is MethodReference &&
+                reference.parameterTypes.map { it.toString() } == listOf("I", STRING, STRING) &&
+                root.instructions.getOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT) {
+                reference.definingClass
+            } else null
+        }.distinct()
+        check(tabBuilderClasses.size == 1) {
+            "AD tab builder anchor is not unique: $tabBuilderClasses"
+        }
+        val tabBuilder = mutableClassDefBy(tabBuilderClasses.single()).methods.singleOrNull {
+            it.descriptors() == listOf("I", STRING, STRING)
+        } ?: throw PatchException("AD tab builder method contract changed")
+        tabBuilder.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
+            .sortedByDescending { it.index }.forEach { (index, instruction) ->
+                val register = (instruction as OneRegisterInstruction).registerA
+                tabBuilder.addInstruction(index,
+                    "invoke-static/range {v$register .. v$register}, $NIEUWS->styleTab(Ljava/lang/Object;)V")
+            }
+
         // 4. Keep the full feed deliverable: the playable-row builder attaches
         //    the whole lane queue to every row. It is identified by carrying
         //    the queue model parameter and the browse delivery extra in the
@@ -140,17 +166,17 @@ val carNieuws = bytecodePatch(
         check(rowParams.firstOrNull() == STRING && rowParams.getOrNull(1) == QUEUE) {
             "AD row-builder route/queue parameter contract changed: $rowParams"
         }
+        check(rowParams.size == 8 && rowParams[6] == STRING) {
+            "AD row-builder group-title parameter contract changed: $rowParams"
+        }
         rowMethod.addInstructions(0, """
             invoke-static/range {p1 .. p2}, $NIEUWS->slimQueue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
             move-result-object p2
             check-cast p2, $QUEUE
+            invoke-static/range {p7 .. p7}, $NIEUWS->groupTitle(Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object p7
+            check-cast p7, $STRING
         """.trimIndent())
-        rowMethod.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
-            .sortedByDescending { it.index }.forEach { (index, instruction) ->
-                val register = (instruction as OneRegisterInstruction).registerA
-                rowMethod.addInstruction(index,
-                    "invoke-static/range {v$register .. v$register}, $NIEUWS->rememberRow(Ljava/lang/Object;)V")
-            }
 
         // 5. Restore the complete queue inside the app when a row is selected:
         //    the browse callback decodes the window through the kept queue

@@ -196,15 +196,27 @@ public class CarNieuwsTest {
     @Test
     public void newsRowsAreStyledAsCardsAndOtherRowsPassThrough() throws Exception {
         reset();
-        // A news row: slimQueue flags the route, rememberRow consumes the flag
-        // without touching the row object or its declared type.
+        // The queue windowing still registers the lane for the in-app restore.
         List<CarAudioQueue.Item> all = new ArrayList<CarAudioQueue.Item>();
         for (int i = 0; i < 25; i++) all.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "s" + i));
         Object queue = new CarAudioQueue(all);
-        CarNieuws.slimQueue("s3", queue);
-        CarNieuws.rememberRow(new Object());
-        // The flag is consumed: a following non-news row passes through cleanly.
-        CarNieuws.rememberRow(new Object());
+        Object windowed = CarNieuws.slimQueue("s3", queue);
+        assertEquals(CarNieuws.QUEUE_WINDOW, ((CarAudioQueue) windowed).getItems().size());
+    }
+
+    @Test
+    public void tabStylingLeavesNonStartTabsAndForeignObjectsUntouched() {
+        // A tab object without any bundle passes through without styling.
+        CarNieuws.styleTab(new Object());
+        CarNieuws.styleTab(new Object() { public final Object bundle = new Object(); });
+    }
+
+    @Test
+    public void onlyTheSynthesizedLaneTitleLosesItsGroupHeader() {
+        assertNull(CarNieuws.groupTitle("Nieuws"));
+        assertNull(CarNieuws.groupTitle(null));
+        assertEquals("Podcasts", CarNieuws.groupTitle("Podcasts"));
+        assertEquals(Integer.valueOf(3), CarNieuws.groupTitle(3));
     }
 
     @Test

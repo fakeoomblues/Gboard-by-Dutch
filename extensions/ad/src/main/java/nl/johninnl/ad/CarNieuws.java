@@ -52,6 +52,8 @@ public final class CarNieuws {
     static final int QUEUE_WINDOW = 20;
     /** The synthesized Nieuws lane title; also the browse tab title. */
     private static final String TAB_TITLE = "Nieuws";
+    /** The car browse route of the replaced start tab. */
+    private static final String START_ROUTE = "/start";
     /** Pathological feed bound only; delivery budget is handled per row window. */
     private static final int MAX_ITEMS = 200;
     /** Recent full lanes retained in memory; older ones fall back to disk. */
@@ -257,7 +259,6 @@ public final class CarNieuws {
                 if (route.equals(uidOf(items.get(i)))) { self = i; break; }
             }
             if (self < 0) return queue;
-            slimmedRoute.set(route);
             Object full = queue;
             String token = NewsFeedStore.save(app, jsonOf(full), pinnedUids());
             List<Object> window = new ArrayList<Object>(items.subList(self,
@@ -354,25 +355,36 @@ public final class CarNieuws {
     }
 
     /**
-     * Hooked before the row builder's returns: news rows carry the
-     * single-item grid hint so the run renders as the mandated headline-led
-     * card shelf instead of the page-default list row. The current row's
-     * news identity comes from the windowing call on the same thread; other
-     * rows are untouched. Returns void: the returned row object itself must
-     * stay untouched so the verifier keeps the declared row type.
+     * Hooked at the tab builder's return: the Nieuws tab adopts the same
+     * presentation as the other news patches — list rows under the tab — by
+     * overriding the tab's playable hint to list style. The other tabs keep
+     * the app's native grid hints.
      */
-    public static void rememberRow(Object row) {
+    public static void styleTab(Object tab) {
         try {
-            String route = slimmedRoute.get();
-            if (route == null) return;
-            slimmedRoute.set(null);
-            Object bundle = bundleOf(row);
-            if (bundle != null) {
-                bundle.getClass().getMethod("putInt", String.class, int.class)
-                    .invoke(bundle, "android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT", 2);
-            }
+            Object bundle = bundleOf(tab);
+            if (bundle == null) return;
+            Object route = bundle.getClass().getMethod("getString", String.class)
+                .invoke(bundle, "LIST_ITEM_ROUTE");
+            if (!START_ROUTE.equals(route)) return;
+            bundle.getClass().getMethod("putInt", String.class, int.class)
+                .invoke(bundle, "android.media.browse.CONTENT_STYLE_PLAYABLE_HINT", 1);
         } catch (Throwable t) {
-            log("row styling skipped", t);
+            log("tab styling skipped", t);
+        }
+    }
+
+    /**
+     * Hooked at the row builder: the synthesized lane's group title would
+     * render a titled section; the other news patches show the feed's rows
+     * directly under the tab, so only the Nieuws lane title we synthesize is
+     * dropped; every other lane title passes through untouched.
+     */
+    public static Object groupTitle(Object groupTitle) {
+        try {
+            return TAB_TITLE.equals(groupTitle) ? null : groupTitle;
+        } catch (Throwable t) {
+            return groupTitle;
         }
     }
 
@@ -398,7 +410,6 @@ public final class CarNieuws {
         return null;
     }
 
-    private static final ThreadLocal<String> slimmedRoute = new ThreadLocal<String>();
 
     // ---------------------------------------------------------------- car DTOs
 
