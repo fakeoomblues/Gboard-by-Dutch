@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a3b108741807b7f02aa4dc26f984d3ceb6fbb951/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [a3b108741807](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/a3b108741807b7f02aa4dc26f984d3ceb6fbb951). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.43.1...v1.43.2) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** keep the row builder's declared return type through the styling hook ([a3b1087](https://gitlab.com/johninnld/nl-morphe-patches/commit/a3b108741807b7f02aa4dc26f984d3ceb6fbb951))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3a5bd57fc759c805f447a5bf579828bef0835468/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.43.1.**
