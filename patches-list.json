@@ -373,7 +373,7 @@
     },
     {
       "name": "Android Auto nieuws",
-      "description": "Makes Nieuws the primary Android Auto tab and lists the latest headlines from the app's home feed with their publisher-supplied spoken audio. Rows render and play through the app's existing car player; premium audio keeps its entitlement.",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
       "default": true,
       "category": null,
       "compatiblePackages": [

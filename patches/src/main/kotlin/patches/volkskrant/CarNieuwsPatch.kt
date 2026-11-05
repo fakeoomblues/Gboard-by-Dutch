@@ -3,7 +3,9 @@ package patches.volkskrant
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.removeInstructions
 import app.morphe.patcher.patch.bytecodePatch
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -22,6 +24,11 @@ private const val TO_LANE_ITEM_QUEUES = "Lnl/dpgmedia/mcdpg/amalia/car/ui/mediai
 private const val QUEUE = "Lnl/dpgmedia/mcdpg/amalia/car/data/model/CarAudioQueue;"
 private const val QUEUE_DECODER = "Lnl/dpgmedia/mcdpg/amalia/car/data/model/CarAudioQueue\$Companion;->fromJsonString(Ljava/lang/String;)Lnl/dpgmedia/mcdpg/amalia/car/data/model/CarAudioQueue;"
 private const val CALLBACK = "Lnl/dpgmedia/mcdpg/amalia/car/ui/browser/CarMediaSessionCallbackDelegate;"
+private const val BRIDGE = "Lnl/johninnl/volkskrant/NewsQueueBridge;"
+private const val QUEUE_PLAYER = "Lnl/dpgmedia/mcdpg/amalia/audio/queue/player/AmaliaAudioQueuePlayer;"
+private const val QUEUE_HOLDER = "Lnl/dpgmedia/mcdpg/amalia/audio/queue/holder/AudioQueueHolder;"
+private const val PLAYER_FACTORY = "Lnl/dpgmedia/mcdpg/amalia/player/audio/player/audio/exoplayer/Media3PlayerFactory;"
+private const val PLAYER_COMMANDS = "Landroidx/media3/common/Player\$Commands;"
 private const val TAB_TITLE = "Nieuws"
 
 /**
@@ -33,7 +40,7 @@ private const val TAB_TITLE = "Nieuws"
 @Suppress("unused")
 val carNieuws = bytecodePatch(
     name = "Android Auto nieuws",
-    description = "Makes Nieuws the primary Android Auto tab and lists the latest headlines from the app's home feed with their publisher-supplied spoken audio. Rows render and play through the app's existing car player; premium audio keeps its entitlement.",
+    description = "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
 ) {
     compatibleWith(volkskrant)
     dependsOn(originalInput)
@@ -113,11 +120,88 @@ val carNieuws = bytecodePatch(
         }
         val decoded = readQueue.instructions.get(decoder.index + 1)
         check(decoded.opcode == Opcode.MOVE_RESULT_OBJECT) { "Volkskrant queue decoder contract changed" }
-        val decodedRegister = (decoded as OneRegisterInstruction).registerA
-        readQueue.addInstructions(decoder.index + 2, """
-            invoke-static/range {v$decodedRegister .. v$decodedRegister}, $NIEUWS->restoreQueue(Ljava/lang/Object;)Ljava/lang/Object;
-            move-result-object v$decodedRegister
-            check-cast v$decodedRegister, $QUEUE
+        check(readQueue.implementation!!.tryBlocks.isEmpty()) { "Volkskrant queue decoder gained a handler" }
+        // Keep the original Bundle available for the compact durable feed ID.
+        // The helper still uses this exact native JSON decoder before restoring
+        // the selected sequence; it performs no playback authorization itself.
+        readQueue.removeInstructions(0, readQueue.instructions.count())
+        readQueue.addInstructions(0, """
+            invoke-static/range {p1 .. p1}, $NIEUWS->readQueue(Landroid/os/Bundle;)Ljava/lang/Object;
+            move-result-object p0
+            check-cast p0, $QUEUE
+            return-object p0
         """.trimIndent())
+
+        // 7. Retain each original browse item for queue metadata. Its opaque
+        //    occurrence ID and compact provider extras remain untouched.
+        val buildItem = exact(MAPPER, "buildPlayableMediaItem-pcjo9SI", "Landroidx/media3/common/MediaItem;",
+            "Ljava/lang/String;", QUEUE, "Ljava/lang/String;", "Ljava/lang/String;",
+            "Lnl/dpgmedia/mcdpg/amalia/car/data/model/CarItemTrackingArgs;",
+            "Ljava/lang/String;", "Ljava/lang/String;", "Lkotlin/jvm/functions/Function1;").method
+        val itemReturn = buildItem.instructions.withIndex().single { it.value.opcode == Opcode.RETURN_OBJECT }
+        val itemRegister = (itemReturn.value as OneRegisterInstruction).registerA
+        buildItem.addInstruction(itemReturn.index,
+            "invoke-static/range {v$itemRegister .. v$itemRegister}, $NIEUWS->rememberBrowseItem(Ljava/lang/Object;)V")
+
+        // 8. Observe only accepted native queue commits. These may occur on IO;
+        //    the extension marshals session notifications to the player looper.
+        val commit = exact(QUEUE_HOLDER, "commit", "V",
+            "Lnl/dpgmedia/mcdpg/amalia/audio/queue/holder/CurrentQueue;").method
+        val queueMutation = commit.instructions.withIndex().single { (_, instruction) ->
+            (instruction as? ReferenceInstruction)?.reference?.toString() ==
+                "Lkotlinx/coroutines/flow/MutableStateFlow;->setValue(Ljava/lang/Object;)V"
+        }
+        // R8 reuses p0 for MutableStateFlow here; p1 still holds CurrentQueue.
+        commit.addInstruction(queueMutation.index + 1,
+            "invoke-static/range {p1 .. p1}, $BRIDGE->onQueueChanged(Ljava/lang/Object;)V")
+
+        // 9. Use the native lazy queue player for all manual navigation. Its
+        //    completion observer remains the sole owner of automatic advance.
+        val queuePlayerInit = exact(QUEUE_PLAYER, "<init>", "V",
+            "Lnl/dpgmedia/mcdpg/amalia/audio/queue/manipulator/AudioQueueManipulator;",
+            "Lnl/dpgmedia/mcdpg/amalia/audio/launcher/AudioItemPlayer;").method
+        val playerInitReturn = queuePlayerInit.instructions.withIndex().single { it.value.opcode == Opcode.RETURN_VOID }
+        queuePlayerInit.addInstruction(playerInitReturn.index,
+            "invoke-static/range {p0 .. p0}, $BRIDGE->capturePlayer(Ljava/lang/Object;)V")
+
+        // 10. Publish that same queue through the existing session's Player.
+        //     No second session or eagerly resolved article playlist is added.
+        val createPlayer = exact(PLAYER_FACTORY, "create", "Landroidx/media3/common/Player;",
+            "Landroid/content/Context;", "Lkotlin/jvm/functions/Function1;").method
+        val playerReturn = createPlayer.instructions.withIndex().single { it.value.opcode == Opcode.RETURN_OBJECT }
+        val playerRegister = (playerReturn.value as OneRegisterInstruction).registerA
+        createPlayer.addInstructions(playerReturn.index, """
+            invoke-static/range {v$playerRegister .. v$playerRegister}, Lnl/johninnl/volkskrant/NewsQueuePlayer;->wrap(Ljava/lang/Object;)Ljava/lang/Object;
+            move-result-object v$playerRegister
+            check-cast v$playerRegister, Landroidx/media3/common/Player;
+        """.trimIndent())
+
+        // R8 inlined Timeline's constructor out of this APK. The extension's
+        // real Timeline subclass needs the ordinary Object constructor chain.
+        val timeline = exact("Landroidx/media3/common/Timeline;", "getWindowCount", "I").classDef
+        check(timeline.methods.none { it.name == "<init>" }) { "Volkskrant Timeline constructor contract changed" }
+        timeline.methods.add(helper(timeline.type, "<init>", "V", emptyList(), 0, """
+            invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+            return-void
+        """.trimIndent(), static = false).apply {
+            accessFlags = AccessFlags.PUBLIC.value or AccessFlags.CONSTRUCTOR.value
+        })
+
+        // The notification controller's grant becomes Media3's global legacy
+        // allow-list. Keep timeline and queue selection permitted even when a
+        // controller connects before the first news item is selected. The
+        // player continues to determine actual navigation availability.
+        val notificationCommands = exact(
+            "Lnl/dpgmedia/mcdpg/amalia/player/audio/player/audio/service/command/MediaSessionAvailableCommandProvider;",
+            "getPlayerCommandsForMediaNotification", PLAYER_COMMANDS).method
+        notificationCommands.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_OBJECT }
+            .sortedByDescending { it.index }.forEach { (index, instruction) ->
+                val register = (instruction as OneRegisterInstruction).registerA
+                notificationCommands.addInstructions(index, """
+                    invoke-static/range {v$register .. v$register}, $BRIDGE->controllerCommands(Ljava/lang/Object;)Ljava/lang/Object;
+                    move-result-object v$register
+                    check-cast v$register, $PLAYER_COMMANDS
+                """.trimIndent())
+            }
     }
 }
