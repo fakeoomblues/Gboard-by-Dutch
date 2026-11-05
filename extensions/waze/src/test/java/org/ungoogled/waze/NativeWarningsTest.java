@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import nl.johninnl.navigation.alerts.WarningCodec;
 import nl.johninnl.navigation.alerts.WarningEvent;
+import nl.johninnl.navigation.alerts.WarningJournal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +39,12 @@ public class NativeWarningsTest {
     private long announcements(){return events.stream().filter(e->"ANNOUNCE".equals(e.getString("operation"))).count();}
     private void repository(Descriptor...values){NativeWarnings.repository(new Repository(Arrays.asList(values)));}
     private WarningEvent decoded(Bundle source){
+        return decoded(source,1);
+    }
+    private WarningEvent decoded(Bundle source,long sequence){
         Bundle b=new Bundle(source);long now=SystemClock.elapsedRealtime();
         b.putInt("protocol_version",1);b.putString("provider_session","00000000-0000-0000-0000-000000000001");
-        b.putLong("sequence",1);b.putLong("issued_elapsed_ms",now);
+        b.putLong("sequence",sequence);b.putLong("issued_elapsed_ms",now);
         if("ANNOUNCE".equals(b.getString("operation")))b.putLong("announce_until_elapsed_ms",now+5000);
         return WarningCodec.decode(b,now);
     }
@@ -135,6 +139,37 @@ public class NativeWarningsTest {
         d.info.silent=null;d.info.validation.valid=false;repository(d);NativeWarnings.sound(d.id);assertEquals(1,announcements());
         d.info.validation.valid=true;repository(d);assertEquals(1,announcements());
         NativeWarnings.sound(d.id);assertEquals(2,announcements());assertEquals(2,last().getLong("announcement_index"));
+    }
+
+    @Test public void displayOnlyRefreshesRemainWithinTheJournalBound(){
+        Descriptor[] values=new Descriptor[7];
+        for(int i=0;i<values.length;i++){values[i]=new Descriptor("display-"+i,"POLICE",0);values[i].info.validation.valid=false;}
+        for(int refresh=0;refresh<40;refresh++)repository(values);
+        WarningJournal journal=new WarningJournal("00000000-0000-0000-0000-000000000001");long sequence=0;
+        for(Bundle value:events)assertEquals("Repeated display-only refreshes must not exhaust retained clear records",
+                WarningJournal.Append.ACCEPTED,journal.append(decoded(value,++sequence),SystemClock.elapsedRealtime()));
+        WarningJournal.Resume view=journal.resume("00000000-0000-0000-0000-000000000001",0,SystemClock.elapsedRealtime());
+        assertFalse(view.overflow);assertEquals(7,view.currentState.size());assertEquals(sequence,view.headSequence);
+        assertTrue("Coalesced history still requires an explicit snapshot",view.resyncRequired);
+        assertTrue(view.announcements.isEmpty());assertEquals(0,announcements());
+        assertTrue(events.stream().allMatch(value->"UPSERT".equals(value.getString("operation"))));
+    }
+
+    @Test public void displayOnlyDemotionClearsAuthorityOnlyOnTransition(){
+        Descriptor value=new Descriptor("demotion","POLICE",0);repository(value);NativeWarnings.sound(value.id);
+        String id=last().getString("warning_id");long first=last().getLong("announcement_index");
+        value.info.silent="Familiar";repository(value);repository(value);
+        value.info.silent=null;value.info.validation.valid=false;repository(value);
+        assertEquals("An already display-only update has no new authority to clear",1,
+                events.stream().filter(event->"CLEAR".equals(event.getString("operation"))).count());
+        value.info.validation.valid=true;repository(value);assertEquals(1,announcements());
+        WarningJournal journal=new WarningJournal("00000000-0000-0000-0000-000000000001");long sequence=0;
+        for(Bundle event:events)assertEquals(WarningJournal.Append.ACCEPTED,journal.append(decoded(event,++sequence),SystemClock.elapsedRealtime()));
+        assertNull("A later valid snapshot must not resurrect the cleared native sound",
+                journal.announcement(id,WarningEvent.Phase.NOTICE,first,SystemClock.elapsedRealtime()));
+        NativeWarnings.sound(value.id);assertEquals(2,announcements());assertTrue(last().getLong("announcement_index")>first);
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(decoded(last(),++sequence),SystemClock.elapsedRealtime()));
+        assertNotNull(journal.announcement(id,WarningEvent.Phase.NOTICE,last().getLong("announcement_index"),SystemClock.elapsedRealtime()));
     }
 
     @Test public void nativeRepeatsAfterDisplayExpiryUseANewerGlobalIndex(){

@@ -168,7 +168,12 @@ public final class NativeWarnings {
         for(Bundle fields:parsed.values()){String key=fields.getString("native_link_key"),id=fields.getString("warning_id");String old=nativeLinks.get(key);nativeLinks.put(key,old==null||old.equals(id)?id:"");}
         long now=observed;for(Bundle fields:parsed.values()){
             if(!fields.getBoolean("native_valid")||fields.containsKey("native_silent_activation")){
-                clear(fields.getString("warning_id"));fields.putString("native_category",fields.getString("category"));fields.putString("category","display_only");
+                Record previous=records.get(fields.getString("warning_id"));
+                // Retire prior audible authority once. Re-clearing an unchanged display-only
+                // model on every native refresh fills the bounded journal with tombstones.
+                if(previous!=null&&previous.fields!=null&&!("UPSERT".equals(previous.fields.getString("operation"))
+                        &&"display_only".equals(previous.fields.getString("category"))))clear(fields.getString("warning_id"));
+                fields.putString("native_category",fields.getString("category"));fields.putString("category","display_only");
             }
             put(fields,false,now,"native_repository");
         }

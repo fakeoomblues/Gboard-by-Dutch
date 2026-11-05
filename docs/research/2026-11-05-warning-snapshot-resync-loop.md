@@ -70,3 +70,62 @@ do not claim the remaining profile/DPI/controls or external-warning modes are
 closed. Run56's baseline APKs/audio/debug/role/GPS were verified restored, its
 owned runtime/server/forwards stopped, and scratch archived/removed. No physical
 phone was touched and no stable release or main promotion occurred.
+
+
+## Native acceptance and initial journal pressure
+
+Run57 kept the snapshot correction observed without exhausting the unchanged
+budget. Its exact181.7-second RPC window recorded562 requests, about3.09/s,
+versus about169.28/s in the earlier faulty window. This is a functional trace
+comparison with live native data, not an uninstrumented benchmark. The passive
+sample exceeded its intended60seconds; app/overall hard deadlines and full
+coverage/restoration/cleanup passed. The remaining capture fault was identified
+by normal application logging as JOURNAL_OVERFLOW.
+
+Only seven warning IDs had emitted259 records in17.671seconds before that
+fault:126 CLEARs and133 display-only UPSERTs. The adapter cleared an already
+invalid/silent warning on every repository refresh and immediately re-added
+it as display-only. The journal legitimately retained those revocations; this
+unnecessary churn exhausted history even with only a few current warnings.
+
+The Waze adapter now clears prior authority only when entering display-only
+state, preserving ordinary removals and true demotions. Repeated display-only
+updates refresh state without another CLEAR. Journal limits, retention, gap
+handling, native validity/silence decisions and audio grant rules are unchanged.
+A later valid snapshot still cannot resurrect the cleared old sound authority;
+a fresh original native sound decision can create a newer authority.
+
+The two adapter regressions fail on the prior code at repeated-clear count and
+actual journal overflow. The correction passes the canonical Android build/test
+component and real Waze21-selection FULL/validate patching, signing/certificate
+and alignment in checkpoint31. Unchanged non-Android checks are retained from
+complete checkpoint30; the final complete verification gate remains pending.
+Other navigation extension payloads are byte-identical to checkpoint30, so
+unaffected receiver and FM input evidence stays reusable. No new observation
+or validation framework was introduced.
+
+Run59 then observed376 repeated UPSERTs over93.13seconds from the first native
+emission, across four live warning IDs, with zero CLEARs, no selected-process
+capture-fault log and full unchanged-observer coverage. The native Vela provider
+page showed Warning bridge connected without the incomplete-capture warning,
+engine running/provider muted and data connected/receiving. Output choices were
+still unreviewed, so no warning playback is inferred. The passive sample ended
+after the intended60seconds; the exact duration, met app/overall deadlines and
+limits are preserved. Baseline APKs/audio/debug/role/GPS were verified restored;
+owned server/forwards/snapshot/runtime stopped or removed and scratch archived.
+CleanupRequired=false. Phone untouched.
+
+The first run58 startup had been rejected before any app operations because
+the Mac had insufficient disk space. It remains a failed startup, separately
+archived. Audited retirement of the task's obsolete3.96GB lavapipe quickboot
+cache preserved the newer verified AA51 snapshot, current userdata/image,
+source work and every original/current APK path. No unrelated worktree, AVD,
+cache or phone artifact was deleted. No rebuild was needed for the retry.
+
+Private receipts are source-snapshot-native57.json,
+waze-display-demotion-verification31.json and source-journal-native59.json.
+Current signed engineering MPP SHA-256:
+`0ca8820a096a3751a6996de103946179ae2b603c2a57cc548a6515ea088d4019`.
+The remaining profile/DPI/control and external-warning output gates and final
+complete verification are still required; no stable release/main promotion
+occurred.
