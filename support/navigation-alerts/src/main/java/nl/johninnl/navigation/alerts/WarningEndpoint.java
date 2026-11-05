@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.util.Log;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public final class WarningEndpoint implements Closeable {
         post(()->{legacyClients.observe(uid,warningAware,clock.getAsLong());refresh();});
     }
     /** Losing a native record must be visible and must prevent new exclusive playback grants. */
-    public void captureOverflow() { captureFault=true;post(()-> { for(Registration r:new ArrayList<>(registrations.values()))deliver(r);refresh(); }); }
+    public void captureOverflow() { failCapture("NATIVE_CAPTURE_OVERFLOW");post(()-> { for(Registration r:new ArrayList<>(registrations.values()))deliver(r);refresh(); }); }
 
     /** Keep the native observation and deadlines. Issued time is captured before any actor backlog. */
     public boolean emit(Bundle nativeFields) {
@@ -136,7 +137,7 @@ public final class WarningEndpoint implements Closeable {
             Bundle fields=new Bundle(nativeFields);
             long issued=clock.getAsLong();
             try { actor.execute(()->append(fields,issued));return true; }
-            catch(RejectedExecutionException error) { captureFault=true;return false; }
+            catch(RejectedExecutionException error) { failCapture("SOURCE_INGRESS_OVERFLOW");return false; }
         }
     }
     private void append(Bundle fields,long issued) {
@@ -152,11 +153,15 @@ public final class WarningEndpoint implements Closeable {
             WarningJournal.Append result=journal.append(event,clock.getAsLong());
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)head=event.sequence;
             if(result==WarningJournal.Append.ACCEPTED)WarningDiagnostics.event(event,"SOURCE_APPEND",clock.getAsLong());
-            if(result==WarningJournal.Append.OVERFLOW)captureFault=true;
+            if(result==WarningJournal.Append.OVERFLOW)failCapture("JOURNAL_OVERFLOW");
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)
                 for(Registration registration:new ArrayList<>(registrations.values()))deliver(registration);
             refresh();
-        }catch(IllegalArgumentException error) { captureFault=true;refresh(); }
+        }catch(IllegalArgumentException error) {
+            String reason=error.getMessage();
+            failCapture(reason!=null&&reason.matches("[A-Za-z0-9_]{1,48}")?"INVALID_NATIVE_EVENT:"+reason:"INVALID_NATIVE_EVENT");
+            refresh();
+        }
     }
     private Bundle handle(int code,int uid,String packageName,Bundle q) {
         if(closed)return WarningWire.status("CLOSED");
@@ -191,7 +196,8 @@ public final class WarningEndpoint implements Closeable {
                 if(r.view==null || !r.view.token.equals(WarningWire.text(q,"view_token")) || !r.view.delivered
                         || r.view.head!=WarningWire.number(q,"head_sequence") || clock.getAsLong()>=r.view.until)
                     return WarningWire.status("STALE_VIEW");
-                r.cursor=r.view.head;r.synced=true;r.view=null;deliver(r);return WarningWire.status("OK");
+                r.cursor=r.view.head;r.captureFaultAcknowledged=r.view.captureFault;
+                r.synced=true;r.view=null;deliver(r);return WarningWire.status("OK");
             case WarningWire.CLAIM_AUDIO:
             case WarningWire.RENEW_AUDIO:
                 if(audio==null)return WarningWire.status("STORAGE_FAILED");
@@ -283,7 +289,8 @@ public final class WarningEndpoint implements Closeable {
                 Bundle b=item("announcement","authority",WarningCodec.encode(announcement.authority));b.putBundle("payload",WarningCodec.encode(announcement.payload));items.add(b);
             }
             if(audio!=null)for(PlaybackGrant grant:audio.dispositions(r.client.uid,r.client.consumerNonce,now))items.add(item("disposition","grant",WarningWire.grant(grant)));
-            r.view=new View(resume.headSequence,resume.resyncRequired || captureFault,items,now+VIEW_TIMEOUT);
+            boolean fault=captureFault;
+            r.view=new View(resume.headSequence,resume.resyncRequired || fault,fault,items,now+VIEW_TIMEOUT);
             r.invalidationPending=false; // An explicit fresh snapshot satisfies a deferred invalidation.
             // A live callback already in flight cannot advance a new snapshot's cursor.
             r.synced=false;r.deliveryGeneration++;
@@ -325,7 +332,10 @@ public final class WarningEndpoint implements Closeable {
     private void deliver(Registration r) {
         if(!r.confirmed || !r.synced || r.slot.busy || r.slot.registration!=r)return;
         WarningJournal.Resume resume=journal.resume(session,r.cursor,clock.getAsLong());
-        if(resume.resyncRequired || captureFault) {
+        // A sticky capture fault still fences audio, but its acknowledged snapshot must
+        // not trigger an immediate ACK -> invalidation -> RESUME loop. The frozen
+        // view records whether that fault was actually visible before acknowledgement.
+        if(resume.resyncRequired || captureFault&&!r.captureFaultAcknowledged) {
             r.synced=false;Bundle b=base(r);b.putLong("head_sequence",resume.headSequence);b.putBoolean("resync_required",true);
             send(r,WarningWire.STATE_INVALIDATED,b,null);return;
         }
@@ -416,7 +426,13 @@ public final class WarningEndpoint implements Closeable {
             throw new IllegalStateException(cause);
         }
     }
-    private void post(Runnable task) { if(!closed)try { actor.execute(task); }catch(RejectedExecutionException error) { captureFault=true; } }
+    private synchronized void failCapture(String reason) {
+        if(captureFault)return;
+        captureFault=true;
+        // One bounded reason, never native messages/coordinates or a packet dump.
+        Log.w("MorpheWarnings",reason);
+    }
+    private void post(Runnable task) { if(!closed)try { actor.execute(task); }catch(RejectedExecutionException error) { failCapture("SOURCE_CALLBACK_QUEUE_OVERFLOW"); } }
     @Override public void close() {
         if(closed)return;closed=true;timer.shutdownNow();
         // Preserve any pending grant on disk. Closing is not proof that a receiver stopped output.
@@ -431,7 +447,7 @@ public final class WarningEndpoint implements Closeable {
     private final class Registration {
         final WarningAudioOwner.Client client;final IBinder callback;final Slot slot;final String challenge=UUID.randomUUID().toString();
         final IBinder.DeathRecipient death=()->post(()-> { remove(this);refresh(); });
-        boolean confirmed,synced,verifySent,invalidationPending;long cursor,touched=clock.getAsLong(),deliveryGeneration,revocationPending;View view;
+        boolean confirmed,synced,verifySent,invalidationPending,captureFaultAcknowledged;long cursor,touched=clock.getAsLong(),deliveryGeneration,revocationPending;View view;
         Registration(WarningAudioOwner.Client client,IBinder callback,Slot slot) { this.client=client;this.callback=callback;this.slot=slot; }
     }
     private static final class Slot {
@@ -439,8 +455,8 @@ public final class WarningEndpoint implements Closeable {
         Slot(int index) { worker=worker("warning-callback-"+index,1); }
     }
     private static final class View {
-        final String token=UUID.randomUUID().toString();final long head,until;final boolean resync;final List<Bundle> items;
+        final String token=UUID.randomUUID().toString();final long head,until;final boolean resync,captureFault;final List<Bundle> items;
         int next;boolean delivered;
-        View(long head,boolean resync,List<Bundle> items,long until) { this.head=head;this.resync=resync;this.items=items;this.until=until; }
+        View(long head,boolean resync,boolean captureFault,List<Bundle> items,long until) { this.head=head;this.resync=resync;this.captureFault=captureFault;this.items=items;this.until=until; }
     }
 }

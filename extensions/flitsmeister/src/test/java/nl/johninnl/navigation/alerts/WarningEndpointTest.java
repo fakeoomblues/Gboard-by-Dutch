@@ -152,6 +152,42 @@ public class WarningEndpointTest {
         assertTrue(items.stream().anyMatch(item->"state".equals(item.getString("item_type"))&&"Actual native text".equals(item.getBundle("event").getString("message"))));
         assertFalse(items.stream().anyMatch(item->"announcement".equals(item.getString("item_type"))));
     }
+    @Test public void acknowledgedCaptureFaultDoesNotLoopSnapshotsOrUnfenceAudio() throws Exception {
+        Callback callback=new Callback();Bundle registration=confirmed(callback);
+        source.captureOverflow();
+        assertNotNull(callback.invalidations.poll(3,TimeUnit.SECONDS));
+        Bundle view=resume(registration);assertFalse(view.getBoolean("capture_complete"));
+        acknowledge(registration,view);
+        assertNull("An acknowledged fault must not invalidate the same snapshot again, including maintenance",
+                callback.invalidations.poll(1200,TimeUnit.MILLISECONDS));
+        Bundle claim=new Bundle();claim.putString("registration_token",registration.getString("registration_token"));
+        claim.putString("mode","VOICE");claim.putBoolean("ready",true);
+        assertEquals("OVERFLOW",call(WarningWire.CLAIM_AUDIO,claim).getString("status"));
+        assertTrue("Valid later records must still reach the receiver",source.emit(event()));
+        assertNotNull(callback.events.poll(3,TimeUnit.SECONDS));
+        assertFalse(call(WarningWire.PING,claim).getBoolean("capture_complete"));
+    }
+    @Test public void aFaultAfterTheFrozenViewStillRequiresOneNewAcknowledgement() throws Exception {
+        Callback callback=new Callback();Bundle registration=confirmed(callback);
+        Bundle beforeFault=resume(registration);assertTrue(beforeFault.getBoolean("capture_complete"));
+        source.captureOverflow();
+        acknowledge(registration,beforeFault);
+        assertNotNull("Acknowledging an older healthy view cannot consume a newer fault",
+                callback.invalidations.poll(3,TimeUnit.SECONDS));
+        Bundle current=resume(registration);assertFalse(current.getBoolean("capture_complete"));
+        acknowledge(registration,current);
+        assertNull(callback.invalidations.poll(1200,TimeUnit.MILLISECONDS));
+    }
+    private Bundle resume(Bundle registration)throws Exception{
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        request.putString("provider_session",registration.getString("provider_session"));request.putLong("after_sequence",0);
+        Bundle view=call(WarningWire.RESUME,request);assertEquals("OK",view.getString("status"));assertTrue(view.getBoolean("done"));return view;
+    }
+    private void acknowledge(Bundle registration,Bundle view)throws Exception{
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        request.putString("view_token",view.getString("view_token"));request.putLong("head_sequence",view.getLong("head_sequence"));
+        assertEquals("OK",call(WarningWire.ACK,request).getString("status"));
+    }
     private WarningEndpoint localRecoverySource(){
         WarningCapabilities profile=new WarningCapabilities(repeat('a',64),caps,true);
         return new WarningEndpoint(android.os.Process.myUid(),u->u>=10001&&u<=10006?"app.client"+u:null,profile,
