@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.40.1",
+  "version": "1.41.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -364,6 +364,76 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobilepa",
+          "name": "Parool",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto nieuws",
+      "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio. Selecting a headline starts the ordered feed at that article, with Previous, Next and Up next through the existing car player. Premium audio keeps its entitlement.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "be.persgroep.android.news.mobiletr",
+          "name": "Trouw",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92",
+            "34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.53.1",
+              "versionCodes": {
+                "ARM64_V8A": 23136515,
+                "ARMEABI_V7A": 23136515,
+                "X86_64": 23136515,
+                "X86": 23136515
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -6506,7 +6576,7 @@
     },
     {
       "name": "Home in Android Auto",
-      "description": "Fills the car Home tab with the same Home sections as the phone app, grouped by section title, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
+      "description": "Fills the car Home tab with regular cover tiles from the phone's Home, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Publishes the real playback queue for Up next, with queue item selection. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
       "default": true,
       "category": null,
       "compatiblePackages": [

@@ -8,15 +8,20 @@ import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val HOME = "Lnl/johninnl/soundcloud/HomeSections;"
-private const val SECTIONS_SERVICE = "Lcom/soundcloud/android/sections/data/SectionsService;"
-private const val DEFAULT_SECTIONS_SERVICE = "Lcom/soundcloud/android/sections/data/DefaultSectionsService;"
-private const val SERVICE_FACTORY = "Lcom/soundcloud/android/sections/wiring/SectionsDataModule_Companion_ProvidesSectionServiceFactory;"
+private const val SECTIONS_SERVICE = "Lcom/soundcloud/android/sdui/data/SDUIService;"
+private const val DEFAULT_SECTIONS_SERVICE = "Lcom/soundcloud/android/sdui/data/DefaultSDUIService;"
+private const val SERVICE_FACTORY = "Lcom/soundcloud/android/sdui/wiring/SDUIModule_Companion_ProvidesSDUIServiceFactory;"
 private const val DISCOVERY_ENTRY = "Lcom/soundcloud/android/playback/mediabrowser/impl/entries/DiscoveryCatalogEntry;"
 private const val ITEM_BUILDER = "Lcom/soundcloud/android/playback/mediabrowser/impl/MediaItemBuilder;"
 private const val MEDIA_ITEM = "Landroid/support/v4/media/MediaBrowserCompat\$MediaItem;"
@@ -32,8 +37,9 @@ private fun Method.strings() = (implementation?.instructions ?: emptyList())
 @Suppress("unused")
 val androidAutoHomePatch = bytecodePatch(
     name = "Home in Android Auto",
-    description = "Fills the car Home tab with the same Home sections as the phone app, grouped by section " +
-        "title, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. " +
+    description = "Fills the car Home tab with regular cover tiles from the phone's Home, " +
+        "using the app's existing account. Tracks, mixes and artists play; playlists and albums open. " +
+        "Publishes the real playback queue for Up next, with queue item selection. " +
         "Falls back to SoundCloud's original car Home if the phone Home cannot load.",
     default = true,
 ) {
@@ -46,16 +52,17 @@ val androidAutoHomePatch = bytecodePatch(
         if (classDefBy(MEDIA_COLLECTION).methods.none { it.name == "<clinit>" && "discover" in it.strings() })
             throw PatchException("SoundCloud's discovery media collection changed")
 
-        // Phone Home request: the SectionsService method DefaultSectionsService implements with the
-        // home-library layout. Resolve its R8 name instead of trusting a letter.
+        // The phone Home uses GraphQL SDUI. /home/query's home-library layout only serves library banners.
+        val queryParameters = listOf(STRING, STRING, "Ljava/lang/Integer;", "Lkotlin/coroutines/jvm/internal/ContinuationImpl;")
         val homeQueries = classDefBy(DEFAULT_SECTIONS_SERVICE).methods.filter {
-            it.returnType == "Ljava/lang/Object;" && it.parameterTypes.map(CharSequence::toString) == listOf(CONTINUATION) &&
-                "soundcloud:layouts:home-library" in it.strings()
+            it.returnType == "Ljava/lang/Object;" && it.parameterTypes.map(CharSequence::toString) == queryParameters
         }
         val homeQuery = homeQueries.singleOrNull()?.name ?: throw PatchException("SoundCloud phone Home request not found")
         if (classDefBy(SECTIONS_SERVICE).methods.none {
-            it.name == homeQuery && it.parameterTypes.map(CharSequence::toString) == listOf(CONTINUATION)
-        }) throw PatchException("SoundCloud SectionsService does not declare the phone Home request")
+            it.name == homeQuery && it.parameterTypes.map(CharSequence::toString) == queryParameters
+        }) throw PatchException("SoundCloud SDUIService does not declare the phone Home request")
+        bindSduiHomeModels()
+        bindQueueExport()
 
         fun builderMethod(vararg parameters: String) = classDefBy(ITEM_BUILDER).methods.filter {
             it.returnType == MEDIA_ITEM && it.parameterTypes.map(CharSequence::toString) == parameters.toList()
@@ -72,12 +79,18 @@ val androidAutoHomePatch = bytecodePatch(
         // Bridges: the extension calls the app's own renamed methods through these bodies.
         val home = mutableClassDefBy(HOME)
         fun bridge(name: String, body: String) = home.methods.single { it.name == name }.addInstructions(0, body)
-        bridge("queryHome", """
+        home.methods.removeAll { it.name == "queryHome" }
+        home.methods.add(MutableMethod(ImmutableMethod(HOME, "queryHome", listOf("Ljava/lang/Object;", CONTINUATION).map {
+            ImmutableMethodParameter(it, emptySet(), null)
+        }, "Ljava/lang/Object;", AccessFlags.STATIC.value, emptySet(), emptySet(),
+            ImmutableMethodImplementation(3, emptyList(), emptyList(), emptyList()))).apply { addInstructions(0, """
             check-cast p0, $SECTIONS_SERVICE
-            invoke-interface { p0, p1 }, $SECTIONS_SERVICE->$homeQuery($CONTINUATION)Ljava/lang/Object;
+            check-cast p1, Lkotlin/coroutines/jvm/internal/ContinuationImpl;
+            const/4 v0, 0x0
+            invoke-interface { p0, v0, v0, v0, p1 }, $SECTIONS_SERVICE->$homeQuery($STRING${STRING}Ljava/lang/Integer;Lkotlin/coroutines/jvm/internal/ContinuationImpl;)Ljava/lang/Object;
             move-result-object v0
             return-object v0
-        """)
+        """) })
         bridge("playable", """
             check-cast p0, $ITEM_BUILDER
             invoke-virtual/range { p0 .. p4 }, $ITEM_BUILDER->$playable($STRING$STRING$STRING$STRING)$MEDIA_ITEM

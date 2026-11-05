@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.40.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.40.1)** · 55 apps · 284 patches
+**Patch bundle [v1.41.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.41.0)** · 55 apps · 286 patches
 
 ### Weather
 
@@ -82,9 +82,9 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [NU.nl](docs/site/en/apps/nunl.md) | Ads · Tracking · Prompts | 26.9.0 | APKS | 4 |
 | [Omroep Brabant](docs/site/en/apps/omroep-brabant.md) | Ads · Tracking · Prompts | 11.1.0 | APKS | 3 |
 | [Omroep West](docs/site/en/apps/omroep-west.md) | Ads · Tracking · Prompts | 20.1 | APKS | 3 |
-| [Parool](docs/site/en/apps/parool.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Parool](docs/site/en/apps/parool.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 | [RTL Nieuws](docs/site/en/apps/rtl-nieuws.md) | Ads · Tracking · Prompts | 12.7.1 | APKS | 4 |
-| [Trouw](docs/site/en/apps/trouw.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Trouw](docs/site/en/apps/trouw.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
 | [Tubantia](docs/site/en/apps/tubantia.md) | Ads · Tracking · Prompts · Articles | 9.23.2 | APKS | 5 |
 | [Voetbal International](docs/site/en/apps/voetbal-international.md) | Ads · Tracking · Prompts · Articles | 5.13.52 | APKS | 4 |
 | [Volkskrant](docs/site/en/apps/volkskrant.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |
