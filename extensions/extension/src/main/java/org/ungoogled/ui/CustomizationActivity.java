@@ -450,7 +450,7 @@ public final class CustomizationActivity extends Activity {
             body.addView(toggleRow("Chime for a road alert ahead", "Uses a reported approach distance, or an estimated position and heading check",chime));
             chime.setOnCheckedChangeListener((b,on)->WazeAlerts.setChime(this,on));
             Switch compact=new Switch(this);compact.setChecked(ExternalTelemetry.widgetEnabled(this));
-            body.addView(toggleRow("Compact speed and average-speed control", "Current speed, limit, observed partial average, progress and remaining distance from De-Waze or Flitsmeister; Google Maps supplies missing values",compact));
+            body.addView(toggleRow("Provider speed and average-speed control", "Use De-Waze or Flitsmeister values in Maps’ speed display; show observed average, progress and remaining distance separately. Maps supplies missing values",compact));
             compact.setOnCheckedChangeListener((b,on)->ExternalTelemetry.setWidget(this,on));
             LinearLayout current=rowBase("Source now",ExternalTelemetry.status());
             TextView currentSub=(TextView)((LinearLayout)current.getChildAt(0)).getChildAt(1);

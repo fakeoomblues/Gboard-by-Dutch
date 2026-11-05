@@ -90,18 +90,37 @@ public final class ExternalTelemetry {
             if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             int[] bounds=carViewportSizes.get(owner);
             if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
+            TelemetryStore.View info=view();String message=compactCarWarning();
+            if(!info.zoneActive&&message.isEmpty()){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
             float density=root.getResources().getDisplayMetrics().density;
-            value.bind(view(),speedMps(),limitKmh(),PowerSaving.miles(),Shapes.navDarkScheme(),compactCarWarning());
+            value.bind(info,limitKmh(),PowerSaving.miles(),Shapes.navDarkScheme(),message);
             int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
-            int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();int width=right-left,height=bottom-top;
+            int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();
+            android.graphics.Rect area=carInfoArea(root,new android.graphics.Rect(left,top,right,bottom));
+            left=area.left;top=area.top;right=area.right;bottom=area.bottom;
+            int width=Math.max(0,right-left),height=Math.max(0,bottom-top);
             int margin=Math.round(16*density);value.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0,width-2*margin),View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(Math.max(0,height-2*margin),View.MeasureSpec.AT_MOST));
+            if(value.getMeasuredWidth()<=0||value.getMeasuredHeight()<=0){removeCarWidget(owner);continue;}
             FrameLayout.LayoutParams layout=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.TOP|Gravity.START);
             layout.leftMargin=Math.max(left+margin,right-value.getMeasuredWidth()-margin);layout.topMargin=Math.max(top+margin,bottom-value.getMeasuredHeight()-margin);value.setLayoutParams(layout);value.bringToFront();
         }
     }
 
-    private static View hiddenBadge;
+    static android.graphics.Rect carInfoArea(ViewGroup root,android.graphics.Rect viewport){
+        android.graphics.Rect result=new android.graphics.Rect(viewport);
+        for(String name:new String[]{"map_buttons_view_speed_limit","map_buttons_view_branding_watermark_container"}){
+            View nativeView=namedCarView(root,name);if(nativeView==null||nativeView.getWidth()<=0||nativeView.getHeight()<=0)continue;
+            android.graphics.Rect occupied=new android.graphics.Rect(0,0,nativeView.getWidth(),nativeView.getHeight());root.offsetDescendantRectToMyCoords(nativeView,occupied);
+            if(occupied.intersects(viewport.left,viewport.top,viewport.right,viewport.bottom))result.bottom=Math.min(result.bottom,occupied.top);
+        }
+        return result;
+    }
+    private static View namedCarView(View view,String name){
+        if(view.getId()!=View.NO_ID){try{if(name.equals(view.getResources().getResourceEntryName(view.getId())))return view;}catch(android.content.res.Resources.NotFoundException ignored){}}
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View found=namedCarView(group.getChildAt(i),name);if(found!=null)return found;}}
+        return null;
+    }
     private static String pinSignature="";
 
     private static SharedPreferences prefs(Context c){return c.getSharedPreferences(Shapes.PREFS,Context.MODE_PRIVATE);}
@@ -111,6 +130,7 @@ public final class ExternalTelemetry {
     static boolean legacy(){return LEGACY.equals(source);}
     static boolean modern(){return TelemetryStore.supported(source);}
     static boolean widgetEnabled(Context c){return prefs(c).getBoolean(KEY_WIDGET,true);}
+    static boolean nativeMetricsEnabled(){return modern()&&app!=null&&widgetEnabled(app);}
     static void setWidget(Context c,boolean enabled){prefs(c).edit().putBoolean(KEY_WIDGET,enabled).apply();refresh(c);}
     static void select(Context c,String value){
         boolean allowed=false;for(String candidate:SOURCES)if(candidate.equals(value))allowed=true;
@@ -237,7 +257,8 @@ public final class ExternalTelemetry {
         return out;
     }
     private static void update(){
-        if(!modern())return;
+        SpeedAlerts.refreshNativeWidgets();
+        if(!modern()){render();return;}
         if(startup!=null)startup.select(source,navigating||carActive());
         TelemetryStore.View v=view();RoadWarningEngine.Fix position=fix==null?null:new RoadWarningEngine.Fix(fix.getLatitude(),fix.getLongitude(),fix.hasBearing()?fix.getBearing():Double.NaN,fix.hasSpeed()?fix.getSpeed():Double.NaN,fixAt);
         // A kind disabled for map pins is disabled for warnings too.
@@ -286,18 +307,19 @@ public final class ExternalTelemetry {
     static void pause(Activity activity){if(startup!=null)startup.onActivityPaused(activity);if(foreground.get()==activity){foreground.clear();removeWidget();}}
     private static void removeWidget(){
         if(widget!=null&&widget.getParent() instanceof ViewGroup)((ViewGroup)widget.getParent()).removeView(widget);
-        widget=null;if(hiddenBadge!=null){hiddenBadge.setAlpha(1f);hiddenBadge=null;}
+        widget=null;
     }
     private static void render(){
         renderCar();
         Activity activity=foreground.get();if(!modern()||activity==null||!widgetEnabled(activity)){removeWidget();return;}
+        if(!view().zoneActive&&compactWarning().isEmpty()){removeWidget();return;}
         ViewGroup content=activity.findViewById(android.R.id.content);if(!(content instanceof FrameLayout))return;
         if(widget==null){widget=new CompactSpeedView(activity);widget.setOnClickListener(v->activity.startActivity(Screens.intent(activity,CustomizationActivity.class).putExtra(CustomizationActivity.EXTRA_PAGE,CustomizationActivity.PAGE_WAZE)));content.addView(widget);}
         float density=activity.getResources().getDisplayMetrics().density;
         FrameLayout.LayoutParams lp=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.BOTTOM|Gravity.START);
         lp.leftMargin=Math.round(16*density);lp.bottomMargin=Math.round(112*density);
         View badge=Shapes.findSpeedBadge(content);
-        if(badge!=null){View card=Shapes.badgeCard(badge,content);if(hiddenBadge!=card){if(hiddenBadge!=null)hiddenBadge.setAlpha(1f);hiddenBadge=card;card.setAlpha(0f);}int[] location=new int[2],origin=new int[2];card.getLocationOnScreen(location);content.getLocationOnScreen(origin);lp.leftMargin=Math.max(0,location[0]-origin[0]);lp.bottomMargin=Math.max(Math.round(24*density),content.getHeight()-(location[1]-origin[1]+card.getHeight()));}
+        if(badge!=null){View card=Shapes.badgeCard(badge,content);int[] location=new int[2],origin=new int[2];card.getLocationOnScreen(location);content.getLocationOnScreen(origin);lp.leftMargin=Math.max(0,location[0]-origin[0]);lp.bottomMargin=Math.max(Math.round(24*density),content.getHeight()-(location[1]-origin[1])+Math.round(8*density));}
         widget.setLayoutParams(lp);widget.refresh(Shapes.navDarkScheme());widget.bringToFront();
     }
 }

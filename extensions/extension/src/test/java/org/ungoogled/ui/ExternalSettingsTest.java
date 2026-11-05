@@ -67,9 +67,9 @@ public class ExternalSettingsTest {
         TelemetryStore store=new TelemetryStore();store.select(TelemetryStore.FLITSMEISTER);Map<String,Object> p=TelemetryStoreTest.packet(TelemetryStore.FLITSMEISTER,"fm",1,5000);
         p.put("zone_status","active");p.put("zone_session",1L);p.put("zone_segment_id","z");p.put("zone_remaining_m",1200);p.put("zone_progress_percent",35d);p.put("zone_progress_estimated",true);p.put("zone_observation_start_elapsed_ms",1000L);p.put("zone_observed_distance_m",100);p.put("zone_average_partial",true);p.put("zone_average_speed_kmh",90d);store.accept(p,TelemetryStore.FLITSMEISTER,5000);
         for(boolean imperial:new boolean[]{false,true}){
-            CompactSpeedView view=new CompactSpeedView(RuntimeEnvironment.getApplication());view.bind(store.view(5000),82/3.6f,90d,imperial,false,"≈300 m · Camera");
+            CompactSpeedView view=new CompactSpeedView(RuntimeEnvironment.getApplication());view.bind(store.view(5000),90d,imperial,false,"≈300 m · Camera");
             view.measure(View.MeasureSpec.makeMeasureSpec(300,View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(300,View.MeasureSpec.AT_MOST));view.layout(0,0,view.getMeasuredWidth(),view.getMeasuredHeight());
-            assertTrue(view.getContentDescription().toString().contains("observed partial average"));save(view,imperial?"compact-zone-imperial.png":"compact-zone-metric.png");
+            assertTrue(view.getContentDescription().toString().contains("Observed partial average"));save(view,imperial?"compact-zone-imperial.png":"compact-zone-metric.png");
         }
     }
     private static void save(View view,String name) throws Exception {

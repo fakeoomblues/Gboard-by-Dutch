@@ -15,6 +15,49 @@ public final class SpeedAlerts {
     /** Over the margin since the last chime. */
     private static boolean over;
     private static long chimedAt;
+    private static final java.util.Map<Object,NativeInputs> nativeWidgets=new java.util.WeakHashMap<>();
+    private static final ThreadLocal<Boolean> refreshing=ThreadLocal.withInitial(()->false);
+    private static final class NativeInputs {
+        Float speed; Integer limit; Object units;
+        NativeInputs(){}
+        NativeInputs(NativeInputs value){speed=value.speed;limit=value.limit;units=value.units;}
+    }
+
+    /** Rewritten to invoke the original Maps setters, preserving their conversion and rendering. */
+    static void writeNativeSpeed(Object wrapper,float speed){}
+    static void writeNativeLimit(Object wrapper,int limit,Object units){}
+    static boolean nativeWidgetAttached(Object wrapper){return false;}
+
+    public static void onNativeSpeedInput(Object wrapper,float speed){
+        if(refreshing.get())return;
+        synchronized(nativeWidgets){nativeWidgets.computeIfAbsent(wrapper,key->new NativeInputs()).speed=speed;}
+        onNativeSpeedMps(speed);
+    }
+    public static int displayedSpeed(Object speedometer,int original){return overrideSpeed(original,kmh(speedometer));}
+    static int overrideSpeed(int original,boolean kmh){
+        Double value=ExternalTelemetry.nativeMetricsEnabled()?ExternalTelemetry.view().currentKmh:null;
+        // Match Maps' own integer conversion; leave its raw metres/second field untouched.
+        return value==null?original:(int)((float)(value/3.6)*(kmh?3.6f:2.2369363f));
+    }
+    public static int displayedLimit(Object wrapper,int original,Object units){return overrideLimit(original,nativeUnits(wrapper,units));}
+    static int overrideLimit(int original,int units){
+        Double value=ExternalTelemetry.nativeMetricsEnabled()?ExternalTelemetry.view().limitKmh:null;
+        return value==null||units<0?original:(int)Math.round(units==1?value:value/1.609344);
+    }
+    static void refreshNativeWidgets(){
+        if(refreshing.get())return;
+        java.util.Map<Object,NativeInputs> snapshot=new java.util.IdentityHashMap<>();
+        synchronized(nativeWidgets){for(java.util.Map.Entry<Object,NativeInputs> entry:nativeWidgets.entrySet())if(entry.getKey()!=null)snapshot.put(entry.getKey(),new NativeInputs(entry.getValue()));}
+        refreshing.set(true);
+        try{
+            for(java.util.Map.Entry<Object,NativeInputs> entry:snapshot.entrySet()){
+                if(!nativeWidgetAttached(entry.getKey())){synchronized(nativeWidgets){nativeWidgets.remove(entry.getKey());}continue;}
+                NativeInputs value=entry.getValue();
+                if(value.limit!=null)writeNativeLimit(entry.getKey(),value.limit,value.units);
+                if(value.speed!=null)writeNativeSpeed(entry.getKey(),value.speed);
+            }
+        }finally{refreshing.remove();}
+    }
 
     /** Rewritten by the patch: the speedometer's speed, in its own units; -1 when unknown. */
     static int speed(Object speedometer) { return -1; }
@@ -29,8 +72,10 @@ public final class SpeedAlerts {
     static int nativeUnits(Object wrapper, Object units) { return -1; }
 
     /** Every native setter call is an observation, even when its displayed integer stays unchanged. */
-    public static void onNativeSpeedMps(float speed) { ExternalTelemetry.nativeSpeedMps(speed); }
+    public static void onNativeSpeedMps(float speed) { if(!refreshing.get())ExternalTelemetry.nativeSpeedMps(speed); }
     public static void onNativeLimitInput(Object wrapper, int limit, Object units) {
+        if(refreshing.get())return;
+        synchronized(nativeWidgets){NativeInputs value=nativeWidgets.computeIfAbsent(wrapper,key->new NativeInputs());value.limit=limit;value.units=units;}
         int selected = nativeUnits(wrapper, units);
         if (selected >= 0) ExternalTelemetry.nativeLimit(limit, selected == 1);
     }

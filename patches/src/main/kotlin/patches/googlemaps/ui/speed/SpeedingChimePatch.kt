@@ -70,6 +70,9 @@ val speedingChimePatch = bytecodePatch(
         if (speedStore < 0) throw PatchException("$speedometer's speed field not found")
         val speedField = code[speedStore].ref() as FieldReference
         val holder = (code[speedStore] as TwoRegisterInstruction).registerB
+        val conversion=code.withIndex().filter{it.value.opcode==Opcode.FLOAT_TO_INT}.singleOrNull()
+            ?:throw PatchException("the speed setter's integer conversion is not unique")
+        val displayed=(conversion.value as TwoRegisterInstruction).registerA
 
         // The speed limit setter, beside it: (limit, units), storing the limit in another int field.
         val setLimit = mutableClassDefBy(setSpeed.definingClass).methods.singleOrNull {
@@ -88,9 +91,17 @@ val speedingChimePatch = bytecodePatch(
         // Chime only after the displayed value changes. Native-data freshness is
         // observed separately at entry: steady speed/limit calls skip these IPUTs.
         setSpeed.addInstruction(speedStore + 1, "invoke-static { v$holder }, $SPEED_ALERTS->onSpeedometer(Ljava/lang/Object;)V")
+        setSpeed.addInstructions(conversion.index+1,"""
+            invoke-static { v$holder, v$displayed }, $SPEED_ALERTS->displayedSpeed(Ljava/lang/Object;I)I
+            move-result v$displayed
+        """)
         setLimit.addInstruction(limitStore + 1, "invoke-static { v$limitHolder }, $SPEED_ALERTS->onSpeedometer(Ljava/lang/Object;)V")
-        setSpeed.addInstruction(0, "invoke-static/range { p1 .. p1 }, $SPEED_ALERTS->onNativeSpeedMps(F)V")
-        setLimit.addInstruction(0, "invoke-static/range { p0 .. p2 }, $SPEED_ALERTS->onNativeLimitInput(Ljava/lang/Object;ILjava/lang/Object;)V")
+        setSpeed.addInstruction(0, "invoke-static/range { p0 .. p1 }, $SPEED_ALERTS->onNativeSpeedInput(Ljava/lang/Object;F)V")
+        setLimit.addInstructions(0,"""
+            invoke-static/range { p0 .. p2 }, $SPEED_ALERTS->onNativeLimitInput(Ljava/lang/Object;ILjava/lang/Object;)V
+            invoke-static/range { p0 .. p2 }, $SPEED_ALERTS->displayedLimit(Ljava/lang/Object;ILjava/lang/Object;)I
+            move-result p1
+        """)
         val wrapperField = code.firstNotNullOfOrNull { insn ->
             (insn.ref() as? FieldReference)?.takeIf {
                 insn.opcode == Opcode.IGET_OBJECT && it.definingClass == setSpeed.definingClass
@@ -114,6 +125,36 @@ val speedingChimePatch = bytecodePatch(
                 ).toMutable().apply { addInstructions(0, smali) },
             )
         }
+        // The supported APK's own attach listener clears ahvy.e on detach.
+        // Repaint only live native widgets; do not keep retired car/phone models active.
+        val preferencesField=mutableClassDefBy(speedometer).fields.singleOrNull{it.name=="c"&&it.type=="Lahvy;"}
+            ?:throw PatchException("the speed widget's native attachment binding changed")
+        val attachedField=mutableClassDefBy("Lahvy;").fields.singleOrNull{it.name=="e"&&it.type=="Ljava/lang/Object;"}
+            ?:throw PatchException("the speed widget's native attachment callback changed")
+        replace("nativeWidgetAttached","Z","""
+            check-cast p0, ${setSpeed.definingClass}
+            iget-object v0, p0, $wrapperField
+            check-cast v0, $speedometer
+            iget-object v0, v0, $preferencesField
+            iget-object v0, v0, $attachedField
+            if-eqz v0, :detached
+            const/4 v0, 0x1
+            return v0
+            :detached
+            const/4 v0, 0x0
+            return v0
+        """)
+        replace("writeNativeSpeed","V","""
+            check-cast p0, ${setSpeed.definingClass}
+            invoke-virtual/range { p0 .. p1 }, ${setSpeed.definingClass}->${setSpeed.name}(F)V
+            return-void
+        """,listOf("Ljava/lang/Object;","F"))
+        replace("writeNativeLimit","V","""
+            check-cast p0, ${setLimit.definingClass}
+            check-cast p2, ${units.type}
+            invoke-virtual/range { p0 .. p2 }, ${setLimit.definingClass}->${setLimit.name}(I${units.type})V
+            return-void
+        """,listOf("Ljava/lang/Object;","I","Ljava/lang/Object;"))
         replace(
             "nativeUnits", "I",
             """

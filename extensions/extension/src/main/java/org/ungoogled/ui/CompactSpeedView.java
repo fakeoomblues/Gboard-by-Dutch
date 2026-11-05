@@ -1,6 +1,5 @@
 package org.ungoogled.ui;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,18 +8,15 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.View;
 
-/** Compact native content embedded in Maps' existing speed-widget slot; transparent by design. */
+/** Supplementary warnings and observed average-zone progress; Maps draws speed and limit. */
 public final class CompactSpeedView extends View {
     private final Paint ink=new Paint(Paint.ANTI_ALIAS_FLAG),fill=new Paint(Paint.ANTI_ALIAS_FLAG);
     private TelemetryStore.View data=TelemetryStore.View.empty("");
-    private Float current;
     private Double limit;
     private boolean imperial,dark=true;
     private String warning="";
-    private float shownMps;
-    private ValueAnimator animation;
     private final float density;
-    private float pairWidth,signSize,rowHeight,totalHeight;
+    private float totalHeight;
     private int bottomClearance;
     public CompactSpeedView(Context context) {
         super(context);density=getResources().getDisplayMetrics().density;
@@ -29,60 +25,28 @@ public final class CompactSpeedView extends View {
     }
     public void refresh(boolean dark) {
         bottomClearance=0;
-        bind(ExternalTelemetry.view(),ExternalTelemetry.speedMps(),ExternalTelemetry.limitKmh(),PowerSaving.miles(),dark,ExternalTelemetry.compactWarning());
+        bind(ExternalTelemetry.view(),ExternalTelemetry.limitKmh(),PowerSaving.miles(),dark,ExternalTelemetry.compactWarning());
     }
-    void bind(TelemetryStore.View snapshot,Float mps,Double maximum,boolean imperial,boolean dark,String warning) {
-        Float old=current;data=snapshot;current=mps;limit=maximum;this.imperial=imperial;this.dark=dark;this.warning=warning;
-        if(animation!=null)animation.cancel();
-        if(mps!=null&&old!=null&&isAttachedToWindow()&&Math.abs(mps-shownMps)>.05f) {
-            animation=ValueAnimator.ofFloat(shownMps,mps);animation.setDuration(600);
-            animation.addUpdateListener(a->{shownMps=(float)a.getAnimatedValue();invalidate();});animation.start();
-        } else if(mps!=null)shownMps=mps;
-        setContentDescription(accessibility());
+    void bind(TelemetryStore.View snapshot,Double maximum,boolean imperial,boolean dark,String warning) {
+        data=snapshot;limit=maximum;this.imperial=imperial;this.dark=dark;this.warning=warning;
+        String average=!data.zoneActive?"":data.averageKmh==null?"Observed partial average pending":"Observed partial average "+Math.round(imperial?data.averageKmh/1.609344:data.averageKmh)+(imperial?" mph":" km/h");
+        setContentDescription(average+(average.isEmpty()||warning.isEmpty()?"":", ")+warning);
         requestLayout();invalidate();
     }
-    private String accessibility() {
-        String speed=current==null?"Current speed unknown":"Current speed "+Math.round(current*(imperial?2.236936f:3.6f))+(imperial?" mph":" km/h");
-        String maximum=limit==null?"speed limit unknown":"speed limit "+Math.round(imperial?limit/1.609344:limit);
-        String average=!data.zoneActive?"":data.averageKmh==null?", observed partial average pending":", observed partial average "+Math.round(imperial?data.averageKmh/1.609344:data.averageKmh);
-        return speed+", "+maximum+average+(warning.isEmpty()?"":", "+warning);
-    }
+    boolean hasContent(){return data.zoneActive||!warning.isEmpty();}
     private float dp(float value){return value*density;}
     private float sp(float value){return value*getResources().getDisplayMetrics().scaledDensity;}
     @Override protected void onMeasure(int widthSpec,int heightSpec) {
+        if(!hasContent()){setMeasuredDimension(0,0);return;}
         float fontScale=Math.max(1,getResources().getDisplayMetrics().scaledDensity/density);
-        signSize=dp(44)*Math.min(1.5f,fontScale);
-        ink.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));ink.setTextSize(sp(32));
-        float factor=imperial?2.236936f:3.6f;
-        float numberWidth=Math.max(dp(48),Math.max(ink.measureText(current==null?"—":String.valueOf(Math.round(current*factor))),ink.measureText(String.valueOf(Math.round(shownMps*factor)))));
-        pairWidth=numberWidth+dp(6)+signSize;
-        rowHeight=Math.max(signSize,sp(32)+sp(10)+dp(3));
         int warningLines=warning.isEmpty()?0:Math.min(4,warning.split("\n").length);
-        totalHeight=rowHeight+(data.zoneActive?sp(16)+sp(11)+dp(16):0)+warningLines*(sp(13)+dp(6))+(warningLines==0?0:dp(12));
-        float measuredWidth=warningLines==0?pairWidth+dp(4):Math.max(pairWidth+dp(4),dp(240)*Math.min(1.5f,fontScale));
+        totalHeight=(data.zoneActive?sp(16)+sp(11)+dp(16):0)+warningLines*(sp(13)+dp(6))+(warningLines==0?0:dp(12));
+        float measuredWidth=warningLines==0?dp(140)*Math.min(1.5f,fontScale):dp(240)*Math.min(1.5f,fontScale);
         setMeasuredDimension(resolveSize((int)Math.ceil(measuredWidth),widthSpec),resolveSize((int)Math.ceil(totalHeight+dp(4+bottomClearance)),heightSpec));
     }
     @Override protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);float x=dp(2),y=dp(2),width=Math.min(pairWidth,getWidth()-dp(4));
+        super.onDraw(canvas);float x=dp(2),y=dp(2),width=Math.max(0,getWidth()-dp(4));
         int normal=dark?Color.WHITE:0xff111d2d,error=0xffe8514a;
-        float unitFactor=imperial?2.236936f:3.6f;
-        double maxDisplay=limit==null?Double.NaN:imperial?limit/1.609344:limit;
-        boolean over=current!=null&&Double.isFinite(maxDisplay)&&shownMps*unitFactor>maxDisplay+(imperial?3:5);
-        float numberWidth=Math.max(0,width-signSize-dp(6)),cx=x+numberWidth/2;
-        ink.setTextAlign(Paint.Align.CENTER);ink.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));ink.setTextSize(sp(32));
-        ink.setColor(over?error:normal);ink.setShadowLayer(dp(2),0,dp(1),dark?0xaa000000:0xaaffffff);
-        String speed=current==null?"—":String.valueOf(Math.round(shownMps*unitFactor));
-        canvas.drawText(speed,cx,y+sp(30),ink);
-        ink.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL));ink.setTextSize(sp(10));ink.setColor(normal);
-        canvas.drawText(imperial?"mph":"km/h",cx,y+sp(30)+sp(11),ink);
-        float radius=signSize/2,signX=x+width-radius,signY=y+radius;
-        fill.setStyle(Paint.Style.FILL);fill.setColor(Color.WHITE);canvas.drawCircle(signX,signY,radius,fill);
-        fill.setStyle(Paint.Style.STROKE);fill.setStrokeWidth(dp(4));fill.setColor(limit==null?0xff8993a0:error);canvas.drawCircle(signX,signY,radius-dp(2),fill);
-        ink.clearShadowLayer();ink.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));ink.setColor(0xff202124);ink.setTextSize(Math.min(sp(21),signSize*.49f));
-        String maximum=limit==null?"—":String.valueOf(Math.round(maxDisplay));
-        while(ink.measureText(maximum)>signSize-dp(10)&&ink.getTextSize()>sp(12))ink.setTextSize(ink.getTextSize()-1);
-        canvas.drawText(maximum,signX,signY-(ink.ascent()+ink.descent())/2,ink);
-        y+=rowHeight;
         ink.setTextAlign(Paint.Align.LEFT);ink.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL));ink.setColor(normal);
         ink.setShadowLayer(dp(2),0,dp(1),dark?0xaa000000:0xaaffffff);
         if(data.zoneActive) {
@@ -116,5 +80,4 @@ public final class CompactSpeedView extends View {
             }
         }
     }
-    @Override protected void onDetachedFromWindow(){if(animation!=null)animation.cancel();super.onDetachedFromWindow();}
 }

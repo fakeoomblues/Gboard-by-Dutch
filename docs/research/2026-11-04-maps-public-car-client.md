@@ -357,3 +357,48 @@ car service is recreated in FREE_NAV. Trace native navigation teardown and
 handover rather than assuming that a retained foreground service proves
 route continuity. No additional runtime session is justified for the unchanged
 checkpoint12 candidate.
+
+## Reuse Maps' native speed widget
+
+The owner rejected a second speed display. Original APK inspection identifies
+`azqb.G(float)` as the shared native speed setter and `azqb.H(int, ciqt)`
+as its speed-limit setter. Both update `ahvw`; the genuine car UI constructs
+that model through `rec`/`ahwb` inside `map_buttons_view_speed_limit`.
+`G` stores raw metres/second in `ahvw.n` before converting to the displayed
+integer `m`. `H` owns units, limit `l`, repaint and speed-dependent styling.
+
+The connected change substitutes fresh selected-provider values in those
+existing setters. Speed substitution happens after native conversion and
+before its equality check, preserving raw `n`, native units and integer
+conversion. Limits use the incoming/native units. Original inputs are retained
+per weakly referenced widget; provider updates, expiry, disable and source
+changes replay those native inputs through the original setters. A repaint
+guard prevents these refreshes from renewing native observation timestamps or
+recapturing substituted values as native data. The original attach listener
+clears `ahvy.e` on detach; a guarded binding excludes retired native widgets.
+
+The supplementary view no longer draws a current-speed/limit pair or hides
+Maps' own widget. It contains only warnings and observed average-zone progress
+and has no visible content without those extras. Car extras reserve the native
+speed/watermark region; phone extras sit above the existing native speed slot.
+Regression checks cover units, measured zero, per-field expiry, source changes,
+disable/fallback, repaint freshness and the absence of a second speed pair.
+Genuine AA pixel and native-value acceptance for this batch remains required.
+The independently observed guidance-reconnect failure remains open.
+
+Checkpoint13 passed the canonical build/regression checks and patched/signed
+the actual Maps APK with its expected patch selection. Genuine-AA run21 at
+1280x480 showed one native speed/limit control and an unobscured watermark.
+Advancing GPS coordinates at 4 m/s produced 14 km/h in that control. The native
+car dump contained no supplementary CompactSpeedView. The actual native canvas
+was 1190x460 at 160dpi; DHU encoded the 1280x480 active head unit inside a
+1280x720 PNG with 120px vertical margins.
+
+The planned session ended before a small-profile transition. This is a wide
+rendering/moving-GPS pass, not full native-provider substitution acceptance:
+independently differing provider/native values and runtime source-switch/expiry
+combinations remain open. Search opened recent destinations but its repeated
+action did not open the keyboard in this run, so route/input acceptance was
+not obtained. Native attach and Frida coverage remained intact, the baseline
+was restored and the owned emulator stopped; cleanupRequired=false. Keep the
+existing reconnect and remaining app/profile/voice gates open.
