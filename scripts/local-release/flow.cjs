@@ -293,9 +293,18 @@ async function command(context,label,args,{timeoutMs=2*60*60*1000,stopTimeoutMs=
   if(failure){Object.assign(failure,captured);throw failure;}
   return captured;
 }
+function pagesInvocation(script,args=[]) {
+  const source=`const {workspaceQuiescent}=require(${JSON.stringify(__filename)});
+const {processAlive}=require(${JSON.stringify(path.join(path.dirname(script),"pages-job.cjs"))});
+require(${JSON.stringify(script)}).main(process.argv.slice(1),{
+  isQuiescent:(workspace,record)=>!processAlive(record.pid)&&workspaceQuiescent(workspace)
+}).catch(error=>{console.error(error.message);process.exitCode=1;});`;
+  return [process.execPath,"-e",source,"--",...args];
+}
 async function cleanupPages(context,{script=path.join(__dirname,"pages.cjs")}={}) {
   let captured,failure,result;
-  try{captured=await command(context,"pages-cleanup",[process.execPath,script,"--cleanup"]);}
+  const invocation=script===path.join(__dirname,"pages.cjs")?pagesInvocation(script,["--cleanup"]):[process.execPath,script,"--cleanup"];
+  try{captured=await command(context,"pages-cleanup",invocation);}
   catch(error){failure=error;captured=error;}
   try{
     if(captured.stdoutTruncated)throw new Error("Pages cleanup result exceeded its diagnostic bound");
@@ -386,7 +395,7 @@ const defaults={
   discover:async context=>command(context,"discovery",[process.execPath,".gitlab/scripts/discovery.cjs"]),
   pages:async context=>{
     const file=path.join(context.workspace,"build/release-safety/pages-result.json");
-    try{await command(context,"pages",[process.execPath,"scripts/local-release/pages.cjs"]);}
+    try{await command(context,"pages",pagesInvocation(path.join(context.workspace,"scripts/local-release/pages.cjs")));}
     finally{
       if(fs.existsSync(file)){
         context.pagesResults=JSON.parse(context.redact(fs.readFileSync(file,"utf8")));
@@ -581,5 +590,5 @@ async function main(argv=process.argv.slice(2)) {
   const result=await runFlow({config,branch:values.branch,publish:values.publish,watchOnce:values["watch-once"],retryFailed:values["retry-failed"]});
   console.log(JSON.stringify(result));
 }
-module.exports={templates,readConfig,environment,ensureApiCredentials,runFlow,cleanupWorkspace,cleanupPages,workspaceQuiescent,command,pruneEvidence,main};
+module.exports={templates,readConfig,environment,ensureApiCredentials,runFlow,cleanupWorkspace,cleanupPages,workspaceQuiescent,pagesInvocation,command,pruneEvidence,main};
 if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1;});

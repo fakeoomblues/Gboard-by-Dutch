@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const {execFileSync} = require("node:child_process");
-const {runFlow, templates, cleanupWorkspace, cleanupPages, readConfig, command, pruneEvidence, workspaceQuiescent, ensureApiCredentials} = require("../scripts/local-release/flow.cjs");
+const {runFlow, templates, cleanupWorkspace, cleanupPages, readConfig, command, pruneEvidence, workspaceQuiescent, pagesInvocation, ensureApiCredentials} = require("../scripts/local-release/flow.cjs");
 const identity = {GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com"};
 function fixture(t) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),"local-release-test-"));
@@ -309,6 +309,21 @@ test("workspace native proof is bounded, fail-closed and receives no credentials
   assert.equal(result,true);assert.equal(seen.file,"/usr/bin/python3");assert.ok(seen.args[1].includes("proc_pidfdinfo"));assert.ok(seen.args[1].includes("info(pid,8,1272,address)"));assert.ok(seen.args.includes("/private/owned/checkout"));assert.equal(seen.options.timeout,30000);assert.equal(seen.options.env.HOME,"/private/owned");assert.equal(seen.options.env.GITLAB_TOKEN,undefined);
   for(const inspect of [()=>"BUSY\n",()=>"",()=>"unexpected output",()=>{throw Object.assign(new Error("unavailable"),{code:"ENOENT"});},()=>{throw Object.assign(new Error("timeout"),{code:"ETIMEDOUT"});},()=>{throw Object.assign(new Error("partial scan"),{status:1,stdout:"",stderr:""});}])assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"darwin",stateDir:"/private/owned",inspect}),false);
   assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"linux",inspect:()=>{throw Object.assign(new Error("no handles"),{status:1,stdout:"",stderr:""});}}),true);
+});
+
+test("Pages reuses the native proof and keeps its live-owner PID guard",()=>{
+  const script=path.resolve(__dirname,"../scripts/local-release/pages.cjs"),invocation=pagesInvocation(script,["--cleanup"]);
+  assert.equal(invocation[0],process.execPath);assert.equal(invocation[1],"-e");assert.deepEqual(invocation.slice(3),["--","--cleanup"]);
+  let passed,alive=true,quiet=false,calls=0;
+  require("node:vm").runInNewContext(invocation[2],{process:{argv:[process.execPath,"--cleanup"]},console,require:file=>{
+    if(file===script)return {main:(args,options)=>{passed={args:Array.from(args),options};return Promise.resolve();}};
+    if(file.endsWith("pages-job.cjs"))return {processAlive:()=>alive};
+    assert.equal(file,path.resolve(__dirname,"../scripts/local-release/flow.cjs"));return {workspaceQuiescent:()=>{calls++;return quiet;}};
+  }});
+  assert.deepEqual(passed.args,["--cleanup"]);
+  assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),false);assert.equal(calls,0);
+  alive=false;assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),false);assert.equal(calls,1);
+  quiet=true;assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),true);assert.equal(calls,2);
 });
 
 test("default credential fallback loads three labelled APIs only when needed and keeps explicit overrides",t=>{

@@ -126,8 +126,10 @@ internal descriptors of the invoking application and launchd-owned, sealed Apple
 platform services as outside the owned child-job scope; their accessible cwd, file
 descriptors and mappings are still inspected. Permission failures in ordinary user
 job processes remain failures. Missing native APIs, truncated reads, unstable PID
-lists and timeouts also retain the workspace. The duplicate Pages-job scan must use
-the same implementation before the complete main-release cleanup gate can close.
+lists and timeouts also retain the workspace. The local driver supplies this same
+proof through the Pages publisher's existing `isQuiescent` callback for both cleanup
+and deployment, preserving its live-owner PID guard. This stays within the approved
+`flow.cjs` and `test_local_release.cjs` scope; no Pages runner files were changed.
 
 Platform references: [MediaSession queue publication](https://developer.android.com/reference/android/media/session/MediaSession#setQueue(java.util.List))
 and [queue selection callback](https://developer.android.com/reference/android/media/session/MediaSession.Callback#onSkipToQueueItem(long)).
