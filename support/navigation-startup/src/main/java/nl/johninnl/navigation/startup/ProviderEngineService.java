@@ -1,6 +1,7 @@
 package nl.johninnl.navigation.startup;
 
 import android.app.Notification;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -25,6 +26,8 @@ public abstract class ProviderEngineService extends Service {
     protected abstract boolean enabled();
     protected abstract boolean engineRunning();
     protected abstract void startEngine() throws ReflectiveOperationException;
+    protected abstract void stopEngine(long ownership) throws ReflectiveOperationException;
+    protected abstract String nativeServiceName();
     protected String integrationStatus(){return "Providing driving data to your selected map";}
     private String notificationStatus;
     private Notification notification(String detail){return new Notification.Builder(this,"navigation_data").setSmallIcon(android.R.drawable.ic_menu_mylocation).setContentTitle("Navigation data sharing").setContentText(detail).setOngoing(true).build();}
@@ -34,9 +37,21 @@ public abstract class ProviderEngineService extends Service {
             .putLong("until", SystemClock.elapsedRealtime() + StartupProtocol.LEASE_MS)
             .putInt("boot", Settings.Global.getInt(context.getContentResolver(), Settings.Global.BOOT_COUNT, -1)).apply();
         ProviderAudio.init(context);
+        ProviderLifecycle.renewed(context);
     }
     public static boolean starting() { return starting; }
     public static String lastState() { return state; }
+    static void stopFailed() { state = "error"; }
+    private boolean nativeServicePresent() {
+        try {
+            // Android exposes a process's own services here, including a native engine still starting.
+            java.util.List<ActivityManager.RunningServiceInfo> services = getSystemService(ActivityManager.class).getRunningServices(128);
+            if (services == null) return true; // Absence could not be established; do not acquire ownership.
+            for (ActivityManager.RunningServiceInfo service : services)
+                if (service.service != null && nativeServiceName().equals(service.service.getClassName())) return true;
+            return false;
+        } catch (RuntimeException unavailable) { return true; }
+    }
     private boolean leased() {
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         long remaining = prefs.getLong("until", 0) - SystemClock.elapsedRealtime();
@@ -44,6 +59,7 @@ public abstract class ProviderEngineService extends Service {
             && prefs.getInt("boot", -2) == Settings.Global.getInt(getContentResolver(), Settings.Global.BOOT_COUNT, -1);
     }
     @Override public final IBinder onBind(Intent intent) { return null; }
+    @Override public void onCreate() { super.onCreate(); ProviderLifecycle.install(this); }
     @Override public final int onStartCommand(Intent intent, int flags, int startId) {
         ProviderAudio.init(this);
         main.removeCallbacks(tick);
@@ -57,8 +73,14 @@ public abstract class ProviderEngineService extends Service {
             notificationStatus=integrationStatus();Notification notification=notification(notificationStatus);
             if (Build.VERSION.SDK_INT >= 29) startForeground(29171, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
             else startForeground(29171, notification);
-            starting = true; state = "starting";
-            startEngine();
+            boolean running = engineRunning();
+            long ownership = ProviderLifecycle.claim(running || nativeServicePresent());
+            starting = !running; state = running ? "running" : "starting";
+            ProviderLifecycle.watch(ownership, () -> {
+                try { stopEngine(ownership); }
+                catch (ReflectiveOperationException error) { throw new ProviderControlService.ReflectiveOperationExceptionWrapper(error); }
+            });
+            if (!running) startEngine();
             main.post(tick);
             return START_STICKY;
         } catch (ReflectiveOperationException | RuntimeException error) {
@@ -82,6 +104,6 @@ public abstract class ProviderEngineService extends Service {
         main.removeCallbacksAndMessages(null); starting = false;
         if (!("start_blocked".equals(state) || "error".equals(state))) state = "stopped";
         stopForeground(STOP_FOREGROUND_REMOVE); super.onDestroy();
-        // The native provider owns its route/idle lifetime; never stop independently used navigation here.
+        // The process-local watchdog survives wrapper destruction and only owns cold API starts.
     }
 }

@@ -84,6 +84,8 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         Fingerprint(definingClass = "Lcom/waze/ls;", name = "d", parameters = listOf("Lg/d/e;"), returnType = "Ljava/lang/Object;").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "isAppStarted", parameters = emptyList(), returnType = "Z").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "getInitializedStatus", parameters = emptyList(), returnType = "Z").method
+        Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "shutDown", parameters = emptyList(), returnType = "V").method
+        patches.shared.bindNavigationProviderLifecycle()
         check(mutableClassDefBy("Lg/d/k;").fields.any { it.name == "a" && it.type == "Lg/d/k;" })
         bindWazeNativeWarnings()
         suppressTaskRelaunch(Fingerprint(definingClass = "Lcom/waze/ls;", name = "onCreate", parameters = emptyList(), returnType = "V").method)

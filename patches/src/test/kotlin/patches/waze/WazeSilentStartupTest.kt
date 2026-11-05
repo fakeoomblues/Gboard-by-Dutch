@@ -15,6 +15,23 @@ import org.junit.Test
 import java.io.File
 
 class WazeSilentStartupTest {
+ @Test fun providerOwnershipObserverRunsAfterTheRealCarSessionHasInitialized() {
+  val path=System.getenv("WAZE_ORIGINAL_APK");assumeNotNull(path)
+  val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.getDefault())
+  val original=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }
+   .single { it.type=="Landroidx/car/app/Session;" }.methods.single { it.name=="<init>" && it.parameterTypes.isEmpty() }
+  val method=MutableMethod(original);val before=method.implementation!!.instructions.toList()
+  patches.shared.observeNavigationProviderSession(method)
+  val after=method.implementation!!.instructions.toList()
+  assertEquals(before.size+1,after.size);assertEquals(before.dropLast(1),after.dropLast(2))
+  val hook=after[after.size-2]
+  assertEquals(Opcode.INVOKE_STATIC_RANGE,hook.opcode)
+  assertEquals("Lnl/johninnl/navigation/startup/ProviderLifecycle;->observeCarSession(Ljava/lang/Object;)V",(hook as ReferenceInstruction).reference.toString())
+  assertEquals(method.implementation!!.registerCount-1,(hook as RegisterRangeInstruction).startRegister)
+  assertEquals(1,hook.registerCount);assertEquals(Opcode.RETURN_VOID,after.last().opcode)
+  assertThrows(IllegalStateException::class.java) { patches.shared.observeNavigationProviderSession(method) }
+ }
+
  private fun originalCarKeepAlive(): MutableMethod {
   val path=System.getenv("WAZE_ORIGINAL_APK");assumeNotNull(path)
   val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.getDefault())

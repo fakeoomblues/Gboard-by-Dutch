@@ -15,6 +15,15 @@ internal fun navigationStartupResources(namespace: String, warningRecovery: Bool
                 if (permission !in permissions) root.appendChild(manifest.createElement("uses-permission").apply { setAttribute("android:name", permission) })
             }
             val app = manifest.getElementsByTagName("application").item(0) as Element
+            val lifecycle = "nl.johninnl.navigation.startup.ProviderLifecycle"
+            check((0 until app.getElementsByTagName("provider").length).none {
+                (app.getElementsByTagName("provider").item(it) as Element).getAttribute("android:name") == lifecycle
+            }) { "Navigation lifecycle provider already declared" }
+            app.appendChild(manifest.createElement("provider").apply {
+                setAttribute("android:name", lifecycle)
+                setAttribute("android:authorities", root.getAttribute("package") + ".morphe.navigation.lifecycle")
+                setAttribute("android:exported", "false")
+            })
             if(warningRecovery){
                 check((0 until app.getElementsByTagName("activity").length).none{(app.getElementsByTagName("activity").item(it) as Element).getAttribute("android:name")=="$namespace.WarningRecoveryActivity"})
                 app.appendChild(manifest.createElement("activity").apply{setAttribute("android:name","$namespace.WarningRecoveryActivity");setAttribute("android:exported","false")})

@@ -57,6 +57,9 @@ public abstract class ProviderControlService extends Service {
             response.putString("state", state);
             response.putBoolean("audio_muted", ProviderAudio.muted());
             response.putString("engine_state", ProviderEngineService.lastState());
+            response.putBoolean("api_started", ProviderLifecycle.apiStarted());
+            response.putLong("health_interval_ms", StartupProtocol.HEARTBEAT_MS);
+            response.putLong("health_timeout_ms", StartupProtocol.LEASE_MS);
             appendWarningCapabilities(response, uid);
             reply.writeNoException(); reply.writeBundle(response); return true;
         }

@@ -218,3 +218,30 @@ alignment verification. The temporary checkout was removed. Bundle SHA-256:
 Waze APK SHA-256:
 `44a1141a98e03ee446ff74314a53c932087bf756e551d24224eb91927faeb1a3`.
 The corrected candidate still requires genuine-DHU runtime acceptance.
+
+
+## Requested owned-provider shutdown, 2026-11-05
+
+The user requested a 10-second Maps/Vela health check and native shutdown after
+15 seconds without it, exclusively for engines started by the API. The existing
+client already polls at 10 seconds. The new batch changes the lease from
+45 seconds to 15 and adds process-local start ownership plus provider-native
+teardown. A private initialization provider registers phone lifecycle observation
+before Activities start. The public CAL Session lifecycle protects user takeover
+on the car without treating a metadata-only service bind as manual use. A native
+service already starting is preserved even before its readiness flag becomes true.
+Ownership is not persisted across process death or reboot. Deferred native
+shutdown rechecks the latest heartbeat and takeover before acting.
+
+The Waze backend uses NativeManager's normal shutdown; FM stops its existing base
+service and its reconstructed normal cleanup. Shared status reports ownership and
+both intervals. Tests cover expiration, renewal, manual starts, takeover, wrapper
+destruction and late callbacks. Canonical verification and actual four-app patch
+application remain required for this new batch.
+
+Run 13 with the preceding car keep-alive candidate still ended in Waze's own
+ShutdownManager path. The guard did not resolve that termination. Patched Maps
+rendered the Amsterdam map in genuine AA at 800x480, but Search did not open its
+editor through the exercised DHU taps. Neither routing nor speech nor the
+remaining profiles were accepted in that run. The retained qualified receipt is
+native-aa17-runtime-13.json in the Downloads review folder; cleanup passed.

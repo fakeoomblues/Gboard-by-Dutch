@@ -35,6 +35,7 @@ val navigationBroadcastPatch = bytecodePatch(
     // Other Flitsmeister controls validate fixed instruction layouts in execute.
     // Add hooks only after those guarded edits have completed.
     finalize {
+        patches.shared.bindNavigationProviderLifecycle()
         bindFlitsmeisterNativeWarnings()
         bindFlitsmeisterNavigationAudio()
         if (isFlitsmeister15()) {

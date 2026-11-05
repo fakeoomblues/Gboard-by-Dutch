@@ -136,7 +136,7 @@ public final class NavigationClient implements Application.ActivityLifecycleCall
         final long token = generation;
         final String selected = provider;
         final IBinder service = binder;
-        pending = true; pendingAt = now; pollAt = now + 10000;
+        pending = true; pendingAt = now; pollAt = now + StartupProtocol.HEARTBEAT_MS;
         worker(selected).execute(() -> {
             Bundle response = null;
             String failure = "error";

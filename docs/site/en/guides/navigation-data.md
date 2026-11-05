@@ -50,7 +50,7 @@ With the updated patches on both sides, opening Maps/Vela or choosing **De-Waze*
 
 The source status distinguishes startup, a running engine, missing location permission and an unavailable startup API. If the API is unavailable, repatch both apps; older provider patches can still supply broadcasts when opened manually. If Android refuses a background restart, the map reports it without opening the provider. Returning to the map allows another silent attempt. No root or Shizuku is used by the integration.
 
-Selecting native data or ending the receiving session releases its startup connection. Its extra sharing service expires after 45 seconds without a consumer; independently running provider navigation is left alone. Waze's existing configurable keep-alive still controls its native idle timeout (initially 180 minutes).
+Choosing the app's own data or ending the receiving session disconnects startup monitoring. Maps/Vela check the provider every 10 seconds. After 15 seconds without a check, Waze or Flitsmeister shuts down only if this API started its engine. An independently running or starting provider is preserved. Opening the provider yourself on the phone or car takes over the session, so it stays running when the map stops checking. Update both the receiving map and provider patches for this behavior.
 
 ## 3. Choose the source in your map app
 

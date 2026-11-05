@@ -45,6 +45,7 @@ public final class ProviderAudio {
         MAIN.removeCallbacks(PULSE); MAIN.post(PULSE);
     }
     public static boolean muted() {
+        if (ProviderLifecycle.stopping()) return true;
         Context context = app;
         if (context == null) return false;
         android.content.SharedPreferences prefs = context.getSharedPreferences("navigation_startup_lease", Context.MODE_PRIVATE);

@@ -50,7 +50,7 @@ Met de bijgewerkte patches aan beide kanten start de gekozen rij-engine automati
 
 De bronstatus maakt onderscheid tussen starten, een actieve motor, ontbrekende locatietoegang en een ontbrekende start-API. Patch beide apps opnieuw als de API ontbreekt; oudere bronpatches kunnen nog steeds gegevens leveren nadat je de bron handmatig opent. Blokkeert Android een herstart op de achtergrond, dan meldt de kaartapp dit zonder de bron te openen. Bij terugkeer naar de kaart volgt een nieuwe stille poging. De koppeling gebruikt geen root of Shizuku.
 
-Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreekt de startverbinding. De extra deeldienst verloopt na 45 seconden zonder ontvanger; zelfstandig draaiende bronnavigatie blijft ongemoeid. Waze behoudt zijn bestaande instelbare inactiviteitstime-out, aanvankelijk 180 minuten.
+Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreekt de startverbinding. Maps/Vela controleren de bron iedere 10 seconden. Na 15 seconden zonder controle wordt Waze of Flitsmeister afgesloten, uitsluitend als deze API de motor heeft gestart. Een bron die zelfstandig draaide of werd gestart, blijft ongemoeid. Open je de bron zelf op de telefoon of in de auto, dan neem je de sessie over en blijft die draaien wanneer de kaart stopt met controleren. Werk zowel de kaart- als de bronpatches bij voor dit gedrag.
 
 ## 3. Kies de bron in je kaartapp
 

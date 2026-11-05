@@ -9,7 +9,8 @@ public final class StartupProtocol {
     private StartupProtocol() {}
     public static final String DESCRIPTOR = "nl.johninnl.navigation.STARTUP_V1";
     public static final int STATUS = 1;
-    public static final long LEASE_MS = 45000;
+    public static final long HEARTBEAT_MS = 10000;
+    public static final long LEASE_MS = 15000;
     public static String controlClass(String provider) {
         return "com.waze".equals(provider) ? "org.ungoogled.waze.NavigationControlService"
             : "nl.flitsmeister".equals(provider) ? "nl.johninnl.flitsmeister.NavigationControlService" : "";
