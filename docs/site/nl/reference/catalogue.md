@@ -199,18 +199,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
 
-## Gboard
-
-[Wat veranderen de patches?](../apps/gboard.md)
-
-`com.google.android.inputmethod.latin`
-
-| Patch | Standaard | App-versies |
-| --- | --- | --- |
-| Change package name | Aan | 18.5.11.993608717-release-arm64-v8a |
-| Custom branding | Uit | 18.5.11.993608717-release-arm64-v8a |
-| Parakeet voice typing | Aan | 18.5.11.993608717-release-arm64-v8a |
-
 ## Gearslip
 
 [Wat veranderen de patches?](../apps/gearslip.md)
