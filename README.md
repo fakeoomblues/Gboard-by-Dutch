@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.39.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.39.0)** · 55 apps · 283 patches
+**Patch bundle [v1.40.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.40.0)** · 55 apps · 284 patches
 
 ### Weather
 
@@ -108,7 +108,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |
-| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | Any | APK | 2 |
+| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, Any | APK | 3 |
 | [NPO Start](docs/site/en/apps/npo-start.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
