@@ -18,7 +18,7 @@ import kotlin.coroutines.jvm.internal.ContinuationImpl;
  * Serves SoundCloud's phone Home sections to the car media browser's Home tab.
  *
  * The car catalog's Home tab reads the legacy /discovery/cards feed, while the phone Home
- * uses /home/query. This loads the phone Home through the app's own SectionsService and
+ * uses GraphQL HOME_SDUI_QUERY. This loads the phone Home through the app's own SDUIService and
  * account session. Any failure returns null, so the original Home code runs unchanged.
  */
 public final class HomeSections {
@@ -36,9 +36,15 @@ public final class HomeSections {
 
     private HomeSections() {}
 
-    /** Called by the patched Dagger factory constructor; holds the SectionsService provider. */
+    /** Called by the patched Dagger factory constructor; holds the SDUIService provider. */
     public static void setServiceProvider(Object provider) {
-        if (provider != null) serviceProvider = provider;
+        if (provider != null && provider != serviceProvider) {
+            synchronized (HomeSections.class) {
+                serviceProvider = provider;
+                service = null;
+                cached = null;
+            }
+        }
     }
 
     /** Called for the car Home root. Returns SoundCloud media items, or null to keep the original. */
@@ -50,7 +56,7 @@ public final class HomeSections {
             }
             Object result = fetch();
             if (result == null) return null;
-            List<Object> items = HomeMapper.map(result, new AppItems(mediaItemBuilder));
+            List<Object> items = SduiHomeMapper.map(result, new AppItems(mediaItemBuilder));
             if (items.isEmpty()) return null;
             synchronized (HomeSections.class) {
                 cached = items;
@@ -84,14 +90,16 @@ public final class HomeSections {
         return service;
     }
 
-    /** ApiSectionsResultResponse.Success holds the result; error responses have none. */
+    /** GraphQlResult.Success holds the response in its erased generic payload field. */
     static Object sectionsResult(Object response) throws IllegalAccessException {
-        if (response.getClass().getName().endsWith(".ApiSectionsResult")) return response;
+        if (response.getClass().getName().endsWith(".ApiSDUIResponse")) return response;
+        if (!response.getClass().getName().endsWith("GraphQlResult$Success")) return null;
         for (Class<?> type = response.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
             for (Field field : type.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers()) || !field.getType().getName().endsWith(".ApiSectionsResult")) continue;
+                if (Modifier.isStatic(field.getModifiers()) || field.getType().isPrimitive()) continue;
                 field.setAccessible(true);
-                return field.get(response);
+                Object value = field.get(response);
+                if (value != null && value.getClass().getName().endsWith(".ApiSDUIResponse")) return value;
             }
         }
         return null;
@@ -103,7 +111,7 @@ public final class HomeSections {
 
     // Bridges. The patch replaces each body with a call to the app's own method.
 
-    /** SectionsService' phone Home request (layout soundcloud:layouts:home-library). */
+    /** SDUIService's phone Home GraphQL request. */
     static Object queryHome(Object sectionsService, Continuation<Object> continuation) {
         return null;
     }
@@ -126,11 +134,11 @@ public final class HomeSections {
         }
 
         @Override public Object playable(String mediaId, String title, String subtitle, String artwork) {
-            return HomeSections.playable(builder, mediaId, title, subtitle, artwork);
+            return cover(HomeSections.playable(builder, mediaId, title, subtitle, artwork));
         }
 
         @Override public Object browsable(String mediaId, String title, String subtitle, String artwork) {
-            return HomeSections.browsable(builder, mediaId, title, subtitle, artwork, false);
+            return cover(HomeSections.browsable(builder, mediaId, title, subtitle, artwork, false));
         }
 
         /** Same format as SoundCloud's MediaIdKt.formatToString for the DISCOVERY collection. */
@@ -143,6 +151,17 @@ public final class HomeSections {
             Bundle extras = extras(item);
             if (extras != null) extras.putString(GROUP_TITLE, title);
         }
+    }
+
+    /** One ungrouped cover grid for music Home; collection children retain the app's track lists. */
+    private static Object cover(Object item) {
+        Bundle extras = extras(item);
+        if (extras != null) {
+            extras.remove(GROUP_TITLE);
+            extras.putInt("android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT", 2);
+            extras.putInt("android.media.browse.CONTENT_STYLE_PLAYABLE_HINT", 1);
+        }
+        return item;
     }
 
     /** MediaItem -> MediaDescriptionCompat -> extras, located by type rather than renamed names. */

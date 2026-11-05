@@ -6506,7 +6506,7 @@
     },
     {
       "name": "Home in Android Auto",
-      "description": "Fills the car Home tab with the same Home sections as the phone app, grouped by section title, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
+      "description": "Fills the car Home tab with regular cover tiles from the phone's Home, using the app's existing account. Tracks, mixes and artists play; playlists and albums open. Publishes the real playback queue for Up next, with queue item selection. Falls back to SoundCloud's original car Home if the phone Home cannot load.",
       "default": true,
       "category": null,
       "compatiblePackages": [
