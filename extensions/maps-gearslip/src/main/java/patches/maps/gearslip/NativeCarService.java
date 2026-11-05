@@ -50,8 +50,9 @@ public final class NativeCarService extends Service {
         final int generation;
         volatile boolean closed;
         ProjectionRenderer renderer;
+        NativeCarNavigationSession nativeSession;
         IBinder host, appHost,navigationHost;
-        NativeNavigationLifetime.Lease guidance;
+        NativeGuidance guidance;
         boolean navigating;
         final List<IBinder> stopCallbacks=new ArrayList<>();
         Runnable stopTimeout;
@@ -186,6 +187,8 @@ public final class NativeCarService extends Service {
         session.death = null;
         if (session.renderer != null) session.renderer.close();
         session.renderer = null;
+        if (session.nativeSession != null) session.nativeSession.close();
+        session.nativeSession = null;
         session.appHost = null;
         session.navigationHost=null;
     }
@@ -202,6 +205,8 @@ public final class NativeCarService extends Service {
         if(session.guidance!=null){try{session.guidance.close();}catch(Exception cleanup){error.addSuppressed(cleanup);}session.guidance=null;}
         Log.e("MapsNativeCar", "Maps car renderer failed", error);
         if (session.renderer != null) session.renderer.close();
+        if (session.nativeSession != null) session.nativeSession.close();
+        session.nativeSession = null;
         invalidate(session);
     }
 
@@ -295,11 +300,15 @@ public final class NativeCarService extends Service {
                     clearKeyboard(session); invalidate(session);
                 }
             });
-            session.renderer.create(intent, configuration);
+            session.nativeSession = new NativeCarNavigationSession(this, main, () -> {
+                if (active == session && !session.closed && session.failure == null)
+                    session.renderer.create(intent, configuration);
+            }, error -> failed(session, error));
+            session.nativeSession.connect();
             if (session.failure == null) CarProtocol.send(session.appHost, APP_HOST, 4,
                     data -> data.writeStrongBinder(new SurfaceBinder(session)));
             if(session.failure==null){
-                session.guidance=NativeNavigationLifetime.connect(this,main,snapshot->navigation(session,snapshot),error->failed(session,error));
+                session.guidance=new NativeGuidance(this,main,snapshot->navigation(session,snapshot),error->failed(session,error));
                 if(session.failure!=null){session.guidance.close();session.guidance=null;}
             }
         });

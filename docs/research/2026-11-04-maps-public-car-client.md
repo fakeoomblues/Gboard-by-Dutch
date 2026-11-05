@@ -498,3 +498,110 @@ command required the legacy `recycler_view`. It restored its baseline, stopped
 the emulator and cleaned storage. A named setup-selector correction is pending
 owner approval under the tooling freeze; new-owner reconnect/stop and remaining
 app/profile/input/alerting acceptance stay open.
+
+### Ownership correction after the Search regression
+
+Run33 rendered the checkpoint19 candidate, including the additional private
+navigation-provider service, but its Search action did not open the native
+editor. It stopped without reconnect acceptance and restored/cleaned its owned
+runtime. The checkpoint17 native input/route evidence remains the last passing
+input baseline. Do not promote checkpoint19 as a completed reconnect fix.
+
+The corrected candidate removes that extra private-service binding. Once the
+native presentation exists, it obtains its original `toi.ae` / `pid.ao` focus
+manager and retains one unique registration through the same `rxp.j(String)` /
+`rxp.m(String)` contract used by native car clients. These ABI paths are guarded
+at patch time. Retired UI leases cannot register again; a different manager
+cannot replace an active owner. A session which never obtained a native owner
+does not retain another client's route. No additional private car controllers
+are started. Native completion and idle detach still release the exact owner
+and guidance listener. Build and focused Maps acceptance remain required.
+
+The user reaffirmed reuse of earlier integration evidence: keep the previously
+validated Vela/Waze/FM provider cases closed unless relevant code changes
+invalidate them. The Maps work remaining here is the specific genuine-AA
+reconnect bug and any regression introduced by its ownership correction.
+
+Run36 identified a specific startup failure in the direct-registration
+candidate: `No field ae in class Ltok`. The native delegate field belongs to an
+activity superclass and is private; the public-field lookup did not find it.
+The correction walks declared fields in the native superclass chain only for
+the `ae`/`ao` ownership path, leaving existing public-field contracts unchanged.
+Its regression case uses a private inherited activity delegate and a private
+delegate owner. The failed run restored/stopped/cleaned its owned emulator;
+no route or reconnect pass is inferred from it.
+
+### Unmodified Maps control supersedes the keepalive hypothesis
+
+At the user's request, run41 installed the original signed Maps
+26.43.05.1002020710 APK (SHA-256
+`81506a2c54fc9a8faca34c18af7619d9c9d26cbfbe799b66884a59ac17791004`)
+on the owned emulator. With genuine AA17 and DHU, its native route remained
+`GUIDED_NAV` with the turn card after the same 1280×480 to 800×480
+disconnect/reconnect. Patched run37 returned to `FREE_NAV`. This confirms a
+real adapter difference, rather than expected stock behavior.
+
+The stock navigation services disappeared while disconnected. Reconnect then
+recorded native CarNavRestore checkpoints and a successful restore timestamp.
+Patched run37 recorded no restore attempt. Service absence therefore does not
+establish route loss, and retaining an extra service/focus owner is not an
+evidence-backed correction. Both ownership experiments have been withdrawn
+from the working implementation, restoring the accepted `15f2785` UI source.
+Their exact changes remain archived under
+`.analysis/android-auto-acceptance/parked-native-ownership-experiment/`.
+The next change must connect the public car session to Maps' genuine native
+projected-session/save/restore lifecycle, preserving native restore policy.
+The restored working source has not yet been rebuilt; reconnect is still open.
+
+The existing Frida CLI was attached to stock Maps during the functional route
+and reconnect comparison; AA/TTS observation remained unchanged. No new probe
+was introduced. Runtime restoration, owned emulator stop and cleanup passed.
+The original APK is retained as a cold-boot-verified emulator reference input.
+The physical phone was untouched. Compact evidence is in the Downloads review
+folder's `stock-maps-control-comparison.json`, native dumps and stock screenshots.
+
+### Native projected-session forwarding and accepted reconnect
+
+The original `lur.y` version-1 provider protocol configures `luv.a` and its
+native clients, then queues the real provider's Android Auto start/stop
+callbacks. Merely binding the service does not start this session. The adapter
+now forwards that protocol locally through the same-UID, non-exported service,
+after authenticating its public CAL host. It negotiates the provider's actual
+version, claims no private host capabilities or vehicle grants, and starts
+native navigation lifecycle before creating the presentation. Closing the
+public session destroys the presentation, forwards native stop and unbinds;
+no service or focus owner is retained across disconnection. External native
+Binder caller validation remains unchanged. Patch-time ABI guards cover the
+native dispatcher and Parcelable contracts.
+
+The first candidate (checkpoint23/run42) reached native CarNavRestore, Search
+and results, but route start failed. Original `tqj` start also registers a
+`pxd` private focus client through `rxp.p`. Its `pxd.c()` returns false when
+the Google-private connection is absent. That connection is intentionally
+unavailable to this public, re-signed client. Original `rxq.f` and `rxr.c`
+already support an absent private client without fabricating a focus result.
+While the authenticated public session is active, the patch selects this
+existing native fallback at registration; CAL navigation ownership still
+uses the adapter's real `INavigationHost`. Other native registrations are
+unchanged. The failed run stopped further input and restored/cleaned before
+this correction was implemented.
+
+Checkpoint24 passed the canonical Android component, actual five-patch Maps
+FULL validation, signing and alignment. Its signed MPP SHA-256 is
+`da9e2a49b5cb3f7f09422f4489b505b897213fee556d206b0facdf5363d97491`.
+Run43 then passed native Search, route start, GPS advancement and the exact
+1280×480 to 800×480 DHU reconnect. The car returned to `GUIDED_NAV`, displayed
+its route and turn card, and accepted a further GPS update. Native diagnostics
+recorded a successful restore attempt and proto load, with checkpoint/outcome
+counters matching the stock control. Frida reported no coverage loss or
+script error. Acceptance finished within the recorded four-minute limit.
+Baseline restoration, observer cleanup and owned emulator stop passed with
+cleanupRequired=false. No physical phone was touched.
+
+Review evidence is in `maps-native-projected-focus-run43.json` and the run43
+screenshots/native dumps in Downloads. This closes this specific reconnect
+regression, not the full all-app, speech, input and profile objective. The
+complete local verifier is still open: checkpoint22 stopped in an unrelated
+Node release-watcher cleanup test before Android verification. No release
+has been published. Do not repeat accepted provider integration or the fixed
+reconnect without a relevant source change or a remaining mandatory gate.

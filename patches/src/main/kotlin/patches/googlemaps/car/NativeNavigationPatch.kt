@@ -194,12 +194,35 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lblot;","j","I")
         requireField("Lybc;","q","Landroid/text/Spanned;")
         requireMethod("Lcom/google/android/libraries/geo/navcore/service/base/NavigationService;","onStartCommand",listOf("Landroid/content/Intent;","I","I"),"I")
-        // The retained same-UID provider owns native navigation independently of
-        // the disposable car presentation. Keep its original registration ABI.
-        val providerType = "L${LEGACY_PROVIDER.replace('.', '/')};"
-        requireMethod(providerType,"onCreate",emptyList(),"V")
-        requireMethod(providerType,"onBind",listOf("Landroid/content/Intent;"),"Landroid/os/IBinder;")
-        requireMethod(providerType,"onDestroy",emptyList(),"V")
+        // The public session forwards the original same-UID provider protocol; it
+        // does not retain its service after disconnect or override restore policy.
+        val nativeProvider = "L${LEGACY_PROVIDER.replace('.', '/')};"
+        requireMethod(nativeProvider, "onBind", listOf("Landroid/content/Intent;"), "Landroid/os/IBinder;")
+        requireMethod(nativeProvider, "d", listOf("Lluq;"), "V")
+        requireMethod(nativeProvider, "e", emptyList(), "V")
+        requireMethod("Llur;", "y", listOf("I", "Landroid/os/Parcel;", "Landroid/os/Parcel;"), "Z")
+        requireMethod("Llus;", "c", listOf("Landroid/os/Bundle;"), "V")
+        requireMethod("Llus;", "e", listOf("Landroid/os/Bundle;"), "V")
+        requireMethod("Lluq;", "c", listOf("Landroid/os/Bundle;"), "V")
+        requireMethod("Lluq;", "e", listOf("Landroid/os/Bundle;"), "V")
+        requireMethod("Lluu;", "e", listOf("Landroid/os/Bundle;"), "V")
+        // Native projected-session start otherwise installs a Google-private
+        // focus client whose disconnected pxd.c() rejects every route request.
+        // CAL already owns navigation through INavigationHost. Keep Maps' normal
+        // phone-focus fallback (the existing p(null) path) for that session only;
+        // do not fabricate a private focus grant or change native route results.
+        requireMethod("Lrxp;", "p", listOf("Lpxd;"), "V")
+        val privateFocus = mutableClassDefBy("Lrxp;").methods.single {
+            it.name == "p" && it.parameterTypes.map(CharSequence::toString) == listOf("Lpxd;")
+        }
+        if (privateFocus.implementation!!.registerCount <= 2)
+            throw PatchException("Maps' private focus registration has no scratch register")
+        privateFocus.addInstructionsWithLabels(0, """
+            invoke-static {}, Lpatches/maps/gearslip/NativeCarNavigationSession;->usesPublicHost()Z
+            move-result v0
+            if-eqz v0, :original_private_focus
+            const/4 p1, 0x0
+        """, ExternalLabel("original_private_focus", privateFocus.implementation!!.instructions.first()))
         requireMethod("Lbemm;", "v", emptyList(), "V")
         requireMethod("Lbemm;", "t", listOf("Landroid/content/res/Resources;"), "V")
         requireMethod("Lltu;", "b", listOf("Landroid/content/res/Configuration;"), "V")
