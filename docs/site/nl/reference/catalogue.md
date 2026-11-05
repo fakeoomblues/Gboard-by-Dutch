@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.39.0**
+**Patchbundel: 1.40.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -375,6 +375,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto Up next | Uit | 2.3.0 |
 | Custom branding | Uit | Alle versies |
 | Gearslip personal library | Aan | Alle versies |
 

@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * home overview page through the existing Hilt repository, converts every
  * article that the publisher supplies spoken audio for into the car SDK's
  * spoken_article row format, and replaces the start-tab with one Nieuws component.
- * response. Rendering, queue building, playback, entitlement and premium
+ * Rendering, queue building, playback, entitlement and premium
  * handling all stay in the app's unmodified Amalia car pipeline.
  *
  * App-specific types are reached reflectively using the verified APK contracts.
@@ -61,6 +62,16 @@ public final class CarNieuws {
      * holds UID references to the original native queues, not copies per row. */
     private static final int RETAINED_LANES = 4;
     private static final List<Map<String, Object>> playbackQueues = new ArrayList<>();
+    private static final Map<String, Object> browseItems = new LinkedHashMap<>();
+    private static final Map<String, String> feedIds = new LinkedHashMap<>();
+    private static final String FEED_ID = "nl.johninnl.volkskrant.NEWS_FEED";
+    private static final String CAR_AUDIO_QUEUE = "nl.dpgmedia.mcdpg.amalia.car.data.model.CarAudioQueue";
+    private static volatile Object activeNewsQueue;
+    private static volatile Set<String> activeNewsUids = Collections.emptySet();
+    private static volatile String activeFeedId;
+    private static volatile Object selectedNewsQueue;
+    private static volatile Set<String> selectedNewsUids = Collections.emptySet();
+    private static volatile String selectedFeedId;
     /** Reuse a fetched feed within this window so repeated browses are instant. */
     private static final long CACHE_MS = 90_000L;
     /** After a failed fetch wait this long before trying again. */
@@ -370,6 +381,8 @@ public final class CarNieuws {
             laneCtor.setAccessible(true);
 
             Map<String, Object> retained = new LinkedHashMap<>();
+            Map<Object, String> stored = new IdentityHashMap<>();
+            Map<String, String> tokens = new LinkedHashMap<>();
             List<Object> result = new ArrayList<Object>(queues.size());
             for (Object laneQueue : queues) {
                 if (laneQueue == null) { result.add(null); continue; }
@@ -377,7 +390,6 @@ public final class CarNieuws {
                 Object itemsObject = full == null ? null : invokeGetter(full, "getItems");
                 if (!(itemsObject instanceof List)) { result.add(laneQueue); continue; }
                 List<?> items = (List<?>) itemsObject;
-                if (items.size() <= 1) { result.add(laneQueue); continue; }
                 String uid = uidOf(laneQueue);
                 int self = -1;
                 for (int j = 0; j < items.size(); j++) {
@@ -387,11 +399,24 @@ public final class CarNieuws {
                 Object compact = audioCtor.newInstance(Collections.singletonList(items.get(self)));
                 result.add(laneCtor.newInstance(compact, uid));
                 retained.put(uid, full);
+                if (!stored.containsKey(full)) {
+                    Set<String> pinned = new HashSet<>();
+                    if (activeFeedId != null) pinned.add(activeFeedId);
+                    if (selectedFeedId != null) pinned.add(selectedFeedId);
+                    Object json = invokeGetter(full, "toJsonString");
+                    stored.put(full, NewsFeedStore.save(app, json instanceof String ? (String) json : null, pinned));
+                }
+                String token = stored.get(full);
+                if (token != null) tokens.put(uid, token);
             }
             if (!retained.isEmpty()) {
                 synchronized (playbackQueues) {
                     playbackQueues.add(retained);
-                    if (playbackQueues.size() > RETAINED_LANES) playbackQueues.remove(0);
+                    feedIds.putAll(tokens);
+                    if (playbackQueues.size() > RETAINED_LANES) {
+                        playbackQueues.remove(0);
+                    }
+                    trimBrowseItems();
                 }
             }
             return result;
@@ -401,9 +426,7 @@ public final class CarNieuws {
         }
     }
 
-    /** Hooked after the native queue JSON decoder, before playback resolution.
-     * Unknown queues (including a row surviving process death) retain their
-     * self-contained selected article and the app's normal policy checks. */
+    /** In-memory restoration; unmarked queues from other native routes pass through. */
     public static Object restoreQueue(Object queue) {
         Object itemsObject = invokeGetter(queue, "getItems");
         if (!(itemsObject instanceof List)) return queue;
@@ -413,10 +436,142 @@ public final class CarNieuws {
         synchronized (playbackQueues) {
             for (int i = playbackQueues.size() - 1; i >= 0; i--) {
                 Object original = playbackQueues.get(i).get(uid);
-                if (original != null) return original;
+                if (original != null) {
+                    selectNewsQueue(original, feedIds.get(uid));
+                    return original;
+                }
             }
+            // Browsing a fresh feed must not evict the sequence currently being
+            // listened to or turn a retained queue row into single playback.
+            if (activeNewsUids.contains(uid) && activeNewsQueue != null) return activeNewsQueue;
+            if (selectedNewsUids.contains(uid) && selectedNewsQueue != null) return selectedNewsQueue;
         }
         return queue;
+    }
+
+    private static void selectNewsQueue(Object queue, String token) {
+        Set<String> uids = new HashSet<>();
+        for (Object item : asIterable(invokeGetter(queue, "getItems"))) {
+            String uid = uidOf(item);
+            if (uid != null) uids.add(uid);
+        }
+        selectedNewsQueue = queue;
+        selectedNewsUids = Collections.unmodifiableSet(uids);
+        selectedFeedId = token;
+        trimBrowseItems();
+    }
+
+    /** Activate only the sequence the native player actually accepted. */
+    static void acceptNewsQueue(String currentUid, List<String> acceptedUids) {
+        synchronized (playbackQueues) {
+            Object source = selectedNewsUids.contains(currentUid) ? selectedNewsQueue
+                : activeNewsUids.contains(currentUid) ? activeNewsQueue : null;
+            if (source == null) {
+                for (Map<String, Object> lane : playbackQueues) {
+                    if (lane.containsKey(currentUid)) { source = lane.get(currentUid); break; }
+                }
+            }
+            if (source == null) return;
+            activeNewsQueue = source;
+            activeNewsUids = Collections.unmodifiableSet(new HashSet<>(acceptedUids));
+            activeFeedId = source == selectedNewsQueue ? selectedFeedId : feedIds.get(currentUid);
+            trimBrowseItems();
+        }
+    }
+
+    private static void trimBrowseItems() {
+        Set<String> retained = new HashSet<>(activeNewsUids);
+        retained.addAll(selectedNewsUids);
+        for (Map<String, Object> lane : playbackQueues) retained.addAll(lane.keySet());
+        browseItems.keySet().retainAll(retained);
+        feedIds.keySet().retainAll(retained);
+    }
+
+    /** Same native decoder, with a compact durable feed reference for news rows. */
+    public static Object readQueue(android.os.Bundle extras) {
+        if (extras == null) return null;
+        String json = extras.getString("LANE_QUEUE_ITEMS");
+        if (json == null) return null;
+        Object compact = decodeQueue(json);
+        Object restored = restoreQueue(compact);
+        String token = extras.getString(FEED_ID);
+        if (token != null && restored == compact) {
+            String fullJson = NewsFeedStore.load(app, token);
+            Object full = fullJson == null ? null : decodeQueue(fullJson);
+            Object items = invokeGetter(compact, "getItems");
+            String uid = items instanceof List && ((List<?>) items).size() == 1
+                ? uidOf(((List<?>) items).get(0)) : null;
+            Map<String, Object> recovered = new LinkedHashMap<>();
+            for (Object item : asIterable(invokeGetter(full, "getItems"))) {
+                String itemUid = uidOf(item);
+                if (itemUid != null) recovered.put(itemUid, full);
+            }
+            if (uid == null || !recovered.containsKey(uid)) throw expiredFeed();
+            synchronized (playbackQueues) {
+                playbackQueues.add(recovered);
+                if (playbackQueues.size() > RETAINED_LANES) playbackQueues.remove(0);
+                for (String itemUid : recovered.keySet()) feedIds.put(itemUid, token);
+                selectNewsQueue(full, token);
+            }
+            return full;
+        }
+        // Rows cached by an older patch have no token. Never silently play only
+        // that article when its old news context is no longer recoverable.
+        if (restored == compact && token == null
+                && "Nieuws".equals(extras.getString("android.media.browse.CONTENT_STYLE_GROUP_TITLE_HINT"))) {
+            Object items = invokeGetter(compact, "getItems");
+            if (items instanceof List && ((List<?>) items).size() == 1) throw expiredFeed();
+        }
+        return restored;
+    }
+
+    private static IllegalStateException expiredFeed() {
+        return new IllegalStateException("Nieuws-feed is niet meer beschikbaar. Open Nieuws opnieuw.");
+    }
+
+    private static Object decodeQueue(String json) {
+        try {
+            Object companion = Class.forName(CAR_AUDIO_QUEUE).getField("Companion").get(null);
+            return companion.getClass().getMethod("fromJsonString", String.class).invoke(companion, json);
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+            if (cause instanceof Error) throw (Error) cause;
+            throw new IllegalStateException(cause);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Cannot decode the native news queue", e);
+        }
+    }
+
+    /** Preserve the original opaque ID, tracking and compact playback extras. */
+    public static void rememberBrowseItem(Object item) {
+        Object value = member(item, "mediaId", "getMediaId");
+        if (!(value instanceof String)) return;
+        String uid = (String) value;
+        synchronized (playbackQueues) {
+            for (Map<String, Object> lane : playbackQueues) {
+                if (lane.containsKey(uid)) {
+                    String token = feedIds.get(uid);
+                    Object metadata = member(item, "mediaMetadata", "getMediaMetadata");
+                    Object extras = member(metadata, "extras", "getExtras");
+                    if (token != null && extras instanceof android.os.Bundle) {
+                        ((android.os.Bundle) extras).putString(FEED_ID, token);
+                    }
+                    browseItems.put(uid, item);
+                    return;
+                }
+            }
+        }
+    }
+
+    static Object browseItem(String uid) {
+        synchronized (playbackQueues) {
+            return browseItems.get(uid);
+        }
+    }
+
+    static boolean isNewsUid(String uid) {
+        return uid != null && activeNewsUids.contains(uid);
     }
 
     private static boolean isArticleLane(List<?> queues) {

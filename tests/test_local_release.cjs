@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const {execFileSync} = require("node:child_process");
-const {runFlow, templates, cleanupWorkspace, cleanupPages, readConfig, command, pruneEvidence, workspaceQuiescent, ensureApiCredentials} = require("../scripts/local-release/flow.cjs");
+const {runFlow, templates, cleanupWorkspace, cleanupPages, readConfig, command, pruneEvidence, workspaceQuiescent, pagesInvocation, ensureApiCredentials} = require("../scripts/local-release/flow.cjs");
 const identity = {GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com"};
 function fixture(t) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),"local-release-test-"));
@@ -284,13 +284,16 @@ test("Pages must return verified evidence even when its hook resolves",async t=>
   const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed,receipt=JSON.parse(fs.readFileSync(failure.receipt));assert.equal(receipt.poststeps.mirrors.status,"fulfilled");assert.equal(receipt.pages.verified,false);assert.equal(receipt.status,"failed");
 });
 
-for(const holding of ["cwd","open-handle"])test(`detached descendants with ${holding} keep the exact owned workspace until test teardown stops them`,async t=>{
+for(const holding of ["cwd","open-handle","mapped-file"])test(`detached descendants with ${holding} keep the exact owned workspace until test teardown stops them`,async t=>{
   const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)}),pidFile=path.join(f.root,"detached.pid");let pid;
   t.after(()=>{if(pid)try{process.kill(-pid,"SIGKILL");}catch{}for(const cleanup of cleanups)cleanup();});
   f.config.environment={HOME:f.root};
   f.dependencies.verify=async context=>{
+    const nested=path.join(context.workspace,"nested");fs.mkdirSync(nested);
     const childCode=holding==="cwd"?"setInterval(()=>{},1000)":`require('node:fs').openSync(${JSON.stringify(path.join(context.workspace,"fixture.txt"))},'r');setInterval(()=>{},1000)`;
-    const code=`const fs=require('node:fs'),{spawn}=require('node:child_process');const child=spawn(process.execPath,['-e',${JSON.stringify(childCode)}],{detached:true,stdio:'ignore',cwd:${JSON.stringify(holding==="cwd"?context.workspace:f.root)}});fs.writeFileSync(${JSON.stringify(pidFile)},String(child.pid));child.unref();`;
+    const executable=holding==="mapped-file"?(process.platform==="darwin"?"/usr/bin/python3":"python3"):process.execPath;
+    const args=holding==="mapped-file"?["-c",`import mmap,time;f=open(${JSON.stringify(path.join(context.workspace,"fixture.txt"))},'rb');mapping=mmap.mmap(f.fileno(),0,access=mmap.ACCESS_READ);f.close();time.sleep(120)`]:["-e",childCode];
+    const code=`const fs=require('node:fs'),{spawn}=require('node:child_process');const child=spawn(${JSON.stringify(executable)},${JSON.stringify(args)},{detached:true,stdio:'ignore',cwd:${JSON.stringify(holding==="cwd"?nested:f.root)}});fs.writeFileSync(${JSON.stringify(pidFile)},String(child.pid));child.unref();`;
     await command(context,"detached-fixture",[process.execPath,"-e",code]);pid=Number(fs.readFileSync(pidFile,"utf8"));
   };
   await assert.rejects(runFlow(options(f,{branch:"main"})),/quiescence|active|handles|cleanup/i);
@@ -299,12 +302,28 @@ for(const holding of ["cwd","open-handle"])test(`detached descendants with ${hol
   assert.doesNotThrow(()=>process.kill(pid,0),"Cleanup must never kill a process outside its known command group");
 });
 
-test("workspace lsof proof is bounded, fail-closed and receives no credentials",()=>{
+test("workspace native proof is bounded, fail-closed and receives no credentials",()=>{
   assert.equal(typeof workspaceQuiescent,"function");
   let seen;
-  const result=workspaceQuiescent("/private/owned/checkout",{stateDir:"/private/owned",env:{PATH:"/usr/bin",GITLAB_TOKEN:"must-not-forward"},inspect:(file,args,options)=>{seen={file,args,options};const error=new Error("no handles");error.status=1;error.stdout="";error.stderr="";throw error;}});
-  assert.equal(result,true);assert.ok(seen.file.endsWith("lsof"));assert.ok(seen.args.includes("/private/owned/checkout"));assert.equal(seen.options.timeout,30000);assert.equal(seen.options.env.HOME,"/private/owned");assert.equal(seen.options.env.GITLAB_TOKEN,undefined);
-  for(const inspect of [()=>"COMMAND PID open-handle\n",()=>{throw Object.assign(new Error("unavailable"),{code:"ENOENT"});},()=>{throw Object.assign(new Error("timeout"),{code:"ETIMEDOUT"});},()=>{throw Object.assign(new Error("partial scan"),{status:1,stdout:"",stderr:"permission warning"});}])assert.equal(workspaceQuiescent("/private/owned/checkout",{stateDir:"/private/owned",inspect}),false);
+  const result=workspaceQuiescent("/private/owned/checkout",{platform:"darwin",stateDir:"/private/owned",env:{PATH:"/usr/bin",GITLAB_TOKEN:"must-not-forward"},inspect:(file,args,options)=>{seen={file,args,options};return "QUIESCENT\n";}});
+  assert.equal(result,true);assert.equal(seen.file,"/usr/bin/python3");assert.ok(seen.args[1].includes("proc_pidfdinfo"));assert.ok(seen.args[1].includes("info(pid,8,1272,address)"));assert.ok(seen.args.includes("/private/owned/checkout"));assert.equal(seen.options.timeout,30000);assert.equal(seen.options.env.HOME,"/private/owned");assert.equal(seen.options.env.GITLAB_TOKEN,undefined);
+  for(const inspect of [()=>"BUSY\n",()=>"",()=>"unexpected output",()=>{throw Object.assign(new Error("unavailable"),{code:"ENOENT"});},()=>{throw Object.assign(new Error("timeout"),{code:"ETIMEDOUT"});},()=>{throw Object.assign(new Error("partial scan"),{status:1,stdout:"",stderr:""});}])assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"darwin",stateDir:"/private/owned",inspect}),false);
+  assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"linux",inspect:()=>{throw Object.assign(new Error("no handles"),{status:1,stdout:"",stderr:""});}}),true);
+});
+
+test("Pages reuses the native proof and keeps its live-owner PID guard",()=>{
+  const script=path.resolve(__dirname,"../scripts/local-release/pages.cjs"),invocation=pagesInvocation(script,["--cleanup"]);
+  assert.equal(invocation[0],process.execPath);assert.equal(invocation[1],"-e");assert.deepEqual(invocation.slice(3),["--","--cleanup"]);
+  let passed,alive=true,quiet=false,calls=0;
+  require("node:vm").runInNewContext(invocation[2],{process:{argv:[process.execPath,"--cleanup"]},console,require:file=>{
+    if(file===script)return {main:(args,options)=>{passed={args:Array.from(args),options};return Promise.resolve();}};
+    if(file.endsWith("pages-job.cjs"))return {processAlive:()=>alive};
+    assert.equal(file,path.resolve(__dirname,"../scripts/local-release/flow.cjs"));return {workspaceQuiescent:()=>{calls++;return quiet;}};
+  }});
+  assert.deepEqual(passed.args,["--cleanup"]);
+  assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),false);assert.equal(calls,0);
+  alive=false;assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),false);assert.equal(calls,1);
+  quiet=true;assert.equal(passed.options.isQuiescent("/owned/checkout",{pid:42}),true);assert.equal(calls,2);
 });
 
 test("default credential fallback loads three labelled APIs only when needed and keeps explicit overrides",t=>{

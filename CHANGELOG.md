@@ -1,4 +1,43 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/fa55a77890f9778790d0f6b3ec22e3d62d400331/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.40.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [fa55a77890f9](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/fa55a77890f9778790d0f6b3ec22e3d62d400331). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.40.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.40.0...v1.40.1) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **Volkskrant:** continue the ordered news feed from each article ([fa55a77](https://gitlab.com/johninnld/nl-morphe-patches/commit/fa55a77890f9778790d0f6b3ec22e3d62d400331))
+
+<!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/95962baaf1cbed4fcb489a0df3c86d3545a17e4f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.40.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [95962baaf1cb](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/95962baaf1cbed4fcb489a0df3c86d3545a17e4f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.40.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.39.0...v1.40.0) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **ci:** avoid blocking macOS mount scans during release cleanup ([957efa1](https://gitlab.com/johninnld/nl-morphe-patches/commit/957efa1d092811a238149aacbf0a85bd63a52be5))
+* **ci:** reuse owned-process proof for Pages cleanup ([95962ba](https://gitlab.com/johninnld/nl-morphe-patches/commit/95962baaf1cbed4fcb489a0df3c86d3545a17e4f))
+
+### ✨ New Features
+
+* **Myspoti:** publish Android Auto Up next queue ([138d983](https://gitlab.com/johninnld/nl-morphe-patches/commit/138d9834f2358af7f0a726d64f93968f6b120a66))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e4c60ea3fe894cdc4c2609ce7b4cfe471fea32e3/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.39.0.**

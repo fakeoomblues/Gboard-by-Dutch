@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import nl.dpgmedia.mcdpg.amalia.audio.data.network.dto.AudioItemContentResponse;
@@ -82,27 +84,151 @@ public class CarNieuwsTest {
     }
 
     @Test
-    public void restoreQueueRetainsThePreviousLaneAfterTheFeedRefreshes() {
+    public void restoreQueueKeepsAcceptedFeedAcrossBrowseRefreshesUntilANewFeedIsAccepted() {
         List<CarAudioQueue.Item> previousItems = new ArrayList<CarAudioQueue.Item>();
         previousItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "previous-0"));
         previousItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "previous-1"));
+        previousItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "previous-2"));
         CarAudioQueue previousFull = new CarAudioQueue(previousItems);
         List<Object> previousLane = new ArrayList<Object>();
         previousLane.add(CarLaneItemQueue.of(previousFull, "previous-0"));
         previousLane.add(CarLaneItemQueue.of(previousFull, "previous-1"));
+        previousLane.add(CarLaneItemQueue.of(previousFull, "previous-2"));
         List<?> previousRows = (List<?>) CarNieuws.slimQueues(previousLane);
+        CarAudioQueue selectedRow = ((CarLaneItemQueue) previousRows.get(1)).getQueue();
 
-        List<CarAudioQueue.Item> refreshedItems = new ArrayList<CarAudioQueue.Item>();
-        refreshedItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "refreshed-0"));
-        refreshedItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, "refreshed-1"));
-        CarAudioQueue refreshedFull = new CarAudioQueue(refreshedItems);
-        List<Object> refreshedLane = new ArrayList<Object>();
-        refreshedLane.add(CarLaneItemQueue.of(refreshedFull, "refreshed-0"));
-        refreshedLane.add(CarLaneItemQueue.of(refreshedFull, "refreshed-1"));
-        List<?> refreshedRows = (List<?>) CarNieuws.slimQueues(refreshedLane);
+        assertSame(previousFull, CarNieuws.restoreQueue(selectedRow));
+        assertTrue("resolving a selection must wait for the native queue commit",
+            !CarNieuws.isNewsUid("previous-1"));
+        CarNieuws.acceptNewsQueue("previous-1", Arrays.asList("previous-0", "previous-1", "previous-2"));
+        assertTrue(CarNieuws.isNewsUid("previous-0"));
+        assertTrue(CarNieuws.isNewsUid("previous-1"));
+        assertTrue(CarNieuws.isNewsUid("previous-2"));
 
-        assertSame(previousFull, CarNieuws.restoreQueue(((CarLaneItemQueue) previousRows.get(1)).getQueue()));
+        CarAudioQueue refreshedFull = null;
+        List<?> refreshedRows = null;
+        for (int generation = 0; generation < 6; generation++) {
+            String prefix = "refreshed-" + generation + "-";
+            List<CarAudioQueue.Item> refreshedItems = new ArrayList<CarAudioQueue.Item>();
+            refreshedItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, prefix + "0"));
+            refreshedItems.add(new CarAudioQueue.Item(CarAudioQueue.Item.Type.Article, prefix + "1"));
+            refreshedFull = new CarAudioQueue(refreshedItems);
+            List<Object> refreshedLane = new ArrayList<Object>();
+            refreshedLane.add(CarLaneItemQueue.of(refreshedFull, prefix + "0"));
+            refreshedLane.add(CarLaneItemQueue.of(refreshedFull, prefix + "1"));
+            refreshedRows = (List<?>) CarNieuws.slimQueues(refreshedLane);
+            assertTrue("browsing must not replace the selected feed", CarNieuws.isNewsUid("previous-1"));
+            assertTrue("unselected browse rows must not become active", !CarNieuws.isNewsUid(prefix + "0"));
+        }
+
+        assertSame("the selected feed must outlive the recent browse-generation cache",
+            previousFull, CarNieuws.restoreQueue(selectedRow));
+        assertEquals("previous-0", previousFull.getItems().get(0).m6831getQueueUidEU6Fzmo());
+        assertEquals("previous-2", previousFull.getItems().get(2).m6831getQueueUidEU6Fzmo());
         assertSame(refreshedFull, CarNieuws.restoreQueue(((CarLaneItemQueue) refreshedRows.get(0)).getQueue()));
+        assertTrue("a pending or rejected selection must preserve the accepted feed",
+            CarNieuws.isNewsUid("previous-1"));
+        assertTrue("a selection is not active before the native queue accepts it",
+            !CarNieuws.isNewsUid("refreshed-5-0"));
+        CarNieuws.acceptNewsQueue("refreshed-5-0", Arrays.asList("refreshed-5-0", "refreshed-5-1"));
+        assertTrue(CarNieuws.isNewsUid("refreshed-5-0"));
+        assertTrue(CarNieuws.isNewsUid("refreshed-5-1"));
+        assertTrue("accepting a fresh feed replaces the previous context", !CarNieuws.isNewsUid("previous-1"));
+    }
+
+    @Test
+    public void snapshotKeepsRepeatedStoriesAsDistinctOpaqueQueueOccurrences() {
+        Object canonicalStory = "urn:story:42";
+        NewsQueueBridge.Entry first = new NewsQueueBridge.Entry(
+            "opaque:first-occurrence", "The same headline", "https://img/story.jpg", 120_000L, canonicalStory);
+        NewsQueueBridge.Entry repeated = new NewsQueueBridge.Entry(
+            "opaque:second-occurrence", "The same headline", "https://img/story.jpg", 120_000L, canonicalStory);
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        entries.add(first);
+        entries.add(repeated);
+
+        NewsQueueBridge.Snapshot snapshot = new NewsQueueBridge.Snapshot(entries, repeated.uid);
+
+        assertEquals(2, snapshot.entries.size());
+        assertSame(first, snapshot.entries.get(0));
+        assertSame(repeated, snapshot.entries.get(1));
+        assertEquals(0, snapshot.indexOf(first.uid));
+        assertEquals(1, snapshot.indexOf(repeated.uid));
+        assertEquals(1, snapshot.currentIndex);
+        assertEquals(repeated.uid, snapshot.currentUid);
+        assertEquals("canonical article IDs must not substitute for occurrence UIDs",
+            -1, snapshot.indexOf((String) canonicalStory));
+    }
+
+    @Test
+    public void snapshotStartsAtFirstMiddleOrLastWithoutDroppingEarlierArticles() {
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        entries.add(new NewsQueueBridge.Entry("opaque:first", "First", null, 60_000L, null));
+        entries.add(new NewsQueueBridge.Entry("opaque:middle", "Middle", null, 90_000L, null));
+        entries.add(new NewsQueueBridge.Entry("opaque:last", "Last", null, 120_000L, null));
+
+        NewsQueueBridge.Snapshot first = new NewsQueueBridge.Snapshot(entries, "opaque:first");
+        NewsQueueBridge.Snapshot middle = new NewsQueueBridge.Snapshot(entries, "opaque:middle");
+        NewsQueueBridge.Snapshot last = new NewsQueueBridge.Snapshot(entries, "opaque:last");
+
+        assertEquals(0, first.currentIndex);
+        assertEquals(1, middle.currentIndex);
+        assertEquals(2, last.currentIndex);
+        assertEquals(entries, first.entries);
+        assertEquals(entries, middle.entries);
+        assertEquals(entries, last.entries);
+        assertEquals("Previous must retain the first occurrence when starting in the middle",
+            0, middle.indexOf("opaque:first"));
+        assertEquals(-1, middle.indexOf("missing"));
+        assertEquals(-1, middle.indexOf(null));
+        assertEquals(-1, new NewsQueueBridge.Snapshot(entries, "missing").currentIndex);
+    }
+
+    @Test
+    public void snapshotPreservesItsOrderAndCurrentOccurrenceWhenTheSourceListChanges() {
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        NewsQueueBridge.Entry first = new NewsQueueBridge.Entry("immutable:first", "First", null, 0L, null);
+        NewsQueueBridge.Entry current = new NewsQueueBridge.Entry("immutable:current", "Current", null, 0L, null);
+        entries.add(first);
+        entries.add(current);
+        NewsQueueBridge.Snapshot snapshot = new NewsQueueBridge.Snapshot(entries, current.uid);
+
+        entries.clear();
+        entries.add(new NewsQueueBridge.Entry("replacement", "New headline", null, 0L, null));
+
+        assertEquals(2, snapshot.entries.size());
+        assertSame(first, snapshot.entries.get(0));
+        assertSame(current, snapshot.entries.get(1));
+        assertEquals(1, snapshot.currentIndex);
+        assertEquals(-1, snapshot.indexOf("replacement"));
+        try {
+            snapshot.entries.clear();
+            fail("The accepted feed snapshot must be immutable");
+        } catch (UnsupportedOperationException expected) {
+            // A controller must not be able to mutate the native feed ordering.
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void snapshotRejectsDuplicateOccurrenceUids() {
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        entries.add(new NewsQueueBridge.Entry("duplicate", "First", null, 0L, null));
+        entries.add(new NewsQueueBridge.Entry("duplicate", "Different story", null, 0L, null));
+        new NewsQueueBridge.Snapshot(entries, "duplicate");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void snapshotRejectsMissingOccurrenceUids() {
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        entries.add(new NewsQueueBridge.Entry(null, "Headline", null, 0L, null));
+        new NewsQueueBridge.Snapshot(entries, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void snapshotRejectsEmptyOccurrenceUids() {
+        List<NewsQueueBridge.Entry> entries = new ArrayList<NewsQueueBridge.Entry>();
+        entries.add(new NewsQueueBridge.Entry("", "Headline", null, 0L, null));
+        new NewsQueueBridge.Snapshot(entries, "");
     }
 
     @Test

@@ -1,7 +1,7 @@
 # Verify Myspoti custom branding
 
 Build the normal Dutch App Patches bundle with `./gradlew :patches:buildAndroid :patches:test`. Use the repository's normal authenticated build environment.
-The resulting bundle contains both Myspoti patches; no separate pack is needed.
+The resulting bundle contains the Myspoti patches, including the opt-in **Android Auto Up next** addition for original 2.3.0 / 1121; no separate pack is needed. Queue runtime acceptance is tracked in `docs/research/2026-11-05-myspoti-up-next.md`.
 
 Run the APK regression matrix against an original publisher APK:
 

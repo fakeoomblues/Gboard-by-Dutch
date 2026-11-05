@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.39.0**
+**Patch bundle: 1.40.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -375,6 +375,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto Up next | Off | 2.3.0 |
 | Custom branding | Off | Any |
 | Gearslip personal library | On | Any |
 
