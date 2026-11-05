@@ -245,3 +245,25 @@ rendered the Amsterdam map in genuine AA at 800x480, but Search did not open its
 editor through the exercised DHU taps. Neither routing nor speech nor the
 remaining profiles were accepted in that run. The retained qualified receipt is
 native-aa17-runtime-13.json in the Downloads review folder; cleanup passed.
+
+Run 15 proved the API-only Waze PID terminated about 821 ms after the recorded
+lease deadline. A manually used Waze also survived an expired lease. The run
+then exposed an unhealthy restart: Android resurrected the private wrapper
+without a receiver or fresh heartbeat because it returned START_STICKY. The
+connected correction returns START_NOT_STICKY and removes/stops the wrapper
+before invoking native shutdown. A pending native initializer retains foreground
+eligibility until its final ownership/health check. Regression assertions cover
+that ordering and deferred readiness. Native expiry remains unaccepted until
+the no-restart and FM cases pass. Run 15 restored and stopped the emulator; its
+trace coverage and cleanup passed.
+
+The corrected checkpoint02 passed canonical verification and all four actual
+APK patch/sign/alignment gates. Native API-only expiry then passed all four
+receiver/provider pairs: Maps/Waze, Maps/FM, Vela/Waze and Vela/FM. Waze quit
+without wrapper resurrection; FM stopped its native base service and wrapper.
+Both bounded sessions retained Frida coverage, restored baseline state and
+stopped the owned emulator. The Downloads review folder contains the signed
+engineering MPP and owned-provider-shutdown-validation.json. FM native manual
+takeover remains unaccepted because first-run onboarding independently stopped
+its driving service; a fully initialized manual session must exercise that gate.
+The original AA navigation, speech, input and profile acceptance gates stay open.

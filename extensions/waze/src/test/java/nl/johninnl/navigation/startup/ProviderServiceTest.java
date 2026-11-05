@@ -11,12 +11,12 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(sdk=34)
 public class ProviderServiceTest {
     public static class Engine extends ProviderEngineService {
-        static int starts, stops; static boolean ready, enabled=true, blocked, nativeFailure, deferShutdown;
+        static int starts, stops; static boolean ready, enabled=true, blocked, nativeFailure, deferShutdown, stoppedBeforeNative;
         static Runnable pendingStop;
         protected boolean enabled(){return enabled;}
         protected boolean engineRunning(){return ready;}
         protected void startEngine(){starts++;if(blocked)throw new SecurityException("foreground promotion denied");if(nativeFailure)throw new IllegalStateException("native initializer failed");}
-        protected void stopEngine(long ownership){pendingStop=()->ProviderLifecycle.shutdownIfExpired(ownership,()->{stops++;ready=false;});if(!deferShutdown)pendingStop.run();}
+        protected void stopEngine(long ownership){pendingStop=()->finishOwnedShutdown(ownership,()->{stoppedBeforeNative=Shadows.shadowOf(this).isStoppedBySelf()&&!Shadows.shadowOf(this).isLastForegroundNotificationAttached();stops++;ready=false;});if(!deferShutdown)pendingStop.run();}
         protected String nativeServiceName(){return "test.NativeEngine";}
     }
     public static class Control extends ProviderControlService {
@@ -25,11 +25,11 @@ public class ProviderServiceTest {
         protected String receiverPackage(){return "";}
         protected Class<? extends ProviderEngineService> engineService(){return Engine.class;}
     }
-    @Before public void setup(){Engine.starts=0;Engine.stops=0;Engine.ready=false;Engine.enabled=true;Engine.blocked=false;Engine.nativeFailure=false;Engine.deferShutdown=false;Engine.pendingStop=null;Application app=RuntimeEnvironment.getApplication();ProviderLifecycle.install(app);app.getSharedPreferences("navigation_startup_lease",0).edit().clear().commit();}
+    @Before public void setup(){Engine.starts=0;Engine.stops=0;Engine.ready=false;Engine.enabled=true;Engine.blocked=false;Engine.nativeFailure=false;Engine.deferShutdown=false;Engine.stoppedBeforeNative=false;Engine.pendingStop=null;Application app=RuntimeEnvironment.getApplication();ProviderLifecycle.install(app);app.getSharedPreferences("navigation_startup_lease",0).edit().clear().commit();}
     @Test public void foregroundNotificationPrecedesNativeStartupWithoutOpeningActivity(){
         Application app=RuntimeEnvironment.getApplication();Shadows.shadowOf(app).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION);
         ProviderEngineService.renewLease(app);
-        Engine e=Robolectric.buildService(Engine.class).create().get();e.onStartCommand(new Intent(),0,1);
+        Engine e=Robolectric.buildService(Engine.class).create().get();assertEquals(Service.START_NOT_STICKY,e.onStartCommand(new Intent(),0,1));
         assertEquals(1,Engine.starts);assertTrue(Shadows.shadowOf(e).isLastForegroundNotificationAttached());
         assertNull(Shadows.shadowOf(app).getNextStartedActivity());e.onDestroy();
     }
@@ -68,7 +68,7 @@ public class ProviderServiceTest {
         Engine e=startOwned();Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(14999));
         assertEquals(0,Engine.stops);assertTrue(Engine.ready);
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1));
-        assertEquals(1,Engine.stops);assertFalse(Engine.ready);e.onDestroy();
+        assertEquals(1,Engine.stops);assertFalse(Engine.ready);assertTrue(Engine.stoppedBeforeNative);e.onDestroy();
     }
     @Test public void aTenSecondHeartbeatExtendsTheSameOwnedEngineWithoutRestarting(){
         Engine e=startOwned();Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(10));
@@ -98,6 +98,7 @@ public class ProviderServiceTest {
         Engine.deferShutdown=true;Engine e=startOwned();
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(15));
         assertNotNull(Engine.pendingStop);assertTrue(ProviderAudio.muted());
+        assertFalse(Shadows.shadowOf(e).isStoppedBySelf());assertTrue(Shadows.shadowOf(e).isLastForegroundNotificationAttached());
         ProviderEngineService.renewLease(RuntimeEnvironment.getApplication());
         Engine.pendingStop.run();
         assertEquals(0,Engine.stops);assertTrue(Engine.ready);e.onDestroy();

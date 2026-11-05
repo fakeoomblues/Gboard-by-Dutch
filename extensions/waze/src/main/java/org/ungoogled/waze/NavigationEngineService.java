@@ -10,7 +10,7 @@ public final class NavigationEngineService extends ProviderEngineService {
     @Override protected void stopEngine(long ownership) throws ReflectiveOperationException {
         Class<?> manager = Class.forName("com.waze.NativeManager");
         manager.getMethod("runOnNativeManagerReady", Runnable.class).invoke(null, (Runnable) () ->
-            nl.johninnl.navigation.startup.ProviderLifecycle.shutdownIfExpired(ownership, () -> {
+            finishOwnedShutdown(ownership, () -> {
                 try { manager.getMethod("shutDown").invoke(manager.getMethod("getInstance").invoke(null)); }
                 catch (ReflectiveOperationException error) { throw new nl.johninnl.navigation.startup.ProviderControlService.ReflectiveOperationExceptionWrapper(error); }
             }));

@@ -17,7 +17,7 @@ public final class NavigationEngineService extends ProviderEngineService {
             .putExtra("checkBackgroundPermission", false));
     }
     @Override protected void stopEngine(long ownership) {
-        nl.johninnl.navigation.startup.ProviderLifecycle.shutdownIfExpired(ownership, () ->
+        finishOwnedShutdown(ownership, () ->
             stopService(new Intent().setClassName(this, "nl.flitsmeister.services.base.FlitsmeisterBaseService")));
     }
 }

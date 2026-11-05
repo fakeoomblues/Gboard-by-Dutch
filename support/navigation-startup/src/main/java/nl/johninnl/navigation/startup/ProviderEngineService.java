@@ -28,6 +28,14 @@ public abstract class ProviderEngineService extends Service {
     protected abstract void startEngine() throws ReflectiveOperationException;
     protected abstract void stopEngine(long ownership) throws ReflectiveOperationException;
     protected abstract String nativeServiceName();
+    protected final void finishOwnedShutdown(long ownership, Runnable action) {
+        ProviderLifecycle.shutdownIfExpired(ownership, () -> {
+            main.removeCallbacks(tick);
+            stopForeground(STOP_FOREGROUND_REMOVE);
+            stopSelf();
+            action.run();
+        });
+    }
     protected String integrationStatus(){return "Providing driving data to your selected map";}
     private String notificationStatus;
     private Notification notification(String detail){return new Notification.Builder(this,"navigation_data").setSmallIcon(android.R.drawable.ic_menu_mylocation).setContentTitle("Navigation data sharing").setContentText(detail).setOngoing(true).build();}
@@ -82,7 +90,8 @@ public abstract class ProviderEngineService extends Service {
             });
             if (!running) startEngine();
             main.post(tick);
-            return START_STICKY;
+            // The receiving map owns recovery. Android must not resurrect an expired API session.
+            return START_NOT_STICKY;
         } catch (ReflectiveOperationException | RuntimeException error) {
             Log.w("NavigationStartup", "Silent engine start failed", error);
             state = error instanceof SecurityException || error.getClass().getSimpleName().equals("ForegroundServiceStartNotAllowedException")
@@ -92,7 +101,12 @@ public abstract class ProviderEngineService extends Service {
     }
     private final Runnable tick = new Runnable() {
         @Override public void run() {
-            if (!leased() || !enabled()) { stopSelf(); return; }
+            if (!leased() || !enabled()) {
+                // A not-yet-ready native initializer owns its deferred shutdown callback.
+                // Keep foreground eligibility until that callback rechecks health/takeover.
+                if (ProviderLifecycle.stopping()) { main.postDelayed(this, 1000); return; }
+                stopSelf(); return;
+            }
             try { state = engineRunning() ? "running" : "starting"; }
             catch (RuntimeException error) { state = "error"; }
             String detail=integrationStatus();
