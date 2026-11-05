@@ -81,3 +81,51 @@ boundary. A matched car-login control is still required: complete AA setup
 first, then initialize original Waze immediately before car selection to
 avoid consuming its background lifetime on host setup. The broader goal and
 all previously accepted provider/Maps evidence remain unchanged.
+
+## Teardown-only correction and normal-startup control
+
+The previous keep-alive injection replaced the result of the shared native
+`car_lib.platform.af.b()` AAOS flag. That flag is also consumed by native
+login and warm-session handling, so applying the local broadcast switch there
+changed policy outside service destruction. The correction leaves the getter
+unchanged and wraps only the result of `car_lib.w.b()` in the original
+`WazeCarAppService.a(WazeCarAppService)` teardown helper. Its original deferred
+shutdown and native shutdown branches remain intact. Version guards reject a
+changed helper before mutation; real-APK regression cases also reject applying
+the hook to the shared flag. The post-patch APK was inspected to verify both
+bindings. This is a correction to hook scope, not a proven attribution of the
+earlier car-login failure.
+
+Checkpoint27 built the Android component, applied all 21 selected patches to
+Waze 5.26.90.901 in FULL/validate mode, and verified signature and alignment.
+Its APK SHA-256 is
+`76afc8da7e298b1af1afc8c7c9bef82842bb3bacda5883d37fd07c9cb097d90a`.
+Run47 still showed the car connection error when Waze had been started through
+the receiver API before normal first-run. Its native shutdown callback had no
+API ownership or lease; no Java `NativeManager.shutDown()` entry was observed.
+Do not infer the initiating native caller from that callback.
+
+Original signed control46 and corrected patched run50 completed AA setup
+before normal Waze first-run, then immediately selected Waze in the car.
+Both opened the native car map at 1280x480. Run50 retained Waze PID7063 and all
+exercised AA processes under the unchanged Frida observer without coverage
+loss. Acceptance ended 102 seconds after Waze normal startup, inside its
+180-second window. This closes normal patched native-car-map startup only;
+route, GPS, warnings, speech and the API-first sequence remain separate gates.
+The different setup order does not isolate one cause of the earlier failures.
+
+Native ARM64 curl on the same rooted VM returned Waze website HTTPS200 with
+certificate verification immediately before and during run50. This establishes
+current general HTTPS connectivity, not Waze backend authentication or the
+network state during every historical failure. YouTube Music's native phone
+UI requested sign-in for its streaming catalog; it did not display a network
+error in the separately retained app check.
+
+The existing ADB root path provides a verified UID0 Frida server; attempted
+Magisk activation failed verification and was reverted. The owned AVD uses a
+private image, leaving the shared SDK image unchanged. Run50 restored and
+verified package hashes, audio, debug property and automotive role, retained
+native curl, stopped owned runtimes and forwards, and archived/removed per-run
+scratch with cleanupRequired=false. Exact identities, screenshots, limits and
+observer results are in the private review folder's
+`waze-normal-startup-run50.json` and `run50-observer-result.json`.

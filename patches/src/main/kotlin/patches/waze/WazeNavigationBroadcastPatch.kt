@@ -19,20 +19,33 @@ import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
 private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze", warningRecovery = true)
 
-/** The native car-service teardown consults this separately from the phone idle timeout. */
+/** Keep-alive belongs only to teardown; the shared AAOS flag also controls native login. */
 internal fun preserveBroadcastsAfterCarSession(method: MutableMethod) {
     val body = method.instructions
-    check(method.definingClass == "Lcom/waze/car_lib/platform/af;" && method.name == "b" &&
-        method.parameterTypes.isEmpty() && method.returnType == "Z") { "Changed Waze car keep-alive ABI" }
-    check(body.count { it.opcode == Opcode.RETURN } == 1 && body.last().opcode == Opcode.RETURN &&
-        body.count { (it as? ReferenceInstruction)?.reference.toString() == "Ljava/lang/Boolean;->booleanValue()Z" } == 1 &&
+    val service = "Lcom/waze/car_lib/WazeCarAppService;"
+    val flag = "Lcom/waze/car_lib/w;->b()Z"
+    check(method.definingClass == service && method.name == "a" &&
+        method.parameterTypes.map(CharSequence::toString) == listOf(service) && method.returnType == "V") {
+        "Changed Waze car teardown ABI"
+    }
+    val calls = body.withIndex().filter { (it.value as? ReferenceInstruction)?.reference.toString() == flag }
+    check(calls.size == 1 && calls.single().value.opcode == Opcode.INVOKE_INTERFACE &&
+        body.count { it.opcode == Opcode.RETURN_VOID } == 1 && body.last().opcode == Opcode.RETURN_VOID &&
+        body.count { (it as? ReferenceInstruction)?.reference.toString() == "Lcom/waze/car_lib/w;->c()Z" } == 1 &&
+        body.count { (it as? ReferenceInstruction)?.reference.toString() == "Lcom/waze/kn;->shutDown()V" } == 1 &&
         body.count { (it as? ReferenceInstruction)?.reference.toString() == "$NAVIGATION_BROADCASTS->keepAliveAfterCarSession(Z)Z" } == 0
-    ) { "Changed or already bound Waze car keep-alive decision" }
-    val register = (body.last() as OneRegisterInstruction).registerA
-    val index = body.lastIndex
-    method.replaceInstruction(index,
-        "invoke-static/range {v$register .. v$register}, $NAVIGATION_BROADCASTS->keepAliveAfterCarSession(Z)Z")
-    method.addInstructions(index + 1, "move-result v$register\nreturn v$register")
+    ) { "Changed or already bound Waze car teardown decision" }
+    val index = calls.single().index + 1
+    check(body[index].opcode == Opcode.MOVE_RESULT && body[index] is OneRegisterInstruction) {
+        "Changed Waze car teardown result"
+    }
+    val register = (body[index] as OneRegisterInstruction).registerA
+    // Preserve the platform policy, deferred-shutdown branch and native shutdown
+    // body. Only this service-destruction decision can include the local feed.
+    method.addInstructions(index + 1, """
+        invoke-static/range {v$register .. v$register}, $NAVIGATION_BROADCASTS->keepAliveAfterCarSession(Z)Z
+        move-result v$register
+    """)
 }
 
 /** Application startup also runs for a cold service bind. Old tasks must not force a UI restart. */
@@ -92,8 +105,8 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         bindWazeNavigationAudio()
         Fingerprint(definingClass = NAVIGATION_BROADCASTS, name = "keepAliveAfterCarSession",
             parameters = listOf("Z"), returnType = "Z").method
-        preserveBroadcastsAfterCarSession(Fingerprint(definingClass = "Lcom/waze/car_lib/platform/af;",
-            name = "b", parameters = emptyList(), returnType = "Z").method)
+        preserveBroadcastsAfterCarSession(Fingerprint(definingClass = "Lcom/waze/car_lib/WazeCarAppService;",
+            name = "a", parameters = listOf("Lcom/waze/car_lib/WazeCarAppService;"), returnType = "V").method)
         val target = receiverPackage.orEmpty().trim()
         if (target.isNotEmpty() && !Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+").matches(target)) {
             throw PatchException("Receiver package is not an Android package name")

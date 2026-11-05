@@ -42,7 +42,7 @@ public final class NavigationBroadcasts {
 
     static boolean isEnabled() { return installed && Customization.on("navigationBroadcasts"); }
 
-    /** A car host releasing its UI must not terminate an enabled phone data feed. */
+    /** Teardown only: never substitute this for the shared native AAOS platform flag. */
     public static boolean keepAliveAfterCarSession(boolean nativeKeepAlive) {
         return nativeKeepAlive || isEnabled();
     }

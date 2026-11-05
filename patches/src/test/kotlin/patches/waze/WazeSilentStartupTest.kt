@@ -32,35 +32,48 @@ class WazeSilentStartupTest {
   assertThrows(IllegalStateException::class.java) { patches.shared.observeNavigationProviderSession(method) }
  }
 
- private fun originalCarKeepAlive(): MutableMethod {
+ private fun originalCarMethod(type:String,name:String,parameters:List<String>): MutableMethod {
   val path=System.getenv("WAZE_ORIGINAL_APK");assumeNotNull(path)
   val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.getDefault())
   val original=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }
-   .single { it.type=="Lcom/waze/car_lib/platform/af;" }.methods.single { it.name=="b" && it.parameterTypes.isEmpty() }
+   .single { it.type==type }.methods.single { it.name==name && it.parameterTypes.map(CharSequence::toString)==parameters }
   return MutableMethod(original)
  }
 
  @Test fun carKeepAlivePreservesTheNativeDecisionBeforeApplyingTheBroadcastSwitch() {
-  val method=originalCarKeepAlive();val before=method.implementation!!.instructions.toList()
-  val register=(before.last() as OneRegisterInstruction).registerA
+  val service="Lcom/waze/car_lib/WazeCarAppService;"
+  val method=originalCarMethod(service,"a",listOf(service));val before=method.implementation!!.instructions.toList()
+  val decision=before.indexOfFirst { (it as? ReferenceInstruction)?.reference.toString()=="Lcom/waze/car_lib/w;->b()Z" }+1
+  assertEquals(Opcode.MOVE_RESULT,before[decision].opcode)
+  val register=(before[decision] as OneRegisterInstruction).registerA
   preserveBroadcastsAfterCarSession(method)
   val after=method.implementation!!.instructions.toList()
   assertEquals(before.size+2,after.size)
-  assertEquals(before.dropLast(1),after.dropLast(3))
-  val hook=after[after.size-3]
+  assertEquals(before.take(decision+1),after.take(decision+1))
+  assertEquals(before.drop(decision+1),after.drop(decision+3))
+  val hook=after[decision+1]
   assertEquals(Opcode.INVOKE_STATIC_RANGE,hook.opcode)
   assertEquals("Lorg/ungoogled/waze/NavigationBroadcasts;->keepAliveAfterCarSession(Z)Z",(hook as ReferenceInstruction).reference.toString())
   assertEquals(register,(hook as RegisterRangeInstruction).startRegister)
   assertEquals(1,hook.registerCount)
-  assertEquals(Opcode.MOVE_RESULT,after[after.size-2].opcode)
-  assertEquals(register,(after[after.size-2] as OneRegisterInstruction).registerA)
-  assertEquals(Opcode.RETURN,after.last().opcode)
-  assertEquals(register,(after.last() as OneRegisterInstruction).registerA)
+  assertEquals(Opcode.MOVE_RESULT,after[decision+2].opcode)
+  assertEquals(register,(after[decision+2] as OneRegisterInstruction).registerA)
+  assertEquals(Opcode.RETURN_VOID,after.last().opcode)
+  assertThrows(IllegalStateException::class.java) { preserveBroadcastsAfterCarSession(method) }
  }
 
- @Test fun changedCarKeepAliveReturnIsRejectedBeforeEditing() {
-  val method=originalCarKeepAlive()
-  method.replaceInstruction(method.implementation!!.instructions.size-1,"return-void")
+ @Test fun sharedAaosModeUsedByLoginCannotBeOverriddenByTheFeed() {
+  val method=originalCarMethod("Lcom/waze/car_lib/platform/af;","b",emptyList())
+  val before=method.implementation!!.instructions.toList()
+  assertThrows(IllegalStateException::class.java) { preserveBroadcastsAfterCarSession(method) }
+  assertEquals(before,method.implementation!!.instructions.toList())
+ }
+
+ @Test fun changedCarTeardownDecisionIsRejectedBeforeEditing() {
+  val service="Lcom/waze/car_lib/WazeCarAppService;"
+  val method=originalCarMethod(service,"a",listOf(service))
+  val decision=method.implementation!!.instructions.indexOfFirst { (it as? ReferenceInstruction)?.reference.toString()=="Lcom/waze/car_lib/w;->b()Z" }
+  method.replaceInstruction(decision,"invoke-interface {v0}, Lcom/waze/car_lib/w;->d()Z")
   val before=method.implementation!!.instructions.toList()
   assertThrows(IllegalStateException::class.java) { preserveBroadcastsAfterCarSession(method) }
   assertEquals(before,method.implementation!!.instructions.toList())
