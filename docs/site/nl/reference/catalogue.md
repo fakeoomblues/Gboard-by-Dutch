@@ -668,6 +668,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1 |
 | Disable tracking | Aan | 7.53.1 |
 | Hide Premium banner | Aan | 7.53.1 |
 | Hide ads | Aan | 7.53.1 |
