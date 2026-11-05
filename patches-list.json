@@ -338,6 +338,40 @@
       ]
     },
     {
+      "name": "Android Auto Up next",
+      "description": "Publishes Myspoti's actual playback queue with titles, artists, artwork and the current occurrence. Android Auto and DriveDeck can display and select upcoming playlist and radio tracks through the existing player.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "app.myspoti.stable",
+          "name": "Myspoti",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "2b8f54daf60ce32cee1ab9206553c7e5741e96f2f32efdf2545758bf210a2c41"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2.3.0",
+              "versionCodes": {
+                "ARM64_V8A": 1121,
+                "ARMEABI_V7A": 1121,
+                "X86_64": 1121,
+                "X86": 1121
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Android Auto nieuws",
       "description": "Makes Nieuws the primary Android Auto tab and lists the latest headlines from the app's home feed with their publisher-supplied spoken audio. Rows render and play through the app's existing car player; premium audio keeps its entitlement.",
       "default": true,

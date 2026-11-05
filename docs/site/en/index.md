@@ -603,16 +603,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable any custom branding gearslip personal library" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable 2.3.0 any android auto up next custom branding gearslip personal library" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Myspoti](apps/myspoti.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">2.3.0, Any</span></p>
 <p class="dap-app-card__package">app.myspoti.stable</p>
 <details class="dap-app-card__patches">
-<summary>2 patches</summary>
+<summary>3 patches</summary>
 <ul>
+<li>Android Auto Up next <span class="dap-app-card__target">2.3.0 · default off</span></li>
 <li>Custom branding <span class="dap-app-card__target">Any · default off</span></li>
 <li>Gearslip personal library <span class="dap-app-card__target">Any</span></li>
 </ul>

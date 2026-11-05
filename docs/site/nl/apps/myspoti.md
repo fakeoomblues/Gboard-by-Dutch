@@ -14,12 +14,15 @@ Selecteer de door de uitgever ondertekende Myspoti-APK. Compatibiliteit is **All
 | --- | --- | --- |
 | **Custom branding** | Uit | Stelt een eigen appnaam in en kiest een van zes meegeleverde launchericonen in Spotify-stijl, of behoudt het originele icoon. |
 | **Gearslip personal library** | Aan | Laat de ingestelde Gearslip-host de bestaande Home, bibliotheek en downloads van Myspoti bekijken, zoeken en muziek kiezen om af te spelen. |
+| **Android Auto Up next** | Uit | Publiceert het huidige item en de echte wachtrij van afspeellijsten/radio, met metadata en selectie. Vereist de originele APK 2.3.0 / 1121; de runtimetest staat nog open. |
 
 ## Advertentie- en trackingdiensten
 
 Deze compatibiliteitspatch verandert de toegang tot de muziekbrowser. De patch verwijdert geen onlinediensten, levert geen account en verandert geen abonnementsrechten.
 
 ## Voor gebruik
+
+**Android Auto Up next** is een lokale ontwikkeltoevoeging voor 2.3.0 / 1121. Selecteer de patch expliciet bij het patchen van de originele APK; combineren met de andere patches is mogelijk. De patch publiceert maximaal 50 echte wachtrij-items inclusief het huidige item en kiest komende items via Myspoti's bestaande wachtrijhandler. Desktopverificatie bewijst geen afspeeltest op telefoon of in de auto.
 
 Schakel **Custom branding** in om **App name** en de keuzelijst **App icon** te gebruiken. De keuzes zijn Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal en Black Spotify on warm white. Een lege naam behoudt Myspoti. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht. Branding kan samen met **Gearslip personal library** uit dezelfde bundel worden gekozen. De patch verandert de Android-appnaam en het launchericoon; logo’s in de app, het opstartscherm, notificatieafbeeldingen en accounttoegang blijven zoals Myspoti ze levert.
 

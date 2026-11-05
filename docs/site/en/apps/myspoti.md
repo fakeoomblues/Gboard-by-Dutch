@@ -14,12 +14,15 @@ Select the publisher-signed Myspoti APK. Compatibility is **Any** version when t
 | --- | --- | --- |
 | **Custom branding** | Off | Sets a custom app name and selects one of six bundled Spotify-style launcher icons, or keeps the original icon. |
 | **Gearslip personal library** | On | Lets the configured Gearslip host browse Myspoti's existing Home, Library and Downloads, use search and select music for playback. |
+| **Android Auto Up next** | Off | Exports the actual current and upcoming playlist/radio occurrences with metadata and queue selection. Requires the original 2.3.0 / 1121 APK; runtime acceptance is pending. |
 
 ## Advertising and tracking services
 
 This compatibility patch changes browser access. It does not remove online services, supply an account or change subscription access.
 
 ## Before using
+
+**Android Auto Up next** is a local development addition for 2.3.0 / 1121. Select it explicitly when patching the original APK; it can be combined with the other patches. It publishes a window of up to 50 actual player occurrences, including the current item, and selects upcoming rows through Myspoti's existing queue handler. Desktop verification does not establish phone/car playback acceptance.
 
 Enable **Custom branding** to use its **App name** field and **App icon** dropdown. The choices are Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal, and Black Spotify on warm white. An empty name keeps Myspoti. Name and icon can be changed independently; changing them requires patching again. Branding can be selected together with **Gearslip personal library** from the same bundle. It changes the Android app label and launcher icon; in-app logos, the splash screen, notification artwork and account access stay as provided by Myspoti.
 
