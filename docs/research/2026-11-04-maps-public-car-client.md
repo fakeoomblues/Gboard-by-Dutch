@@ -424,3 +424,28 @@ The final full verification remains incomplete at checkpoint15's environmental
 Node/lsof cleanup failure. Genuine-AA Search/keyboard/route acceptance of this
 new input batch remains open; no successful runtime claim is inferred from
 these build/regression results.
+
+
+### Genuine-AA input acceptance of the editor batch
+
+Run28 exercised checkpoint17's signed Maps APK (SHA-256
+`c6998d826d01cfc30e899f61d07d6d6e6ebeb963a41ed5f6d35a086e885f0ae4`)
+on genuine AA17/DHU at 1280x480/160dpi. The native Search action opened the
+AA keyboard, accepted `dam`, produced native results and a route preview, and
+Start reached native `GUIDED_NAV`. Advancing GPS coordinates rendered moving
+guidance with one native speed/limit widget. This accepts the editor/input
+correction; it does not complete every navigation/profile/alerting gate.
+
+The normal AA welcome task had previously been placed behind notification
+settings. Focusing that already-launched task and clicking its real Continue
+button completed native consent without changing permissions or preflight
+state. Run26/27 setup failures remain retained separately.
+
+Standalone Waze still displayed its native one-time phone-setup gate. The
+subsequent reconnect attempt hit a DHU quit timeout, so the enclosing run remains
+failed for Waze/reconnect acceptance. No Frida coverage failure or Waze shutdown
+hook event was recorded. Baseline restoration, DHU/emulator stop and local
+cleanup passed. No physical phone was touched. Compact screenshots, exact
+artifacts, native dumps and limitations are in the Downloads review folder's
+`maps-aa17-native-editor-run28.json` and README. The full local verifier remains
+incomplete at the previously retained Node/lsof environment failure.
