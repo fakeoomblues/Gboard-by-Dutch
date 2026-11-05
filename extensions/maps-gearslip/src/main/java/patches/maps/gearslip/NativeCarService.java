@@ -51,7 +51,7 @@ public final class NativeCarService extends Service {
         volatile boolean closed;
         ProjectionRenderer renderer;
         IBinder host, appHost,navigationHost;
-        NativeGuidance guidance;
+        NativeNavigationLifetime.Lease guidance;
         boolean navigating;
         final List<IBinder> stopCallbacks=new ArrayList<>();
         Runnable stopTimeout;
@@ -299,7 +299,7 @@ public final class NativeCarService extends Service {
             if (session.failure == null) CarProtocol.send(session.appHost, APP_HOST, 4,
                     data -> data.writeStrongBinder(new SurfaceBinder(session)));
             if(session.failure==null){
-                session.guidance=new NativeGuidance(this,main,snapshot->navigation(session,snapshot),error->failed(session,error));
+                session.guidance=NativeNavigationLifetime.connect(this,main,snapshot->navigation(session,snapshot),error->failed(session,error));
                 if(session.failure!=null){session.guidance.close();session.guidance=null;}
             }
         });

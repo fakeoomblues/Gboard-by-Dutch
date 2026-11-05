@@ -449,3 +449,35 @@ cleanup passed. No physical phone was touched. Compact screenshots, exact
 artifacts, native dumps and limitations are in the Downloads review folder's
 `maps-aa17-native-editor-run28.json` and README. The full local verifier remains
 incomplete at the previously retained Node/lsof environment failure.
+
+## Native navigation ownership across car presentation teardown
+
+The original APK's `rxp.j(String)` registers a native navigation-focus client;
+`rxp.m(String)` removes it and calls `blsh.k(false)` when the last registration
+disappears while a route/focus request exists. Incoming DEX references identify
+the car activity's `toi.z()` and
+`CarNavigationProviderService.onDestroy()` as the two unregistering clients.
+The provider's original `onCreate()` registers its own `tqj.a` owner through
+`tqj.C.j(...)`; destruction removes that exact owner through `tqj.C.m(...)`.
+This explains a native contract which screen-state restoration cannot replace.
+It does not independently attribute every previously observed route loss.
+
+The adapter now binds that original, non-exported provider inside the Maps UID
+with its genuine internal action. Its application-owned binding and native
+guidance subscription outlive a detached presentation only while native
+guidance remains active. A reconnect subscribes to the same native guidance;
+native completion/stop releases detached ownership. Idle detach, failed/null
+binding, connection timeout and binding death release the listener/binding.
+Closed UI leases receive no later callbacks. No renderer, Surface, host Binder
+or car View is retained by this navigation owner.
+
+The existing host `onStopNavigation` still sends the original
+`abortcurrentsession` command and waits for native non-GUIDING confirmation.
+The provider remains undiscoverable to external hosts; no private Google host
+permission or vehicle-data grant is added. Patch-time guards retain the
+original provider's create/bind/destroy signatures. Unit coverage uses the
+existing native-guidance model to exercise active/idle detach, reconnect,
+completion, binding failure/death and timeout. Checkpoint18 passed the canonical
+Android component and actual Maps patch/sign/alignment checks; its owned build
+checkout and scratch were removed. Real-AA reconnect/stop acceptance of this
+batch remains required before calling this a runtime fix.

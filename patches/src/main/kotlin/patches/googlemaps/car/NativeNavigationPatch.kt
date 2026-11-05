@@ -194,6 +194,12 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lblot;","j","I")
         requireField("Lybc;","q","Landroid/text/Spanned;")
         requireMethod("Lcom/google/android/libraries/geo/navcore/service/base/NavigationService;","onStartCommand",listOf("Landroid/content/Intent;","I","I"),"I")
+        // The retained same-UID provider owns native navigation independently of
+        // the disposable car presentation. Keep its original registration ABI.
+        val providerType = "L${LEGACY_PROVIDER.replace('.', '/')};"
+        requireMethod(providerType,"onCreate",emptyList(),"V")
+        requireMethod(providerType,"onBind",listOf("Landroid/content/Intent;"),"Landroid/os/IBinder;")
+        requireMethod(providerType,"onDestroy",emptyList(),"V")
         requireMethod("Lbemm;", "v", emptyList(), "V")
         requireMethod("Lbemm;", "t", listOf("Landroid/content/res/Resources;"), "V")
         requireMethod("Lltu;", "b", listOf("Landroid/content/res/Configuration;"), "V")
