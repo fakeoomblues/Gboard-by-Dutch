@@ -38,6 +38,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 9.22.0 |
 | Disable tracking | Aan | 9.22.0 |
 | Hide Premium banner | Aan | 9.22.0 |
 | Hide ads | Aan | 9.22.0 |
@@ -785,4 +786,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

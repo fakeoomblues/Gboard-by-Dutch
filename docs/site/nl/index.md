@@ -82,7 +82,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="ad be.persgroep.android.news.mobilead 9.22.0 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [AD](apps/ad.md)
@@ -90,8 +90,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">9.22.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilead</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">9.22.0</span></li>
 <li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>

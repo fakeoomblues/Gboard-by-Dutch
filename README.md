@@ -64,7 +64,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
-| [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 5 |
+| [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Bright](docs/site/en/apps/bright.md) | Ads · Tracking · Prompts · Articles | 10.181.0 | APKS | 4 |
 | [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
 | [De Tijd](docs/site/en/apps/detijd.md) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 8 |
@@ -126,6 +126,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [2dehands](docs/site/en/apps/2dehands.md) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
+| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.5.11.993608717-release-arm64-v8a | APK | 3 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
