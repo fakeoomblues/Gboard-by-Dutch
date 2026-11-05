@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/19778ddbc04cf63741a9ffe27b6e074a0536d418/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.42.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [19778ddbc04c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/19778ddbc04cf63741a9ffe27b6e074a0536d418). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.42.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.41.0...v1.42.0) (2026-11-05)
+
+### ✨ New Features
+
+* **AD:** add the Android Auto news feed ([19778dd](https://gitlab.com/johninnld/nl-morphe-patches/commit/19778ddbc04cf63741a9ffe27b6e074a0536d418))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/1a60424cf5b1b58bd7963400b16cf63d2f759af0/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.41.0.**
