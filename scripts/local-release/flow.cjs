@@ -133,7 +133,8 @@ async function cleanupWorkspace({stateDir,workspace,env=process.env}) {
   if(fs.existsSync(repository)&&fs.lstatSync(repository).isSymbolicLink())throw new Error("Workspace Git ownership mismatch");
   if(fs.existsSync(workspace)){
     if(fs.lstatSync(workspace).isSymbolicLink()||path.resolve(workspace,git(["rev-parse","--git-common-dir"],{cwd:workspace,env}))!==repository)throw new Error("Workspace Git ownership mismatch");
-    if(!workspaceQuiescent(workspace,{stateDir:root,env}))throw new Error("Owned workspace quiescence is unproved: live cwd/open handles or incomplete scan; cleanup pending");
+    let proofFailure;
+    if(!workspaceQuiescent(workspace,{stateDir:root,env,onFailure:reason=>{proofFailure=reason;}}))throw new Error("Owned workspace quiescence is unproved: "+(proofFailure||"live cwd/open handles or incomplete scan")+"; cleanup pending");
     git(["worktree","remove","--force",workspace],{cwd:repository,env});
   }
   // Only remove the marked run container; populated worktrees also prove their Git common directory.
@@ -227,18 +228,27 @@ try:
         seen.update(current)
         if pids()<=seen:print('QUIESCENT');sys.exit(0)
     raise RuntimeError('unstable process list')
-except Exception:
+except Exception as problem:
+    reason=str(problem) if isinstance(problem,RuntimeError) else type(problem).__name__
+    print('workspace-proof: '+reason[:120],file=sys.stderr)
     sys.exit(2)
 `;
 /** A command group can exit while a detached descendant still holds the checkout. */
-function workspaceQuiescent(workspace,{stateDir=path.dirname(workspace),env=process.env,inspect=execFileSync,platform=process.platform}={}) {
+function workspaceQuiescent(workspace,{stateDir=path.dirname(workspace),env=process.env,inspect=execFileSync,platform=process.platform,onFailure=()=>{}}={}) {
   try{
     const mac=platform==="darwin";
     const output=inspect(mac?"/usr/bin/python3":"lsof",mac?["-c",MAC_WORKSPACE_PROOF,workspace]:["-n","-P","+D",workspace],{
       cwd:stateDir,env:{PATH:env.PATH,HOME:stateDir,LANG:"C",LC_ALL:"C"},encoding:"utf8",stdio:["ignore","pipe","pipe"],timeout:30000,maxBuffer:2*1024*1024,
     });
-    return mac?String(output).trim()==="QUIESCENT":!String(output).trim();
-  }catch(error){return platform!=="darwin"&&error.status===1&&!String(error.stdout||"").trim()&&!String(error.stderr||"").trim();}
+    const quiet=mac?String(output).trim()==="QUIESCENT":!String(output).trim();
+    if(!quiet)onFailure(String(output).trim()==="BUSY"?"live workspace holder":"unexpected native scan output");
+    return quiet;
+  }catch(error){
+    if(platform!=="darwin"&&error.status===1&&!String(error.stdout||"").trim()&&!String(error.stderr||"").trim())return true;
+    const reason=/^workspace-proof: ([a-zA-Z0-9 _:-]{1,120})\s*$/.exec(String(error.stderr||""));
+    onFailure(error.code==="ETIMEDOUT"?"native scan timed out":reason?reason[1]:"native scan unavailable");
+    return false;
+  }
 }
 const delay=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
 function groupQuiescent(group) {

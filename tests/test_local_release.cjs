@@ -311,6 +311,24 @@ test("workspace native proof is bounded, fail-closed and receives no credentials
   assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"linux",inspect:()=>{throw Object.assign(new Error("no handles"),{status:1,stdout:"",stderr:""});}}),true);
 });
 
+test("native scan failures retain a bounded reason without trusting arbitrary stderr",()=>{
+  for(const [inspect,expected] of [
+    [()=>"BUSY\n","live workspace holder"],
+    [()=>"unexpected output","unexpected native scan output"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: incomplete cwd scan\n"});},"incomplete cwd scan"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: unstable process list\n"});},"unstable process list"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: incomplete fd scan\n"});},"incomplete fd scan"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: incomplete mapping scan\n"});},"incomplete mapping scan"],
+    [()=>{throw Object.assign(new Error("timed out"),{code:"ETIMEDOUT"});},"native scan timed out"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: "+"x".repeat(121)});},"native scan unavailable"],
+    [()=>{throw Object.assign(new Error("scan failed"),{status:2,stderr:"workspace-proof: incomplete fd scan\nprivate diagnostic content"});},"native scan unavailable"],
+  ]){
+    const reasons=[];
+    assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"darwin",inspect,onFailure:reason=>reasons.push(reason)}),false);
+    assert.deepEqual(reasons,[expected]);
+  }
+});
+
 test("Pages reuses the native proof and keeps its live-owner PID guard",()=>{
   const script=path.resolve(__dirname,"../scripts/local-release/pages.cjs"),invocation=pagesInvocation(script,["--cleanup"]);
   assert.equal(invocation[0],process.execPath);assert.equal(invocation[1],"-e");assert.deepEqual(invocation.slice(3),["--","--cleanup"]);
