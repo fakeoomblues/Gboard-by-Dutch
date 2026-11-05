@@ -199,6 +199,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Read full articles | On | 2.6.8 |
 | Skip consent screens | On | 2.6.8 |
 
+## Gboard
+
+[What do the patches change?](../apps/gboard.md)
+
+`com.google.android.inputmethod.latin`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Change package name | On | 18.5.11.993608717-release-arm64-v8a |
+| Custom branding | Off | 18.5.11.993608717-release-arm64-v8a |
+| Parakeet voice typing | On | 18.5.11.993608717-release-arm64-v8a |
+
 ## Gearslip
 
 [What do the patches change?](../apps/gearslip.md)
@@ -786,4 +798,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

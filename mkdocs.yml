@@ -185,6 +185,7 @@ nav:
       - Other apps:
           - apps/other/index.md
           - apps/2dehands.md
+          - apps/gboard.md
           - apps/monet.md
           - apps/marktplaats.md
           - apps/projectivy.md

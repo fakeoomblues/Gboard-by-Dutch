@@ -22,6 +22,7 @@ APP_PAGES = {
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.myspoti.stable': ('myspoti', 'entertainment'),
     'com.soundcloud.android': ('soundcloud', 'entertainment'),
+    'com.google.android.inputmethod.latin': ('gboard', 'other'),
     'app.vela': ('vela', 'mobility'),
     'com.google.android.apps.maps': ('google-maps', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
