@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3a5bd57fc759c805f447a5bf579828bef0835468/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [3a5bd57fc759](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/3a5bd57fc759c805f447a5bf579828bef0835468). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.43.0...v1.43.1) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** render the Nieuws shelf as titled headline-led cards ([3a5bd57](https://gitlab.com/johninnld/nl-morphe-patches/commit/3a5bd57fc759c805f447a5bf579828bef0835468))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/ebd57d1ec04c16716f371933bb53da8c69e9394d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.43.0.**
