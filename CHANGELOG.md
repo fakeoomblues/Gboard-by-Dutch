@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/ebd57d1ec04c16716f371933bb53da8c69e9394d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.43.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [ebd57d1ec04c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/ebd57d1ec04c16716f371933bb53da8c69e9394d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.43.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.42.0...v1.43.0) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **AD:** render Nieuws as native headline-led cards with article artwork ([8554500](https://gitlab.com/johninnld/nl-morphe-patches/commit/8554500ce9a22b5ebfa388834c5562d3a59e8e01))
+
+### ✨ New Features
+
+* **Gboard:** add on-device Parakeet voice typing ([ebd57d1](https://gitlab.com/johninnld/nl-morphe-patches/commit/ebd57d1ec04c16716f371933bb53da8c69e9394d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/19778ddbc04cf63741a9ffe27b6e074a0536d418/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.42.0.**
