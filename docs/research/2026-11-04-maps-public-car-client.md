@@ -481,3 +481,20 @@ completion, binding failure/death and timeout. Checkpoint18 passed the canonical
 Android component and actual Maps patch/sign/alignment checks; its owned build
 checkout and scratch were removed. Real-AA reconnect/stop acceptance of this
 batch remains required before calling this a runtime fix.
+
+Checkpoint19 includes GitLab main v1.40.1 (`be0babad`) in verified feature source
+`4db1e5d`. It passed the complete `scripts/local-release/verify.cjs` command set
+without omitting commands or substituting a smaller reused subset. Main's
+upstream macOS cleanup correction resolves the previously failing local-release
+gate. The actual Maps input patched with all five expected patches and no
+failures, then passed signing/alignment. Owned build checkout/scratch cleanup
+passed. The signed engineering MPP SHA-256 is
+`8b379f9cfdcd6b685dee8acb34a93062f4d09d8a7218b3845d60efec3c2cc31e`.
+No stable release or physical-phone operation was performed.
+
+The separate Vela route attempt (run29) stopped before app acceptance: genuine
+AA17 selected native `Material3SettingsActivity`, while the existing setup
+command required the legacy `recycler_view`. It restored its baseline, stopped
+the emulator and cleaned storage. A named setup-selector correction is pending
+owner approval under the tooling freeze; new-owner reconnect/stop and remaining
+app/profile/input/alerting acceptance stay open.
