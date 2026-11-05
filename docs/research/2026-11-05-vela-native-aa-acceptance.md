@@ -11,9 +11,9 @@ later global coverage failure. The complete run and the full all-app objective
 remain incomplete.
 
 Reconnecting at 800x480 returned the car UI to browsing, without its route/turn
-card. That frame also predates the later coverage loss. Compare the original
-app's route/disconnect behavior before changing Vela: its native behavior has
-not yet been established for this transition. Tall-profile, 240dpi, complete
+card. That frame predates the later coverage loss. Original-signed route
+control55 reproduced the same transition; this case matches native behavior
+and does not require a patch fix. Tall-profile, 240dpi, complete
 controls/scrolling/rotary/Back and external-warning audio modes remain open.
 No source, observer, runner or application policy was changed in these checks.
 
@@ -88,3 +88,36 @@ runtimes, removed forwards and owned snapshots, and archived/removed scratch.
 CleanupRequired=false. The initialized baseline and original inputs remain.
 No physical phone was touched. The private review index contains exact
 receipts, native methods/encoder evidence, screenshots and speech correlation.
+
+
+## Original route/reconnect comparison closed
+
+Control55 used the same original signed input and native precise-location
+prompt, searched for the same Lake Mendocino North Ramp destination, started
+native guidance at1280x480 and supplied the same fresh4m/s GPS fixes. The
+original turn card and route were captured before disconnect. After genuine
+DHU disconnect/reconnect at800x480, original Vela returned to browsing with
+no guidance card, matching patched54. Do not add route keepalive or screen
+restoration code for this matched transition. This does not establish every
+possible native lifecycle mode or replace the remaining profile/input checks.
+
+Original Vela retained the existing CLI native crash/exit attachment throughout;
+AA/TTS and other exercised targets used the unchanged coordinator without
+coverage loss. The unrelated background Waze process was intentionally stopped
+with the existing expected-stop marker before standalone Vela route stimuli.
+No provider/API warning session was selected or stopped by that operation.
+The control ended inside its four-minute app window and eight-minute overall
+limit. Exact installed hashes, state/GPS restoration, runtime stop and scratch
+cleanup passed. Private `vela-original-route-reconnect55.json` and paired
+screenshots preserve the comparison.
+
+GitLab main advanced to v1.43.2 at
+`0bf19c7d2c6e86988d2e5d3d84f4b06edd04395e`; merge
+`17d395c6191c01739515071d2047de188cb4f295` preserves the feature history.
+The navigation target source is unchanged from the previous main cohort.
+Complete canonical verification29 passed on the merge, including new upstream
+modules, and its owned build workspace was cleaned. All five navigation
+extension payloads are byte-identical to checkpoint28, preserving existing APK
+and scoped runtime evidence. Signed engineering MPP SHA-256:
+`81882de2ae4f1289f96042743dadc39858396cb8e3b56d9f393d0de911588fe6`.
+No stable release or main promotion occurred.
