@@ -4,11 +4,11 @@ The enforceable rules are in [AGENTS.md](AGENTS.md). This file contains the setu
 
 ## What runs locally
 
-A user LaunchAgent periodically invokes the local release watcher. The first successful invocation baselines the existing `main` and `dev` heads without publishing historical work. Later approved branch updates run the complete local verification, build/sign and publication flow. Feature branches never publish.
+A user LaunchAgent periodically invokes the local release watcher. The first successful invocation baselines the existing `main` head without publishing historical work. Later approved branch updates run the complete local verification, build/sign and publication flow. Feature branches never publish. The dev prerelease channel is retired; `main` is the only maintained release channel.
 
 GitLab is the source/version authority. One canonical signed MPP is published to GitLab, then the same published bytes are mirrored to Codeberg and GitGud in parallel. Each destination is authenticated separately and its public download is verified. No mirror selects another version, rewrites source metadata or force-pushes conflicting refs.
 
-Every `main` release also rebuilds and publishes the production Pages site from committed release metadata. Main documentation-only/no-release updates may refresh the site too. `dev` never replaces the production website. GitLab Pages requires a Pages job, so that small tagged job runs on this Mac's protected project runner; it does not consume shared-runner minutes. The build/test/release watcher itself is independent of hosted runners.
+Every `main` release also rebuilds and publishes the production Pages site from committed release metadata. Main documentation-only/no-release updates may refresh the site too. GitLab Pages requires a Pages job, so that small tagged job runs on this Mac's protected project runner; it does not consume shared-runner minutes. The build/test/release watcher itself is independent of hosted runners.
 
 Docker is optional for an additional Linux check. The existing macOS Android SDK and emulator remain the native Android test environment.
 
@@ -33,11 +33,10 @@ That command previews verification; normal publication still requires the establ
 | Branch | Publication |
 | --- | --- |
 | `main` | Stable releases |
-| `dev` | `dev` prereleases |
 
 `.releaserc` and `.gitlab/gitlab-com.release.config.cjs` own version selection, release notes, generated catalogues and release files. Do not bump generated versions manually. Required approval for unapproved app changes happens before promotion to `main`; the watcher automatically publishes approved updates afterward.
 
-Both local automation and optional cloud CI use `scripts/local-release/verify.cjs`. It retains identity/history and release-policy tests, Python regressions, patch build/tests and all applicable extension unit tests through Gradle's aggregate `testDebugUnitTest` task, Medium bundle/tests and strict bilingual documentation/link checks. This supports the different modules on main and dev without merging app changes between them. Tests and builds use isolated flow-owned checkouts. `LOCAL_RELEASE_PYTHON` selects the documentation Python environment; `LOCAL_RELEASE_GRADLE_OFFLINE=true` restricts Gradle to cached dependencies.
+Both local automation and optional cloud CI use `scripts/local-release/verify.cjs`. It retains identity/history and release-policy tests, Python regressions, patch build/tests and all applicable extension unit tests through Gradle's aggregate `testDebugUnitTest` task, Medium bundle/tests and strict bilingual documentation/link checks. Tests and builds use isolated flow-owned checkouts. `LOCAL_RELEASE_PYTHON` selects the documentation Python environment; `LOCAL_RELEASE_GRADLE_OFFLINE=true` restricts Gradle to cached dependencies.
 
 ## Private files: keep these out of Git
 
@@ -131,13 +130,6 @@ node scripts/local-release/flow.cjs --config "$CONFIG" --branch main
 node scripts/local-release/flow.cjs --config "$CONFIG" --branch main --publish
 ```
 
-Development (`dev`):
-
-```bash
-node scripts/local-release/flow.cjs --config "$CONFIG" --branch dev
-node scripts/local-release/flow.cjs --config "$CONFIG" --branch dev --publish
-```
-
 Branch commands preview by default. Preview never invokes tagged recovery, mirror publication or production Pages. `--publish` is explicit. The installed watcher uses `--watch-once` and serializes jobs. A failed head remains recorded, not rebuilt every polling interval; after diagnosing its cause, use `--retry-failed` deliberately.
 
 ## Cleanup and recovery
@@ -154,6 +146,6 @@ Do not edit generated versions or delete failure state to hide an error. Diagnos
 
 ## Optional hosted fallback
 
-Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with the `run_cloud_ci` input set to `true` retains the complete fallback; protected main/dev publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.
+Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with the `run_cloud_ci` input set to `true` retains the complete fallback; protected main publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.
 
 The separate API path supplies the validated `run_local_pages=true` and `expected_pages_sha` pipeline inputs. The YAML derives the job's `RUN_LOCAL_PAGES` and `EXPECTED_PAGES_SHA` environment variables from those inputs. It is restricted to the tagged protected Mac project runner, not shared runners. Keep arbitrary pipeline-variable overrides disabled; the controller does not require that permission. A skipped/canceled hosted pipeline is never reported as a passing verification run; retain the local source-SHA receipt instead.

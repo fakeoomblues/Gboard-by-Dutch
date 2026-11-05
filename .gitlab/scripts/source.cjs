@@ -8,7 +8,7 @@ const {BASE, REPOSITORY, NAME} = require("./api.cjs");
 const {verifyPublisher} = require("./identity.cjs");
 const REMOTE = `${BASE}/${REPOSITORY}.git`;
 async function publishMetadata(manifest, branch, {env = process.env} = {}) {
-  if (!["main", "dev"].includes(branch)) throw new Error("Invalid metadata channel");
+  if (branch !== "main") throw new Error("Invalid metadata channel");
   await verifyPublisher({env});
   git.verifyGitIdentity({env});
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), `${NAME.toLowerCase()}-source-`));

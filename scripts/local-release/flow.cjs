@@ -95,7 +95,7 @@ function refreshCache(config,stateDir,env) {
   else {
     if(fs.lstatSync(cache).isSymbolicLink() || git(["rev-parse","--is-bare-repository"],{cwd:cache,env})!=="true" || git(["config","remote.origin.url"],{cwd:cache,env})!==config.remoteUrl)throw new Error("Unowned or unexpected bare cache");
   }
-  git(["fetch","--prune","--tags","origin","+refs/heads/main:refs/heads/main","+refs/heads/dev:refs/heads/dev"],{cwd:cache,env});
+  git(["fetch","--prune","--tags","origin","+refs/heads/main:refs/heads/main"],{cwd:cache,env});
   return cache;
 }
 function sourceTemplates(cache,head,env,branch) {
@@ -108,7 +108,7 @@ function sourceTemplates(cache,head,env,branch) {
   const publisher=content(".gitlab/scripts/publish_release.cjs");
   if(!publisher.includes("--local")||!publisher.includes("--dry-run"))throw new Error("Approved source needs the local/preview publisher entry point");
   const branches=JSON.parse(content(".releaserc")).branches;
-  if(!branches.includes("main")||!branches.some(branch=>branch.name==="dev"&&branch.prerelease==="dev"&&branch.channel==="dev"))throw new Error("Source semantic-release branches do not match main/dev templates");
+  if(!branches.includes("main")||branches.some(branch=>branch.name==="dev"))throw new Error("Source semantic-release branches do not match the maintained main-only templates");
 }
 function checkout({cache,stateDir,owner,branch,head,id,env}) {
   const directory=path.join(stateDir,"workspaces",id);fs.mkdirSync(directory,{mode:0o700});
@@ -513,7 +513,7 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
         receipt.publication=JSON.parse(redactor(env)(JSON.stringify(outcome)));writeJson(receiptFile,receipt);
         const published=context.publish&&outcome.published!==false;
         if(published) {
-          if(!outcome.version||!(name==="dev"?/^\d+\.\d+\.\d+-dev\.\d+$/:/^\d+\.\d+\.\d+$/).test(outcome.version))throw new Error("Publisher receipt version/channel mismatch");
+          if(!outcome.version||!/^\d+\.\d+\.\d+$/.test(outcome.version))throw new Error("Publisher receipt version/channel mismatch");
           await deps.discover(context);
         }
         const poststeps=[];

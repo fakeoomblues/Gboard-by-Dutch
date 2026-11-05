@@ -80,7 +80,7 @@ function install({configPath, home = os.homedir(), node = process.execPath, sour
     fs.writeFileSync(path.join(stagedTooling,".installed.json"),JSON.stringify({label:LABEL,hashes},null,2)+"\n",{mode:0o600,flag:"wx"});
     const stagedPlist=path.join(stage,`${LABEL}.plist`);fs.writeFileSync(stagedPlist,plan.plist,{mode:0o600,flag:"wx"});
     const templates=JSON.parse(fs.readFileSync(path.join(stagedTooling,"templates.json"),"utf8"));
-    if(Object.keys(templates).sort().join(",")!=="dev,main"||templates.main?.branch!=="main"||templates.main?.prerelease!==false||templates.main?.channel!==null||templates.dev?.branch!=="dev"||templates.dev?.prerelease!=="dev"||templates.dev?.channel!=="dev")throw new Error("Staged templates must declare only main/dev release channels");
+    if(Object.keys(templates).sort().join(",")!=="main"||templates.main?.branch!=="main"||templates.main?.prerelease!==false||templates.main?.channel!==null)throw new Error("Staged templates must declare only the main release channel");
     JSON.parse(fs.readFileSync(path.join(stagedTooling,".installed.json"),"utf8"));
     for(const name of FILES.filter(name=>name.endsWith(".cjs")))if(run(node,["--check",path.join(stagedTooling,name)],{encoding:"utf8"}).status!==0)throw new Error("Staged JavaScript validation failed: "+name);
     if(run("plutil",["-lint",stagedPlist],{encoding:"utf8"}).status!==0)throw new Error("Generated LaunchAgent failed plist validation");

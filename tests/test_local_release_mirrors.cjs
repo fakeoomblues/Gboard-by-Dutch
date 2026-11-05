@@ -15,7 +15,7 @@ function fixture(t,branch="main"){
   const alternateZip=Buffer.alloc(22);alternateZip.writeUInt32LE(0x06054b50);alternateZip[4]=1;
   const alternateSignature=crypto.sign(null,Buffer.concat([Buffer.from("MorpheSig1"),crypto.createHash("sha256").update(alternateZip).digest()]),privateKey);
   const alternateComment=Buffer.from(`MorpheSig1 ${key} ${alternateSignature.toString("base64")}`);alternateZip.writeUInt16LE(alternateComment.length,20);const alternateBytes=Buffer.concat([alternateZip,alternateComment]);
-  const head="a".repeat(40),tagSha="b".repeat(40),version=branch==="dev"?"1.2.3-dev.1":"1.2.3",tag=`v${version}`,filename=`patches-${version}.mpp`;
+  const head="a".repeat(40),tagSha="b".repeat(40),version="1.2.3",tag=`v${version}`,filename=`patches-${version}.mpp`;
   const receipt={version,branch};const manifest={version,public_key:key,description:"Canonical GitLab notes",download_url:`https://gitlab.com/johninnld/nl-morphe-patches/-/releases/${tag}/downloads/${filename}`};
   fs.mkdirSync(path.join(cwd,"build/release-safety"),{recursive:true});fs.mkdirSync(path.join(cwd,"patches/build/libs"),{recursive:true});
   fs.writeFileSync(path.join(cwd,"build/release-safety/gitlab-result.json"),JSON.stringify(receipt));fs.writeFileSync(path.join(cwd,"patches-bundle.json"),JSON.stringify(manifest));fs.writeFileSync(path.join(cwd,"morphe-signing.pub"),key);fs.writeFileSync(path.join(cwd,"patches/build/libs",filename),bytes);
@@ -99,8 +99,8 @@ test("wrong owners, insufficient GitGud scope and feature/channel mismatches are
   assert.equal((await api().preflight(options(f,{request}))).complete,false);
   const scoped=async(name,endpoint,options)=>endpoint==="/personal_access_tokens/self"?{scopes:["read_api"]}:f.request(name,endpoint,options);
   assert.equal((await api().preflight(options(f,{request:scoped}))).targets.gitgud.status,"rejected");
-  const git=(args,opts)=>args[0]==="branch"?"feature/work":f.git(args,opts);await assert.rejects(api().mirrorReleases(options(f,{git})),/main.*dev/);
-  fs.writeFileSync(path.join(f.cwd,"build/release-safety/gitlab-result.json"),JSON.stringify({...f.receipt,branch:"dev"}));await assert.rejects(api().mirrorReleases(options(f)),/channel|branch/);
+  const git=(args,opts)=>args[0]==="branch"?"feature/work":f.git(args,opts);await assert.rejects(api().mirrorReleases(options(f,{git})),/Only main/);
+  fs.writeFileSync(path.join(f.cwd,"build/release-safety/gitlab-result.json"),JSON.stringify({...f.receipt,branch:"dev"}));await assert.rejects(api().mirrorReleases(options(f)),/branch\/channel\/version mismatch/);
 });
 test("a conflicting existing signed asset is never replaced",async t=>{
   const f=fixture(t);await api().mirrorReleases(options(f));const changed=Buffer.from(f.bytes);changed[4]^=1;
@@ -132,8 +132,8 @@ test("uncommitted canonical metadata and preview receipts cannot publish or reta
   await assert.rejects(api().mirrorReleases(options(f)),/preview/i);
   assert.equal(f.calls.filter(row=>row.kind==="git"&&row.args[0]==="push"||row.method&&row.method!=="GET").length,writes);
 });
-test("dev prereleases retain their channel and no-release receipts perform no mirror writes",async t=>{
-  const f=fixture(t,"dev");assert.equal((await api().mirrorReleases(options(f))).complete,true);assert.equal(f.targets.codeberg.release.prerelease,true);
+test("no-release receipts perform no mirror writes",async t=>{
+  const f=fixture(t);assert.equal((await api().mirrorReleases(options(f))).complete,true);assert.equal(f.targets.codeberg.release.prerelease,false);
   fs.writeFileSync(path.join(f.cwd,"build/release-safety/gitlab-result.json"),JSON.stringify({published:false}));
   const before=f.calls.length,result=await api().mirrorReleases(options(f));assert.equal(result.skipped,"no-release");
   assert.ok(!f.calls.slice(before).some(row=>row.kind==="api"||row.args?.[0]==="push"));

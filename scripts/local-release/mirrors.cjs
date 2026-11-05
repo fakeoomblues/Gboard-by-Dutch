@@ -73,7 +73,7 @@ function remoteRefs(name,context,patterns){
 }
 function sourceContext({cwd=process.cwd(),env=process.env,git=defaultGit,request,download,canonicalDownload=downloadCanonical}={}){
   const options={cwd,env},branch=git(["branch","--show-current"],options);
-  if(!["main","dev"].includes(branch))throw new Error("Only main/dev can publish release mirrors");
+  if(branch!=="main")throw new Error("Only main can publish release mirrors");
   const head=git(["rev-parse","HEAD"],options);if(!SHA.test(head))throw new Error("Invalid canonical source head");
   if(git(["rev-parse","--is-shallow-repository"],options)!=="false")throw new Error("Mirror identity audit requires complete, non-shallow history");
   for(const role of ["AUTHOR","COMMITTER"])if(!git(["var",`GIT_${role}_IDENT`],options).startsWith("johninnl <349981574+johninnl@users.noreply.github.com> "))throw new Error("Mirror Git identity must be johninnl");
@@ -148,7 +148,7 @@ function canonicalRelease(context){
   if(receipt.published===false)return null;
   const manifest=read("patches-bundle.json"),version=receipt.version;
   if(JSON.stringify(JSON.parse(context.git(["show","HEAD:patches-bundle.json"],{cwd:context.cwd,env:context.env})))!==JSON.stringify(manifest))throw new Error("Canonical manifest differs from committed release metadata");
-  if(receipt.branch!==context.branch||!(context.branch==="dev"?/^\d+\.\d+\.\d+-dev\.\d+$/:/^\d+\.\d+\.\d+$/).test(version)||manifest.version!==version)throw new Error("Canonical release branch/channel/version mismatch");
+  if(receipt.branch!==context.branch||!/^\d+\.\d+\.\d+$/.test(version)||manifest.version!==version)throw new Error("Canonical release branch/channel/version mismatch");
   const tag=`v${version}`,filename=`patches-${version}.mpp`,gitOptions={cwd:context.cwd,env:context.env};
   const tagSha=context.git(["rev-parse",`refs/tags/${tag}`],gitOptions);
   if(!SHA.test(tagSha)||context.git(["rev-parse",`refs/tags/${tag}^{commit}`],gitOptions)!==context.head)throw new Error("Canonical release tag is not at this source commit");
@@ -175,9 +175,9 @@ async function codebergRelease(context,source){
   const destination=TARGETS.codeberg,endpoint=`/repos/${destination.repository}/releases`,request=(url,options)=>context.request("codeberg",url,options);
   const url=`${destination.base}/${destination.repository}/releases/download/${source.tag}/${source.filename}`;
   let release=await request(`${endpoint}/tags/${encodeURIComponent(source.tag)}`);
-  const valid=value=>{if(value?.tag_name!==source.tag||value.author?.login!==destination.owner||value.prerelease!==(context.branch==="dev"))throw new Error("Codeberg release owner/tag/channel mismatch");};
+  const valid=value=>{if(value?.tag_name!==source.tag||value.author?.login!==destination.owner||value.prerelease!==false)throw new Error("Codeberg release owner/tag/channel mismatch");};
   if(release)valid(release);
-  else{release=await request(endpoint,{method:"POST",body:{tag_name:source.tag,target_commitish:context.head,name:`Dutch App Patches ${source.version}`,body:source.notes,draft:true,prerelease:context.branch==="dev"}});valid(release);}
+  else{release=await request(endpoint,{method:"POST",body:{tag_name:source.tag,target_commitish:context.head,name:`Dutch App Patches ${source.version}`,body:source.notes,draft:true,prerelease:false}});valid(release);}
   const assets=await request(`${endpoint}/${release.id}/assets`),matches=assets.filter(asset=>asset.name===source.filename);
   if(matches.length>1)throw new Error("Codeberg has duplicate conflicting assets");
   let asset=matches[0];

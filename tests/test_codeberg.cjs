@@ -51,7 +51,7 @@ test("Codeberg semantic config preserves app scopes and exact Git identity guard
   const config = require("../.forgejo/release.config.cjs");
   const plugins = config.plugins.map(p => Array.isArray(p) ? p[0] : p);
   assert.equal(config.repositoryUrl, `https://codeberg.org/${REPOSITORY}.git`);
-  assert.deepEqual(config.branches, ["main", {name: "dev", prerelease: "dev", channel: "dev"}]);
+  assert.deepEqual(config.branches, ["main"]);
   assert.equal(plugins[plugins.indexOf("./.github/scripts/public_git.cjs") - 1], "./.forgejo/scripts/identity.cjs");
   assert.ok(plugins.includes("./.github/scripts/verify_release_notes.cjs"));
   assert.ok(plugins.includes("./.forgejo/scripts/changelog.cjs"));

@@ -19,7 +19,7 @@ function signedFixture() {
 test("GitLab chooses versions with existing source guards and never loads another forge publisher", () => {
   const config=require("../.gitlab/gitlab-com.release.config.cjs");
   assert.equal(config.repositoryUrl,"https://gitlab.com/johninnld/nl-morphe-patches.git");
-  assert.deepEqual(config.branches,["main",{name:"dev",prerelease:"dev",channel:"dev"}]);
+  assert.deepEqual(config.branches,["main"]);
   const plugins=config.plugins.map(p=>Array.isArray(p)?p[0]:p);
   assert.ok(plugins.includes("./.github/scripts/verify_release_notes.cjs"));
   assert.equal(plugins[plugins.indexOf("./.github/scripts/public_git.cjs")-1],"./.gitlab/scripts/identity.cjs");
@@ -134,7 +134,7 @@ test("GitLab anonymous downloads and discovery reject wrong hosts, channels and 
   const release={tag_name:"v1.2.3",author:{username:"johninnld"},assets:{links:[{name:"patches-1.2.3.mpp",url:"https://gitlab.com/api/v4/projects/johninnld%2Fnl-morphe-patches/packages/generic/morphe-patches/1.2.3/patches-1.2.3.mpp"}]}};
   const options={branch:"main",version:"1.2.3",publicKey:key};
   assert.ok(verifyDiscovery(manifest,release,options).url.includes("gitlab.com"));
-  assert.throws(()=>verifyDiscovery(manifest,release,{...options,branch:"dev"}),/channel/);
+  assert.throws(()=>verifyDiscovery(manifest,release,{...options,branch:"dev"}),/channel|Version/);
   assert.throws(()=>verifyDiscovery({...manifest,public_key:signedFixture().key},release,options),/signing/);
   assert.throws(()=>verifyDiscovery(manifest,{...release,author:{username:"bot"}},options),/source/);
 });
@@ -146,11 +146,11 @@ function publisherFixture(t, branch="main") {
   const receipt=()=>JSON.parse(fs.readFileSync(path.join(cwd,"build/release-safety/gitlab-result.json"),"utf8"));
   return {cwd,receipt};
 }
-test("local main/dev releases check the remote before running the unchanged signed release configuration", async t => {
+test("local releases check the remote before running the unchanged signed release configuration", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");
-  for(const branch of ["main","dev"]){
+  for(const branch of ["main"]){
     const {cwd,receipt}=publisherFixture(t,branch);const calls=[];
-    const version=branch==="main"?"1.2.4":"1.2.4-dev.1";
+    const version="1.2.4";
     const result=await main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},
       verifyHead:checked=>{assert.equal(checked,branch);calls.push("head");},
       release:async(options,context)=>{
@@ -171,14 +171,14 @@ test("hosted publication retains semantic-release CI defaults", async t => {
 test("dry-run records selected and unselected previews without invoking tagged recovery", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");
   for(const selected of [true,false]){
-    const {cwd,receipt}=publisherFixture(t,"dev");
+    const {cwd,receipt}=publisherFixture(t,"main");
     const result=await main(["--local","--dry-run"],{cwd,env:{GITLAB_TOKEN:"fixture"},
       verifyHead:()=>assert.fail("Preview must not enter publication guards or recovery"),
       release:async(options)=>{
         assert.equal(options.ci,false);assert.equal(options.dryRun,true);
-        return selected?{nextRelease:{version:"1.2.4-dev.1"}}:false;
+        return selected?{nextRelease:{version:"1.2.4"}}:false;
       },recover:async()=>assert.fail("A preview must never publish a tagged release")});
-    const expected={preview:true,published:false,branch:"dev",...(selected?{version:"1.2.4-dev.1"}:{})};
+    const expected={preview:true,published:false,branch:"main",...(selected?{version:"1.2.4"}:{})};
     assert.deepEqual(result,expected);assert.deepEqual(receipt(),expected);
   }
 });
@@ -192,8 +192,8 @@ test("dry-run is respected without local mode", async t => {
 test("feature branches and unknown options are refused before release or recovery", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t,"feature/test");
   const deps={cwd,env:{GITLAB_TOKEN:"fixture"},release:async()=>assert.fail("Feature publication"),recover:async()=>assert.fail("Feature recovery"),verifyHead:()=>assert.fail("Unexpected remote lookup")};
-  await assert.rejects(main(["--local"],deps),/Only main\/dev/);
-  await assert.rejects(main(["--local","--dry-run"],deps),/Only main\/dev/);
+  await assert.rejects(main(["--local"],deps),/Only main/);
+  await assert.rejects(main(["--local","--dry-run"],deps),/Only main/);
   await assert.rejects(main(["--preview"],deps),/Unknown option/);
 });
 test("stale release checkouts fail before semantic-release or tagged recovery", async t => {
@@ -222,7 +222,7 @@ test("a remote advance during no-release analysis blocks recovery publication", 
   assert.equal(checks,2);
 });
 test("the default local head guard compares the selected checkout to its exact GitLab branch", async t => {
-  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t,"dev");
+  const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t,"main");
   const env={...process.env,GITLAB_TOKEN:"fixture",GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com"};
   execFileSync("git",["-c","commit.gpgsign=false","commit","--allow-empty","-m","test: source head fixture"],{cwd,env,stdio:"pipe"});
   const source=execFileSync("git",["rev-parse","HEAD"],{cwd,encoding:"utf8"}).trim();
@@ -230,12 +230,12 @@ test("the default local head guard compares the selected checkout to its exact G
   const exec=(file,args,options)=>{
     if(args[0]==="ls-remote"){
       assert.equal(file,"git");assert.equal(options.cwd,cwd);
-      assert.deepEqual(args,["ls-remote","https://gitlab.com/johninnld/nl-morphe-patches.git","refs/heads/dev"]);
-      calls.push("remote");return `${remote}\trefs/heads/dev\n`;
+      assert.deepEqual(args,["ls-remote","https://gitlab.com/johninnld/nl-morphe-patches.git","refs/heads/main"]);
+      calls.push("remote");return `${remote}\trefs/heads/main\n`;
     }
     return execFileSync(file,args,options);
   };
-  const release=async()=>{calls.push("release");return {nextRelease:{version:"1.2.4-dev.1"}};};
+  const release=async()=>{calls.push("release");return {nextRelease:{version:"1.2.4"}};};
   await main(["--local"],{cwd,env,exec,release});assert.deepEqual(calls,["remote","release"]);
   remote="b".repeat(40);calls.length=0;
   await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Stale release checkout/);assert.deepEqual(calls,["remote"]);
@@ -243,7 +243,7 @@ test("the default local head guard compares the selected checkout to its exact G
   await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Cannot verify the current GitLab source head/);
 });
 test("local SSH publication safely quotes its key and checks the same SSH remote",async t=>{
-  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t,"dev"),head="a".repeat(40);
+  const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t,"main"),head="a".repeat(40);
   const sshUrl="git@gitlab.com:johninnld/nl-morphe-patches.git",key="/private/keys/GitLab user's identity";
   const env={GITLAB_TOKEN:"api-fixture",GITLAB_SSH_KEY:key,GIT_SSH:"inherited-ssh",GIT_SSH_COMMAND:"inherited-command",GIT_CONFIG_COUNT:"1",GIT_CONFIG_KEY_0:"http.https://other.invalid/.extraheader",GIT_CONFIG_VALUE_0:"old-header-fixture"};
   const sshEnv=value=>{
@@ -254,12 +254,12 @@ test("local SSH publication safely quotes its key and checks the same SSH remote
   };
   const seen=[],exec=(command,args,options)=>{
     assert.equal(command,"git");
-    if(args[0]==="branch")return "dev\n";
+    if(args[0]==="branch")return "main\n";
     sshEnv(options.env);if(args[0]==="rev-parse")return head;
-    assert.deepEqual(args,["ls-remote",sshUrl,"refs/heads/dev"]);seen.push("head");return `${head}\trefs/heads/dev\n`;
+    assert.deepEqual(args,["ls-remote",sshUrl,"refs/heads/main"]);seen.push("head");return `${head}\trefs/heads/main\n`;
   };
   await main(["--local"],{cwd,env,exec,authenticate:()=>assert.fail("SSH refs must not require HTTPS Git authentication"),release:async(options,context)=>{
-    assert.equal(options.repositoryUrl,sshUrl);assert.equal(options.ci,false);sshEnv(context.env);seen.push("release");return {nextRelease:{version:"1.2.4-dev.1"}};
+    assert.equal(options.repositoryUrl,sshUrl);assert.equal(options.ci,false);sshEnv(context.env);seen.push("release");return {nextRelease:{version:"1.2.4"}};
   }});
   assert.deepEqual(seen,["head","release"]);
 });

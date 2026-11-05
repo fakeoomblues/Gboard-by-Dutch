@@ -21,8 +21,8 @@ async function recoverTaggedRelease(branch, {cwd = process.cwd(), env = process.
   build = () => exec("./gradlew", [":patches:buildAndroid", "--no-daemon", "-Dorg.gradle.jvmargs=-Xmx2g"], {cwd, env, stdio: "inherit"}),
   publish = require("./publish.cjs").publish} = {}) {
   const manifest = JSON.parse(fs.readFileSync(path.join(cwd, "patches-bundle.json"), "utf8"));
-  const pattern = branch === "dev" ? /^\d+\.\d+\.\d+-dev\.\d+$/ : /^\d+\.\d+\.\d+$/;
-  if (!["main", "dev"].includes(branch) || !pattern.test(manifest.version)) throw new Error("Tagged source channel/version mismatch");
+  const pattern = /^\d+\.\d+\.\d+$/;
+  if (branch !== "main" || !pattern.test(manifest.version)) throw new Error("Tagged source channel/version mismatch");
   const tag = `v${manifest.version}`;
   const tags = exec("git", ["tag", "--points-at", "HEAD"], {cwd, env, encoding: "utf8"}).trim().split("\n");
   if (!tags.includes(tag)) return null;
@@ -52,7 +52,7 @@ async function main(argv = process.argv.slice(2), {cwd = process.cwd(), env = pr
   const baseEnv={...env,GITLAB_REPOSITORY:REPOSITORY,GITHUB_REPOSITORY:REPOSITORY,GITLAB_DESTINATION:"gitlab"},ssh=local&&!!env.GITLAB_SSH_KEY;
   const sshEnv=ssh?localSshAuth(baseEnv):null;
   const branch = exec("git", ["branch", "--show-current"], {cwd, env:sshEnv||env, encoding: "utf8"}).trim();
-  if (!["main", "dev"].includes(branch)) throw new Error("Only main/dev can publish");
+  if (branch !== "main") throw new Error("Only main can publish");
   const releaseEnv = sshEnv||authenticate(baseEnv);
   const options = {...require("../gitlab-com.release.config.cjs"), ...(local ? {ci: false} : {}), ...(preview ? {dryRun: true} : {}), ...(ssh?{repositoryUrl:SSH_URL}:{})};
   const checkHead = verifyHead || (() => verifyCurrentHead(branch, undefined, {cwd, env: releaseEnv, exec,repositoryUrl:options.repositoryUrl}));

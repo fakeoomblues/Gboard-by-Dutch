@@ -5,9 +5,9 @@ const {execFileSync} = require("node:child_process");
 
 /** Verify what Manager discovers, rather than only the GitHub release flag. */
 function verifyDiscovery(manifest, release, {repository, branch, version, publicKey}) {
-  if (!["main", "dev"].includes(branch)) throw new Error("Unsupported release branch");
-  const prerelease = branch === "dev";
-  const validVersion = prerelease ? /^\d+\.\d+\.\d+-dev\.\d+$/ : /^\d+\.\d+\.\d+$/;
+  if (branch !== "main") throw new Error("Unsupported release branch; only main is maintained");
+  const prerelease = false;
+  const validVersion = /^\d+\.\d+\.\d+$/;
   if (!validVersion.test(version)) throw new Error("Version does not match source channel");
   if (manifest.version !== version) throw new Error("Morphe branch manifest advertises a different version");
   if (release.tag_name !== `v${version}` || release.prerelease !== prerelease || release.draft) {

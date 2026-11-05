@@ -5,7 +5,7 @@ const fs=require("node:fs"),os=require("node:os"),path=require("node:path");
 const {LABEL,FILES,installationPlan,install}=require("../scripts/local-release/install.cjs");
 
 function writeSources(directory,label){
-  for(const file of FILES)fs.writeFileSync(path.join(directory,file),file.endsWith(".json")?JSON.stringify({main:{branch:"main",channel:null,prerelease:false},dev:{branch:"dev",channel:"dev",prerelease:"dev"}}):`"use strict"; // ${label}\n`);
+  for(const file of FILES)fs.writeFileSync(path.join(directory,file),file.endsWith(".json")?JSON.stringify({main:{branch:"main",channel:null,prerelease:false}}):`"use strict"; // ${label}\n`);
 }
 function fixture(t){
   const root=fs.mkdtempSync(path.join(os.tmpdir(),"local-installer-transaction-"));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
@@ -29,16 +29,16 @@ test("LaunchAgent uses stable tooling, private config and a bounded one-shot wat
   assert.throws(()=>installationPlan({configPath:"/config",config:{stateDir:"/state",pollSeconds:10}}),/60/);
 });
 
-test("both maintained channel templates agree with release configuration and AGENTS",()=>{
+test("the maintained channel template agrees with release configuration and AGENTS",()=>{
   const root=path.join(__dirname,"..");
   const templates=JSON.parse(fs.readFileSync(path.join(root,"scripts/local-release/templates.json"),"utf8"));
   const release=JSON.parse(fs.readFileSync(path.join(root,".releaserc"),"utf8"));
   const instructions=fs.readFileSync(path.join(root,"AGENTS.md"),"utf8");
-  assert.deepEqual(Object.keys(templates).sort(),["dev","main"]);
+  assert.deepEqual(Object.keys(templates).sort(),["main"]);
   assert.ok(release.branches.includes("main"));
-  assert.ok(release.branches.some(value=>value.name==="dev"&&value.prerelease==="dev"&&value.channel==="dev"));
-  for(const branch of ["main","dev"]){assert.equal(templates[branch].branch,branch);assert.ok(fs.readFileSync(path.join(root,"PUBLISHING.md"),"utf8").includes(`--branch ${branch}`));}
-  assert.equal(templates.main.prerelease,false);assert.equal(templates.dev.prerelease,"dev");
+  assert.ok(!release.branches.some(value=>typeof value==="object"&&value.name==="dev"));
+  for(const branch of Object.keys(templates)){assert.equal(templates[branch].branch,branch);assert.ok(fs.readFileSync(path.join(root,"PUBLISHING.md"),"utf8").includes(`--branch ${branch}`));}
+  assert.equal(templates.main.prerelease,false);
 });
 
 test("installation copies reviewed templates and validates before bootstrap",()=>{

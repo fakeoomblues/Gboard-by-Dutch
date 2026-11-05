@@ -1,4 +1,3 @@
 {
-  "main": {"branch": "main", "channel": null, "prerelease": false},
-  "dev": {"branch": "dev", "channel": "dev", "prerelease": "dev"}
+  "main": {"branch": "main", "channel": null, "prerelease": false}
 }

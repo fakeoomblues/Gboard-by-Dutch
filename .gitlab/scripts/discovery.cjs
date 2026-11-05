@@ -3,8 +3,8 @@ const fs = require("node:fs");
 const {api, BASE, REPOSITORY, OWNER} = require("./api.cjs");
 const {verifyBundle, download} = require("./bundle.cjs");
 function verifyDiscovery(manifest, release, {branch, version, publicKey}) {
-  const pattern = branch === "dev" ? /^\d+\.\d+\.\d+-dev\.\d+$/ : /^\d+\.\d+\.\d+$/;
-  if (!["main", "dev"].includes(branch) || !pattern.test(version)) throw new Error("Version/channel mismatch");
+  const pattern = /^\d+\.\d+\.\d+$/;
+  if (branch !== "main" || !pattern.test(version)) throw new Error("Version/channel mismatch");
   if (manifest.version !== version || manifest.public_key !== publicKey.trim()) throw new Error("Source version or signing key changed");
   if (!release || release.tag_name !== `v${version}` || release.upcoming_release || release.author?.username !== OWNER) throw new Error("Published release does not match its source");
   const filename = `patches-${version}.mpp`;

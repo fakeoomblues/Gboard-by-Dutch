@@ -16,22 +16,22 @@ function fixture(t) {
   git(["init","-b","main"]);
   for(const file of ["scripts/local-release/verify.cjs","scripts/local-release/mirrors.cjs","scripts/local-release/pages.cjs","scripts/local-release/pages-job.cjs",".gitlab/scripts/publish_release.cjs",".gitlab/scripts/discovery.cjs"]){fs.mkdirSync(path.dirname(path.join(source,file)),{recursive:true});fs.writeFileSync(path.join(source,file),"// admitted test fixture --local --dry-run\n");}
   fs.writeFileSync(path.join(source,"scripts/local-release/templates.json"),JSON.stringify(templates));
-  fs.writeFileSync(path.join(source,".releaserc"),JSON.stringify({branches:["main",{name:"dev",prerelease:"dev",channel:"dev"}]}));
+  fs.writeFileSync(path.join(source,".releaserc"),JSON.stringify({branches:["main"]}));
   function commit(label){fs.writeFileSync(path.join(source,"fixture.txt"),label);git(["add","."]);git(["commit","-m",label]);return git(["rev-parse","HEAD"]);}
-  const initial=commit("initial");git(["branch","dev"]);git(["clone","--bare",source,remote]);
+  const initial=commit("initial");git(["clone","--bare",source,remote]);
   function advance(branch,label){git(["checkout",branch]);const sha=commit(label);git(["fetch",source,`+refs/heads/${branch}:refs/heads/${branch}`],remote);return sha;}
   const calls=[];
-  const dependencies={allowLocalRemote:true,verifyIdentity:async ctx=>calls.push(["identity",ctx.branch]),verify:async ctx=>calls.push(["verify",ctx.branch]),publish:async ctx=>{calls.push(["publish",ctx.branch,ctx.publish]);return ctx.publish?{version:ctx.branch==="dev"?"1.0.1-dev.1":"1.0.1",branch:ctx.branch}:{published:false,preview:true};},discover:async ctx=>calls.push(["discover",ctx.branch]),mirrorPreflight:async ctx=>calls.push(["mirror-preflight",ctx.branch]),mirrors:async ctx=>{calls.push(["mirrors",ctx.branch]);return {targets:[{target:"codeberg",verified:true},{target:"gitgud",verified:true}]};},cleanupPages:async()=>({cleanupRequired:false}),pages:async ctx=>{calls.push(["pages",ctx.branch]);return {verified:true,status:"verified"};},bootstrap:async()=>{}};
+  const dependencies={allowLocalRemote:true,verifyIdentity:async ctx=>calls.push(["identity",ctx.branch]),verify:async ctx=>calls.push(["verify",ctx.branch]),publish:async ctx=>{calls.push(["publish",ctx.branch,ctx.publish]);return ctx.publish?{version:"1.0.1",branch:ctx.branch}:{published:false,preview:true};},discover:async ctx=>calls.push(["discover",ctx.branch]),mirrorPreflight:async ctx=>calls.push(["mirror-preflight",ctx.branch]),mirrors:async ctx=>{calls.push(["mirrors",ctx.branch]);return {targets:[{target:"codeberg",verified:true},{target:"gitgud",verified:true}]};},cleanupPages:async()=>({cleanupRequired:false}),pages:async ctx=>{calls.push(["pages",ctx.branch]);return {verified:true,status:"verified"};},bootstrap:async()=>{}};
   const config={stateDir,remoteUrl:remote};
   return {root,source,remote,stateDir,git,advance,initial,calls,dependencies,config};
 }
 function options(f,more={}){return {config:f.config,dependencies:f.dependencies,...more};}
 
-test("templates admit only stable main and dev prereleases",()=>{
-  assert.deepEqual(Object.keys(templates),["main","dev"]);
-  assert.equal(templates.main.prerelease,false);assert.equal(templates.dev.prerelease,"dev");
+test("templates admit only the stable main channel",()=>{
+  assert.deepEqual(Object.keys(templates),["main"]);
+  assert.equal(templates.main.prerelease,false);
 });
-test("initial watcher baselines both heads without executing verification/publication",async t=>{
+test("initial watcher baselines the observed head without executing verification/publication",async t=>{
   const f=fixture(t);const result=await runFlow(options(f,{watchOnce:true}));
   assert.equal(result.status,"baselined");assert.equal(f.calls.length,0);
   assert.equal(JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.observed,f.initial);
@@ -47,9 +47,9 @@ test("watcher publishes changed approved heads, verifies discovery and removes s
   assert.equal(f.git(["status","--porcelain"]),"");assert.notEqual(original,sha);
   assert.equal((await runFlow(options(f,{watchOnce:true}))).runs.length,0);
 });
-test("one-shot defaults preview and dev has its own channel",async t=>{
-  const f=fixture(t);const result=await runFlow(options(f,{branch:"dev"}));
-  assert.equal(result.runs[0].status,"preview");assert.deepEqual(f.calls.find(row=>row[0]==="publish"),["publish","dev",false]);
+test("one-shot defaults to preview without publication",async t=>{
+  const f=fixture(t);const result=await runFlow(options(f,{branch:"main"}));
+  assert.equal(result.runs[0].status,"preview");assert.deepEqual(f.calls.find(row=>row[0]==="publish"),["publish","main",false]);
   assert.equal(f.calls.some(row=>row[0]==="discover"),false);
 });
 test("no-release completion skips discovery and cleans its owned worktree",async t=>{
@@ -125,7 +125,7 @@ test("raw base64 signing seeds retain padding and expected assignment wrappers p
   f.dependencies.verify=async context=>assert.equal(context.env.MORPHE_SIGNING_KEY,raw);
   await runFlow(options(f,{branch:"main"}));
   fs.writeFileSync(secret,"export MORPHE_SIGNING_KEY=\""+raw+"\"\n");
-  await runFlow(options(f,{branch:"dev"}));
+  await runFlow(options(f,{branch:"main"}));
 });
 
 test("returning to an older failed SHA still requires explicit retry",async t=>{
@@ -201,7 +201,7 @@ test("unproved process quiescence prevents deletion and blocks later jobs",async
   await assert.rejects(runFlow(options(f,{branch:"main"})),/original active-group failure/);
   const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed;const receipt=JSON.parse(fs.readFileSync(failure.receipt));
   assert.equal(receipt.cleanupRequired,true);assert.equal(receipt.workspaceRemoved,false);assert.equal(fs.existsSync(receipt.workspace),true);
-  await assert.rejects(runFlow(options(f,{branch:"dev"})),/requires explicit.*cleanup/);
+  await assert.rejects(runFlow(options(f,{branch:"main"})),/requires explicit.*cleanup/);
 });
 
 test("normal owned commands retain final diagnostic output before cleanup",async t=>{
@@ -249,10 +249,9 @@ test("diagnostic log failure does not erase the original command error",async t=
   await assert.rejects(command({workspace:root,runDir:path.join(root,"missing"),env:process.env,redact:value=>value},"controlled-logfailure",[process.execPath,"-e","process.exit(7)"]),/controlled-logfailure failed.*diagnostic log write failed/);
 });
 
-test("actual main no-release still deploys Pages while dev never deploys production Pages",async t=>{
+test("actual main no-release still deploys production Pages exactly once",async t=>{
   const f=fixture(t);f.dependencies.publish=async()=>({published:false});
   const main=await runFlow(options(f,{branch:"main",publish:true}));assert.equal(main.runs[0].pages.verified,true);assert.equal(f.calls.filter(row=>row[0]==="pages").length,1);assert.equal(f.calls.some(row=>row[0]==="mirrors"),false);
-  await runFlow(options(f,{branch:"dev",publish:true}));assert.equal(f.calls.filter(row=>row[0]==="pages").length,1);
   await runFlow(options(f,{branch:"main"}));assert.equal(f.calls.filter(row=>row[0]==="pages").length,1);
 });
 

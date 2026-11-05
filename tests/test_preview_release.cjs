@@ -31,12 +31,12 @@ test("preview first release without tags includes the initial commit", () => rep
   assert.doesNotMatch(notes, /undefined|null/);
 }));
 
-for (const [stable, dev, message, expected, releaseType] of [
-  ['v1.2.0', 'v1.2.1-dev.1', 'feat(Fixture): add another control', '1.3.0-dev.1'],
-  ['v1.1.0', 'v1.2.0-dev.1', 'feat(Fixture): change interface', '2.0.0-dev.1', 'major'],
+for (const [stable, message, expected, releaseType] of [
+  ['v1.2.0', 'feat(Fixture): add another control', '1.3.0'],
+  ['v1.1.0', 'feat(Fixture): change interface', '2.0.0', 'major'],
 ]) {
-  test(`dev preview follows semantic-release release type after ${dev}`, () => repository(({dir, git}) => {
-    git('tag', stable); git('tag', dev);
+  test(`preview follows semantic-release release type after ${stable}`, () => repository(({dir, git}) => {
+    git('tag', stable);
     if (releaseType) {
       const file = path.join(dir, '.releaserc'); const config = JSON.parse(fs.readFileSync(file, 'utf8'));
       config.plugins.unshift(['@semantic-release/commit-analyzer', {releaseRules:[{type:'feat',release:releaseType}]}]);
@@ -44,7 +44,7 @@ for (const [stable, dev, message, expected, releaseType] of [
     }
     fs.appendFileSync(path.join(dir, 'patches/src/main/kotlin/patches/fixture/Compatibility.kt'), '// new change\n');
     git('add', '.'); git('commit', '-m', message);
-    const result = spawnSync(process.execPath, [previewScript, '--branch', 'dev'], {cwd: dir, encoding: 'utf8', timeout: 30000});
+    const result = spawnSync(process.execPath, [previewScript, '--branch', 'main'], {cwd: dir, encoding: 'utf8', timeout: 30000});
     assert.equal(result.status, 0, result.stderr);
     const notes = fs.readFileSync(path.join(dir, 'build/release-safety/notes-preview.md'), 'utf8');
     assert.ok(notes.includes(`patch bundle v${expected}`), notes);

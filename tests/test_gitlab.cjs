@@ -78,7 +78,7 @@ test("GitLab cloud workflows require explicit web opt-in, including main/dev and
     }
     return false;
   }
-  for(const branch of ["main", "dev", "feature/example"]){
+  for(const branch of ["main", "feature/example"]){
     for(const source of ["push", "merge_request_event", "schedule", "api"]){
       assert.equal(allowed({CI_SERVER_HOST:"gitlab.com", CI_COMMIT_BRANCH:branch, CI_PIPELINE_SOURCE:source, RUN_CLOUD_CI:"true"}),false,`${source} ${branch}`);
     }
