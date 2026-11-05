@@ -121,3 +121,55 @@ extension payloads are byte-identical to checkpoint28, preserving existing APK
 and scoped runtime evidence. Signed engineering MPP SHA-256:
 `81882de2ae4f1289f96042743dadc39858396cb8e3b56d9f393d0de911588fe6`.
 No stable release or main promotion occurred.
+
+## Reviewed parked warning output on genuine AA
+
+Run60 used source `2110052642f4087bc0cc277d245015d6a3f92bfa`, the unchanged
+Vela checkpoint02 APK and corrected checkpoint31 Waze APK SHA-256
+`5df09acb5c6f9ab91a85852b0e4b194204bbcacba08d78b143764e00dbffe6ac`.
+The existing observer bundle SHA-256 remained
+`68a4923351db81aa71e9e40f9ffd4c27f1dcfe4a7e81d8eb8c49baaa384d8120`.
+Vela, Waze, AA and TTS hooks were established before their respective inputs.
+No observer, probe, runner, application result or eligibility rule changed.
+
+Vela's normal phone onboarding and Navigation settings were operated through
+their UI. The selected source was De-Waze; Voice was selected, the existing
+category choices confirmed and Spoken road warnings enabled. Native car
+selection displayed Vela's map and normal controls at 1280x480. Parked preview
+actions used the product's explicit synthetic-preview confirmation dialog.
+They do not establish real detection or on-route alert delivery.
+
+The Voice preview obtained a playback grant and submitted a 67-character
+content request to Android TTS with result0. Content ID
+`vela-warning-e2af3acb-99fb-47e6-894f-c48a1371f096` started at elapsed345237ms
+and completed at349739ms; the separate lead-in is not another content request.
+The speaker and scheduler reported COMPLETED and quiescent. The subsequent
+Tone preview also completed and became quiescent without another TTS request.
+After selecting Silent, the preview remained USER_MUTED with no new speaker
+or TTS calls before the later observation failure. Timing includes tracing
+overhead. Emulator media volume0 and DHU dummy audio kept the test inaudible.
+
+The enclosing run remains incomplete. Before on-route controlled warning,
+card or cancellation acceptance, Waze entered its original JNI-originated
+`onNativeLayerShutDown(false)` callback. At that callback api_started=false,
+lease_remaining_ms=8735, wrapper_state=running, activity_count=0 and
+car_session_count=0. No Java `NativeManager.shutDown()` hook fired.
+Android records SIGNALED/status9, without an available native crash trace.
+This excludes the API-owned lease-expiry shutdown path; it does not identify
+the native shutdown initiator. Earlier DHU startup displayed Waze before Vela;
+the ownership contract deliberately relinquishes API ownership on a visible
+native car session. Do not suppress native shutdown or change takeover policy
+on the basis of this result. Isolate future API-only acceptance from that
+initial native Waze car session using the existing selection/stop procedure.
+
+All preview cases above precede the unexpected Waze detach. Further UI/GPS
+stimuli stopped when coverage loss was observed. Baseline APK hashes, audio,
+debug property, projection role, GPS and native curl were verified restored;
+the owned observer, server, DHU and VM terminated inside the overall deadline.
+Workspace quiescence passed, compact evidence was archived and per-run scratch
+removed with cleanupRequired=false. No physical phone was touched.
+
+The private review folder contains `vela-warning-preview60.json`,
+`run60-qualified-events.json`, `run60-observer-result.json` and the run60
+screenshots. Voice/Tone/Silent parked preview proof does not close the remaining
+on-route warning, card, cancellation, profile, DPI or input acceptance gates.
