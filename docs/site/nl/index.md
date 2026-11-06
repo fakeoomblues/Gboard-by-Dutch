@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">59 apps</span> · Patchbundel: 1.47.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">60 apps</span> · Patchbundel: 1.47.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -146,6 +146,28 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/at4k.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="bol com.bol.shop 2026.23.1 disable play license check disable tracking hide consent screens hide promotional content hide sponsored content" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [bol](apps/bol.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">2026.23.1</span></p>
+<p class="dap-app-card__package">com.bol.shop</p>
+<details class="dap-app-card__patches">
+<summary>5 patches</summary>
+<ul>
+<li>Disable Play license check <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Disable tracking <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide consent screens <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide promotional content <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide sponsored content <span class="dap-app-card__target">2026.23.1</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/bol.md){ .dap-app-card__link }
 
 </article>
 

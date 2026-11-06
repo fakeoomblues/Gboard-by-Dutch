@@ -1,6 +1,19 @@
 Morphe NOTICE
 =============
 
+bol advertising and privacy controls
+------------------------------------
+
+Derived from Wouter075's bol-patches, source snapshot
+350a044f83d0e3bf73816ed8be04aa10136f9b0d (2026.22.1), licensed under GPLv3.
+Source: https://github.com/wouter075/bol-patches
+Credit: Wouter075 (Wouter van Hezel).
+This project ports the original three controls to bol 2026.23.1 build 430517
+and adds fixes for separately loaded Home advertisements, sponsored feeds and
+shopping-assistant products, publisher promotions, consent screens and
+first-party analytics paths. See docs/privacy/bol-2026.23.1.md and the
+bol-specific patch notes for the exact additions and verification limits.
+
 SoundCloud additional controls
 -----------------------------
 

@@ -171,3 +171,7 @@ with the app version, selected patches and reproducible steps.
 Code is licensed under [GPLv3](LICENSE). Retained contributor and upstream
 credit is in [AUTHORS.md](AUTHORS.md) and [NOTICE](NOTICE). Brand and font
 attribution is in [asset sources](docs/site/assets/brand/SOURCES.md).
+
+### bol attribution
+
+The bol controls build on [Wouter075’s bol-patches](https://github.com/wouter075/bol-patches). The 2026.23.1 integration fixes missed advertising paths and adds promotional, consent and tracking controls. See [bol patch notes](docs/release-notes/bol-2026.23.1.md) for the additions beyond the original patches.

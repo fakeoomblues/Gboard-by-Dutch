@@ -73,6 +73,20 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Unlock Premium | Aan | 1.2 |
 
+## bol
+
+[Wat veranderen de patches?](../apps/bol.md)
+
+`com.bol.shop`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable Play license check | Aan | 2026.23.1 |
+| Disable tracking | Aan | 2026.23.1 |
+| Hide consent screens | Aan | 2026.23.1 |
+| Hide promotional content | Aan | 2026.23.1 |
+| Hide sponsored content | Aan | 2026.23.1 |
+
 ## Bright
 
 [Wat veranderen de patches?](../apps/bright.md)
@@ -843,4 +857,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

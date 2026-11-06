@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">59 apps</span> · Patch bundle: 1.47.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">60 apps</span> · Patch bundle: 1.47.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -146,6 +146,28 @@ hide:
 </details>
 
 [Guide and downloads](apps/at4k.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="bol com.bol.shop 2026.23.1 disable play license check disable tracking hide consent screens hide promotional content hide sponsored content" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [bol](apps/bol.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.23.1</span></p>
+<p class="dap-app-card__package">com.bol.shop</p>
+<details class="dap-app-card__patches">
+<summary>5 patches</summary>
+<ul>
+<li>Disable Play license check <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Disable tracking <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide consent screens <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide promotional content <span class="dap-app-card__target">2026.23.1</span></li>
+<li>Hide sponsored content <span class="dap-app-card__target">2026.23.1</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/bol.md){ .dap-app-card__link }
 
 </article>
 

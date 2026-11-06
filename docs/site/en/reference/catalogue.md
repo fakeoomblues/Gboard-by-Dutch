@@ -73,6 +73,20 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Unlock Premium | On | 1.2 |
 
+## bol
+
+[What do the patches change?](../apps/bol.md)
+
+`com.bol.shop`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable Play license check | On | 2026.23.1 |
+| Disable tracking | On | 2026.23.1 |
+| Hide consent screens | On | 2026.23.1 |
+| Hide promotional content | On | 2026.23.1 |
+| Hide sponsored content | On | 2026.23.1 |
+
 ## Bright
 
 [What do the patches change?](../apps/bright.md)
@@ -843,4 +857,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

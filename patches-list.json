@@ -1608,6 +1608,40 @@
       "options": []
     },
     {
+      "name": "Disable Play license check",
+      "description": "Required for a patched (re-signed) app: skips the Google Play license check that would otherwise close the app.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.bol.shop",
+          "name": "bol",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#0000A4",
+          "signatures": [
+            "d33783d8b827ba6d59f8937a9f4081e19baba769effdfb5beef72b70166a2ae3"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.23.1",
+              "versionCodes": {
+                "ARM64_V8A": 430517,
+                "ARMEABI_V7A": 430517,
+                "X86_64": 430517,
+                "X86": 430517
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Disable Swrve (expert)",
       "description": "Reduces data sharing by stopping the remaining Swrve user and device updates and background push activity. Includes the standard ad, tracking and consent controls. Push notifications and Swrve channel synchronization stop working; shared Firebase authentication and configuration remain available.",
       "default": false,
@@ -1967,6 +2001,40 @@
               },
               "isExperimental": false,
               "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking",
+      "description": "Disables analytics and tracking: RudderStack, AppsFlyer, Firebase Analytics, Crashlytics, Firebase Performance, Sentry, Airship analytics, first-party GA4 sessions, experiment beacons and the advertising id. Push notifications keep working.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.bol.shop",
+          "name": "bol",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#0000A4",
+          "signatures": [
+            "d33783d8b827ba6d59f8937a9f4081e19baba769effdfb5beef72b70166a2ae3"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.23.1",
+              "versionCodes": {
+                "ARM64_V8A": 430517,
+                "ARMEABI_V7A": 430517,
+                "X86_64": 430517,
+                "X86": 430517
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -6745,6 +6813,40 @@
       "options": []
     },
     {
+      "name": "Hide consent screens",
+      "description": "Skips data usage, data sharing and notification opt-in onboarding. Local tracking choices stay declined and tracking is disabled. Manual notification settings and server account preferences remain unchanged.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.bol.shop",
+          "name": "bol",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#0000A4",
+          "signatures": [
+            "d33783d8b827ba6d59f8937a9f4081e19baba769effdfb5beef72b70166a2ae3"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.23.1",
+              "versionCodes": {
+                "ARM64_V8A": 430517,
+                "ARMEABI_V7A": 430517,
+                "X86_64": 430517,
+                "X86": 430517
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Hide empty listening carousel",
       "description": "Hides the blank Luister verder loading row and its invalid placeholder links. Real listening history, podcast carousels and playback remain available.",
       "default": true,
@@ -6983,6 +7085,40 @@
       "options": []
     },
     {
+      "name": "Hide promotional content",
+      "description": "Removes marketing banners, brand campaigns, Home merchandising, seasonal backgrounds and the offers footer, game promotions and promotional feeds. Search, product prices and checkout discounts remain available.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.bol.shop",
+          "name": "bol",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#0000A4",
+          "signatures": [
+            "d33783d8b827ba6d59f8937a9f4081e19baba769effdfb5beef72b70166a2ae3"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.23.1",
+              "versionCodes": {
+                "ARM64_V8A": 430517,
+                "ARMEABI_V7A": 430517,
+                "X86_64": 430517,
+                "X86": 430517
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Hide promotions",
       "description": "Stops the recurring NOS-app promotion on the scoreboard page. Preserves Teletekst pages, favourites, sharing and refresh.",
       "default": true,
@@ -7036,6 +7172,40 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide sponsored content",
+      "description": "Removes sponsored search products, paid brand cards and shopping-assistant recommendations, product-page advertising, and display ads from both standalone and Home page responses.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.bol.shop",
+          "name": "bol",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#0000A4",
+          "signatures": [
+            "d33783d8b827ba6d59f8937a9f4081e19baba769effdfb5beef72b70166a2ae3"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.23.1",
+              "versionCodes": {
+                "ARM64_V8A": 430517,
+                "ARMEABI_V7A": 430517,
+                "X86_64": 430517,
+                "X86": 430517
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
