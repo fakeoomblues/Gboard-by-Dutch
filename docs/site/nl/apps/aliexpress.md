@@ -1,10 +1,10 @@
 # AliExpress
 
-**Appversie:** 8.180.0 · **Build:** 80005997 · **Origineel bestand:** APKM
+**Appversie:** 8.180.1 · **Build:** 80005998 · **Origineel bestand:** APK
 
 [Originele app downloaden](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer het volledige APKM-bestand in Morphe Desktop. Het gepatchte resultaat is één installeerbaar APK-bestand.
+Selecteer het aangeleverde losse APK-bestand in Morphe Desktop. Versie 8.180.0 build 80005997 blijft ook ondersteund.
 
 ## Patches
 
@@ -22,6 +22,6 @@ Selecteer het volledige APKM-bestand in Morphe Desktop. Het gepatchte resultaat 
 
 ## Voor gebruik
 
-De handtekeningbescherming houdt producten en accountfuncties werkend na het patchen. Google-login vereist een compatibele GmsCore-installatie. Alleen versie 8.180.0 build 80005997 wordt ondersteund.
+De handtekeningbescherming houdt producten en accountfuncties werkend na het patchen. Google-login vereist een compatibele GmsCore-installatie. Versies 8.180.0 build 80005997 en 8.180.1 build 80005998 worden ondersteund. Gebruik per versie het bijbehorende originele bestand.
 
 [Installatie](../guides/install.md) · [Opties kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardwaarden](../reference/catalogue.md)

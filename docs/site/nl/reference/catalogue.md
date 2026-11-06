@@ -53,15 +53,15 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable analytics | Aan | 8.180.0 |
-| Disable update prompts | Aan | 8.180.0 |
-| Enable image saving | Aan | 8.180.0 |
-| Fix dark mode | Aan | 8.180.0 |
-| GmsCore support | Aan | 8.180.0 |
-| Remove promotional popups | Aan | 8.180.0 |
-| Remove sponsored items | Aan | 8.180.0 |
-| Skip splash promotions | Aan | 8.180.0 |
-| Spoof signature | Aan | 8.180.0 |
+| Disable analytics | Aan | 8.180.0, 8.180.1 |
+| Disable update prompts | Aan | 8.180.0, 8.180.1 |
+| Enable image saving | Aan | 8.180.0, 8.180.1 |
+| Fix dark mode | Aan | 8.180.0, 8.180.1 |
+| GmsCore support | Aan | 8.180.0, 8.180.1 |
+| Remove promotional popups | Aan | 8.180.0, 8.180.1 |
+| Remove sponsored items | Aan | 8.180.0, 8.180.1 |
+| Skip splash promotions | Aan | 8.180.0, 8.180.1 |
+| Spoof signature | Aan | 8.180.0, 8.180.1 |
 
 ## AT4K Launcher
 
@@ -843,4 +843,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

@@ -9,7 +9,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [2dehands](../apps/2dehands.md) | 16.19.0 / 633464 | [XAPK](https://buzzheavier.com/p3t8spl0cswx) |
 | [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
-| [AliExpress](../apps/aliexpress.md) | 8.180.0 / 80005997 | [APKM](#local-original-inputs) |
+| [AliExpress](../apps/aliexpress.md) | 8.180.1 / 80005998 | [APK](#local-original-inputs) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |
 | [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/9fl1lzedekqp) |
 | [Buienradar](../apps/buienradar.md) | 7.4.8 / 7897 | [APKM](https://buzzheavier.com/v4m79608e677) |

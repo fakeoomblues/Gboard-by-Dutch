@@ -1755,7 +1755,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -1769,6 +1769,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -3374,7 +3386,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -3388,6 +3400,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -3510,7 +3534,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -3524,6 +3548,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -3934,7 +3970,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -3948,6 +3984,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -4204,7 +4252,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -4218,6 +4266,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -8428,7 +8488,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -8442,6 +8502,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -8521,7 +8593,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -8535,6 +8607,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -9960,7 +10044,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -9974,6 +10058,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,
@@ -10341,7 +10437,7 @@
           "packageName": "com.alibaba.aliexpresshd",
           "name": "AliExpress",
           "description": null,
-          "apkFileType": "APKM",
+          "apkFileType": "APK",
           "appIconColor": null,
           "signatures": [
             "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
@@ -10355,6 +10451,18 @@
                 "ARMEABI_V7A": 80005997,
                 "X86_64": 80005997,
                 "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            },
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
               },
               "isExperimental": false,
               "minSdk": 21,

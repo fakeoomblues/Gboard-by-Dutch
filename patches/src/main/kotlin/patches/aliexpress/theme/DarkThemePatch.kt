@@ -62,9 +62,10 @@ val darkThemePatch = bytecodePatch(
         markPatchApplied("darkTheme", DESCRIPTION)
         ActivityConfigurationFingerprint.matchSingle().method.returnWhenEnabled("$DARK_THEME_CLASS->followsDarkMode()Z")
         DefaultNightModeFingerprint.matchSingle().method.returnWhenEnabled("$DARK_THEME_CLASS->followsDarkMode()Z")
-        DarkModeEnabledFingerprint.matchSingle().let { match ->
-            val (deviceSupportsDark, serverAllowsDark) = match.instructionMatches
-            val darkModeEnabled = match.method
+        val legacyDarkMode = DarkModeEnabledFingerprint.matchOrNull()
+        if (legacyDarkMode != null) {
+            val (deviceSupportsDark, serverAllowsDark) = legacyDarkMode.instructionMatches
+            val darkModeEnabled = legacyDarkMode.method
             darkModeEnabled.addInstructionsWithLabels(
                 0,
                 """
@@ -83,6 +84,32 @@ val darkThemePatch = bytecodePatch(
                     return v0
                 """.trimIndent(),
                 ExternalLabel("original", darkModeEnabled.getInstruction(0)),
+            )
+        } else {
+            val darkModeEnabled = DarkModeEnabledV2Fingerprint.matchSingle()
+            val (deviceSupportsDark, serverAllowsDark, nativeSwitchChosen) = darkModeEnabled.instructionMatches
+            val method = darkModeEnabled.method
+            method.addInstructionsWithLabels(
+                0,
+                """
+                    invoke-static { }, $PATCH_SETTINGS_CLASS->darkTheme()Z
+                    move-result v0
+                    if-eqz v0, :original
+                    invoke-static { }, ${method.getInstruction<ReferenceInstruction>(deviceSupportsDark.index).reference}
+                    move-result v0
+                    if-eqz v0, :record
+                    invoke-static { }, ${method.getInstruction<ReferenceInstruction>(serverAllowsDark.index).reference}
+                    move-result v0
+                    if-eqz v0, :record
+                    invoke-static { }, ${method.getInstruction<ReferenceInstruction>(nativeSwitchChosen.index).reference}
+                    move-result v0
+                    :record
+                    invoke-static { v0 }, $DARK_THEME_CLASS->recordHostDarkMode(Z)V
+                    invoke-static { }, $DARK_THEME_CLASS->nativeSwitchOn()Z
+                    move-result v0
+                    return v0
+                """.trimIndent(),
+                ExternalLabel("original", method.getInstruction(0)),
             )
         }
         val nativeSwitch = NativeDarkSwitchFingerprint.matchSingle().method

@@ -12,6 +12,7 @@ package patches.aliexpress.images
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.InstructionLocation.MatchAfterImmediately
+import app.morphe.patcher.InstructionLocation.MatchAfterWithin
 import app.morphe.patcher.methodCall
 import app.morphe.patcher.opcode
 import app.morphe.patcher.string
@@ -25,7 +26,7 @@ internal object ImageSaveButtonFingerprint : Fingerprint(
             name = "getBoolean",
             parameters = listOf("Ljava/lang/String;", "Z"),
             returnType = "Z",
-            location = MatchAfterImmediately(),
+            location = MatchAfterWithin(2),
         ),
         opcode(Opcode.MOVE_RESULT, location = MatchAfterImmediately()),
     ),

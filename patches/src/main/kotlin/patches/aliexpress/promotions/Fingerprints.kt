@@ -13,7 +13,5 @@ package patches.aliexpress.promotions
 import app.morphe.patcher.Fingerprint
 
 internal object PromotionActivityFingerprint : Fingerprint(
-    returnType = "Z",
-    parameters = listOf("Landroid/app/Activity;"),
     strings = listOf("isValidActivity, sForbiddenAllPopInDebugMode true, return false"),
 )

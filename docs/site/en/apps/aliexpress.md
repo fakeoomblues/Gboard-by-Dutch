@@ -1,10 +1,10 @@
 # AliExpress
 
-**App version:** 8.180.0 · **Build:** 80005997 · **Original file:** APKM
+**App version:** 8.180.1 · **Build:** 80005998 · **Original file:** APK
 
 [Download original app](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select the complete APKM archive in Morphe Manager. The patched output is a single installable APK.
+Select the supplied single APK in Morphe Manager. Version 8.180.0 build 80005997 remains supported as well.
 
 ## Patches
 
@@ -22,6 +22,6 @@ Select the complete APKM archive in Morphe Manager. The patched output is a sing
 
 ## Before using
 
-The signature spoof keeps product loading and account functions working after patching. Google sign-in needs a compatible GmsCore installation. Only version 8.180.0 build 80005997 is supported.
+The signature spoof keeps product loading and account functions working after patching. Google sign-in needs a compatible GmsCore installation. Versions 8.180.0 build 80005997 and 8.180.1 build 80005998 are supported. Use the matching original file for each version.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

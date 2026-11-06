@@ -13,7 +13,5 @@ package patches.aliexpress.splash
 import app.morphe.patcher.Fingerprint
 
 internal object SplashPromotionFingerprint : Fingerprint(
-    returnType = "Z",
-    parameters = listOf("Lcom/alibaba/aliexpresshd/home/ui/MainActivity;"),
     strings = listOf("tryShowScreen, getNeedToShowScreen cost: "),
 )

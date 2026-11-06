@@ -38,7 +38,11 @@ internal fun MutableMethod.returnWhenEnabled(settingMethod: String) {
     val returnInstructions = when (returnType) {
         "V" -> "return-void"
         "Z" -> "const/4 v0, 0x0\nreturn v0"
-        else -> throw PatchException("Expected a void or boolean method, found $returnType")
+        else -> if (returnType.startsWith("L") || returnType.startsWith("[")) {
+            "const/4 v0, 0x0\nreturn-object v0"
+        } else {
+            throw PatchException("Expected a void, boolean or object method, found $returnType")
+        }
     }
     addInstructionsWithLabels(
         0,

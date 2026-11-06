@@ -115,3 +115,37 @@ internal object QuantityControlFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;", "Landroid/util/AttributeSet;", "I"),
     filters = listOf(opcode(Opcode.RETURN_VOID)),
 )
+
+/**
+ * 8.180.1 replaced the instance dark-mode predicate with a cached static
+ * helper that combines device support, server allowance and the native switch.
+ */
+internal object DarkModeEnabledV2Fingerprint : Fingerprint(
+    classFingerprint = NativeDarkSwitchFingerprint,
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC, AccessFlags.FINAL),
+    returnType = "Z",
+    parameters = emptyList(),
+    filters = listOf(
+        methodCall(
+            definingClass = "this",
+            name = "e",
+            returnType = "Z",
+            parameters = emptyList(),
+            opcode = Opcode.INVOKE_STATIC,
+        ),
+        methodCall(
+            definingClass = "this",
+            name = "c",
+            returnType = "Z",
+            parameters = emptyList(),
+            opcode = Opcode.INVOKE_STATIC,
+        ),
+        methodCall(
+            definingClass = "this",
+            name = "d",
+            returnType = "Z",
+            parameters = emptyList(),
+            opcode = Opcode.INVOKE_STATIC,
+        ),
+    ),
+)

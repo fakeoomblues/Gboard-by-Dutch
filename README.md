@@ -127,7 +127,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [2dehands](docs/site/en/apps/2dehands.md) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
-| [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0 | APKM | 9 |
+| [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 9 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.5.11.993608717-release-arm64-v8a | APK | 9 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
