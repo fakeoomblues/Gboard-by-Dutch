@@ -11,6 +11,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.util.matchSingle
@@ -62,7 +63,11 @@ val darkThemePatch = bytecodePatch(
         markPatchApplied("darkTheme", DESCRIPTION)
         ActivityConfigurationFingerprint.matchSingle().method.returnWhenEnabled("$DARK_THEME_CLASS->followsDarkMode()Z")
         DefaultNightModeFingerprint.matchSingle().method.returnWhenEnabled("$DARK_THEME_CLASS->followsDarkMode()Z")
-        val legacyDarkMode = DarkModeEnabledFingerprint.matchOrNull()
+        val legacyDarkMode = try {
+            DarkModeEnabledFingerprint.matchOrNull()
+        } catch (_: PatchException) {
+            null
+        }
         if (legacyDarkMode != null) {
             val (deviceSupportsDark, serverAllowsDark) = legacyDarkMode.instructionMatches
             val darkModeEnabled = legacyDarkMode.method
