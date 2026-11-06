@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">56 apps</span> · Patchbundel: 1.44.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">58 apps</span> · Patchbundel: 1.44.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -273,6 +273,43 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/dumpert.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="easypark net.easypark.android 26.40.1 allow custom android auto hosts" markdown>
+<p class="dap-app-card__category">Verkeer</p>
+
+### [EasyPark](apps/easypark.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">26.40.1</span></p>
+<p class="dap-app-card__package">net.easypark.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">26.40.1</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/easypark.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="easypark nl com.parkmobile 26.42.4 add microg-re support allow custom android auto hosts" markdown>
+<p class="dap-app-card__category">Verkeer</p>
+
+### [EasyPark NL](apps/easypark-nl.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">26.42.4</span></p>
+<p class="dap-app-card__package">com.parkmobile</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Add microG-RE support <span class="dap-app-card__target">26.42.4</span></li>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">26.42.4</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/easypark-nl.md){ .dap-app-card__link }
 
 </article>
 

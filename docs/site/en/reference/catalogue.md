@@ -152,6 +152,27 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 5.8.0 |
 | Skip consent screens | On | 5.8.0 |
 
+## EasyPark
+
+[What do the patches change?](../apps/easypark.md)
+
+`net.easypark.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | On | 26.40.1 |
+
+## EasyPark NL
+
+[What do the patches change?](../apps/easypark-nl.md)
+
+`com.parkmobile`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Add microG-RE support | On | 26.42.4 |
+| Allow custom Android Auto hosts | On | 26.42.4 |
+
 ## ED
 
 [What do the patches change?](../apps/ed.md)

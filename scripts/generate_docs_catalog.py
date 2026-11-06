@@ -17,6 +17,8 @@ APP_PAGES = {
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),
     'app.wuplay.android': ('wuplay-mobile', 'entertainment'),
     'com.waze': ('waze', 'mobility'),
+    'net.easypark.android': ('easypark', 'mobility'),
+    'com.parkmobile': ('easypark-nl', 'mobility'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),

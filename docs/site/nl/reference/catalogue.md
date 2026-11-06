@@ -152,6 +152,27 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 5.8.0 |
 | Skip consent screens | Aan | 5.8.0 |
 
+## EasyPark
+
+[Wat veranderen de patches?](../apps/easypark.md)
+
+`net.easypark.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | Aan | 26.40.1 |
+
+## EasyPark NL
+
+[Wat veranderen de patches?](../apps/easypark-nl.md)
+
+`com.parkmobile`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Add microG-RE support | Aan | 26.42.4 |
+| Allow custom Android Auto hosts | Aan | 26.42.4 |
+
 ## ED
 
 [Wat veranderen de patches?](../apps/ed.md)

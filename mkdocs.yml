@@ -161,6 +161,8 @@ nav:
           - apps/mobility/index.md
           - apps/9292.md
           - apps/flitsmeister.md
+          - apps/easypark.md
+          - apps/easypark-nl.md
           - apps/waze.md
           - apps/gearslip.md
           - apps/vela.md
