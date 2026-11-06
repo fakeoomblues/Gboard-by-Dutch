@@ -432,6 +432,33 @@ const defaults={
     return context.mirrorResults;
   },
 };
+async function resolveWorkspaceCleanups(state,stateDir,owner,env,deps,redact){
+  // Watch ticks re-attempt pending owned-workspace cleanup so a transient
+  // holder (for example an orphaned build daemon that later exits) self-
+  // resolves, matching the documented watcher behaviour. A workspace that is
+  // already gone is stamped resolved without touching the filesystem.
+  for(const branchState of Object.values(state.branches)){
+    for(const failure of Object.values(branchState.failures||{})){
+      if(!failure?.cleanupRequired)continue;
+      const file=failure.receipt,run=path.dirname(file),id=path.basename(run);
+      if(!/^[a-f0-9-]{36}$/.test(id)||run!==path.join(stateDir,"runs",id)||path.basename(file)!=="receipt.json")throw new Error("Refuse unowned cleanup receipt");
+      privatePath(file);
+      let receipt;try{receipt=JSON.parse(fs.readFileSync(file,"utf8"));}catch{continue;}
+      if(receipt.owner!==owner.id||receipt.id!==id||receipt.status!=="failed")continue;
+      const workspace=failure.workspace||receipt.workspace;
+      let note;
+      if(!workspace||!fs.existsSync(workspace)){note="workspace already absent";}
+      else{
+        try{await deps.cleanupWorkspace({stateDir,workspace,env});note="workspace cleanup completed";}
+        catch(error){failure.cleanupReason=redact(error.message);continue;}
+      }
+      const stamp=new Date().toISOString();
+      failure.cleanupRequired=false;failure.workspaceCleanupRequired=false;failure.cleanupResolvedAt=stamp;failure.cleanupResolution=note;
+      receipt.cleanupRequired=false;receipt.workspaceCleanupRequired=false;receipt.cleanupResolvedAt=stamp;receipt.cleanupResolution=note;receipt.workspaceRemoved=true;
+      writeJson(file,receipt);
+    }
+  }
+}
 function resolvePagesCleanup(state,stateDir,owner) {
   const resolved=new Set();
   for(const branch of Object.values(state.branches))for(const failure of [branch.failed,...Object.values(branch.failures||{})]){
@@ -474,7 +501,12 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
         writeJson(cleanupFile,{finished:new Date().toISOString(),cleanupRequired:false,result:cleanupContext.pagesCleanupResult,processGroups:cleanupContext.processGroups||[]});resolvePagesCleanup(state,stateDir,owner);writeJson(stateFile,state);
       }catch(error){writeJson(cleanupFile,{finished:new Date().toISOString(),failure:redactor(env)(error.message),cleanupRequired:true,retryable:cleanupContext.pagesCleanupResult?.retryable===true,result:cleanupContext.pagesCleanupResult||null,processGroups:cleanupContext.processGroups||[]});throw error;}
     }
-    if(Object.values(state.branches).some(value=>Object.values(value.failures||{}).some(failure=>failure.cleanupRequired)))throw new Error("Previous run requires explicit owned-workspace/process cleanup before another release job");
+    if(Object.values(state.branches).some(value=>Object.values(value.failures||{}).some(failure=>failure.cleanupRequired))){
+      // Only watch ticks sweep; explicit runs keep failing fast for an operator.
+      if(!watchOnce)throw new Error("Previous run requires explicit owned-workspace/process cleanup before another release job");
+      await resolveWorkspaceCleanups(state,stateDir,owner,env,deps,redact);writeJson(stateFile,state);
+      if(Object.values(state.branches).some(value=>Object.values(value.failures||{}).some(failure=>failure.cleanupRequired)))throw new Error("Previous run requires explicit owned-workspace/process cleanup before another release job");
+    }
     const cache=refreshCache(config,stateDir,env),branches=watchOnce?Object.keys(templates):[branch],heads={};
     for(const name of branches){heads[name]=remoteHead(config,name,env);sourceTemplates(cache,heads[name],env,name);}
     if(watchOnce&&!state.initialized) {

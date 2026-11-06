@@ -196,12 +196,57 @@ test("owned command timeout quiesces its child group before failed workspace cle
   try {process.kill(pid,0);const status=execFileSync("ps",["-p",String(pid),"-o","stat="],{encoding:"utf8"}).trim();assert.match(status,/^Z/,"Owned child still runs after timeout cleanup");}catch(error){if(error.code!=="ESRCH")throw error;}
 });
 
-test("unproved process quiescence prevents deletion and blocks later jobs",async t=>{
-  const f=fixture(t);f.dependencies.verify=async context=>{context.processGroups=[{id:123456,stage:"controlled",quiescent:false}];throw new Error("original active-group failure");};
+test("a held workspace keeps its named reason and blocks, then a watch tick sweeps it once free",async t=>{
+  const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)}),pidFile=path.join(f.root,"detached.pid");let pid;
+  t.after(()=>{if(pid)try{process.kill(-pid,"SIGKILL");}catch{}for(const cleanup of cleanups)cleanup();});
+  f.config.environment={HOME:f.root};
+  await runFlow(options(f,{watchOnce:true}));
+  f.dependencies.verify=async context=>{
+    const nested=path.join(context.workspace,"nested");fs.mkdirSync(nested);
+    const code=`const fs=require('node:fs'),{spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{detached:true,stdio:'ignore',cwd:${JSON.stringify(nested)}});fs.writeFileSync(${JSON.stringify(pidFile)},String(child.pid));child.unref();setInterval(()=>{},1000);`;
+    const {spawn}=require('node:child_process');const outer=spawn(process.execPath,['-e',code],{detached:true,stdio:'ignore'});outer.unref();await new Promise(resolve=>setTimeout(resolve,300));pid=Number(fs.readFileSync(pidFile,'utf8'));
+    context.processGroups=[{id:123456,stage:"controlled",quiescent:false}];throw new Error("original active-group failure");
+  };
   await assert.rejects(runFlow(options(f,{branch:"main"})),/original active-group failure/);
-  const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed;const receipt=JSON.parse(fs.readFileSync(failure.receipt));
-  assert.equal(receipt.cleanupRequired,true);assert.equal(receipt.workspaceRemoved,false);assert.equal(fs.existsSync(receipt.workspace),true);
+  const state=()=>JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json")));
+  const failure=state().branches.main.failed;
   await assert.rejects(runFlow(options(f,{branch:"main"})),/requires explicit.*cleanup/);
+  await assert.rejects(runFlow(options(f,{watchOnce:true})),/requires explicit.*cleanup/);
+  const held=state().branches.main.failures[failure.head];
+  assert.ok(held.cleanupReason,"A held workspace keeps its named reason for the operator");
+  process.kill(-pid,"SIGKILL");await new Promise(resolve=>setTimeout(resolve,300));
+  const result=await runFlow(options(f,{watchOnce:true}));
+  assert.equal(result.status,"complete");
+  const entry=state().branches.main.failures[failure.head];
+  assert.equal(entry.cleanupRequired,false);assert.equal(entry.cleanupResolution,"workspace cleanup completed");
+  const receipt=JSON.parse(fs.readFileSync(failure.receipt));
+  assert.equal(receipt.cleanupRequired,false);assert.equal(receipt.workspaceRemoved,true);
+});
+test("a watch tick resolves pending cleanup once the workspace is already gone",async t=>{
+  const f=fixture(t);await runFlow(options(f,{watchOnce:true}));
+  f.dependencies.verify=async context=>{context.processGroups=[{id:123456,stage:"controlled",quiescent:false}];throw new Error("original active-group failure");};
+  await assert.rejects(runFlow(options(f,{branch:"main"})),/original active-group failure/);
+  const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed;
+  fs.rmSync(failure.workspace,{recursive:true,force:true});
+  const result=await runFlow(options(f,{watchOnce:true}));
+  assert.equal(result.status,"complete");
+  const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json")));
+  const entry=state.branches.main.failures[failure.head];
+  assert.equal(entry.cleanupRequired,false);assert.equal(entry.cleanupResolution,"workspace already absent");assert.ok(entry.cleanupResolvedAt);
+  const receipt=JSON.parse(fs.readFileSync(failure.receipt));
+  assert.equal(receipt.cleanupRequired,false);assert.equal(receipt.cleanupResolution,"workspace already absent");
+});
+test("a watch tick sweeps a present quiescent workspace and proceeds",async t=>{
+  const f=fixture(t);await runFlow(options(f,{watchOnce:true}));
+  f.dependencies.verify=async context=>{context.processGroups=[{id:123456,stage:"controlled",quiescent:false}];throw new Error("original active-group failure");};
+  await assert.rejects(runFlow(options(f,{branch:"main"})),/original active-group failure/);
+  const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed;
+  assert.equal(fs.existsSync(failure.workspace),true);
+  const result=await runFlow(options(f,{watchOnce:true}));
+  assert.equal(result.status,"complete");
+  assert.equal(fs.existsSync(failure.workspace),false);
+  const receipt=JSON.parse(fs.readFileSync(failure.receipt));
+  assert.equal(receipt.cleanupRequired,false);assert.equal(receipt.workspaceRemoved,true);assert.equal(receipt.cleanupResolution,"workspace cleanup completed");
 });
 
 test("normal owned commands retain final diagnostic output before cleanup",async t=>{
@@ -384,12 +429,23 @@ test("a later successful Pages cleanup clears only Pages-only pending cleanup fl
   const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))),receipt=JSON.parse(fs.readFileSync(first.receipt));assert.equal(state.branches.main.failures[first.head].cleanupRequired,false);assert.equal(receipt.cleanupRequired,false);assert.equal(receipt.status,"failed");assert.ok(receipt.pagesCleanupResolvedAt);
 });
 
-test("Pages cleanup success cannot clear an independently unproved root workspace",async t=>{
+test("Pages cleanup success alone cannot clear an unproved root workspace; the sweep proves it independently",async t=>{
   const f=fixture(t);f.config.pages={runnerId:17};
   f.dependencies.pages=async context=>{context.pagesResults={verified:false,cleanupRequired:true};context.processGroups=[{id:123456,quiescent:false}];throw new Error("Pages pending and root activity unproved");};
   await assert.rejects(runFlow(options(f,{branch:"main",publish:true})),/root activity unproved/);
-  await assert.rejects(runFlow(options(f,{watchOnce:true})),/requires explicit.*cleanup/);
-  const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))),receipt=JSON.parse(fs.readFileSync(state.branches.main.failed.receipt));assert.equal(receipt.cleanupRequired,true);assert.equal(receipt.workspaceCleanupRequired,true);assert.equal(fs.existsSync(receipt.workspace),true);
+  await assert.rejects(runFlow(options(f,{branch:"main"})),/requires explicit.*cleanup/);
+  const failure=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.failed;
+  assert.equal(JSON.parse(fs.readFileSync(failure.receipt)).cleanupRequired,true);
+  f.advance("main","fix: advance after the failed release");
+  // The first watch tick sweeps the root workspace with its own quiescence
+  // proof instead of trusting the Pages result; because the watcher was not
+  // yet initialized it baselines, and the next tick processes the new head.
+  const first=await runFlow(options(f,{watchOnce:true}));
+  assert.equal(first.status,"baselined");
+  const result=await runFlow(options(f,{watchOnce:true}));
+  assert.equal(result.status,"complete");
+  const receipt=JSON.parse(fs.readFileSync(failure.receipt));
+  assert.equal(receipt.cleanupRequired,false);assert.equal(receipt.workspaceRemoved,true);assert.equal(receipt.workspaceCleanupRequired,false);
 });
 
 test("Pages cleanup resolution recovers when its receipt was saved before the state checkpoint",async t=>{
