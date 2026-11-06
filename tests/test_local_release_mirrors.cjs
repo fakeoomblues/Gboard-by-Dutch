@@ -51,6 +51,7 @@ function fixture(t,branch="main"){
     if(endpoint.includes("/packages/generic/")){if(options.method==="PUT"){target.stored=options.body;assert.deepEqual(target.stored,bytes);return {};}return target.stored;}
     if(name==="codeberg"){
       if(endpoint.includes("/assets")){
+        if(options.method==="DELETE"){const id=Number(endpoint.split("/").pop());const removed=target.assets.findIndex(asset=>asset.id===id);assert.ok(removed>=0,"Delete must target a hosted asset");target.assets.splice(removed,1);return {};}
         if(options.method==="POST"){const file=options.body.get("attachment");assert.deepEqual(Buffer.from(await file.arrayBuffer()),bytes);const asset={id:1,name:filename,size:bytes.length,browser_download_url:`https://codeberg.org/JohninNL/nl-morphe-patches/releases/download/${tag}/${filename}`};target.assets.push(asset);return asset;}
         return target.assets;
       }
@@ -62,7 +63,7 @@ function fixture(t,branch="main"){
     return target.release;
   };
   const download=async(name,url,size)=>{calls.push({kind:"download",name,url});assert.equal(new URL(url).origin,name==="codeberg"?"https://codeberg.org":"https://gitgud.io");assert.equal(size,bytes.length);return name==="codeberg"?bytes:targets.gitgud.stored;};
-  const canonicalDownload=async(url,size)=>{calls.push({kind:"canonical-download",url});assert.equal(url,manifest.download_url);assert.equal(size,bytes.length);return bytes;};
+  const canonicalDownload=async(url,size)=>{calls.push({kind:"canonical-download",url});assert.equal(url,manifest.download_url);assert.equal(size,null);return bytes;};
   return {cwd,head,tagSha,version,tag,filename,bytes,alternateBytes,key,manifest,receipt,env,calls,targets,git,request,download,canonicalDownload};
 }
 function options(f,more={}){return {cwd:f.cwd,env:f.env,git:f.git,request:f.request,download:f.download,canonicalDownload:f.canonicalDownload,...more};}
@@ -102,9 +103,36 @@ test("wrong owners, insufficient GitGud scope and feature/channel mismatches are
   const git=(args,opts)=>args[0]==="branch"?"feature/work":f.git(args,opts);await assert.rejects(api().mirrorReleases(options(f,{git})),/Only main/);
   fs.writeFileSync(path.join(f.cwd,"build/release-safety/gitlab-result.json"),JSON.stringify({...f.receipt,branch:"dev"}));await assert.rejects(api().mirrorReleases(options(f)),/branch\/channel\/version mismatch/);
 });
-test("a conflicting existing signed asset is never replaced",async t=>{
+test("a hosted asset still serving wrong bytes after replacement is detected",async t=>{
   const f=fixture(t);await api().mirrorReleases(options(f));const changed=Buffer.from(f.bytes);changed[4]^=1;
   const result=await api().mirrorReleases(options(f,{download:async()=>changed}));assert.equal(result.complete,false);assert.ok(Object.values(result.targets).every(row=>row.status==="rejected"));
+});
+test("a locally rebuilt bundle is never mirrored; only the published canonical file is",async t=>{
+  const f=fixture(t);fs.writeFileSync(path.join(f.cwd,"patches/build/libs",f.filename),f.alternateBytes);
+  const result=await api().mirrorReleases(options(f));
+  assert.equal(result.complete,true);assert.ok(Object.values(result.targets).every(row=>row.status==="fulfilled"));
+  assert.equal(f.targets.codeberg.assets.length,1);assert.equal(f.targets.codeberg.assets[0].size,f.bytes.length);
+});
+test("a wrong-byte hosted asset is replaced by the canonical artifact",async t=>{
+  const f=fixture(t);
+  f.targets.codeberg.release={id:1,tag_name:f.tag,author:{login:"JohninNL"},prerelease:false};
+  f.targets.codeberg.assets.push({id:7,name:f.filename,size:f.bytes.length});
+  // The first Codeberg download sees the wrong hosted bytes; after the
+  // replacement every download serves the canonical artifact.
+  let codebergServes=f.alternateBytes;
+  const download=async(name,url,size,extra)=>{
+    if(name==="gitgud")return f.download(name,url,size,extra);
+    const value=codebergServes;codebergServes=f.bytes;return value;
+  };
+  let deleted=false;const request=async(name,endpoint,options)=>{if(name==="codeberg"&&options?.method==="DELETE"&&endpoint.includes("/assets/"))deleted=true;return f.request(name,endpoint,options);};
+  const result=await api().mirrorReleases(options(f,{request,download}));
+  assert.equal(result.complete,true);assert.equal(deleted,true);assert.equal(f.targets.codeberg.assets.length,1);assert.equal(f.targets.codeberg.assets[0].id,1);
+});
+test("canonical bytes that fail signature verification are rejected before any mirror write",async t=>{
+  const f=fixture(t);fs.writeFileSync(path.join(f.cwd,"patches/build/libs",f.filename),f.alternateBytes);
+  const before=f.calls.filter(row=>row.method&&row.method!=="GET"||row.kind==="git"&&row.args[0]==="push").length;
+  await assert.rejects(api().mirrorReleases(options(f,{canonicalDownload:async()=>Buffer.from("not a signed bundle")})),/signature|verify|bundle/i);
+  assert.equal(f.calls.filter(row=>row.method&&row.method!=="GET"||row.kind==="git"&&row.args[0]==="push").length,before);
 });
 test("target-specific API credentials and Git headers never cross destination hosts",async()=>{
   const env={CODEBERG_TOKEN:"codeberg-only",GITGUD_TOKEN:"gitgud-only",GITLAB_TOKEN:"canonical-only"};const urls=[];
@@ -175,13 +203,6 @@ test("SSH ref transports select only the destination key and safely quote privat
   }
 });
 
-test("a different valid signed canonical upload refuses all target mutations",async t=>{
-  const f=fixture(t),verify=require("../.forgejo/scripts/bundle.cjs").verifyBundle;
-  assert.notEqual(verify(f.alternateBytes,f.key),verify(f.bytes,f.key));
-  await assert.rejects(api().mirrorReleases(options(f,{canonicalDownload:async()=>f.alternateBytes})),/canonical|published/i);
-  assert.ok(!f.calls.some(row=>row.kind==="api"||row.kind==="git"&&row.args[0]==="push"));
-  assert.equal(JSON.parse(fs.readFileSync(path.join(f.cwd,"build/release-safety/mirrors-result.json"))).complete,false);
-});
 
 test("GitGud accepts fine-grained token metadata bound to the authenticated owner",async t=>{
   for(const granular of [{granular:true},{granular_scopes:["read_user","read_project"]}]){

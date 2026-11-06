@@ -141,7 +141,7 @@ async function preflight(options={}){
   const context=sourceContext(options);
   return settledTargets(context,async name=>{await checkTarget(name,context);return {checked:true};});
 }
-function canonicalRelease(context){
+async function canonicalRelease(context){
   const read=file=>JSON.parse(fs.readFileSync(path.join(context.cwd,file),"utf8"));
   const receipt=read("build/release-safety/gitlab-result.json");
   if(receipt.preview)throw new Error("Preview receipts cannot publish release mirrors");
@@ -157,7 +157,10 @@ function canonicalRelease(context){
   const key=fs.readFileSync(path.join(context.cwd,"morphe-signing.pub"),"utf8").trim();
   if(context.git(["show","HEAD:morphe-signing.pub"],gitOptions).trim()!==key)throw new Error("Canonical signing key differs from committed release metadata");
   if(manifest.public_key?.trim()!==key||manifest.download_url!==`${CANONICAL.base}/${CANONICAL.repository}/-/releases/${tag}/downloads/${filename}`)throw new Error("Canonical release manifest/signing identity mismatch");
-  const bytes=fs.readFileSync(path.join(context.cwd,"patches/build/libs",filename)),hash=verifyBundle(bytes,key);
+  // Mirrors must publish the already released canonical file, never a local
+  // rebuild: signing is non-deterministic, so a retry's rebuilt bundle is
+  // different valid bytes. Source the artifact from the published URL.
+  const bytes=await context.canonicalDownload(manifest.download_url,null),hash=verifyBundle(bytes,key);
   return {version,tag,tagSha,filename,key,bytes,hash,canonicalUrl:manifest.download_url,notes:manifest.description||""};
 }
 function syncRefs(name,context,release,refs){
@@ -181,8 +184,18 @@ async function codebergRelease(context,source){
   const assets=await request(`${endpoint}/${release.id}/assets`),matches=assets.filter(asset=>asset.name===source.filename);
   if(matches.length>1)throw new Error("Codeberg has duplicate conflicting assets");
   let asset=matches[0];
+  if(asset){
+    // Decide by bytes, not by URL formatting: an identical asset is left
+    // untouched, a wrong-byte asset is replaced with the canonical artifact.
+    let hosted=null;
+    if(asset.size===source.bytes.length){try{hosted=await context.download("codeberg",url,asset.size,{authenticated:release.draft});}catch{hosted=null;}}
+    if(!hosted||verifyBundle(hosted,source.key)!==source.hash){
+      await request(`${endpoint}/${release.id}/assets/${asset.id}`,{method:"DELETE"});
+      asset=null;
+    }
+  }
   if(!asset){const form=new FormData();form.set("attachment",new Blob([source.bytes],{type:"application/octet-stream"}),source.filename);asset=await request(`${endpoint}/${release.id}/assets?name=${encodeURIComponent(source.filename)}`,{method:"POST",body:form});}
-  if(asset.name!==source.filename||asset.size!==source.bytes.length||asset.browser_download_url!==url)throw new Error("Codeberg asset metadata conflicts with canonical bundle");
+  if(asset.name!==source.filename||asset.size!==source.bytes.length)throw new Error("Codeberg asset metadata conflicts with canonical bundle");
   sameBundle(await context.download("codeberg",url,asset.size,{authenticated:release.draft}),source);
   if(release.draft){release=await request(`${endpoint}/${release.id}`,{method:"PATCH",body:{draft:false}});valid(release);if(release.draft)throw new Error("Codeberg release remained a draft");}
   sameBundle(await context.download("codeberg",url,asset.size),source);
@@ -216,9 +229,9 @@ function saveResult(cwd,result){
 async function mirrorReleases(options={}){
   let context,source;
   try{
-    context=sourceContext(options);source=canonicalRelease(context);
-    // A valid rebuild is insufficient: mirrors must reproduce the already public canonical file.
-    if(source)sameBundle(await context.canonicalDownload(source.canonicalUrl,source.bytes.length),source);
+    context=sourceContext(options);source=await canonicalRelease(context);
+    // The mirrored bytes are the published canonical artifact itself; a valid
+    // local rebuild is never consulted for mirroring.
   }
   catch(error){
     const result={format:1,complete:false,phase:"validation",targets:{}};
