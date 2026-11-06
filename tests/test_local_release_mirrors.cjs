@@ -19,7 +19,7 @@ function fixture(t,branch="main"){
   const receipt={version,branch};const manifest={version,public_key:key,description:"Canonical GitLab notes",download_url:`https://gitlab.com/johninnld/nl-morphe-patches/-/releases/${tag}/downloads/${filename}`};
   fs.mkdirSync(path.join(cwd,"build/release-safety"),{recursive:true});fs.mkdirSync(path.join(cwd,"patches/build/libs"),{recursive:true});
   fs.writeFileSync(path.join(cwd,"build/release-safety/gitlab-result.json"),JSON.stringify(receipt));fs.writeFileSync(path.join(cwd,"patches-bundle.json"),JSON.stringify(manifest));fs.writeFileSync(path.join(cwd,"morphe-signing.pub"),key);fs.writeFileSync(path.join(cwd,"patches/build/libs",filename),bytes);
-  const calls=[],targets={codeberg:{refs:{},assets:[],release:null},gitgud:{refs:{},stored:null,release:null}};
+  const calls=[],targets={codeberg:{refs:{},assets:[],release:null,releases:[]},gitgud:{refs:{},stored:null,release:null}};
   const env={CODEBERG_TOKEN:"codeberg-fixture",GITGUD_TOKEN:"gitgud-fixture",GITLAB_TOKEN:"canonical-fixture"};
   const git=(args,options={})=>{
     calls.push({kind:"git",args,env:options.env});
@@ -50,13 +50,18 @@ function fixture(t,branch="main"){
     if(endpoint===`/projects/JohninNL%2Fnl-morphe-patches`)return {path_with_namespace:"JohninNL/nl-morphe-patches",namespace:{path:"JohninNL"},permissions:{project_access:{access_level:40}}};
     if(endpoint.includes("/packages/generic/")){if(options.method==="PUT"){target.stored=options.body;assert.deepEqual(target.stored,bytes);return {};}return target.stored;}
     if(name==="codeberg"){
+      const releases="/repos/JohninNL/nl-morphe-patches/releases";
+      if(endpoint===releases+"?limit=50")return target.releases.length?target.releases:(target.release?[target.release]:[]);
+      if(options.method==="DELETE"&&endpoint.startsWith(releases+"/")&&!endpoint.includes("/assets")){
+        const id=Number(endpoint.split("/").pop());assert.ok(target.releases.some(item=>item.id===id),"Delete must target a hosted release");target.releases=target.releases.filter(item=>item.id!==id);if(target.release?.id===id)target.release=null;return {};
+      }
       if(endpoint.includes("/assets")){
         if(options.method==="DELETE"){const id=Number(endpoint.split("/").pop());const removed=target.assets.findIndex(asset=>asset.id===id);assert.ok(removed>=0,"Delete must target a hosted asset");target.assets.splice(removed,1);return {};}
         if(options.method==="POST"){const file=options.body.get("attachment");assert.deepEqual(Buffer.from(await file.arrayBuffer()),bytes);const asset={id:1,name:filename,size:bytes.length,browser_download_url:`https://codeberg.org/JohninNL/nl-morphe-patches/releases/download/${tag}/${filename}`};target.assets.push(asset);return asset;}
         return target.assets;
       }
-      if(options.method==="POST"){target.release={...options.body,id:1,author:{login:"JohninNL"}};return target.release;}
-      if(options.method==="PATCH"){Object.assign(target.release,options.body);return target.release;}
+      if(options.method==="POST"){target.release={...options.body,id:1,created_at:new Date().toISOString(),author:{login:"JohninNL"}};target.releases.push(target.release);return target.release;}
+      if(options.method==="PATCH"){Object.assign(target.release,options.body);const stored=target.releases.find(item=>item.id===target.release.id);if(stored)Object.assign(stored,options.body);return target.release;}
       return target.release;
     }
     if(options.method==="POST"){target.release={...options.body,author:{username:"JohninNL"},commit:{id:head}};return target.release;}
@@ -127,6 +132,14 @@ test("a wrong-byte hosted asset is replaced by the canonical artifact",async t=>
   let deleted=false;const request=async(name,endpoint,options)=>{if(name==="codeberg"&&options?.method==="DELETE"&&endpoint.includes("/assets/"))deleted=true;return f.request(name,endpoint,options);};
   const result=await api().mirrorReleases(options(f,{request,download}));
   assert.equal(result.complete,true);assert.equal(deleted,true);assert.equal(f.targets.codeberg.assets.length,1);assert.equal(f.targets.codeberg.assets[0].id,1);
+});
+test("Codeberg keeps only the latest five releases and deletes one older release per publication",async t=>{
+  const f=fixture(t);
+  for(let index=1;index<=5;index++)f.targets.codeberg.releases.push({id:100+index,tag_name:`v1.0.${index}`,created_at:`2026-01-0${index}T00:00:00Z`,author:{login:"JohninNL"},prerelease:false});
+  const result=await api().mirrorReleases(options(f));
+  assert.equal(result.complete,true);assert.equal(f.targets.codeberg.releases.length,5);
+  assert.ok(!f.targets.codeberg.releases.some(release=>release.tag_name==="v1.0.1"));
+  assert.ok(f.targets.codeberg.releases.some(release=>release.tag_name===f.tag));
 });
 test("canonical bytes that fail signature verification are rejected before any mirror write",async t=>{
   const f=fixture(t);fs.writeFileSync(path.join(f.cwd,"patches/build/libs",f.filename),f.alternateBytes);

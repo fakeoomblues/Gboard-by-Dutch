@@ -11,6 +11,7 @@ const TARGETS={
   gitgud:{base:"https://gitgud.io",repository:"JohninNL/nl-morphe-patches",owner:"JohninNL",token:"GITGUD_TOKEN",api:"/api/v4",sshKey:"GITGUD_SSH_KEY",ssh:"git@ssh.gitgud.io:JohninNL/nl-morphe-patches.git"},
 };
 const CANONICAL={base:"https://gitlab.com",repository:"johninnld/nl-morphe-patches",owner:"johninnld",token:"GITLAB_TOKEN",sshKey:"GITLAB_SSH_KEY",ssh:"git@gitlab.com:johninnld/nl-morphe-patches.git"};
+const CODEBERG_RELEASE_LIMIT=5;
 const SHA=/^[a-f0-9]{40}$/;
 function target(name){const value=TARGETS[name];if(!value)throw new Error("Unknown release mirror");return value;}
 function tokenFor(name,env){const value=env[target(name).token];if(!value||!/^[A-Za-z0-9._-]+$/.test(value))throw new Error(target(name).token+" is required");return value;}
@@ -174,6 +175,22 @@ function syncRefs(name,context,release,refs){
   if(actual[branchRef]!==context.head||actual[tagRef]!==release.tagSha)throw new Error(name+" source refs do not match canonical source");
 }
 function sameBundle(bytes,release){if(!bytes||verifyBundle(bytes,release.key)!==release.hash)throw new Error("Mirror asset differs from the canonical signed bytes");}
+async function pruneCodebergReleases(context,request,currentTag){
+  const endpoint=`/repos/${TARGETS.codeberg.repository}/releases?limit=50`;
+  const releases=await context.request("codeberg",endpoint);
+  if(!Array.isArray(releases))throw new Error("Codeberg release list is invalid");
+  const ordered=releases.slice().sort((left,right)=>{
+    const leftTime=Date.parse(left.created_at),rightTime=Date.parse(right.created_at);
+    return Number.isFinite(leftTime)&&Number.isFinite(rightTime)?leftTime-rightTime:Number(left.id)-Number(right.id);
+  });
+  const excess=ordered.slice(0,Math.max(0,ordered.length-CODEBERG_RELEASE_LIMIT));
+  for(const release of excess){
+    if(!release||!Number.isSafeInteger(release.id)||typeof release.tag_name!=="string")throw new Error("Codeberg release list contains an invalid entry");
+    if(release.tag_name===currentTag)throw new Error("Codeberg release pruning selected the release being published");
+    await request(`/repos/${TARGETS.codeberg.repository}/releases/${release.id}`,{method:"DELETE"});
+  }
+  return excess.length;
+}
 async function codebergRelease(context,source){
   const destination=TARGETS.codeberg,endpoint=`/repos/${destination.repository}/releases`,request=(url,options)=>context.request("codeberg",url,options);
   const url=`${destination.base}/${destination.repository}/releases/download/${source.tag}/${source.filename}`;
@@ -199,6 +216,7 @@ async function codebergRelease(context,source){
   sameBundle(await context.download("codeberg",url,asset.size,{authenticated:release.draft}),source);
   if(release.draft){release=await request(`${endpoint}/${release.id}`,{method:"PATCH",body:{draft:false}});valid(release);if(release.draft)throw new Error("Codeberg release remained a draft");}
   sameBundle(await context.download("codeberg",url,asset.size),source);
+  await pruneCodebergReleases(context,request,source.tag);
   return {url:`${destination.base}/${destination.repository}/releases/tag/${source.tag}`,sha256:source.hash,version:source.version};
 }
 async function gitgudRelease(context,source){
