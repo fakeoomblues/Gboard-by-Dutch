@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">58 apps</span> · Patchbundel: 1.46.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">59 apps</span> · Patchbundel: 1.46.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -102,6 +102,32 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/ad.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="aliexpress com.alibaba.aliexpresshd 8.180.0 disable analytics disable update prompts enable image saving fix dark mode gmscore support remove promotional popups remove sponsored items skip splash promotions spoof signature" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [AliExpress](apps/aliexpress.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">8.180.0</span></p>
+<p class="dap-app-card__package">com.alibaba.aliexpresshd</p>
+<details class="dap-app-card__patches">
+<summary>9 patches</summary>
+<ul>
+<li>Disable analytics <span class="dap-app-card__target">8.180.0</span></li>
+<li>Disable update prompts <span class="dap-app-card__target">8.180.0</span></li>
+<li>Enable image saving <span class="dap-app-card__target">8.180.0</span></li>
+<li>Fix dark mode <span class="dap-app-card__target">8.180.0</span></li>
+<li>GmsCore support <span class="dap-app-card__target">8.180.0</span></li>
+<li>Remove promotional popups <span class="dap-app-card__target">8.180.0</span></li>
+<li>Remove sponsored items <span class="dap-app-card__target">8.180.0</span></li>
+<li>Skip splash promotions <span class="dap-app-card__target">8.180.0</span></li>
+<li>Spoof signature <span class="dap-app-card__target">8.180.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/aliexpress.md){ .dap-app-card__link }
 
 </article>
 

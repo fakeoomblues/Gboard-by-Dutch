@@ -1747,6 +1747,40 @@
     },
     {
       "name": "Disable analytics",
+      "description": "Stops usage statistics and affiliate link reports.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable analytics",
       "description": "Stops SoundCloud's TrackingHandler from storing and dispatching analytics events. Other tracking SDKs and online services remain active.",
       "default": true,
       "category": null,
@@ -3331,6 +3365,40 @@
       "options": []
     },
     {
+      "name": "Disable update prompts",
+      "description": "Removes automatic update dialogs. The Version row in Settings still checks manually.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable En Route alerts",
       "description": "Enables local En Route access and nearby static-camera warnings using the app's real data and distance settings. Requests notification permission and preserves later notification choices, location permissions, authentication and purchases.",
       "default": true,
@@ -3425,6 +3493,40 @@
               },
               "isExperimental": false,
               "minSdk": 27,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable image saving",
+      "description": "Shows the save button in the full-screen image viewer.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
               "description": null
             }
           ]
@@ -3823,6 +3925,40 @@
       "options": []
     },
     {
+      "name": "Fix dark mode",
+      "description": "Fixes the screens and web pages the built-in Dark mode leaves white. Requires Android 10 or later.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Fix integrity",
       "description": "Uses RainViewer's no-attestation fallback and renews its anonymous app session once, preserving settings and purchase records. Includes original-certificate compatibility for Google services. Does not forge signed Google verdicts or hide publisher errors.",
       "default": true,
@@ -4057,6 +4193,40 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "GmsCore support",
+      "description": "Signs in through GmsCore instead of Google Play Services. Requires GmsCore to be installed.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Google sign-in via microG-Re",
@@ -8249,6 +8419,40 @@
       "options": []
     },
     {
+      "name": "Remove promotional popups",
+      "description": "Stops coupon offers opening over Home and search results.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Remove sign-in prompts",
       "description": "Removes Google's sign-in prompts: the first-launch \"Make it your map\" page, the search screen's \"Tired of typing?\" card and the account sheet's \"Sign in\" pill. Tapping \"Your profile\" (or the pill, where it still shows) answers with a \"Can't sign in\" toast instead of nothing. With Add microG-RE support, which signs in, only the first-launch page and the card go.",
       "default": true,
@@ -8300,6 +8504,40 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove sponsored items",
+      "description": "Removes paid placements from search results and product feeds.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
               "description": null
             }
           ]
@@ -9713,6 +9951,40 @@
       "options": []
     },
     {
+      "name": "Skip splash promotions",
+      "description": "Skips the full-screen promotion shown at launch.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Skip subscription screens",
       "description": "Skips subscription onboarding, automatic startup/web promotions, recurring purchase offers and Settings offer cards. Hides the Settings plan Manage link while retaining the plan badge and premium access state.",
       "default": true,
@@ -10052,6 +10324,40 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Spoof signature",
+      "description": "Restores product loading on patched installs.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.0",
+              "versionCodes": {
+                "ARM64_V8A": 80005997,
+                "ARMEABI_V7A": 80005997,
+                "X86_64": 80005997,
+                "X86": 80005997
+              },
+              "isExperimental": false,
+              "minSdk": 21,
               "description": null
             }
           ]

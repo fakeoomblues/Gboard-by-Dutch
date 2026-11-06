@@ -45,6 +45,24 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
 
+## AliExpress
+
+[Wat veranderen de patches?](../apps/aliexpress.md)
+
+`com.alibaba.aliexpresshd`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable analytics | Aan | 8.180.0 |
+| Disable update prompts | Aan | 8.180.0 |
+| Enable image saving | Aan | 8.180.0 |
+| Fix dark mode | Aan | 8.180.0 |
+| GmsCore support | Aan | 8.180.0 |
+| Remove promotional popups | Aan | 8.180.0 |
+| Remove sponsored items | Aan | 8.180.0 |
+| Skip splash promotions | Aan | 8.180.0 |
+| Spoof signature | Aan | 8.180.0 |
+
 ## AT4K Launcher
 
 [Wat veranderen de patches?](../apps/at4k.md)
@@ -825,4 +843,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
