@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-11-06T21:30:09",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/6212121049485cc24fcd45349608905f26acfa95/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.48.0.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [621212104948](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/6212121049485cc24fcd45349608905f26acfa95). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.48.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.47.1...v1.48.0) (2026-11-06)\n\n### ✨ New Features\n\n* **bol:** remove missed ads and consent prompts in 2026.23.1 ([6212121](https://gitlab.com/johninnld/nl-morphe-patches/commit/6212121049485cc24fcd45349608905f26acfa95))",
-  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.48.0/downloads/patches-1.48.0.mpp",
+  "created_at": "2026-11-06T22:21:36",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.48.1.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [e2c85a9d519e](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.48.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.48.0...v1.48.1) (2026-11-06)\n\n### 🐛 Bug Fixes\n\n* **AliExpress:** tolerate missing legacy dark-mode fingerprint ([e2c85a9](https://gitlab.com/johninnld/nl-morphe-patches/commit/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef))",
+  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.48.1/downloads/patches-1.48.1.mpp",
   "signature_download_url": "",
-  "version": "1.48.0",
+  "version": "1.48.1",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }

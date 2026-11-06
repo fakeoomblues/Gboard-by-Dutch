@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.48.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e2c85a9d519e](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.48.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.48.0...v1.48.1) (2026-11-06)
+
+### 🐛 Bug Fixes
+
+* **AliExpress:** tolerate missing legacy dark-mode fingerprint ([e2c85a9](https://gitlab.com/johninnld/nl-morphe-patches/commit/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/6212121049485cc24fcd45349608905f26acfa95/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.48.0.**
