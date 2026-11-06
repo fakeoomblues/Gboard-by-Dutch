@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/6212121049485cc24fcd45349608905f26acfa95/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.48.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [621212104948](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/6212121049485cc24fcd45349608905f26acfa95). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.48.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.47.1...v1.48.0) (2026-11-06)
+
+### ✨ New Features
+
+* **bol:** remove missed ads and consent prompts in 2026.23.1 ([6212121](https://gitlab.com/johninnld/nl-morphe-patches/commit/6212121049485cc24fcd45349608905f26acfa95))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3c7ef5f0fd4d68d233307258a46c9d728f7875fc/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.47.1.**

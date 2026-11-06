@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.47.1**
+**Patchbundel: 1.48.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -857,4 +857,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Gearslip music browser support | Aan | Alle versies |
 
-[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
+[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
