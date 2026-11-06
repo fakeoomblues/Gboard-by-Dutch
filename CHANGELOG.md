@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/ae8f0cf59a7a201869522adb1dffd8e44e4519bb/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.47.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [ae8f0cf59a7a](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/ae8f0cf59a7a201869522adb1dffd8e44e4519bb). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.47.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.46.0...v1.47.0) (2026-11-06)
+
+### ✨ New Features
+
+* **AliExpress:** port nine patches to 8.180.0 ([ae8f0cf](https://gitlab.com/johninnld/nl-morphe-patches/commit/ae8f0cf59a7a201869522adb1dffd8e44e4519bb))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e64bd6a82ac198aaa855541162c721334c1ef735/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.46.0.**

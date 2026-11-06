@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.46.0**
+**Patch bundle: 1.47.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -843,4 +843,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
+[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
