@@ -6,6 +6,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const crypto = require("node:crypto");
+const {fetchManifest} = require("../.gitlab/scripts/discovery.cjs");
 const {execFileSync} = require("node:child_process");
 const {loadAll} = require("js-yaml");
 function signedFixture() {
@@ -146,6 +147,27 @@ function publisherFixture(t, branch="main") {
   const receipt=()=>JSON.parse(fs.readFileSync(path.join(cwd,"build/release-safety/gitlab-result.json"),"utf8"));
   return {cwd,receipt};
 }
+test("discovery retries stale CDN manifests with cache-busted fetches", async () => {
+  const manifest = {version: "1.2.3", public_key: "key"};
+  let served = 0;
+  const stale = {ok: true, json: async () => ({version: "1.2.2", public_key: "key"})};
+  const fresh = {ok: true, json: async () => manifest};
+  const fetcher = async url => {
+    assert.ok(url.includes("?t="), "Manifest fetches must be cache busted");
+    return ++served === 1 ? stale : fresh;
+  };
+  const pauses = [];
+  const recovered = await fetchManifest("a".repeat(40), {expectedVersion: "1.2.3", fetcher, attempts: 3, pause: ms => {pauses.push(ms); return Promise.resolve();}});
+  assert.deepEqual(recovered, manifest);
+  assert.deepEqual(pauses, [5000], "Retries back off between attempts");
+  // A stale version is retried too, and only reported once every attempt is stale.
+  let staleCalls = 0;
+  await assert.rejects(fetchManifest("main", {expectedVersion: "1.2.3", fetcher: async () => {staleCalls++; return stale;}, attempts: 3, pause: () => Promise.resolve()}), /still advertises 1\.2\.2/);
+  assert.equal(staleCalls, 3, "Every allowed attempt is used before reporting a stale manifest");
+  const urls = [];
+  await assert.rejects(fetchManifest("main", {fetcher: async url => {urls.push(url); return {ok: false, status: 502};}, attempts: 2, pause: () => Promise.resolve()}), /HTTP 502/);
+  assert.equal(urls.length, 2);
+});
 test("local releases check the remote before running the unchanged signed release configuration", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");
   for(const branch of ["main"]){
