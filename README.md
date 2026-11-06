@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.44.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.44.0)** · 56 apps · 290 patches
+**Patch bundle [v1.45.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.45.0)** · 58 apps · 293 patches
 
 ### Weather
 
@@ -94,6 +94,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [9292](docs/site/en/apps/9292.md) | Ads · Tracking · Prompts · Compatibility | 2.48.1 | APKM | 4 |
+| [EasyPark](docs/site/en/apps/easypark.md) | See guide | 26.40.1 | APKM | 1 |
+| [EasyPark NL](docs/site/en/apps/easypark-nl.md) | See guide | 26.42.4 | APKS | 2 |
 | [Flitsmeister](docs/site/en/apps/flitsmeister.md) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17, 15.0 | APKS | 9 |
 | [Gearslip](docs/site/en/apps/gearslip.md) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 3 |
 | [Google Maps](docs/site/en/apps/google-maps.md) | See guide | 26.43.05.1002020710 | APK | 31 |

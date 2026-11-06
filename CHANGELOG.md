@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/21072359acc8f109a7fd835cec7770f12362deda/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.45.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [21072359acc8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/21072359acc8f109a7fd835cec7770f12362deda). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.45.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.44.0...v1.45.0) (2026-11-06)
+
+### ✨ New Features
+
+* **EasyPark NL:** enable third-party Android Auto hosts ([2107235](https://gitlab.com/johninnld/nl-morphe-patches/commit/21072359acc8f109a7fd835cec7770f12362deda))
+* **EasyPark:** enable third-party Android Auto hosts ([2107235](https://gitlab.com/johninnld/nl-morphe-patches/commit/21072359acc8f109a7fd835cec7770f12362deda))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9f5c31db276a643c68592571d51e0ff009bee28b/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.44.0.**
