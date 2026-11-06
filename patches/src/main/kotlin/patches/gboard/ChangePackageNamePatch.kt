@@ -13,7 +13,13 @@ private fun Document.elements(tag: String): List<Element> =
     getElementsByTagName(tag).let { list -> (0 until list.length).map { list.item(it) as Element } }
 
 /** One manifest value that names Gboard's own identity: [prefix] + package + [suffix]. */
-private class Identity(val element: String, val attribute: String, val prefix: String = "", val suffix: String = "")
+private class Identity(
+    val element: String,
+    val attribute: String,
+    val prefix: String = "",
+    val suffix: String = "",
+    val optional: Boolean = false,
+)
 
 /**
  * Every manifest value in Gboard 18.5.11 that carries its package name, all of them the
@@ -30,6 +36,7 @@ private val identities = listOf(
     Identity("provider", "android:authorities"),
     Identity("provider", "android:authorities", suffix = ".androidx-startup"),
     Identity("provider", "android:authorities", suffix = ".clipboard_content"),
+    Identity("provider", "android:authorities", suffix = ".gboard_patches", optional = true),
     Identity("provider", "android:authorities", suffix = ".fileprovider"),
     Identity("provider", "android:authorities", suffix = ".inputactionprovider"),
     Identity("provider", "android:authorities", suffix = ".mlkitinitprovider"),
@@ -79,20 +86,25 @@ val gboardChangePackageNamePatch = resourcePatch(
             val all = manifest.elements("*").flatMap { element ->
                 (0 until element.attributes.length).map { element.attributes.item(it) as Attr }
             }
-            val owned = identities.map { identity ->
+            val owned = identities.mapNotNull { identity ->
                 val value = identity.prefix + old + identity.suffix
                 val matches = manifest.elements(identity.element).mapNotNull { element ->
                     element.getAttributeNode(identity.attribute)?.takeIf { it.value == value }
                 }
-                matches.singleOrNull() ?: throw PatchException(
-                    "Expected one ${identity.element} ${identity.attribute}=\"$value\", found ${matches.size}",
-                )
+                when {
+                    matches.size == 1 -> matches.single() to identity
+                    matches.isEmpty() && identity.optional -> null
+                    else -> throw PatchException(
+                        "Expected one ${identity.element} ${identity.attribute}=\"$value\", found ${matches.size}",
+                    )
+                }
             }
-            val unexpected = all.firstOrNull { attr -> old in attr.value && owned.none { it === attr } }
+            val ownedAttrs = owned.map { it.first }
+            val unexpected = all.firstOrNull { attr -> old in attr.value && ownedAttrs.none { it === attr } }
             if (unexpected != null) {
                 throw PatchException("Unexpected package value ${unexpected.name}=\"${unexpected.value}\" in Gboard's manifest")
             }
-            owned.zip(identities).forEach { (attr, identity) -> attr.value = identity.prefix + new + identity.suffix }
+            owned.forEach { (attr, identity) -> attr.value = identity.prefix + new + identity.suffix }
         }
 
         // Settings screens that open Gboard's own activities by package, including ones other patches added.

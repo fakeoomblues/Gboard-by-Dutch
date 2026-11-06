@@ -229,8 +229,14 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Change package name | On | 18.5.11.993608717-release-arm64-v8a |
+| Clipboard Enhancements | On | 18.5.11.993608717-release-arm64-v8a |
+| Cursor trackpad mode | On | 18.5.11.993608717-release-arm64-v8a |
 | Custom branding | Off | 18.5.11.993608717-release-arm64-v8a |
+| Incognito Mode Toggle | On | 18.5.11.993608717-release-arm64-v8a |
 | Parakeet voice typing | On | 18.5.11.993608717-release-arm64-v8a |
+| Simple Calculator | On | 18.5.11.993608717-release-arm64-v8a |
+| Toolbar Editing Buttons | On | 18.5.11.993608717-release-arm64-v8a |
+| Web Clipboard | On | 18.5.11.993608717-release-arm64-v8a |
 
 ## Gearslip
 
@@ -819,4 +825,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
