@@ -1,4 +1,28 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e64bd6a82ac198aaa855541162c721334c1ef735/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.46.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e64bd6a82ac1](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e64bd6a82ac198aaa855541162c721334c1ef735). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.46.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.45.0...v1.46.0) (2026-11-06)
+
+### 🐛 Bug Fixes
+
+* **ci:** select the current bundle and vendor jar without requiring a clean ([9c558db](https://gitlab.com/johninnld/nl-morphe-patches/commit/9c558db198dc3fcdb21bba28d8035680ab6602d6))
+* **release:** mirror only the published canonical bundle ([a2e5251](https://gitlab.com/johninnld/nl-morphe-patches/commit/a2e5251f5a056e3e9632493f41d4aeff80aa29e6))
+* **release:** sweep pending workspace cleanup on watch ticks ([762d8d4](https://gitlab.com/johninnld/nl-morphe-patches/commit/762d8d40db1b83cedc207b85ff8ec509c61ae90a))
+* **release:** verify discovery against the release commit and retry stale CDN reads ([7eef795](https://gitlab.com/johninnld/nl-morphe-patches/commit/7eef7957925e5471396e15a573e73d0976cb4d22))
+
+### ✨ New Features
+
+* **Gboard:** port six editing and clipboard patches to 18.5.11 ([e64bd6a](https://gitlab.com/johninnld/nl-morphe-patches/commit/e64bd6a82ac198aaa855541162c721334c1ef735))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/21072359acc8f109a7fd835cec7770f12362deda/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.45.0.**
