@@ -16,7 +16,7 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 | **Enable full streaming** | Aan | Houdt volledige nummers speelbaar voor het aangemelde account: verwijdert preview- en apparaatlimiet-oordelen, behoudt offline- en radiorechten, wist de streamingtijdslimiet en laat catalogusitems via Deezer's eigen mediaservice afspelen. |
 | **Remove advertising** | Aan | Schakelt banner-, native-, audio- en preroll-advertenties uit. Weergave gaat verder zonder advertentiepauze en de audio-advertentielancering krijgt nooit zijn advertentiedata. |
 | **Disable tracking** | Aan | Schakelt Adjust-initialisatie en -events, Segment-eventlevering en de Braze-bestemming, de Firebase Analytics/Crashlytics/Performance/Sessions-verzamelaars, automatische Facebook-app-events en advertentie-ID's uit. |
-| **Remove subscription paywalls** | Aan | Verbruikt de Premium-tab voordat die start, blokkeert de premiumtab-webviewpaywall na het aanmelden en sluit de artiestenpaywall, trial-start en aanbiedingsdialoogvensters na hun normale lifecycle. |
+| **Remove subscription paywalls** | Aan | Verbruikt de Premium-tab voordat die start, leidt de Premium-startactiviteit naar Home in plaats van naar de launcher, blokkeert de premiumtab-webviewpaywall na het aanmelden en sluit de artiestenpaywall, trial-start en aanbiedingsdialoogvensters na hun normale lifecycle. |
 
 ## Weergave
 

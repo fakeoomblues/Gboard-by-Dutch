@@ -13,9 +13,9 @@ import app.morphe.patcher.patch.bytecodePatch
 @Suppress("unused")
 val deezerRemovePaywalls = bytecodePatch(
     name = "Remove subscription paywalls",
-    description = "Stops the Premium tab from launching its subscription activity and closes the artist " +
-        "paywall, trial-start and offer-dialog activities after their normal lifecycle starts, so " +
-        "subscription offers and upgrade screens cannot block the listener. Account, sign-in and " +
+    description = "Stops the Premium tab and the startup Premium surface from blocking the app, " +
+        "redirecting the startup Premium activity to Home, and closes the artist paywall, trial-start " +
+        "and offer-dialog activities after their normal lifecycle starts. Account, sign-in and " +
         "catalogue services are unchanged.",
     default = true,
 ) {
@@ -116,10 +116,17 @@ val deezerRemovePaywalls = bytecodePatch(
             """,
         )
 
+        // NativePremiumActivity can be the restored task root at startup. Finishing it
+        // would empty the task and expose the launcher; start the normal Home surface
+        // instead, then finish the subscription activity.
+        redirectAfterSuperOnCreate(
+            "Lcom/deezer/ui/premium/NativePremiumActivity;",
+            "Lcom/deezer/ui/dynamicpage/DynamicPageRootActivity;",
+        )
+
         listOf(
             "Lcom/deezer/feature/artist/ArtistPaywallActivity;",
             "Lcom/deezer/feature/trialstart/TrialStartActivity;",
-            "Lcom/deezer/ui/premium/NativePremiumActivity;",
             "Lcom/deezer/ui/premium/NativePremiumTabActivity;",
             "Lcom/deezer/android/ui/activity/UserOffersDialogActivity;",
         ).forEach { closeAfterSuperOnCreate(it) }

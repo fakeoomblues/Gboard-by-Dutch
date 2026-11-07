@@ -935,4 +935,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

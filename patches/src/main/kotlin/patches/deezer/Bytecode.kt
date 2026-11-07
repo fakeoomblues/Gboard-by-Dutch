@@ -45,3 +45,37 @@ internal fun closeAfterSuperOnCreate(owner: String) {
         """,
     )
 }
+
+/**
+ * Run the activity's normal super.onCreate, then start the normal Home activity and
+ * finish the subscription activity. This is used where the subscription activity can
+ * be the task root (for example at startup), where a plain finish would drop to the
+ * launcher.
+ */
+context(_: BytecodePatchContext)
+internal fun redirectAfterSuperOnCreate(owner: String, target: String) {
+    val method = exact(owner, "onCreate", "V", "Landroid/os/Bundle;").method
+    val superCall = method.instructions.indexOfFirst { instruction ->
+        if (instruction.opcode != Opcode.INVOKE_SUPER && instruction.opcode != Opcode.INVOKE_SUPER_RANGE) {
+            return@indexOfFirst false
+        }
+        val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+        reference?.name == "onCreate" &&
+            reference.returnType == "V" &&
+            reference.parameterTypes.map(CharSequence::toString) == listOf("Landroid/os/Bundle;")
+    }
+    check(superCall >= 0) { "$owner has no super.onCreate call" }
+    method.addInstructions(
+        superCall + 1,
+        """
+            new-instance v0, Landroid/content/Intent;
+            const-class v1, $target
+            invoke-direct {v0, p0, v1}, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
+            const/high16 v1, 0x14000000
+            invoke-virtual {v0, v1}, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
+            invoke-virtual {p0, v0}, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
+            invoke-virtual {p0}, $owner->finish()V
+            return-void
+        """,
+    )
+}
