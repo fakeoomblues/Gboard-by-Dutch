@@ -47,26 +47,6 @@ private val COMPATIBILITY_MAPS_SYSTEM_VOICE = Compatibility(
     ),
 )
 
-/** An already package-renamed Maps test build (the navigation AVD uses this package). */
-private val COMPATIBILITY_MAPS_UNGOOGLED_2643 = Compatibility(
-    name = "Google Maps (Ungoogled)",
-    packageName = "org.ungoogled.android.apps.maps",
-    apkFileType = ApkFileType.APK,
-    appIconColor = 0xFFFFFF,
-    targets = listOf(
-        AppTarget(
-            version = "26.43.05.1002020710",
-            versionCodes = SupportedAbi.entries.associateWith { 1068844719 },
-            minSdk = 29,
-        ),
-        AppTarget(
-            version = "26.44.06.1006895251",
-            versionCodes = SupportedAbi.entries.associateWith { 1068856906 },
-            minSdk = 29,
-        ),
-    ),
-)
-
 /**
  * Maps only declares Google TTS in <queries>. Android 11+ package visibility then hides
  * the user's default engine, so `new TextToSpeech(context, listener)` silently falls back
@@ -106,7 +86,7 @@ val mapsSystemVoicePatch = bytecodePatch(
         "with the local DriveDeck voice. If no system engine is ready, Maps keeps its original voice.",
     default = false,
 ) {
-    compatibleWith(COMPATIBILITY_MAPS_SYSTEM_VOICE, COMPATIBILITY_MAPS_UNGOOGLED_2643)
+    compatibleWith(COMPATIBILITY_MAPS_SYSTEM_VOICE)
     dependsOn(sharedExtensionPatch, mapsSystemVoiceResources)
 
     execute {
