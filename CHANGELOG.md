@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/76a386c6720e616720cbc2aa97e10596c9fff081/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.49.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [76a386c6720e](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/76a386c6720e616720cbc2aa97e10596c9fff081). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.49.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.48.1...v1.49.0) (2026-11-07)
+
+### ✨ New Features
+
+* **Zoom Workplace:** support compatible Android Auto hosts ([76a386c](https://gitlab.com/johninnld/nl-morphe-patches/commit/76a386c6720e616720cbc2aa97e10596c9fff081))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e2c85a9d519ef82df5bbbcfc2f8a7c673f7bf0ef/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.48.1.**
