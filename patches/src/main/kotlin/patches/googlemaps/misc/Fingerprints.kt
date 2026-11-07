@@ -36,9 +36,12 @@ internal object GmsComplianceHostFingerprint : Fingerprint(
  * both senders from it.
  */
 internal object AdPingSenderFingerprint : Fingerprint(
-    custom = { method, _ -> method.parameterTypes.size == 3 },
-    parameters = listOf("Ljava/lang/String;", "Z", "Lazbn;"),
-    accessFlags = listOf(AccessFlags.PRIVATE, AccessFlags.FINAL),
+    custom = { method, _ ->
+        method.parameterTypes.size == 3 &&
+            method.parameterTypes[0].toString() == "Ljava/lang/String;" &&
+            method.parameterTypes[1].toString() == "Z" &&
+            AccessFlags.PRIVATE.isSet(method.accessFlags) && method.returnType == "V"
+    },
     returnType = "V",
     filters = listOf(methodCall(definingClass = "Landroid/webkit/URLUtil;", name = "isNetworkUrl")),
 )
