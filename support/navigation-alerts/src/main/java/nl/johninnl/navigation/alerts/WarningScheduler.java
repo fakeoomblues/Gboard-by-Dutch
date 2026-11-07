@@ -234,6 +234,9 @@ public final class WarningScheduler {
         if(changedPreparation||retryPreparation){preparedLanguage=language;preparedMode=mode;nextPrepare=now+PREPARE_RETRY_MS;speaker.prepare(language,mode);}
         boolean ready=mode==WarningAudioOwner.Mode.SILENT || active!=null && active.accepted && !active.cancelled ||
                 (audible==null?speaker.ready(language,mode):speaker.ready(audible.payload,mode));
+        // Native engine readiness can cross Binder or initialize a cold voice.
+        // Renew against the time after that work, before requesting playback.
+        now=time.now();
         if(lease!=null && now>=lease.until){lease=null;if(active!=null)cancel(active,false);}
         if(lease!=null && lease.mode!=mode)nextClaim=0;
         if(lease==null || now>=nextRenew || lease.mode!=mode) {

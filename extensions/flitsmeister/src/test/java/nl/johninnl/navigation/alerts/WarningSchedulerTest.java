@@ -218,6 +218,39 @@ public class WarningSchedulerTest {
         time.now+=6001;scheduler.refresh();assertEquals(1,speaker.cancels);assertNotNull(source.pending);assertEquals(1,speaker.calls);
         speaker.callback.finished(speaker.grant,PlaybackGrant.Outcome.INTERRUPTED,true);assertNull(source.pending);
     }
+    @Test public void slowReadinessRenewsBeforeNativeStartupConsumesTheRemainingLease(){
+        Speaker cold=new Speaker(){boolean first=true;
+            @Override public boolean ready(String language,WarningAudioOwner.Mode mode){
+                if(first&&!language.isEmpty()){first=false;time.now+=2500;}
+                return super.ready(language,mode);
+            }
+            @Override public boolean speak(WarningEvent e,PlaybackGrant g,long until,WarningScheduler.Callback cb){
+                time.now+=3500;return super.speak(e,g,until,cb);
+            }
+        };
+        scheduler=new WarningScheduler(time,policy,cold,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent e,PlaybackGrant.Outcome o){observed.add(o);}});
+        scheduler.connected(source,snapshot(Collections.emptyList()));
+        WarningEvent authority=event("cold-native-engine",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);
+        scheduler.events(source,Collections.singletonList(authority));assertEquals(1,cold.calls);
+        scheduler.refresh();assertEquals("Readiness delay must not consume the lease needed for startup",0,cold.cancels);
+        assertEquals("Renewal cannot extend native warning authority",authority.announceUntil,cold.deadline);
+        cold.callback.started(cold.grant);assertTrue(source.pending.started);
+        cold.callback.finished(cold.grant,PlaybackGrant.Outcome.COMPLETED,true);assertNull(source.pending);
+        assertTrue(observed.contains(PlaybackGrant.Outcome.COMPLETED));
+    }
+    @Test public void readinessFinishingAfterNativeDeadlineCannotCreatePlaybackAuthority(){
+        Speaker cold=new Speaker(){boolean first=true;
+            @Override public boolean ready(String language,WarningAudioOwner.Mode mode){
+                if(first&&!language.isEmpty()){first=false;time.now+=11000;}
+                return super.ready(language,mode);
+            }
+        };
+        scheduler=new WarningScheduler(time,policy,cold,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent e,PlaybackGrant.Outcome o){observed.add(o);}});
+        scheduler.connected(source,snapshot(Collections.emptyList()));
+        WarningEvent authority=event("expired-during-readiness",1,1,WarningEvent.Operation.ANNOUNCE);source.add(authority);
+        scheduler.events(source,Collections.singletonList(authority));assertEquals(0,cold.calls);assertNull(source.pending);
+        assertTrue(observed.contains(PlaybackGrant.Outcome.EXPIRED));
+    }
     @Test public void explicitPreviewUsesTheSourceGrantAndIsNotAnActualWarning(){
         policy.enabled=false;CompletableFuture<String> result=scheduler.preview("en");
         assertEquals(1,speaker.calls);assertTrue(Boolean.TRUE.equals(speaker.event.fields().get("is_preview")));assertNotNull(source.pending);assertFalse(result.isDone());
