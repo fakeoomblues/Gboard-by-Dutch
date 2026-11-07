@@ -8,13 +8,27 @@ Read this checkpoint at task start and after context compaction, before resuming
 - Replay the now-known UI steps instead of rediscovering them.
 - Finish connected code changes, build once, then run one focused acceptance session.
 - Reuse passing evidence; repeat checks only when relevant code changes invalidate it or a separately identified mandatory gate requires a check.
-- Keep validation tooling frozen. Report progress as fixed behaviour, failed behaviour or a concrete blocker, not test counts. Do not add or modify probes, fixtures, runners, observers or validation frameworks without explicit approval for that named change.
+- Report progress as fixed behaviour, failed behaviour or a concrete blocker, not test counts. Probes required to meet a goal may be added, modified and run without separate approval under the owner's latest global rule. Keep other validation tooling frozen: fixtures, runners, observers and validation frameworks require explicit approval for the named change.
 
 During a live acceptance window, execute the prepared UI/GPS checklist and collect evidence only. Defer source/history/tool research and implementation until the owned runtime is stopped. Record the stop deadline before starting; do not consume that deadline on offline investigation.
 
 Before each batch, identify the concrete behaviour to change, the existing evidence that remains valid and the bounded acceptance steps. After a failed acceptance session, preserve evidence and diagnose offline before the next connected implementation batch. Retain mandatory verification gates.
 
 Preserve the documented reusable emulator baseline and known UI recipe while stopping owned runtimes and cleaning per-job scratch/output storage. Do not claim an initialized baseline exists until it has actually been saved and verified.
+
+## Owner stop on emulator testing
+
+- The owner stopped broad emulator testing after approving the revised Maps pill. The later request authorizes one real Vela HUD image for approval/rejection of the generic shared pill design. Limit the next runtime window to that capture and cleanup; broader functional acceptance remains stopped. Continue producer/receiver contract implementation and grouped offline verification outside that bounded window.
+
+## Owner HUD design gate
+
+- Apply [Navigation indicator contract v1](docs/contracts/navigation-indicators-v1.md) to all FM/Waze producer and Maps/Vela consumer changes. Preserve native identity and speech authority; do not invent geometry, direction, zone progress or provider support from the existence of an icon.
+- The owner approved the revised Maps camera pill on 2026-11-06: `.analysis/waze-native-warnings/provider-data-design80/camera-fresh.png` (receipt records exact SHA). Freeze its size, typography, icon scale, right-column progress and right-edge alignment. The rejected initial set remains rejected. Prioritize FM/Waze field correctness. The owner subsequently reduced the visual gate to one generic Vela frame; do not restore a19-type gallery requirement.
+- Run85 supplies that real Vela frame at `.analysis/waze-native-warnings/vela-single-design85/vela-camera.png`, copied unchanged to Downloads. Its camera pill overlaps the native zoom-minus control and is not approved. Treat this as a placement defect; do not claim accepted design or active navigation. Retain the initialized Vela engineering state and corrected UI/capture recipe in `scripts/navigation-alerts/dhu/README.md`.
+- The owner replaced the full19-alert gallery gate with one actual rendered image to approve or reject the generic design. Maps' revised camera frame is already approved; provide one Vela HUD frame at1280×480 using the same generic camera pill. Preserve a fixed outer pill size for every alert type. Do not require38 design captures.
+- The owner authorizes an artificial FM event for this single design capture. Label the input artificial; never describe it as natural feed/delivery proof. Do not fabricate or compose the captured UI.
+- Present the actual rendered captures and obtain the owner's design-and-placement approval before proceeding with broader driving or functional validation. This is a hard gate; passing builds or unit tests do not satisfy it.
+- Reuse existing capture/injection capabilities. This approval does not authorize unrelated probes, observers, runners or validation-framework expansion.
 
 ## Global execution: batch implementation, then validate
 
@@ -29,6 +43,7 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 
 ## Hard stop: validation-tooling scope
 
+- The owner's latest global exception permits goal-required probes without separate approval. For the pending single Vela design frame, a bounded read-only sample of native visible/stable rectangles and surface dimensions is in scope. Preserve method results and application policy. This exception does not authorize fixture, runner, observer or framework changes.
 - Approved exception (2026-11-05): the owner requested rootAVD/avdroot evaluation and native ARM64 curl installation for the owned navigation AVD, including root/Frida readiness checks and a private image where required. This does not authorize other observer hooks, probes or runner changes. Keep certificate verification enabled for connectivity diagnosis.
 - Approved exception (2026-11-05): the existing AA17 acceptance setup command may replace its legacy `recycler_view` scroll selector with a selector matching either `recycler_view` or native Material 3 `scroll_view`. No new hooks, grants, fixtures or framework changes are included.
 - Approved exception (2026-11-05): the existing Frida observer may record caller stacks and API ownership/lease state at Waze `NativeManager.shutDown()` and `onNativeLayerShutDown(boolean)`. This named approval does not authorize other hooks or runner changes.
@@ -42,6 +57,7 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 
 ## Android runtime observation
 
+- For the owner's real driving/visual acceptance scenario, only GPS movement may be fabricated. Use genuine provider camera/report/zone data and the receivers' actual rendered UI. Do not inject synthetic alerts, zones, averages, warning states or UI for this proof. Existing controlled-input captures remain historical implementation/test evidence, not the requested simulated-drive evidence. Capture genuine DHU frames and optional scrcpy recordings, distinguishing phone and head-unit surfaces.
 - Keep Frida attached to every exercised producer/receiver process during short reproductions and longer Android validation sessions. Static checks and JVM unit tests do not require a device attachment.
 - Establish required hooks before generating test stimuli, verify attachment coverage throughout the session, and stop further stimuli after an unexpected detach, hook failure or missing coverage. Mark incomplete coverage explicitly; do not treat an untraced failure as a passing run.
 - Retain bounded Frida messages, Java/native crash or detach evidence, relevant Android logs and process-exit observations. Capture available tombstones for the exercised processes when needed. Record exact APK, Frida and script identities; protect private data and keep raw diagnostics out of releases.

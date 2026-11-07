@@ -86,15 +86,7 @@ public final class TelemetryRuntime {
                     return WarningPassage.passed(event,fix,now);
                 }
                 public WarningPassage.Relevance relevance(WarningEvent event,long now){
-                    if(!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
-                    Boolean guidance=sessionGuidanceState();if(guidance==null)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
-                    Location fix=lastFix;
-                    if(guidance){
-                        RoadWarningEngine.Route route=nativeRoute();
-                        if(route==null||event.latitude==null||event.longitude==null||!WarningPassage.freshFix(fix,now))return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
-                        return route.warningRelevance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.getAccuracy());
-                    }
-                    return WarningPassage.passed(event,fix,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;
+                    return warningRelevance(event,now);
                 }
             },new WarningScheduler.Speaker(){
                 public void prepare(String language){nativeSpeaker.prepare(language);}
@@ -305,6 +297,35 @@ public final class TelemetryRuntime {
         return compactLegacyWarningText();
     }
     static String compactCarWarningText(){String messages=nativeWarnings.carMessages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));return messages.isEmpty()?compactLegacyWarningText():providerName()+"\n"+messages;}
+    static java.util.List<nl.johninnl.navigation.alerts.WarningEvent> carWarnings(){
+        long now=SystemClock.elapsedRealtime();return nativeWarnings.carEvents(now,event->{
+            if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
+            if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
+            WarningPassage.Relevance relevance=warningRelevance(event,now);
+            return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
+        });
+    }
+    private static WarningPassage.Relevance warningRelevance(WarningEvent event,long now){
+        if(!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
+        Boolean guidance=sessionGuidanceState();if(guidance==null)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+        Location fix=lastFix;
+        if(guidance){
+            RoadWarningEngine.Route route=nativeRoute();
+            if(route==null||event.latitude==null||event.longitude==null||!WarningPassage.freshFix(fix,now))return WarningPassage.Relevance.CONTEXT_UNVERIFIED;
+            return route.warningRelevance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.getAccuracy());
+        }
+        return WarningPassage.passed(event,fix,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;
+    }
+    static nl.johninnl.navigation.alerts.WarningGeometry carWarningGeometry(WarningEvent event,long now){
+        nl.johninnl.navigation.alerts.WarningGeometry nativeValue=nl.johninnl.navigation.alerts.WarningGeometry.fromNative(event,now);
+        if(nativeValue!=null)return nativeValue;
+        Boolean guidance=sessionGuidanceState();Double distance=null;
+        if(Boolean.TRUE.equals(guidance)&&WarningPassage.freshFix(lastFix,now)&&event.latitude!=null&&event.longitude!=null){
+            RoadWarningEngine.Route route=nativeRoute();
+            if(route!=null)distance=route.passageDistance(lastFix.getLatitude(),lastFix.getLongitude(),event.latitude,event.longitude,lastFix.getAccuracy());
+        }
+        return nl.johninnl.navigation.alerts.WarningGeometry.display(event,lastFix,now,distance,!Boolean.FALSE.equals(guidance));
+    }
     private static String compactLegacyWarningText(){
         RoadWarningEngine.Warning w=currentWarning;if(w==null)return "";
         String icon;

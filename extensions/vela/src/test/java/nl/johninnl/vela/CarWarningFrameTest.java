@@ -32,8 +32,32 @@ public class CarWarningFrameTest {
     private Bitmap draw(Renderer renderer){Bitmap image=Bitmap.createBitmap(320,240,Bitmap.Config.ARGB_8888);CarUi.warningFrame(renderer,new Canvas(image));return image;}
     private int pixels(Bitmap image){int count=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if(image.getPixel(x,y)!=0)count++;return count;}
     @Test public void browseWarningDrawsWithoutNavigationLocationSpeedOrNativeSpeedDisplay(){Renderer renderer=new Renderer();renderer.m0.setColor(Color.MAGENTA);renderer.m0.setTextSize(11);app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",false).commit();Bitmap image=draw(renderer);assertTrue("Native warning must draw on a browsing frame with no GPS/speed fields",pixels(image)>20);assertEquals(Color.MAGENTA,renderer.m0.getColor());assertEquals(11,renderer.m0.getTextSize(),0);for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if(x<25||x>=295||y<20||y>=210)assertEquals("Host control area unchanged",0,image.getPixel(x,y));}
-    @Test public void nativeDriveCompactIsNotDuplicatedButDisabledSpeedStillAllowsWarnings(){Renderer renderer=new Renderer();renderer.drive=true;app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",true).commit();assertEquals("Existing compact renderer owns the native drive frame",0,pixels(draw(renderer)));app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",false).commit();assertTrue("Warnings are independent of native SpeedDisplay",pixels(draw(renderer))>20);}
+    @Test public void warningPillHasItsOwnLayerAndReservesTheNativeSpeedSlot(){Renderer renderer=new Renderer();renderer.drive=true;app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",true).commit();Bitmap image=draw(renderer);assertTrue("Warning pill must remain visible with the normal speed display",pixels(image)>20);for(int y=160;y<210;y++)for(int x=25;x<295;x++)assertEquals("The warning layer must leave the speed slot free",0,image.getPixel(x,y));app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",false).commit();assertTrue("Warnings are independent of native SpeedDisplay",pixels(draw(renderer))>20);}
     @Test public void semanticChangesAndClearRefreshTheActualRendererWithoutAnotherGpsFrame(){Renderer renderer=new Renderer();draw(renderer);CarUi.warningChanged();int arrived=renderer.snapshots;assertTrue(arrived>0);CarUi.warningChanged();assertEquals("Unchanged semantic state does not regenerate snapshots",arrived,renderer.snapshots);view.clear();CarUi.warningChanged();assertEquals("Clear refreshes the original surface without GPS",arrived+1,renderer.snapshots);}
+    @Test public void distanceChangesRefreshThePillEvenWhenTheMessageStaysTheSame(){
+        Renderer renderer=new Renderer();draw(renderer);CarUi.warningChanged();int before=renderer.snapshots;
+        long now=SystemClock.elapsedRealtime();WarningEvent original=view.current(now);Bundle b=WarningCodec.encode(original);
+        b.putLong("sequence",original.sequence+1);b.putLong("revision",original.revision+1);b.putInt("distance_m",100);
+        b.putLong("distance_observed_elapsed_ms",now);b.putBoolean("distance_estimated",false);b.putLong("issued_elapsed_ms",now);
+        view.events(Collections.singletonList(WarningCodec.decode(b,now)));CarUi.warningChanged();
+        assertEquals(before+1,renderer.snapshots);CarUi.warningChanged();assertEquals(before+1,renderer.snapshots);
+    }
+    @Test public void nativeVisualRangeChangesRefreshProgressWithoutAChangedDistanceOrGpsFrame(){
+        Renderer renderer=new Renderer();draw(renderer);long now=SystemClock.elapsedRealtime();WarningEvent original=view.current(now);Bundle b=WarningCodec.encode(original);
+        b.putLong("sequence",original.sequence+1);b.putLong("revision",original.revision+1);b.putLong("issued_elapsed_ms",now);
+        b.putInt("distance_m",100);b.putLong("distance_observed_elapsed_ms",now);b.putBoolean("distance_estimated",false);
+        b.putInt("range_m",400);b.putLong("range_observed_elapsed_ms",now);b.putBoolean("range_estimated",false);b.putString("range_origin","native_ui_max_distance");
+        view.events(Collections.singletonList(WarningCodec.decode(b,now)));CarUi.warningChanged();int before=renderer.snapshots;
+        b.putLong("sequence",original.sequence+2);b.putLong("revision",original.revision+2);b.putInt("range_m",800);
+        view.events(Collections.singletonList(WarningCodec.decode(b,now)));CarUi.warningChanged();assertEquals(before+1,renderer.snapshots);CarUi.warningChanged();assertEquals(before+1,renderer.snapshots);
+    }
+    @Test public void numericWarningValueChangesRefreshWithoutAChangedMessageOrRoadTelemetry(){
+        Renderer renderer=new Renderer();draw(renderer);long now=SystemClock.elapsedRealtime();WarningEvent original=view.current(now);Bundle b=WarningCodec.encode(original);
+        b.putLong("sequence",original.sequence+1);b.putLong("revision",original.revision+1);b.putLong("issued_elapsed_ms",now);b.putString("native_type","MAXIMUM_SPEED");b.putString("native_subtype","");b.putString("category","maximum_speed");b.putString("message","Native overspeed warning");b.putInt("road_speed_limit_kmh",100);
+        view.events(Collections.singletonList(WarningCodec.decode(b,now)));CarUi.warningChanged();int before=renderer.snapshots;
+        b.putLong("sequence",original.sequence+2);b.putLong("revision",original.revision+2);b.putInt("road_speed_limit_kmh",80);
+        view.events(Collections.singletonList(WarningCodec.decode(b,now)));CarUi.warningChanged();assertEquals(before+1,renderer.snapshots);
+    }
     @Test public void wazeUsesTheSameNativeCarWarningSurfaceWithItsOwnAttribution(){
         TelemetryRuntime.select(TelemetryStore.WAZE);WarningPreferences choices=TelemetryRuntime.warningPreferences();choices.categories(WarningPreferences.ROAD_DANGER);choices.confirm();
         Bundle b=WarningCodec.encode(event("road_danger"));b.putString("native_type","HAZARD");b.putString("native_subtype","HAZARD_TYPE_ON_ROAD_OBJECT");b.putString("relevance","point_ahead");b.putString("message","Object on road");

@@ -81,3 +81,13 @@ remove forwards and token-scoped scratch, restore the initialized baseline's
 APKs/settings/GPS and stop the VM. Preserve failed attachment receipts; only
 the later fully covered app window supplies accepted behavior. No physical
 phone was touched.
+
+## Single Vela design frame
+
+The owner replaced the19-type design gallery with one Vela generic-pill approval frame. Maps' camera frame80 is already approved. Reuse the Vela engineering APK and initialized native onboarding retained by run84; preserve the older native51 snapshot and rollback APKs. Run84 proves real Vela map/route-preview rendering, not an approved pill or active-guidance acceptance. Verify the retained APK and prefs before claiming a new reusable baseline.
+
+Use the **compiled** observer `.analysis/android-auto-acceptance/quiet-observer/observer.bundle.js`, SHA256 `68a4923351db81aa71e9e40f9ffd4c27f1dcfe4a7e81d8eb8c49baaa384d8120`. The raw ESM source is not a loadable replacement. Stop cached TTS before observation and use the normal AA wake/per-process freezer handling documented above. Require sufficient free disk before boot; run83 encountered an unresponsive guest and a subsequent restore boot was refused with1.3GB free. Completed-job obsolete APKs were audited and removed while keeping native51 and current rollback/input artifacts.
+
+DHU touch coordinates exclude the120px top video margin, while raw screenshots include it. Launcher is `tap 40 435`; native Vela icon in the recorded grid is `tap 540 388`. Allow transitions to settle before taking a separate screenshot. Vela's A5 recent row is `tap 300 138`; the first route's Go is `tap 125 200` (not320). Run84 completed Vela's native welcome/Google choice/system-voice setup. Retain that state rather than repeating onboarding for every picture. Enable the native car speed-display setting for a review that includes the normal speed/limit badge.
+
+Use only the existing archived FM input helper and one camera case for the owner-authorized artificial design event. Configure the receiver after onboarding, ensure both producer/receiver hooks are ready, emit a fresh event, wait for receiver delivery plus1.2s, then capture. Withhold a design claim if distance has expired or the card is absent. Preserve the raw DHU frame; do not compose the UI or describe artificial input as natural provider proof.

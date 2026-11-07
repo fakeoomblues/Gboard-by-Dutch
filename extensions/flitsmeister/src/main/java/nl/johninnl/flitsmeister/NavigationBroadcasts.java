@@ -113,8 +113,10 @@ public final class NavigationBroadcasts {
         try {
             Class<?> info=Class.forName(version15 ? "brf" : "hmf");
             int limit=info.getField("f").getInt(null);
-            int country=Class.forName(version15 ? "m65" : "r65").getField("b").getInt(null);
-            limit(limit,country==14 ? "imperial" : "metric");
+            // Both native caches are metric: the native overspeed controller compares
+            // this value directly with location.getSpeed()*3.6, including in the UK.
+            limit(limit,"metric");
+            if(NativeWarnings.endpoint()!=null)NativeWarnings.roadLimit(limit);
         } catch (ReflectiveOperationException | ClassCastException e) { Log.w("NavigationFeed","Road source",e); }
     }
     /** Capture a candidate and geometry after native detection; do not use premium sample averages. */

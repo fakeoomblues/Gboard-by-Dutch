@@ -222,15 +222,11 @@ public final class ProjectionRenderer {
     }
     static Rect warningViewport(int width,int height,Rect visible,Rect stable){
         Rect result=new Rect(0,0,Math.max(0,width),Math.max(0,height));
-        // Empty callbacks mean unknown, not a promise that host chrome leaves the
-        // full surface unobscured. Keep drawing the map, but withhold its overlay.
-        boolean known=false;
-        for(Rect area:new Rect[]{visible,stable}){
-            if(area==null||area.isEmpty())continue;
-            known=true;
-            if(!result.intersect(area)){result.setEmpty();return result;}
-        }
-        if(!known)result.setEmpty();
+        // Warnings move with the currently visible native controls. The stable
+        // area reserves space even for hidden controls; intersecting it here
+        // prevents alignment with Maps after those controls disappear.
+        Rect area=visible!=null&&!visible.isEmpty()?visible:stable;
+        if(area==null||area.isEmpty()||!result.intersect(area))result.setEmpty();
         return result;
     }
 

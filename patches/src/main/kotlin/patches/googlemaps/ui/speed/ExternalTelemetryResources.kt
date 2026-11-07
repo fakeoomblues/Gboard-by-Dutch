@@ -2,11 +2,13 @@ package org.ungoogled.patches.maps.ui.speed
 
 import app.morphe.patcher.patch.resourcePatch
 import org.w3c.dom.Element
+import patches.shared.navigationWarningIcons
 
 /** Provider identity checks need visibility even in Maps builds that only query Waze. */
 internal val externalTelemetryVisibilityPatch = resourcePatch(
     description = "Makes both external navigation providers visible for sender identity checks.",
 ) {
+    dependsOn(navigationWarningIcons)
     execute {
         document("AndroidManifest.xml").use { manifest ->
             val root = manifest.documentElement

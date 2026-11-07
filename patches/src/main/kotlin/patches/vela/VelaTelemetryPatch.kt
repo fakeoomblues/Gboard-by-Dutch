@@ -180,6 +180,7 @@ internal fun validateVelaHostAbi(classes: Iterable<ClassDef>) {
     field("Lba4;", "g", "Lba4;"); field("Ler4;", "a", "Ler4;")
     listOf("l0", "m0", "n0", "o0", "p0").forEach { field("Lcw;", it, "Landroid/graphics/Paint;") }
     field("Lcw;", "h", "I"); field("Lcw;", "i", "I")
+    field("Lcw;", "K", "Landroid/graphics/Rect;"); field("Lcw;", "u0", "Landroid/graphics/Rect;")
     field("Lnt3;", "f", "Landroidx/car/app/i;"); field("Lji1;", "a", "Ljava/util/ArrayList;")
     field("Lmq3;", "f", "Lfv2;"); field("Lmq3;", "e", "Landroidx/car/app/model/Toggle;"); field("Lmq3;", "h", "Z")
     field("Lqj4;", "a", "Lev2;"); field("Lqj4;", "b", "Z")
@@ -224,6 +225,7 @@ private fun guardNativeAbi() {
         "$RUNTIME->speedKmh(Ljava/lang/Double;)Ljava/lang/Double;", "$RUNTIME->limitKmh(Ljava/lang/Double;)Ljava/lang/Double;",
         "$RUNTIME->carLimitKmh(Ljava/lang/Double;)Ljava/lang/Double;", "$RUNTIME->bindVoice(Ljava/lang/Object;)V", "$RUNTIME->fix(Landroid/location/Location;)V",
         "$CAR->settingsEntry(Ljava/lang/Object;Ljava/lang/Object;)V", "$CAR->compact(Ljava/lang/Object;Landroid/graphics/Canvas;)Z",
+        "$CAR->surface(Ljava/lang/Object;Ljava/lang/Object;)V",
         "$RUNTIME->compactWarningText()Ljava/lang/String;",
     ).forEach { descriptor -> check(context.classDefBy(descriptor.substringBefore("->")).methods.count { it.toString() == descriptor && it.accessFlags and AccessFlags.STATIC.value != 0 } == 1) { "Missing Vela extension ABI $descriptor" } }
 }
@@ -496,6 +498,13 @@ val externalSpeedControlsPatch = bytecodePatch(
         prepend(settings, 1018, "invoke-static {v1}, $UI->settings(Ljava/lang/Object;)V", "const v0, 0x7f0e0487")
         bindVelaCarSettings(carSettings)
         interceptVelaCarSpeed(carSpeed)
+        val surface = mutableClassDefBy("Lcw;").methods.single {
+            it.name == "o" && it.returnType == "V" && it.parameterTypes.map(CharSequence::toString) == listOf("Landroidx/car/app/SurfaceContainer;")
+        }
+        check(classDefBy("Landroidx/car/app/SurfaceContainer;").methods.any {
+            it.name == "getDpi" && it.parameterTypes.isEmpty() && it.returnType == "I"
+        }) { "Vela host surface DPI binding changed" }
+        surface.addInstructions(0,"invoke-static/range {p0 .. p1}, $CAR->surface(Ljava/lang/Object;Ljava/lang/Object;)V")
         returns.getValue(voice).reversed().forEach { prepend(voice, it, "invoke-static/range {p0 .. p0}, $RUNTIME->bindVoice(Ljava/lang/Object;)V", "return-void") }
         bindVelaSpeedingInputs(speeding)
         bindVelaNavigationService(serviceCreate, serviceDestroy)

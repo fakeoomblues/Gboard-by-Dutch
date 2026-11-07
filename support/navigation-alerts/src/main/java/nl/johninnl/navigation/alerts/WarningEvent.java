@@ -20,10 +20,10 @@ public final class WarningEvent {
     public final Operation operation;
     public final Priority priority;
     public final Phase phase;
-    public final Integer distanceMeters, triggerMeters;
-    public final Double latitude, longitude;
-    public final Long distanceObservedAt, triggerObservedAt, positionObservedAt;
-    public final boolean distanceEstimated, triggerEstimated, positionEstimated, nativeDeadline;
+    public final Integer distanceMeters, triggerMeters, rangeMeters;
+    public final Double latitude, longitude, relativeBearingDegrees;
+    public final Long distanceObservedAt, triggerObservedAt, positionObservedAt, rangeObservedAt, relationshipObservedAt;
+    public final boolean distanceEstimated, triggerEstimated, positionEstimated, rangeEstimated, relationshipEstimated, nativeDeadline;
     public final int encodedBytes;
     private final Map<String, Object> fields;
 
@@ -89,18 +89,28 @@ public final class WarningEvent {
         }
         distanceMeters = optional("distance_m", Integer.class, null);
         triggerMeters = optional("trigger_m", Integer.class, null);
+        rangeMeters = optional("range_m", Integer.class, null);
         latitude = optional("latitude", Double.class, null);
         longitude = optional("longitude", Double.class, null);
         distanceObservedAt = optional("distance_observed_elapsed_ms", Long.class, null);
         triggerObservedAt = optional("trigger_observed_elapsed_ms", Long.class, null);
         positionObservedAt = optional("position_observed_elapsed_ms", Long.class, null);
+        rangeObservedAt = optional("range_observed_elapsed_ms", Long.class, null);
+        relationshipObservedAt = optional("relationship_observed_elapsed_ms", Long.class, null);
+        relativeBearingDegrees = optional("relative_bearing_degrees", Double.class, null);
         distanceEstimated = optional("distance_estimated", Boolean.class, false);
         triggerEstimated = optional("trigger_estimated", Boolean.class, false);
         positionEstimated = optional("position_estimated", Boolean.class, false);
+        rangeEstimated = optional("range_estimated", Boolean.class, false);
+        relationshipEstimated = optional("relationship_estimated", Boolean.class, false);
         geometryGroup(distanceMeters != null, distanceObservedAt, "distance_estimated");
         geometryGroup(triggerMeters != null, triggerObservedAt, "trigger_estimated");
         geometryGroup(latitude != null || longitude != null, positionObservedAt, "position_estimated");
+        geometryGroup(rangeMeters != null, rangeObservedAt, "range_estimated");
+        geometryGroup(relationshipObservedAt != null, relationshipObservedAt, "relationship_estimated");
         if ((distanceMeters != null && distanceMeters < 0) || (triggerMeters != null && triggerMeters < 0)) throw invalid("GEOMETRY");
+        if(rangeMeters!=null&&(rangeMeters<=0||text("range_origin",true).isEmpty()))throw invalid("GEOMETRY");
+        if(relativeBearingDegrees!=null&&(!Double.isFinite(relativeBearingDegrees)||relativeBearingDegrees<0||relativeBearingDegrees>=360||relationshipObservedAt==null))throw invalid("GEOMETRY");
         if (latitude != null || longitude != null) {
             if (latitude == null || longitude == null) throw invalid("GEOMETRY_METADATA");
             if (!Double.isFinite(latitude) || !Double.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)

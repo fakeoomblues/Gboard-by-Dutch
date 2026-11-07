@@ -30,6 +30,13 @@ public final class NativeWarnings {
     private static final IdentityHashMap<Object,Long> suppressedProjections=new IdentityHashMap<>();
     private static final IdentityHashMap<Object,String> projectionIds=new IdentityHashMap<>();
     private static final Set<String> notificationControlled=new HashSet<>();
+    private static final Map<Object,CountrySample> countrySamples=new java.util.WeakHashMap<>();
+    private static final Map<Object,Integer> countryObserved=new java.util.WeakHashMap<>();
+    private static Integer previousRoadLimit;
+    private static final class CountrySample {
+        final int before;final Location fix;final Integer previousGeo;
+        CountrySample(int before,Location fix,Integer previousGeo){this.before=before;this.fix=new Location(fix);this.previousGeo=previousGeo;}
+    }
     private static String notificationId;
     private static final ThreadLocal<SourceFact> convertingCits=new ThreadLocal<>();
     private static final IdentityHashMap<Object,SourceFact> citsAliases=new IdentityHashMap<>();
@@ -77,6 +84,84 @@ public final class NativeWarnings {
     }
     public static synchronized WarningEndpoint endpoint(){return endpoint;}
     public static synchronized void started(){captureEnabled=true;}
+    /** Native request/parser bookkeeping only. Accepted warning hooks remain the publication authority. */
+    public static void earlyRequest(Object task,Location fix){try{EarlyWarningGeometry.request(task,fix);}catch(RuntimeException ignored){}}
+    public static void earlyResponse(Object task,Object json){try{EarlyWarningGeometry.response(task,json);}catch(RuntimeException ignored){}}
+    public static void earlyParsing(Object json){try{EarlyWarningGeometry.parsing(json);}catch(RuntimeException ignored){}}
+    public static void earlyParsed(Object model){try{EarlyWarningGeometry.parsed(model);}catch(RuntimeException ignored){}}
+    public static void earlyResponseFinished(){EarlyWarningGeometry.finished();}
+    /** A real native overspeed decision, excluding SignalScreens' settings sound previews. */
+    public static void maximumSpeed(Location fix){capture(()->{
+        if(!captureEnabled||app==null)return;
+        Bundle fields=new Bundle();fields.putString("native_family","MaximumSpeed");fields.putString("native_type","MAXIMUM_SPEED");
+        fields.putString("category","maximum_speed");fields.putInt("priority",2);fields.putLong("display_max_age_ms",10000);fields.putBoolean("native_announce_observed",true);
+        fields.putString("native_decision_path","road_threshold");fields.putString("native_text_key","fm_maximum_speed_v1");
+        if(fix!=null&&fix.hasSpeed()&&Float.isFinite(fix.getSpeed())&&fix.getSpeed()>=0){long at=fix.getElapsedRealtimeNanos()/1000000,now=SystemClock.elapsedRealtime();
+            if(at>0&&at<=now&&now-at<=5000){fields.putDouble("current_speed_kmh",fix.getSpeed()*3.6);fields.putLong("current_speed_observed_elapsed_ms",at);fields.putBoolean("current_speed_estimated",false);}}
+        // This callback is installed only by the exact FM15 data profile.
+        try{int limit=Class.forName("brf").getField("f").getInt(null);
+            if(limit>0&&limit<=500){fields.putInt("road_speed_limit_kmh",limit);fields.putLong("road_speed_limit_observed_elapsed_ms",SystemClock.elapsedRealtime());fields.putBoolean("road_speed_limit_estimated",false);}}
+        catch(ReflectiveOperationException unavailable){fields.putString("capture_diagnostic","MAXIMUM_SPEED_VALUE_UNAVAILABLE");}
+        int resource=app.getResources().getIdentifier("youre_driving_too_fast","string",app.getPackageName());
+        boolean dutch=language().toLowerCase(Locale.ROOT).startsWith("nl");String text=resource==0?(dutch?"Je rijdt te hard":"You are driving too fast"):app.getString(resource);
+        fields.putString("language_tag",language());if(resource==0)fields.putString("template_id","fm_maximum_speed_v1");
+        update("fm/maximum-speed",fields,text,resource==0?"template":"native_resource","notice",true,false,"native_maximum_speed_decision",false);
+    });}
+    public static void maximumSpeedCleared(){capture(()->{
+        Record record=records.get("fm/maximum-speed");
+        if(record!=null&&"road_threshold".equals(record.fields.getString("native_decision_path")))clear("fm/maximum-speed");
+    });}
+    /** Separate native average-zone overspeed intent; never label it ordinary road speeding. */
+    public static void averageSpeedWarning(){capture(()->{
+        if(!captureEnabled||app==null)return;
+        Bundle fields=new Bundle();fields.putString("native_family","AverageSpeedWarning");fields.putString("native_type","AVERAGE_SPEED_WARNING");
+        fields.putString("category","average_speed_zone");fields.putInt("priority",1);fields.putBoolean("native_zone_alarm",true);fields.putString("reference_metric","native_average_speed");
+        fields.putBoolean("native_announce_observed",true);fields.putLong("display_max_age_ms",10000);fields.putString("native_text_key","fm_average_speed_warning_v1");
+        int resource=app.getResources().getIdentifier("youre_driving_too_fast","string",app.getPackageName());boolean dutch=language().toLowerCase(Locale.ROOT).startsWith("nl");
+        String text=resource==0?(dutch?"Verlaag je gemiddelde snelheid":"Lower your average speed"):app.getString(resource);fields.putString("language_tag",language());
+        if(resource==0)fields.putString("template_id","fm_average_speed_warning_v1");
+        update("fm/average-speed-exceeded",fields,text,resource==0?"template":"native_resource","notice",true,false,"native_average_speed_warning",false);
+    });}
+    public static void averageSpeedCleared(){capture(()->clear("fm/average-speed-exceeded"));}
+    /** Native GPS country detection only: constructor defaults and manual selection are not crossings. */
+    public static void countryBegin(Object detector,Location fix){capture(()->{
+        countrySamples.remove(detector);if(!captureEnabled||detector==null||fix==null)return;
+        try{java.lang.reflect.Field field=detector.getClass().getDeclaredField("s");field.setAccessible(true);
+            if(countrySamples.size()>=MAX_WARNINGS)countrySamples.remove(countrySamples.keySet().iterator().next());
+            countrySamples.put(detector,new CountrySample(field.getInt(detector),fix,countryObserved.get(detector)));
+        }catch(ReflectiveOperationException ignored){}
+    });}
+    public static void countryEnd(Object detector){capture(()->{
+        CountrySample sample=countrySamples.remove(detector);if(sample==null||!captureEnabled||app==null)return;
+        try{
+            java.lang.reflect.Field field=detector.getClass().getDeclaredField("s");field.setAccessible(true);int after=field.getInt(detector);
+            long now=SystemClock.elapsedRealtime(),at=sample.fix.getElapsedRealtimeNanos()/1000000;
+            if(after==37||at<=0||at>now||now-at>5000||!sample.fix.hasAccuracy()||!Float.isFinite(sample.fix.getAccuracy())||sample.fix.getAccuracy()<0||sample.fix.getAccuracy()>50
+                    ||!Double.isFinite(sample.fix.getLatitude())||Math.abs(sample.fix.getLatitude())>90||!Double.isFinite(sample.fix.getLongitude())||Math.abs(sample.fix.getLongitude())>180){countryObserved.remove(detector);return;}
+            if(countryObserved.size()>=MAX_WARNINGS)countryObserved.remove(countryObserved.keySet().iterator().next());countryObserved.put(detector,after);
+            if(sample.previousGeo==null||sample.previousGeo!=sample.before||sample.before==after||sample.before==37)return;
+            java.lang.reflect.Method country=Class.forName("nl.flitsmeister.fmcore.data.enums.UserCountries").getMethod("getCountryCode",Integer.class);
+            String from=string(country.invoke(null,sample.before)).toUpperCase(Locale.ROOT),to=string(country.invoke(null,after)).toUpperCase(Locale.ROOT);
+            if(!from.matches("[A-Z]{2}")||!to.matches("[A-Z]{2}")||from.equals(to))return;
+            android.os.LocaleList locales=app.getResources().getConfiguration().getLocales();Locale locale=locales.isEmpty()?Locale.getDefault():locales.get(0);
+            String name=new Locale("",to).getDisplayCountry(locale);if(name.isEmpty())name=to;
+            Bundle fields=new Bundle();fields.putString("native_family","CountryTransition");fields.putString("native_type","BORDER_CROSSING");fields.putString("category","border_crossing");fields.putInt("priority",2);
+            fields.putString("country_from",from);fields.putString("country_code",to);fields.putString("country_name",name);fields.putLong("transition_observed_elapsed_ms",at);
+            fields.putString("state_origin","native_gps_country_transition");fields.putBoolean("native_visual_only",true);fields.putLong("display_max_age_ms",10000);fields.putString("native_text_key","fm_country_transition_v1");
+            fields.putString("language_tag",language());fields.putString("template_id","fm_country_transition_v1");
+            update("fm/border-crossing",fields,name,"template","notice",false,false,"native_country_state",false);
+        }catch(ReflectiveOperationException ignored){}
+    });}
+    /** Final native road-limit transitions are visual data, never native sound authority or Hop-hop. */
+    public static void roadLimit(int value){capture(()->{
+        if(!captureEnabled||app==null)return;Integer before=previousRoadLimit;previousRoadLimit=value>0&&value<=500?value:null;
+        if(before==null||previousRoadLimit==null||before.equals(previousRoadLimit))return;
+        Bundle fields=new Bundle();fields.putString("native_family","RoadInformation");fields.putString("native_type","ROAD_LIMIT_CHANGE");fields.putString("category","maximum_speed");fields.putInt("priority",2);
+        fields.putInt("road_speed_limit_kmh",value);fields.putInt("previous_road_speed_limit_kmh",before);fields.putLong("road_speed_limit_observed_elapsed_ms",SystemClock.elapsedRealtime());fields.putBoolean("road_speed_limit_estimated",false);
+        fields.putString("state_origin","native_final_road_limit_transition");fields.putBoolean("native_visual_only",true);fields.putLong("display_max_age_ms",10000);fields.putString("native_text_key","fm_road_limit_transition_v1");
+        fields.putString("language_tag",language());fields.putString("template_id","fm_road_limit_transition_v1");
+        update("fm/road-limit-change",fields,value+" km/h","template","notice",false,false,"native_road_information",false);
+    });}
     /** Observe only scalar source identity around the original pure CITS model conversion. */
     public static void citsSource(Object event){capture(()->{
         convertingCits.remove();if(event!=null){
@@ -176,6 +261,8 @@ public final class NativeWarnings {
         if(!Boolean.TRUE.equals(optional(wrapper,"getAdded"))){clear(id);return;}
         fields.putString("category","speed_advice");Object speed=optional(report,"getAdviceKph");
         if(speed instanceof Number&&((Number)speed).intValue()>=0)fields.putInt("native_advice_kmh",((Number)speed).intValue());
+        Object trafficLight=optional(report,"isTrafficLight");
+        if(trafficLight instanceof Boolean)fields.putBoolean("native_is_traffic_light",(Boolean)trafficLight);
         NativeWarningText.Text text=NativeWarningText.resolve(app,report,"active",null);fields.putString("language_tag",text.language);
         update(id,fields,text.value,text.origin,"active",false,false,"vri_state",false);
     });}
@@ -250,7 +337,7 @@ public final class NativeWarnings {
             }
         });
     }
-    public static void stopped(){capture(()->{for(String id:new ArrayList<>(records.keySet()))clear(id);captureEnabled=false;anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();});}
+    public static void stopped(){capture(()->{for(String id:new ArrayList<>(records.keySet()))clear(id);captureEnabled=false;anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();});}
     private static synchronized void capture(Runnable action){
         try{
             long now=SystemClock.elapsedRealtime();
@@ -293,14 +380,17 @@ public final class NativeWarnings {
         if(source!=null&&!source.selectedLanguage.equals("und")&&NativeWarningText.hash(text).equals(source.selectedTextHash)){
             fields.putString("language_tag",source.selectedLanguage);fields.putString("language_origin","native_free_text_where");
         }
+        if(!fields.containsKey("relationship"))fields.putString("relationship","unknown");
         if(record.fields!=null&&semanticChange(record.fields,fields))record.revision++;
         if(announce)record.index=++announcementCounter;
         long now=SystemClock.elapsedRealtime();
         fields.putString("warning_id",id);fields.putLong("revision",record.revision);fields.putLong("announcement_index",record.index);
         fields.putString("phase",phase);fields.putString("operation",announce?"ANNOUNCE":"UPSERT");
         fields.putString("message",text);fields.putString("message_origin",origin);
-        fields.putLong("observed_elapsed_ms",now);fields.putLong("state_until_elapsed_ms",now+30000);
-        fields.putString("relationship","unknown");fields.putString("capture_path",path);fields.putBoolean("native_local_mute_bypass",bypass);
+        fields.putLong("observed_elapsed_ms",now);
+        long displayAge=fields.getLong("display_max_age_ms",30000);
+        fields.putLong("state_until_elapsed_ms",now+Math.max(1,Math.min(30000,displayAge)));
+        fields.putString("capture_path",path);fields.putBoolean("native_local_mute_bypass",bypass);
         fields.putString("relevance",relevance(fields,phase));
         if(!NativeWarningText.useful(text)&&!"display_only".equals(fields.getString("category")))fields.putString("capture_diagnostic","MISSING_NATIVE_TEXT");
         record.fields=new Bundle(fields);record.listed|=listed;emit(fields);
@@ -312,7 +402,7 @@ public final class NativeWarnings {
         fields.putLong("observed_elapsed_ms",now);fields.putLong("state_until_elapsed_ms",now+30000);
         record.fields=fields;record.listed=false;emit(fields);
     }
-    private static void emit(Bundle fields){if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
+    private static void emit(Bundle fields){nl.johninnl.navigation.alerts.IndicatorContract.annotate(fields);if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
     private static Bundle describe(Object report){
         Bundle b=new Bundle();String family=report.getClass().getSimpleName();
         b.putString("native_family",family);String type=value(report,"getReportType"),sub="";
@@ -334,6 +424,13 @@ public final class NativeWarnings {
         else if(isFamily(report,"ServiceVehicle"))sub=value(report,"getType");
         if(type.isEmpty())type=family;
         b.putString("native_type",type);if(!sub.isEmpty())b.putString("native_subtype",sub);
+        if(isFamily(report,"EarlyWarningNotification")||isFamily(report,"EarlyWarningReport")){
+            Object notification=isFamily(report,"EarlyWarningReport")?optional(report,"getNotification"):report;
+            Object distance=optional(report,"getDistance");
+            Object maximum=notification==null?null:optional(notification,"getMaxDistance");
+            Object heading=optional(report,"getHeading");
+            nativeEarlyGeometry(b,distance,maximum,heading,SystemClock.elapsedRealtime());
+        }
         b.putString("native_text_key",NativeWarningText.fingerprint(report,app));
         b.putString("category",category(type,sub));b.putInt("priority",priority(type,sub));
         // This is the native early emergency model, distinct from an ordinary road-service incident.
@@ -355,7 +452,23 @@ public final class NativeWarnings {
                 b.putDouble("latitude",l.getLatitude());b.putDouble("longitude",l.getLongitude());b.putLong("position_observed_elapsed_ms",at);b.putBoolean("position_estimated",false);
                 if(fixedPoint)b.putBoolean("native_point_target",true);
             }else b.remove("position_clock_origin");}
+        if(isFamily(report,"EarlyWarningNotification")||isFamily(report,"EarlyWarningReport")){
+            Object notification=isFamily(report,"EarlyWarningReport")?optional(report,"getNotification"):report;
+            if(notification!=null)EarlyWarningGeometry.append(b,notification,optional(report,"getDistance"),optional(notification,"getMaxDistance"),optional(report,"getHeading"),SystemClock.elapsedRealtime());
+        }
         return b;
+    }
+    /** Raw values read at this callback, not a claim about the source measurement time. */
+    static void nativeEarlyGeometry(Bundle fields,Object distance,Object maximum,Object heading,long readAt){
+        if(readAt<0)return;
+        boolean present=false;
+        if(distance instanceof Number){double value=((Number)distance).doubleValue();
+            if(Double.isFinite(value)&&value>=0&&value<=1000000){fields.putDouble("native_early_distance_m",value);present=true;}}
+        if(maximum instanceof Number){double value=((Number)maximum).doubleValue();
+            if(Double.isFinite(value)&&value>0&&value<=1000000){fields.putDouble("native_early_max_distance_m",value);present=true;}}
+        if(heading instanceof Number){double value=((Number)heading).doubleValue();
+            if(Double.isFinite(value)&&value>=0&&value<=360){fields.putDouble("native_early_heading_degrees",value);present=true;}}
+        if(present)fields.putLong("native_early_geometry_read_elapsed_ms",readAt);
     }
     private static String identity(Object model,Bundle fields){
         SourceFact alias=citsAliases.get(model);if(alias!=null)return alias.warningId;
@@ -369,7 +482,7 @@ public final class NativeWarnings {
         return fields.getString("native_family","")+":"+id;
     }
     private static boolean semanticChange(Bundle old,Bundle next){
-        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
+        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_is_traffic_light","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","native_early_distance_m","native_early_max_distance_m","native_early_heading_degrees","distance_m","distance_observed_elapsed_ms","range_m","range_observed_elapsed_ms","relative_bearing_degrees","relationship","relationship_observed_elapsed_ms","road_speed_limit_kmh","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
             if(!java.util.Objects.equals(old.get(key),next.get(key)))return true;
         return false;
     }
@@ -416,9 +529,10 @@ public final class NativeWarnings {
     private static String join(String a,String b){return a.isEmpty()?b:b.isEmpty()?a:a+". "+b;}
     private static String language(){if(app!=null){android.os.LocaleList locales=app.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
     private static String contextLanguage(Context context){if(context!=null){android.os.LocaleList locales=context.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
-    private static void resetCits(){convertingCits.remove();citsAliases.clear();citsFacts.clear();}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();}
+    private static void resetCits(){convertingCits.remove();citsAliases.clear();citsFacts.clear();countrySamples.clear();countryObserved.clear();previousRoadLimit=null;}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();}
     static synchronized void setEndpointForTest(WarningEndpoint value){
+        EarlyWarningGeometry.clear();
         if(endpoint!=null&&endpoint!=value)endpoint.close();endpoint=value;app=null;testSink=null;captureEnabled=false;
         announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();
     }

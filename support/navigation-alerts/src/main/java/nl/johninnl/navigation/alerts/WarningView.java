@@ -36,13 +36,28 @@ public final class WarningView {
     public synchronized String messages(long now,java.util.function.Predicate<WarningEvent> enabled){return messages(now,enabled,false);}
     /** A notification's native car variants and explicit native car exclusion apply only here. */
     public synchronized String carMessages(long now,java.util.function.Predicate<WarningEvent> enabled){return messages(now,enabled,true);}
+    /** Structured car state, preserving native exclusions, priority and expiry. */
+    public synchronized List<WarningEvent> carEvents(long now,java.util.function.Predicate<WarningEvent> enabled){
+        values.entrySet().removeIf(entry->!entry.getValue().stateValid(now));
+        List<WarningEvent> result=new java.util.ArrayList<>();
+        for(WarningEvent event:values.values())if(!Boolean.TRUE.equals(event.fields().get("is_preview"))
+                &&!event.category.equals("display_only")&&enabled.test(event)&&WarningEvent.hasText(message(event,true)))result.add(event);
+        result.sort(java.util.Comparator.comparingInt((WarningEvent e)->e.priority.ordinal()).thenComparingLong(e->e.announceUntil).thenComparingLong(e->e.sequence));
+        return java.util.Collections.unmodifiableList(new java.util.ArrayList<>(result.subList(0,Math.min(3,result.size()))));
+    }
+    public static String carMessage(WarningEvent event){return message(event,true);}
     private String messages(long now,java.util.function.Predicate<WarningEvent> enabled,boolean car){
         values.entrySet().removeIf(entry->!entry.getValue().stateValid(now));
         java.util.List<WarningEvent> current=new java.util.ArrayList<>();
         for(WarningEvent event:values.values())if(!Boolean.TRUE.equals(event.fields().get("is_preview"))&&!event.category.equals("display_only")&&enabled.test(event)&&WarningEvent.hasText(message(event,car)))current.add(event);
         current.sort(java.util.Comparator.comparingInt((WarningEvent e)->e.priority.ordinal()).thenComparingLong(e->e.announceUntil).thenComparingLong(e->e.sequence));
         StringBuilder text=new StringBuilder();int count=0;
-        for(WarningEvent event:current){if(count++==3)break;if(text.length()>0)text.append('\n');text.append(message(event,car).replace('\n',' ').replace('\r',' '));}
+        for(WarningEvent event:current){if(count++==3)break;if(text.length()>0)text.append('\n');String body=message(event,car).replace('\n',' ').replace('\r',' ');
+            if(car&&event.category.equals("emergency_vehicle")&&event.relationship.equals("behind")&&WarningGeometry.relationshipKnown(event,now)){
+                boolean dutch=event.languageTag.toLowerCase(java.util.Locale.ROOT).startsWith("nl");
+                String label=dutch?"Van achteren":"Behind";
+                text.append(label).append(" · ").append(body);
+            }else text.append(body);}
         return text.toString();
     }
     private static String message(WarningEvent event,boolean car){

@@ -286,6 +286,15 @@ public class NativeWarningsTest {
         assertTrue(last().getString("warning_id").startsWith("waze/segment/"));assertEquals("UPSERT",last().getString("operation"));decoded(last());
         NativeWarnings.segments(new SegmentUpdate(Collections.emptyList()));assertEquals("CLEAR",last().getString("operation"));
     }
+    @Test public void descriptorAndSoundRefreshesRetainSegmentFactsWithoutRenewingTheirClock(){
+        Descriptor d=new Descriptor("42","CAMERA",0);repository(d);Segment s=new Segment("AVERAGE_SPEED_CAMERA");s.links=Collections.singletonList(new Link(42,"uuid-42","CAMERA"));NativeWarnings.segments(new SegmentUpdate(Collections.singletonList(s)));
+        long segmentAt=last().getLong("native_segment_observed_ms");String key=last().getString("native_segment_key");assertTrue(last().getBoolean("native_segment_correlated"));
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));d.info.validation.distance=80;repository(d);
+        assertEquals("AVERAGE_SPEED_CAMERA",last().getString("native_segment_type"));assertEquals(key,last().getString("native_segment_key"));assertEquals(segmentAt,last().getLong("native_segment_observed_ms"));assertEquals(50,last().getInt("native_segment_distance_m"));assertEquals(0,announcements());
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));NativeWarnings.sound(d.id);
+        assertEquals(1,announcements());assertTrue(last().getBoolean("native_segment_correlated"));assertEquals(segmentAt,last().getLong("native_segment_observed_ms"));
+        NativeWarnings.segments(new SegmentUpdate(Collections.emptyList()));assertFalse(last().containsKey("native_segment_correlated"));repository(d);assertFalse(last().containsKey("native_segment_type"));
+    }
     @Test public void invalidSegmentSnapshotCannotPartiallyEnrichStateOrClaimAnObservedFamily(){
         Descriptor d=new Descriptor("42","PERMANENT_HAZARD",0);repository(d);int count=events.size();
         Segment s=new Segment("SPEED_BUMP");s.links=Collections.singletonList(new Link(42,"uuid-42","PERMANENT_HAZARD"));

@@ -90,11 +90,26 @@ public final class ExternalTelemetry {
             if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             int[] bounds=carViewportSizes.get(owner);
             if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
-            TelemetryStore.View info=view();String message=compactCarWarning();
-            if(!info.zoneActive&&message.isEmpty()){removeCarWidget(owner);continue;}
+            TelemetryStore.View info=view();
+            long now=SystemClock.elapsedRealtime();
+            List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
+                if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
+                if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
+                WarningPassage.Relevance relevance=MapsGuidanceCoordinator.relevance(event,fix,now,navigating);
+                return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
+            });
+            List<WarningEvent> pills=new ArrayList<>();for(WarningEvent event:nativeEvents)if(!info.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))pills.add(event);
+            String message=nativeEvents.isEmpty()?legacyWarning:"";
+            if(!info.zoneActive&&message.isEmpty()&&pills.isEmpty()){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
             float density=root.getResources().getDisplayMetrics().density;
-            value.bind(info,limitKmh(),PowerSaving.miles(),Shapes.navDarkScheme(),message);
+            boolean dark=(root.getResources().getConfiguration().uiMode&android.content.res.Configuration.UI_MODE_NIGHT_MASK)==android.content.res.Configuration.UI_MODE_NIGHT_YES;
+            android.widget.TextView number=largestNativeText(carSpeedBadge(root));
+            value.carTypeface(number==null?null:number.getTypeface());
+            java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
+            for(WarningEvent event:pills)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
+            value.carGeometry(geometry);
+            value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,pills);
             int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
             int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();
             android.graphics.Rect area=carInfoArea(root,new android.graphics.Rect(left,top,right,bottom));
@@ -108,13 +123,50 @@ public final class ExternalTelemetry {
     }
 
     static android.graphics.Rect carInfoArea(ViewGroup root,android.graphics.Rect viewport){
-        android.graphics.Rect result=new android.graphics.Rect(viewport);
-        for(String name:new String[]{"map_buttons_view_speed_limit","map_buttons_view_branding_watermark_container"}){
-            View nativeView=namedCarView(root,name);if(nativeView==null||nativeView.getWidth()<=0||nativeView.getHeight()<=0)continue;
-            android.graphics.Rect occupied=new android.graphics.Rect(0,0,nativeView.getWidth(),nativeView.getHeight());root.offsetDescendantRectToMyCoords(nativeView,occupied);
-            if(occupied.intersects(viewport.left,viewport.top,viewport.right,viewport.bottom))result.bottom=Math.min(result.bottom,occupied.top);
+        return carInfoArea(viewport,occupiedCarView(root,carSpeedBadge(root)),
+            occupiedCarView(root,"map_buttons_view_branding_watermark_container"),Math.round(16*root.getResources().getDisplayMetrics().density));
+    }
+    private static View carSpeedBadge(ViewGroup root){
+        View wrapper=namedCarView(root,"map_buttons_view_speed_limit");
+        if(wrapper==null)return null;
+        return carSpeedCard(wrapper,namedCarView(wrapper,"speedometer"),namedCarView(wrapper,"speed_limit"));
+    }
+    static View carSpeedCard(View wrapper,View speed,View limit){
+        // Stop at their shared card, before Maps' larger watermark container.
+        for(View candidate=speed;candidate!=null&&candidate!=wrapper;candidate=parentView(candidate)){
+            for(View child=limit;child!=null;child=parentView(child)){
+                if(candidate==child)return candidate;
+                if(child==wrapper)break;
+            }
         }
+        return wrapper;
+    }
+    private static View parentView(View view){return view.getParent() instanceof View?(View)view.getParent():null;}
+    static android.graphics.Rect carInfoArea(android.graphics.Rect viewport,android.graphics.Rect speed,android.graphics.Rect watermark,int margin){
+        android.graphics.Rect result=new android.graphics.Rect(viewport);
+        if(speed!=null&&android.graphics.Rect.intersects(speed,viewport)){
+            result.bottom=Math.min(result.bottom,speed.top);
+            // renderCar subtracts its margin: the resulting pill ends exactly at the native badge's right edge.
+            result.right=Math.min(result.right,speed.right+margin);
+        }
+        if(watermark!=null&&android.graphics.Rect.intersects(watermark,viewport))result.bottom=Math.min(result.bottom,watermark.top);
         return result;
+    }
+    private static android.graphics.Rect occupiedCarView(ViewGroup root,String name){
+        return occupiedCarView(root,namedCarView(root,name));
+    }
+    static android.graphics.Rect occupiedCarView(ViewGroup root,View view){
+        if(view==null||view.getVisibility()!=View.VISIBLE||view.getWidth()<=0||view.getHeight()<=0)return null;
+        android.graphics.Rect bounds=new android.graphics.Rect();if(!view.getGlobalVisibleRect(bounds))return null;
+        int[] origin=new int[2];root.getLocationOnScreen(origin);bounds.offset(-origin[0],-origin[1]);return bounds;
+    }
+    private static android.widget.TextView largestNativeText(View view){
+        android.widget.TextView largest=view instanceof android.widget.TextView?(android.widget.TextView)view:null;
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){
+            android.widget.TextView candidate=largestNativeText(group.getChildAt(i));
+            if(candidate!=null&&(largest==null||candidate.getTextSize()>largest.getTextSize()))largest=candidate;
+        }}
+        return largest;
     }
     private static View namedCarView(View view,String name){
         if(view.getId()!=View.NO_ID){try{if(name.equals(view.getResources().getResourceEntryName(view.getId())))return view;}catch(android.content.res.Resources.NotFoundException ignored){}}

@@ -161,7 +161,7 @@ public final class NativeWarnings {
         Object values=WazeWarningModels.call(update,"getDescriptorsList");if(!(values instanceof Collection)||((Collection<?>)values).size()>MAX_WARNINGS)throw new IllegalArgumentException("NATIVE_REPOSITORY_BOUND");
         long observed=SystemClock.elapsedRealtime();
         Map<String,Bundle> parsed=new LinkedHashMap<>();Map<String,Object> models=new LinkedHashMap<>();
-        for(Object model:(Collection<?>)values){Bundle fields=WazeWarningModels.descriptor(app,model);String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_NATIVE_ID");models.put(id,model);}
+        for(Object model:(Collection<?>)values){Bundle fields=retainSegment(WazeWarningModels.descriptor(app,model));String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_NATIVE_ID");models.put(id,model);}
         for(String id:new ArrayList<>(nativeModels.keySet()))if(!models.containsKey(id)){retireTrackedZone(id);clear(id);}
         nativeModels.clear();nativeModels.putAll(models);nativeObservedAt.clear();for(String id:models.keySet())nativeObservedAt.put(id,observed);nativeLinks.clear();repositoryObserved=true;alertersAt=observed;
         if(parsed.values().stream().anyMatch(b->b.containsKey("native_zone_state")))zonesAt=alertersAt;
@@ -207,13 +207,23 @@ public final class NativeWarnings {
         put(fields,true,SystemClock.elapsedRealtime(),"native_sound");
     });}
     private static Bundle descriptorFields(String id,Object model){
-        Bundle fields=WazeWarningModels.descriptor(app,model);Long observed=nativeObservedAt.get(id);
+        Bundle fields=retainSegment(WazeWarningModels.descriptor(app,model));Long observed=nativeObservedAt.get(id);
         if(observed==null)throw new IllegalStateException("UNOBSERVED_NATIVE_MODEL");
         if(fields.containsKey("distance_m"))fields.putLong("distance_observed_elapsed_ms",observed);
         if(fields.containsKey("trigger_m"))fields.putLong("trigger_observed_elapsed_ms",observed);
         if(fields.containsKey("latitude")){fields.putLong("position_observed_elapsed_ms",observed);fields.putString("position_clock_origin","native_repository");}
         if(fields.getBoolean("native_validation_present"))fields.putLong("native_validation_observed_elapsed_ms",observed);
+        if(fields.containsKey("native_zone_percent"))fields.putLong("native_zone_observed_elapsed_ms",observed);
         return fields;
+    }
+    /** Independent native segment observations survive descriptor reads without a new clock. */
+    private static Bundle retainSegment(Bundle fields){
+        Record previous=records.get(fields.getString("warning_id"));
+        if(previous==null||previous.fields==null||!previous.fields.getBoolean("native_segment_correlated")
+                ||!java.util.Objects.equals(fields.get("native_type"),previous.fields.get("native_type")))return fields;
+        Bundle supplement=new Bundle(previous.fields);
+        for(String key:new ArrayList<>(supplement.keySet()))if(!key.startsWith("native_segment_")||fields.containsKey(key))supplement.remove(key);
+        fields.putAll(supplement);return fields;
     }
     private static String zonePhase(Object controller){
         try{Field state=controller.getClass().getDeclaredField("b");state.setAccessible(true);Object value=state.get(controller);int ordinal=((Enum<?>)value).ordinal();return ordinal==1?"enter":ordinal==2?"exit":"approach";}
@@ -314,13 +324,15 @@ public final class NativeWarnings {
         fields.putLong("state_until_elapsed_ms",until);fields.putString("capture_path",path);
         if(fields.containsKey("distance_m")&&!fields.containsKey("distance_observed_elapsed_ms"))fields.putLong("distance_observed_elapsed_ms",observed);
         if(fields.containsKey("trigger_m")&&!fields.containsKey("trigger_observed_elapsed_ms"))fields.putLong("trigger_observed_elapsed_ms",observed);
+        if(fields.containsKey("native_zone_percent")&&!fields.containsKey("native_zone_observed_elapsed_ms"))fields.putLong("native_zone_observed_elapsed_ms",observed);
         if(fields.containsKey("latitude")){if(!fields.containsKey("position_observed_elapsed_ms"))fields.putLong("position_observed_elapsed_ms",observed);if(!fields.containsKey("position_clock_origin"))fields.putString("position_clock_origin","native_decision");}
         record.fields=new Bundle(fields);emit(fields);
     }
     private static boolean sameContent(Bundle a,Bundle b){
-        for(String key:new String[]{"native_type","native_subtype","native_trait","category","priority","phase","message","language_tag","native_valid","native_silent_activation","native_car_title","native_car_body"})if(!java.util.Objects.equals(a.get(key),b.get(key)))return false;return true;
+        for(String key:new String[]{"native_type","native_subtype","native_trait","category","priority","phase","message","language_tag","native_valid","native_silent_activation","native_car_title","native_car_body",
+                "native_segment_correlated","native_segment_type","native_segment_phase","native_segment_key"})if(!java.util.Objects.equals(a.get(key),b.get(key)))return false;return true;
     }
     private static void clear(String id){Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;Bundle b=new Bundle();b.putString("warning_id",id);b.putString("operation","CLEAR");b.putLong("revision",record.revision);b.putLong("announcement_index",record.index);long now=SystemClock.elapsedRealtime();b.putLong("observed_elapsed_ms",now);b.putLong("state_until_elapsed_ms",now+30000);record.fields=b;emit(b);}
-    private static void emit(Bundle fields){if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
+    private static void emit(Bundle fields){nl.johninnl.navigation.alerts.IndicatorContract.annotate(fields);if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
     static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();retiredZoneRequests.clear();carSurfaces.clear();testRetire=null;if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
 }

@@ -225,7 +225,7 @@ final class WazeWarningModels {
         b.putString("warning_id","waze/segment/"+hash(type+":"+nativeId));b.putString("native_segment_key",hash(type+":"+nativeId));b.putInt("native_type_raw",number(id,"SegmentTypeValue"));
         String phase=string(call(info,"getPositionRelativeToSegment"));b.putString("native_segment_phase",phase);b.putString("phase",phase.equals("APPROACHING")?"approach":"active");
         b.putString("relevance","zone");b.putString("category",type.equals("AVERAGE_SPEED_CAMERA")?"average_speed_zone":type.equals("TRAFFIC")?"traffic":"road_feature");b.putInt("priority",2);
-        int distance=number(info,"RemainingDistanceMeters");if(distance>=0){b.putInt("distance_m",distance);b.putBoolean("distance_estimated",false);b.putString("native_distance_kind",phase.equals("APPROACHING")?"to_segment":"remaining_in_segment");}
+        int distance=number(info,"RemainingDistanceMeters");if(distance>=0&&(phase.equals("APPROACHING")||phase.equals("WITHIN"))){b.putInt("distance_m",distance);b.putBoolean("distance_estimated",false);b.putString("native_distance_kind",phase.equals("APPROACHING")?"to_segment":"remaining_in_segment");}
         if(present(info,"RemainingDurationSeconds")){int duration=number(info,"RemainingDurationSeconds");if(duration>=0)b.putInt("native_remaining_duration_s",duration);}
         if(present(info,"Priority"))priority(b,call(info,"getPriority"));
         List<?> alerts=(List<?>)call(info,"getSourceAlertInfosList");if(alerts.size()>32)throw new IllegalArgumentException("SEGMENT_LINK_BOUND");b.putInt("source_alert_count",alerts.size());

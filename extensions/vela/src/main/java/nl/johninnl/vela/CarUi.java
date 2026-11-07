@@ -16,6 +16,13 @@ import java.util.WeakHashMap;
 
 /** Native Vela 0.5.2621 car templates and map-surface additions. No window or car runtime. */
 public final class CarUi {
+    private static final Map<Object,Float> DENSITIES=java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+    /** Retain the host DPI without replacing or changing the original surface callback. */
+    public static void surface(Object renderer,Object container){
+        if(renderer==null||container==null)return;
+        try{int dpi=((Number)invoke(container,"getDpi")).intValue();if(dpi>0&&dpi<=1000)DENSITIES.put(renderer,dpi/160f);}
+        catch(ReflectiveOperationException|RuntimeException unavailable){DENSITIES.remove(renderer);}
+    }
     private static final Map<Object,Object> PARENTS = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Map<Object,Boolean> RENDERERS=Collections.synchronizedMap(new WeakHashMap<>());
     private static String lastWarningFrameKey="";
@@ -137,7 +144,22 @@ public final class CarUi {
     /** Request the original surface snapshot on semantic arrival, clear and expiry, even without GPS. */
     public static void warningChanged() {
         if(TelemetryRuntime.app()==null)return;
-        String key=TelemetryRuntime.carEnabled()+":"+TelemetryRuntime.app().getSharedPreferences("vela_settings",0).getBoolean("car_speed_on",false)+":"+TelemetryRuntime.nativeCarWarningText();
+        TelemetryStore.View state=TelemetryRuntime.view();long now=android.os.SystemClock.elapsedRealtime();
+        StringBuilder presentation=new StringBuilder().append(TelemetryRuntime.selected()).append(':').append(TelemetryRuntime.carEnabled())
+            .append(':').append(TelemetryRuntime.app().getSharedPreferences("vela_settings",0).getBoolean("car_speed_on",false))
+            .append(':').append(NativeUi.imperial()).append(':').append(state.currentKmh).append(':').append(state.limitKmh)
+            .append(':').append(state.zoneActive).append(':').append(state.averageKmh).append(':').append(state.progressPercent)
+            .append(':').append(state.progressEstimated).append(':').append(state.remainingMeters).append(':').append(TelemetryRuntime.nativeCarWarningText());
+        for(nl.johninnl.navigation.alerts.WarningEvent event:TelemetryRuntime.carWarnings()){
+            nl.johninnl.navigation.alerts.WarningGeometry geometry=TelemetryRuntime.carWarningGeometry(event,now);
+            presentation.append('|').append(nl.johninnl.navigation.alerts.WarningIcons.key(event)).append(':').append(event.relationship)
+                .append(':').append(nl.johninnl.navigation.alerts.WarningGeometry.relationshipKnown(event,now))
+                .append(':').append(geometry==null?null:geometry.distanceMeters).append(':').append(geometry==null?null:geometry.estimated)
+                .append(':').append(geometry==null?null:geometry.progress(event,now))
+                .append(':').append(nl.johninnl.navigation.alerts.IndicatorContract.valueText(event,NativeUi.imperial()))
+                .append(':').append(event.triggerMeters).append(':').append(nl.johninnl.navigation.alerts.CarWarningPills.fresh(event.triggerObservedAt,now));
+        }
+        String key=presentation.toString();
         if(key.equals(lastWarningFrameKey))return;
         lastWarningFrameKey=key;
         Object[] renderers;synchronized(RENDERERS){renderers=RENDERERS.keySet().toArray();}
@@ -149,18 +171,45 @@ public final class CarUi {
         RENDERERS.put(renderer,Boolean.TRUE);
         TelemetryRuntime.carFrame(renderer);
         if (!TelemetryRuntime.carEnabled()) return;
-        String warning=TelemetryRuntime.nativeCarWarningText();
-        if (warning.isEmpty()) return;
+        TelemetryStore.View view=TelemetryRuntime.view();
+        java.util.List<nl.johninnl.navigation.alerts.WarningEvent> events=new java.util.ArrayList<>();
+        for(nl.johninnl.navigation.alerts.WarningEvent event:TelemetryRuntime.carWarnings())
+            if(!view.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))events.add(event);
+        if(!view.zoneActive&&events.isEmpty())return;
         try {
-            // The existing compact speed/zone renderer already includes the same warning on
-            // native drive/navigation frames. Preserve its layout and do not draw it twice.
             boolean nativeDrive=Boolean.TRUE.equals(invoke(renderer,"n"))||Boolean.TRUE.equals(field(renderer,"I"));
             boolean nativeSpeed=TelemetryRuntime.app().getSharedPreferences("vela_settings",0).getBoolean("car_speed_on",false);
-            if (nativeDrive&&nativeSpeed) return;
-            Rect safe=new Rect((Rect)invoke(renderer,"u"));
-            if (!safe.intersect(0,0,canvas.getWidth(),canvas.getHeight())) return;
-            drawWarning(canvas,safe,warning,Boolean.TRUE.equals(invoke(renderer,"l")),(Paint)field(renderer,"m0"));
+            Rect safe=overlayViewport(renderer,canvas.getWidth(),canvas.getHeight());
+            if (safe.isEmpty()) return;
+            Float hostDensity=DENSITIES.get(renderer);float scale=hostDensity==null?1f:hostDensity;
+            if(nativeDrive&&nativeSpeed)safe.bottom-=Math.round(78*scale);
+            safe.inset(Math.round(8*scale),Math.round(8*scale));
+            boolean imperial=NativeUi.imperial();
+            Double maximum=TelemetryRuntime.carLimitKmh(null);
+            android.graphics.Typeface face=null;
+            try{face=((Paint)field(renderer,"l0")).getTypeface();}catch(ReflectiveOperationException unavailable){/* Use the regular system face until the native number paint is available. */}
+            java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
+            long now=android.os.SystemClock.elapsedRealtime();
+            for(nl.johninnl.navigation.alerts.WarningEvent event:events)geometry.put(event.warningId,TelemetryRuntime.carWarningGeometry(event,now));
+            nl.johninnl.navigation.alerts.CarWarningPills.draw(TelemetryRuntime.app(),canvas,new RectF(safe),scale,
+                Boolean.TRUE.equals(invoke(renderer,"l")),imperial,view.zoneActive,view.averageKmh,maximum,
+                view.progressPercent,view.remainingMeters,view.progressEstimated,events,face,geometry);
         } catch (ReflectiveOperationException|RuntimeException error) { failure(error); }
+    }
+    /** Current host occlusion wins over the native renderer's preferred stable area. */
+    static Rect overlayViewport(Rect visible,Rect stable,int width,int height) {
+        Rect selected=visible!=null?visible:stable;
+        Rect result=selected==null?new Rect():new Rect(selected);
+        if(width<=0||height<=0||!result.intersect(0,0,width,height))result.setEmpty();
+        return result;
+    }
+    private static Rect overlayViewport(Object renderer,int width,int height)throws ReflectiveOperationException {
+        try{return overlayViewport((Rect)field(renderer,"K"),(Rect)field(renderer,"u0"),width,height);}
+        catch(NoSuchFieldException legacy){
+            // Preserve the existing bounds-only renderer adapter. The pinned Vela
+            // binding guards both native callback fields before installing this code.
+            return overlayViewport((Rect)invoke(renderer,"u"),null,width,height);
+        }
     }
     static void drawWarning(Canvas canvas,Rect safe,String warning,boolean dark,Paint nativePaint) {
         String[] lines=warning.split("\n",4);
@@ -177,8 +226,8 @@ public final class CarUi {
         TelemetryRuntime.carFrame(renderer);
         if (TelemetryRuntime.selected().isEmpty() || !TelemetryRuntime.carEnabled()) return false;
         try {
-            Rect safe = new Rect((Rect)invoke(renderer, "u"));
-            if (!safe.intersect(0, 0, canvas.getWidth(), canvas.getHeight())) return true;
+            Rect safe = overlayViewport(renderer,canvas.getWidth(),canvas.getHeight());
+            if (safe.isEmpty()) return true;
             boolean imperial = Boolean.TRUE.equals(invoke(type("gr4").getField("a").get(null), "getValue"));
             boolean dark = Boolean.TRUE.equals(invoke(renderer, "l"));
             double mps = TelemetryRuntime.carSpeedMps(((Number)field(renderer, "q")).doubleValue());
@@ -186,12 +235,12 @@ public final class CarUi {
                     String.valueOf(Math.max(0, Math.round(mps * (imperial ? 2.236936 : 3.6)))));
             Double limit = TelemetryRuntime.carLimitKmh((Double)field(renderer, "r"));
             TelemetryStore.View view = TelemetryRuntime.view();
-            String warning = TelemetryRuntime.compactCarWarningText();
+            String warning = TelemetryRuntime.carWarnings().isEmpty()?TelemetryRuntime.compactCarWarningText():"";
             float radius = Math.max(22f, Math.min(46f,
                     Math.min(((Number)field(renderer,"h")).intValue(), ((Number)field(renderer,"i")).intValue()) / 18f));
-            Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), view.zoneActive, warning.isEmpty()?0:Math.min(4,warning.split("\n").length));
+            Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), false, warning.isEmpty()?0:Math.min(4,warning.split("\n").length));
             if (layout == null) return true;
-            renderCompact(canvas, layout, current, limit, view, warning, imperial, dark,
+            renderCompact(canvas, layout, current, limit, TelemetryStore.View.empty(TelemetryRuntime.selected()), warning, imperial, dark,
                     (Paint)field(renderer,"l0"), (Paint)field(renderer,"m0"), (Paint)field(renderer,"p0"),
                     (Paint)field(renderer,"n0"), (Paint)field(renderer,"o0"));
             return true;
@@ -204,9 +253,9 @@ public final class CarUi {
         final float scale, rowTop;
         Layout(RectF bounds, float scale, boolean zone, int warningLines) {
             this.bounds = bounds; this.scale = scale;
-            rowTop = bounds.top + warningLines * 22f * scale;
+            rowTop = bounds.top + warningLines * 22f * scale + (zone ? 66f * scale : 0);
             pair = new RectF(bounds.left, rowTop, bounds.right, rowTop + 68f * scale);
-            bar = zone ? new RectF(pair.left, rowTop + 97f * scale, pair.right, rowTop + 101f * scale) : null;
+            bar = zone ? new RectF(pair.left+10f*scale, rowTop-35f*scale, pair.right-10f*scale, rowTop-31f*scale) : null;
         }
     }
     static Layout compactLayout(Rect safe, float requestedScale, boolean zone, boolean warning) {
@@ -214,7 +263,7 @@ public final class CarUi {
     }
     static Layout compactLayout(Rect safe, float requestedScale, boolean zone, int warningLines) {
         warningLines=Math.max(0,Math.min(4,warningLines));
-        float height = (zone ? 128f : 68f) + warningLines * 22f;
+        float height = (zone ? 134f : 68f) + warningLines * 22f;
         float scale = Math.min(1f, requestedScale);
         scale = Math.min(scale, Math.min((safe.width()-16f)/156f, (safe.height()-16f)/height));
         if (scale < .5f) return null;
@@ -231,11 +280,10 @@ public final class CarUi {
         int ink=dark?Color.WHITE:0xff111827;
         Paint number=new Paint(nativeNumber), unit=new Paint(nativeUnit), limit=new Paint(nativeLimit);
         Paint disc=new Paint(nativeDisc), ring=new Paint(nativeRing);
-        number.setColor(ink); unit.setColor(ink); limit.setColor(0xff111111);
+        number.setColor(0xff202124); unit.setColor(0xff202124); limit.setColor(0xff111111);
         number.setTextAlign(Paint.Align.CENTER); unit.setTextAlign(Paint.Align.CENTER); limit.setTextAlign(Paint.Align.CENTER);
         number.setTextSize(42f*k); unit.setTextSize(18f*k); limit.setTextSize(36f*k);
-        number.setShadowLayer(1.5f*k,0,0,dark?0x99000000:0xbbffffff);
-        unit.setShadowLayer(1.5f*k,0,0,dark?0x99000000:0xbbffffff);
+        number.clearShadowLayer(); unit.clearShadowLayer();
         if(number.measureText(current)>72f*k)number.setTextSize(number.getTextSize()*72f*k/number.measureText(current));
         String max=limitKmh==null||!Double.isFinite(limitKmh)||limitKmh<=0?"—":
                 String.valueOf(Math.round(imperial?limitKmh/1.609344:limitKmh));
@@ -247,33 +295,48 @@ public final class CarUi {
         int save=canvas.save();
         try {
             canvas.clipRect(layout.bounds);
-            float currentX=left+36f*k, limitX=right-34f*k;
+            // Match Maps' combined car badge: one light pill, limit on the left,
+            // current speed and its unit on the right.
+            Paint badge=new Paint(Paint.ANTI_ALIAS_FLAG);
+            badge.setColor(Color.WHITE);badge.setStyle(Paint.Style.FILL);
+            badge.setShadowLayer(3f*k,0,1f*k,0x55000000);
+            canvas.drawRoundRect(layout.pair,34f*k,34f*k,badge);
+            float limitX=left+34f*k, currentX=right-36f*k;
             canvas.drawText(current,currentX,top+41f*k,number);
             canvas.drawText(imperial?"mph":"km/h",currentX,top+62f*k,unit);
             disc.setColor(Color.WHITE); disc.setStyle(Paint.Style.FILL);
             ring.setStyle(Paint.Style.STROKE); ring.setStrokeWidth(5f*k);
+            ring.setColor(limitKmh==null||!Double.isFinite(limitKmh)||limitKmh<=0?0xff8993a0:0xffd32f2f);
             canvas.drawCircle(limitX,top+34f*k,30f*k,disc);
             canvas.drawCircle(limitX,top+34f*k,30f*k,ring);
             canvas.drawText(max,limitX,top+46f*k,limit);
             if(!warning.isEmpty()) {
+                unit.setColor(ink);
                 unit.setTextAlign(Paint.Align.LEFT); unit.setTextSize(18f*k);
                 String[] lines=warning.split("\n",4);
                 for(int i=0;i<lines.length;i++)canvas.drawText(ellipsize(lines[i],unit,layout.bounds.width()),left,layout.bounds.top+(17f+22f*i)*k,unit);
             }
             if(view.zoneActive) {
-                unit.setTextAlign(Paint.Align.LEFT); unit.setTextSize(20f*k);
+                RectF zoneBounds=new RectF(left,top-66f*k,right,top-6f*k);
+                badge.clearShadowLayer();badge.setColor(dark?0xff20242b:Color.WHITE);
+                canvas.drawRoundRect(zoneBounds,30f*k,30f*k,badge);
+                int zoneInk=dark?Color.WHITE:0xff202124;
+                unit.setColor(zoneInk); unit.setTextAlign(Paint.Align.LEFT); unit.setTextSize(16f*k);
+                canvas.drawText("Average",left+10f*k,top-46f*k,unit);
+                unit.setTextAlign(Paint.Align.RIGHT);unit.setTextSize(20f*k);
                 if(view.averageKmh!=null&&limitKmh!=null&&view.averageKmh>limitKmh+5)unit.setColor(0xffe8514a);
-                canvas.drawText(averageText(view.averageKmh,imperial),left,top+89f*k,unit);
-                unit.setColor(ink); unit.setTextSize(16f*k);
+                String average=view.averageKmh==null?"—":String.valueOf(Math.round(imperial?view.averageKmh/1.609344:view.averageKmh));
+                canvas.drawText(average+(imperial?" mph":" km/h"),right-10f*k,top-46f*k,unit);
+                unit.setColor(zoneInk); unit.setTextSize(14f*k);unit.setTextAlign(Paint.Align.LEFT);
                 Paint track=new Paint(Paint.ANTI_ALIAS_FLAG);
                 track.setColor(dark?0xff68737e:0xffc5cbd0);
                 canvas.drawRoundRect(layout.bar,2f*k,2f*k,track);
                 float fraction=view.progressPercent==null?0:Math.max(0f,Math.min(1f,view.progressPercent.floatValue()/100f));
                 track.setColor(0xff1f6feb);
                 canvas.drawRoundRect(new RectF(layout.bar.left,layout.bar.top,layout.bar.left+layout.bar.width()*fraction,layout.bar.bottom),2f*k,2f*k,track);
-                canvas.drawText(progressText(view.progressPercent,view.progressEstimated),left,top+123f*k,unit);
+                canvas.drawText(progressText(view.progressPercent,view.progressEstimated),left+10f*k,top-12f*k,unit);
                 unit.setTextAlign(Paint.Align.RIGHT);
-                canvas.drawText(distanceText(view.remainingMeters,imperial),right,top+123f*k,unit);
+                canvas.drawText(distanceText(view.remainingMeters,imperial),right-10f*k,top-12f*k,unit);
             }
         } finally { canvas.restoreToCount(save); }
     }

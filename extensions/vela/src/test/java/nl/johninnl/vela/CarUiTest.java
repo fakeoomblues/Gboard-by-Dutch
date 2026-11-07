@@ -23,6 +23,31 @@ public class CarUiTest {
     @Before public void init() { TelemetryRuntime.init((Application)RuntimeEnvironment.getApplication(),()->{}); }
     @After public void reset() { TelemetryRuntime.resetForTest(); }
 
+    @Test public void overlaysUseCurrentVisibleBoundsInsteadOfTheLargerStableRegion() {
+        Rect visible=new Rect(420,90,1090,448),stable=new Rect(12,12,1178,448);
+        Rect actual=CarUi.overlayViewport(visible,stable,1190,460);
+        assertEquals(visible,actual);assertNotSame(visible,actual);
+        assertEquals(new Rect(12,12,1178,448),stable);
+        CarUi.Layout badge=CarUi.compactLayout(actual,1,false,false);
+        assertNotNull(badge);assertTrue(badge.bounds.right<1090);
+        visible.set(12,12,1178,448);
+        assertEquals("A new callback can expand the area again",visible,CarUi.overlayViewport(visible,stable,1190,460));
+        assertEquals("Earlier frames retain their own geometry",new Rect(420,90,1090,448),actual);
+    }
+    @Test public void emptyOrUnavailableVisibleAreaCannotReappearAsAFullSurfaceOverlay() {
+        Rect stable=new Rect(12,12,1178,448);
+        assertTrue(CarUi.overlayViewport(new Rect(),stable,1190,460).isEmpty());
+        assertTrue(CarUi.overlayViewport(null,null,1190,460).isEmpty());
+        assertEquals(stable,CarUi.overlayViewport(null,stable,1190,460));
+        assertTrue(CarUi.overlayViewport(new Rect(1300,0,1400,400),stable,1190,460).isEmpty());
+        assertTrue(CarUi.overlayViewport(stable,null,0,460).isEmpty());
+    }
+    @Test public void overlayBoundsAreClippedOnceInSurfaceCoordinatesWithoutMutatingHostRects() {
+        Rect host=new Rect(-20,-10,1300,500);
+        assertEquals(new Rect(0,0,1190,460),CarUi.overlayViewport(host,null,1190,460));
+        assertEquals(new Rect(-20,-10,1300,500),host);
+    }
+
     @Test public void nativeSelectionAndDisabledCarKeepTheOriginalRenderer() {
         Canvas canvas=new Canvas(Bitmap.createBitmap(260,220,Bitmap.Config.ARGB_8888));
         assertFalse(CarUi.compact(new Object(),canvas));
@@ -38,8 +63,9 @@ public class CarUiTest {
             assertTrue(layout.bounds.top>=safe.top);
             assertTrue(layout.bounds.right<=safe.right);
             assertTrue(layout.bounds.bottom<=safe.bottom);
-            assertEquals(layout.pair.left,layout.bar.left,0);
-            assertEquals(layout.pair.right,layout.bar.right,0);
+            assertTrue(layout.bar.left>=layout.bounds.left);
+            assertTrue(layout.bar.right<=layout.bounds.right);
+            assertTrue(layout.bar.bottom<layout.pair.top);
             assertTrue(layout.bar.height()<=4);
         }
     }
@@ -65,7 +91,7 @@ public class CarUiTest {
         assertTrue(view.partialAverage);assertTrue(view.progressEstimated);
     }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
-    public void drawingHasNoEnclosingBackgroundAndNeverMutatesNativePaints() {
+    public void badgeStaysInsideTheSafeAreaAndNeverMutatesNativePaints() {
         Bitmap bitmap=Bitmap.createBitmap(260,220,Bitmap.Config.ARGB_8888);
         Canvas canvas=new Canvas(bitmap);
         CarUi.Layout layout=CarUi.compactLayout(new Rect(20,20,240,200),1,true,false);
@@ -74,8 +100,12 @@ public class CarUiTest {
         number.setTextSize(9);number.setColor(Color.MAGENTA);ring.setColor(0xffd32f2f);
         CarUi.renderCompact(canvas,layout,"0",100d,zone(),"",false,false,number,unit,limit,disc,ring);
         assertEquals(9,number.getTextSize(),0);assertEquals(Color.MAGENTA,number.getColor());
-        assertEquals(0,bitmap.getPixel((int)layout.bounds.left+3,(int)layout.bounds.top+3));
-        assertEquals(0,bitmap.getPixel((int)layout.bounds.left+80,(int)layout.bounds.top+70));
+        assertTrue(Color.alpha(bitmap.getPixel((int)layout.bounds.left+3,(int)layout.bounds.top+3))<255);
+        assertEquals("The combined badge has a light background",Color.WHITE,
+                bitmap.getPixel((int)layout.pair.centerX(),(int)layout.pair.top+6));
+        assertEquals("The limit sign is on the left of the current speed",0xffd32f2f,
+                bitmap.getPixel((int)layout.pair.left+34,(int)layout.pair.top+4));
+        assertTrue(layout.bar.bottom<layout.pair.top);
         assertEquals(0xff1f6feb,bitmap.getPixel((int)(layout.bar.left+layout.bar.width()*.1),(int)layout.bar.centerY()));
         assertEquals(0xffc5cbd0,bitmap.getPixel((int)(layout.bar.left+layout.bar.width()*.8),(int)layout.bar.centerY()));
         for(int y=0;y<bitmap.getHeight();y++)for(int x=0;x<bitmap.getWidth();x++) {

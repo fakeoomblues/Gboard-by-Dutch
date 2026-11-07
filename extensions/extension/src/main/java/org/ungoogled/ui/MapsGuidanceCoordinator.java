@@ -185,6 +185,21 @@ public final class MapsGuidanceCoordinator {
         }catch(ReflectiveOperationException|RuntimeException unavailable){return WarningPassage.Relevance.CONTEXT_UNVERIFIED;}
         return WarningPassage.passed(event,fix,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;
     }
+    /** Derive a display-only distance from the same guarded route used for warning relevance. */
+    static nl.johninnl.navigation.alerts.WarningGeometry displayGeometry(WarningEvent event,Location fix,long now,boolean navigating){
+        nl.johninnl.navigation.alerts.WarningGeometry nativeValue=nl.johninnl.navigation.alerts.WarningGeometry.fromNative(event,now);
+        if(nativeValue!=null)return nativeValue;
+        boolean requireRoute=navigating;Double distance=null;
+        Object owner;synchronized(LOCK){owner=route.get();}
+        try{
+            if(owner!=null&&navigationActive(owner)){
+                requireRoute=true;RoadWarningEngine.Route shape=warningRoute(owner);
+                if(shape!=null&&event.latitude!=null&&event.longitude!=null&&WarningPassage.freshFix(fix,now))
+                    distance=shape.passageDistance(fix.getLatitude(),fix.getLongitude(),event.latitude,event.longitude,fix.getAccuracy());
+            }
+        }catch(ReflectiveOperationException|RuntimeException unavailable){requireRoute=true;}
+        return nl.johninnl.navigation.alerts.WarningGeometry.display(event,fix,now,distance,requireRoute);
+    }
     private static RoadWarningEngine.Route warningRoute(Object owner)throws ReflectiveOperationException{
         Object model=routeField(owner,"e").get(owner);if(model==null)return null;
         ClassLoader loader=owner.getClass().getClassLoader();Class<?> routeModel=Class.forName("blot",false,loader),pathType=Class.forName("yap",false,loader),polylineType=Class.forName("bjix",false,loader),pointType=Class.forName("bjis",false,loader);

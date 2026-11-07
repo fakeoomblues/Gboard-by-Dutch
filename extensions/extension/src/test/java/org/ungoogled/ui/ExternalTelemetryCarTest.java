@@ -58,5 +58,28 @@ public class ExternalTelemetryCarTest {
         session(first,true);surface(first,root);assertEquals(1,root.getChildCount());assertSame(nativeWidget,root.getChildAt(0));assertEquals(1,nativeWidget.getAlpha(),0);
         session(first,false);assertEquals(1,root.getChildCount());assertEquals(1,nativeWidget.getAlpha(),0);
     }
+    @Test public void warningRightEdgeFollowsTheNativeSpeedBadgeAndRemainsInsideTheHostArea(){
+        android.graphics.Rect viewport=new android.graphics.Rect(80,10,1280,480);
+        android.graphics.Rect speed=new android.graphics.Rect(1080,370,1190,430);
+        android.graphics.Rect area=ExternalTelemetry.carInfoArea(viewport,speed,new android.graphics.Rect(1030,445,1210,470),16);
+        assertEquals("The same final margin aligns the two pill edges",speed.right,area.right-16);
+        assertTrue("Warnings stay above the speed badge",area.bottom-16<=speed.top-16);
+        area=ExternalTelemetry.carInfoArea(new android.graphics.Rect(80,10,1140,480),speed,null,16);
+        assertEquals("A host overlay takes priority over the old speed-badge edge",1140,area.right);
+        area=ExternalTelemetry.carInfoArea(viewport,null,null,16);assertEquals(viewport,area);
+    }
+    @Test public void nativeCardLocatorStopsBeforeTheLargerWatermarkContainer(){
+        FrameLayout watermark=new FrameLayout(app),wrapper=new FrameLayout(app),card=new FrameLayout(app);android.view.View sign=new android.view.View(app),speed=new android.view.View(app);
+        watermark.addView(wrapper);wrapper.addView(card);card.addView(sign);card.addView(speed);
+        assertSame(card,ExternalTelemetry.carSpeedCard(wrapper,speed,sign));
+        assertSame("Unknown native variants fall back to the dedicated speed wrapper",wrapper,ExternalTelemetry.carSpeedCard(wrapper,null,sign));
+    }
+    @Test @Config(qualifiers="w1280dp-h720dp-land-mdpi") public void nativeScalingAndTranslationAreIncludedInTheAlignmentBounds(){
+        android.app.Activity activity=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        FrameLayout root=new FrameLayout(activity),card=new FrameLayout(activity);activity.setContentView(root);root.addView(card);root.layout(0,0,1190,460);card.layout(1052,330,1150,390);card.setPivotX(49);card.setPivotY(30);card.setTranslationX(-10);card.setScaleX(.95f);card.setScaleY(.95f);
+        android.graphics.Rect drawn=ExternalTelemetry.occupiedCarView(root,card);assertNotNull(drawn);assertEquals(1138,drawn.right,1);assertEquals(1044,drawn.left,1);
+        android.graphics.Rect area=ExternalTelemetry.carInfoArea(new android.graphics.Rect(12,12,1178,448),drawn,null,16);
+        assertEquals("Warning face aligns to drawn pixels rather than the unscaled layout box",drawn.right,area.right-16);assertNotEquals(card.getRight(),area.right-16);activity.finish();
+    }
 
 }

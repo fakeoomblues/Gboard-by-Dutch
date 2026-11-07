@@ -19,6 +19,16 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk=32,manifest=Config.NONE)
 public class NativeWarningsTest {
+    @Test public void nativeEarlyGeometryRetainsRawValuesWithoutInventingFreshDistance(){
+        Bundle fields=new Bundle();NativeWarnings.nativeEarlyGeometry(fields,100d,400d,270f,1234L);
+        assertEquals(100d,fields.getDouble("native_early_distance_m"),0);
+        assertEquals(400d,fields.getDouble("native_early_max_distance_m"),0);
+        assertEquals(270d,fields.getDouble("native_early_heading_degrees"),0);
+        assertEquals(1234L,fields.getLong("native_early_geometry_read_elapsed_ms"));
+        assertFalse(fields.containsKey("distance_m"));assertFalse(fields.containsKey("relationship"));
+        Bundle invalid=new Bundle();NativeWarnings.nativeEarlyGeometry(invalid,Double.NaN,-1d,361d,1234L);
+        assertFalse(invalid.containsKey("native_early_geometry_read_elapsed_ms"));
+    }
     private final List<Bundle> events = new ArrayList<>();
     private Context app;
     @Before public void before() { app=RuntimeEnvironment.getApplication(); NativeWarnings.resetForTest(app, events::add); }
@@ -60,6 +70,88 @@ public class NativeWarningsTest {
         public boolean isActive(){return true;}
     }
     private Bundle last(){return events.get(events.size()-1);}
+    private Location requestFix(long at){Location fix=new Location("request");fix.setLatitude(52);fix.setLongitude(4);fix.setAccuracy(3);fix.setBearing(0);fix.setSpeed(20);fix.setElapsedRealtimeNanos(at*1000000);return fix;}
+    private org.json.JSONObject earlyJson(boolean coordinates)throws Exception{
+        org.json.JSONObject json=new org.json.JSONObject();json.put("distance",100);json.put("max_distance",400);json.put("heading",0);json.put("type","AMBULANCE");
+        if(coordinates){json.put("latitude",51.9991);json.put("longitude",4d);}return json;
+    }
+    @Test public void requestGeometryRetainsMeasurementClockAndDerivesBehindFromCoordinates()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        assertTrue("Bookkeeping must not publish",events.isEmpty());Bundle b=new Bundle();b.putString("category","emergency_vehicle");
+        EarlyWarningGeometry.append(b,model,100d,400d,0f,2000);
+        assertEquals(100,b.getInt("distance_m"));assertEquals(1000,b.getLong("distance_observed_elapsed_ms"));assertEquals(400,b.getInt("range_m"));assertFalse(b.containsKey("trigger_m"));
+        assertEquals("behind",b.getString("relationship"));assertTrue(b.getBoolean("relationship_estimated"));assertEquals(180,b.getDouble("relative_bearing_degrees"),1);
+        assertEquals("native_response_request_fix",b.getString("geometry_clock_origin"));assertEquals(1000,b.getLong("relationship_observed_elapsed_ms"));
+    }
+    @Test public void headingAloneCannotMeanBehindAndUnrelatedParserCannotBorrowARequest()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(false);json.put("heading",180);
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);
+        Bundle b=new Bundle();b.putString("category","emergency_vehicle");EarlyWarningGeometry.append(b,model,100d,400d,180f,2000);
+        assertEquals(100,b.getInt("distance_m"));assertFalse(b.containsKey("relationship"));assertFalse(b.containsKey("latitude"));
+        Object unrelated=new Object();EarlyWarningGeometry.parsing(earlyJson(true));EarlyWarningGeometry.parsed(unrelated);b=new Bundle();EarlyWarningGeometry.append(b,unrelated,100d,400d,0f,2000);assertFalse(b.containsKey("distance_m"));
+        EarlyWarningGeometry.clear();b=new Bundle();EarlyWarningGeometry.append(b,model,100d,400d,180f,2000);assertFalse(b.containsKey("distance_m"));
+    }
+    @Test public void partialNativeModelNeverAcquiresDefaultZeroGeometry()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(false);json.remove("distance");
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();EarlyWarningGeometry.append(b,model,0d,400d,0f,2000);assertFalse(b.containsKey("distance_m"));
+    }
+    @Test public void partialCrossingParserResultCannotRetainDescribeDefaultCoordinates()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);json.put("type","RAILWAY_CROSSING");json.put("longitude","broken");
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();b.putDouble("latitude",51.9991);b.putDouble("longitude",0d);b.putLong("position_observed_elapsed_ms",2000);b.putBoolean("position_estimated",false);b.putString("position_clock_origin","native_decision");b.putBoolean("native_point_target",true);
+        EarlyWarningGeometry.append(b,model,100d,0d,0f,2000);
+        for(String key:new String[]{"latitude","longitude","position_observed_elapsed_ms","position_estimated","position_clock_origin","native_point_target","distance_m"})assertFalse(key,b.containsKey(key));
+    }
+    @Test public void completeCrossingGeometryRetainsItsFixedTargetWithTheRequestClock()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);json.put("type","RAILWAY_CROSSING");
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();b.putBoolean("native_point_target",true);EarlyWarningGeometry.append(b,model,100d,400d,0f,2000);
+        assertTrue(b.getBoolean("native_point_target"));assertEquals(1000,b.getLong("position_observed_elapsed_ms"));assertEquals(51.9991,b.getDouble("latitude"),0);assertEquals(4d,b.getDouble("longitude"),0);
+    }
+    @Test public void unrelatedLegacyOrCitsGeometryIsNotTreatedAsAPartialNetworkParserResult(){
+        Bundle b=new Bundle();b.putDouble("latitude",52d);b.putDouble("longitude",4d);b.putBoolean("native_point_target",true);
+        EarlyWarningGeometry.append(b,new Object(),100d,400d,0f,2000);assertEquals(52d,b.getDouble("latitude"),0);assertTrue(b.getBoolean("native_point_target"));
+    }
+    @Test public void nativeDistanceDoesNotRequireAndroidSpeedOrBearingPresence()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);Location fix=requestFix(1000);fix.removeSpeed();fix.removeBearing();
+        EarlyWarningGeometry.request(task,fix);EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();b.putString("category","emergency_vehicle");EarlyWarningGeometry.append(b,model,100d,400d,0f,2000);
+        assertEquals(100,b.getInt("distance_m"));assertEquals(1000,b.getLong("distance_observed_elapsed_ms"));assertEquals(400,b.getInt("range_m"));
+        assertFalse(b.containsKey("relationship"));assertFalse(b.containsKey("relative_bearing_degrees"));
+    }
+    @Test public void zeroNativeVisualRangeLeavesVerifiedDistanceWithoutInventingProgress()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(false);json.put("max_distance",0);
+        EarlyWarningGeometry.request(task,requestFix(1000));EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();EarlyWarningGeometry.append(b,model,100d,0d,0f,2000);assertEquals(100,b.getInt("distance_m"));assertFalse(b.containsKey("range_m"));assertFalse(b.containsKey("trigger_m"));
+    }
+    @Test public void invalidBearingAccuracyWithholdsDirectionWithoutDiscardingNativeDistance()throws Exception{
+        Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);Location fix=requestFix(1000);fix.setBearingAccuracyDegrees(Float.NaN);
+        EarlyWarningGeometry.request(task,fix);EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+        Bundle b=new Bundle();b.putString("category","emergency_vehicle");EarlyWarningGeometry.append(b,model,100d,400d,0f,2000);
+        assertEquals(100,b.getInt("distance_m"));assertFalse(b.containsKey("relationship"));assertFalse(b.containsKey("relative_bearing_degrees"));
+    }
+    @Test public void unserializableRequestNumbersCannotBeCorrelatedToAnOlderNativeResponse()throws Exception{
+        for(boolean invalidSpeed:new boolean[]{true,false}){
+            Object task=new Object(),model=new Object();org.json.JSONObject json=earlyJson(true);Location fix=requestFix(1000);
+            if(invalidSpeed)fix.setSpeed(Float.NaN);else fix.setBearing(Float.NaN);
+            EarlyWarningGeometry.request(task,fix);EarlyWarningGeometry.response(task,json);EarlyWarningGeometry.parsing(json);EarlyWarningGeometry.parsed(model);EarlyWarningGeometry.finished();
+            Bundle b=new Bundle();EarlyWarningGeometry.append(b,model,100d,400d,0f,2000);
+            assertFalse("Native JSON serialization rejects NaN request getters",b.containsKey("distance_m"));
+        }
+    }
+    @Test public void roadInformationTransitionsHaveNoNativeAnnouncementAuthority(){
+        NativeWarnings.roadLimit(100);NativeWarnings.roadLimit(100);assertTrue(events.isEmpty());NativeWarnings.roadLimit(80);
+        assertEquals("UPSERT",last().getString("operation"));assertEquals("ROAD_LIMIT_CHANGE",last().getString("native_type"));assertTrue(last().getBoolean("native_visual_only"));assertEquals(0,last().getLong("announcement_index"));assertEquals(80,last().getInt("road_speed_limit_kmh"));
+        int count=events.size();NativeWarnings.roadLimit(0);NativeWarnings.roadLimit(130);assertEquals(count,events.size());
+        NativeWarnings.roadLimit(100);assertEquals("ROAD_LIMIT_CHANGE",last().getString("native_type"));assertEquals("MAXIMUM_SPEED",last().getString("indicator_kind"));
+    }
+    @Test public void roadAndAverageOverspeedKeepSeparateNativeIdentityAndClears(){
+        NativeWarnings.maximumSpeed(null);assertEquals("MAXIMUM_SPEED",last().getString("native_type"));assertEquals("ANNOUNCE",last().getString("operation"));String road=last().getString("warning_id");
+        NativeWarnings.averageSpeedWarning();assertEquals("AVERAGE_SPEED_WARNING",last().getString("native_type"));assertTrue(last().getBoolean("native_zone_alarm"));assertFalse(last().containsKey("average_speed_kmh"));String zone=last().getString("warning_id");assertNotEquals(road,zone);
+        NativeWarnings.maximumSpeedCleared();assertEquals("CLEAR",last().getString("operation"));assertEquals(road,last().getString("warning_id"));NativeWarnings.averageSpeedCleared();assertEquals(zone,last().getString("warning_id"));
+    }
     @Test public void nativeEntryExportsExactTextBeforeLocalMuteAndWithoutSpeedOrGeometry() {
         NativeWarnings.regular(null,new Incident(),true,false,"Spookrijder!",null);
         assertEquals("ANNOUNCE",last().getString("operation"));

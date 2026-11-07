@@ -1,0 +1,100 @@
+{
+  "artwork": "Owner-supplied files copied byte-for-byte; only the background was changed by the owner.",
+  "icons": [
+    {
+      "key": "speed_limit_130",
+      "source_filename": "130 km_h speed limit icon-16.png",
+      "sha256": "f4ecdf6efd68dcfb3266b0bcb4aaf57a4db7fd3ab49818eba76f0c058d7f20e9"
+    },
+    {
+      "key": "average_speed",
+      "source_filename": "Average speed camera badge-4.png",
+      "sha256": "16bd25e56bfca7ed5c9f7c6c1503b7d3ae865705d40a7e94b1e696ecba52cf37"
+    },
+    {
+      "key": "speed_trap",
+      "source_filename": "Blue speed-trap camera warning badge-1.png",
+      "sha256": "1c976b33e157430c3eb8cdc3dd99beb8d08bd632e2d7c24c2166ba0110b96791"
+    },
+    {
+      "key": "bridge",
+      "source_filename": "Bridge opening warning icon-10.png",
+      "sha256": "556931b7d6dc553ec3bbdc349b5971af671570bfee287e1a4e54cccf46ef04d6"
+    },
+    {
+      "key": "roadworks",
+      "source_filename": "Clean orange roadwork worker icon-11.png",
+      "sha256": "b48ded4c380705a5325952d18fcb60afa37b70b27d3f027380e9b32ded5335f5"
+    },
+    {
+      "key": "matrix",
+      "source_filename": "Red X on navy warning badge-18.png",
+      "sha256": "c7bc95da9afae38db63dc296e0f01c957ac42d3c7e9e175e089bd6de8088e026"
+    },
+    {
+      "key": "emergency",
+      "source_filename": "Red emergency beacon icon-12.png",
+      "sha256": "fd2931a5273a9e3386463e0e0fa886623b8abdc3bb52011407e5ab338b864b07"
+    },
+    {
+      "key": "incident",
+      "source_filename": "Red warning triangle icon-7.png",
+      "sha256": "9d2f49bcdfb72fee824d722cd5899ddcaf8f7ebc47253c3a6ccaf195d30a66a8"
+    },
+    {
+      "key": "poor_road",
+      "source_filename": "Road hump warning icon-2.png",
+      "sha256": "d769a1afda578b6dde0bc4c3aec2cdbe491af08a3292939524d91a2c0be0162c"
+    },
+    {
+      "key": "border_nl",
+      "source_filename": "Rounded Netherlands flag icon-15.png",
+      "sha256": "83bef7a32f11d72be5e85785c59089ae511c02f2797d4ff8c6493bfc1b86c641"
+    },
+    {
+      "key": "speed_camera",
+      "source_filename": "Speed camera radar badge-3.png",
+      "sha256": "f1430cacabc09abb4004e1f543177e4f8f8581d0105787e0ec0703fbb55d02a1"
+    },
+    {
+      "key": "maximum_speed_unknown",
+      "source_filename": "Speed limit question mark icon-13.png",
+      "sha256": "cbb611751e9b825cda586f5572835776bc35adc57ba3b06097bbbe7eb713d8c1"
+    },
+    {
+      "key": "speed_trap_hotspot",
+      "source_filename": "Speed trap hotspot target icon-6.png",
+      "sha256": "c542c54e5b4c9eaf0bb6e8bb7e252cfe4912c11edea5d5707276fb3abdd112f7"
+    },
+    {
+      "key": "traffic_jam",
+      "source_filename": "Traffic Jam Warning Badge-5.png",
+      "sha256": "b6978ba8bb0e47f3149aa8daa48cc6651a83995799279b7a016477cfaa6e104e"
+    },
+    {
+      "key": "traffic_camera",
+      "source_filename": "Traffic camera focus reticle-17.png",
+      "sha256": "0fbc71d047468220efba609b742fa5c4deb8debc691c060a13c44ef15a90fd8c"
+    },
+    {
+      "key": "level_crossing",
+      "source_filename": "Train level crossing warning icon-19.png",
+      "sha256": "01b964e87b86844e5eae08a64345e00a1104ff92249b5a675c38ed4d4795a58b"
+    },
+    {
+      "key": "traffic_light",
+      "source_filename": "Vertical traffic light icon-20.png",
+      "sha256": "afb1d12782065afb985deebb3dad55b6db47277b0e920d519887536281c810ed"
+    },
+    {
+      "key": "animals",
+      "source_filename": "White paw print warning badge-14.png",
+      "sha256": "8f227d60adadef00ea0ddf51262cae91e8aa9b19b94f5d866e276ea92a826841"
+    },
+    {
+      "key": "wrong_way",
+      "source_filename": "Wrong-Way Driver Warning Icon-9.png",
+      "sha256": "f99ac43146ccc7ba0774c6a8a865851305a7d10c396d507e0932118c0e739508"
+    }
+  ]
+}

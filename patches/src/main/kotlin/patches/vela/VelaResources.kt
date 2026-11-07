@@ -2,9 +2,10 @@ package patches.vela
 
 import app.morphe.patcher.patch.resourcePatch
 import org.w3c.dom.Element
+import patches.shared.navigationWarningIcons
 
 internal val velaResources = resourcePatch {
-    dependsOn(originalInput)
+    dependsOn(originalInput, navigationWarningIcons)
     execute {
         val android = "http://schemas.android.com/apk/res/android"
         document("AndroidManifest.xml").use { doc ->

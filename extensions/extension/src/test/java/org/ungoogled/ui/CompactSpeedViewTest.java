@@ -11,7 +11,7 @@ public class CompactSpeedViewTest {
  }
  @Test public void averagePanelHasNoCurrentSpeedOrLimitPair(){
   CompactSpeedView v=new CompactSpeedView(RuntimeEnvironment.getApplication());v.bind(zone(),90d,false,true,"");measure(v);
-  assertTrue(v.hasContent());assertTrue(v.getWidth()<=150);assertTrue(v.getHeight()<70);
+  assertTrue(v.hasContent());assertTrue(v.getWidth()<=210);assertTrue(v.getHeight()<90);
   String text=v.getContentDescription().toString();assertTrue(text.contains("Observed partial average"));assertFalse(text.contains("Current speed"));assertFalse(text.contains("speed limit"));
   Bitmap image=Bitmap.createBitmap(v.getWidth(),v.getHeight(),Bitmap.Config.ARGB_8888);v.draw(new Canvas(image));assertEquals(0,Color.alpha(image.getPixel(0,0)));
  }
@@ -23,6 +23,13 @@ public class CompactSpeedViewTest {
   CompactSpeedView v=new CompactSpeedView(RuntimeEnvironment.getApplication());v.bind(TelemetryStore.View.empty("nl.flitsmeister"),100d,false,false,"Emergency vehicle behind");measure(v);
   assertTrue(v.hasContent());assertEquals("Emergency vehicle behind",v.getContentDescription());assertTrue(v.getHeight()<70);
   v.bind(TelemetryStore.View.empty("nl.flitsmeister"),100d,false,true,"");measure(v);assertEquals(0,v.getMeasuredWidth());assertEquals(0,v.getMeasuredHeight());
+ }
+ @Test public void fullAverageControlWarningWrapsInsteadOfClippingItsSingleMessageLine(){
+  CompactSpeedView v=new CompactSpeedView(RuntimeEnvironment.getApplication());
+  String message="Flitsmeister\nAverage speed check 130 kilometres per hour. Keep your average speed below the limit.";
+  v.bind(zone(),130d,false,false,message);measure(v);
+  assertTrue(v.getHeight()>100);assertTrue(v.getHeight()<160);assertTrue(v.getContentDescription().toString().contains(message));
+  assertTrue(v.getContentDescription().toString().contains("1200 m remaining")||v.getContentDescription().toString().contains("1.2 km remaining"));
  }
  private static void measure(View v){v.measure(View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST));v.layout(0,0,v.getMeasuredWidth(),v.getMeasuredHeight());}
 }

@@ -20,12 +20,14 @@ private const val EARLY_VIEW="Lnl/flitsmeister/fmcore/models/data/earlywarnings/
 /** Resolve only exact FM15 roots before invoking the whole-profile transformation. */
 context(context: BytecodePatchContext)
 internal fun bindFlitsmeisterNativeWarnings15() {
+    val indicatorData=resolveFlitsmeisterIndicatorData15()
     val methods=flitsmeisterWarningContracts15.keys.associateWith { descriptor ->
         val owner=descriptor.substringBefore("->");val signature=descriptor.substringAfter("->")
         val parameters=Regex("\\[*L[^;]+;|\\[*[ZBCSIJFD]").findAll(signature.substringAfter('(').substringBefore(')')).map{it.value}.toList()
         exact(owner,signature.substringBefore('('),signature.substringAfter(')'),*parameters.toTypedArray()).method
     }
     bindFlitsmeisterNativeWarnings15(methods)
+    bindFlitsmeisterIndicatorData15(indicatorData)
 }
 
 /** Testable complete transformation; validate every root before changing any method. */
