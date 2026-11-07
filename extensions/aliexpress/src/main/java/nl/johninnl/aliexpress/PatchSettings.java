@@ -61,6 +61,10 @@ public final class PatchSettings {
     private static void initializeAnalytics(Context context, boolean enabled) {
     }
 
+    public static boolean removePromotionsAndGames() {
+        return isFeatureEnabled(AppliedPatches.removePromotionsAndGames(), AppliedPatches.REMOVE_PROMOTIONS_AND_GAMES);
+    }
+
     public static boolean removeSponsoredItems() {
         return isFeatureEnabled(AppliedPatches.removeSponsoredItems(), AppliedPatches.REMOVE_SPONSORED_ITEMS);
     }

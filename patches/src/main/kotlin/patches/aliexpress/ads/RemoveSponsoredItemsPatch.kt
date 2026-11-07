@@ -12,7 +12,13 @@ package patches.aliexpress.ads
 
 import patches.aliexpress.ALIEXPRESS
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.util.addInstructionsAtControlFlowLabel
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.findInstructionIndicesReversedOrThrow
+import app.morphe.patcher.opcode
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.matchSingle
 import patches.aliexpress.settings.markPatchApplied
@@ -22,21 +28,35 @@ private const val EXTENSION_CLASS_DESCRIPTOR = "Lnl/johninnl/aliexpress/Sponsore
 
 private const val DESCRIPTION = "Removes paid placements from search results and product feeds."
 
+// Shared installation point: either control can be selected independently in Manager.
+internal val contentFilteringPatch = bytecodePatch {
+    dependsOn(spoofSignaturePatch)
+    extendWith("extensions/aliexpress.mpe")
+    execute {
+        installRenderedItemFiltering()
+        ProductArrayFingerprint.matchSingle().method.apply {
+            val returns = findInstructionIndicesReversedOrThrow(opcode(Opcode.RETURN_OBJECT))
+            if (returns.isEmpty()) throw PatchException("AliExpress array return hook is missing")
+            returns.forEach { index ->
+                val register = getInstruction<OneRegisterInstruction>(index).registerA
+                addInstructionsAtControlFlowLabel(
+                    index,
+                    "invoke-static/range { v$register .. v$register }, " +
+                        "$EXTENSION_CLASS_DESCRIPTOR->filterIfEnabled(Ljava/util/List;)V",
+                )
+            }
+        }
+    }
+}
+
 @Suppress("unused")
 val removeSponsoredItemsPatch = bytecodePatch(
     name = "Remove sponsored items",
     description = DESCRIPTION,
 ) {
     compatibleWith(ALIEXPRESS)
-    dependsOn(spoofSignaturePatch)
-    extendWith("extensions/aliexpress.mpe")
-
+    dependsOn(contentFilteringPatch)
     execute {
         markPatchApplied("removeSponsoredItems", DESCRIPTION)
-        ProductArrayFingerprint.matchSingle().method.addInstruction(
-            0,
-            "invoke-static/range { p0 .. p1 }, " +
-                "$EXTENSION_CLASS_DESCRIPTOR->filterIfEnabled(Ljava/util/Map;Ljava/lang/String;)V",
-        )
     }
 }

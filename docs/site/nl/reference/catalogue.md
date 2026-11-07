@@ -59,6 +59,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Fix dark mode | Aan | 8.180.0, 8.180.1 |
 | GmsCore support | Aan | 8.180.0, 8.180.1 |
 | Remove promotional popups | Aan | 8.180.0, 8.180.1 |
+| Remove promotions and games | Aan | 8.180.1 |
 | Remove sponsored items | Aan | 8.180.0, 8.180.1 |
 | Skip splash promotions | Aan | 8.180.0, 8.180.1 |
 | Spoof signature | Aan | 8.180.0, 8.180.1 |

@@ -40,6 +40,8 @@ public final class AppliedPatches {
 
     static final String REMOVE_PROMOTIONAL_POPUPS = "Remove promotional popups";
 
+    static final String REMOVE_PROMOTIONS_AND_GAMES = "Remove promotions and games";
+
     static final String REMOVE_SPONSORED_ITEMS = "Remove sponsored items";
 
     static final String SKIP_SPLASH_PROMOTIONS = "Skip splash promotions";
@@ -48,10 +50,11 @@ public final class AppliedPatches {
 
     static final List<String> SWITCH_KEYS = Collections
         .unmodifiableList(Arrays.asList(REMOVE_SPONSORED_ITEMS, DISABLE_ANALYTICS, DISABLE_UPDATE_PROMPTS,
-                ENABLE_IMAGE_SAVING, REMOVE_PROMOTIONAL_POPUPS, SKIP_SPLASH_PROMOTIONS));
+                ENABLE_IMAGE_SAVING, REMOVE_PROMOTIONAL_POPUPS, REMOVE_PROMOTIONS_AND_GAMES, SKIP_SPLASH_PROMOTIONS));
 
     private static final List<String> NAMES = Collections.unmodifiableList(Arrays.asList(DISABLE_ANALYTICS,
             DISABLE_UPDATE_PROMPTS, ENABLE_IMAGE_SAVING, FIX_DARK_MODE, GMSCORE_SUPPORT, REMOVE_PROMOTIONAL_POPUPS,
+            REMOVE_PROMOTIONS_AND_GAMES,
             REMOVE_SPONSORED_ITEMS, SKIP_SPLASH_PROMOTIONS, SPOOF_SIGNATURE));
 
     private AppliedPatches() {
@@ -81,6 +84,8 @@ public final class AppliedPatches {
                 return gmsCoreSupportDescription();
             case REMOVE_PROMOTIONAL_POPUPS:
                 return removePromotionalPopupsDescription();
+            case REMOVE_PROMOTIONS_AND_GAMES:
+                return removePromotionsAndGamesDescription();
             case REMOVE_SPONSORED_ITEMS:
                 return removeSponsoredItemsDescription();
             case SKIP_SPLASH_PROMOTIONS:
@@ -133,6 +138,14 @@ public final class AppliedPatches {
     }
 
     public static String removePromotionalPopupsDescription() {
+        return null;
+    }
+
+    static boolean removePromotionsAndGames() {
+        return removePromotionsAndGamesDescription() != null;
+    }
+
+    public static String removePromotionsAndGamesDescription() {
         return null;
     }
 

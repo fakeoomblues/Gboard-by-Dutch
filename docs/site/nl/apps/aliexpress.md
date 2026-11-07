@@ -16,11 +16,14 @@ Selecteer het aangeleverde losse APK-bestand in Morphe Desktop. Versie 8.180.0 b
 | **Fix dark mode** | Aan | Herstelt schermen en webpagina's die de ingebouwde donkere modus wit laat. Vereist Android 10 of nieuwer. |
 | **GmsCore support** | Aan | Logt in via GmsCore in plaats van Google Play Services. Vereist een geïnstalleerde GmsCore. |
 | **Remove promotional popups** | Aan | Voorkomt dat couponaanbiedingen over Home en zoekresultaten openen. |
+| **Remove promotions and games** | Aan | Verwijdert campagnes en couponaanbiedingen, producten die alleen naar dealacties leiden, registratiecadeaus, spellen, muntaanbiedingen, muntknoppen en het tabblad Fast & Free. |
 | **Remove sponsored items** | Aan | Verwijdert betaalde plaatsingen uit zoekresultaten en productfeeds. |
 | **Skip splash promotions** | Aan | Slaat de promotie over die bij het starten het hele scherm vult. |
 | **Spoof signature** | Aan | Herstelt het laden van producten op gepatchte installaties. |
 
 ## Voor gebruik
+
+De nieuwe promotiefilter is bedoeld voor 8.180.1 build 80005998 en is nog niet vrijgegeven. Het verwijderen van herkenbare betaalde plaatsingen bewijst niet dat de overblijvende serverrangschikking onbevooroordeeld is.
 
 De handtekeningbescherming houdt producten en accountfuncties werkend na het patchen. Google-login vereist een compatibele GmsCore-installatie. Versies 8.180.0 build 80005997 en 8.180.1 build 80005998 worden ondersteund. Gebruik per versie het bijbehorende originele bestand.
 

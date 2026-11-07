@@ -9,3 +9,5 @@ android {
         buildConfigField("String", "BUNDLE_VERSION", "\"${project.version}\"")
     }
 }
+
+dependencies { testImplementation("junit:junit:4.13.2") }

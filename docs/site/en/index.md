@@ -105,7 +105,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="aliexpress com.alibaba.aliexpresshd 8.180.0 8.180.1 disable analytics disable update prompts enable image saving fix dark mode gmscore support remove promotional popups remove sponsored items skip splash promotions spoof signature" markdown>
+<article class="dap-app-card" data-category="other" data-search="aliexpress com.alibaba.aliexpresshd 8.180.0 8.180.1 disable analytics disable update prompts enable image saving fix dark mode gmscore support remove promotional popups remove promotions and games remove sponsored items skip splash promotions spoof signature" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [AliExpress](apps/aliexpress.md)
@@ -113,7 +113,7 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">8.180.0, 8.180.1</span></p>
 <p class="dap-app-card__package">com.alibaba.aliexpresshd</p>
 <details class="dap-app-card__patches">
-<summary>9 patches</summary>
+<summary>10 patches</summary>
 <ul>
 <li>Disable analytics <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
 <li>Disable update prompts <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
@@ -121,6 +121,7 @@ hide:
 <li>Fix dark mode <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
 <li>GmsCore support <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
 <li>Remove promotional popups <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
+<li>Remove promotions and games <span class="dap-app-card__target">8.180.1</span></li>
 <li>Remove sponsored items <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
 <li>Skip splash promotions <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>
 <li>Spoof signature <span class="dap-app-card__target">8.180.0, 8.180.1</span></li>

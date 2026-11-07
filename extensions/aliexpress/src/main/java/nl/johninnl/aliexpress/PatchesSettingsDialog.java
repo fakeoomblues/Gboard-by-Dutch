@@ -151,6 +151,9 @@ final class PatchesSettingsDialog {
         if (AppliedPatches.removePromotionalPopups()) {
             addSwitch(browsing, "hx_aliexpress_ic_promotions", AppliedPatches.REMOVE_PROMOTIONAL_POPUPS);
         }
+        if (AppliedPatches.removePromotionsAndGames()) {
+            addSwitch(browsing, "hx_aliexpress_ic_promotions", AppliedPatches.REMOVE_PROMOTIONS_AND_GAMES);
+        }
         if (AppliedPatches.enableImageSaving()) {
             addSwitch(browsing, "hx_aliexpress_ic_images", AppliedPatches.ENABLE_IMAGE_SAVING);
         }

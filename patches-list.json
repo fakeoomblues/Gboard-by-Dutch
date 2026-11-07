@@ -8726,6 +8726,40 @@
       "options": []
     },
     {
+      "name": "Remove promotions and games",
+      "description": "Removes campaign and coupon offers, channel-only deals, registration gift prompts, games, coin offers and entries, and the Fast & Free tab.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.alibaba.aliexpresshd",
+          "name": "AliExpress",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": [
+            "4fc3b267393ea2351c4716b37e6910517f197eb479bc43d9c9a5a46d49dd700e"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.180.1",
+              "versionCodes": {
+                "ARM64_V8A": 80005998,
+                "ARMEABI_V7A": 80005998,
+                "X86_64": 80005998,
+                "X86": 80005998
+              },
+              "isExperimental": false,
+              "minSdk": 21,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Remove sign-in prompts",
       "description": "Removes Google's sign-in prompts: the first-launch \"Make it your map\" page, the search screen's \"Tired of typing?\" card and the account sheet's \"Sign in\" pill. Tapping \"Your profile\" (or the pill, where it still shows) answers with a \"Can't sign in\" toast instead of nothing. With Add microG-RE support, which signs in, only the first-launch page and the card go.",
       "default": true,

@@ -59,6 +59,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Fix dark mode | On | 8.180.0, 8.180.1 |
 | GmsCore support | On | 8.180.0, 8.180.1 |
 | Remove promotional popups | On | 8.180.0, 8.180.1 |
+| Remove promotions and games | On | 8.180.1 |
 | Remove sponsored items | On | 8.180.0, 8.180.1 |
 | Skip splash promotions | On | 8.180.0, 8.180.1 |
 | Spoof signature | On | 8.180.0, 8.180.1 |

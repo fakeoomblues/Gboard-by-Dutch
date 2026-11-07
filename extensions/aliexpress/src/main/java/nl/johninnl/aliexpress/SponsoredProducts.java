@@ -20,67 +20,15 @@
  */
 package nl.johninnl.aliexpress;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public final class SponsoredProducts {
+    private SponsoredProducts() { }
 
-    private static final String LIST_ITEMS = "listItems";
-
-    private static final String CELLS = "cells";
-
-    private static final String PRODUCT_ID = "productId";
-
-    private static final String SPONSORSHIP = "p4p";
-
-    private SponsoredProducts() {
+    /** Called after FastJSON has converted strings and raw lists into JSONArray. */
+    public static void filterIfEnabled(List<?> products) {
+        // JSON arrays also carry template catalogues. Campaign floors are filtered as view models.
+        ContentFilter.filterArray(products, PatchSettings.removeSponsoredItems(), false);
     }
-
-    public static void filterIfEnabled(Map<String, Object> source, String key) {
-        if (PatchSettings.removeSponsoredItems()) {
-            filter(source, key);
-        }
-    }
-
-    static void filter(Map<String, Object> source, String key) {
-        if (!LIST_ITEMS.equals(key) && !CELLS.equals(key)) {
-            return;
-        }
-        Object value = source.get(key);
-        if (!(value instanceof List<?>)) {
-            return;
-        }
-        List<?> products = (List<?>) value;
-        if (!containsSponsoredProduct(products)) {
-            return;
-        }
-        List<Object> filtered = new ArrayList<>(products.size());
-        for (Object item : products) {
-            if (isSponsoredProduct(item)) {
-                continue;
-            }
-            filtered.add(item);
-        }
-        source.put(key, filtered);
-    }
-
-    private static boolean containsSponsoredProduct(List<?> products) {
-        for (Object product : products) {
-            if (isSponsoredProduct(product)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isSponsoredProduct(Object item) {
-        if (!(item instanceof Map<?, ?>)) {
-            return false;
-        }
-        Map<?, ?> product = (Map<?, ?>) item;
-        return product.get(PRODUCT_ID) != null && product.get(SPONSORSHIP) instanceof Map<?, ?>;
-    }
-
 }
