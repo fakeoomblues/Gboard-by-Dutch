@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public final class NativeGuidanceTest {
     public interface Marker{}
-    public interface Listener extends Marker{void rW(State value);}
+    public interface Listener extends Marker{void se(State value);}
     public enum Mode{OFF,GUIDING,CRUISING}
     public static final class Step{public CharSequence q="Turn right";}
     public static final class Progress{public Step d=new Step();public int i=120,j=15;}
@@ -19,7 +19,23 @@ public final class NativeGuidanceTest {
         public volatile State b=new State(Mode.GUIDING);Listener listener;Executor executor;int removals;
         public void a(Marker value,Executor executor){listener=(Listener)value;this.executor=executor;}
         public void c(Marker value){assertSame(listener,value);removals++;}
-        void emit(Mode mode){b=new State(mode);executor.execute(()->listener.rW(b));}
+        void emit(Mode mode){b=new State(mode);executor.execute(()->listener.se(b));}
+    }
+    public static final class Provider{
+        final Source source=new Source();
+        public Object a(){return source;}
+    }
+    public static final class Component{public Provider bR=new Provider();}
+    public static class ApplicationBase{
+        final Component component=new Component();
+        public Object rS(){return component;}
+        protected Object e(){throw new AssertionError("Must not create another component manager");}
+    }
+    public static final class Application extends ApplicationBase{}
+    @Test public void acquiresExistingGuidanceThroughTheInheritedCachedComponent()throws Exception{
+        Application app=new Application();
+        assertSame(app.component.bR.source,NativeGuidance.acquire(app));
+        assertSame(NativeGuidance.acquire(app),NativeGuidance.acquire(app));
     }
     @Test public void registersSeedsAlreadyGuidingAndRemovesTheExactListener()throws Exception{
         Source source=new Source();List<NativeGuidance.Snapshot> values=new ArrayList<>();

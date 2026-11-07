@@ -21,7 +21,7 @@ final class NativeGuidance implements AutoCloseable {
     private boolean closed;
 
     NativeGuidance(Context context,Handler main,Consumer<Snapshot> callback,Consumer<Throwable> failure)throws Exception{
-        this(acquire(context),context.getClassLoader().loadClass("blkt"),context.getClassLoader().loadClass("blku"),
+        this(acquire(context.getApplicationContext()),context.getClassLoader().loadClass("blra"),context.getClassLoader().loadClass("blrb"),
                 command->main.post(command),callback,failure);
     }
     NativeGuidance(Object source,Class<?> listenerType,Class<?> marker,Executor executor,Consumer<Snapshot> callback,Consumer<Throwable> failure)throws Exception{
@@ -32,7 +32,7 @@ final class NativeGuidance implements AutoCloseable {
                 if("equals".equals(method.getName()))return proxy==args[0];
                 return "Maps CAL guidance listener";
             }
-            if("rW".equals(method.getName())&&!closed){
+            if("se".equals(method.getName())&&!closed){
                 try{callback.accept(snapshot(args[0]));}catch(Exception error){failure.accept(error);}
             }
             return null;
@@ -41,10 +41,10 @@ final class NativeGuidance implements AutoCloseable {
         try{callback.accept(snapshot(field(source,"b")));}
         catch(Exception error){close();throw error;}
     }
-    private static Object acquire(Context context)throws Exception{
-        Object app=context.getApplicationContext();
-        Object manager=method(app,"rI").invoke(app);
-        Object component=method(manager,"rJ").invoke(manager);
+    static Object acquire(Object app)throws Exception{
+        // 26.44 inherits this cached component accessor from nsm. Do not call
+        // the protected e() factory, which creates another application manager.
+        Object component=method(app,"rS").invoke(app);
         Object provider=field(component,"bR");
         return method(provider,"a").invoke(provider);
     }

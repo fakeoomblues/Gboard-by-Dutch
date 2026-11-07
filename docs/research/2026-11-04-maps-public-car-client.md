@@ -91,6 +91,40 @@ These are independently decoded by the real public CAL library in unit tests.
 
 ## Acceptance ledger
 
+### Current phone target, 2026-11-07
+
+The USB phone's microG Maps 26.44.06.1006895251 now contains the provider health
+row and location-settings shortcut. Actual taps from both Maps and Vela opened
+De-Waze's Android application settings, preserving apps, signing and data.
+These are setup checks, not driving or warning-speech acceptance.
+
+The first real Google DHU admission used the 1280×480 profile, authenticated
+USB/TLS successfully, then failed Maps `onAppCreate` with a missing application
+`rI()` method. The owned DHU was stopped without GPS/warning stimuli. The compact
+private receipt and real frame are in `.analysis/phone-dhu-admission-124`.
+
+The exact original 26.44 APK exposes the cached application component through
+inherited `nsm.rS()`, which delegates to `nsn.n()` / `cqwl.rS()` and returns
+`njz`. Its `bR` provider still supplies guidance, now `blrr`; the snapshot listener
+is `blra extends blrb`, callback `se(blqy)`. The runtime adapter retained the old
+`rI`/`rJ` chain and `blkt`/`blku`/`rW` names while patch-time checks had already
+moved to the new snapshot types. The connected correction updates that adapter
+and checks the concrete application hierarchy, cached accessor and listener
+before patching. Build/original-input and fresh DHU acceptance remain required.
+
+Static evidence: REA `ev_e2136a4add9ba7e3d93aed3d654cf24f3d309ae7ce6f5448f216a262d1eccea8`
+(cached accessor), `ev_2f268c7d83923d0f6c72f57ab215d224c8a0ea68241d99e20eeff057157cd3e6`
+(component), `ev_eea04c6e6e43cbe78aa3c261fb225cb8c864fbae6786eedb259777b4577e901d`
+(provider initialization), `ev_5f12625eb5167a2eee8e7cf512a64ba6841e4c85df48cd326be1aa59a97a901b`
+(guidance creation), and `ev_e7b453ecd64d471eafc9bd779848ca5ab813e586b17216dfa040108691823722`
+(listener dispatch). Original merged-input SHA-256:
+`3ec1854b5c90d1d949c1be6e7a6ac488384d99149f3c25b29c9c025113dbee61`.
+
+Main explicitly skips native warning-voice binding for 26.44 in `WazeAlertsPatch`.
+The older speech acceptance below does not cover this target. Warning audio
+remains unavailable until its renamed native pipeline is ported and accepted;
+the car-startup correction does not close that separate gate.
+
 The earlier signed v1.38 baseline rendered a genuine Maps car map in DriveDeck
 at 1280×480. The new checkpoint06 candidate additionally rendered its native map
 and an active 11-minute/3.7 km route at 1280×480/160dpi with **only the AA stub**

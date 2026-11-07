@@ -12,11 +12,37 @@ import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.util.smali.ExternalLabel
 import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
 import org.w3c.dom.Element
+import com.android.tools.smali.dexlib2.iface.ClassDef
 
 private const val ORIGINAL = "com.google.android.apps.gmm.car.GmmCarProjectionService"
 private const val LEGACY_PROVIDER = "com.google.android.apps.gmm.car.projected.service.CarNavigationProviderService"
 private const val ADAPTER = "patches.maps.gearslip.NativeCarService"
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
+
+/** Check the concrete application path, not an unrelated generated interface. */
+internal fun validateMapsGuidanceComponent(classBy: (String) -> ClassDef) {
+    val hierarchy = listOf(
+        "Lcom/google/android/apps/gmm/base/app/GoogleMapsApplication;",
+        "Lnsn;", "Lngb;", "Lnsm;",
+    )
+    hierarchy.zipWithNext().forEach { (child, parent) ->
+        check(classBy(child).superclass == parent) { "Maps' application component hierarchy changed: $child" }
+    }
+    listOf(Triple("Lnsm;", "rS", "Ljava/lang/Object;"),
+        Triple("Lnsn;", "n", "Lcqwl;"),
+        Triple("Lcqwl;", "rS", "Ljava/lang/Object;")).forEach { (owner, name, result) ->
+        check(classBy(owner).methods.count { it.name == name && it.parameterTypes.isEmpty() && it.returnType == result } == 1) {
+            "Maps' cached application component accessor changed: $owner->$name"
+        }
+    }
+    check(classBy("Lnjz;").fields.count { it.name == "bR" && it.type == "Lcqya;" } == 1) {
+        "Maps' native guidance provider changed"
+    }
+    check("Lblrb;" in classBy("Lblra;").interfaces) { "Maps' native guidance listener marker changed" }
+    check(classBy("Lblra;").methods.count {
+        it.name == "se" && it.parameterTypes.map(CharSequence::toString) == listOf("Lblqy;") && it.returnType == "V"
+    } == 1) { "Maps' native guidance callback changed" }
+}
 
 private val nativeNavigationResources = resourcePatch {
     execute {
@@ -179,9 +205,7 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lbete;", "h", "Landroid/content/Context;")
         requireMethod("Lbesz;", "f", listOf("Landroid/view/Surface;"), "V")
         requireField("Lbesz;", "b", "Ljava/lang/Object;")
-        // nrw.rI removed in 26.44 (synthetic accessor renamed)
-        // cqnq.rJ removed in 26.44 (synthetic accessor renamed)
-        // njj.bR removed in 26.44 (field renamed)
+        validateMapsGuidanceComponent { classDefBy(it) }
         requireMethod("Lblrr;","a",listOf("Lblrb;","Ljava/util/concurrent/Executor;"),"V")
         requireMethod("Lblrr;","c",listOf("Lblrb;"),"V")
         requireField("Lblrr;","b","Lblqy;")
