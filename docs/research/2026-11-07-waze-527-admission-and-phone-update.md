@@ -66,6 +66,38 @@ time.” Android's direct permission editor is protected by
 `GRANT_RUNTIME_PERMISSIONS`; do not request that system permission or silently
 grant background access. The user makes the choice in Android settings.
 
+## Verified receiver delivery
+
+The feature branch was subsequently rebased onto fetched main `1b3ee2a`.
+All recorded navigation source-tree hashes were unchanged by that rebase.
+The signed, unpublished review build is `1.53.3+review.e78952feae88`, with SHA-256
+`724f410c86bc42d3ee00915aaabc8fbddbfefa650b65aebebb3404a4630bfee9`.
+Canonical release files retain their authoritative version; the review identity
+was passed only to the Gradle invocation. Full Android and Python checkpoints
+passed. No review bundle was published.
+
+Installed-APK inspection initially caught an older extension after a
+same-version Manager update. The review source now has the explicit local
+display name `Dutch App Patches Navigation Review`; final patch results and
+installed code were checked before delivery claims. Vela and the existing
+`org.ungoogled.android.apps.maps.microg` installation now contain the settings
+helper. Maps retained its 26-patch selection and exact 19-icon asset set. Stock
+Google Maps was not replaced.
+
+Actual phone taps verified both call sites: Android recorded
+`app.vela` and `org.ungoogled.android.apps.maps.microg` launching
+`android.settings.APPLICATION_DETAILS_SETTINGS` with `package:com.waze`.
+No permission was changed during those checks. Maps' temporary De-Waze choice
+was restored to its original FM choice. Real screenshots in
+`~/Downloads/Android-Auto-Functional-Review/` show both receiver settings pages
+and Maps opening Waze's Android app-info page.
+
+The phone exception remains explicit: these were normal, uninstrumented
+Manager/settings/logcat checks on the owner's unrooted phone. They prove the
+settings action and connection state, not warning speech or a simulated drive.
+Maps' settings frame reports warning audio unavailable outside the exercised
+navigation context; navigation/audio acceptance remains open.
+
 ## Physical phone update
 
 The owner authorized in-place navigation app updates through the phone's

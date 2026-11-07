@@ -64,6 +64,19 @@ Morphe's explicit Update action, preserve its patch choices/options and APK
 signing key, and check the installed APK for the intended code before claiming
 delivery. A Manager success screen or version label alone is not that proof.
 
+Give the local source an unambiguous Manager display name, such as `Dutch App
+Patches Navigation Review`, using the source card's Rename action. This changes
+only the local label, not the signed MPP. In the APK version picker, confirm the
+review source's row is marked selected before choosing the saved original.
+Check the final patch result's source version before installing; a public
+release with the same bundle name is a different input. Preserve the app's
+saved patch selection and options, including microG and clone configuration.
+
+When operating Manager by UI, dismiss its keyboard before scrolling or using
+the bottom navigation. Allow transitions to settle, then use current element
+bounds rather than fixed coordinates from an earlier screen. App-info actions
+move when an update notice or scroll position changes.
+
 ## Private files: keep these out of Git
 
 The private store defaults to `~/Library/Application Support/nl-morphe-local-release/`. Its configuration and secret files use mode `600`; private directories use `700`. Use absolute paths in configuration. Never put credential values in this document, `AGENTS.md`, a committed configuration, a plist, command output or a test diagnostic.

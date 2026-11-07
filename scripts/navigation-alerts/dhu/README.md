@@ -26,6 +26,27 @@ The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.
 
+## Native audio capture candidate
+
+The shipped ARM64 DHU (`4e42c054167d6a09a6cff04bba0b62d88898d39e866f241e7393750d2e23c163`)
+contains SDL's `SDL_DISKAUDIOFILE` and `SDL_DISKAUDIOFILEIN` strings. A retained
+REA query is in `.analysis/dhu-native-capabilities-115/strings.json`. This is
+static capability evidence, not an accepted capture session.
+
+SDL's existing disk audio backend can write output PCM to a file instead of a
+speaker. For a future owned DHU session, evaluate the process-scoped settings
+`SDL_AUDIODRIVER=disk` and `SDL_DISKAUDIOFILE=<owned-job>/dhu-audio.raw`; leave
+the driver's pacing override unset. No observer or runner change is needed.
+The [SDL implementation](https://github.com/libsdl-org/SDL/blob/SDL2/src/audio/disk/SDL_diskaudio.c)
+documents the raw output and file selection; that current upstream source is
+not proof of the SDK binary's exact SDL revision.
+
+Before accepting evidence, confirm that the DHU selected the backend, retain
+the negotiated PCM format and determine which output stream owns each file.
+Correlate captured speech content with genuine navigation warnings and native
+callbacks/logs. A nonempty raw file alone does not prove warning speech, and
+this capture setup does not establish production end-to-end audio latency.
+
 ## Owned VM root and connectivity tools
 
 The owner authorized rootAVD/avdroot and native curl setup on 2026-11-05.
