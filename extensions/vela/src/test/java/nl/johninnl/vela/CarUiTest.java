@@ -31,21 +31,34 @@ public class CarUiTest {
         CarUi.Layout badge=CarUi.compactLayout(actual,1,false,false);
         assertNotNull(badge);assertTrue(badge.bounds.right<1090);
         visible.set(12,12,1178,448);
-        assertEquals("A new callback can expand the area again",visible,CarUi.overlayViewport(visible,stable,1190,460));
+        assertEquals("A new callback can expand up to the map-action column",new Rect(12,12,1110,448),CarUi.overlayViewport(visible,stable,1190,460));
         assertEquals("Earlier frames retain their own geometry",new Rect(420,90,1090,448),actual);
     }
     @Test public void emptyOrUnavailableVisibleAreaCannotReappearAsAFullSurfaceOverlay() {
         Rect stable=new Rect(12,12,1178,448);
         assertTrue(CarUi.overlayViewport(new Rect(),stable,1190,460).isEmpty());
         assertTrue(CarUi.overlayViewport(null,null,1190,460).isEmpty());
-        assertEquals(stable,CarUi.overlayViewport(null,stable,1190,460));
+        assertEquals(new Rect(12,12,1110,448),CarUi.overlayViewport(null,stable,1190,460));
         assertTrue(CarUi.overlayViewport(new Rect(1300,0,1400,400),stable,1190,460).isEmpty());
         assertTrue(CarUi.overlayViewport(stable,null,0,460).isEmpty());
     }
     @Test public void overlayBoundsAreClippedOnceInSurfaceCoordinatesWithoutMutatingHostRects() {
         Rect host=new Rect(-20,-10,1300,500);
-        assertEquals(new Rect(0,0,1190,460),CarUi.overlayViewport(host,null,1190,460));
+        assertEquals(new Rect(0,0,1110,460),CarUi.overlayViewport(host,null,1190,460));
         assertEquals(new Rect(-20,-10,1300,500),host);
+    }
+    @Test public void observedHostBoundsDoNotPermitPillsUnderTheZoomButton() {
+        // Real run89 surface coordinates, rather than a host rectangle assumed safe.
+        Rect host=new Rect(428,36,1154,460),zoomMinus=new Rect(1114,384,1178,448);
+        Rect safe=CarUi.overlayViewport(host,host,1190,460,1f);
+        assertTrue("The full warning pill and shadow clear the native button",safe.right+3<zoomMinus.left);
+        CarUi.Layout speed=CarUi.compactLayout(safe,1,false,false);
+        assertNotNull(speed);assertTrue(speed.bounds.right+3<zoomMinus.left);
+        Rect doubled=CarUi.overlayViewport(new Rect(856,72,2308,920),null,2380,920,2f);
+        assertTrue("Reserve the control lane in host dp",doubled.right+6<zoomMinus.left*2);
+        assertEquals("Do not shrink an already narrower host reservation",new Rect(428,36,1000,460),
+            CarUi.overlayViewport(new Rect(428,36,1000,460),null,1190,460,1f));
+        assertTrue(CarUi.overlayViewport(new Rect(1115,0,1190,460),null,1190,460,1f).isEmpty());
     }
 
     @Test public void nativeSelectionAndDisabledCarKeepTheOriginalRenderer() {

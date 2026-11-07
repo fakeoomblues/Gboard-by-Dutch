@@ -196,19 +196,31 @@ public final class CarUi {
                 view.progressPercent,view.remainingMeters,view.progressEstimated,events,face,geometry);
         } catch (ReflectiveOperationException|RuntimeException error) { failure(error); }
     }
-    /** Current host occlusion wins over the native renderer's preferred stable area. */
+    /** Current host occlusion wins; the map-action column remains reserved while auto-hidden. */
     static Rect overlayViewport(Rect visible,Rect stable,int width,int height) {
+        return overlayViewport(visible,stable,width,height,1f);
+    }
+    static Rect overlayViewport(Rect visible,Rect stable,int width,int height,float density) {
         Rect selected=visible!=null?visible:stable;
         Rect result=selected==null?new Rect():new Rect(selected);
         if(width<=0||height<=0||!result.intersect(0,0,width,height))result.setEmpty();
+        // The AA17 host's visible/stable rectangles can extend into its map-action
+        // buttons (run89: right=1154 on a 1190px surface, button starts at1114).
+        // Reserve the native 80dp end column as well as all reported occlusions.
+        // Keep it when the strip auto-hides so both pills retain one stable anchor.
+        if(!result.isEmpty()) {
+            result.right=Math.min(result.right,width-Math.round(80f*density));
+            if(result.right<=result.left)result.setEmpty();
+        }
         return result;
     }
     private static Rect overlayViewport(Object renderer,int width,int height)throws ReflectiveOperationException {
-        try{return overlayViewport((Rect)field(renderer,"K"),(Rect)field(renderer,"u0"),width,height);}
+        Float hostDensity=DENSITIES.get(renderer);float density=hostDensity==null?1f:hostDensity;
+        try{return overlayViewport((Rect)field(renderer,"K"),(Rect)field(renderer,"u0"),width,height,density);}
         catch(NoSuchFieldException legacy){
             // Preserve the existing bounds-only renderer adapter. The pinned Vela
             // binding guards both native callback fields before installing this code.
-            return overlayViewport((Rect)invoke(renderer,"u"),null,width,height);
+            return overlayViewport((Rect)invoke(renderer,"u"),null,width,height,density);
         }
     }
     static void drawWarning(Canvas canvas,Rect safe,String warning,boolean dark,Paint nativePaint) {
