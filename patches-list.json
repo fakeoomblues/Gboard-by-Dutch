@@ -11068,6 +11068,146 @@
       "options": []
     },
     {
+      "name": "Use the system voice for navigation",
+      "description": "Uses the phone's selected text-to-speech engine for Maps navigation instead of requiring Google TTS. Select DriveDeck in Android's text-to-speech settings to hear Maps with the local DriveDeck voice. If no system engine is ready, Maps keeps its original voice.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.maps",
+          "name": "Google Maps",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#FFFFFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "26.43.05.1002020710",
+              "versionCodes": {
+                "ARM64_V8A": 1068844719,
+                "ARMEABI_V7A": 1068844719,
+                "X86_64": 1068844719,
+                "X86": 1068844719
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "26.44.06.1006895251",
+              "versionCodes": {
+                "ARM64_V8A": 1068856906,
+                "ARMEABI_V7A": 1068856906,
+                "X86_64": 1068856906,
+                "X86": 1068856906
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "org.ungoogled.android.apps.maps",
+          "name": "Google Maps (Ungoogled)",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#FFFFFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "26.43.05.1002020710",
+              "versionCodes": {
+                "ARM64_V8A": 1068844719,
+                "ARMEABI_V7A": 1068844719,
+                "X86_64": 1068844719,
+                "X86": 1068844719
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            },
+            {
+              "version": "26.44.06.1006895251",
+              "versionCodes": {
+                "ARM64_V8A": 1068856906,
+                "ARMEABI_V7A": 1068856906,
+                "X86_64": 1068856906,
+                "X86": 1068856906
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Use the system voice for navigation",
+      "description": "Speaks Flitsmeister navigation directions through the phone's selected text-to-speech engine instead of requiring Google TTS. Select DriveDeck as the system engine to hear the local DriveDeck voice; otherwise the voice the driver chose remains in use.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.flitsmeister",
+          "name": "Flitsmeister",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "ba4fdde5ed7d1082f6ba1af87df2ca39c81b094af20d36ff55b583aa3e3353e6"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "15.0",
+              "versionCodes": {
+                "ARM64_V8A": 1289,
+                "ARMEABI_V7A": 1289,
+                "X86_64": 1289,
+                "X86": 1289
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Use the system voice for navigation",
+      "description": "Speaks Waze navigation chunks through the phone's selected text-to-speech engine instead of Waze's downloaded voice recordings. Waze already supplies the chunk text, so no speech recognition is needed. Select DriveDeck as the system engine to hear the local DriveDeck voice; otherwise the original voice remains the fallback.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.waze",
+          "name": "Waze",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#33CCFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "5.27.0.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Waze alerts",
       "description": "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. Supports our navigation broadcasts for current speed, speed limits and average-speed zones, plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
       "default": true,
