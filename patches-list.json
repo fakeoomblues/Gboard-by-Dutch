@@ -333,7 +333,7 @@
     },
     {
       "name": "Allow all Android Auto hosts",
-      "description": "Allows Zoom's native meeting and phone interface on any compatible projection host, including DriveDeck, without checking the host package or signing certificate. Keeps the patched app working with a new APK signing certificate and unavailable car details.",
+      "description": "Allows Zoom's native meeting and phone interface on any compatible projection host, including DriveDeck, without checking the host package or signing certificate. Keeps the car service discoverable and the patched app working with a new APK signing certificate and unavailable car details.",
       "default": true,
       "category": null,
       "compatiblePackages": [

@@ -17,6 +17,14 @@ All three original APKs were scanned, including their DEX entries and all 126 AR
 
 ## Verification
 
+### Discovery limitation found on the owner's phone
+
+The earlier emulator setup explicitly ran `pm enable` for `ZmAutoServiceV3`; consequently, its rendering/startup evidence did not verify normal fresh-install discovery. The owner's patched installation subsequently had this service explicitly disabled and the normal CarAppService query returned no results. The original manifest sets this service disabled by default. Both application startup and PTUI call `com.zipow.videobox.auto.w.a(boolean)`, which writes the enabled or disabled component state according to Zoom's availability condition. The correction enables this one exported CALLING service in the manifest and pins only that component updater's Boolean input to true, retaining its other guards, handler, component and PackageManager call. It does not change account or meeting authorization.
+
+The corrected candidate passed the complete affected Android/JVM and bilingual-documentation gates. Applying it to the exact original APKS passed rebuilding, signing and independent output inspection; all 126 native libraries remained identical to the previously accepted candidate. One 175.45-second API 34 acceptance session proved normal PackageManager discovery immediately after a clean installation, after first startup and after a cold restart, without any `pm enable`. A separate step within that session explicitly disabled the service to reproduce the phone's stored component state, then proved that ordinary Zoom startup restored discovery. Passive Frida lifecycle observation covered all three Zoom processes; no unexpected exit occurred and the owned runtime stopped cleanly.
+
+The physical phone's shell denied the attempted one-time component enable with `SecurityException`. Its installed APK was not replaced and its data was not cleared. The corrected signed MPP was copied to the phone's Download directory for application through the owner's Morphe Manager signing identity. Phone/Android Auto acceptance of the corrected APK remains pending that in-place Manager update.
+
 - Complete initial repository verification passed. The native and optional-metadata batches reran all affected Android/JVM, generated-catalogue and bilingual documentation gates through the shared verifier, reusing passing Git/release/Python/Medium evidence whose inputs were unchanged.
 - Real-input tests passed without skips for the host validator, native preimage/preservation/rejection behavior and optional car metadata binding/control flow.
 - Morphe Desktop merged the complete three-APK original archive and applied exactly `Allow all Android Auto hosts`, with no failed patches. Rebuild/sign steps passed. Independent final-output inspection confirmed the Java validator and both null-handling setters, the exact native instructions and all unrelated library bytes.

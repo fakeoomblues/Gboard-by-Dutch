@@ -41,11 +41,12 @@ val carHostPatch = bytecodePatch(
     name = "Allow all Android Auto hosts",
     description = "Allows Zoom's native meeting and phone interface on any compatible projection host, " +
         "including DriveDeck, without checking the host package or signing certificate. " +
-        "Keeps the patched app working with a new APK signing certificate and unavailable car details.",
+        "Keeps the car service discoverable and the patched app working with a new APK signing " +
+        "certificate and unavailable car details.",
     default = true,
 ) {
     compatibleWith(zoom)
-    dependsOn(originalInput, nativeStartupCompatibility, carMetadataCompatibility)
+    dependsOn(originalInput, nativeStartupCompatibility, carMetadataCompatibility, carDiscoveryCompatibility)
     execute {
         check(classDefBy(HOST_VALIDATOR).fields.any {
             it.name == "ALLOW_ALL_HOSTS_VALIDATOR" && it.type == HOST_VALIDATOR &&

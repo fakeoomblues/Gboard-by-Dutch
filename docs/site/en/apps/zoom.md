@@ -20,7 +20,7 @@ This patch changes access to the car interface. Zoom's existing accounts, analyt
 
 ## Before using
 
-Sign in and enable Android Auto in Zoom on the phone. Meeting availability and Zoom Phone features depend on your account and license. The host must implement Zoom's car templates and required car API level.
+Sign in to Zoom on the phone. The patch keeps Zoom's car service enabled so compatible hosts can discover it after installation and startup. Meeting availability and Zoom Phone features depend on your account and license. The host must implement Zoom's car templates and required car API level.
 
 The patch also prevents Zoom closing itself because the patched app uses a different APK signing certificate. It allows the car screen to reopen when a host has no car-manufacturer or model information.
 

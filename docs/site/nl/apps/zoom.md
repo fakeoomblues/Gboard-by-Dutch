@@ -20,7 +20,7 @@ Deze patch verandert de toegang tot de auto-interface. De bestaande accounts, an
 
 ## Voor gebruik
 
-Meld je op de telefoon aan en schakel Android Auto in Zoom in. Beschikbare vergaderingen en Zoom Phone-functies hangen af van je account en licentie. De host moet de autosjablonen en het vereiste auto-API-niveau van Zoom ondersteunen.
+Meld je op de telefoon aan bij Zoom. De patch houdt de autoservice van Zoom ingeschakeld, zodat geschikte hosts deze na installatie en opstarten kunnen vinden. Beschikbare vergaderingen en Zoom Phone-functies hangen af van je account en licentie. De host moet de autosjablonen en het vereiste auto-API-niveau van Zoom ondersteunen.
 
 De patch voorkomt ook dat Zoom zichzelf sluit doordat de gepatchte app een ander APK-ondertekeningscertificaat gebruikt. Het autoscherm kan ook opnieuw openen als een host geen autofabrikant of model doorgeeft.
 
