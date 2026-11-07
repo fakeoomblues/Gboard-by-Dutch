@@ -47,6 +47,7 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 | Patch | Default | What it does |
 | --- | --- | --- |
 | **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The adapter owns its car UI resources; see the acceptance limits above. |
+| **Use the system voice for navigation** | Off | Reads navigation directions with the phone's selected text-to-speech engine instead of Google TTS, including DriveDeck when it is selected. |
 
 ### Extended by this project
 

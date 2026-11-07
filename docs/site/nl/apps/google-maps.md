@@ -47,6 +47,7 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. De adapter beheert de eigen auto-interface; zie de acceptatiegrenzen hierboven. |
+| **Use the system voice for navigation** | Uit | Leest navigatie-aanwijzingen voor met de tekst-naar-spraak-engine die op de telefoon is gekozen in plaats van Google TTS, ook DriveDeck als die is gekozen. |
 
 ### Uitgebreid door dit project
 
