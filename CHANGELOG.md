@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/de576d2d2d64d830f2526524305025a84d6fe5fd/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.49.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [de576d2d2d64](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/de576d2d2d64d830f2526524305025a84d6fe5fd). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.49.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.49.0...v1.49.1) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Zoom Workplace:** keep the car service discoverable ([de576d2](https://gitlab.com/johninnld/nl-morphe-patches/commit/de576d2d2d64d830f2526524305025a84d6fe5fd))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/76a386c6720e616720cbc2aa97e10596c9fff081/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.49.0.**
