@@ -43,7 +43,9 @@ internal fun bindFlitsmeisterNavigationAudio15() {
         Triple(routing[2], 7, 49), Triple(routing[3], 8, 53),
         Triple(constructor, 4, 56), Triple(cleanup, 6, 77),
         Triple(mediaFactory, 16, 68), Triple(prepared, 2, 7), Triple(resume, 4, 22),
-        Triple(speech, 18, 235), Triple(resetSpeech, 6, 85),
+        Triple(speech, 18, 235),
+        // resetSpeech is the TTS factory; a system-voice patch may replace its
+        // constructor and add a return, so only its references are guarded below.
         Triple(mapListener, 3, 6), Triple(mapSpeech, 6, 22),
         Triple(focus, 2, 4), Triple(abandon, 2, 4),
     )) check(method.implementation!!.registerCount == registers && method.instructions.size == count) {

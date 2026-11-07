@@ -17,6 +17,7 @@ object CatalogCompatibility {
         appIconColor = 0x33CCFF,
         targets = listOf(
             AppTarget(version = "5.26.90.901"),
+            AppTarget(version = "5.27.0.1"),
         ),
     )
 }

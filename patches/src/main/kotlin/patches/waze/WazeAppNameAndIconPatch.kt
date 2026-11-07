@@ -71,20 +71,38 @@ val wazeChangeAppNameAndIconPatch = resourcePatch(
         var reiconed = 0
         document("AndroidManifest.xml").use { manifest ->
             val elements = manifest.getElementsByTagName("*")
+            // A compiled manifest stores the application label and icon as resource IDs
+            // (@0x...), while a decoded manifest keeps @string/... names. Match both forms
+            // and follow every component that shares the application's reference.
+            var stockLabel: String? = null
+            var stockIcon: String? = null
             for (i in 0 until elements.length) {
                 val element = elements.item(i) as Element
-                if (element.getAttribute("android:label") == STOCK_LABEL) {
+                if (element.tagName == "application") {
+                    if (stockLabel == null) stockLabel = element.getAttribute("android:label").takeIf { it.isNotEmpty() }
+                    if (stockIcon == null) stockIcon = element.getAttribute("android:icon").takeIf { it.isNotEmpty() }
+                }
+            }
+            val labels = linkedSetOf<String>()
+            stockLabel?.let { labels += it }
+            labels += STOCK_LABEL
+            val icons = linkedSetOf<String>()
+            stockIcon?.let { icons += it }
+            icons += STOCK_ICON
+            for (i in 0 until elements.length) {
+                val element = elements.item(i) as Element
+                if (element.getAttribute("android:label") in labels) {
                     element.setAttribute("android:label", NEW_LABEL)
                     relabeled++
                 }
-                if (style != "stock" && element.getAttribute("android:icon") == STOCK_ICON) {
+                if (style != "stock" && element.getAttribute("android:icon") in icons) {
                     element.setAttribute("android:icon", NEW_ICON)
                     reiconed++
                 }
             }
         }
-        if (relabeled == 0) throw PatchException("no manifest labels reference $STOCK_LABEL")
-        if (style != "stock" && reiconed == 0) throw PatchException("no manifest icons reference $STOCK_ICON")
+        if (relabeled == 0) throw PatchException("no manifest labels reference the Waze app label")
+        if (style != "stock" && reiconed == 0) throw PatchException("no manifest icons reference the Waze launcher icon")
 
         document("res/values/strings.xml").use { strings ->
             val resources = strings.getElementsByTagName("resources").item(0) as Element
