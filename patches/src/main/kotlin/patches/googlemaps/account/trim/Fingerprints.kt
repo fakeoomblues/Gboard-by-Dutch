@@ -30,11 +30,11 @@ import com.android.tools.smali.dexlib2.Opcode
 /** Group 1 bounds: custom-actions list construction (kept, start) .. Offline maps' own call (kept, end). */
 internal object CustomActionsListFingerprint : Fingerprint(
     name = "t",
-    parameters = listOf("Lafyh;"),
-    returnType = "Lbqrr;",
+    parameters = listOf("Lagdp;"),
+    returnType = "Lbqye;",
     filters = listOf(
-        methodCall(definingClass = "Lbwix;", name = "<init>", opcode = Opcode.INVOKE_DIRECT, parameters = listOf("I")),
-        methodCall(definingClass = "Lolm;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbwpw;", name = "<init>", opcode = Opcode.INVOKE_DIRECT, parameters = listOf("I")),
+        methodCall(definingClass = "Lomf;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
     ),
 )
 
@@ -49,25 +49,25 @@ internal object CustomActionsListFingerprint : Fingerprint(
  */
 internal object CommonActionsListFingerprint : Fingerprint(
     name = "t",
-    parameters = listOf("Lafyh;"),
-    returnType = "Lbqrr;",
+    parameters = listOf("Lagdp;"),
+    returnType = "Lbqye;",
     filters = listOf(
-        methodCall(definingClass = "Lolm;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
-        methodCall(definingClass = "Lbwix;", name = "<init>", opcode = Opcode.INVOKE_DIRECT, parameters = listOf("I")),
-        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lolm;", name = "q"),
+        methodCall(definingClass = "Lomf;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbwpw;", name = "<init>", opcode = Opcode.INVOKE_DIRECT, parameters = listOf("I")),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lomf;", name = "q"),
     ),
 )
 
 /** Group 3 bounds: Settings' own row-add (kept, start) .. the common-actions list finalize (kept, end). */
 internal object SettingsRowAddFingerprint : Fingerprint(
     name = "t",
-    parameters = listOf("Lafyh;"),
-    returnType = "Lbqrr;",
+    parameters = listOf("Lagdp;"),
+    returnType = "Lbqye;",
     filters = listOf(
-        methodCall(definingClass = "Lbsaj;", name = "cw", opcode = Opcode.INVOKE_STATIC),
+        methodCall(definingClass = "Lbsgx;", name = "aP", opcode = Opcode.INVOKE_STATIC),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
-        methodCall(definingClass = "Lbwix;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
-        methodCall(definingClass = "Lbwix;", name = "h", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbwpw;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
+        methodCall(definingClass = "Lbwpw;", name = "h", opcode = Opcode.INVOKE_VIRTUAL),
     ),
 )
 
@@ -82,12 +82,12 @@ internal object SettingsRowAddFingerprint : Fingerprint(
 internal object LegacySettingsRowAddFingerprint : Fingerprint(
     name = "a",
     parameters = listOf("Z"),
-    returnType = "Lbqpl;",
+    returnType = "Lbqvz;",
     filters = listOf(
-        methodCall(definingClass = "Lbsaj;", name = "cw", opcode = Opcode.INVOKE_STATIC),
+        methodCall(definingClass = "Lbsgx;", name = "aP", opcode = Opcode.INVOKE_STATIC),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
-        methodCall(definingClass = "Lbwix;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
-        methodCall(definingClass = "Lbwix;", name = "h", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbwpw;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
+        methodCall(definingClass = "Lbwpw;", name = "h", opcode = Opcode.INVOKE_VIRTUAL),
     ),
 )
 
@@ -95,11 +95,11 @@ internal object LegacySettingsRowAddFingerprint : Fingerprint(
 internal object LegacyYourProfileFingerprint : Fingerprint(
     name = "a",
     parameters = listOf("Z"),
-    returnType = "Lbqpl;",
+    returnType = "Lbqvz;",
     filters = listOf(
-        methodCall(definingClass = "Lbqxk;", name = "a", returnType = "Lbqxl;", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbrdw;", name = "a", returnType = "Lbrdx;", opcode = Opcode.INVOKE_VIRTUAL),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
-        methodCall(definingClass = "Lbwix;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
-        methodCall(definingClass = "Lolm;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lbwpw;", name = "i", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
+        methodCall(definingClass = "Lomf;", name = "e", opcode = Opcode.INVOKE_VIRTUAL),
     ),
 )

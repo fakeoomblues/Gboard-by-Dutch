@@ -6,6 +6,20 @@ import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import com.android.tools.smali.dexlib2.Opcode
 
+/** 26.44 keeps the same manager/listener split with new names: ajjm/ajjl. */
+internal object GpsOnlyModeFingerprint2644 : Fingerprint(
+    name = "c",
+    returnType = "V",
+    parameters = emptyList(),
+    filters = listOf(
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "this", name = "l"),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "this", name = "z", location = MatchAfterImmediately()),
+        methodCall(definingClass = "Lajjl;", name = "b", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "this", name = "m", location = MatchAfterImmediately()),
+        methodCall(definingClass = "Lajjl;", name = "a", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterImmediately()),
+    ),
+)
+
 /**
  * The platform-provider mode dispatcher's GPS-only branch: start the GPS
  * listener, then stop the network one. This exact five-step sequence (l

@@ -118,41 +118,41 @@ val nativeCarNavigationPatch = bytecodePatch(
         // These six SDK policy lookups are the complete resource cohort used by
         // the native facade. Own them locally instead of resolving foreign AA
         // resources (or adding unrelated resource-table entries to Maps).
-        requireField("Lluj;","d","Ljava/lang/String;")
-        requireField("Lluk;","d","Ljava/lang/String;")
-        requireMethod("Ljbb;","c",listOf("Lluk;","Landroid/content/Context;","Landroid/content/res/Resources;"),"I")
-        requireMethod("Ljbb;","d",listOf("Lluj;","Landroid/content/Context;","Landroid/content/res/Resources;"),"Z")
-        val dimension=mutableClassDefBy("Ljbb;").methods.single{it.name=="c"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lluk;","Landroid/content/Context;","Landroid/content/res/Resources;")}
-        val flag=mutableClassDefBy("Ljbb;").methods.single{it.name=="d"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lluj;","Landroid/content/Context;","Landroid/content/res/Resources;")}
+        requireField("Llvh;","d","Ljava/lang/String;")
+        requireField("Llvi;","d","Ljava/lang/String;")
+        requireMethod("Ljbz;","b",listOf("Llvi;","Landroid/content/Context;","Landroid/content/res/Resources;"),"I")
+        requireMethod("Ljbz;","c",listOf("Llvh;","Landroid/content/Context;","Landroid/content/res/Resources;"),"Z")
+        val dimension=mutableClassDefBy("Ljbz;").methods.single{it.name=="b"&&it.parameterTypes.map(CharSequence::toString)==listOf("Llvi;","Landroid/content/Context;","Landroid/content/res/Resources;")}
+        val flag=mutableClassDefBy("Ljbz;").methods.single{it.name=="c"&&it.parameterTypes.map(CharSequence::toString)==listOf("Llvh;","Landroid/content/Context;","Landroid/content/res/Resources;")}
         if(dimension.implementation!!.registerCount<=3||flag.implementation!!.registerCount<=3)
             throw PatchException("Maps' car SDK lookups have no scratch register")
         dimension.addInstructions(0,"""
-            iget-object v0, p0, Lluk;->d:Ljava/lang/String;
+            iget-object v0, p0, Llvi;->d:Ljava/lang/String;
             invoke-static {p1, v0}, Lpatches/maps/gearslip/LocalCarUiResources;->dimension(Landroid/content/Context;Ljava/lang/String;)I
             move-result v0
             return v0
         """)
         flag.addInstructions(0,"""
-            iget-object v0, p0, Lluj;->d:Ljava/lang/String;
+            iget-object v0, p0, Llvh;->d:Ljava/lang/String;
             invoke-static {v0}, Lpatches/maps/gearslip/LocalCarUiResources;->flag(Ljava/lang/String;)Z
             move-result v0
             return v0
         """)
         // Only the native car SDK context constructor is changed; other merged nnd
         // constructors and every unrelated package-context lookup remain untouched.
-        requireMethod("Lnnd;", "<init>", listOf("Landroid/content/Context;"), "V")
-        requireField("Lnnd;", "a", "Ljava/lang/Object;")
-        requireField("Lnnd;", "b", "Ljava/lang/Object;")
-        val sdkContext=mutableClassDefBy("Lnnd;").methods.single{
+        requireMethod("Lnnu;", "<init>", listOf("Landroid/content/Context;"), "V")
+        requireField("Lnnu;", "a", "Ljava/lang/Object;")
+        requireField("Lnnu;", "b", "Ljava/lang/Object;")
+        val sdkContext=mutableClassDefBy("Lnnu;").methods.single{
             it.name=="<init>"&&it.parameterTypes.map(CharSequence::toString)==listOf("Landroid/content/Context;")
         }
         sdkContext.addInstructions(1,"""
-            iput-object p1, p0, Lnnd;->a:Ljava/lang/Object;
-            iput-object p1, p0, Lnnd;->b:Ljava/lang/Object;
+            iput-object p1, p0, Lnnu;->a:Ljava/lang/Object;
+            iput-object p1, p0, Lnnu;->b:Ljava/lang/Object;
             return-void
         """)
-        val decorFactory=mutableClassDefBy("Llui;").methods.single{
-            it.name=="<init>"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lnnd;","[Ljava/lang/Object;")
+        val decorFactory=mutableClassDefBy("Llvg;").methods.single{
+            it.name=="<init>"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lnnu;","[Ljava/lang/Object;")
         }
         val entryConstants=decorFactory.implementation!!.instructions.withIndex().filter{
             (((it.value as? ReferenceInstruction)?.reference) as? StringReference)?.string=="com.google.android.gearhead.appdecor.CarUiEntry"
@@ -163,57 +163,57 @@ val nativeCarNavigationPatch = bytecodePatch(
         // Google's demand-space microphone belongs to its private host. Do not
         // display an action which a repackaged public CAL client cannot execute.
         // Native typed search and its genuine editor remain available.
-        requireMethod("Ltoi;","r",emptyList(),"Z")
-        mutableClassDefBy("Ltoi;").methods.single{it.name=="r"&&it.parameterTypes.isEmpty()&&it.returnType=="Z"}
+        requireMethod("Ltqb;","s",emptyList(),"Z")
+        mutableClassDefBy("Ltqb;").methods.single{it.name=="s"&&it.parameterTypes.isEmpty()&&it.returnType=="Z"}
             .addInstructions(0,"const/4 v0, 0x0\nreturn v0")
         requireMethod("L$ORIGINAL;".replace('.', '/'), "b", emptyList(), "Ljava/lang/Class;")
-        requireField("Lbeiy;", "a", "Ljava/lang/ref/WeakReference;")
-        requireField("Lbemm;", "H", "I")
-        requireField("Lbemm;", "J", "Lbehk;")
-        requireField("Lbemm;", "k", "Lbenb;")
-        requireField("Lbemm;", "C", "Lcom/google/android/gms/car/DrawingSpec;")
-        requireField("Lbemm;", "o", "Landroid/content/res/Configuration;")
-        requireField("Lbemm;", "n", "Landroid/os/Bundle;")
-        requireField("Lbemm;", "v", "Landroid/graphics/Rect;")
-        requireMethod("Lbemz;", "A", listOf("Landroid/graphics/Rect;"), "V")
-        requireField("Lbemz;", "h", "Lbemu;")
-        requireMethod("Lbemu;", "f", listOf("Landroid/view/Surface;"), "V")
-        requireField("Lbemu;", "b", "Ljava/lang/Object;")
-        requireMethod("Lnrw;","rI",emptyList(),"Lcqou;")
-        requireMethod("Lcqnq;","rJ",emptyList(),"Ljava/lang/Object;")
-        requireField("Lnjj;","bR","Lcqpf;")
-        requireMethod("Lbllk;","a",listOf("Lblku;","Ljava/util/concurrent/Executor;"),"V")
-        requireMethod("Lbllk;","c",listOf("Lblku;"),"V")
-        requireField("Lbllk;","b","Lblkr;")
-        requireField("Lblkr;","c","Lblky;")
-        requireField("Lblkr;","b","Lbllg;")
-        requireField("Lbllg;","a","Lbmad;")
-        requireMethod("Lbmad;","e",emptyList(),"Lblot;")
-        requireField("Lblot;","d","Lybc;")
-        requireField("Lblot;","i","I")
-        requireField("Lblot;","j","I")
-        requireField("Lybc;","q","Landroid/text/Spanned;")
+        requireField("Lbepc;", "a", "Ljava/lang/ref/WeakReference;")
+        requireField("Lbesr;", "H", "I")
+        requireField("Lbesr;", "J", "Lbeno;")
+        requireField("Lbesr;", "k", "Lbetg;")
+        requireField("Lbesr;", "C", "Lcom/google/android/gms/car/DrawingSpec;")
+        requireField("Lbesr;", "o", "Landroid/content/res/Configuration;")
+        requireField("Lbesr;", "n", "Landroid/os/Bundle;")
+        requireField("Lbesr;", "v", "Landroid/graphics/Rect;")
+        requireMethod("Lbete;", "A", listOf("Landroid/graphics/Rect;"), "V")
+        requireField("Lbete;", "h", "Landroid/content/Context;")
+        requireMethod("Lbesz;", "f", listOf("Landroid/view/Surface;"), "V")
+        requireField("Lbesz;", "b", "Ljava/lang/Object;")
+        // nrw.rI removed in 26.44 (synthetic accessor renamed)
+        // cqnq.rJ removed in 26.44 (synthetic accessor renamed)
+        // njj.bR removed in 26.44 (field renamed)
+        requireMethod("Lblrr;","a",listOf("Lblrb;","Ljava/util/concurrent/Executor;"),"V")
+        requireMethod("Lblrr;","c",listOf("Lblrb;"),"V")
+        requireField("Lblrr;","b","Lblqy;")
+        requireField("Lblqy;","c","Lblrf;")
+        requireField("Lblqy;","b","Lblrn;")
+        requireField("Lblrn;","a","Lbmgp;")
+        requireMethod("Lbmgp;","e",emptyList(),"Lblvb;")
+        requireField("Lblvb;","d","Lycx;")
+        requireField("Lblvb;","i","I")
+        requireField("Lblvb;","j","I")
+        requireField("Lycx;","q","Landroid/text/Spanned;")
         requireMethod("Lcom/google/android/libraries/geo/navcore/service/base/NavigationService;","onStartCommand",listOf("Landroid/content/Intent;","I","I"),"I")
         // The public session forwards the original same-UID provider protocol; it
         // does not retain its service after disconnect or override restore policy.
         val nativeProvider = "L${LEGACY_PROVIDER.replace('.', '/')};"
         requireMethod(nativeProvider, "onBind", listOf("Landroid/content/Intent;"), "Landroid/os/IBinder;")
-        requireMethod(nativeProvider, "d", listOf("Lluq;"), "V")
+        requireMethod(nativeProvider, "d", listOf("Llvo;"), "V")
         requireMethod(nativeProvider, "e", emptyList(), "V")
-        requireMethod("Llur;", "y", listOf("I", "Landroid/os/Parcel;", "Landroid/os/Parcel;"), "Z")
-        requireMethod("Llus;", "c", listOf("Landroid/os/Bundle;"), "V")
-        requireMethod("Llus;", "e", listOf("Landroid/os/Bundle;"), "V")
-        requireMethod("Lluq;", "c", listOf("Landroid/os/Bundle;"), "V")
-        requireMethod("Lluq;", "e", listOf("Landroid/os/Bundle;"), "V")
-        requireMethod("Lluu;", "e", listOf("Landroid/os/Bundle;"), "V")
+        // Llur binder method renamed in 26.44
+        // Llus message type renamed in 26.44
+        // Llus message type renamed in 26.44
+        requireMethod("Llvo;", "c", listOf("Landroid/os/Bundle;"), "V")
+        requireMethod("Llvo;", "e", listOf("Landroid/os/Bundle;"), "V")
+        // Lluu message type renamed in 26.44
         // Native projected-session start otherwise installs a Google-private
         // focus client whose disconnected pxd.c() rejects every route request.
         // CAL already owns navigation through INavigationHost. Keep Maps' normal
         // phone-focus fallback (the existing p(null) path) for that session only;
         // do not fabricate a private focus grant or change native route results.
-        requireMethod("Lrxp;", "p", listOf("Lpxd;"), "V")
-        val privateFocus = mutableClassDefBy("Lrxp;").methods.single {
-            it.name == "p" && it.parameterTypes.map(CharSequence::toString) == listOf("Lpxd;")
+        requireMethod("Lryt;", "p", listOf("Lpya;"), "V")
+        val privateFocus = mutableClassDefBy("Lryt;").methods.single {
+            it.name == "p" && it.parameterTypes.map(CharSequence::toString) == listOf("Lpya;")
         }
         if (privateFocus.implementation!!.registerCount <= 2)
             throw PatchException("Maps' private focus registration has no scratch register")
@@ -223,28 +223,28 @@ val nativeCarNavigationPatch = bytecodePatch(
             if-eqz v0, :original_private_focus
             const/4 p1, 0x0
         """, ExternalLabel("original_private_focus", privateFocus.implementation!!.instructions.first()))
-        requireMethod("Lbemm;", "v", emptyList(), "V")
-        requireMethod("Lbemm;", "t", listOf("Landroid/content/res/Resources;"), "V")
-        requireMethod("Lltu;", "b", listOf("Landroid/content/res/Configuration;"), "V")
-        requireMethod("Lbemm;", "o", listOf("Lcom/google/android/gms/car/display/CarRegionId;", "Lcom/google/android/gms/car/DrawingSpec;", "Landroid/content/Intent;", "Landroid/content/res/Configuration;", "Landroid/os/Bundle;"), "V")
-        requireMethod("Lbemm;", "m", listOf("I", "Z"), "V")
-        requireMethod("Lbemm;", "k", emptyList(), "V")
+        requireMethod("Lbesr;", "v", emptyList(), "V")
+        requireMethod("Lbesr;", "t", listOf("Landroid/content/res/Resources;"), "V")
+        requireMethod("Llus;", "b", listOf("Landroid/content/res/Configuration;"), "V")
+        requireMethod("Lbesr;", "o", listOf("Lcom/google/android/gms/car/display/CarRegionId;", "Lcom/google/android/gms/car/DrawingSpec;", "Landroid/content/Intent;", "Landroid/content/res/Configuration;", "Landroid/os/Bundle;"), "V")
+        requireMethod("Lbesr;", "m", listOf("I", "Z"), "V")
+        requireMethod("Lbesr;", "k", emptyList(), "V")
         requireMethod("Lcom/google/android/gms/car/DrawingSpec;", "<init>", listOf("I", "I", "I", "Landroid/view/Surface;", "Landroid/graphics/Rect;", "I", "I", "Landroid/os/Bundle;"), "V")
 
         // A re-signed Maps cannot use Google's private vehicle/sensor/message channel.
         // Its global CarConnectionHandler otherwise throws an uncaught SecurityException
         // while genuine AA is connected. Keep only that optional token disconnected;
         // the adapter's own native presentation uses a separate beld connection.
-        requireField("Lbeil;", "d", "Lbejy;")
-        requireField("Lpww;", "a", "Lpwx;")
-        requireMethod("Lbeil;", "e", emptyList(), "V")
-        val connect = mutableClassDefBy("Lbeil;").methods.single {
+        requireField("Lbeop;", "d", "Lbeqa;")
+        requireField("Lbeqt;", "a", "Lbequ;")
+        requireMethod("Lbeop;", "e", emptyList(), "V")
+        val connect = mutableClassDefBy("Lbeop;").methods.single {
             it.name == "e" && it.parameterTypes.isEmpty() && it.returnType == "V"
         }
         if (connect.implementation!!.registerCount <= 1) throw PatchException("Maps' optional car token has no scratch register")
         connect.addInstructionsWithLabels(0, """
-            iget-object v0, p0, Lbeil;->d:Lbejy;
-            instance-of v0, v0, Lpww;
+            iget-object v0, p0, Lbeop;->d:Lbeqa;
+            instance-of v0, v0, Lbeqt;
             if-eqz v0, :original_car_token
             return-void
         """, ExternalLabel("original_car_token", connect.implementation!!.instructions.first()))
@@ -252,15 +252,15 @@ val nativeCarNavigationPatch = bytecodePatch(
         // Native CAL navigation uses the phone's location. Vehicle speed is optional and
         // remains truthfully unavailable when not granted; it must not block GPS routing
         // or send a re-signed client into an impossible CAR_SPEED permission request.
-        requireField("Ltpr;", "a", "Z")
-        requireField("Ltpr;", "b", "Z")
-        requireMethod("Ltpr;", "a", emptyList(), "Z")
-        val permissions = mutableClassDefBy("Ltpr;").methods.single {
+        requireField("Ltrl;", "a", "Z")
+        requireField("Ltrl;", "b", "Z")
+        requireMethod("Ltrl;", "a", emptyList(), "Z")
+        val permissions = mutableClassDefBy("Ltrl;").methods.single {
             it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == "Z"
         }
         if (permissions.implementation!!.registerCount <= 1) throw PatchException("Maps' car permission preflight has no scratch register")
         permissions.addInstructions(0, """
-            iget-boolean v0, p0, Ltpr;->a:Z
+            iget-boolean v0, p0, Ltrl;->a:Z
             return v0
         """)
     }

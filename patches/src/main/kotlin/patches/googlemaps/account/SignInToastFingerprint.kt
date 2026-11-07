@@ -20,9 +20,9 @@ internal object SignInClickFingerprint : Fingerprint(
     name = "onClick",
     parameters = listOf("Landroid/view/View;"),
     filters = listOf(
-        checkCast("Lbqul;"),
+        checkCast("Lbrav;"),
         methodCall(
-            definingClass = "Lbqul;",
+            definingClass = "Lbrav;",
             name = "performClick",
             opcode = Opcode.INVOKE_VIRTUAL,
             location = MatchAfterImmediately(),

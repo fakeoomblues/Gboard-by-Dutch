@@ -76,7 +76,8 @@ val locationProviderTogglePatch = bytecodePatch(
         //    inlines this into its provider dispatcher: k must exist AND playLocation must be true.
         //    Reuse the loaded object's register after the null test, where it serves only that test.
         //    Keep all later k reads intact so changing to Android still stops the old fused listener.
-        FusedLocationAvailabilityFingerprint.let { fp ->
+        val availabilityFingerprint = if (packageMetadata.versionName == "26.44.06.1006895251") FusedLocationAvailabilityFingerprint2644 else FusedLocationAvailabilityFingerprint
+        availabilityFingerprint.let { fp ->
             val read = fp.instructionMatches.first().index
             val instructions = fp.method.implementation!!.instructions.toList()
             val register = (instructions[read] as com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction).registerA

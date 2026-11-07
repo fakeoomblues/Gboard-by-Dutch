@@ -1,6 +1,7 @@
 package org.ungoogled.patches.maps.ui.speed
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
@@ -35,6 +36,10 @@ internal val wazeFeaturesRowPatch = bytecodePatch(
 
     // In finalize, after every patch has run, so the sheet's other rows of ours are in place.
     finalize {
+        if (packageMetadata.versionName == "26.44.06.1006895251") {
+            buildWazeRow2644()
+            return@finalize
+        }
         val rowHolder = mutableClassDefBy("Lolm;")
         val template = rowHolder.methods.single { it.name == "a" && it.returnType == "Lbqxa;" && it.parameterTypes.isEmpty() }
         val templateRefs = template.implementation!!.instructions.mapNotNull { (it as? ReferenceInstruction)?.reference?.toString() }
@@ -143,4 +148,98 @@ internal val wazeFeaturesRowPatch = bytecodePatch(
         addUnderPowerSaving("Lbqrr;", listOf("Lafyh;"))
         addUnderPowerSaving("Lbqpl;", listOf("Z"))
     }
+}
+
+
+/** 26.44's account-sheet row holder and builder, after Customization and Power Saving rows. */
+context(context: BytecodePatchContext)
+private fun buildWazeRow2644() {
+    val rowHolder = context.mutableClassDefBy("Lomf;")
+    val template = rowHolder.methods.single {
+        it.name == "a" && it.returnType == "Lbrdm;" && it.parameterTypes.isEmpty()
+    }
+    val templateRefs = template.implementation!!.instructions.mapNotNull {
+        (it as? ReferenceInstruction)?.reference?.toString()
+    }
+    listOf(
+        "Lomf;->a:Lnxh;",
+        "Lgez;->aC(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;",
+        "Lbrdm;->a()Lbrdk;",
+        "Lbrdk;->c(I)V", "Lbrdk;->d(Ljava/lang/String;)V", "Lbrdk;->f(I)V",
+        "Lbrdk;->e(Landroid/view/View${'$'}OnClickListener;)V", "Lbrdk;->a()Lbrdm;",
+    ).forEach { if (it !in templateRefs) throw PatchException("account sheet row builder no longer uses $it") }
+    rowHolder.methods.add(
+        ImmutableMethod(
+            rowHolder.type, "uaWazeRow", emptyList(), "Lbrdm;",
+            AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null, MutableMethodImplementation(6),
+        ).toMutable().apply {
+            addInstructions(
+                0,
+                """
+                    iget-object v0, p0, Lomf;->a:Lnxh;
+                    const v1, 0x7f080536
+                    invoke-static { v0, v1 }, Lgez;->aC(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;
+                    move-result-object v1
+                    invoke-static { }, Lbrdm;->a()Lbrdk;
+                    move-result-object v3
+                    invoke-static { }, Landroid/view/View;->generateViewId()I
+                    move-result v4
+                    invoke-virtual { v3, v4 }, Lbrdk;->c(I)V
+                    iput-object v1, v3, Lbrdk;->a:Landroid/graphics/drawable/Drawable;
+                    const-string v4, "Waze & external data source"
+                    invoke-virtual { v3, v4 }, Lbrdk;->d(Ljava/lang/String;)V
+                    const v4, 0x161a8
+                    invoke-virtual { v3, v4 }, Lbrdk;->f(I)V
+                    new-instance v2, $OPEN_WAZE
+                    invoke-direct { v2, v0 }, $OPEN_WAZE-><init>(Landroid/content/Context;)V
+                    invoke-virtual { v3, v2 }, Lbrdk;->e(Landroid/view/View${'$'}OnClickListener;)V
+                    sget-object v4, Lbrdj;->b:Lbrdj;
+                    iput-object v4, v3, Lbrdk;->d:Lbrdj;
+                    invoke-virtual { v3 }, Lbrdk;->a()Lbrdm;
+                    move-result-object v0
+                    return-object v0
+                """,
+            )
+        },
+    )
+
+    val method = context.mutableClassDefBy("Lomi;").methods.single {
+        it.name == "a" && it.returnType == "Lbqvz;" && it.parameterTypes.map { t -> t.toString() } == listOf("Z")
+    }
+    val ins = method.implementation!!.instructions
+    fun calls(insn: Instruction, name: String) =
+        ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
+            r.definingClass == "Lomf;" && r.name == name
+        } == true
+    val call = ins.indexOfFirst { calls(it, "uaCustomizationRow") }
+    if (call < 0) throw PatchException("Customization row call not found")
+    val result = ins[call + 1] as OneRegisterInstruction
+    val add = ins[call + 2] as Instruction35c
+    val list = add.registerC
+    val scratch = result.registerA
+    val source = (ins.getOrNull(call - 2) as? TwoRegisterInstruction)?.registerB
+    val power = (call + 3 until minOf(ins.size, call + 10)).firstOrNull { calls(ins[it], "uaPowerRow") }
+    val at = if (power == null) call + 3 else {
+        val powerAdd = (power + 1 until minOf(ins.size, power + 4)).firstOrNull {
+            ins[it].opcode == Opcode.INVOKE_VIRTUAL &&
+                ((ins[it] as ReferenceInstruction).reference as MethodReference).let { r ->
+                    r.definingClass == "Lbwpw;" && r.name == "i"
+                }
+        } ?: throw PatchException("Power Saving Options row add not found")
+        powerAdd + 1
+    }
+    method.addInstructions(
+        at,
+        if (source != null) """
+            move-object v$scratch, v$source
+            check-cast v$scratch, Lomf;
+            invoke-virtual { v$scratch }, Lomf;->uaWazeRow()Lbrdm;
+            move-result-object v$scratch
+            invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
+        """ else """
+            invoke-virtual { v$scratch }, Lomf;->uaWazeRow()Lbrdm;
+            move-result-object v$scratch
+            invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
+        """,
+    )
 }

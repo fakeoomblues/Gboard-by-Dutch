@@ -19,7 +19,7 @@ internal object ExploreSheetStateFingerprint : Fingerprint(
     returnType = "V",
     parameters = emptyList(),
     filters = listOf(
-        fieldAccess(opcode = Opcode.SGET_OBJECT, definingClass = "Lagay;", name = "a", type = "Lpfc;"),
+        fieldAccess(opcode = Opcode.SGET_OBJECT, definingClass = "Laggg;", name = "a", type = "Lpfx;"),
         opcode(Opcode.NEW_INSTANCE, MatchAfterImmediately()),
     ),
 )

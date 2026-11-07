@@ -27,8 +27,10 @@ import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
 private const val PICKER = "Lorg/ungoogled/ui/OfflinePicker;"
 /** The picker's view model; c = the size cap, h = the selection in window coordinates, a = its Activity. */
 private const val MODEL = "Lapbb;"
+private const val MODEL_2644 = "Laphb;"
 /** Compose MutableState.setValue. */
 private const val STATE_SET = "Ldyl;->b(Ljava/lang/Object;)V"
+private const val STATE_SET_2644 = "Ldzc;->b(Ljava/lang/Object;)V"
 
 /**
  * The live offline area picker's layout callback (a Compose lambda; the old
@@ -49,11 +51,23 @@ internal object OfflinePickerLayoutFingerprint : Fingerprint(
     ),
 )
 
+/** 26.44 keeps the same picker model and Compose state under new names. */
+internal object OfflinePickerLayoutFingerprint2644 : Fingerprint(
+    name = "a",
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Ljava/lang/Object;"),
+    filters = listOf(
+        fieldAccess(opcode = Opcode.IGET_WIDE, definingClass = MODEL_2644, name = "c", type = "J"),
+        methodCall(definingClass = "Ljava/lang/Math;", name = "sqrt"),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = MODEL_2644, name = "h", type = "Ldzc;"),
+    ),
+)
+
 private fun BuilderInstruction.field(): FieldReference? = (this as? ReferenceInstruction)?.reference as? FieldReference
 
-private fun BuilderInstruction.isStateSet(): Boolean =
+private fun BuilderInstruction.isStateSet(stateSet: String): Boolean =
     opcode == Opcode.INVOKE_INTERFACE && ((this as ReferenceInstruction).reference as MethodReference).let {
-        "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}" == STATE_SET
+        "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}" == stateSet
     }
 
 @Suppress("unused")
@@ -71,12 +85,17 @@ val betterOfflineMapsPatch = bytecodePatch(
     execute {
         markPatched("betterOfflinePatched")
 
-        OfflinePickerLayoutFingerprint.method.apply {
+        val is2644 = packageMetadata.versionName == "26.44.06.1006895251"
+        val modelType = if (is2644) MODEL_2644 else MODEL
+        val stateSet = if (is2644) STATE_SET_2644 else STATE_SET
+        val pickerFingerprint = if (is2644) OfflinePickerLayoutFingerprint2644 else OfflinePickerLayoutFingerprint
+
+        pickerFingerprint.method.apply {
             val instructions = implementation!!.instructions
             fun reg(i: Int) = (instructions[i] as OneRegisterInstruction).registerA
 
             val capReads = instructions.indices.filter {
-                instructions[it].field()?.let { f -> f.definingClass == MODEL && f.name == "c" } == true
+                instructions[it].field()?.let { f -> f.definingClass == modelType && f.name == "c" } == true
             }
             val capRead = capReads.singleOrNull() ?: throw PatchException("size cap is read ${capReads.size} times")
 
@@ -102,7 +121,7 @@ val betterOfflineMapsPatch = bytecodePatch(
 
             // 2. The local state write: `iget-object vS, this.c` then `state.setValue(vR)`.
             val localWrites = instructions.indices.filter {
-                it > 0 && instructions[it].isStateSet() && instructions[it - 1].opcode == Opcode.IGET_OBJECT &&
+                it > 0 && instructions[it].isStateSet(stateSet) && instructions[it - 1].opcode == Opcode.IGET_OBJECT &&
                     instructions[it - 1].field()?.let { f -> f.definingClass == definingClass && f.name == "c" } == true
             }
             val localWrite = localWrites.singleOrNull() ?: throw PatchException("local selection write found ${localWrites.size} times")
@@ -113,8 +132,8 @@ val betterOfflineMapsPatch = bytecodePatch(
             // 3. The window state write: `iget-object vW, vM, model.h` then `state.setValue(vWR)`,
             //    after which the lambda returns Unit.
             val windowWrites = instructions.indices.filter {
-                it > 0 && instructions[it].isStateSet() && instructions[it - 1].opcode == Opcode.IGET_OBJECT &&
-                    instructions[it - 1].field()?.let { f -> f.definingClass == MODEL && f.name == "h" } == true
+                it > 0 && instructions[it].isStateSet(stateSet) && instructions[it - 1].opcode == Opcode.IGET_OBJECT &&
+                    instructions[it - 1].field()?.let { f -> f.definingClass == modelType && f.name == "h" } == true
             }
             val windowWrite = windowWrites.singleOrNull() ?: throw PatchException("window selection write found ${windowWrites.size} times")
             val window = instructions[windowWrite] as Instruction35c
@@ -136,7 +155,7 @@ val betterOfflineMapsPatch = bytecodePatch(
             addInstructions(
                 windowWrite + 1,
                 """
-                    iget-object v$scratch, v$model, $MODEL->a:Landroid/app/Activity;
+                    iget-object v$scratch, v$model, $modelType->a:Landroid/app/Activity;
                     invoke-static { v$scratch, v${window.registerC}, v${window.registerD}, v$model }, $PICKER->pickerOverlay(Landroid/app/Activity;Ljava/lang/Object;Landroid/graphics/RectF;Ljava/lang/Object;)V
                 """,
             )

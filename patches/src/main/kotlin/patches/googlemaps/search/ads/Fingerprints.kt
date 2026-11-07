@@ -48,14 +48,14 @@ internal object SponsoredPlacemarksGateFingerprint : Fingerprint(
  */
 internal object UnifiedListLoopHeadFingerprint : Fingerprint(
     name = "ao",
-    returnType = "Lavoy;",
+    returnType = "Lavux;",
     filters = listOf(
         methodCall(definingClass = "Ljava/util/Iterator;", name = "hasNext", opcode = Opcode.INVOKE_INTERFACE),
         opcode(Opcode.MOVE_RESULT, MatchAfterImmediately()),
         opcode(Opcode.IF_EQZ, MatchAfterImmediately()),
         methodCall(definingClass = "Ljava/util/Iterator;", name = "next", opcode = Opcode.INVOKE_INTERFACE, location = MatchAfterImmediately()),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
-        checkCast("Lcgrr;", location = MatchAfterImmediately()),
+        checkCast("Lavvs;", location = MatchAfterImmediately()),
     ),
 )
 
@@ -68,9 +68,9 @@ internal object UnifiedListLoopHeadFingerprint : Fingerprint(
  */
 internal object FallbackPlacemarkFingerprint : Fingerprint(
     name = "ao",
-    returnType = "Lavoy;",
+    returnType = "Lavux;",
     filters = listOf(
-        methodCall(definingClass = "Lokp;", name = "a", opcode = Opcode.INVOKE_VIRTUAL),
+        methodCall(definingClass = "Lolj;", name = "a", opcode = Opcode.INVOKE_VIRTUAL),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
     ),
 )
@@ -78,8 +78,8 @@ internal object FallbackPlacemarkFingerprint : Fingerprint(
 /** The sponsored-pin/ad placemark object's static factory, built from the ads proto. */
 internal object AdPlacemarkFactoryFingerprint : Fingerprint(
     name = "c",
-    returnType = "Lancw;",
-    parameters = listOf("Lceol;"),
+    returnType = "Lanis;",
+    parameters = listOf("Lcewy;"),
 )
 
 /** The parsed unified rows handed to the search-list fragment. */
@@ -97,14 +97,14 @@ internal object SearchRowsFingerprint : Fingerprint(
 internal object SearchAdPinsDrawerFingerprint : Fingerprint(
     name = "c",
     returnType = "V",
-    parameters = listOf("Lceom;", "I", "Llyv;"),
+    parameters = listOf("Lcewz;", "I", "Llzt;"),
 )
 
 /** The callout pointing at an off-screen ad pin: picks one of the search response's ad pins, if any. */
 internal object AdPinCalloutFingerprint : Fingerprint(
     name = "b",
-    returnType = "Lbvzl;",
-    parameters = listOf("Lceom;"),
+    returnType = "Lbwgj;",
+    parameters = listOf("Lcewz;"),
     filters = listOf(
         methodCall(definingClass = "Ljava/util/List;", name = "isEmpty", opcode = Opcode.INVOKE_INTERFACE),
         opcode(Opcode.MOVE_RESULT, MatchAfterImmediately()),

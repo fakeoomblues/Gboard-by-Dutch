@@ -22,26 +22,26 @@ private const val IMMUTABLE_LIST = "Lcom/google/common/collect/ImmutableList;"
 private const val LISTENABLE_FUTURE = "Lcom/google/common/util/concurrent/ListenableFuture;"
 
 /** The directions request builder (classes5.dex) and the request parameters it reads. */
-private const val BUILDER = "Lxlh;"
-private const val PARAMS = "Lyci;"
+private const val BUILDER = "Lxnb;"
+private const val PARAMS = "Lyed;"
 /** The directions fetcher (DirectionsFetcherImpl), a request, an answer, a trip and its travel mode. */
-private const val FETCHER = "Lvyp;"
+private const val FETCHER = "Lwan;"
 /** The directions request controller (RequestTriggeringControllerImpl) and its request records. */
-private const val CONTROLLER = "Lwpf;"
-private const val REQUEST_RECORD = "Lwnz;"
+private const val CONTROLLER = "Lwrb;"
+private const val REQUEST_RECORD = "Lwpw;"
 /** The directions screen's request session (its controller is g) and the request record factory. */
-private const val SESSION = "Lwou;"
-private const val RECORD_FACTORY = "Lwot;"
-private const val REQUEST = "Lcqbc;"
-private const val REQUEST_BODY = "Lcqat;"
-private const val RESPONSE = "Lxzu;"
-private const val TRIP = "Lcqjl;"
-private const val TRIP_MODE = "Lcive;"
+private const val SESSION = "Lwqr;"
+private const val RECORD_FACTORY = "Lwqq;"
+private const val REQUEST = "Lcqkc;"
+private const val REQUEST_BODY = "Lcqju;"
+private const val RESPONSE = "Lybn;"
+private const val TRIP = "Lcqsl;"
+private const val TRIP_MODE = "Lcjdw;"
 /** A route's points, one point (b() latitude, d() longitude), a position in degrees, a pass-through point. */
-private const val POLYLINE = "Lbjix;"
-private const val POINT = "Lbjis;"
-private const val LAT_LNG = "Lbjil;"
-private const val VIA = "Lybm;"
+private const val POLYLINE = "Lbjpp;"
+private const val POINT = "Lbjpk;"
+private const val LAT_LNG = "Lbjpd;"
+private const val VIA = "Lydh;"
 
 /** The register of parameter [index] (0 = this) of an instance method. */
 private fun MutableMethod.parameterRegister(index: Int): Int {
@@ -64,8 +64,8 @@ internal val steerHookPatch = bytecodePatch(
     execute {
         // The request builder: its loop over the parameters' pass-through list.
         val builder = mutableClassDefBy(BUILDER).methods.single {
-            it.name == "d" && it.returnType == "Lcmsq;" &&
-                it.parameterTypes.map { t -> t.toString() } == listOf(PARAMS, "Lcqbi;", "Ljava/util/List;", "Lcqba;", "Z")
+            it.name == "d" && it.returnType == "Lcnbo;" &&
+                it.parameterTypes.map { t -> t.toString() } == listOf(PARAMS, "Lcqki;", "Ljava/util/List;", "Lcqka;", "Z")
         }
         val read = builder.implementation!!.instructions.withIndex().filter { (_, i) ->
             i.opcode == Opcode.IGET_OBJECT && ((i as ReferenceInstruction).reference as FieldReference).let {
@@ -85,7 +85,7 @@ internal val steerHookPatch = bytecodePatch(
 
         // The directions screen's onStart starts its request session with wou.b(aydc), prefetched or not.
         val sessionStart = mutableClassDefBy(SESSION).methods.single {
-            it.name == "b" && it.returnType == "V" && it.parameterTypes.map { t -> t.toString() } == listOf("Laydc;")
+            it.name == "b" && it.returnType == "V" && it.parameterTypes.map { t -> t.toString() } == listOf("Layje;")
         }
         val sessionRegister = sessionStart.parameterRegister(0)
         sessionStart.addInstructions(
@@ -121,10 +121,10 @@ internal val steerHookPatch = bytecodePatch(
                 check-cast p0, $REQUEST
                 iget-object v0, p0, $REQUEST->c:$REQUEST_BODY
                 if-eqz v0, :none
-                iget-object v1, v0, $REQUEST_BODY->e:Lcmtn;
+                iget-object v1, v0, $REQUEST_BODY->e:Lcncl;
                 invoke-interface { v1 }, Ljava/util/List;->size()I
                 move-result v1
-                iget-object v2, v0, $REQUEST_BODY->k:Lcmtn;
+                iget-object v2, v0, $REQUEST_BODY->k:Lcncl;
                 invoke-interface { v2 }, Ljava/util/List;->size()I
                 move-result v2
                 const/4 v3, 0x2
@@ -161,11 +161,11 @@ internal val steerHookPatch = bytecodePatch(
             "requestMode", listOf("Ljava/lang/Object;"), "I", 2,
             """
                 check-cast p0, $PARAMS
-                iget-object v0, p0, $PARAMS->a:Lcqaz;
+                iget-object v0, p0, $PARAMS->a:Lcqjz;
                 if-eqz v0, :none
-                iget-object v0, v0, Lcqaz;->f:Lciwv;
+                iget-object v0, v0, Lcqjz;->f:Lcjfo;
                 if-eqz v0, :none
-                iget v0, v0, Lciwv;->c:I
+                iget v0, v0, Lcjfo;->c:I
                 return v0
                 :none
                 const/4 v0, -0x1
@@ -195,7 +195,7 @@ internal val steerHookPatch = bytecodePatch(
                 check-cast p0, $RESPONSE
                 invoke-virtual { p0, p1 }, $RESPONSE->x(I)$TRIP
                 move-result-object v0
-                invoke-virtual { v0 }, $TRIP->B()$TRIP_MODE
+                invoke-virtual { v0 }, $TRIP->A()$TRIP_MODE
                 move-result-object v0
                 iget v0, v0, $TRIP_MODE->c:I
                 return v0
@@ -242,7 +242,7 @@ internal val steerHookPatch = bytecodePatch(
                 check-cast p0, $SESSION
                 iget-object v0, p0, $SESSION->g:$CONTROLLER
                 if-eqz v0, :no
-                iget-object v1, v0, $CONTROLLER->k:Laydc;
+                iget-object v1, v0, $CONTROLLER->k:Layje;
                 if-eqz v1, :no
                 const/4 v0, 0x1
                 return v0
@@ -260,10 +260,10 @@ internal val steerHookPatch = bytecodePatch(
                 check-cast p0, $SESSION
                 iget-object v0, p0, $SESSION->g:$CONTROLLER
                 if-eqz v0, :none
-                iget-object v1, v0, $CONTROLLER->k:Laydc;
+                iget-object v1, v0, $CONTROLLER->k:Layje;
                 if-eqz v1, :none
                 iget-object v2, v0, $CONTROLLER->d:$RECORD_FACTORY
-                invoke-virtual { v2, v1 }, $RECORD_FACTORY->d(Laydc;)$REQUEST_RECORD
+                invoke-virtual { v2, v1 }, $RECORD_FACTORY->d(Layje;)$REQUEST_RECORD
                 move-result-object v2
                 invoke-virtual { v0, v2 }, $CONTROLLER->c($REQUEST_RECORD)V
                 :none

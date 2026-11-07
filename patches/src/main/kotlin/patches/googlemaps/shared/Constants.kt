@@ -13,8 +13,8 @@ object Constants {
         apkFileType = ApkFileType.APK,
         appIconColor = 0xFFFFFF,
         targets = listOf(AppTarget(
-            version = "26.43.05.1002020710",
-            versionCodes = SupportedAbi.entries.associateWith { 1068844719 },
+            version = "26.44.06.1006895251",
+            versionCodes = SupportedAbi.entries.associateWith { 1068856906 },
             minSdk = 29,
         )),
     )
