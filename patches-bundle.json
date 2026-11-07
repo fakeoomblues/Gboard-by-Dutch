@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-11-07T11:49:52",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/4355d8e4940b2e63030bee6c2a50c9399a2b97f9/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.52.2.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [4355d8e4940b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/4355d8e4940b2e63030bee6c2a50c9399a2b97f9). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.52.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.52.1...v1.52.2) (2026-11-07)\n\n### 🐛 Bug Fixes\n\n* **Spotify:** consolidate Spotify Android Auto support ([4355d8e](https://gitlab.com/johninnld/nl-morphe-patches/commit/4355d8e4940b2e63030bee6c2a50c9399a2b97f9))",
-  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.52.2/downloads/patches-1.52.2.mpp",
+  "created_at": "2026-11-07T13:19:14",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/311f3f4667daca217cf2c2c20258f701c09c3862/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.53.0.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [311f3f4667da](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/311f3f4667daca217cf2c2c20258f701c09c3862). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.53.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.52.2...v1.53.0) (2026-11-07)\n\n### ✨ Features\n\n* **Google Maps:** Adds full support for Google Maps 26.44.06.1006895251, with all existing Maps patches ported and applying together. ([311f3f4](https://gitlab.com/johninnld/nl-morphe-patches/commit/311f3f4667daca217cf2c2c20258f701c09c3862))",
+  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.53.0/downloads/patches-1.53.0.mpp",
   "signature_download_url": "",
-  "version": "1.52.2",
+  "version": "1.53.0",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }
