@@ -138,6 +138,12 @@ The older speech acceptance below does not cover this target. Warning audio
 remains unavailable until its renamed native pipeline is ported and accepted;
 the car-startup correction does not close that separate gate.
 
+The subsequent feature-branch speech port is documented in
+[Maps 26.44 warning voice](2026-11-07-maps-warning-voice-2644.md). Its native
+queue, callback ownership, modes, release types and route geometry were reviewed
+against the original DEX. Fresh build/original-input and runtime gates remain
+separate from the earlier 26.43 speech results below.
+
 The earlier signed v1.38 baseline rendered a genuine Maps car map in DriveDeck
 at 1280×480. The new checkpoint06 candidate additionally rendered its native map
 and an active 11-minute/3.7 km route at 1280×480/160dpi with **only the AA stub**

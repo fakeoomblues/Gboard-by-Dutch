@@ -29,12 +29,12 @@ public class MapsGuidanceGapTest {
         public Executor j=Runnable::run;
         public Object p,q;
     }
-    public static final class ComponentManager{final Object component=new Object();public Object rJ(){return component;}}
-    public static final class MapsApplication{final ComponentManager manager=new ComponentManager();public ComponentManager rI(){return manager;}}
-    @Test public void resolvesTheComponentThroughTheRealApplicationManagerContract()throws Exception{
+    public static class MapsApplicationBase{final Object component=new Object();public Object rS(){return component;}protected Object e(){throw new AssertionError("Must not create another manager");}}
+    public static final class MapsApplication extends MapsApplicationBase{}
+    @Test public void resolvesTheExistingComponentThroughTheInheritedApplicationContract()throws Exception{
         MapsApplication application=new MapsApplication();
-        assertSame(application.manager.component,MapsGuidanceCoordinator.applicationComponent(application));
-        try{MapsApplication.class.getDeclaredMethod("rJ");fail("Fixture must not supply the obsolete direct accessor");}catch(NoSuchMethodException expected){}
+        assertSame(application.component,MapsGuidanceCoordinator.applicationComponent(application));
+        assertSame(application.component,MapsGuidanceCoordinator.applicationComponent(application));
     }
     private MapsGuidanceCoordinator coordinator;
     private NativeQueue manager;

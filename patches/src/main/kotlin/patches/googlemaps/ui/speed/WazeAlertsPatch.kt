@@ -25,9 +25,6 @@ val wazeAlertsPatch = bytecodePatch(
 
     execute {
         markPatched("wazeAlertsPatched")
-        // The 26.44 native warning-voice pipeline is a separate subsystem from
-        // the broadcast-driven Waze/Flitsmeister alerts used here.
-        if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         bindMapsWarningVoice()
     }
 }

@@ -49,15 +49,14 @@ public final class MapsGuidanceCoordinator {
             Object component=applicationComponent(app);
             Object provider=field(component.getClass(),"hU").get(component);
             Object actual=method(provider.getClass(),"a").invoke(provider);
-            if(!actual.getClass().getName().equals("bmrc"))throw new IllegalStateException("NATIVE_MANAGER");
+            if(!actual.getClass().getName().equals("bmxs"))throw new IllegalStateException("NATIVE_MANAGER");
             manager=actual;bound=true;
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }
     static Object applicationComponent(Object application)throws ReflectiveOperationException{
-        // This Maps build exposes its generated component manager through rI;
-        // rJ belongs to that manager, not GoogleMapsApplication itself.
-        Object manager=method(application.getClass(),"rI").invoke(application);
-        return method(manager.getClass(),"rJ").invoke(manager);
+        // 26.44 inherits the cached component accessor from nsm. Its protected
+        // e() factory creates a different manager and must never be used here.
+        return method(application.getClass(),"rS").invoke(application);
     }
     public boolean isReady(){return hooksInstalled()&&bound&&!fault;}
     public WarningAudioOwner.Mode effectiveMode(WarningAudioOwner.Mode requested) {
@@ -124,7 +123,7 @@ public final class MapsGuidanceCoordinator {
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;abandon(version,callback,"GUIDANCE_EXECUTOR_FAILED");}
     }
     private void cancel(Object job) throws ReflectiveOperationException {
-        Class<?> jobInterface=Class.forName("bmud",false,app.getClassLoader());
+        Class<?> jobInterface=Class.forName("bnav",false,app.getClassLoader());
         method(manager.getClass(),"l",jobInterface).invoke(manager,job);
     }
     private void awaitQuiet(long version,long deadline,Ready callback) {
@@ -154,12 +153,12 @@ public final class MapsGuidanceCoordinator {
         if(restore)regenerateCurrent();
     }
     private boolean canRegenerate(){synchronized(LOCK){Object owner=route.get();if(owner==null)return false;try{return routeField(owner,"o").get(owner)!=null&&routeField(owner,"e").get(owner)!=null&&navigationActive(owner);}catch(ReflectiveOperationException | RuntimeException error){return false;}}}
-    /** Read current route and step at release. No captured turn text or stale ybc is replayed. */
+    /** Read current route and step at release. No captured turn text or stale ycx is replayed. */
     private void regenerateCurrent() {
         Object owner;synchronized(LOCK){owner=route.get();}if(owner==null)return;
         try {
             Object step=routeField(owner,"o").get(owner),model=routeField(owner,"e").get(owner);
-            if(step!=null && model!=null && navigationActive(owner))method(routeBase(owner),"u",Class.forName("ybc",false,app.getClassLoader())).invoke(owner,step);
+            if(step!=null && model!=null && navigationActive(owner))method(routeBase(owner),"u",Class.forName("ycx",false,app.getClassLoader())).invoke(owner,step);
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }
     public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;}});}
@@ -202,7 +201,7 @@ public final class MapsGuidanceCoordinator {
     }
     private static RoadWarningEngine.Route warningRoute(Object owner)throws ReflectiveOperationException{
         Object model=routeField(owner,"e").get(owner);if(model==null)return null;
-        ClassLoader loader=owner.getClass().getClassLoader();Class<?> routeModel=Class.forName("blot",false,loader),pathType=Class.forName("yap",false,loader),polylineType=Class.forName("bjix",false,loader),pointType=Class.forName("bjis",false,loader);
+        ClassLoader loader=owner.getClass().getClassLoader();Class<?> routeModel=Class.forName("blvb",false,loader),pathType=Class.forName("ycj",false,loader),polylineType=Class.forName("bjpp",false,loader),pointType=Class.forName("bjpk",false,loader);
         if(!routeModel.isInstance(model))return null;Field pathField=field(routeModel,"b");if(pathField.getType()!=pathType)return null;Object path=pathField.get(model);if(path==null)return null;Field geometry=field(pathType,"k");if(geometry.getType()!=polylineType)return null;Object polyline=geometry.get(path);if(polyline==null)return null;
         synchronized(LOCK){if(polyline==cachedPolyline)return cachedWarningRoute;}
         int count=((Number)method(polylineType,"g").invoke(polyline)).intValue();if(count<2||count>50000)return null;double[] latitudes=new double[count],longitudes=new double[count];Method point=method(polylineType,"n",int.class),latitude=method(pointType,"b"),longitude=method(pointType,"d");
@@ -210,13 +209,13 @@ public final class MapsGuidanceCoordinator {
         RoadWarningEngine.Route snapshot=new RoadWarningEngine.Route(latitudes,longitudes);synchronized(LOCK){if(route.get()==owner){cachedPolyline=polyline;cachedWarningRoute=snapshot;}}return snapshot;
     }
     private static Class<?> routeBase(Object owner)throws ClassNotFoundException {
-        Class<?> base=Class.forName("bmia",false,owner.getClass().getClassLoader());
+        Class<?> base=Class.forName("bmon",false,owner.getClass().getClassLoader());
         if(!base.isInstance(owner))throw new IllegalArgumentException("ROUTE_OWNER");return base;
     }
     /** Obfuscated subclasses reuse member names; use the guarded base declaration, not a name walk. */
     private static Field routeField(Object owner,String name)throws ReflectiveOperationException {
         Field value=routeBase(owner).getDeclaredField(name);value.setAccessible(true);
-        String expected="o".equals(name)?"ybc":"e".equals(name)?"blot":"bmhh";
+        String expected="o".equals(name)?"ycx":"e".equals(name)?"blvb":"bmnv";
         if(!value.getType().getName().equals(expected))throw new NoSuchFieldException("ROUTE_FIELD_TYPE");return value;
     }
     private static boolean navigationActive(Object owner)throws ReflectiveOperationException {
@@ -233,13 +232,13 @@ public final class MapsGuidanceCoordinator {
         try{return audio.requestAudioFocus(request);}
         finally{synchronized(LOCK){nativeFocusInFlight--;}}
     }
-    /** Focus-denied callbacks take an earlier native return than bmuc.d; release their prepared media too. */
+    /** Focus-denied callbacks take an earlier native return than bnau.d; release their prepared media too. */
     public static boolean cancelPreparedCallback(Object callback) {
         MapsGuidanceCoordinator coordinator;synchronized(LOCK){coordinator=current;}
         if(coordinator==null || !coordinator.holding)return false;
         try {
-            if(field(callback.getClass(),"$cid").getInt(callback)!=0)return false;
-            Object parent=field(callback.getClass(),"b").get(callback),job=field(parent.getClass(),"a").get(parent),player=field(callback.getClass(),"a").get(callback);
+            if(field(callback.getClass(),"$cid").getInt(callback)!=2)return false;
+            Object parent=field(callback.getClass(),"a").get(callback),job=field(parent.getClass(),"a").get(parent),player=field(callback.getClass(),"b").get(callback);
             reject(coordinator,job,player);return true;
         }catch(InvocationTargetException error){Throwable cause=error.getCause();if(cause instanceof RuntimeException)throw (RuntimeException)cause;if(cause instanceof Error)throw (Error)cause;throw new IllegalStateException(cause);}
         catch(ReflectiveOperationException error){coordinator.fault=true;throw new IllegalStateException("Maps prepared callback ABI",error);}
@@ -247,14 +246,14 @@ public final class MapsGuidanceCoordinator {
     private static void reject(MapsGuidanceCoordinator coordinator,Object job,Object player)throws ReflectiveOperationException {
         coordinator.regenerate=true;((AtomicBoolean)field(job.getClass(),"s").get(job)).set(true);
         method(player.getClass(),"l").invoke(player);
-        method(job.getClass(),"e",Class.forName("bmuc",false,job.getClass().getClassLoader())).invoke(job,player);
+        method(job.getClass(),"e",Class.forName("bnau",false,job.getClass().getClassLoader())).invoke(job,player);
         synchronized(LOCK) {
             try{if(released(player,0))PLAYERS.remove(job);}
             catch(ReflectiveOperationException | RuntimeException error){coordinator.fault=true;}
         }
     }
 
-    /** Exact final bmuc.d boundary after asynchronous focus/readiness. Native unheld behavior stays intact. */
+    /** Exact final bnau.d boundary after asynchronous focus/readiness. Native unheld behavior stays intact. */
     public static void dispatch(Object job,Object player,Object callback) {
         MapsGuidanceCoordinator coordinator;
         synchronized(LOCK) {
@@ -268,7 +267,7 @@ public final class MapsGuidanceCoordinator {
                 // Release its resources, then use the original never-played queue completion path.
                 reject(coordinator,job,player);return;
             }
-            method(player.getClass(),"d",Class.forName("bmua",false,player.getClass().getClassLoader())).invoke(player,callback);
+            method(player.getClass(),"d",Class.forName("bnas",false,player.getClass().getClassLoader())).invoke(player,callback);
         }catch(InvocationTargetException error) {
             Throwable cause=error.getCause();if(cause instanceof RuntimeException)throw (RuntimeException)cause;if(cause instanceof Error)throw (Error)cause;throw new IllegalStateException(cause);
         }catch(ReflectiveOperationException error){if(coordinator!=null)coordinator.fault=true;throw new IllegalStateException("Maps native dispatch ABI",error);}
@@ -296,12 +295,12 @@ public final class MapsGuidanceCoordinator {
     private static boolean released(Object player,int depth) throws ReflectiveOperationException {
         if(depth>8)throw new IllegalArgumentException("PLAYER_DEPTH");
         switch(player.getClass().getName()) {
-            case "bmsk":return field(player.getClass(),"a").get(player)==null;
-            case "bmtu":Object leaf=field(player.getClass(),"a").get(player);return leaf==null || released(leaf,depth+1);
-            case "bmsh":for(Object leafPlayer:(Object[])field(player.getClass(),"a").get(player))if(!released(leafPlayer,depth+1))return false;return true;
-            case "bmsi":return true; // Native non-audio silence timer.
-            case "bmtp":return true; // Native no-op sentinel: callbacks only, no audio resource.
-            case "bmty":return true; // Native vibration/wearable transport, not a local audio player.
+            case "bmzd":return field(player.getClass(),"a").get(player)==null;
+            case "bnam":Object leaf=field(player.getClass(),"a").get(player);return leaf==null || released(leaf,depth+1);
+            case "bmza":for(Object leafPlayer:(Object[])field(player.getClass(),"a").get(player))if(!released(leafPlayer,depth+1))return false;return true;
+            case "bmzb":return true; // Native non-audio silence timer.
+            case "bnah":return true; // Native no-op sentinel: callbacks only, no audio resource.
+            case "bnaq":return true; // Native vibration/wearable transport, not a local audio player.
             default:throw new IllegalArgumentException("PLAYER_UNSUPPORTED");
         }
     }
