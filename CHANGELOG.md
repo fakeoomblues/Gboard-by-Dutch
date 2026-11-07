@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/7246206278b170d1995af8bda7118e354b553b15/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.49.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [7246206278b1](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/7246206278b170d1995af8bda7118e354b553b15). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.49.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.49.1...v1.49.2) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **AliExpress:** remove advertising and game campaign surfaces ([7246206](https://gitlab.com/johninnld/nl-morphe-patches/commit/7246206278b170d1995af8bda7118e354b553b15))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/de576d2d2d64d830f2526524305025a84d6fe5fd/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.49.1.**

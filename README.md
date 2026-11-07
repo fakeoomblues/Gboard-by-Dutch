@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.49.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.49.1)** · 61 apps · 314 patches
+**Patch bundle [v1.49.2](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.49.2)** · 61 apps · 315 patches
 
 ### Weather
 
@@ -127,7 +127,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [2dehands](docs/site/en/apps/2dehands.md) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
-| [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 9 |
+| [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 10 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.5.11.993608717-release-arm64-v8a | APK | 9 |
