@@ -79,9 +79,13 @@ public final class NativeWarnings {
 
     /** Changed to true only after the patch validates/binds the complete original method set. */
     public static boolean bound(){return false;}
+    static boolean supportedNativeBuild(String version,long code){
+        return "5.26.90.901".equals(version)&&code==1030746
+                ||"5.27.0.1".equals(version)&&code==1030748;
+    }
     static boolean supportsEventProtocol(Context context){
         if(!bound())return false;
-        try{android.content.pm.PackageInfo info=context.getPackageManager().getPackageInfo(context.getPackageName(),0);return "5.26.90.901".equals(info.versionName)&&info.getLongVersionCode()==1030746;}
+        try{android.content.pm.PackageInfo info=context.getPackageManager().getPackageInfo(context.getPackageName(),0);return supportedNativeBuild(info.versionName,info.getLongVersionCode());}
         catch(android.content.pm.PackageManager.NameNotFoundException unavailable){return false;}
     }
     public static synchronized WarningEndpoint init(Context context){

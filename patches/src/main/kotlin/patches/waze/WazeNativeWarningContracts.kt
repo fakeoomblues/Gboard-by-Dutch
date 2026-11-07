@@ -34,6 +34,8 @@ internal fun validateWazeWarningClassAbi(classes: Map<String, ClassDef>) {
 }
 
 /** Waze 5.26.90.901 supplied original base SHA-256 b1504af4bcbe50325195774a891f50f7189cdef7ad38ee67a2f5b7af00f29e4d.
+ * Waze 5.27.0.1 original base SHA-256 0a66289f3db3ad575ef76ea2bac88724ed49ec8afa6f2147955d93e992750397
+ * matches this complete guarded method set and selector ABI without changing any fingerprints.
  * Pin native decision roots, transitive zone callbacks, public adapter getters and raw enum mappings.
  * Every original body is validated before any broadcast or warning mutation. */
 internal val wazeWarningContracts = mapOf(
