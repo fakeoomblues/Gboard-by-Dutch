@@ -26,6 +26,24 @@ private object NavCameraUpdateFingerprint : Fingerprint(
     ),
 )
 
+/** 26.44 renamed the retarget call's holder and value types. */
+private object NavCameraUpdateFingerprint2644 : Fingerprint(
+    returnType = "Lj\$/util/Optional;",
+    filters = listOf(
+        string("NavigationCameraControllerImpl.updateSharedCameraMode"),
+        methodCall(opcode = Opcode.INVOKE_VIRTUAL, returnType = "Lj\$/util/Optional;", parameters = listOf("Lcfnq;", "Lbmgp;", "Z")),
+        opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
+    ),
+    custom = { method, _ -> method.definingClass == "Lbmly;" },
+)
+
+private object NavCameraTeardownFingerprint2644 : Fingerprint(
+    classFingerprint = NavCameraUpdateFingerprint2644,
+    name = "g",
+    returnType = "V",
+    parameters = emptyList(),
+)
+
 /** The same controller's teardown: it unregisters from the camera and releases the shared controller. */
 private object NavCameraTeardownFingerprint : Fingerprint(
     classFingerprint = NavCameraUpdateFingerprint,
@@ -47,7 +65,9 @@ internal val navigationCameraHookPatch = bytecodePatch(
     dependsOn(sharedExtensionPatch)
 
     execute {
-        NavCameraUpdateFingerprint.let { fp ->
+        val update = if (packageMetadata.versionName == "26.44.06.1006895251") NavCameraUpdateFingerprint2644 else NavCameraUpdateFingerprint
+        val teardown = if (packageMetadata.versionName == "26.44.06.1006895251") NavCameraTeardownFingerprint2644 else NavCameraTeardownFingerprint
+        update.let { fp ->
             // Capture before editing: the entry hook below shifts every index by one.
             val afterRetarget = fp.instructionMatches.last().index + 1
             // Re-assert a held zoom in the same call that just re-targeted the camera,
@@ -61,6 +81,6 @@ internal val navigationCameraHookPatch = bytecodePatch(
         // An instant "navigation ended", instead of inferring it from the camera
         // hook going stale -- which left the tiles up for three seconds after the
         // rest of the drive screen had gone.
-        NavCameraTeardownFingerprint.method.addInstruction(0, "invoke-static {}, $SHAPES->navEnded()V")
+        teardown.method.addInstruction(0, "invoke-static {}, $SHAPES->navEnded()V")
     }
 }
