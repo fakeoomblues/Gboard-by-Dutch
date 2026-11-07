@@ -38,6 +38,32 @@ That command previews verification; normal publication still requires the establ
 
 Both local automation and optional cloud CI use `scripts/local-release/verify.cjs`. It retains identity/history and release-policy tests, Python regressions, patch build/tests and all applicable extension unit tests through Gradle's aggregate `testDebugUnitTest` task, Medium bundle/tests and strict bilingual documentation/link checks. Tests and builds use isolated flow-owned checkouts. `LOCAL_RELEASE_PYTHON` selects the documentation Python environment; `LOCAL_RELEASE_GRADLE_OFFLINE=true` restricts Gradle to cached dependencies.
 
+## Local engineering bundles
+
+Keep canonical release version selection in the existing release automation.
+For an unpublished phone-review bundle, derive a distinct identity from the
+current canonical base version and clean source commit. Pass it only to the
+Gradle invocation; do not edit `gradle.properties`, release metadata or tags:
+
+```bash
+navigation_review_sha=$(git rev-parse --short=12 HEAD)
+```
+
+With the existing private signing/application environment loaded, invoke the
+normal build using `-Pversion=<canonical-version>+review.<source-sha>`. For
+example, a review of canonical base `1.53.3` uses
+`-Pversion=1.53.3+review.<the navigation_review_sha value>`. The suffix is build
+metadata for local identification, not another release channel. Never publish
+these review bundles through the watcher, hosted fallback or forge mirrors.
+
+Different signed bytes must not reuse a review version. The phone investigation
+on 2026-11-07 found an older extension in an installed APK despite a successful
+same-version bundle import and APK installation. Keep the signed bundle hash
+and source SHA in the private receipt. Update the existing local source through
+Morphe's explicit Update action, preserve its patch choices/options and APK
+signing key, and check the installed APK for the intended code before claiming
+delivery. A Manager success screen or version label alone is not that proof.
+
 ## Private files: keep these out of Git
 
 The private store defaults to `~/Library/Application Support/nl-morphe-local-release/`. Its configuration and secret files use mode `600`; private directories use `700`. Use absolute paths in configuration. Never put credential values in this document, `AGENTS.md`, a committed configuration, a plist, command output or a test diagnostic.
