@@ -44,6 +44,26 @@ internal fun validateMapsGuidanceComponent(classBy: (String) -> ClassDef) {
     } == 1) { "Maps' native guidance callback changed" }
 }
 
+internal fun validateMapsNavigationProvider(classBy: (String) -> ClassDef) {
+    listOf("Lcom/google/android/apps/gmm/car/projected/service/CarNavigationProviderService;", "Ltsf;", "Llvt;")
+        .zipWithNext().forEach { (child, parent) ->
+        check(classBy(child).superclass == parent) { "Maps' native navigation service hierarchy changed: $child" }
+    }
+    check(classBy("Llvt;").fields.count { it.name == "b" && it.type == "Llvp;" } == 1) {
+        "Maps' native navigation Binder changed"
+    }
+    check(classBy("Llvp;").methods.count {
+        it.name == "y" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "Landroid/os/Parcel;", "Landroid/os/Parcel;") && it.returnType == "Z"
+    } == 1) { "Maps' native navigation dispatch changed" }
+    for (type in listOf("Llvs;", "Llvq;", "Llvo;")) {
+        for (name in listOf("c", "e")) {
+            check(classBy(type).methods.count {
+                it.name == name && it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/os/Bundle;") && it.returnType == "V"
+            } == 1) { "Maps' native navigation message changed: $type->$name" }
+        }
+    }
+}
+
 private val nativeNavigationResources = resourcePatch {
     execute {
         var descriptor: String? = null
@@ -224,12 +244,7 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireMethod(nativeProvider, "onBind", listOf("Landroid/content/Intent;"), "Landroid/os/IBinder;")
         requireMethod(nativeProvider, "d", listOf("Llvo;"), "V")
         requireMethod(nativeProvider, "e", emptyList(), "V")
-        // Llur binder method renamed in 26.44
-        // Llus message type renamed in 26.44
-        // Llus message type renamed in 26.44
-        requireMethod("Llvo;", "c", listOf("Landroid/os/Bundle;"), "V")
-        requireMethod("Llvo;", "e", listOf("Landroid/os/Bundle;"), "V")
-        // Lluu message type renamed in 26.44
+        validateMapsNavigationProvider { classDefBy(it) }
         // Native projected-session start otherwise installs a Google-private
         // focus client whose disconnected pxd.c() rejects every route request.
         // CAL already owns navigation through INavigationHost. Keep Maps' normal

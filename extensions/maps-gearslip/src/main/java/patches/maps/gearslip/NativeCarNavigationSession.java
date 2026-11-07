@@ -31,7 +31,7 @@ public final class NativeCarNavigationSession implements AutoCloseable {
             try {
                 // This Binder is obtained only from the non-exported service in this APK.
                 // Its external onTransact Google-host check remains entirely unchanged.
-                Class<?> type = context.getClassLoader().loadClass("lur");
+                Class<?> type = context.getClassLoader().loadClass("lvp");
                 if (binder == null || binder.getClass() != type || !(binder instanceof Binder))
                     throw new SecurityException("Maps navigation provider is not local");
                 provider = new LocalProvider(binder);

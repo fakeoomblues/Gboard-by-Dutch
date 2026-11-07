@@ -112,6 +112,19 @@ moved to the new snapshot types. The connected correction updates that adapter
 and checks the concrete application hierarchy, cached accessor and listener
 before patching. Build/original-input and fresh DHU acceptance remain required.
 
+The same offline audit found the next startup dependency still loading `lur`,
+which is now a window-insets listener. The concrete service inherits through
+generated `tsf` to `lvt`, whose `b:lvp` field holds the Binder;
+`lvp.y(int,Parcel,Parcel)` retains the original dispatch. Update the runtime
+Binder class and restore the removed patch-time service/Binder/message guards.
+The original `lvs` version range, `lvq` configuration and `lvo` mode messages
+retain their Bundle keys and wire format. REA evidence:
+`ev_e72c360d7094a068ff731e364f1463b5ed6b2a63c530fab1a9ee107a806f186b`,
+`ev_063df1f3efc008fc1bf4af3649922c439b4ba548df2852e2133d5f23c86814dc`,
+`ev_7f5c62705d80976d6d100b57e6c4bfd54185ed51875bb16b1dfb79815a164836`,
+`ev_68b5690e0759818be7f8c5023bf82a2fd3da18d7d957712dbf5c17b9e18c7dfd`,
+and `ev_528d1c918f8c61e5cb8b8124c37555334ff231f19609357ae2685753217b6743`.
+
 Static evidence: REA `ev_e2136a4add9ba7e3d93aed3d654cf24f3d309ae7ce6f5448f216a262d1eccea8`
 (cached accessor), `ev_2f268c7d83923d0f6c72f57ab215d224c8a0ea68241d99e20eeff057157cd3e6`
 (component), `ev_eea04c6e6e43cbe78aa3c261fb225cb8c864fbae6786eedb259777b4577e901d`
