@@ -12,7 +12,7 @@ Select the complete original archive for this exact version in Morphe Manager, i
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Allow any Android Auto host** | On | Lets Deezer's car media browser accept any Android Auto host by selecting its built-in Android Auto tree instead of rejecting the host through the known-package certificate list. |
+| **Allow any Android Auto host** | On | Lets Deezer's car media browser accept any Android Auto host by selecting its built-in Android Auto tree, keeping Home, Library, Recently played and Explore browsable with Deezer's own Up next queue. |
 | **Enable full streaming** | On | Keeps full-track playback enabled for the signed-in account: removes preview and device-limit verdicts, keeps offline and radio rights, clears the streaming time limit, and leaves catalogue entries playable through Deezer's own media service. |
 | **Remove advertising** | On | Disables banner, native, audio and preroll advertising. Playback continues without an ad break and the audio-ad launcher never receives its ad payload. |
 | **Disable tracking** | On | Disables Adjust initialization and events, Segment event delivery and its Braze destination, the Firebase Analytics/Crashlytics/Performance/Sessions collectors, Facebook automatic app events and advertising IDs. |

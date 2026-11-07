@@ -32,8 +32,9 @@ private val GOTO = setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
 val deezerCustomAndroidAutoHosts = bytecodePatch(
     name = "Allow any Android Auto host",
     description = "Lets Deezer's car media browser accept any Android Auto host, including DriveDeck, " +
-        "Gearslip and hosts outside Deezer's package/signature allow-list, by selecting the built-in " +
-        "Android Auto browser tree. Deezer's account, catalogue and playback services are unchanged.",
+        "Gearslip and hosts outside Deezer's package/signature allow-list. Home, Library, Recently " +
+        "played and Explore stay browsable and Deezer's own Up next queue is used. Account, catalogue " +
+        "and playback services are unchanged.",
     default = true,
 ) {
     compatibleWith(deezer)

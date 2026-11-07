@@ -12,7 +12,7 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Allow any Android Auto host** | Aan | Laat de auto-mediabrowser van Deezer elke Android Auto-host accepteren via de ingebouwde Android Auto-structuur in plaats van de host via de lijst met bekende certificaten te weigeren. |
+| **Allow any Android Auto host** | Aan | Laat de auto-mediabrowser van Deezer elke Android Auto-host accepteren via de ingebouwde Android Auto-structuur, met Home, Library, Recent en Explore plus de eigen Up next-wachtrij van Deezer. |
 | **Enable full streaming** | Aan | Houdt volledige nummers speelbaar voor het aangemelde account: verwijdert preview- en apparaatlimiet-oordelen, behoudt offline- en radiorechten, wist de streamingtijdslimiet en laat catalogusitems via Deezer's eigen mediaservice afspelen. |
 | **Remove advertising** | Aan | Schakelt banner-, native-, audio- en preroll-advertenties uit. Weergave gaat verder zonder advertentiepauze en de audio-advertentielancering krijgt nooit zijn advertentiedata. |
 | **Disable tracking** | Aan | Schakelt Adjust-initialisatie en -events, Segment-eventlevering en de Braze-bestemming, de Firebase Analytics/Crashlytics/Performance/Sessions-verzamelaars, automatische Facebook-app-events en advertentie-ID's uit. |
