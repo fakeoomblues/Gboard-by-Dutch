@@ -1,6 +1,6 @@
 # Google Maps
 
-**Appversie:** 26.43.05.1002020710 · **Build:** 1068844719 · **Origineel bestand:** APK
+**Appversie:** 26.44.06.1006895251 · **Build:** 1068856906 · **Origineel bestand:** APK
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
@@ -36,7 +36,7 @@ Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen
 
 ## Waar komen deze patches vandaan?
 
-De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.43.05.1002020710, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
+De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.44.06.1006895251, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
 
 Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bundel bevat de aangepaste oorspronkelijke opties al. Ook overlappende Maps-patches uit bearinmind patches kiezen kan verschillende versies van dezelfde gedeelde koppelingen uitvoeren.
 

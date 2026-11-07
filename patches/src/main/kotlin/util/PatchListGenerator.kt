@@ -20,7 +20,7 @@ fun main() {
             !fileName.contains("javadoc") &&
                     !fileName.contains("sources") &&
                     fileName.endsWith(".mpp")
-        }!!.first()
+        }!!.maxByOrNull { it.lastModified() } ?: error("No patch bundle in build/libs")
     )
     val loadedPatches = loadPatchesFromJar(patchFiles)
     val patchClassLoader = URLClassLoader(patchFiles.map { it.toURI().toURL() }.toTypedArray())

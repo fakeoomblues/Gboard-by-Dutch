@@ -1,6 +1,6 @@
 # Google Maps
 
-**App version:** 26.43.05.1002020710 · **Build:** 1068844719 · **Original file:** APK
+**App version:** 26.44.06.1006895251 · **Build:** 1068856906 · **Original file:** APK
 
 [Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
@@ -36,7 +36,7 @@ This uses our **Broadcast navigation data** patch in the provider app. Installin
 
 ## Where these patches come from
 
-The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.43.05.1002020710, extended **Waze alerts** with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
+The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.44.06.1006895251, extended **Waze alerts** with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
 
 Select Maps patches from **Dutch App Patches only** for a patching attempt. Our bundle already contains the adapted upstream controls. Selecting overlapping Maps patches from bearinmind patches as well can run incompatible versions of the same shared hooks.
 

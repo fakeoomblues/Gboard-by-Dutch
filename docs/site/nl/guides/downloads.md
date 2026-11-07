@@ -51,7 +51,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [TVgids.nl](../apps/tvgids-nl.md) | 7.0.16 / 106691 | [APK](https://buzzheavier.com/tgxpzbzghwec) |
 | [Trouw](../apps/trouw.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/30zwvpz9wqse) |
 | [Tubantia](../apps/tubantia.md) | 9.23.2 / 9230200 | [APKS](https://buzzheavier.com/dewwv45bqcl3) |
-| [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710 / 1068844719 | [APK](#local-original-inputs) |
+| [Google Maps](../apps/google-maps.md) | 26.44.06.1006895251 / 1068856906 | [APK](#local-original-inputs) |
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | [APKM](https://buzzheavier.com/nbgqof6ngf98) |
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.117.0 / 1622 | [APKS](https://buzzheavier.com/56tfd9zgaf6g) |
