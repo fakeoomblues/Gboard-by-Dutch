@@ -178,7 +178,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Allow custom Android Auto hosts | On | 9.0.26.3 |
+| Allow any Android Auto host | On | 9.0.26.3 |
+| Disable tracking | On | 9.0.26.3 |
+| Enable full streaming | On | 9.0.26.3 |
+| Remove advertising | On | 9.0.26.3 |
+| Remove subscription paywalls | On | 9.0.26.3 |
 
 ## DS Nieuws
 
@@ -931,4 +935,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

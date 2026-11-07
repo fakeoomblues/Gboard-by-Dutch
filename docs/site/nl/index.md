@@ -302,7 +302,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow custom android auto hosts" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow any android auto host disable tracking enable full streaming remove advertising remove subscription paywalls" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Deezer](apps/deezer.md)
@@ -310,9 +310,13 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">9.0.26.3</span></p>
 <p class="dap-app-card__package">deezer.android.app</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>5 patches</summary>
 <ul>
-<li>Allow custom Android Auto hosts <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Allow any Android Auto host <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Disable tracking <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Enable full streaming <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Remove advertising <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Remove subscription paywalls <span class="dap-app-card__target">9.0.26.3</span></li>
 </ul>
 </details>
 
