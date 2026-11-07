@@ -207,7 +207,14 @@ def inspect(pid):
         if within(value.raw[176:1200]):return True
     address=0
     for _ in range(65536):
-        n,data,error=info(pid,8,1272,address)
+        # A process can change its mappings between two native reads. Retry
+        # briefly instead of declaring the whole workspace uncleanable.
+        for attempt in range(4):
+            n,data,error=info(pid,8,1272,address)
+            if n==1272:break
+            if n==0 and (error==errno.ESRCH or (error==errno.EINVAL and address>0)):break
+            if attempt==3:raise RuntimeError('incomplete mapping scan')
+            time.sleep(0.05)
         # XNU proc_pidregionpathinfo returns EINVAL after the final region.
         # Only accept it after at least one complete, advancing region read.
         if n==0 and (error==errno.ESRCH or (error==errno.EINVAL and address>0)):break
