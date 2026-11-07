@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/47dac3af726b526603d83a6ae254a185ffbae3b1/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.53.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [47dac3af726b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/47dac3af726b526603d83a6ae254a185ffbae3b1). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.53.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.1...v1.53.2) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Spotify:** make video shelf filtering verifier-safe ([47dac3a](https://gitlab.com/johninnld/nl-morphe-patches/commit/47dac3af726b526603d83a6ae254a185ffbae3b1))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/4355d8e4940b2e63030bee6c2a50c9399a2b97f9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.52.2.**
