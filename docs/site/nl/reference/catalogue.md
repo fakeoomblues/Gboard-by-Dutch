@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.49.2**
+**Patchbundel: 1.50.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -238,6 +238,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 14.17, 15.0 |
 | Support Gearslip and DriveDeck | Aan | 14.17, 15.0 |
 | Unlock Pro | Aan | 14.17, 15.0 |
+| Use the system voice for navigation | Uit | 15.0 |
 
 ## FTM
 
@@ -320,6 +321,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speed cameras | Aan | 26.43.05.1002020710 |
 | Speeding chime | Aan | 26.43.05.1002020710 |
 | Trim account menu | Aan | 26.43.05.1002020710 |
+| Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Waze alerts | Aan | 26.43.05.1002020710 |
 | Zoom controls in navigation | Aan | 26.43.05.1002020710 |
 
@@ -798,6 +800,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speed limit sign | Uit | 5.26.90.901 |
 | Stay awake in the background | Uit | 5.26.90.901 |
 | Support Gearslip | Aan | 5.26.90.901 |
+| Use the system voice for navigation | Uit | 5.27.0.1 |
 | YT Music Morphe in Waze | Aan | Alle versies |
 
 ## Weeronline

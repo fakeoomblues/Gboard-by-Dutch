@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.49.2**
+**Patch bundle: 1.50.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -238,6 +238,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 14.17, 15.0 |
 | Support Gearslip and DriveDeck | On | 14.17, 15.0 |
 | Unlock Pro | On | 14.17, 15.0 |
+| Use the system voice for navigation | Off | 15.0 |
 
 ## FTM
 
@@ -320,6 +321,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speed cameras | On | 26.43.05.1002020710 |
 | Speeding chime | On | 26.43.05.1002020710 |
 | Trim account menu | On | 26.43.05.1002020710 |
+| Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Waze alerts | On | 26.43.05.1002020710 |
 | Zoom controls in navigation | On | 26.43.05.1002020710 |
 
@@ -798,6 +800,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speed limit sign | Off | 5.26.90.901 |
 | Stay awake in the background | Off | 5.26.90.901 |
 | Support Gearslip | On | 5.26.90.901 |
+| Use the system voice for navigation | Off | 5.27.0.1 |
 | YT Music Morphe in Waze | On | Any |
 
 ## Weeronline

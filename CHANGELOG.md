@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b9d831e5d816c9b936d3d44ef4209f23c87cb624/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.50.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [b9d831e5d816](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/b9d831e5d816c9b936d3d44ef4209f23c87cb624). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.50.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.49.2...v1.50.0) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** target stock Maps in the system voice patch ([cb64231](https://gitlab.com/johninnld/nl-morphe-patches/commit/cb64231b671ffb444cedfe2429d01a3a7e8fbbaa))
+
+### ✨ New Features
+
+* **Flitsmeister:** use the selected voice for Maps, Waze and Flitsmeister ([93a82a5](https://gitlab.com/johninnld/nl-morphe-patches/commit/93a82a54b4473938d6f42c46ce1abcc897ed2ac3))
+* **Google Maps:** use the selected voice for Maps, Waze and Flitsmeister ([93a82a5](https://gitlab.com/johninnld/nl-morphe-patches/commit/93a82a54b4473938d6f42c46ce1abcc897ed2ac3))
+* **Waze:** use the selected voice for Maps, Waze and Flitsmeister ([93a82a5](https://gitlab.com/johninnld/nl-morphe-patches/commit/93a82a54b4473938d6f42c46ce1abcc897ed2ac3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/7246206278b170d1995af8bda7118e354b553b15/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.49.2.**

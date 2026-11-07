@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">61 apps</span> · Patch bundle: 1.49.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">61 apps</span> · Patch bundle: 1.50.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -385,7 +385,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro use the system voice for navigation" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -393,7 +393,7 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">14.17, 15.0</span></p>
 <p class="dap-app-card__package">nl.flitsmeister</p>
 <details class="dap-app-card__patches">
-<summary>9 patches</summary>
+<summary>10 patches</summary>
 <ul>
 <li>Broadcast navigation data <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17, 15.0</span></li>
@@ -404,6 +404,7 @@ hide:
 <li>Hide ads <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Unlock Pro <span class="dap-app-card__target">14.17, 15.0</span></li>
+<li>Use the system voice for navigation <span class="dap-app-card__target">15.0 · default off</span></li>
 </ul>
 </details>
 
@@ -479,15 +480,15 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for gearslip and android auto offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu waze alerts zoom controls in navigation" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.43.05.1002020710 26.44.06.1006895251 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for gearslip and android auto offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu use the system voice for navigation waze alerts zoom controls in navigation" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Google Maps](apps/google-maps.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">26.43.05.1002020710</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">26.43.05.1002020710, 26.44.06.1006895251</span></p>
 <p class="dap-app-card__package">com.google.android.apps.maps</p>
 <details class="dap-app-card__patches">
-<summary>31 patches</summary>
+<summary>32 patches</summary>
 <ul>
 <li>120 refresh rate <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Account sheet cleanup <span class="dap-app-card__target">26.43.05.1002020710</span></li>
@@ -518,6 +519,7 @@ hide:
 <li>Speed cameras <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Speeding chime <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Trim account menu <span class="dap-app-card__target">26.43.05.1002020710</span></li>
+<li>Use the system voice for navigation <span class="dap-app-card__target">26.43.05.1002020710, 26.44.06.1006895251 · default off</span></li>
 <li>Waze alerts <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 <li>Zoom controls in navigation <span class="dap-app-card__target">26.43.05.1002020710</span></li>
 </ul>
@@ -1219,15 +1221,15 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 any 5.27.0.1 alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip use the system voice for navigation yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](apps/waze.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">5.26.90.901, Any, 5.27.0.1</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
-<summary>40 patches</summary>
+<summary>41 patches</summary>
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
@@ -1268,6 +1270,7 @@ hide:
 <li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · default off</span></li>
 <li>Support Gearslip <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Use the system voice for navigation <span class="dap-app-card__target">5.27.0.1 · default off</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Any</span></li>
 </ul>
 </details>
