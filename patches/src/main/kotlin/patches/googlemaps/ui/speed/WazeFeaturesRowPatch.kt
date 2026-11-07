@@ -203,43 +203,65 @@ private fun buildWazeRow2644() {
         },
     )
 
-    val method = context.mutableClassDefBy("Lomi;").methods.single {
-        it.name == "a" && it.returnType == "Lbqvz;" && it.parameterTypes.map { t -> t.toString() } == listOf("Z")
+    // Insert the row into both account-sheet builders: the legacy builder used
+    // by older layouts and the modern builder that current 26.44 builds show.
+    listOf("Lbqvz;" to listOf("Z"), "Lbqye;" to listOf("Lagdp;")).forEach { (returnType, parameters) ->
+        val found = mutableListOf<Pair<String, String>>()
+        context.classDefForEach { c ->
+            for (m in c.methods) {
+                if (m.returnType != returnType || m.parameterTypes.map { it.toString() } != parameters) continue
+                val usesCustomization = m.implementation?.instructions?.any { insn ->
+                    ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
+                        r.definingClass == "Lomf;" && r.name == "uaCustomizationRow"
+                    } == true
+                } == true
+                if (usesCustomization) found += c.type to m.name
+            }
+        }
+        val (owner, name) = found.singleOrNull()
+            ?: throw PatchException("account sheet builder $returnType(${parameters.joinToString()}) with the Customization row: found ${found.size}")
+        val method = context.mutableClassDefBy(owner).methods.single {
+            it.name == name && it.returnType == returnType && it.parameterTypes.map { t -> t.toString() } == parameters
+        }
+        val ins = method.implementation!!.instructions
+        fun calls(insn: Instruction, target: String) =
+            ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
+                r.definingClass == "Lomf;" && r.name == target
+            } == true
+        val call = ins.indexOfFirst { calls(it, "uaCustomizationRow") }
+        if (call < 0) throw PatchException("Customization row call not found in $owner")
+        val result = ins[call + 1] as OneRegisterInstruction
+        val add = ins[call + 2] as Instruction35c
+        val list = add.registerC
+        val scratch = result.registerA
+        val holder = (ins[call] as Instruction35c).registerC
+        val cast = ins.getOrNull(call - 1)?.takeIf {
+            it.opcode == Opcode.CHECK_CAST && ((it as ReferenceInstruction).reference as TypeReference).type == "Lomf;"
+        }
+        val source = cast?.let { (ins[call - 2] as TwoRegisterInstruction).registerB }
+        val power = (call + 3 until minOf(ins.size, call + 10)).firstOrNull { calls(ins[it], "uaPowerRow") }
+        val at = if (power == null) call + 3 else {
+            val powerAdd = (power + 1 until minOf(ins.size, power + 4)).firstOrNull {
+                ins[it].opcode == Opcode.INVOKE_VIRTUAL &&
+                    ((ins[it] as ReferenceInstruction).reference as MethodReference).let { r ->
+                        r.definingClass == "Lbwpw;" && r.name == "i"
+                    }
+            } ?: throw PatchException("Power Saving Options row add not found")
+            powerAdd + 1
+        }
+        method.addInstructions(
+            at,
+            if (source != null) """
+                move-object v$scratch, v$source
+                check-cast v$scratch, Lomf;
+                invoke-virtual { v$scratch }, Lomf;->uaWazeRow()Lbrdm;
+                move-result-object v$scratch
+                invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
+            """ else """
+                invoke-virtual { v$holder }, Lomf;->uaWazeRow()Lbrdm;
+                move-result-object v$scratch
+                invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
+            """,
+        )
     }
-    val ins = method.implementation!!.instructions
-    fun calls(insn: Instruction, name: String) =
-        ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
-            r.definingClass == "Lomf;" && r.name == name
-        } == true
-    val call = ins.indexOfFirst { calls(it, "uaCustomizationRow") }
-    if (call < 0) throw PatchException("Customization row call not found")
-    val result = ins[call + 1] as OneRegisterInstruction
-    val add = ins[call + 2] as Instruction35c
-    val list = add.registerC
-    val scratch = result.registerA
-    val source = (ins.getOrNull(call - 2) as? TwoRegisterInstruction)?.registerB
-    val power = (call + 3 until minOf(ins.size, call + 10)).firstOrNull { calls(ins[it], "uaPowerRow") }
-    val at = if (power == null) call + 3 else {
-        val powerAdd = (power + 1 until minOf(ins.size, power + 4)).firstOrNull {
-            ins[it].opcode == Opcode.INVOKE_VIRTUAL &&
-                ((ins[it] as ReferenceInstruction).reference as MethodReference).let { r ->
-                    r.definingClass == "Lbwpw;" && r.name == "i"
-                }
-        } ?: throw PatchException("Power Saving Options row add not found")
-        powerAdd + 1
-    }
-    method.addInstructions(
-        at,
-        if (source != null) """
-            move-object v$scratch, v$source
-            check-cast v$scratch, Lomf;
-            invoke-virtual { v$scratch }, Lomf;->uaWazeRow()Lbrdm;
-            move-result-object v$scratch
-            invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
-        """ else """
-            invoke-virtual { v$scratch }, Lomf;->uaWazeRow()Lbrdm;
-            move-result-object v$scratch
-            invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
-        """,
-    )
 }
