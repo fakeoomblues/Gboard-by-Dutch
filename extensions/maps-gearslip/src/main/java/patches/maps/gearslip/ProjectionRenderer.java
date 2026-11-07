@@ -171,7 +171,7 @@ public final class ProjectionRenderer {
     public void newIntent(Intent value) {
         guard(() -> {
             intent = nativeIntent(value);
-            if (created) call(field(controller, "J"), "B", new Class<?>[]{Intent.class}, intent);
+            if (created) call(field(controller, "J"), "C", new Class<?>[]{Intent.class}, intent);
         });
     }
     public void configurationChanged(Configuration value) {
@@ -232,7 +232,7 @@ public final class ProjectionRenderer {
 
     private void resizeCanvas(int w,int h,int density) throws Exception {
         finishTouch();
-        Object holder=field(field(controller,"k"),"h");
+        Object holder=displayHolder();
         Object target=field(holder,"b");
         if(!(target instanceof VirtualDisplay))throw new IllegalStateException("Maps virtual display ABI changed");
         // Resize the existing display/window, including while a host keyboard is
@@ -327,7 +327,7 @@ public final class ProjectionRenderer {
     private void showSurface() throws Exception {
         if (controller == null || surface == null || !surface.isValid() || intent == null) return;
         if (created) {
-            Object holder = field(field(controller, "k"), "h");
+            Object holder = displayHolder();
             call(holder, "f", new Class<?>[]{Surface.class}, surface);
             controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
             applyAreas();
@@ -366,7 +366,7 @@ public final class ProjectionRenderer {
         if (controller != null && created) {
             // Maps' original VirtualDisplay holder can change its output without destroying
             // the Presentation/window. Destroying it here invalidates IProxyInputConnection.
-            Object holder = field(field(controller, "k"), "h");
+            Object holder = displayHolder();
             call(holder, "f", new Class<?>[]{Surface.class}, new Object[]{null});
         }
         if (surface != null) surface.release();
@@ -434,6 +434,7 @@ public final class ProjectionRenderer {
         try { view.dispatchTouchEvent(event); } finally { event.recycle(); }
     }
     private Class<?> type(String name) throws ClassNotFoundException { return service.getClassLoader().loadClass(name); }
+    private Object displayHolder() throws Exception { return field(field(controller, "k"), "j"); }
     private static Object field(Object target, String name) throws Exception {
         Field member = target.getClass().getDeclaredField(name); member.setAccessible(true); return member.get(target);
     }

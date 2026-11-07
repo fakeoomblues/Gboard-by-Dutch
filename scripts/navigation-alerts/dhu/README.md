@@ -4,14 +4,45 @@
 
 ## Current availability (2026-11-07)
 
-The initialized AVD data described below is historical. Its registered directory
-currently lacks `config.ini`, userdata and snapshots; the registration alone does
-not provide a reusable baseline. Do not launch it or claim the old initialized
-state is available. The private system-image tools remain, and the owner has
-instead authorized normal testing on the connected phone without Frida.
-The original Vela/FM phone installations were updated through Morphe without
-clearing data or replacing the signing identity. Waze/Maps updates and full
-phone DHU acceptance are still open.
+The old `native_warnings_ui_api34` registration is historical: its directory lacks
+the saved configuration/userdata. Do not launch it or claim native51 is available.
+The current goal-owned replacement is `nl_morphe_navigation_api34`, port5590,
+under `~/.local/state/nl-morphe-patches/emulator-baselines/navigation-api34/`.
+Its registration, full AVD disks/overlays, private system-image directory and
+`inputs/privapp-native-aa17.xml` are reusable inputs outside the worktree.
+Preserve the complete set, not only `system.img` or a registration file.
+
+An inactive DriveDeck disk baseline was independently cloned with its owner's
+permission; source hashes remained unchanged. Its logical disk chains were
+normalized and compared before use. No initialized-app claim was inferred from
+its old metadata. Preflight135 proved root, verified HTTPS and Frida inventory.
+Disk normalization then changed the guest state: current network/Frida readiness
+must be checked again before source stimuli. Provisioning136 proved root and
+the installed package/role state after that change. Original signed AA17 was provisioned through the
+recovered system-slot/unregister/reboot procedure, a guest-derived22-permission
+allowlist and normal framework projection-role qualification. A normal update
+of the same original APK set then succeeded. All four current patched source
+APKs were installed and their device bytes verified before stopping the VM.
+Private receipts: `.analysis/navigation-baseline-recovery-135` and
+`.analysis/navigation-aa17-provision-136`.
+
+Cold-boot persistence, normal first-run/developer setup, actual Java-hook coverage,
+TTS readiness and navigation remain unverified. Do not call this an initialized
+acceptance baseline until those have been saved and verified. All source apps
+were left stopped; provisioning generated no GPS or warning stimuli.
+
+Use the existing cold-boot recipe with the new AVD name, `-writable-system`,
+`-no-snapshot`, `-no-window`, `-gpu host`, four cores and4096MB. Verify original
+AA17 version179664044, native role, installed APK hashes and private disk paths
+before source-app stimuli. Stop it between batches. The unchanged observer was
+compiled from its tracked source using cached Java bridge7.0.13; exact source,
+compiled artifact and tool hashes are in `observer-compile.json`/`tool-inputs.json`
+under the recovery receipt. Process inventory is not Java hook coverage.
+
+The owner also authorized normal phone checks without Frida. Phone app updates
+must still use its existing Morphe signer/data; the engineering APK cache is for
+the owned emulator. The newest local MPP is in phone Downloads, but its install
+and phone DHU acceptance remain open while the phone handoff is pending.
 
 For phone GPS replay, DHU's documented `location lat long accuracy altitude speed
 bearing` command accepts speed in metres per second: 100 km/h is
@@ -47,7 +78,12 @@ Correlate captured speech content with genuine navigation warnings and native
 callbacks/logs. A nonempty raw file alone does not prove warning speech, and
 this capture setup does not establish production end-to-end audio latency.
 
-## Owned VM root and connectivity tools
+## Historical VM root and connectivity tools
+
+These findings belong to the removed runtime and its writable overlays. The
+retained private base image alone does not prove `/system/bin/curl`, AA17 or an
+initialized app state is present. Current tool inputs and evidence are described
+above; do not replace fresh hook/readiness checks with these historical results.
 
 The owner authorized rootAVD/avdroot and native curl setup on 2026-11-05.
 The registered `native_warnings_ui_api34` AVD now uses the private image at
@@ -83,7 +119,10 @@ A genuine-AA initialized baseline is now retained and verified as described
 below. Full all-app acceptance remains incomplete.
 
 
-## Initialized native AA baseline
+## Historical initialized native AA baseline
+
+This section describes the removed native51 runtime. It is recovery evidence,
+not a claim that its old userdata, snapshot or compiled artifacts remain present.
 
 The owned AVD retains original AA17 plus its matching splits, native automotive
 role, accepted consent/developer settings, and the exact signed engineering
@@ -127,7 +166,11 @@ APKs/settings/GPS and stop the VM. Preserve failed attachment receipts; only
 the later fully covered app window supplies accepted behavior. No physical
 phone was touched.
 
-## Single Vela design frame
+## Historical single Vela design frame
+
+The one-frame design gate described here was subsequently closed by the owner's
+complete run92 approval. Retain this recipe for evidence provenance; do not
+repeat the gallery or seek the same approval again.
 
 The owner replaced the19-type design gallery with one Vela generic-pill approval frame. Maps' camera frame80 is already approved. Reuse the Vela engineering APK and initialized native onboarding retained by run84; preserve the older native51 snapshot and rollback APKs. Run84 proves real Vela map/route-preview rendering, not an approved pill or active-guidance acceptance. Verify the retained APK and prefs before claiming a new reusable baseline.
 

@@ -18,16 +18,17 @@ Preserve the documented reusable emulator baseline and known UI recipe while sto
 
 ## Owner stop on emulator testing
 
-- The owner stopped broad emulator testing after approving the revised Maps pill. The later request authorizes one real Vela HUD image for approval/rejection of the generic shared pill design. Limit the next runtime window to that capture and cleanup; broader functional acceptance remains stopped. Continue producer/receiver contract implementation and grouped offline verification outside that bounded window.
+- The earlier stop on broad emulator testing applied while the pill design was awaiting approval. Both Maps and the complete Vela layout are now approved. The current explicit goal authorizes focused Android Auto/DHU functional acceptance on owned emulation, including GPS-only driving, speech, lifecycle and multiple screen sizes. Preserve the approved design and batching rules; do not restart a design gallery or treat setup/static checks as functional acceptance.
 
 ## Owner HUD design gate
 
 - Apply [Navigation indicator contract v1](docs/contracts/navigation-indicators-v1.md) to all FM/Waze producer and Maps/Vela consumer changes. Preserve native identity and speech authority; do not invent geometry, direction, zone progress or provider support from the existence of an icon.
 - The owner approved the revised Maps camera pill on 2026-11-06: `.analysis/waze-native-warnings/provider-data-design80/camera-fresh.png` (receipt records exact SHA). Freeze its size, typography, icon scale, right-column progress and right-edge alignment. The rejected initial set remains rejected. Prioritize FM/Waze field correctness. The owner subsequently reduced the visual gate to one generic Vela frame; do not restore a19-type gallery requirement.
-- Run85 supplies that real Vela frame at `.analysis/waze-native-warnings/vela-single-design85/vela-camera.png`, copied unchanged to Downloads. Its camera pill overlaps the native zoom-minus control and is not approved. Treat this as a placement defect; do not claim accepted design or active navigation. Retain the initialized Vela engineering state and corrected UI/capture recipe in `scripts/navigation-alerts/dhu/README.md`.
-- The owner replaced the full19-alert gallery gate with one actual rendered image to approve or reject the generic design. Maps' revised camera frame is already approved; provide one Vela HUD frame at1280×480 using the same generic camera pill. Preserve a fixed outer pill size for every alert type. Do not require38 design captures.
+- The owner subsequently approved the complete Vela run92 layout with current100km/h, limit130km/h and camera300m together. Its exported frame and exact hash are recorded in the indicator contract. This closes the design gate; it does not prove natural-feed delivery or speech. Do not seek the same design approval again.
+- Historical run85's overlapping Vela frame remains rejected. The placement defect was corrected before the approved complete run92 layout; do not substitute the rejected frame for that approval. Preserve the corrected UI/capture recipe in `scripts/navigation-alerts/dhu/README.md`.
+- The owner replaced the full19-alert gallery gate with one actual rendered Vela image and approved the completed layout. Preserve a fixed outer pill size for every alert type. Do not require38 design captures or reopen that gallery gate.
 - The owner authorizes an artificial FM event for this single design capture. Label the input artificial; never describe it as natural feed/delivery proof. Do not fabricate or compose the captured UI.
-- Present the actual rendered captures and obtain the owner's design-and-placement approval before proceeding with broader driving or functional validation. This is a hard gate; passing builds or unit tests do not satisfy it.
+- The design-and-placement gate was a hard gate and is now closed by the approvals above. Keep the earlier rejected frames labeled historical/rejected. Current runtime work must prove functionality with the approved UI; build results never substitute for rendered or natural-feed evidence.
 - Reuse existing capture/injection capabilities. This approval does not authorize unrelated probes, observers, runners or validation-framework expansion.
 
 ## Global execution: batch implementation, then validate

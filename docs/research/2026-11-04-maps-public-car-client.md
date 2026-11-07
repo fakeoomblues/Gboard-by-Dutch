@@ -144,6 +144,24 @@ queue, callback ownership, modes, release types and route geometry were reviewed
 against the original DEX. Fresh build/original-input and runtime gates remain
 separate from the earlier 26.43 speech results below.
 
+### Remaining projection ABI corrections
+
+The exact26.44 projection review found two further stale runtime members before
+another navigation run. New intents must call `C(Intent)` on the native car
+activity; `B` now accepts an unrelated integer. The VirtualDisplay holder is
+`bete.j:besz`, while `h` is now a Context. A shared holder lookup now serves
+resize, surface replacement and detach, and patch-time guards check `j` and
+`C(Intent)`. Behavioral regressions cover forwarding the original destination
+payload and detaching through the holder while retaining the native activity.
+
+The controller lifecycle fields/methods, presentation Window/inset methods,
+public display/UI constructors and local navigation Binder protocol were also
+checked against the original DEX. The adapter's declared feature set selects
+the VirtualDisplay `bete` branch; this does not claim the alternative private
+SurfaceControlViewHost branch was implemented or tested. Compact evidence is
+in `.analysis/maps-projection-abi-137`. Fresh build/original-input checks and
+actual route/resize/reconnect acceptance remain required for these corrections.
+
 The earlier signed v1.38 baseline rendered a genuine Maps car map in DriveDeck
 at 1280×480. The new checkpoint06 candidate additionally rendered its native map
 and an active 11-minute/3.7 km route at 1280×480/160dpi with **only the AA stub**

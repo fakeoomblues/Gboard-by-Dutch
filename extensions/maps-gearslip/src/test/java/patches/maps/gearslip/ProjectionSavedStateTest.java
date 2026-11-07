@@ -1,5 +1,8 @@
 package patches.maps.gearslip;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -10,6 +13,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowBinder;
+import org.robolectric.RuntimeEnvironment;
+import android.view.Surface;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32)
@@ -57,6 +62,7 @@ public class ProjectionSavedStateTest {
     }
     public static class Controller {
         public Bundle n;
+        public Object J,k;
         final java.util.List<Integer> events=new java.util.ArrayList<>();
         public void m(int state,boolean changing) {
             events.add(state);
@@ -64,6 +70,32 @@ public class ProjectionSavedStateTest {
             if(state==0)n=null;
         }
         public void k(){events.add(-1);}
+    }
+    public static class NativeActivity {
+        Intent received;
+        public void B(int unrelated){throw new AssertionError("B is not the new-intent entry point");}
+        public void C(Intent intent){received=intent;}
+    }
+    @Test public void newDestinationUsesTheCurrentNativeIntentEntryPoint()throws Exception {
+        ProjectionRenderer renderer=renderer(30005);Controller controller=new Controller();NativeActivity activity=new NativeActivity();controller.J=activity;
+        set(renderer,"controller",controller);set(renderer,"created",true);
+        Intent incoming=new Intent("androidx.car.app.action.NAVIGATE",Uri.parse("google.navigation:q=52.0,4.3"));incoming.putExtra("request","original");
+        renderer.newIntent(incoming);
+        assertNotNull(activity.received);assertEquals(Intent.ACTION_VIEW,activity.received.getAction());assertEquals(incoming.getData(),activity.received.getData());assertEquals("original",activity.received.getStringExtra("request"));
+        assertSame(field(renderer,"intent"),activity.received);renderer.close();
+    }
+    public static class DisplayHolder {
+        int detaches;
+        public void f(Surface surface){assertNull(surface);detaches++;}
+    }
+    public static class NativePresentation {
+        public Context h=RuntimeEnvironment.getApplication();
+        public DisplayHolder j=new DisplayHolder();
+    }
+    @Test public void surfaceDetachUsesTheDisplayHolderAndPreservesTheNativeActivity()throws Exception {
+        ProjectionRenderer renderer=renderer(30006);Controller controller=new Controller();NativePresentation presentation=new NativePresentation();controller.k=presentation;
+        set(renderer,"controller",controller);set(renderer,"created",true);renderer.surfaceDestroyed();
+        assertEquals(1,presentation.j.detaches);assertSame(controller,field(renderer,"controller"));assertTrue((Boolean)field(renderer,"created"));renderer.close();
     }
     @Test public void closeCapturesNativeStopStateBeforeDestroyClearsIt()throws Exception {
         ProjectionRenderer first=renderer(30003);Controller nativeController=new Controller();set(first,"controller",nativeController);set(first,"created",true);
