@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5259e88d68a2e8e7696e224d24bdeca6106218ac/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.53.4.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [5259e88d68a2](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/5259e88d68a2e8e7696e224d24bdeca6106218ac). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.53.4](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.3...v1.53.4) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **release:** retry transient workspace mapping scans ([5259e88](https://gitlab.com/johninnld/nl-morphe-patches/commit/5259e88d68a2e8e7696e224d24bdeca6106218ac))
+* **Spotify:** use the correct video section switch keys ([1b3ee2a](https://gitlab.com/johninnld/nl-morphe-patches/commit/1b3ee2a218e23aa4abaf9df8dd6385794d093e14))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/539ed2438c6c99528c108c6c22901d47b6e9fc9a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.53.3.**
