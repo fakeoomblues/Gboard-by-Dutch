@@ -17,6 +17,36 @@ native hooks. Android compilation and unit checks passed in batch100, including
 the exact-pair admission test. Python regression checks also passed; their
 existing 45 skips do not establish Android runtime behavior.
 
+## Complete original-package patch checks
+
+Batch102 applied the signed engineering bundle built from `2bb8f3f` to the
+supplied original packages using Morphe desktop 1.19.1, full DEX emission and
+fingerprint validation. Waze 5.27.0.1 accepted all 41 catalogue patches together,
+including the renamed branding patch, native alert sharing and system voice.
+The exact requested/applied sets match; no patches or reported steps failed.
+The existing Waze recents/JNI and display-register verifier also passed.
+
+Maps 26.44.06.1006895251 accepted its complete 28-patch default selection,
+including native Android Auto navigation and the external warning consumer.
+The original APKM's base alone lacks density-specific product-logo PNGs and
+correctly fails the Blue pin patch. Morphe's bundled merger supplies those
+resources from the original splits; every original base DEX remains unchanged.
+Both original base signatures verify. The merged input is a derived archive,
+not an originally signed standalone APK; no test signer or signer bypass was
+used to prepare it.
+
+The emitted Maps APK contains all 19 byte-identical owner icons and the shared
+health-label code. Its native entry hooks bind original `Larvf.v(F)V` and
+`Larvf.w(ILcizm;)V` to `onNativeSpeedInput` and `onNativeLimitInput`, before
+display-change gates. A bounded read-only probe checks these against the
+original DEX and retains the existing direct-reference/access checks: no missing
+or inaccessible references were found. The older standalone reference verifier
+still pins `azqb.G/H`; its failed run is retained and is not relabeled passing.
+No existing verifier or runtime observation framework was changed.
+
+These outputs are unsigned desktop patch checks. They were not installed on
+the phone and do not close the runtime, speech, GPS or car-UI gates.
+
 ## Physical phone update
 
 The owner authorized in-place navigation app updates through the phone's
