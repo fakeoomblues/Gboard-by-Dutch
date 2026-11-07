@@ -92,6 +92,13 @@ private object SaveButtonIconFingerprint : Fingerprint(
     filters = listOf(literal(SUITCASE_ICON), literal(HEART_ICON)),
 )
 
+/** 26.44 moved the two density-split drawables down one resource id. */
+private object SaveButtonIconFingerprint2644 : Fingerprint(
+    returnType = "I",
+    parameters = emptyList(),
+    filters = listOf(literal(0x7f080867), literal(0x7f080813)),
+)
+
 /** The place sheet's Call chip: its click is the only method with this trace label. */
 private object CallClickFingerprint : Fingerprint(
     filters = listOf(string("OnCallClick")),
@@ -273,7 +280,8 @@ internal val mapMarkersPatch = bytecodePatch(description = "Draws extra pins on 
     dependsOn(sharedExtensionPatch)
 
     execute {
-        val (positionGetter, featureIdGetter) = placeGetters(mutableClassDefBy(SaveButtonIconFingerprint.method.definingClass))
+        val saveButton = if (packageMetadata.versionName == "26.44.06.1006895251") SaveButtonIconFingerprint2644 else SaveButtonIconFingerprint
+        val (positionGetter, featureIdGetter) = placeGetters(mutableClassDefBy(saveButton.method.definingClass))
         savedOnMap(featureIdGetter.returnType, positionGetter.returnType)
     }
 }
