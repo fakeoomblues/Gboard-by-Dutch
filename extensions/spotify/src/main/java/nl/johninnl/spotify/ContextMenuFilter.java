@@ -27,12 +27,12 @@ public final class ContextMenuFilter {
 
     /** Title resource ids for the same rows, used when the id field is not a stable string. */
     private static final Set<Integer> HIDDEN_TITLES = new HashSet<>(Arrays.asList(
-            0x7f130abd, // context_menu_download
-            0x7f130abe, // context_menu_download_artist
-            0x7f130ad9, // context_menu_offline_download
-            0x7f13130b, // group_session_context_menu_start
-            0x7f13130c, // group_session_context_menu_start_disabled
-            0x7f13159f  // label_start_a_jam
+            0x7f130aaa, // context_menu_download
+            0x7f130aab, // context_menu_download_artist
+            0x7f130ac5, // context_menu_offline_download
+            0x7f1312da, // group_session_context_menu_start
+            0x7f1312db, // group_session_context_menu_start_disabled
+            0x7f131560  // label_start_a_jam
     ));
 
     private ContextMenuFilter() {

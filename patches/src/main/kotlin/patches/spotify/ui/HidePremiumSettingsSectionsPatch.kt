@@ -6,13 +6,13 @@ import patches.spotify.COMPATIBILITY_SPOTIFY
 import patches.spotify.shared.EXTENSION
 import patches.spotify.shared.EXTENSION_PACKAGE
 
-private const val SETTINGS_SCREEN = "Lp/xr61;"
+private const val SETTINGS_SCREEN = "Lp/rs51;"
 private const val FILTER = "$EXTENSION_PACKAGE/spotify/SettingsFilter;"
 
 /**
  * Removes the settings sections that only lead to a Premium wall: advertising, download quality,
- * downloads and streaming, offline, storage destinations and the DJ. The screen model holds its
- * sections in two lists; filtering those lists leaves every other settings row untouched.
+ * downloads and streaming, offline, storage and the DJ. Every settings page is modelled as a list
+ * of sections; filtering that list leaves every other settings row untouched.
  */
 @Suppress("unused")
 val hidePremiumSettingsSectionsPatch = bytecodePatch(
@@ -30,7 +30,7 @@ val hidePremiumSettingsSectionsPatch = bytecodePatch(
             method.name == "<init>" &&
                 method.returnType == "V" &&
                 method.parameterTypes.map(CharSequence::toString) ==
-                listOf("Lp/hux;", "Lp/jx21;", "Lp/gn10;", "Ljava/util/List;", "Ljava/util/List;")
+                listOf("Lp/ugx;", "Lp/t121;", "Lp/s810;", "Ljava/util/List;", "Ljava/util/List;")
         } ?: throw IllegalStateException("Spotify settings screen model changed")
 
         constructor.addInstructions(

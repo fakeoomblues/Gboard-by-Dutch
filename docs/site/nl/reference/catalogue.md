@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.53.6**
+**Patchbundel: 1.53.7**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -682,27 +682,25 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Android Auto Up next | Uit | 9.2.0.26 |
-| Android Auto support | Aan | 9.2.0.26 |
-| Block popup ads | Aan | 9.2.0.26 |
-| Change package name | Uit | 9.2.0.26 |
-| Disable ad breaks | Uit | 9.2.0.26 |
-| Fix third party launchers widgets | Aan | 9.2.0.26 |
-| Force play order | Uit | 9.2.0.26 |
-| Hide Premium tab | Aan | 9.2.0.26 |
-| Hide ad sections | Aan | 9.2.0.26 |
-| Hide download buttons | Aan | 9.2.0.26 |
-| Hide playlist ads | Aan | 9.2.0.26 |
-| Hide premium context-menu rows | Aan | 9.2.0.26 |
-| Hide premium settings sections | Aan | 9.2.0.26 |
-| Hide shuffle controls | Aan | 9.2.0.26 |
-| Hide video ads | Aan | 9.2.0.26 |
-| Hide video shelves (safe) | Aan | 9.2.0.26 |
-| Remove shuffle restriction | Aan | 9.2.0.26 |
-| Sanitize sharing links | Aan | 9.2.0.26 |
-| Show Premium in the account row | Aan | 9.2.0.26 |
-| Skip audio ads | Aan | 9.2.0.26 |
-| Use the Premium plan icon | Aan | 9.2.0.26 |
+| Android Auto Up next | Uit | 9.1.94.1929 |
+| Android Auto support | Aan | 9.1.94.1929 |
+| Block popup ads | Aan | 9.1.94.1929 |
+| Change package name | Uit | 9.1.94.1929 |
+| Disable ad breaks | Uit | 9.1.94.1929 |
+| Force play order | Uit | 9.1.94.1929 |
+| Hide Premium tab | Aan | 9.1.94.1929 |
+| Hide ad sections | Aan | 9.1.94.1929 |
+| Hide download buttons | Aan | 9.1.94.1929 |
+| Hide playlist ads | Aan | 9.1.94.1929 |
+| Hide premium context-menu rows | Aan | 9.1.94.1929 |
+| Hide premium settings sections | Aan | 9.1.94.1929 |
+| Hide shuffle controls | Aan | 9.1.94.1929 |
+| Hide video ads | Aan | 9.1.94.1929 |
+| Hide video shelves (safe) | Aan | 9.1.94.1929 |
+| Remove shuffle restriction | Aan | 9.1.94.1929 |
+| Sanitize sharing links | Aan | 9.1.94.1929 |
+| Show Premium in the account row | Aan | 9.1.94.1929 |
+| Skip audio ads | Aan | 9.1.94.1929 |
 
 ## TIDAL
 

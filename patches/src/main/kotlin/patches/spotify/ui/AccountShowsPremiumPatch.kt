@@ -6,14 +6,16 @@ import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
-private const val ACCOUNT_ROW = "Lp/soi;"
-private const val PLAN_OVERVIEW = "Lp/t1t0;"
-private const val PREMIUM_LABEL = 0x7f132207
-private val FREE_PLAN_LABELS = setOf(0x7f132800, 0x7f132802, 0x7f132852)
+private const val ACCOUNT_ROW = "Lp/ggi;"
+private const val PLAN_OVERVIEW = "Lp/qcs0;"
+private const val PREMIUM_LABEL = 0x7f132173 // string/premium
+private val FREE_PLAN_LABELS = setOf(
+    0x7f132754, // settings_item_go_premium_title ("Free account")
+    0x7f132756, // settings_item_go_premium_value_title ("Free plan")
+    0x7f1327a6, // settings_item_plan_overview_free_plan_title ("Free plan")
+)
 
 /**
  * Changes only the label the account/plan rows show for a Free account. The account product,

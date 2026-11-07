@@ -1,10 +1,19 @@
 # Music apps on third-party Android Auto hosts
 
-Investigation date: 2026-11-07. Inputs from the original publisher APKs in `~/Desktop/music`:
+> **Current Spotify target (2026-11-08):** support was rebased to **9.1.94.1929 / 147600575**
+> (universal APK, minSdk 24) and the 9.2.0.26 target was dropped. The 9.2.0.26 investigation
+> below is retained as history; the live mappings are in `patches/spotify/`. On 9.1.94 the gates
+> live in `j4a1.d`, `di60.b`, `y34.b`, `r8p0.n`, `k34.a` and the Home wrapper `bjn0`. The widget
+> permission check and the plan-logo renderer do not exist there, so those two controls are not
+> offered.
+
+Investigation date: 2026-11-07. Inputs from the original publisher APKs in `~/Desktop/music`. The
+Spotify row shows the current target; the 9.2.0.26 analysis further down is historical and that
+target is no longer supported:
 
 | App | Version / build | Input | minSdk | Signer SHA-256 |
 | --- | --- | --- | --- | --- |
-| Spotify | 9.2.0.26 / 148373686 | APKM | 24 | `6505b181…5e28ffd` |
+| Spotify | 9.1.94.1929 / 147600575 | APK | 24 | `6505b181…5e28ffd` |
 | Apple Music | 7.0.0 / 1614 | APKM | 30 | `771d8674d3d9837c9edf11b11873443998f19105abcecab425ed9b8e6fefff9b` (33+) and `88ba590ec2e1ea33c4458daf59489faee2cef297a9b4071e18cf82ef531100aa` (24–32) |
 | TIDAL | 2.216.0 / 10020 | APKM | 32 | `2e74cf21cde153a6e6abdb2c9a3fb5f26fc5c4c6bcdb635152b967459487ea96` (33+) and `2e8a4794a95418367e36c84303feb43774919d6a351129d23d0fcf1b0b729454` (24–32) |
 | Deezer | 9.0.26.3 / 9002603 | APKM | 32 | `51a891a6c5d17b4e36a6f46bab675c1cae786a5af06f51d0105dab7ec6a94516` |
@@ -51,12 +60,13 @@ therefore shipped; a missing Qobuz entry on a host points at the host's media ca
 
 ## Spotify patch port
 
-The 11 patches that apply to 9.2.0.26 are ported from `../spotify-patches` with these changes:
+The 11 patches that were ported for 9.2.0.26 are ported from `../spotify-patches` with these changes:
 
 - Package `app.pablobaro.*` → `patches.spotify`/`nl.johninnl.spotify`.
 - The `app.morphe.util` helpers that the source repository used are replaced with local
   `patches.spotify.shared` implementations so the bundle builds against this repository's patcher.
-- Compatibility is pinned to 9.2.0.26 / 148373686 and the original signer.
+- Compatibility was pinned to 9.2.0.26 / 148373686 and the original signer (superseded by
+  the 9.1.94.1929 / 147600575 pin above).
 - `Hide ad views`, `Hide context menu upsells` and `Diagnose Spotify client` are not ported: their
   exact target classes (`GetViewModel`, the ad view types, `FailedToLoadHomeStructure`) are absent
   from 9.2.0.26 and the patches fail with a fingerprint error. Shipping them would make the default
@@ -112,6 +122,32 @@ media-position substitute, not a replacement of the native media file itself.
 - Not verified: signed-in playback, Premium/free ad delivery, actual car rendering, and physical
   head units. Those require the user's accounts and hardware and are not claimed by this note.
 
+
+## 9.1.94.1929 verification
+
+Target: `com.spotify.music` 9.1.94.1929, versionCode 147600575, universal APK
+(signer `6505b181…5e28ffd`), minSdk 24, `apkFileType = APK`.
+
+- The patch bundle built with `./gradlew :patches:buildAndroid`, `:patches:test` and
+  `:patches:generatePatchesList`.
+- Morphe CLI applied every default patch to the original APK with no failure: Android Auto
+  support, Block popup ads, Hide Premium tab, Hide ad sections, Hide download buttons, Hide
+  playlist ads, Hide premium context-menu rows, Hide premium settings sections, Hide shuffle
+  controls, Hide video ads, Hide video shelves (safe), Remove shuffle restriction, Sanitize
+  sharing links, Show Premium in the account row and Skip audio ads.
+- The opt-in patches applied in a second run: Android Auto Up next, Disable ad breaks and Force
+  play order. Change package name applied in a third run.
+- Re-decompiled output confirmed the intended changes: `j4a1.d`, `y34.b` and `r8p0.n` return
+  true; `di60.b` returns true; three `k34.a` gearhead verdicts are `const/4 1`; both `bjn0`
+  fallback branches are nop'ed; Home switch keys 10/18/21/24 target the skip branch; both
+  `oq10.m` peek gates are nop'ed; `mf71.a` sends shuffle=false; the context-menu and settings
+  section filters are injected; the account/plan labels use `R.string.premium`; the shuffle
+  restriction returns an empty `yn70`.
+- A Debug-signed build with Change package name (`com.spotify.music.morphe`) installed on the
+  acceptance phone and launched to Spotify's LoginActivity with no crash, `VerifyError`,
+  `NoClassDefFoundError` or ANR. `QUERY_ALL_PACKAGES` is present in the rebuilt manifest.
+- Not verified: signed-in playback, Premium/free ad delivery, actual car rendering and physical
+  head units. Those require the user's accounts and hardware.
 
 ## Runtime acceptance on the user's phone
 

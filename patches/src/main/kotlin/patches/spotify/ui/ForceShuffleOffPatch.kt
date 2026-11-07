@@ -9,8 +9,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
-private const val PLAYBACK_SETTINGS = "Lp/pf81;"
-private const val SET_SHUFFLE = "Lp/k4u0;->r(Z)V"
+private const val PLAYBACK_SETTINGS = "Lp/mf71;"
+private const val SET_SHUFFLE = "Lp/qet0;->r(Z)V"
 
 /**
  * Forces the shuffle flag in Spotify's SetShuffleState request to false. The Premium upsell is

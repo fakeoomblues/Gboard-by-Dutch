@@ -113,8 +113,8 @@ public final class DisableAdBreaksPatch {
     }
 
     /**
-     * Resolves the transport's request factory. Releases before 9.2 used the private
-     * {@code access$createRequest} static accessor; 9.2 exposes {@code createRequest} itself.
+     * Resolves the transport's request factory. Older releases used the private
+     * {@code access$createRequest} static accessor; this build exposes {@code createRequest} itself.
      */
     private static Object createRequest(Class<?> transportClass, Object transport, String slot) throws Exception {
         byte[] payload = updateSlotEnabledRequest(slot, false);

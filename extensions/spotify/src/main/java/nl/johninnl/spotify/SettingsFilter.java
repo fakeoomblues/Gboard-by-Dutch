@@ -2,9 +2,6 @@ package nl.johninnl.spotify;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,34 +10,33 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Removes settings sections and rows that only lead to Premium or downloads. The screen model
- * stores sections as p.xt61 items (title resource id in field b) and rows in field e. Row lists are
+ * Removes settings sections and rows that only lead to Premium or downloads. The settings screens
+ * store sections as p.ru51 items (title resource id in field b) and rows in field e. Row lists are
  * immutable, so a changed section is rebuilt rather than mutated.
  */
 @SuppressWarnings("unused")
 public final class SettingsFilter {
     private static final Set<Integer> HIDDEN_SECTION_TITLES = new HashSet<>(Arrays.asList(
-            0x7f13291b, // settings_section_advertisements_title
-            0x7f13291a, // settings_section_advertisementcategories_title
-            0x7f1328ea, // settings_page_advertisements_title
-            0x7f132929, // settings_section_download_quality_title
-            0x7f13292a, // settings_section_downloads_and_streaming_title
-            0x7f132928, // settings_section_download_quality_note
-            0x7f132932, // settings_section_offline_title
-            0x7f13293d, // settings_section_storage_title
-            0x7f132924, // settings_section_default_save_locations_title
-            0x7f132927  // settings_section_dj_title
+            0x7f13286a, // settings_section_advertisements_title
+            0x7f132869, // settings_section_advertisementcategories_title
+            0x7f13283a, // settings_page_advertisements_title
+            0x7f13287a, // settings_section_download_quality_title
+            0x7f13287b, // settings_section_downloads_and_streaming_title
+            0x7f132879, // settings_section_download_quality_note
+            0x7f132883, // settings_section_offline_title
+            0x7f13288f, // settings_section_storage_title
+            0x7f132875, // settings_section_default_save_locations_title
+            0x7f132878  // settings_section_dj_title
     ));
 
     private static final Set<Integer> HIDDEN_ROW_TITLES = new HashSet<>(Arrays.asList(
-            0x7f131812, // lossless_streaming_quality_very_high
-            0x7f131808, // lossless_streaming_quality_lossless
-            0x7f131809, // lossless_streaming_quality_lossless_16
-            0x7f13180b  // lossless_streaming_quality_lossless_24
+            0x7f1317c9, // lossless_streaming_quality_very_high
+            0x7f1317bf, // lossless_streaming_quality_lossless
+            0x7f1317c0, // lossless_streaming_quality_lossless_16
+            0x7f1317c2  // lossless_streaming_quality_lossless_24
     ));
 
     private static Class<?> sectionType;
-    private static Class<?> rowListType;
 
     private SettingsFilter() {
     }
@@ -63,6 +59,10 @@ public final class SettingsFilter {
     }
 
     private static Object rewriteRows(Object section) {
+        Field rowsField = declaredField(section, "e");
+        // Only rebuild rows when the section declares a plain java.util.List. This version stores
+        // them in its own immutable list interface, which the section constructor keeps as-is.
+        if (rowsField == null || rowsField.getType() != List.class) return section;
         Object rows = field(section, "e");
         if (!(rows instanceof List)) return section;
 
@@ -79,8 +79,7 @@ public final class SettingsFilter {
                 + " hidden=" + (filtered.size() != ((List<?>) rows).size()));
         if (!changed) return section;
 
-        Object rowList = rowListProxy(filtered);
-        Object rebuilt = rowList == null ? null : newSection(section, rowList);
+        Object rebuilt = newSection(section, filtered);
         nl.johninnl.spotify.shared.Logger.info("SettingsFilter rebuilt=" + (rebuilt != null));
         if (rebuilt != null) return rebuilt;
         return section;
@@ -101,24 +100,6 @@ public final class SettingsFilter {
             // Keep the original section.
         }
         return null;
-    }
-
-    private static Object rowListProxy(List<Object> rows) {
-        try {
-            if (rowListType == null) rowListType = Class.forName("p.c380");
-            InvocationHandler handler = (proxy, method, args) -> {
-                if (method.getName().equals("subList")) {
-                    int from = (Integer) args[0];
-                    int to = (Integer) args[1];
-                    return new ArrayList<>(rows.subList(from, to));
-                }
-                return method.invoke(rows, args);
-            };
-            return Proxy.newProxyInstance(rowListType.getClassLoader(),
-                    new Class<?>[]{rowListType, List.class}, handler);
-        } catch (Throwable ignored) {
-            return null;
-        }
     }
 
     private static boolean isHiddenRow(Object row) {
@@ -161,16 +142,23 @@ public final class SettingsFilter {
     }
 
     private static Object field(Object object, String name) {
+        Field field = declaredField(object, name);
+        if (field == null) return null;
+        try {
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static Field declaredField(Object object, String name) {
         if (object == null) return null;
         for (Class<?> type = object.getClass(); type != null; type = type.getSuperclass()) {
             try {
-                Field field = type.getDeclaredField(name);
-                field.setAccessible(true);
-                return field.get(object);
+                return type.getDeclaredField(name);
             } catch (NoSuchFieldException ignored) {
                 // Try the superclass.
-            } catch (Throwable ignored) {
-                return null;
             }
         }
         return null;

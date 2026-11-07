@@ -3,12 +3,11 @@ package patches.spotify.ui
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import patches.spotify.COMPATIBILITY_SPOTIFY
+import patches.spotify.ContextMenuViewModelConstructorFingerprint
 import patches.spotify.shared.EXTENSION
 import patches.spotify.shared.EXTENSION_PACKAGE
+import patches.spotify.shared.parameterRegister
 
-private const val CONTEXT_MENU_VIEW_MODEL = "Lp/kjm;"
-private const val HEADER = "Lp/igm;"
-private const val ITEMS = "Ljava/util/List;"
 private const val EXTENSION_CLASS = "$EXTENSION_PACKAGE/spotify/ContextMenuFilter;"
 
 /**
@@ -27,18 +26,16 @@ val hidePremiumContextMenuRowsPatch = bytecodePatch(
     extendWith(EXTENSION)
 
     execute {
-        val owner = mutableClassDefBy(CONTEXT_MENU_VIEW_MODEL)
-        val constructor = owner.methods.singleOrNull { method ->
-            method.name == "<init>" &&
-                method.returnType == "V" &&
-                method.parameterTypes.map(CharSequence::toString) == listOf(HEADER, ITEMS, "Z")
-        } ?: throw IllegalStateException("Spotify context-menu view model changed")
+        val constructor = ContextMenuViewModelConstructorFingerprint.method
+        val listIndex = constructor.parameterTypes.indexOfFirst { it.toString() == "Ljava/util/List;" }
+        check(listIndex >= 0) { "Spotify context-menu item list changed" }
 
+        val register = constructor.parameterRegister(listIndex)
         constructor.addInstructions(
             0,
             """
-                invoke-static {p2}, $EXTENSION_CLASS->filter(Ljava/util/List;)Ljava/util/List;
-                move-result-object p2
+                invoke-static/range { v$register .. v$register }, $EXTENSION_CLASS->filter(Ljava/util/List;)Ljava/util/List;
+                move-result-object v$register
             """,
         )
     }

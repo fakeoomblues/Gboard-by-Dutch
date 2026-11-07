@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patchbundel: 1.53.6</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patchbundel: 1.53.7</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1094,37 +1094,35 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.2.0.26 android auto up next android auto support block popup ads change package name disable ad breaks fix third party launchers widgets force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads use the premium plan icon" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads change package name disable ad breaks force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Spotify](apps/spotify.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">9.2.0.26</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">9.1.94.1929</span></p>
 <p class="dap-app-card__package">com.spotify.music</p>
 <details class="dap-app-card__patches">
-<summary>21 patches</summary>
+<summary>19 patches</summary>
 <ul>
-<li>Android Auto Up next <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
-<li>Android Auto support <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Block popup ads <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Change package name <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
-<li>Disable ad breaks <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
-<li>Fix third party launchers widgets <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Force play order <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
-<li>Hide Premium tab <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide ad sections <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide download buttons <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide playlist ads <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide premium context-menu rows <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide premium settings sections <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide shuffle controls <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide video ads <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Hide video shelves (safe) <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Remove shuffle restriction <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Sanitize sharing links <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Show Premium in the account row <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Skip audio ads <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Use the Premium plan icon <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Android Auto Up next <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
+<li>Android Auto support <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Block popup ads <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Change package name <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
+<li>Disable ad breaks <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
+<li>Force play order <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
+<li>Hide Premium tab <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide ad sections <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide download buttons <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide playlist ads <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide premium context-menu rows <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide premium settings sections <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide shuffle controls <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide video ads <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Hide video shelves (safe) <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Remove shuffle restriction <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Sanitize sharing links <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Show Premium in the account row <span class="dap-app-card__target">9.1.94.1929</span></li>
+<li>Skip audio ads <span class="dap-app-card__target">9.1.94.1929</span></li>
 </ul>
 </details>
 

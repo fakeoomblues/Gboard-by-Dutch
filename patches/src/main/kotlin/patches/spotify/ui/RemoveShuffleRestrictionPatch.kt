@@ -8,6 +8,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
 private const val RESTRICTIONS = "Lcom/spotify/player/model/AutoValue_Restrictions;"
+private const val EMPTY_REASONS = "Lp/yn70;"
 
 /**
  * Removes the client-side shuffle restriction from the player model. The Free upsell sheet asks
@@ -43,7 +44,7 @@ val removeShuffleRestrictionPatch = bytecodePatch(
             """
                 const/4 v0, 0x0
                 new-array v1, v0, [Ljava/lang/Object;
-                invoke-static {v0, v1}, Lp/t380;->n(I[Ljava/lang/Object;)Lp/t380;
+                invoke-static {v0, v1}, $EMPTY_REASONS->n(I[Ljava/lang/Object;)$EMPTY_REASONS
                 move-result-object v0
                 return-object v0
             """,

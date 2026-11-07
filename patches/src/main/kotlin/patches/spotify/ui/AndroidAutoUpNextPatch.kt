@@ -3,20 +3,23 @@ package patches.spotify.ui
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
-private const val NOW_PLAYING_MODEL = "Lp/d520;"
+private const val NOW_PLAYING_MODEL = "Lp/oq10;"
+private const val PLAYER_STATE = "Lcom/spotify/player/model/PlayerState;"
+private const val PLAYER_QUEUE = "Lcom/spotify/player/model/PlayerQueue;"
+private const val PEEK_NEXT_GATE = "Lp/rnn1;->u(Lcom/spotify/player/model/PlayerState;)Z"
 
 /**
  * Spotify builds the media-session queue from `PlayerQueue.nextTracks()` only when
- * `PlayerState.restrictions().disallowPeekingNextReasons()` is empty. A Free account sets that
- * restriction, so the queue is replaced with an empty one even though the player has upcoming
- * tracks. Skip both gate branches around the queue builder so the car's Up next receives the
- * player's real list. This is opt-in because it also enters the queue builder when Spotify has
- * no queue yet during startup.
+ * `PlayerState.restrictions().disallowPeekingNextReasons()` is empty and the peek gate allows it.
+ * A Free account sets that restriction, so the queue is replaced with an empty one even though the
+ * player has upcoming tracks. Skip both gate branches around the queue builder so the car's Up next
+ * receives the player's real list. This is opt-in because it also enters the queue builder when
+ * Spotify has no queue yet during startup.
  */
 @Suppress("unused")
 val spotifyAndroidAutoUpNextPatch = bytecodePatch(
@@ -29,32 +32,36 @@ val spotifyAndroidAutoUpNextPatch = bytecodePatch(
 
     execute {
         val method = mutableClassDefBy(NOW_PLAYING_MODEL).methods.single { candidate ->
-            candidate.name == "p" &&
+            candidate.name == "m" &&
                 candidate.implementation != null &&
                 candidate.parameterTypes.map(CharSequence::toString).take(2) ==
-                listOf(
-                    "Lcom/spotify/player/model/PlayerState;",
-                    "Lcom/spotify/player/model/PlayerQueue;",
-                )
+                listOf(PLAYER_STATE, PLAYER_QUEUE)
         }
         val instructions = method.implementation!!.instructions.toList()
-        val peekGate = instructions.indexOfFirst { instruction ->
-            if (instruction.opcode != Opcode.INVOKE_STATIC) return@indexOfFirst false
-            val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-                ?: return@indexOfFirst false
-            reference.definingClass == "Lp/o4p1;" && reference.name == "t" &&
-                reference.returnType == "Z" &&
-                reference.parameterTypes.map(CharSequence::toString) ==
-                listOf("Lcom/spotify/player/model/PlayerState;")
+
+        // Each gate reads the peek-next restriction, then the DJ gate. Both branches jump to the
+        // empty queue. Nop them so the real queue builder is always reached.
+        val gates = instructions.indices.filter { index ->
+            val instruction = instructions[index]
+            if (instruction.opcode != Opcode.INVOKE_STATIC) return@filter false
+            instruction.getReference<MethodReference>()?.toString() == PEEK_NEXT_GATE
         }
-        check(peekGate >= 0) { "Spotify peek-next gate changed" }
-        val emptyGate = (peekGate - 1 downTo maxOf(0, peekGate - 5))
-            .firstOrNull { instructions[it].opcode == Opcode.IF_EQZ }
-            ?: throw IllegalStateException("Spotify queue empty gate changed")
-        val peekBranch = (peekGate + 1 until minOf(instructions.size, peekGate + 5))
-            .firstOrNull { instructions[it].opcode == Opcode.IF_NEZ }
-            ?: throw IllegalStateException("Spotify queue peek gate changed")
-        method.replaceInstruction(emptyGate, "nop")
-        method.replaceInstruction(peekBranch, "nop")
+        check(gates.size == 2) { "Spotify peek-next gate changed" }
+
+        var patched = 0
+        gates.forEach { gate ->
+            val branch = (gate + 1 until minOf(instructions.size, gate + 5))
+                .firstOrNull { instructions[it].opcode == Opcode.IF_NEZ }
+                ?: throw IllegalStateException("Spotify queue peek gate changed")
+            method.replaceInstruction(branch, "nop")
+            patched++
+
+            val restrictionBranch = (gate - 1 downTo maxOf(0, gate - 10))
+                .firstOrNull { instructions[it].opcode == Opcode.IF_EQZ }
+                ?: throw IllegalStateException("Spotify queue empty gate changed")
+            method.replaceInstruction(restrictionBranch, "nop")
+            patched++
+        }
+        check(patched == 4) { "Spotify queue gates changed" }
     }
 }

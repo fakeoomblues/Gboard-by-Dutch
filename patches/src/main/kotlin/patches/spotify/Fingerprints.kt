@@ -4,7 +4,6 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.literal
 import app.morphe.patcher.methodCall
-import app.morphe.patcher.opcode
 import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -81,22 +80,6 @@ internal object NavigationTabEnumFingerprint : Fingerprint(
 )
 
 // endregion
-
-// region Misc
-
-internal object CanBindAppWidgetPermissionFingerprint : Fingerprint(
-    returnType = "Z",
-    strings = listOf("android.permission.BIND_APPWIDGET"),
-    filters = listOf(opcode(Opcode.AND_INT_LIT8)),
-)
-
-/**
- * Newer versions no longer check the system app flag in the same method.
- */
-internal object CanBindAppWidgetPermissionNoFlagsFingerprint : Fingerprint(
-    returnType = "Z",
-    strings = listOf("android.permission.BIND_APPWIDGET"),
-)
 
 // endregion
 

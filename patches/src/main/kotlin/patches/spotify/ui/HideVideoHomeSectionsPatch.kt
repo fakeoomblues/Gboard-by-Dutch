@@ -5,10 +5,19 @@ import com.android.tools.smali.dexlib2.builder.instruction.BuilderPackedSwitchPa
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderSwitchElement
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
-private const val HOME_SECTION_RENDERER = "Lp/uqs;"
+private const val HOME_SECTION_RENDERER = "Lp/dfs;"
+private const val HOME_SECTION_RENDERER_METHOD = "k"
+private const val HOME_SECTION_RENDERER_RESULT = "Lp/v760;"
+private const val CASITA_SECTION = "Lcom/spotify/casita/v1/resolved/Section;"
 
-/** Switch keys for VIDEO_PROMO, VIDEO_BRAND_AD, VIDEO_CAROUSEL and WATCH_FEED. */
-private val VIDEO_SWITCH_KEYS = setOf(18, 21, 24, 42)
+/**
+ * Switch keys for VIDEO_PROMO (18), VIDEO_BRAND_AD (21), VIDEO_CAROUSEL (24) and WATCH_FEED (10).
+ *
+ * The switch value is the `SectionType` ordinal minus one, not the proto field number. Verified
+ * against the 9.1.94 case bodies: key 10 calls `Section.d0()` (WatchFeed), 18 calls `c0()`
+ * (VideoPromo), 21 calls `a0()` (VideoBrandAd) and 24 calls `b0()` (VideoCarousel).
+ */
+private val VIDEO_SWITCH_KEYS = setOf(10, 18, 21, 24)
 
 /** The packed-switch key Spotify already uses for an unsupported section. */
 private const val SKIP_SWITCH_KEY = 5
@@ -34,10 +43,9 @@ val hideVideoHomeSectionsPatch = bytecodePatch(
     execute {
         val owner = mutableClassDefBy(HOME_SECTION_RENDERER)
         val method = owner.methods.singleOrNull { candidate ->
-            candidate.name == "j" &&
-                candidate.returnType == "Lp/jn60;" &&
-                candidate.parameterTypes.map(CharSequence::toString) ==
-                listOf("Lcom/spotify/casita/v1/resolved/Section;")
+            candidate.name == HOME_SECTION_RENDERER_METHOD &&
+                candidate.returnType == HOME_SECTION_RENDERER_RESULT &&
+                candidate.parameterTypes.map(CharSequence::toString) == listOf(CASITA_SECTION)
         } ?: throw IllegalStateException("Spotify Home section renderer changed")
 
         val payload = method.implementation!!.instructions

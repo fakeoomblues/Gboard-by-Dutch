@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.53.6**
+**Patch bundle: 1.53.7**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -682,27 +682,25 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Android Auto Up next | Off | 9.2.0.26 |
-| Android Auto support | On | 9.2.0.26 |
-| Block popup ads | On | 9.2.0.26 |
-| Change package name | Off | 9.2.0.26 |
-| Disable ad breaks | Off | 9.2.0.26 |
-| Fix third party launchers widgets | On | 9.2.0.26 |
-| Force play order | Off | 9.2.0.26 |
-| Hide Premium tab | On | 9.2.0.26 |
-| Hide ad sections | On | 9.2.0.26 |
-| Hide download buttons | On | 9.2.0.26 |
-| Hide playlist ads | On | 9.2.0.26 |
-| Hide premium context-menu rows | On | 9.2.0.26 |
-| Hide premium settings sections | On | 9.2.0.26 |
-| Hide shuffle controls | On | 9.2.0.26 |
-| Hide video ads | On | 9.2.0.26 |
-| Hide video shelves (safe) | On | 9.2.0.26 |
-| Remove shuffle restriction | On | 9.2.0.26 |
-| Sanitize sharing links | On | 9.2.0.26 |
-| Show Premium in the account row | On | 9.2.0.26 |
-| Skip audio ads | On | 9.2.0.26 |
-| Use the Premium plan icon | On | 9.2.0.26 |
+| Android Auto Up next | Off | 9.1.94.1929 |
+| Android Auto support | On | 9.1.94.1929 |
+| Block popup ads | On | 9.1.94.1929 |
+| Change package name | Off | 9.1.94.1929 |
+| Disable ad breaks | Off | 9.1.94.1929 |
+| Force play order | Off | 9.1.94.1929 |
+| Hide Premium tab | On | 9.1.94.1929 |
+| Hide ad sections | On | 9.1.94.1929 |
+| Hide download buttons | On | 9.1.94.1929 |
+| Hide playlist ads | On | 9.1.94.1929 |
+| Hide premium context-menu rows | On | 9.1.94.1929 |
+| Hide premium settings sections | On | 9.1.94.1929 |
+| Hide shuffle controls | On | 9.1.94.1929 |
+| Hide video ads | On | 9.1.94.1929 |
+| Hide video shelves (safe) | On | 9.1.94.1929 |
+| Remove shuffle restriction | On | 9.1.94.1929 |
+| Sanitize sharing links | On | 9.1.94.1929 |
+| Show Premium in the account row | On | 9.1.94.1929 |
+| Skip audio ads | On | 9.1.94.1929 |
 
 ## TIDAL
 
