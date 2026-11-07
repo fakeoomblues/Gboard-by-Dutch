@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">61 apps</span> · Patchbundel: 1.51.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patchbundel: 1.51.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -129,6 +129,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/aliexpress.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="apple music com.apple.android.music 7.0.0 allow custom android auto hosts" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Apple Music](apps/apple-music.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.0.0</span></p>
+<p class="dap-app-card__package">com.apple.android.music</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">7.0.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/apple-music.md){ .dap-app-card__link }
 
 </article>
 
@@ -281,6 +299,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/detijd.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow custom android auto hosts" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Deezer](apps/deezer.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">9.0.26.3</span></p>
+<p class="dap-app-card__package">deezer.android.app</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">9.0.26.3</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/deezer.md){ .dap-app-card__link }
 
 </article>
 
@@ -1054,6 +1090,67 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.2.0.26 accept custom android auto media browsers allow custom android auto hosts block popup ads change package name disable ad breaks fix third party launchers widgets force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves offer the car library to any host remove shuffle restriction report a desktop device sanitize sharing links share the car up next queue show premium in the account row skip audio ads use the premium plan icon use the car home loader use the car library feed" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Spotify](apps/spotify.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">9.2.0.26</span></p>
+<p class="dap-app-card__package">com.spotify.music</p>
+<details class="dap-app-card__patches">
+<summary>26 patches</summary>
+<ul>
+<li>Accept custom Android Auto media browsers <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Block popup ads <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Change package name <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
+<li>Disable ad breaks <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
+<li>Fix third party launchers widgets <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Force play order <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
+<li>Hide Premium tab <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide ad sections <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide download buttons <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide playlist ads <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide premium context-menu rows <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide premium settings sections <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide shuffle controls <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide video ads <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Hide video shelves <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Offer the car library to any host <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Remove shuffle restriction <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Report a desktop device <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
+<li>Sanitize sharing links <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Share the car Up next queue <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Show Premium in the account row <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Skip audio ads <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Use the Premium plan icon <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Use the car Home loader <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Use the car library feed <span class="dap-app-card__target">9.2.0.26</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/spotify.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="tidal com.aspiro.tidal 2.216.0 allow custom android auto hosts" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [TIDAL](apps/tidal.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">2.216.0</span></p>
+<p class="dap-app-card__package">com.aspiro.tidal</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">2.216.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/tidal.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="news" data-search="trouw be.persgroep.android.news.mobiletr 7.53.1 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
@@ -1221,55 +1318,55 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 alle versies 5.27.0.1 alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip use the system voice for navigation yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 5.27.0.1 alle versies alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip use the system voice for navigation yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Verkeer</p>
 
 ### [Waze](apps/waze.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">5.26.90.901, Alle versies, 5.27.0.1</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">5.26.90.901, 5.27.0.1, Alle versies</span></p>
 <p class="dap-app-card__package">com.waze</p>
 <details class="dap-app-card__patches">
 <summary>41 patches</summary>
 <ul>
-<li>Alert distances <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>All moods <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Allow high refresh rate <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Auto zoom <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Broadcast navigation data <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Car reconnect grace period <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Car traffic meter <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Change app name and icon <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Extra map info <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Flock cameras <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Full black <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Hide ads <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Hide recent destinations <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Lane guidance <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Map skin <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Native camera and hazard controls <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Navigation distances <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>No AI reporting <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>No Google Assistant <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Open without device location <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Remove permissions <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Remove sign-in prompts <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Remove telemetry <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Report speed limit <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Share Waze Alerts with external applications <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Skip consent screens <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Alert distances <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>All moods <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Allow high refresh rate <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Auto zoom <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Bigger alert pins <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Bigger speedometer <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Broadcast navigation data <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Car alerts as notifications <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Car reconnect grace period <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Car traffic meter <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Change app name and icon <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Extra map info <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Flock cameras <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Full black <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Hide ads <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Hide recent destinations <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Lane guidance <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Map skin <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Native camera and hazard controls <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Navigation distances <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>No AI reporting <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>No Google Assistant <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Open without device location <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Remove permissions <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Remove sign-in prompts <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Remove telemetry <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Report speed limit <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Share Waze Alerts with external applications <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
 <li>SoundCloud in Waze <span class="dap-app-card__target">Alle versies</span></li>
-<li>Speed bump controls <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901</span></li>
-<li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Speed limit controls <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Speed limit sign <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901 · standaard uit</span></li>
-<li>Support Gearslip <span class="dap-app-card__target">5.26.90.901</span></li>
+<li>Speed bump controls <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Speed camera alerts <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Speed camera sound at any speed <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
+<li>Speed cameras everywhere <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Speed limit controls <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Speed limit sign <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · standaard uit</span></li>
+<li>Support Gearslip <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
 <li>Use the system voice for navigation <span class="dap-app-card__target">5.27.0.1 · standaard uit</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Alle versies</span></li>
 </ul>

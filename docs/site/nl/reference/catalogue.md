@@ -64,6 +64,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Skip splash promotions | Aan | 8.180.0, 8.180.1 |
 | Spoof signature | Aan | 8.180.0, 8.180.1 |
 
+## Apple Music
+
+[Wat veranderen de patches?](../apps/apple-music.md)
+
+`com.apple.android.music`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | Aan | 7.0.0 |
+
 ## AT4K Launcher
 
 [Wat veranderen de patches?](../apps/at4k.md)
@@ -159,6 +169,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Read full articles | Aan | 5.6.1 |
 | Skip consent screens | Aan | 5.6.1 |
 | Skip onboarding | Aan | 5.6.1 |
+
+## Deezer
+
+[Wat veranderen de patches?](../apps/deezer.md)
+
+`deezer.android.app`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | Aan | 9.0.26.3 |
 
 ## DS Nieuws
 
@@ -650,6 +670,51 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Enable SoundCloud Go | Aan | 2026.10.28-release |
 | Home in Android Auto | Aan | 2026.10.28-release |
 
+## Spotify
+
+[Wat veranderen de patches?](../apps/spotify.md)
+
+`com.spotify.music`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Accept custom Android Auto media browsers | Aan | 9.2.0.26 |
+| Allow custom Android Auto hosts | Aan | 9.2.0.26 |
+| Block popup ads | Aan | 9.2.0.26 |
+| Change package name | Uit | 9.2.0.26 |
+| Disable ad breaks | Uit | 9.2.0.26 |
+| Fix third party launchers widgets | Aan | 9.2.0.26 |
+| Force play order | Uit | 9.2.0.26 |
+| Hide Premium tab | Aan | 9.2.0.26 |
+| Hide ad sections | Aan | 9.2.0.26 |
+| Hide download buttons | Aan | 9.2.0.26 |
+| Hide playlist ads | Aan | 9.2.0.26 |
+| Hide premium context-menu rows | Aan | 9.2.0.26 |
+| Hide premium settings sections | Aan | 9.2.0.26 |
+| Hide shuffle controls | Aan | 9.2.0.26 |
+| Hide video ads | Aan | 9.2.0.26 |
+| Hide video shelves | Aan | 9.2.0.26 |
+| Offer the car library to any host | Aan | 9.2.0.26 |
+| Remove shuffle restriction | Aan | 9.2.0.26 |
+| Report a desktop device | Uit | 9.2.0.26 |
+| Sanitize sharing links | Aan | 9.2.0.26 |
+| Share the car Up next queue | Aan | 9.2.0.26 |
+| Show Premium in the account row | Aan | 9.2.0.26 |
+| Skip audio ads | Aan | 9.2.0.26 |
+| Use the Premium plan icon | Aan | 9.2.0.26 |
+| Use the car Home loader | Aan | 9.2.0.26 |
+| Use the car library feed | Aan | 9.2.0.26 |
+
+## TIDAL
+
+[Wat veranderen de patches?](../apps/tidal.md)
+
+`com.aspiro.tidal`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | Aan | 2.216.0 |
+
 ## Trouw
 
 [Wat veranderen de patches?](../apps/trouw.md)
@@ -761,45 +826,45 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Alert distances | Aan | 5.26.90.901 |
-| All moods | Uit | 5.26.90.901 |
-| Allow high refresh rate | Uit | 5.26.90.901 |
-| Auto zoom | Uit | 5.26.90.901 |
-| Average speed zone bar | Aan | 5.26.90.901 |
-| Bigger alert pins | Uit | 5.26.90.901 |
-| Bigger speedometer | Aan | 5.26.90.901 |
-| Broadcast navigation data | Aan | 5.26.90.901 |
-| Car alerts as notifications | Uit | 5.26.90.901 |
-| Car reconnect grace period | Uit | 5.26.90.901 |
-| Car traffic meter | Uit | 5.26.90.901 |
-| Change app name and icon | Aan | 5.26.90.901 |
-| Extra map info | Uit | 5.26.90.901 |
-| Flock cameras | Aan | 5.26.90.901 |
-| Full black | Aan | 5.26.90.901 |
-| Hide ads | Aan | 5.26.90.901 |
-| Hide recent destinations | Uit | 5.26.90.901 |
-| Lane guidance | Uit | 5.26.90.901 |
-| Map skin | Aan | 5.26.90.901 |
-| Native camera and hazard controls | Uit | 5.26.90.901 |
-| Navigation distances | Uit | 5.26.90.901 |
-| No AI reporting | Uit | 5.26.90.901 |
-| No Google Assistant | Uit | 5.26.90.901 |
-| Open without device location | Uit | 5.26.90.901 |
-| Remove permissions | Aan | 5.26.90.901 |
-| Remove sign-in prompts | Aan | 5.26.90.901 |
-| Remove telemetry | Aan | 5.26.90.901 |
-| Report speed limit | Uit | 5.26.90.901 |
-| Share Waze Alerts with external applications | Aan | 5.26.90.901 |
-| Skip consent screens | Aan | 5.26.90.901 |
+| Alert distances | Aan | 5.26.90.901, 5.27.0.1 |
+| All moods | Uit | 5.26.90.901, 5.27.0.1 |
+| Allow high refresh rate | Uit | 5.26.90.901, 5.27.0.1 |
+| Auto zoom | Uit | 5.26.90.901, 5.27.0.1 |
+| Average speed zone bar | Aan | 5.26.90.901, 5.27.0.1 |
+| Bigger alert pins | Uit | 5.26.90.901, 5.27.0.1 |
+| Bigger speedometer | Aan | 5.26.90.901, 5.27.0.1 |
+| Broadcast navigation data | Aan | 5.26.90.901, 5.27.0.1 |
+| Car alerts as notifications | Uit | 5.26.90.901, 5.27.0.1 |
+| Car reconnect grace period | Uit | 5.26.90.901, 5.27.0.1 |
+| Car traffic meter | Uit | 5.26.90.901, 5.27.0.1 |
+| Change app name and icon | Aan | 5.26.90.901, 5.27.0.1 |
+| Extra map info | Uit | 5.26.90.901, 5.27.0.1 |
+| Flock cameras | Aan | 5.26.90.901, 5.27.0.1 |
+| Full black | Aan | 5.26.90.901, 5.27.0.1 |
+| Hide ads | Aan | 5.26.90.901, 5.27.0.1 |
+| Hide recent destinations | Uit | 5.26.90.901, 5.27.0.1 |
+| Lane guidance | Uit | 5.26.90.901, 5.27.0.1 |
+| Map skin | Aan | 5.26.90.901, 5.27.0.1 |
+| Native camera and hazard controls | Uit | 5.26.90.901, 5.27.0.1 |
+| Navigation distances | Uit | 5.26.90.901, 5.27.0.1 |
+| No AI reporting | Uit | 5.26.90.901, 5.27.0.1 |
+| No Google Assistant | Uit | 5.26.90.901, 5.27.0.1 |
+| Open without device location | Uit | 5.26.90.901, 5.27.0.1 |
+| Remove permissions | Aan | 5.26.90.901, 5.27.0.1 |
+| Remove sign-in prompts | Aan | 5.26.90.901, 5.27.0.1 |
+| Remove telemetry | Aan | 5.26.90.901, 5.27.0.1 |
+| Report speed limit | Uit | 5.26.90.901, 5.27.0.1 |
+| Share Waze Alerts with external applications | Aan | 5.26.90.901, 5.27.0.1 |
+| Skip consent screens | Aan | 5.26.90.901, 5.27.0.1 |
 | SoundCloud in Waze | Aan | Alle versies |
-| Speed bump controls | Uit | 5.26.90.901 |
-| Speed camera alerts | Aan | 5.26.90.901 |
-| Speed camera sound at any speed | Aan | 5.26.90.901 |
-| Speed cameras everywhere | Uit | 5.26.90.901 |
-| Speed limit controls | Uit | 5.26.90.901 |
-| Speed limit sign | Uit | 5.26.90.901 |
-| Stay awake in the background | Uit | 5.26.90.901 |
-| Support Gearslip | Aan | 5.26.90.901 |
+| Speed bump controls | Uit | 5.26.90.901, 5.27.0.1 |
+| Speed camera alerts | Aan | 5.26.90.901, 5.27.0.1 |
+| Speed camera sound at any speed | Aan | 5.26.90.901, 5.27.0.1 |
+| Speed cameras everywhere | Uit | 5.26.90.901, 5.27.0.1 |
+| Speed limit controls | Uit | 5.26.90.901, 5.27.0.1 |
+| Speed limit sign | Uit | 5.26.90.901, 5.27.0.1 |
+| Stay awake in the background | Uit | 5.26.90.901, 5.27.0.1 |
+| Support Gearslip | Aan | 5.26.90.901, 5.27.0.1 |
 | Use the system voice for navigation | Uit | 5.27.0.1 |
 | YT Music Morphe in Waze | Aan | Alle versies |
 
@@ -871,4 +936,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Allow all Android Auto hosts | Aan | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

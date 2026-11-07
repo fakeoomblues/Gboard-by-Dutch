@@ -62,6 +62,10 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
 | [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
+| [Spotify](../apps/spotify.md) | 9.2.0.26 / 148373686 | [APKM](#local-original-inputs) |
+| [Apple Music](../apps/apple-music.md) | 7.0.0 / 1614 | [APKM](#local-original-inputs) |
+| [TIDAL](../apps/tidal.md) | 2.216.0 / 10020 | [APKM](#local-original-inputs) |
+| [Deezer](../apps/deezer.md) | 9.0.26.3 / 9002603 | [APKM](#local-original-inputs) |
 | [Myspoti](../apps/myspoti.md) | 2.4.0 / 1142 | [APK](#local-original-inputs) |
 | [SoundCloud](../apps/soundcloud.md) | 2026.10.28-release / 379050 | [APKM](#local-original-inputs) |
 | [Gboard](../apps/gboard.md) | 18.5.11.993608717-release-arm64-v8a / 176050094 | [APK](#local-original-inputs) |
