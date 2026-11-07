@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.51.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.51.0)** · 61 apps · 318 patches
+**Patch bundle [v1.52.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.52.0)** · 65 apps · 347 patches
 
 ### Weather
 
@@ -107,6 +107,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
+| [Apple Music](docs/site/en/apps/apple-music.md) | See guide | 7.0.0 | APKM | 1 |
+| [Deezer](docs/site/en/apps/deezer.md) | See guide | 9.0.26.3 | APKM | 1 |
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |
@@ -115,6 +117,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
 | [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.10.28-release | APKM | 4 |
+| [Spotify](docs/site/en/apps/spotify.md) | Compatibility | 9.2.0.26 | APKM | 26 |
+| [TIDAL](docs/site/en/apps/tidal.md) | See guide | 2.216.0 | APKM | 1 |
 | [TVgids.nl](docs/site/en/apps/tvgids-nl.md) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](docs/site/en/apps/videoland.md) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |
 | [Videoland Android TV](docs/site/en/apps/videoland-android-tv.md) | Ads · Tracking | 1.117.0 | APKS | 3 |

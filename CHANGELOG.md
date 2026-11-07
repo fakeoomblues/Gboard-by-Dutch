@@ -1,4 +1,29 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5a214880eb01ffdda396c7a9417927d6a400ff68/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.52.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [5a214880eb01](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/5a214880eb01ffdda396c7a9417927d6a400ff68). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.52.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.51.0...v1.52.0) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** keep Flitsmeister and Waze patches applying cleanly ([dddac13](https://gitlab.com/johninnld/nl-morphe-patches/commit/dddac13f2c4ef46c9ed295091c3a541430edeb46))
+* **Waze:** keep Flitsmeister and Waze patches applying cleanly ([dddac13](https://gitlab.com/johninnld/nl-morphe-patches/commit/dddac13f2c4ef46c9ed295091c3a541430edeb46))
+
+### ✨ New Features
+
+* **Apple Music:** add Spotify Home/Library and custom host support ([a1f77df](https://gitlab.com/johninnld/nl-morphe-patches/commit/a1f77df2bdea0dae7af556bf122a559ca38e84ba))
+* **Deezer:** add Spotify Home/Library and custom host support ([a1f77df](https://gitlab.com/johninnld/nl-morphe-patches/commit/a1f77df2bdea0dae7af556bf122a559ca38e84ba))
+* **Spotify:** add Spotify Home/Library and custom host support ([a1f77df](https://gitlab.com/johninnld/nl-morphe-patches/commit/a1f77df2bdea0dae7af556bf122a559ca38e84ba))
+* **TIDAL:** add Spotify Home/Library and custom host support ([a1f77df](https://gitlab.com/johninnld/nl-morphe-patches/commit/a1f77df2bdea0dae7af556bf122a559ca38e84ba))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e00abbd156819e44b24184011b3246c631b8a8d4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.51.0.**
