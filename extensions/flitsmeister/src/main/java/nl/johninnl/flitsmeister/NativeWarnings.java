@@ -90,6 +90,14 @@ public final class NativeWarnings {
     public static void earlyParsing(Object json){try{EarlyWarningGeometry.parsing(json);}catch(RuntimeException ignored){}}
     public static void earlyParsed(Object model){try{EarlyWarningGeometry.parsed(model);}catch(RuntimeException ignored){}}
     public static void earlyResponseFinished(){EarlyWarningGeometry.finished();}
+    /** The native controller's p1 register is reused before its sound decision. */
+    public static void maximumSpeedFromController(Object controller){
+        Location fix=null;
+        if(controller!=null)try{java.lang.reflect.Field field=controller.getClass().getDeclaredField("c");field.setAccessible(true);
+            Object value=field.get(controller);if(value instanceof Location)fix=(Location)value;
+        }catch(ReflectiveOperationException|RuntimeException unavailable){/* Optional fix metadata stays unknown. */}
+        maximumSpeed(fix);
+    }
     /** A real native overspeed decision, excluding SignalScreens' settings sound previews. */
     public static void maximumSpeed(Location fix){capture(()->{
         if(!captureEnabled||app==null)return;

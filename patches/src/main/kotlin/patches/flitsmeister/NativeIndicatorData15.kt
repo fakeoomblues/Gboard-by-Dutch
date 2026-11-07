@@ -75,7 +75,9 @@ internal fun bindFlitsmeisterIndicatorData15(methods:Map<String,MutableMethod>){
     // DEX block order is not control-flow order. Insert from the highest original
     // index so the native clear branch and sound call both retain their anchors.
     listOf(
-        Triple(maximumAt,"invoke-static/range {p1 .. p1}, $WARNINGS->maximumSpeed(Landroid/location/Location;)V",maximumCall),
+        // R8 reuses p1 for fci by this call. The original controller remains p0
+        // and owns the current native fix in its guarded Location field c.
+        Triple(maximumAt,"invoke-static/range {p0 .. p0}, $WARNINGS->maximumSpeedFromController(Ljava/lang/Object;)V",maximumCall),
         Triple(clearAt,"invoke-static {}, $WARNINGS->maximumSpeedCleared()V","sget-object v$clearRegister, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;")
     ).sortedByDescending{it.first}.forEach{(at,hook,original)->maximum.replaceInstruction(at,hook);maximum.addInstruction(at+1,original)}
     started.replaceInstruction(startedAt,"invoke-static {}, $WARNINGS->averageSpeedWarning()V")

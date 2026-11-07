@@ -152,6 +152,10 @@ public class NativeWarningsTest {
         NativeWarnings.averageSpeedWarning();assertEquals("AVERAGE_SPEED_WARNING",last().getString("native_type"));assertTrue(last().getBoolean("native_zone_alarm"));assertFalse(last().containsKey("average_speed_kmh"));String zone=last().getString("warning_id");assertNotEquals(road,zone);
         NativeWarnings.maximumSpeedCleared();assertEquals("CLEAR",last().getString("operation"));assertEquals(road,last().getString("warning_id"));NativeWarnings.averageSpeedCleared();assertEquals(zone,last().getString("warning_id"));
     }
+    @Test public void unavailableControllerFixDoesNotInventSpeedMetadataOrBreakNativeDecision(){
+        NativeWarnings.maximumSpeedFromController(null);assertEquals("MAXIMUM_SPEED",last().getString("native_type"));assertFalse(last().containsKey("current_speed_kmh"));
+        NativeWarnings.maximumSpeedFromController(new Object());assertEquals("ANNOUNCE",last().getString("operation"));assertFalse(last().containsKey("current_speed_kmh"));
+    }
     @Test public void nativeEntryExportsExactTextBeforeLocalMuteAndWithoutSpeedOrGeometry() {
         NativeWarnings.regular(null,new Incident(),true,false,"Spookrijder!",null);
         assertEquals("ANNOUNCE",last().getString("operation"));
