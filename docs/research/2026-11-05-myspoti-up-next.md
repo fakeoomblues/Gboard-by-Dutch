@@ -1,5 +1,9 @@
 # Myspoti 2.3.0 Android Auto Up next
 
+> Myspoti 2.4.0 publishes this queue natively. The 2.4.0 port keeps that queue and opens the
+> library to every Android Auto host; see `2026-11-07-myspoti-2.4.0-port.md`.
+
+
 ## Input and intended result
 
 Original publisher APK supplied by the user: `myspoti-stable-2.3.0-arm64-v8a.apk`.

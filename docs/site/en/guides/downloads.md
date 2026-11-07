@@ -62,7 +62,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
 | [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
-| [Myspoti](../apps/myspoti.md) | 2.3.0 / 1121 | [APK](#local-original-inputs) |
+| [Myspoti](../apps/myspoti.md) | 2.4.0 / 1142 | [APK](#local-original-inputs) |
 | [SoundCloud](../apps/soundcloud.md) | 2026.10.28-release / 379050 | [APKM](#local-original-inputs) |
 | [Gboard](../apps/gboard.md) | 18.5.11.993608717-release-arm64-v8a / 176050094 | [APK](#local-original-inputs) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |

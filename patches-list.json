@@ -465,7 +465,7 @@
     },
     {
       "name": "Android Auto Up next",
-      "description": "Publishes Myspoti's actual playback queue with titles, artists, artwork and the current occurrence. Android Auto and DriveDeck can display and select upcoming playlist and radio tracks through the existing player.",
+      "description": "Myspoti 2.4.0 publishes its current and upcoming playlist/radio queue with metadata and queue selection itself; on 2.3.0 this patch exports that queue. It also lets every Android Auto host, or only the host packages you list, browse the library and control that queue.",
       "default": false,
       "category": null,
       "compatiblePackages": [
@@ -491,11 +491,33 @@
               "isExperimental": false,
               "minSdk": 29,
               "description": null
+            },
+            {
+              "version": "2.4.0",
+              "versionCodes": {
+                "ARM64_V8A": 1142,
+                "ARMEABI_V7A": 1142,
+                "X86_64": 1142,
+                "X86": 1142
+              },
+              "isExperimental": false,
+              "minSdk": 29,
+              "description": null
             }
           ]
         }
       ],
-      "options": []
+      "options": [
+        {
+          "key": "allowedHostPackages",
+          "title": "Allowed host packages",
+          "description": "Leave empty to allow every Android Auto host, including third-party systems. Otherwise enter comma-separated host app package names; every other app is denied browsing. Include Android Auto itself in the list when you restrict it. Repatch to change this list.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Android Auto nieuws",
