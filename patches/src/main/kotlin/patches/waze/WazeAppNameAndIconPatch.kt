@@ -122,5 +122,13 @@ val wazeChangeAppNameAndIconPatch = resourcePatch(
             destination.parentFile.mkdirs()
             source.use { input -> destination.outputStream().use(input::copyTo) }
         }
+        // 5.27 removed the beta monochrome layer; write the adaptive icon without it
+        // so the chosen icon still encodes and installs.
+        get("res/mipmap-anydpi-v26/dewaze_launcher.xml").writeText(
+            "<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">" +
+                "<background android:drawable=\"@drawable/dewaze_background\" />" +
+                "<foreground android:drawable=\"@drawable/dewaze_foreground\" />" +
+            "</adaptive-icon>",
+        )
     }
 }
