@@ -124,20 +124,29 @@ val powerSavingModePatch = bytecodePatch(
                     val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
                     ref != null && ref.definingClass == check.definingClass && ref.name == check.name && ref.returnType == "Z" && ref.parameterTypes.isEmpty()
                 }
-                val gate = (call - 1 downTo maxOf(0, call - 40)).singleOrNull { i ->
+                // 26.43 gated with `iget-boolean cfqb.bm` followed by a dead
+                // `const/4 0x0`; 26.44 keeps the boolean gate but branches on it
+                // directly. Take the closest boolean read and derive a scratch
+                // register: the old dead zero when present, otherwise the last
+                // local, which the enclosing switch case does not use.
+                val gate = (call - 1 downTo maxOf(0, call - 60)).firstOrNull { i ->
                     instructions[i].opcode == Opcode.IGET_BOOLEAN &&
-                        ((instructions[i] as ReferenceInstruction).reference as FieldReference).let { it.definingClass == "Lcfqb;" && it.name == "bm" && it.type == "Z" }
-                } ?: throw PatchException("min-mode provider no longer gates the device check with cfqb.bm")
-                // The following zero initialization makes this local dead at the gate.
-                // Use it as scratch so the original flag's receiver/register is preserved.
-                val zero = instructions.getOrNull(gate + 1)
-                    ?: throw PatchException("min-mode provider has no scratch initialization")
-                if (zero.opcode != Opcode.CONST_4 || (zero as NarrowLiteralInstruction).narrowLiteral != 0 ||
-                    instructions[gate].location.labels.isNotEmpty()) {
+                        ((instructions[i] as ReferenceInstruction).reference as FieldReference).type == "Z"
+                } ?: throw PatchException("min-mode provider no longer gates the device check")
+                if (instructions[gate].location.labels.isNotEmpty()) {
                     throw PatchException("min-mode provider's server gate changed shape")
                 }
-                val scratch = (zero as OneRegisterInstruction).registerA
-                if (scratch == (instructions[gate] as TwoRegisterInstruction).registerB || scratch > 15) {
+                val gateRegister = (instructions[gate] as TwoRegisterInstruction).registerB
+                val following = instructions.getOrNull(gate + 1)
+                    ?: throw PatchException("min-mode provider has no instruction after the gate")
+                val scratch = when {
+                    following.opcode == Opcode.CONST_4 &&
+                        (following as NarrowLiteralInstruction).narrowLiteral == 0 ->
+                        (following as OneRegisterInstruction).registerA
+                    following.opcode == Opcode.IF_EQZ -> implementation!!.registerCount - 2
+                    else -> throw PatchException("min-mode provider's server gate changed shape")
+                }
+                if (scratch == gateRegister || scratch == (instructions[gate] as TwoRegisterInstruction).registerA || scratch >= implementation!!.registerCount) {
                     throw PatchException("min-mode provider's scratch register is not free")
                 }
                 addInstructionsWithLabels(
@@ -293,45 +302,45 @@ val powerSavingModePatch = bytecodePatch(
     // Local saved. In finalize, after every patch has run, so the sheet's other rows of ours are
     // in place whichever order the patches ran in.
     finalize {
-        val rowHolder = mutableClassDefBy("Lolm;")
-        val template = rowHolder.methods.single { it.name == "a" && it.returnType == "Lbqxa;" && it.parameterTypes.isEmpty() }
+        val rowHolder = mutableClassDefBy("Lomf;")
+        val template = rowHolder.methods.single { it.name == "a" && it.returnType == "Lbrdm;" && it.parameterTypes.isEmpty() }
         val templateRefs = template.implementation!!.instructions.mapNotNull { (it as? ReferenceInstruction)?.reference?.toString() }
         listOf(
-            "Lolm;->a:Lnwm;", "Lgej;->aF(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;",
-            "Lbqxa;->a()Lbqwy;", "Lbqwy;->c(I)V", "Lbqwy;->d(Ljava/lang/String;)V", "Lbqwy;->f(I)V",
-            "Lbqwy;->e(Landroid/view/View\$OnClickListener;)V", "Lbqwx;->d:Lbqwx;", "Lbqwy;->a()Lbqxa;",
+            "Lomf;->a:Lnxh;", "Lgez;->aC(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;",
+            "Lbrdm;->a()Lbrdk;", "Lbrdk;->c(I)V", "Lbrdk;->d(Ljava/lang/String;)V", "Lbrdk;->f(I)V",
+            "Lbrdk;->e(Landroid/view/View\$OnClickListener;)V", "Lbrdj;->d:Lbrdj;", "Lbrdk;->a()Lbrdm;",
         ).forEach { if (it !in templateRefs) throw PatchException("account sheet row builder no longer uses $it") }
         // Built like the Customization row; its action id must be unique on the sheet too.
         rowHolder.methods.add(
             ImmutableMethod(
-                rowHolder.type, "uaPowerRow", emptyList(), "Lbqxa;",
+                rowHolder.type, "uaPowerRow", emptyList(), "Lbrdm;",
                 AccessFlags.PUBLIC.value or AccessFlags.FINAL.value, null, null, MutableMethodImplementation(6),
             ).toMutable().apply {
                 addInstructions(
                     0,
                     """
-                        iget-object v0, p0, Lolm;->a:Lnwm;
+                        iget-object v0, p0, Lomf;->a:Lnxh;
                         const v1, $BATTERY_ICON
-                        invoke-static { v0, v1 }, Lgej;->aF(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;
+                        invoke-static { v0, v1 }, Lgez;->aC(Landroid/content/Context;I)Landroid/graphics/drawable/Drawable;
                         move-result-object v1
                         invoke-static { v1 }, $POWER_ROW_ICON
                         move-result-object v1
-                        invoke-static { }, Lbqxa;->a()Lbqwy;
+                        invoke-static { }, Lbrdm;->a()Lbrdk;
                         move-result-object v3
                         invoke-static { }, Landroid/view/View;->generateViewId()I
                         move-result v4
-                        invoke-virtual { v3, v4 }, Lbqwy;->c(I)V
-                        iput-object v1, v3, Lbqwy;->a:Landroid/graphics/drawable/Drawable;
+                        invoke-virtual { v3, v4 }, Lbrdk;->c(I)V
+                        iput-object v1, v3, Lbrdk;->a:Landroid/graphics/drawable/Drawable;
                         const-string v4, "Power Saving Options"
-                        invoke-virtual { v3, v4 }, Lbqwy;->d(Ljava/lang/String;)V
+                        invoke-virtual { v3, v4 }, Lbrdk;->d(Ljava/lang/String;)V
                         const v4, 0x161a8
-                        invoke-virtual { v3, v4 }, Lbqwy;->f(I)V
+                        invoke-virtual { v3, v4 }, Lbrdk;->f(I)V
                         new-instance v2, $OPEN_POWER
                         invoke-direct { v2, v0 }, $OPEN_POWER-><init>(Landroid/content/Context;)V
-                        invoke-virtual { v3, v2 }, Lbqwy;->e(Landroid/view/View${'$'}OnClickListener;)V
-                        sget-object v4, Lbqwx;->d:Lbqwx;
-                        iput-object v4, v3, Lbqwy;->d:Lbqwx;
-                        invoke-virtual { v3 }, Lbqwy;->a()Lbqxa;
+                        invoke-virtual { v3, v2 }, Lbrdk;->e(Landroid/view/View${'$'}OnClickListener;)V
+                        sget-object v4, Lbrdj;->d:Lbrdj;
+                        iput-object v4, v3, Lbrdk;->d:Lbrdj;
+                        invoke-virtual { v3 }, Lbrdk;->a()Lbrdm;
                         move-result-object v0
                         return-object v0
                     """,
@@ -343,7 +352,7 @@ val powerSavingModePatch = bytecodePatch(
         fun addUnderCustomization(returnType: String, parameters: List<String>) {
             fun callsCustomizationRow(insn: com.android.tools.smali.dexlib2.iface.instruction.Instruction) =
                 ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
-                    r.definingClass == "Lolm;" && r.name == "uaCustomizationRow"
+                    r.definingClass == "Lomf;" && r.name == "uaCustomizationRow"
                 } == true
             val found = mutableListOf<Pair<String, String>>()
             classDefForEach { c ->
@@ -362,7 +371,7 @@ val powerSavingModePatch = bytecodePatch(
             val result = ins[call + 1]
             val add = ins[call + 2]
             if (result.opcode != Opcode.MOVE_RESULT_OBJECT || add.opcode != Opcode.INVOKE_VIRTUAL ||
-                ((add as ReferenceInstruction).reference as MethodReference).let { it.definingClass != "Lbwix;" || it.name != "i" }
+                ((add as ReferenceInstruction).reference as MethodReference).let { it.definingClass != "Lbwpw;" || it.name != "i" }
             ) throw PatchException("Customization row add changed shape")
             // The row's result register is dead after its add, so it carries ours.
             val scratch = (result as OneRegisterInstruction).registerA
@@ -370,25 +379,25 @@ val powerSavingModePatch = bytecodePatch(
             val holder = (ins[call] as Instruction35c).registerC
             // Modern builder: the holder is cast from a wider register just before; do the same.
             val cast = ins.getOrNull(call - 1)?.takeIf {
-                it.opcode == Opcode.CHECK_CAST && ((it as ReferenceInstruction).reference as TypeReference).type == "Lolm;"
+                it.opcode == Opcode.CHECK_CAST && ((it as ReferenceInstruction).reference as TypeReference).type == "Lomf;"
             }
             val source = cast?.let { (ins[call - 2] as TwoRegisterInstruction).registerB }
             method.addInstructions(
                 call + 3,
                 if (source != null) """
                     move-object v$scratch, v$source
-                    check-cast v$scratch, Lolm;
-                    invoke-virtual { v$scratch }, Lolm;->uaPowerRow()Lbqxa;
+                    check-cast v$scratch, Lomf;
+                    invoke-virtual { v$scratch }, Lomf;->uaPowerRow()Lbrdm;
                     move-result-object v$scratch
-                    invoke-virtual { v$list, v$scratch }, Lbwix;->i(Ljava/lang/Object;)V
+                    invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
                 """ else """
-                    invoke-virtual { v$holder }, Lolm;->uaPowerRow()Lbqxa;
+                    invoke-virtual { v$holder }, Lomf;->uaPowerRow()Lbrdm;
                     move-result-object v$scratch
-                    invoke-virtual { v$list, v$scratch }, Lbwix;->i(Ljava/lang/Object;)V
+                    invoke-virtual { v$list, v$scratch }, Lbwpw;->i(Ljava/lang/Object;)V
                 """,
             )
         }
-        addUnderCustomization("Lbqrr;", listOf("Lafyh;"))
-        addUnderCustomization("Lbqpl;", listOf("Z"))
+        addUnderCustomization("Lbqye;", listOf("Lagdp;"))
+        addUnderCustomization("Lbqvz;", listOf("Z"))
     }
 }

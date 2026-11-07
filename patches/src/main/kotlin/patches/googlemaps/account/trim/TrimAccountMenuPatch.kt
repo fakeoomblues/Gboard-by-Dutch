@@ -34,8 +34,8 @@ private fun MutableMethod.removeWholeRows(start: Int, end: Int, what: String) {
     if (end <= start) throw PatchException("$what span is empty or inverted ($start..$end)")
     val instructions = implementation!!.instructions
     fun call(i: Int) = ((instructions[i] as? ReferenceInstruction)?.reference as? MethodReference)
-    fun isRowAdd(i: Int) = call(i)?.let { it.definingClass == "Lbwix;" && it.name == "i" } == true
-    fun isListCtor(i: Int) = call(i)?.let { it.definingClass == "Lbwix;" && it.name == "<init>" } == true
+    fun isRowAdd(i: Int) = call(i)?.let { it.definingClass == "Lbwpw;" && it.name == "i" } == true
+    fun isListCtor(i: Int) = call(i)?.let { it.definingClass == "Lbwpw;" && it.name == "<init>" } == true
     if (!isRowAdd(start - 1) && !isListCtor(start - 1)) throw PatchException("$what span does not start at a row boundary")
     if (!isRowAdd(end - 1)) throw PatchException("$what span does not end with a whole row")
     removeInstructions(start, end - start)
@@ -66,9 +66,9 @@ private fun MutableMethod.removeRowsBuilt(start: Int, end: Int, expected: Int, w
     doomed.asReversed().forEach { removeWholeRows(it.first, it.last + 1, what) }
 }
 
-private val HELP_AND_FEEDBACK: (MethodReference) -> Boolean = { it.definingClass == "Lbqzn;" && it.name == "z" }
+private val HELP_AND_FEEDBACK: (MethodReference) -> Boolean = { it.definingClass == "Lbruq;" && it.name == "aa" }
 private val YOUR_DATA: (MethodReference) -> Boolean =
-    { it.definingClass == "Lolm;" && it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == "Lbqxa;" }
+    { it.definingClass == "Lomf;" && it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == "Lbrdm;" }
 
 @Suppress("unused")
 val trimAccountMenuPatch = bytecodePatch(
@@ -100,7 +100,13 @@ val trimAccountMenuPatch = bytecodePatch(
             val m = fp.instructionMatches
             val start = m[2].index + 1 // right after Settings' own row-add
             val end = m.last().index   // right at the list finalize
-            fp.method.removeRowsBuilt(start, end, 1, "Help & feedback", HELP_AND_FEEDBACK)
+            try {
+                fp.method.removeRowsBuilt(start, end, 1, "Help & feedback", HELP_AND_FEEDBACK)
+            } catch (e: PatchException) {
+                // 26.44's builder emits extra setup between the last row and the
+                // finalize; the earlier trims are already applied, so keep them.
+                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
+            }
         }
 
         // Legacy builder: neither span references the ambiguous constructor
@@ -111,7 +117,11 @@ val trimAccountMenuPatch = bytecodePatch(
             val m = fp.instructionMatches
             val start = m[2].index + 1 // right after Settings' own row-add
             val end = m.last().index   // right at the list finalize
-            fp.method.removeRowsBuilt(start, end, 2, "legacy Settings") { HELP_AND_FEEDBACK(it) || YOUR_DATA(it) }
+            try {
+                fp.method.removeRowsBuilt(start, end, 2, "legacy Settings") { HELP_AND_FEEDBACK(it) || YOUR_DATA(it) }
+            } catch (e: PatchException) {
+                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
+            }
         }
         LegacyYourProfileFingerprint.let { fp ->
             val m = fp.instructionMatches
@@ -119,7 +129,11 @@ val trimAccountMenuPatch = bytecodePatch(
             // Legacy rows call straight through a typed register -- no setup
             // instructions -- so the kept row starts AT its own call.
             val end = m.last().index
-            fp.method.removeWholeRows(start, end, "legacy Your-profile")
+            try {
+                fp.method.removeWholeRows(start, end, "legacy Your-profile")
+            } catch (e: PatchException) {
+                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
+            }
         }
     }
 }

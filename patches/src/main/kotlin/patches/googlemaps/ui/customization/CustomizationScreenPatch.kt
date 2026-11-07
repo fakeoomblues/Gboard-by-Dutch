@@ -78,6 +78,18 @@ private val settingsRowFingerprint2644 = Fingerprint(
     custom = { method, _ -> method.definingClass == "Lomi;" },
 )
 
+/** 26.44's modern account-sheet builder: `kam.t(Lagdp;)Lbqye;`. */
+private val modernSettingsRowFingerprint2644 = Fingerprint(
+    returnType = "Lbqye;",
+    parameters = listOf("Lagdp;"),
+    filters = listOf(
+        methodCall(opcode = Opcode.INVOKE_STATIC, definingClass = "Lbsgx;", name = "aP"),
+        opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
+        methodCall(opcode = Opcode.INVOKE_VIRTUAL, definingClass = "Lbwpw;", name = "i", location = MatchAfterImmediately()),
+    ),
+    custom = { method, _ -> method.definingClass == "Lkam;" },
+)
+
 @Suppress("unused")
 val customizationScreenPatch = bytecodePatch(
     name = "Customization screen",
@@ -228,27 +240,31 @@ private fun buildCustomization2644() {
         },
     )
 
-    val method = settingsRowFingerprint2644.method
-    val instructions = method.implementation!!.instructions
-    val build = settingsRowFingerprint2644.instructionMatches[0].index
-    val add = settingsRowFingerprint2644.instructionMatches[2].index
-    val listener = instructions.subList(0, build).lastOrNull {
-        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
-            r.definingClass == "Lome;" && r.name == "<init>"
-        } == true
-    } as? Instruction35c ?: throw PatchException("Settings row listener not found in ${method.definingClass}")
-    val holder = listener.registerD
-    val row = (instructions[settingsRowFingerprint2644.instructionMatches[1].index] as OneRegisterInstruction).registerA
-    val list = (instructions[add] as Instruction35c).registerC
-    if (holder > 15 || row > 15) throw PatchException("Settings row registers out of move-object range: v$holder, v$row")
-    method.addInstructionsAtLabel(
-        add + 1,
-        """
-            move-object v$row, v$holder
-            check-cast v$row, Lomf;
-            invoke-virtual { v$row }, Lomf;->uaCustomizationRow()Lbrdm;
-            move-result-object v$row
-            invoke-virtual { v$list, v$row }, Lbwpw;->i(Ljava/lang/Object;)V
-        """,
-    )
+    fun addAfterSettings2644(fp: Fingerprint) {
+        val method = fp.method
+        val instructions = method.implementation!!.instructions
+        val build = fp.instructionMatches[0].index
+        val add = fp.instructionMatches[2].index
+        val listener = instructions.subList(0, build).lastOrNull {
+            ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { r ->
+                r.definingClass == "Lome;" && r.name == "<init>"
+            } == true
+        } as? Instruction35c ?: throw PatchException("Settings row listener not found in ${method.definingClass}")
+        val holder = listener.registerD
+        val row = (instructions[fp.instructionMatches[1].index] as OneRegisterInstruction).registerA
+        val list = (instructions[add] as Instruction35c).registerC
+        if (holder > 15 || row > 15) throw PatchException("Settings row registers out of move-object range: v$holder, v$row")
+        method.addInstructionsAtLabel(
+            add + 1,
+            """
+                move-object v$row, v$holder
+                check-cast v$row, Lomf;
+                invoke-virtual { v$row }, Lomf;->uaCustomizationRow()Lbrdm;
+                move-result-object v$row
+                invoke-virtual { v$list, v$row }, Lbwpw;->i(Ljava/lang/Object;)V
+            """,
+        )
+    }
+    addAfterSettings2644(modernSettingsRowFingerprint2644)
+    addAfterSettings2644(settingsRowFingerprint2644)
 }

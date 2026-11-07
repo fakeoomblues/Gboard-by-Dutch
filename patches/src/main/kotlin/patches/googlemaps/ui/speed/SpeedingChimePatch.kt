@@ -127,10 +127,16 @@ val speedingChimePatch = bytecodePatch(
         }
         // The supported APK's own attach listener clears ahvy.e on detach.
         // Repaint only live native widgets; do not keep retired car/phone models active.
-        val preferencesField=mutableClassDefBy(speedometer).fields.singleOrNull{it.name=="c"&&it.type=="Lahvy;"}
-            ?:throw PatchException("the speed widget's native attachment binding changed")
-        val attachedField=mutableClassDefBy("Lahvy;").fields.singleOrNull{it.name=="e"&&it.type=="Ljava/lang/Object;"}
-            ?:throw PatchException("the speed widget's native attachment callback changed")
+        // The attach listener's class is renamed between builds; identify it by the
+        // callback field it holds instead of pinning the obfuscated name.
+        val preferencesField = mutableClassDefBy(speedometer).fields.singleOrNull { f ->
+            f.name == "c" && classDefByOrNull(f.type)?.fields?.any {
+                it.name == "e" && it.type == "Ljava/lang/Object;"
+            } == true
+        } ?: throw PatchException("the speed widget's native attachment binding changed")
+        val attachedField = mutableClassDefBy(preferencesField.type).fields.singleOrNull {
+            it.name == "e" && it.type == "Ljava/lang/Object;"
+        } ?: throw PatchException("the speed widget's native attachment callback changed")
         replace("nativeWidgetAttached","Z","""
             check-cast p0, ${setSpeed.definingClass}
             iget-object v0, p0, $wrapperField

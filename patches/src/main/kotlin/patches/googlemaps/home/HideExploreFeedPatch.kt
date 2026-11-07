@@ -41,7 +41,7 @@ internal val hideExploreFeedPatch = bytecodePatch(
                 mergePoint + 1,
                 """
                     if-eqz v1, :keep_state
-                    sget-object v9, Lpfc;->a:Lpfc;
+                    sget-object v9, Lpfx;->a:Lpfx;
                 """,
                 ExternalLabel("keep_state", implementation!!.instructions[mergePoint + 1]),
             )

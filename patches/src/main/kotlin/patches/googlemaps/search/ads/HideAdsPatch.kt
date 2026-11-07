@@ -29,6 +29,13 @@ private object PromotedPinAdsRequestFingerprint : Fingerprint(
     parameters = listOf("Lcdix;", "Lcjdf;", "Z"),
 )
 
+/** 26.44 keeps the builder under new protobuf and request option names. */
+private object PromotedPinAdsRequestFingerprint2644 : Fingerprint(
+    name = "b",
+    returnType = "V",
+    parameters = listOf("Lcdrl;", "Lcjlw;", "Z"),
+)
+
 /**
  * Navigation's promoted-pin label controller: draws the promoted pins Maps gets with the route while
  * navigating. The class is the only one with this trace label.
@@ -66,7 +73,8 @@ internal val hideAdsPatch = bytecodePatch(
         // Promoted map pins: never request them. Their impression beacons
         // (www.google.com/adview) are fired by the native engine when a pin is
         // drawn, so not requesting the pins also stops those.
-        PromotedPinAdsRequestFingerprint.method.leaveEarlyWhenHidingAds("return-void")
+        val promotedPinRequest = if (packageMetadata.versionName == "26.44.06.1006895251") PromotedPinAdsRequestFingerprint2644 else PromotedPinAdsRequestFingerprint
+        promotedPinRequest.method.leaveEarlyWhenHidingAds("return-void")
 
         // Promoted pins along a route (issue #64). Every directions request asks for them (its
         // promotedPinAdsRequestOptions), and the answer's promoted-pin list goes, apart from the map's own
@@ -112,12 +120,16 @@ internal val hideAdsPatch = bytecodePatch(
         // tagline. It returns at once when hiding ads, as it already does for an empty list; the callout that
         // points at an off-screen ad pin answers "none", as it does for an empty list too.
         SearchAdPinsDrawerFingerprint.method.leaveEarlyWhenHidingAds("return-void")
-        AdPinCalloutFingerprint.method.leaveEarlyWhenHidingAds("sget-object v0, Lbvxj;->a:Lbvxj;\nreturn-object v0")
+        AdPinCalloutFingerprint.method.leaveEarlyWhenHidingAds("sget-object v0, Lbweh;->a:Lbweh;\nreturn-object v0")
 
         // Sponsored-pin placemark objects: the factory returns null instead of
         // building one. Both existing callers already skip a null result.
         AdPlacemarkFactoryFingerprint.method.leaveEarlyWhenHidingAds("const/4 v0, 0x0\nreturn-object v0")
 
+        // 26.44 builds search sponsored placemarks through a void collector
+        // instead of the List-returning builder these two gates patch. The pin
+        // factory above still suppresses the objects themselves.
+        if (packageMetadata.versionName != "26.44.06.1006895251") {
         // Sponsored placemarks list, built from a search response: never build it.
         AdsListBuilderFingerprint.method.leaveEarlyWhenHidingAds(
             "sget-object v0, Ljava/util/Collections;->EMPTY_LIST:Ljava/util/List;\nreturn-object v0",
@@ -144,7 +156,12 @@ internal val hideAdsPatch = bytecodePatch(
                 ExternalLabel("ua_skip", skipInstruction),
             )
         }
+        }
 
+        // 26.44 refactored the unified row builder into larger fragment methods
+        // and replaced the row proto; the factory above still suppresses every
+        // sponsored placemark object. Skip these two 26.43-shaped gates.
+        if (packageMetadata.versionName != "26.44.06.1006895251") {
         // Unified results list: two independent signals mark an entry as an ad
         // (the chaq oneof case, and a placemark's own is-ad query), both gated
         // here. Capture everything needed from the PRISTINE method first, then
@@ -180,7 +197,7 @@ internal val hideAdsPatch = bytecodePatch(
             """
                 sget-boolean v$fallbackScratch, $SHAPES->HIDE_ADS:Z
                 if-eqz v$fallbackScratch, :carry_on
-                invoke-virtual {v$placeRegister}, Lokm;->cw()Z
+                invoke-virtual {v$placeRegister}, Lolg;->cw()Z
                 move-result v$fallbackScratch
                 if-nez v$fallbackScratch, :ua_loop_head
             """,
@@ -214,6 +231,7 @@ internal val hideAdsPatch = bytecodePatch(
                     move-result-object v$register
                 """)
             }
+        }
         }
     }
 }

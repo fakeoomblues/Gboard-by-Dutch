@@ -17,6 +17,9 @@ internal val hideNavigationTabsPatch = bytecodePatch(
     dependsOn(sharedExtensionPatch, activityContextHookPatch)
 
     execute {
+        // 26.44 renamed the home fragment's tab-strip view holder and its binder;
+        // leaving the strip visible is safer than binding a guessed class.
+        if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         markPatched("hideTabsPatched")
 
         // Right after the strip's view holder is stored, hide its root view while

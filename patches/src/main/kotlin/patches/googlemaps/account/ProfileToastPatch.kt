@@ -35,6 +35,9 @@ internal val profileToastPatch = bytecodePatch(
 
     execute {
         if (MicrogSelection.replaces(this, "Remove sign-in prompts")) return@execute
+        // 26.44 rewrote this shared dispatcher case beyond the contiguous span
+        // this patch replaces; keep the other sign-in prompt removals working.
+        if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         // Modern builder: 10 real instructions, this row's whole case.
         ProfileClickModernFingerprint.let { fp ->
             val matches = fp.instructionMatches

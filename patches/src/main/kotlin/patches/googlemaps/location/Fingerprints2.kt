@@ -25,6 +25,19 @@ internal object FusedLocationAvailabilityFingerprint : Fingerprint(
     custom = { _, classDef -> classDef.type == "Laiwt;" },
 )
 
+/** 26.44 keeps the same fused-provider availability test under new names. */
+internal object FusedLocationAvailabilityFingerprint2644 : Fingerprint(
+    name = "g",
+    returnType = "V",
+    parameters = emptyList(),
+    filters = listOf(
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lajcc;", name = "k", type = "Lajkt;"),
+        opcode(Opcode.IF_EQZ, MatchAfterImmediately()),
+        opcode(Opcode.IF_NEZ, MatchAfterImmediately()),
+    ),
+    custom = { _, classDef -> classDef.type == "Lajcc;" },
+)
+
 /**
  * Where every Play services connection Maps opens gets its descriptor: the
  * bundled client's getServiceStartIntent-style package (A()) and service

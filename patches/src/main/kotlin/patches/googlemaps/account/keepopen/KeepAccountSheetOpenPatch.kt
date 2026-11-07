@@ -28,12 +28,12 @@ import org.ungoogled.patches.shared.addInstructionsAtLabel
  */
 private object AccountSheetActionDismissFingerprint : Fingerprint(
     filters = listOf(
-        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lcmar;", name = "e"),
-        methodCall(opcode = Opcode.INVOKE_INTERFACE, definingClass = "Lctxs;", name = "a", location = MatchAfterImmediately()),
-        fieldAccess(opcode = Opcode.SGET_OBJECT, definingClass = "Lcmes;", name = "a", location = MatchAfterImmediately()),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lcmjl;", name = "e"),
+        methodCall(opcode = Opcode.INVOKE_INTERFACE, definingClass = "Lcuge;", name = "a", location = MatchAfterImmediately()),
+        fieldAccess(opcode = Opcode.SGET_OBJECT, definingClass = "Lcmnr;", name = "a", location = MatchAfterImmediately()),
         opcode(Opcode.RETURN_OBJECT, MatchAfterImmediately()),
     ),
-    custom = { method, _ -> method.definingClass == "Lbmou;" },
+    custom = { method, _ -> method.definingClass == "Lbnhv;" },
 )
 
 /**
@@ -58,7 +58,7 @@ internal val accountSheetNoDismissPatch = bytecodePatch(
                     if-eqz v$register, :dismiss
                     const/4 v$register, 0x0
                     sput-boolean v$register, $SHAPES->SKIP_DISMISS:Z
-                    sget-object v$register, Lcmes;->b:Lcmes;
+                    sget-object v$register, Lcmnr;->b:Lcmnr;
                     return-object v$register
                 """,
                 ExternalLabel("dismiss", fp.method.implementation!!.instructions[dismiss]),
@@ -102,8 +102,8 @@ private object SettingsRowClickFingerprint : Fingerprint(
     filters = listOf(
         fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "this", name = "a"),
         opcode(Opcode.MOVE_OBJECT, MatchAfterImmediately()),
-        checkCast("Lolm;", location = MatchAfterImmediately()),
-        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lolm;", location = MatchAfterImmediately()),
+        checkCast("Lomf;", location = MatchAfterImmediately()),
+        fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = "Lomf;", location = MatchAfterImmediately()),
         string("SettingsActionSpecClicked", location = MatchAfterImmediately()),
     ),
 )
@@ -141,6 +141,6 @@ internal val keepAccountSheetOpenPatch = bytecodePatch(
                 """,
             )
         }
-        if (SettingsRowClickFingerprint.method.definingClass != "Loll;") throw PatchException("Settings row is no longer in the shared dispatcher")
+        if (SettingsRowClickFingerprint.method.definingClass != "Lome;") throw PatchException("Settings row is no longer in the shared dispatcher")
     }
 }
