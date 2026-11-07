@@ -5,10 +5,38 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
 import java.io.File
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import org.junit.Assume.assumeNotNull
 import org.junit.Test
 
 class MapsGuidanceComponentTest {
+    @Test fun privateTokenGuardExcludesBothUnsupportedClientsAndPreservesOtherConnectionPaths() {
+        val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
+        val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
+        val original=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }
+            .single { it.type=="Lbeop;" }.methods.single { it.name=="e"&&it.parameterTypes.isEmpty()&&it.returnType=="V" }
+        val before=original.implementation!!.instructions.toList();val mutable=MutableMethod(original)
+        guardMapsPrivateCarToken(mutable);val after=mutable.instructions.toList()
+        assertEquals(before.size+6,after.size)
+        assertEquals("Lbeop;->d:Lbeqa;",(after[0] as ReferenceInstruction).reference.toString())
+        assertEquals("Lbeqt;",(after[1] as ReferenceInstruction).reference.toString())
+        assertEquals("Lpxt;",(after[3] as ReferenceInstruction).reference.toString())
+        assertEquals(Opcode.IF_NEZ,after[2].opcode);assertEquals(Opcode.IF_EQZ,after[4].opcode);assertEquals(Opcode.RETURN_VOID,after[5].opcode)
+        val pc=mutableListOf(0);after.forEach { pc.add(pc.last()+it.codeUnits) }
+        assertEquals(pc[5],pc[2]+(after[2] as OffsetInstruction).codeOffset)
+        assertEquals(pc[6],pc[4]+(after[4] as OffsetInstruction).codeOffset)
+        before.forEachIndexed { index,instruction ->
+            assertEquals(instruction.opcode,after[index+6].opcode)
+            assertEquals((instruction as? ReferenceInstruction)?.reference?.toString(),(after[index+6] as? ReferenceInstruction)?.reference?.toString())
+        }
+        assertTrue(after.drop(6).isNotEmpty())
+    }
     @Test fun suppliedOriginalExposesTheConcreteCachedComponentAndCurrentListener() {
         val path = System.getenv("MAPS_CAR_ORIGINAL_APK"); assumeNotNull(path)
         val dex = DexFileFactory.loadDexContainer(File(path!!), Opcodes.forApi(29))

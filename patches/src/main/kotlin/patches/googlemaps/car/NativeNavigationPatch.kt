@@ -13,11 +13,27 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
 import org.w3c.dom.Element
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 
 private const val ORIGINAL = "com.google.android.apps.gmm.car.GmmCarProjectionService"
 private const val LEGACY_PROVIDER = "com.google.android.apps.gmm.car.projected.service.CarNavigationProviderService"
 private const val ADAPTER = "patches.maps.gearslip.NativeCarService"
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
+
+/** Keep unsupported private clients disconnected; never forge a retail-host grant. */
+internal fun guardMapsPrivateCarToken(method: MutableMethod) {
+    check(method.definingClass == "Lbeop;" && method.name == "e" && method.parameterTypes.isEmpty() && method.returnType == "V")
+    check(method.implementation!!.registerCount > 2) { "Maps' optional car token has no scratch registers" }
+    method.addInstructionsWithLabels(0, """
+        iget-object v0, p0, Lbeop;->d:Lbeqa;
+        instance-of v1, v0, Lbeqt;
+        if-nez v1, :unsupported_private_car_token
+        instance-of v1, v0, Lpxt;
+        if-eqz v1, :original_car_token
+        :unsupported_private_car_token
+        return-void
+    """, ExternalLabel("original_car_token", method.implementation!!.instructions.first()))
+}
 
 /** Check the concrete application path, not an unrelated generated interface. */
 internal fun validateMapsGuidanceComponent(classBy: (String) -> ClassDef) {
@@ -277,17 +293,14 @@ val nativeCarNavigationPatch = bytecodePatch(
         // the adapter's own native presentation uses a separate beld connection.
         requireField("Lbeop;", "d", "Lbeqa;")
         requireField("Lbeqt;", "a", "Lbequ;")
+        requireField("Lpxu;", "c", "Lbeop;")
+        requireMethod("Lpxt;", "<init>", listOf("Lpxu;"), "V")
+        requireMethod("Lpxt;", "b", emptyList(), "V")
         requireMethod("Lbeop;", "e", emptyList(), "V")
         val connect = mutableClassDefBy("Lbeop;").methods.single {
             it.name == "e" && it.parameterTypes.isEmpty() && it.returnType == "V"
         }
-        if (connect.implementation!!.registerCount <= 1) throw PatchException("Maps' optional car token has no scratch register")
-        connect.addInstructionsWithLabels(0, """
-            iget-object v0, p0, Lbeop;->d:Lbeqa;
-            instance-of v0, v0, Lbeqt;
-            if-eqz v0, :original_car_token
-            return-void
-        """, ExternalLabel("original_car_token", connect.implementation!!.instructions.first()))
+        guardMapsPrivateCarToken(connect)
 
         // Native CAL navigation uses the phone's location. Vehicle speed is optional and
         // remains truthfully unavailable when not granted; it must not block GPS routing

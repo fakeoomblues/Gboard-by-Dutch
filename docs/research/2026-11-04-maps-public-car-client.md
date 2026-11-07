@@ -162,6 +162,38 @@ SurfaceControlViewHost branch was implemented or tested. Compact evidence is
 in `.analysis/maps-projection-abi-137`. Fresh build/original-input checks and
 actual route/resize/reconnect acceptance remain required for these corrections.
 
+### Current genuine-AA startup failure
+
+The recovered owned API34 baseline retained AA17 version179664044, native
+projection-role grants and all four APK hashes across cold boot. Native AA
+developer/unknown-source settings and notification-listener consent were
+completed through their normal UI. DHU2.0 completed protocol1.7/TLS1.2 and
+rendered its real1280×480 viewport. Selecting the patched package produced its
+native map, then the traced process terminated with `SecurityException: Wrong
+signature - go/gearhead-retail-device`. This is failed startup evidence, not a
+stable map, Dutch drive or warning/speech acceptance. Full redirected Frida
+output, native logs and raw SDK frames are in `.analysis/navigation-dhu-transport-141`.
+
+The rejection comes through `bdww.run` → `pxt.b` → private `ltf.x` calls while
+creating Google car sensors/messages. Original `pxu` constructs its `beop` token
+with a `pxt` listener; `beop.e()` opens that connection. The previous selective
+guard excluded only `beqt`, so the global `pxt` client still attempted access
+which a re-signed Maps cannot authenticate. The correction excludes these two
+unsupported private clients before connection creation. Other token listeners
+retain the original path; the public CAL/native presentation route remains.
+The host's signature enforcement and all actual warning/focus grants remain
+unchanged. Original-input branch tests verify both exclusions and preservation
+of the remaining method body before a fresh bounded startup attempt.
+
+REA original-source evidence:
+`ev_08cf704e1496fb4c590495e935c879857dbcbe9b0336faa0faac646c468efd90`
+(global client constructor),
+`ev_27fa98fa124afaacf69495d1b71a0a059f3d816e2fbbe9191b25cfef042e8ed2`
+(connection creation), and
+`ev_85ff3eac78109be3e28ca9a0973f38ce9144030afce4344fc12d97acc12c2182`
+(private sensors/messages callback). Build, emitted-APK and runtime verification
+remain separate required gates for the correction.
+
 The earlier signed v1.38 baseline rendered a genuine Maps car map in DriveDeck
 at 1280×480. The new checkpoint06 candidate additionally rendered its native map
 and an active 11-minute/3.7 km route at 1280×480/160dpi with **only the AA stub**
