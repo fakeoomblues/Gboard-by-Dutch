@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.53.4](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.53.4)** · 65 apps · 342 patches
+**Patch bundle [v1.53.6](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.53.6)** · 65 apps · 346 patches
 
 ### Weather
 
@@ -108,7 +108,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [Apple Music](docs/site/en/apps/apple-music.md) | See guide | 7.0.0 | APKM | 1 |
-| [Deezer](docs/site/en/apps/deezer.md) | See guide | 9.0.26.3 | APKM | 1 |
+| [Deezer](docs/site/en/apps/deezer.md) | Tracking | 9.0.26.3 | APKM | 5 |
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |

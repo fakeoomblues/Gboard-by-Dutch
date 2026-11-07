@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.53.5**
+**Patchbundel: 1.53.6**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -935,4 +935,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Allow all Android Auto hosts | Aan | 7.2.1.43844 |
 
-[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
+[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)

@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cf4107ac1ae7e04e1ef6426ac08542332d77adf4/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.53.6.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cf4107ac1ae7](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cf4107ac1ae7e04e1ef6426ac08542332d77adf4). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.53.6](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.5...v1.53.6) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Deezer:** describe the verified Android Auto browser and queue ([cf4107a](https://gitlab.com/johninnld/nl-morphe-patches/commit/cf4107ac1ae7e04e1ef6426ac08542332d77adf4))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5259e88d68a2e8e7696e224d24bdeca6106218ac/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.53.4.**
