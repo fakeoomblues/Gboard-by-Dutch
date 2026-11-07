@@ -435,6 +435,10 @@ public final class CustomizationActivity extends Activity {
             TextView sourceSub=(TextView)((LinearLayout)sourceRow.getChildAt(0)).getChildAt(1);
             sourceRow.setOnClickListener(v->choose("Navigation data source",ExternalTelemetry.LABELS,ExternalTelemetry.sourceIndex(this),which->{ExternalTelemetry.select(this,ExternalTelemetry.SOURCES[which]);sourceSub.setText(ExternalTelemetry.LABELS[which]);nativeControls.removeAllViews();buildNativeWarningControls(nativeControls);}));
             body.addView(sourceRow);
+            LinearLayout current=rowBase(getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl")?"Verbindingsstatus":"Connection status",ExternalTelemetry.status());
+            TextView currentSub=(TextView)((LinearLayout)current.getChildAt(0)).getChildAt(1);
+            current.setOnClickListener(v->WazeAlerts.ask());body.addView(current);
+            live(()->currentSub.setText(ExternalTelemetry.status()));
             body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
             buildNativeWarningControls(nativeControls);body.addView(nativeControls);
             LinearLayout kindsRow = rowBase("Map-pin and legacy alert types", WazeAlerts.kindsSummary(this));
@@ -452,10 +456,7 @@ public final class CustomizationActivity extends Activity {
             Switch compact=new Switch(this);compact.setChecked(ExternalTelemetry.widgetEnabled(this));
             body.addView(toggleRow("Provider speed and average-speed control", "Use De-Waze or Flitsmeister values in Maps’ speed display; show observed average, progress and remaining distance separately. Maps supplies missing values",compact));
             compact.setOnCheckedChangeListener((b,on)->ExternalTelemetry.setWidget(this,on));
-            LinearLayout current=rowBase("Source now",ExternalTelemetry.status());
-            TextView currentSub=(TextView)((LinearLayout)current.getChildAt(0)).getChildAt(1);
-            current.setOnClickListener(v->WazeAlerts.ask());body.addView(current);
-            live(()->currentSub.setText(ExternalTelemetry.status()));
+
 
     }
 

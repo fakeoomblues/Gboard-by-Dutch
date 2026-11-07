@@ -85,9 +85,9 @@ public class TelemetryRuntimeTest {
    assertTrue(TelemetryRuntime.warningBridgeStatus().contains("not connected"));
    TelemetryStore store=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"store");
    assertTrue(store.accept(TelemetryStoreTest.packet(provider,"status-data",1,SystemClock.elapsedRealtime()),provider,SystemClock.elapsedRealtime()));
-   assertTrue(TelemetryRuntime.dataStatus().contains("connected · receiving data"));
+   assertTrue(TelemetryRuntime.dataStatus().contains("Receiving data from"));
    assertTrue("Telemetry alone must not prove the warning API works",TelemetryRuntime.warningBridgeStatus().contains("not connected"));
-   assertTrue(TelemetryRuntime.statusText().startsWith(TelemetryRuntime.providerName()+" · Warning bridge:"));
+   assertTrue(TelemetryRuntime.statusText().startsWith(TelemetryRuntime.providerName()+" · ○ Warnings:"));
   }
  }
  @Test public void realWarningHandshakeIsReportedForEachProviderAndSourceSwitchClearsIt() throws Exception {
@@ -106,10 +106,10 @@ public class TelemetryRuntimeTest {
    try(nl.johninnl.navigation.alerts.WarningEndpoint endpoint=new nl.johninnl.navigation.alerts.WarningEndpoint(app,uid->uid==20000?app.getPackageName():null,caps)){
     android.os.Bundle status=new android.os.Bundle();status.putBinder("warning_api",endpoint.binder());status.putIntArray("warning_protocols",new int[]{1});
     assertTrue(session.prepare(provider,status,generation));
-    assertEquals("Warning bridge: connected",TelemetryRuntime.warningBridgeStatus());
-    assertTrue("A working warning bridge does not require a speed fix",TelemetryRuntime.dataStatus().contains("no fresh data"));
+    assertEquals("✓ Warnings: connected to "+TelemetryRuntime.providerName(),TelemetryRuntime.warningBridgeStatus());
+    assertTrue("A working warning bridge does not require a speed fix",TelemetryRuntime.dataStatus().contains("No recent data"));
     org.robolectric.util.ReflectionHelpers.setField(session,"captureComplete",false);
-    assertEquals("Warning bridge: connected · warning coverage incomplete",TelemetryRuntime.warningBridgeStatus());
+    assertEquals("! Warnings: connected to "+TelemetryRuntime.providerName()+" · some warning types unavailable",TelemetryRuntime.warningBridgeStatus());
     TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
     TelemetryRuntime.select(provider);assertTrue("The previous session cannot mark a new selection connected",TelemetryRuntime.warningBridgeStatus().contains("not connected"));
    }
@@ -122,12 +122,12 @@ public class TelemetryRuntimeTest {
    nl.johninnl.navigation.startup.NavigationClient startup=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"startup");
    long generation=org.robolectric.util.ReflectionHelpers.getField(startup,"generation");
    assertTrue(session.prepare(provider,new android.os.Bundle(),generation));
-   assertEquals(TelemetryStore.WAZE.equals(provider)?"Warning bridge: data only · native warnings unavailable":"Warning bridge: unavailable · update the selected provider",TelemetryRuntime.warningBridgeStatus());
+   assertEquals("! Warnings: update the patches for "+TelemetryRuntime.providerName(),TelemetryRuntime.warningBridgeStatus());
    android.os.Bundle incompatible=new android.os.Bundle();incompatible.putIntArray("warning_protocols",new int[]{2});
    assertFalse(session.prepare(provider,incompatible,generation));
-   assertEquals("Warning bridge: unavailable · update the selected provider",TelemetryRuntime.warningBridgeStatus());
-   org.robolectric.util.ReflectionHelpers.setField(session,"state","connecting");assertEquals("Warning bridge: connecting",TelemetryRuntime.warningBridgeStatus());
-   org.robolectric.util.ReflectionHelpers.setField(session,"state","disconnected");assertEquals("Warning bridge: disconnected · reconnecting",TelemetryRuntime.warningBridgeStatus());
+   assertEquals("! Warnings: update the patches for "+TelemetryRuntime.providerName(),TelemetryRuntime.warningBridgeStatus());
+   org.robolectric.util.ReflectionHelpers.setField(session,"state","connecting");assertEquals("… Warnings: connecting to "+TelemetryRuntime.providerName(),TelemetryRuntime.warningBridgeStatus());
+   org.robolectric.util.ReflectionHelpers.setField(session,"state","disconnected");assertEquals("! Warnings: connection lost · reconnecting",TelemetryRuntime.warningBridgeStatus());
   }
  }
  @Test public void settingsRepublishBridgeHealthWithoutAChangeInSpeedOrEngineState(){
@@ -141,16 +141,16 @@ public class TelemetryRuntimeTest {
  @Test public void telemetryExpiryDoesNotLeaveSettingsClaimingFreshData(){
   TelemetryStore store=org.robolectric.util.ReflectionHelpers.getStaticField(TelemetryRuntime.class,"store");
   long now=SystemClock.elapsedRealtime();assertTrue(store.accept(TelemetryStoreTest.packet(TelemetryStore.WAZE,"status-expiry",1,now),TelemetryStore.WAZE,now));
-  assertTrue(TelemetryRuntime.dataStatus().contains("receiving data"));
+  assertTrue(TelemetryRuntime.dataStatus().contains("Receiving data from"));
   org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(11));
-  assertEquals("Data: no fresh data · using Vela data",TelemetryRuntime.dataStatus());
+  assertEquals("! No recent data from De-Waze · Vela is using its own data",TelemetryRuntime.dataStatus());
  }
  @Test @Config(qualifiers="nl-rNL") public void dutchSettingsExplainBridgeAndFallbackForBothProviders(){
   for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
    TelemetryRuntime.select(provider);
-   assertEquals("Waarschuwingsbrug: niet verbonden",TelemetryRuntime.warningBridgeStatus());
-   assertEquals("Gegevens: geen recente gegevens · Vela-gegevens worden gebruikt",TelemetryRuntime.dataStatus());
-   assertTrue(TelemetryRuntime.providerServiceStatus().startsWith("Achtergrondservice: "));
+   assertEquals("○ Waarschuwingen: niet verbonden met "+TelemetryRuntime.providerName(),TelemetryRuntime.warningBridgeStatus());
+   assertEquals("! Geen recente gegevens van "+TelemetryRuntime.providerName()+" · Vela gebruikt eigen gegevens",TelemetryRuntime.dataStatus());
+   assertTrue(TelemetryRuntime.providerServiceStatus().startsWith("○ "+TelemetryRuntime.providerName()));
   }
  }
 

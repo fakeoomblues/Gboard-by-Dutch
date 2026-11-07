@@ -32,6 +32,8 @@ public class ExternalSettingsTest {
         assertEquals(TelemetryStore.FLITSMEISTER,ExternalTelemetry.source(activity));
         TextView selection=(TextView)((LinearLayout)((LinearLayout)body.getChildAt(0)).getChildAt(0)).getChildAt(1);
         assertTrue(selection.getText().toString().contains("Flitsmeister"));
+        TextView statusTitle=(TextView)((LinearLayout)((LinearLayout)body.getChildAt(1)).getChildAt(0)).getChildAt(0);
+        assertEquals("Connection status",statusTitle.getText().toString());
         org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
         body.measure(View.MeasureSpec.makeMeasureSpec(411,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(1200,View.MeasureSpec.AT_MOST));body.layout(0,0,411,body.getMeasuredHeight());
         assertTrue(body.getHeight()>400);assertTrue(body.getHeight()<1200);save(body,"external-source-settings.png");
@@ -45,7 +47,7 @@ public class ExternalSettingsTest {
         LinearLayout body=new LinearLayout(activity);body.setOrientation(LinearLayout.VERTICAL);activity.buildExternalDataControls(body);
         body.getChildAt(0).performClick();AlertDialog dialog=ShadowAlertDialog.getLatestAlertDialog();dialog.getListView().performItemClick(null,2,2);
         assertEquals(TelemetryStore.WAZE,ExternalTelemetry.source(activity));
-        LinearLayout controls=(LinearLayout)body.getChildAt(2);LinearLayout output=(LinearLayout)controls.getChildAt(0);
+        LinearLayout controls=(LinearLayout)body.getChildAt(3);LinearLayout output=(LinearLayout)controls.getChildAt(0);
         TextView label=(TextView)((LinearLayout)output.getChildAt(0)).getChildAt(0);assertEquals("De-Waze warning audio",label.getText().toString());
         output.performClick();AlertDialog outputs=ShadowAlertDialog.getLatestAlertDialog();assertNotNull(outputs);
         outputs.getListView().performItemClick(null,1,1);

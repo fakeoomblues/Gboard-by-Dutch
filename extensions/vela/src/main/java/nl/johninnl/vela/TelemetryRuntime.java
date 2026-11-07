@@ -244,40 +244,19 @@ public final class TelemetryRuntime {
         try{return !voice.getClass().getField("n").getBoolean(voice)||voice.getClass().getField("o").getBoolean(voice);}catch(ReflectiveOperationException e){return false;}
     }
     public static String providerName() { return WarningProviders.supported(selected())?WarningProviders.displayName(selected()):"Vela"; }
-    /** Settings health: an engine or telemetry packet alone never proves the warning bridge. */
+    /** Settings health: an engine or telemetry packet alone never proves the warning connection. */
     public static String warningBridgeStatus() {
-        String state=semantic==null?"off":semantic.state();
-        String label;
-        switch(state){
-            case "ready":
-                if(semantic.advertisesEvents(selected())){
-                    label=dutch()?"verbonden":"connected";
-                    if(!semantic.captureComplete())label+=dutch()?" · waarschuwingen nog onvolledig":" · warning coverage incomplete";
-                    break;
-                }
-                label=dutch()?"niet verbonden":"not connected";break;
-            case "connecting":label=dutch()?"verbinden":"connecting";break;
-            case "disconnected":label=dutch()?"verbinding verbroken · opnieuw verbinden":"disconnected · reconnecting";break;
-            case "legacy":
-                label=TelemetryStore.WAZE.equals(selected())?(dutch()?"alleen gegevens · native waarschuwingen niet beschikbaar":"data only · native warnings unavailable")
-                        :(dutch()?"niet beschikbaar · werk de geselecteerde bronapp bij":"unavailable · update the selected provider");break;
-            case "incompatible":label=dutch()?"niet beschikbaar · werk de geselecteerde bronapp bij":"unavailable · update the selected provider";break;
-            default:
-                String engine=startup==null?"off":startup.state();
-                boolean connecting=engine.equals("connecting")||engine.equals("checking")||engine.equals("starting")||engine.equals("reconnecting")||engine.equals("running");
-                label=connecting?(dutch()?"verbinden":"connecting"):(dutch()?"niet verbonden":"not connected");
-        }
-        return (dutch()?"Waarschuwingsbrug: ":"Warning bridge: ")+label;
+        return nl.johninnl.navigation.startup.NavigationHealth.warnings(providerName(),
+            semantic==null?"off":semantic.state(),semantic!=null&&semantic.advertisesEvents(selected()),
+            semantic!=null&&semantic.captureComplete(),startup==null?"off":startup.state(),dutch());
     }
     public static String providerServiceStatus() {
-        return (dutch()?"Achtergrondservice: ":"Background service: ")+(startup==null?(dutch()?"uit":"off"):startup.statusLabel(dutch()));
+        return nl.johninnl.navigation.startup.NavigationHealth.service(providerName(),startup==null?"off":startup.state(),dutch());
     }
     public static String dataStatus() {
         TelemetryStore.View v=view();
-        String status=v.external?(dutch()?"verbonden · gegevens worden ontvangen":"connected · receiving data"):(dutch()?"geen recente gegevens":"no fresh data");
-        if(!v.external)status+=dutch()?" · Vela-gegevens worden gebruikt":" · using Vela data";
-        else if(v.currentKmh==null||v.limitKmh==null)status+=dutch()?" · Vela waar nodig":" · Vela fallback where needed";
-        return (dutch()?"Gegevens: ":"Data: ")+status;
+        return nl.johninnl.navigation.startup.NavigationHealth.data(providerName(),"Vela",v.external,
+            v.currentKmh==null||v.limitKmh==null,dutch());
     }
     public static String statusText() {
         if(selected().isEmpty())return "Vela";

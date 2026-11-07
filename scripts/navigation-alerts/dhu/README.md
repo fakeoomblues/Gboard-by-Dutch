@@ -2,6 +2,30 @@
 
 1280x480 is the primary real-car viewport. DHU supports standard encoded resolutions; use 1280x720 with 240 total vertical margin and native cropmargins=true, yielding a 1280x480 presented viewport. This is native head-unit configuration, not post-processing of screenshots. Verify the requested margins, resulting view bounds and captured image dimensions during acceptance. DriveDeck uses a native 1280x480 surface. Other comparison profiles: 1280x720 and 800x480, each at 160dpi with touch and rotary controls enabled.
 
+## Current availability (2026-11-07)
+
+The initialized AVD data described below is historical. Its registered directory
+currently lacks `config.ini`, userdata and snapshots; the registration alone does
+not provide a reusable baseline. Do not launch it or claim the old initialized
+state is available. The private system-image tools remain, and the owner has
+instead authorized normal testing on the connected phone without Frida.
+The original Vela/FM phone installations were updated through Morphe without
+clearing data or replacing the signing identity. Waze/Maps updates and full
+phone DHU acceptance are still open.
+
+For phone GPS replay, DHU's documented `location lat long accuracy altitude speed
+bearing` command accepts speed in metres per second: 100 km/h is
+27.777778 m/s. The profile must enable `location` under `[sensors]` or updates
+are ignored. Sending a sensor command is not proof that either receiver or the
+FM/Waze producer has accepted that fix. Verify native provider location/speed
+before the bounded drive; only GPS may be simulated. Do not inject warnings or
+substitute the head unit's separate vehicle-speed sensor for a genuine provider
+GPS speed. See the [official DHU sensor guide](https://developer.android.com/training/cars/testing/dhu#sensors).
+
+The remaining sections retain the prior setup and UI recipe as historical
+recovery information. Preserve surviving inputs and exported evidence; do not
+assume missing private manifests or scripts can be reused.
+
 ## Owned VM root and connectivity tools
 
 The owner authorized rootAVD/avdroot and native curl setup on 2026-11-05.

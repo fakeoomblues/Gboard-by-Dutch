@@ -281,12 +281,13 @@ public final class ExternalTelemetry {
     static String status(){
         if(!modern())return LEGACY.equals(source)?WazeAlerts.legacyStatus():"Off · Google Maps";
         TelemetryStore.View v=view();
-        String out=provider()+(v.external?" · connected":" unavailable · Google Maps fallback");
-        if(startup!=null)out+=" · "+startup.statusLabel(false);
-        if(semantic!=null&&WarningProviders.supported(source)&&"ready".equals(semantic.state()))
-            out+=semantic.captureComplete()?" · warnings connected":" · warning coverage incomplete";
-        if(WarningProviders.supported(source)&&warningPreferences!=null)out+=" · "+warningAudioStatus();
-        if(v.external&&(v.currentKmh==null||v.limitKmh==null))out+=" · Maps where needed";
+        boolean dutch=app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
+        String out=nl.johninnl.navigation.startup.NavigationHealth.warnings(provider(),
+            semantic==null?"off":semantic.state(),semantic!=null&&semantic.advertisesEvents(source),
+            semantic!=null&&semantic.captureComplete(),startup==null?"off":startup.state(),dutch)
+            +"\n"+nl.johninnl.navigation.startup.NavigationHealth.service(provider(),startup==null?"off":startup.state(),dutch)
+            +"\n"+nl.johninnl.navigation.startup.NavigationHealth.data(provider(),"Google Maps",v.external,v.currentKmh==null||v.limitKmh==null,dutch);
+        if(WarningProviders.supported(source)&&warningPreferences!=null)out+="\n"+warningAudioStatus();
         if(v.zoneActive)out+="\n"+(v.averageKmh==null?"Observed partial average pending":String.format(Locale.getDefault(),"Observed partial average %.0f km/h",v.averageKmh))+String.format(Locale.getDefault()," · %s%.0f%% · %s remaining",v.progressEstimated?"≈":"",v.progressPercent,distance(v.remainingMeters,PowerSaving.miles()));
         else if(v.approachDistanceMeters!=null)out+="\nAverage-speed zone "+(v.approachEstimated?"≈":"")+distance(v.approachDistanceMeters,PowerSaving.miles())+" ahead";
         return out;
