@@ -636,6 +636,37 @@
       ]
     },
     {
+      "name": "Android Auto Up next",
+      "description": "Publishes the player's real upcoming tracks to the media session on accounts whose peek-next restriction would otherwise hide the car's Up next list.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.spotify.music",
+          "name": "Spotify",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#1ED760",
+          "signatures": [
+            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.2.0.26",
+              "versionCodes": {
+                "ARM64_V8A": 148373686
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Android Auto nieuws",
       "description": "Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio from the audio bundles the app itself renders. Selecting a headline restores the full ordered feed inside the app, so playback, Up next and premium entitlement follow the app's own player. The replaced Start content is never shown.",
       "default": true,
@@ -777,7 +808,7 @@
     },
     {
       "name": "Android Auto support",
-      "description": "Makes Spotify's car media browser, Home, Library and Up next work with DriveDeck, Gearslip or another compatible Android Auto host, including the bundled car service. Spotify's account, catalogue and playback services are unchanged.",
+      "description": "Makes Spotify's car media browser, Home and Library work with DriveDeck, Gearslip or another compatible Android Auto host, including the bundled car service. Spotify's account, catalogue and playback services are unchanged.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -7974,7 +8005,7 @@
     {
       "name": "Hide video shelves",
       "description": "Drops video/watch sections from Spotify's resolved Home feed, so video podcast and music-video shelves are not shown.",
-      "default": true,
+      "default": false,
       "category": null,
       "compatiblePackages": [
         {

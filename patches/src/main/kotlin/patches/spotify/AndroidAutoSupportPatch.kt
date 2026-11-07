@@ -22,7 +22,6 @@ private const val CAR_CLIENT_HELPER = "Lp/jo31;"
 private const val CAR_ROOT_FILTER = "Lp/z54;"
 private const val CAR_ROOT_WRAPPER = "Lp/w6o0;"
 private const val LIBRARY_PROVIDER = "Lp/v1v0;"
-private const val NOW_PLAYING_MODEL = "Lp/d520;"
 private const val GEARHEAD = "com.google.android.projection.gearhead"
 private const val STRING_EQUALS = "Lp/u890;->j(Ljava/lang/Object;Ljava/lang/Object;)Z"
 
@@ -34,14 +33,13 @@ private const val STRING_EQUALS = "Lp/u890;->j(Ljava/lang/Object;Ljava/lang/Obje
  *   shared car-client predicate (`jo31.o`) and Browse/Recently played/Library root filters
  *   (`z54.a`) accept a custom host;
  * - the Free/custom-host car providers (`w6o0`, `v1v0`) use the real Home and Library feeds;
- * - the car media session publishes the player's real Up next queue (`d520`).
  *
  * Spotify's account, catalogue and playback services are unchanged.
  */
 @Suppress("unused")
 val spotifyAndroidAutoSupport = bytecodePatch(
     name = "Android Auto support",
-    description = "Makes Spotify's car media browser, Home, Library and Up next work with " +
+    description = "Makes Spotify's car media browser, Home and Library work with " +
         "DriveDeck, Gearslip or another compatible Android Auto host, including the bundled " +
         "car service. Spotify's account, catalogue and playback services are unchanged.",
     default = true,
@@ -144,33 +142,5 @@ val spotifyAndroidAutoSupport = bytecodePatch(
             """,
         )
 
-        // Car media session: publish the real Up next queue even when peek-next is restricted.
-        val nowPlaying = mutableClassDefBy(NOW_PLAYING_MODEL).methods.single { candidate ->
-            candidate.name == "p" &&
-                candidate.implementation != null &&
-                candidate.parameterTypes.map(CharSequence::toString).take(2) ==
-                listOf(
-                    "Lcom/spotify/player/model/PlayerState;",
-                    "Lcom/spotify/player/model/PlayerQueue;",
-                )
-        }
-        val instructions = nowPlaying.implementation!!.instructions.toList()
-        val peekGate = instructions.indexOfFirst { instruction ->
-            if (instruction.opcode != Opcode.INVOKE_STATIC) return@indexOfFirst false
-            val reference = instruction.getReference<MethodReference>() ?: return@indexOfFirst false
-            reference.definingClass == "Lp/o4p1;" && reference.name == "t" &&
-                reference.returnType == "Z" &&
-                reference.parameterTypes.map(CharSequence::toString) ==
-                listOf("Lcom/spotify/player/model/PlayerState;")
-        }
-        check(peekGate >= 0) { "Spotify peek-next gate changed" }
-        val emptyGate = (peekGate - 1 downTo maxOf(0, peekGate - 5))
-            .firstOrNull { instructions[it].opcode == Opcode.IF_EQZ }
-            ?: throw IllegalStateException("Spotify queue empty gate changed")
-        val peekBranch = (peekGate + 1 until minOf(instructions.size, peekGate + 5))
-            .firstOrNull { instructions[it].opcode == Opcode.IF_NEZ }
-            ?: throw IllegalStateException("Spotify queue peek gate changed")
-        nowPlaying.replaceInstruction(emptyGate, "nop")
-        nowPlaying.replaceInstruction(peekBranch, "nop")
     }
 }

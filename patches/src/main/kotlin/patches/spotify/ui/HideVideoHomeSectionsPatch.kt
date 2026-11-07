@@ -23,7 +23,7 @@ val hideVideoHomeSectionsPatch = bytecodePatch(
     name = "Hide video shelves",
     description = "Drops video/watch sections from Spotify's resolved Home feed, so video " +
         "podcast and music-video shelves are not shown.",
-    default = true,
+    default = false,
 ) {
     compatibleWith(COMPATIBILITY_SPOTIFY)
 

@@ -678,6 +678,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto Up next | Off | 9.2.0.26 |
 | Android Auto support | On | 9.2.0.26 |
 | Block popup ads | On | 9.2.0.26 |
 | Change package name | Off | 9.2.0.26 |
@@ -692,7 +693,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide premium settings sections | On | 9.2.0.26 |
 | Hide shuffle controls | On | 9.2.0.26 |
 | Hide video ads | On | 9.2.0.26 |
-| Hide video shelves | On | 9.2.0.26 |
+| Hide video shelves | Off | 9.2.0.26 |
 | Remove shuffle restriction | On | 9.2.0.26 |
 | Sanitize sharing links | On | 9.2.0.26 |
 | Show Premium in the account row | On | 9.2.0.26 |
@@ -930,4 +931,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

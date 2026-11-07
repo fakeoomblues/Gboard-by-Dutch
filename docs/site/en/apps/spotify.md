@@ -12,7 +12,8 @@ Select the complete original archive for this exact version in Morphe Manager, i
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Android Auto support** | On | Makes the car media browser, Home, Library and Up next work with DriveDeck, Gearslip or another compatible Android Auto host, including Spotify's bundled car service. |
+| **Android Auto support** | On | Makes the car media browser, Home and Library work with DriveDeck, Gearslip or another compatible Android Auto host, including Spotify's bundled car service. |
+| **Android Auto Up next** | Off | Publishes the real upcoming tracks so the car's Up next list is populated; opt-in while queue startup is verified. |
 | **Block popup ads** | On | Blocks fullscreen promotions shown when opening the app. |
 | **Change package name** | Off | Changes the package name and app name so the patched app can be installed beside the original. |
 | **Disable ad breaks** | Off | Asks Spotify's ads service to turn its audio ad slots off. Experimental: the request path is repaired for this version, but it needs a signed-in free account and real playback to confirm. |
@@ -26,7 +27,7 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | **Hide Premium tab** | On | Removes the Premium tab from the bottom navigation bar. |
 | **Hide shuffle controls** | On | Removes the shuffle and Smart Shuffle buttons; Spotify Free still enforces its shuffled queue. |
 | **Hide video ads** | On | Disables the video ad plugin of the now-playing view. |
-| **Hide video shelves** | On | Drops video and watch sections from the resolved Home feed. |
+| **Hide video shelves** | Off | Drops video and watch sections from the resolved Home feed. |
 | **Remove shuffle restriction** | On | Stops the Free shuffle upsell and lets the app use normal play order and shuffle controls. |
 | **Sanitize sharing links** | On | Removes `si` and `utm_*` tracking parameters from shared and copied links. |
 | **Show Premium in the account row** | On | Shows Premium instead of Free in the account and plan rows; a label change only. |

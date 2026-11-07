@@ -12,7 +12,8 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Android Auto support** | Aan | Maakt de auto-mediabrowser, Home, Bibliotheek en Up next bruikbaar met DriveDeck, Gearslip of een andere compatibele Android Auto-host, inclusief de meegeleverde autoservice van Spotify. |
+| **Android Auto support** | Aan | Maakt de auto-mediabrowser, Home en Bibliotheek bruikbaar met DriveDeck, Gearslip of een andere compatibele Android Auto-host, inclusief de meegeleverde autoservice van Spotify. |
+| **Android Auto Up next** | Uit | Publiceert de echte komende nummers zodat de Up next-lijst in de auto gevuld is; optioneel terwijl het starten van de wachtrij wordt gecontroleerd. |
 | **Block popup ads** | Aan | Blokkeert volledige promotieschermen bij het openen van de app. |
 | **Change package name** | Uit | Wijzigt pakketnaam en appnaam zodat de gepatchte app naast het origineel kan staan. |
 | **Disable ad breaks** | Uit | Vraagt de advertentiedienst van Spotify de audio-advertentieslots uit te zetten. Experimenteel: het verzoekpad is voor deze versie hersteld, maar echte weergave met een gratis account is niet vastgesteld. |
@@ -26,7 +27,7 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 | **Hide Premium tab** | Aan | Verwijdert het tabblad Premium uit de onderste navigatie. |
 | **Hide shuffle controls** | Aan | Verwijdert de knoppen Shuffle en Smart Shuffle; Spotify Free dwingt nog steeds een geschudde wachtrij af. |
 | **Hide video ads** | Aan | Schakelt de videoadvertentie-plugin van de now-playing-weergave uit. |
-| **Hide video shelves** | Aan | Verwijdert video- en kijksecties uit de opgeloste Home-feed. |
+| **Hide video shelves** | Uit | Verwijdert video- en kijksecties uit de opgeloste Home-feed. |
 | **Remove shuffle restriction** | Aan | Stopt de shuffle-upsell voor Free en laat de app normale afspeelvolgorde en shuffleknoppen gebruiken. |
 | **Sanitize sharing links** | Aan | Verwijdert de trackingparameters `si` en `utm_*` uit gedeelde en gekopieerde links. |
 | **Show Premium in the account row** | Aan | Toont Premium in plaats van Free in de account- en planrijen; alleen het label verandert. |
