@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.52.2**
+**Patch bundle: 1.53.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -312,38 +312,38 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| 120 refresh rate | On | 26.43.05.1002020710 |
-| Account sheet cleanup | On | 26.43.05.1002020710 |
-| Add microG-RE support | Off | 26.43.05.1002020710 |
-| Add original microG support | Off | 26.43.05.1002020710 |
-| Any media app | On | 26.43.05.1002020710 |
-| Avoid Flock cameras | On | 26.43.05.1002020710 |
-| Better offline maps | On | 26.43.05.1002020710 |
-| Black theme | On | 26.43.05.1002020710 |
-| Blue pin | On | 26.43.05.1002020710 |
-| Bypass Play Services checks | On | 26.43.05.1002020710 |
-| Change app name | On | 26.43.05.1002020710 |
-| Change package name | On | 26.43.05.1002020710 |
-| Customization screen | On | 26.43.05.1002020710 |
-| Flock cameras | On | 26.43.05.1002020710 |
-| Follow playing media | Off | 26.43.05.1002020710 |
-| Hide ads and clutter | On | 26.43.05.1002020710 |
-| Legacy icon | On | 26.43.05.1002020710 |
-| Location provider toggle | On | 26.43.05.1002020710 |
-| Native navigation for Gearslip and Android Auto | On | 26.43.05.1002020710 |
-| Offline saved places | On | 26.43.05.1002020710 |
-| Power saving mode | On | 26.43.05.1002020710 |
-| Proxy | On | 26.43.05.1002020710 |
-| Rectangle shapes | On | 26.43.05.1002020710 |
-| Remove permissions | On | 26.43.05.1002020710 |
-| Remove sign-in prompts | On | 26.43.05.1002020710 |
-| Remove telemetry | On | 26.43.05.1002020710 |
-| Speed cameras | On | 26.43.05.1002020710 |
-| Speeding chime | On | 26.43.05.1002020710 |
-| Trim account menu | On | 26.43.05.1002020710 |
+| 120 refresh rate | On | 26.44.06.1006895251 |
+| Account sheet cleanup | On | 26.44.06.1006895251 |
+| Add microG-RE support | Off | 26.44.06.1006895251 |
+| Add original microG support | Off | 26.44.06.1006895251 |
+| Any media app | On | 26.44.06.1006895251 |
+| Avoid Flock cameras | On | 26.44.06.1006895251 |
+| Better offline maps | On | 26.44.06.1006895251 |
+| Black theme | On | 26.44.06.1006895251 |
+| Blue pin | On | 26.44.06.1006895251 |
+| Bypass Play Services checks | On | 26.44.06.1006895251 |
+| Change app name | On | 26.44.06.1006895251 |
+| Change package name | On | 26.44.06.1006895251 |
+| Customization screen | On | 26.44.06.1006895251 |
+| Flock cameras | On | 26.44.06.1006895251 |
+| Follow playing media | Off | 26.44.06.1006895251 |
+| Hide ads and clutter | On | 26.44.06.1006895251 |
+| Legacy icon | On | 26.44.06.1006895251 |
+| Location provider toggle | On | 26.44.06.1006895251 |
+| Native navigation for Gearslip and Android Auto | On | 26.44.06.1006895251 |
+| Offline saved places | On | 26.44.06.1006895251 |
+| Power saving mode | On | 26.44.06.1006895251 |
+| Proxy | On | 26.44.06.1006895251 |
+| Rectangle shapes | On | 26.44.06.1006895251 |
+| Remove permissions | On | 26.44.06.1006895251 |
+| Remove sign-in prompts | On | 26.44.06.1006895251 |
+| Remove telemetry | On | 26.44.06.1006895251 |
+| Speed cameras | On | 26.44.06.1006895251 |
+| Speeding chime | On | 26.44.06.1006895251 |
+| Trim account menu | On | 26.44.06.1006895251 |
 | Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Waze alerts | On | 26.43.05.1002020710 |
-| Zoom controls in navigation | On | 26.43.05.1002020710 |
+| Waze alerts | On | 26.44.06.1006895251 |
+| Zoom controls in navigation | On | 26.44.06.1006895251 |
 
 ## GVA
 
@@ -693,7 +693,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide premium settings sections | On | 9.2.0.26 |
 | Hide shuffle controls | On | 9.2.0.26 |
 | Hide video ads | On | 9.2.0.26 |
-| Hide video shelves | Off | 9.2.0.26 |
+| Hide video shelves | On | 9.2.0.26 |
 | Remove shuffle restriction | On | 9.2.0.26 |
 | Sanitize sharing links | On | 9.2.0.26 |
 | Show Premium in the account row | On | 9.2.0.26 |

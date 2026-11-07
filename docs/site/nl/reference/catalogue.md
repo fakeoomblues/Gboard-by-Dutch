@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.52.2**
+**Patchbundel: 1.53.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -312,38 +312,38 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| 120 refresh rate | Aan | 26.43.05.1002020710 |
-| Account sheet cleanup | Aan | 26.43.05.1002020710 |
-| Add microG-RE support | Uit | 26.43.05.1002020710 |
-| Add original microG support | Uit | 26.43.05.1002020710 |
-| Any media app | Aan | 26.43.05.1002020710 |
-| Avoid Flock cameras | Aan | 26.43.05.1002020710 |
-| Better offline maps | Aan | 26.43.05.1002020710 |
-| Black theme | Aan | 26.43.05.1002020710 |
-| Blue pin | Aan | 26.43.05.1002020710 |
-| Bypass Play Services checks | Aan | 26.43.05.1002020710 |
-| Change app name | Aan | 26.43.05.1002020710 |
-| Change package name | Aan | 26.43.05.1002020710 |
-| Customization screen | Aan | 26.43.05.1002020710 |
-| Flock cameras | Aan | 26.43.05.1002020710 |
-| Follow playing media | Uit | 26.43.05.1002020710 |
-| Hide ads and clutter | Aan | 26.43.05.1002020710 |
-| Legacy icon | Aan | 26.43.05.1002020710 |
-| Location provider toggle | Aan | 26.43.05.1002020710 |
-| Native navigation for Gearslip and Android Auto | Aan | 26.43.05.1002020710 |
-| Offline saved places | Aan | 26.43.05.1002020710 |
-| Power saving mode | Aan | 26.43.05.1002020710 |
-| Proxy | Aan | 26.43.05.1002020710 |
-| Rectangle shapes | Aan | 26.43.05.1002020710 |
-| Remove permissions | Aan | 26.43.05.1002020710 |
-| Remove sign-in prompts | Aan | 26.43.05.1002020710 |
-| Remove telemetry | Aan | 26.43.05.1002020710 |
-| Speed cameras | Aan | 26.43.05.1002020710 |
-| Speeding chime | Aan | 26.43.05.1002020710 |
-| Trim account menu | Aan | 26.43.05.1002020710 |
+| 120 refresh rate | Aan | 26.44.06.1006895251 |
+| Account sheet cleanup | Aan | 26.44.06.1006895251 |
+| Add microG-RE support | Uit | 26.44.06.1006895251 |
+| Add original microG support | Uit | 26.44.06.1006895251 |
+| Any media app | Aan | 26.44.06.1006895251 |
+| Avoid Flock cameras | Aan | 26.44.06.1006895251 |
+| Better offline maps | Aan | 26.44.06.1006895251 |
+| Black theme | Aan | 26.44.06.1006895251 |
+| Blue pin | Aan | 26.44.06.1006895251 |
+| Bypass Play Services checks | Aan | 26.44.06.1006895251 |
+| Change app name | Aan | 26.44.06.1006895251 |
+| Change package name | Aan | 26.44.06.1006895251 |
+| Customization screen | Aan | 26.44.06.1006895251 |
+| Flock cameras | Aan | 26.44.06.1006895251 |
+| Follow playing media | Uit | 26.44.06.1006895251 |
+| Hide ads and clutter | Aan | 26.44.06.1006895251 |
+| Legacy icon | Aan | 26.44.06.1006895251 |
+| Location provider toggle | Aan | 26.44.06.1006895251 |
+| Native navigation for Gearslip and Android Auto | Aan | 26.44.06.1006895251 |
+| Offline saved places | Aan | 26.44.06.1006895251 |
+| Power saving mode | Aan | 26.44.06.1006895251 |
+| Proxy | Aan | 26.44.06.1006895251 |
+| Rectangle shapes | Aan | 26.44.06.1006895251 |
+| Remove permissions | Aan | 26.44.06.1006895251 |
+| Remove sign-in prompts | Aan | 26.44.06.1006895251 |
+| Remove telemetry | Aan | 26.44.06.1006895251 |
+| Speed cameras | Aan | 26.44.06.1006895251 |
+| Speeding chime | Aan | 26.44.06.1006895251 |
+| Trim account menu | Aan | 26.44.06.1006895251 |
 | Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Waze alerts | Aan | 26.43.05.1002020710 |
-| Zoom controls in navigation | Aan | 26.43.05.1002020710 |
+| Waze alerts | Aan | 26.44.06.1006895251 |
+| Zoom controls in navigation | Aan | 26.44.06.1006895251 |
 
 ## GVA
 
@@ -693,7 +693,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide premium settings sections | Aan | 9.2.0.26 |
 | Hide shuffle controls | Aan | 9.2.0.26 |
 | Hide video ads | Aan | 9.2.0.26 |
-| Hide video shelves | Uit | 9.2.0.26 |
+| Hide video shelves | Aan | 9.2.0.26 |
 | Remove shuffle restriction | Aan | 9.2.0.26 |
 | Sanitize sharing links | Aan | 9.2.0.26 |
 | Show Premium in the account row | Aan | 9.2.0.26 |

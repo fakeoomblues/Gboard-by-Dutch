@@ -1,29 +1,33 @@
 package patches.spotify.ui
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.smali.ExternalLabel
-import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
-import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderPackedSwitchPayload
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderSwitchElement
 import patches.spotify.COMPATIBILITY_SPOTIFY
 
 private const val HOME_SECTION_RENDERER = "Lp/uqs;"
 
+/** Switch keys for WATCH_FEED, VIDEO_PROMO, VIDEO_BRAND_AD and VIDEO_CAROUSEL. */
+private val VIDEO_SWITCH_KEYS = setOf(15, 20, 23, 31)
+
+/** The packed-switch key Spotify already uses for an unsupported section. */
+private const val SKIP_SWITCH_KEY = 5
+
 /**
- * Spotify's resolved Home feed renders one model per section type. The video section payloads
- * (`WATCH_FEED`, `VIDEO_PROMO`, `VIDEO_BRAND_AD`, `VIDEO_CAROUSEL`) share this renderer, so the
- * "Video Podcasts"/video rows appear wherever Home is shown. Route those section types to the
- * same empty switch case Spotify already uses for unsupported sections; audio sections keep the
- * normal model mapping.
+ * Spotify's resolved Home feed switches on the section type. The video section payloads
+ * (`WATCH_FEED`, `VIDEO_PROMO`, `VIDEO_BRAND_AD`, `VIDEO_CAROUSEL`) share the same packed switch
+ * as every audio section.
+ *
+ * Point those switch entries at the existing skip target. This changes only switch targets, not
+ * the method's code, which keeps the class verifier-safe (injecting new branches into this method
+ * was rejected by the ART verifier).
  */
 @Suppress("unused")
 val hideVideoHomeSectionsPatch = bytecodePatch(
     name = "Hide video shelves",
     description = "Drops video/watch sections from Spotify's resolved Home feed, so video " +
         "podcast and music-video shelves are not shown.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(COMPATIBILITY_SPOTIFY)
 
@@ -36,45 +40,20 @@ val hideVideoHomeSectionsPatch = bytecodePatch(
                 listOf("Lcom/spotify/casita/v1/resolved/Section;")
         } ?: throw IllegalStateException("Spotify Home section renderer changed")
 
-        val instructions = method.implementation!!.instructions.toList()
-        val caseCall = instructions.indexOfFirst { instruction ->
-            if (instruction.opcode != Opcode.INVOKE_VIRTUAL &&
-                instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE
-            ) return@indexOfFirst false
-            val reference = (instruction as? com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction)?.reference as? MethodReference ?: return@indexOfFirst false
-            reference.definingClass == "Lcom/spotify/casita/v1/resolved/Section;" &&
-                reference.name == "z" && reference.returnType == "I"
-        }
-        check(caseCall >= 0) { "Spotify Home section case call changed" }
+        val payload = method.implementation!!.instructions
+            .filterIsInstance<BuilderPackedSwitchPayload>()
+            .singleOrNull()
+            ?: throw IllegalStateException("Spotify Home section switch payload changed")
 
-        val moveResult = caseCall + 1
-        check(instructions[moveResult].opcode == Opcode.MOVE_RESULT) {
-            "Spotify Home section case result changed"
+        val elements = payload.switchElements
+        val keys = elements.map { it.key }.toSet()
+        check(keys.containsAll(VIDEO_SWITCH_KEYS + SKIP_SWITCH_KEY)) {
+            "Spotify Home section switch keys changed: $keys"
         }
-        val caseRegister = (instructions[moveResult] as OneRegisterInstruction).registerA
-        val afterCase = moveResult + 1
-        val sectionSwitch = (afterCase until instructions.size).firstOrNull {
-            instructions[it].opcode == Opcode.PACKED_SWITCH
-        } ?: throw IllegalStateException("Spotify Home section switch changed")
-
-        method.addInstructionsWithLabels(
-            afterCase,
-            """
-                const/16 v5, 0xb
-                if-eq v$caseRegister, v5, :video_section
-                const/16 v5, 0x12
-                if-eq v$caseRegister, v5, :video_section
-                const/16 v5, 0x14
-                if-eq v$caseRegister, v5, :video_section
-                const/16 v5, 0x19
-                if-eq v$caseRegister, v5, :video_section
-                goto :non_video
-                :video_section
-                const/4 v$caseRegister, 0x5
-                goto :video_switch
-            """,
-            ExternalLabel("non_video", method.getInstruction(afterCase)),
-            ExternalLabel("video_switch", method.getInstruction(sectionSwitch)),
-        )
+        val skip = elements.single { it.key == SKIP_SWITCH_KEY }.target
+        VIDEO_SWITCH_KEYS.forEach { key ->
+            val index = elements.indexOfFirst { it.key == key }
+            elements[index] = BuilderSwitchElement(payload, key, skip)
+        }
     }
 }
