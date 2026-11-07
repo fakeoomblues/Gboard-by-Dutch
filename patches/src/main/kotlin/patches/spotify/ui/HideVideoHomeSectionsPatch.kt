@@ -60,14 +60,14 @@ val hideVideoHomeSectionsPatch = bytecodePatch(
         method.addInstructionsWithLabels(
             afterCase,
             """
-                const/16 v0, 0xb
-                if-eq v$caseRegister, v0, :video_section
-                const/16 v0, 0x12
-                if-eq v$caseRegister, v0, :video_section
-                const/16 v0, 0x14
-                if-eq v$caseRegister, v0, :video_section
-                const/16 v0, 0x19
-                if-eq v$caseRegister, v0, :video_section
+                const/16 v5, 0xb
+                if-eq v$caseRegister, v5, :video_section
+                const/16 v5, 0x12
+                if-eq v$caseRegister, v5, :video_section
+                const/16 v5, 0x14
+                if-eq v$caseRegister, v5, :video_section
+                const/16 v5, 0x19
+                if-eq v$caseRegister, v5, :video_section
                 goto :non_video
                 :video_section
                 const/4 v$caseRegister, 0x5

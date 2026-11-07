@@ -13,10 +13,10 @@ internal val tidal = Compatibility(
     ),
     targets = listOf(
         AppTarget(
-            version = "2.216.0", minSdk = 32,
+            version = "2.216.0", minSdk = 24,
             versionCodes = mapOf(SupportedAbi.ARM64_V8A to 10020),
         ),
     ),
 )
 
-internal val originalInput = patches.shared.originalInput(tidal)
+internal val originalInput = patches.shared.originalInput(tidal, additionalMinSdks = setOf(32))

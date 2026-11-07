@@ -10,10 +10,10 @@ internal val deezer = Compatibility(
     signatures = setOf("51a891a6c5d17b4e36a6f46bab675c1cae786a5af06f51d0105dab7ec6a94516"),
     targets = listOf(
         AppTarget(
-            version = "9.0.26.3", minSdk = 32,
+            version = "9.0.26.3", minSdk = 28,
             versionCodes = mapOf(SupportedAbi.ARM64_V8A to 9002603),
         ),
     ),
 )
 
-internal val originalInput = patches.shared.originalInput(deezer)
+internal val originalInput = patches.shared.originalInput(deezer, additionalMinSdks = setOf(32))

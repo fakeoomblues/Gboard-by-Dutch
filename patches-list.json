@@ -35,37 +35,6 @@
       "options": []
     },
     {
-      "name": "Accept custom Android Auto media browsers",
-      "description": "Allows Spotify's media-browser service to answer any Android Auto host, so a custom host can browse its library instead of falling back to session-only playback.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Account sheet cleanup",
       "description": "Removes the \"More from this app\" label from the account sheet, and keeps the sheet open when you come back from Settings or Customization or tap \"Your profile\", instead of dropping back to the map.",
       "default": true,
@@ -462,7 +431,7 @@
                 "ARM64_V8A": 9002603
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 28,
               "description": null
             }
           ]
@@ -589,7 +558,7 @@
                 "ARM64_V8A": 10020
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -8682,37 +8651,6 @@
       "options": []
     },
     {
-      "name": "Offer the car library to any host",
-      "description": "Selects Spotify's Android Auto media-browser root for any car host instead of only Google's Gearhead package, so custom hosts can browse Home and Library.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Offline saved places",
       "description": "Save places without a Google account, kept only on the phone: Save opens Maps' own \"Place saved\" sheet (Want to go, Travel plans, Starred places, Favorites, your own lists, a note), and a \"Local saved\" row on the account sheet rebuilds Maps' You tab -- your recent places, your lists and labels (Home, Work, your own) -- with export and import (backup file, KML, Google Takeout's saved lists and Saved Places.json, several files or the whole Takeout .zip at once). It also has a Timeline: where the phone has been, grouped into days and visits, kept only on the phone, with GPX export. Recording is off until switched on there; it shows a notification while it runs. With Add microG-RE support, Maps' own Save keeps syncing to your account and Local saved instead copies the account's saved lists to the phone (Pull from Google account).",
       "default": true,
@@ -9811,37 +9749,6 @@
       "options": []
     },
     {
-      "name": "Report a desktop device",
-      "description": "Reports Spotify Connect as a COMPUTER device instead of SMARTPHONE. This is the device type the web/desktop client uses to avoid the Free mobile shuffle restriction. Playback, ads and account entitlement are otherwise unchanged.",
-      "default": false,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Report speed limit",
       "description": "Lets you correct speed limits from the speedometer (unverified).",
       "default": false,
@@ -9943,6 +9850,37 @@
     {
       "name": "Share the car Up next queue",
       "description": "Publishes the player's real upcoming tracks to the media session on accounts whose peek-next restriction would otherwise hide the car's Up next list.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.spotify.music",
+          "name": "Spotify",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#1ED760",
+          "signatures": [
+            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.2.0.26",
+              "versionCodes": {
+                "ARM64_V8A": 148373686
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Share the car media library with custom hosts",
+      "description": "Accepts any Android Auto host at Spotify's media-browser admission check and offers it the Android Auto root, so the host can browse Home and Library.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -12218,39 +12156,8 @@
       "options": []
     },
     {
-      "name": "Use the car Home loader",
-      "description": "Stops the car root wrapper from falling back to the empty provider on Free or custom hosts, so the Home/related feed uses its primary loader.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Use the car library feed",
-      "description": "Routes the car Library provider to Spotify's regular car feed loader with an empty fallback, so the Library tab can show playable items on Free/custom hosts.",
+      "name": "Use the car Home and Library feeds",
+      "description": "Uses Spotify's real car Home loader and car feed provider for Free/custom hosts, so the Home and Library tabs show playable items instead of empty fallbacks.",
       "default": true,
       "category": null,
       "compatiblePackages": [

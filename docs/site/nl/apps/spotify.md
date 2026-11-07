@@ -12,8 +12,9 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Accept custom Android Auto media browsers** | Aan | Laat de mediabrowserdienst van Spotify elke Android Auto-host beantwoorden, zodat een externe host de bibliotheek kan bekijken. |
 | **Allow custom Android Auto hosts** | Aan | Laat de auto-mediabrowser en de meegeleverde autoservice van Spotify elke externe host zoals DriveDeck of Gearslip accepteren, inclusief de roots Browse, Recently played en Your Library. |
+| **Share the car media library with custom hosts** | Aan | Accepteert een externe host bij de mediabrowser-toelating en biedt de Android Auto-root aan, zodat Home en Bibliotheek te bekijken zijn. |
+| **Use the car Home and Library feeds** | Aan | Gebruikt Spotify's echte auto-Homefeed en stuurt Bibliotheek naar de gewone carfeed in plaats van lege terugvallen. |
 | **Block popup ads** | Aan | Blokkeert volledige promotieschermen bij het openen van de app. |
 | **Change package name** | Uit | Wijzigt pakketnaam en appnaam zodat de gepatchte app naast het origineel kan staan. |
 | **Disable ad breaks** | Uit | Vraagt de advertentiedienst van Spotify de audio-advertentieslots uit te zetten. Experimenteel: het verzoekpad is voor deze versie hersteld, maar echte weergave met een gratis account is niet vastgesteld. |
@@ -28,15 +29,11 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 | **Hide shuffle controls** | Aan | Verwijdert de knoppen Shuffle en Smart Shuffle; Spotify Free dwingt nog steeds een geschudde wachtrij af. |
 | **Hide video ads** | Aan | Schakelt de videoadvertentie-plugin van de now-playing-weergave uit. |
 | **Hide video shelves** | Aan | Verwijdert video- en kijksecties uit de opgeloste Home-feed. |
-| **Offer the car library to any host** | Aan | Kiest de Android Auto-mediabrowserroot van Spotify voor elke autohost, niet alleen Google's Gearhead-pakket. |
 | **Remove shuffle restriction** | Aan | Stopt de shuffle-upsell voor Free en laat de app normale afspeelvolgorde en shuffleknoppen gebruiken. |
-| **Report a desktop device** | Uit | Meldt Spotify Connect als COMPUTER-apparaat in plaats van SMARTPHONE. |
 | **Sanitize sharing links** | Aan | Verwijdert de trackingparameters `si` en `utm_*` uit gedeelde en gekopieerde links. |
 | **Share the car Up next queue** | Aan | Publiceert de echte komende nummers naar de mediasessie waar peek-next de Up next-lijst van de auto zou verbergen. |
 | **Show Premium in the account row** | Aan | Toont Premium in plaats van Free in de account- en planrijen; alleen het label verandert. |
 | **Skip audio ads** | Aan | Vraagt de speler van Spotify een audioadvertentie over te slaan via zijn eigen volgende-knop, zoekt daarna naar het einde als de speler weigert en dempt pas als laatste redmiddel. Zet "Device broadcast status" in Spotify aan voor betere herkenning. |
-| **Use the car Home loader** | Aan | Voorkomt dat de auto-rootwrapper bij Free of externe hosts terugvalt op de lege provider. |
-| **Use the car library feed** | Aan | Leidt de auto-bibliotheekprovider naar Spotify's gewone carfeed-lader met een lege terugval. |
 | **Use the Premium plan icon** | Aan | Toont het meegeleverde premium-logo op de account-/planrij in plaats van het witte Spotify-teken. |
 
 De community-set bevatte ook **Hide ad views**, **Hide context menu upsells** en **Diagnose Spotify client**. Hun doelklassen bestaan niet meer in 9.2.0.26; ze worden hier niet aangeboden in plaats van de hele patchrun te laten mislukken.
