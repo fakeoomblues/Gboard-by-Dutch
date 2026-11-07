@@ -678,8 +678,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Accept custom Android Auto media browsers | On | 9.2.0.26 |
-| Allow custom Android Auto hosts | On | 9.2.0.26 |
+| Android Auto support | On | 9.2.0.26 |
 | Block popup ads | On | 9.2.0.26 |
 | Change package name | Off | 9.2.0.26 |
 | Disable ad breaks | Off | 9.2.0.26 |
@@ -694,15 +693,11 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide shuffle controls | On | 9.2.0.26 |
 | Hide video ads | On | 9.2.0.26 |
 | Hide video shelves | On | 9.2.0.26 |
-| Offer the car library to any host | On | 9.2.0.26 |
 | Remove shuffle restriction | On | 9.2.0.26 |
 | Sanitize sharing links | On | 9.2.0.26 |
-| Share the car Up next queue | On | 9.2.0.26 |
 | Show Premium in the account row | On | 9.2.0.26 |
 | Skip audio ads | On | 9.2.0.26 |
 | Use the Premium plan icon | On | 9.2.0.26 |
-| Use the car Home loader | On | 9.2.0.26 |
-| Use the car library feed | On | 9.2.0.26 |
 
 ## TIDAL
 

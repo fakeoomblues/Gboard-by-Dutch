@@ -505,37 +505,6 @@
     },
     {
       "name": "Allow custom Android Auto hosts",
-      "description": "Lets Spotify's car media browser and bundled car service accept a third-party Android Auto host such as DriveDeck or Gearslip, including its Browse, Recently played and Your Library roots. Spotify's account, catalogue and playback services are unchanged.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Allow custom Android Auto hosts",
       "description": "Lets TIDAL's car media browser accept a third-party Android Auto host such as DriveDeck or Gearslip. Only the host admission check changes; TIDAL's accounts, subscription, catalogue and playback services stay active.",
       "default": true,
       "category": null,
@@ -799,6 +768,37 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto support",
+      "description": "Makes Spotify's car media browser, Home, Library and Up next work with DriveDeck, Gearslip or another compatible Android Auto host, including the bundled car service. Spotify's account, catalogue and playback services are unchanged.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.spotify.music",
+          "name": "Spotify",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#1ED760",
+          "signatures": [
+            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.2.0.26",
+              "versionCodes": {
+                "ARM64_V8A": 148373686
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -9848,68 +9848,6 @@
       "options": []
     },
     {
-      "name": "Share the car Up next queue",
-      "description": "Publishes the player's real upcoming tracks to the media session on accounts whose peek-next restriction would otherwise hide the car's Up next list.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Share the car media library with custom hosts",
-      "description": "Accepts any Android Auto host at Spotify's media-browser admission check and offers it the Android Auto root, so the host can browse Home and Library.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Show Premium in the account row",
       "description": "Displays Premium instead of Free account/Free plan on the account and plan rows. This is a label change only; the account tier and every entitlement stay unchanged.",
       "default": true,
@@ -12127,37 +12065,6 @@
     {
       "name": "Use the Premium plan icon",
       "description": "Shows the bundled premium logo on the account/plan row instead of the white Spotify glyph. Label-only change; the account tier and entitlements are untouched.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.spotify.music",
-          "name": "Spotify",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": "#1ED760",
-          "signatures": [
-            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "9.2.0.26",
-              "versionCodes": {
-                "ARM64_V8A": 148373686
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Use the car Home and Library feeds",
-      "description": "Uses Spotify's real car Home loader and car feed provider for Free/custom hosts, so the Home and Library tabs show playable items instead of empty fallbacks.",
       "default": true,
       "category": null,
       "compatiblePackages": [

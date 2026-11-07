@@ -678,8 +678,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Accept custom Android Auto media browsers | Aan | 9.2.0.26 |
-| Allow custom Android Auto hosts | Aan | 9.2.0.26 |
+| Android Auto support | Aan | 9.2.0.26 |
 | Block popup ads | Aan | 9.2.0.26 |
 | Change package name | Uit | 9.2.0.26 |
 | Disable ad breaks | Uit | 9.2.0.26 |
@@ -694,15 +693,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide shuffle controls | Aan | 9.2.0.26 |
 | Hide video ads | Aan | 9.2.0.26 |
 | Hide video shelves | Aan | 9.2.0.26 |
-| Offer the car library to any host | Aan | 9.2.0.26 |
 | Remove shuffle restriction | Aan | 9.2.0.26 |
 | Sanitize sharing links | Aan | 9.2.0.26 |
-| Share the car Up next queue | Aan | 9.2.0.26 |
 | Show Premium in the account row | Aan | 9.2.0.26 |
 | Skip audio ads | Aan | 9.2.0.26 |
 | Use the Premium plan icon | Aan | 9.2.0.26 |
-| Use the car Home loader | Aan | 9.2.0.26 |
-| Use the car library feed | Aan | 9.2.0.26 |
 
 ## TIDAL
 

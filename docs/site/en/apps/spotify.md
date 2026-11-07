@@ -12,9 +12,7 @@ Select the complete original archive for this exact version in Morphe Manager, i
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Allow custom Android Auto hosts** | On | Lets Spotify's car media browser and its bundled car service accept a third-party host such as DriveDeck or Gearslip, including the Browse, Recently played and Your Library roots. |
-| **Share the car media library with custom hosts** | On | Accepts a custom host at the media-browser admission check and offers it the Android Auto root, so it can browse Home and Library. |
-| **Use the car Home and Library feeds** | On | Uses Spotify's real car Home loader and routes Library to the regular car feed instead of empty fallbacks. |
+| **Android Auto support** | On | Makes the car media browser, Home, Library and Up next work with DriveDeck, Gearslip or another compatible Android Auto host, including Spotify's bundled car service. |
 | **Block popup ads** | On | Blocks fullscreen promotions shown when opening the app. |
 | **Change package name** | Off | Changes the package name and app name so the patched app can be installed beside the original. |
 | **Disable ad breaks** | Off | Asks Spotify's ads service to turn its audio ad slots off. Experimental: the request path is repaired for this version, but it needs a signed-in free account and real playback to confirm. |
@@ -31,7 +29,6 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | **Hide video shelves** | On | Drops video and watch sections from the resolved Home feed. |
 | **Remove shuffle restriction** | On | Stops the Free shuffle upsell and lets the app use normal play order and shuffle controls. |
 | **Sanitize sharing links** | On | Removes `si` and `utm_*` tracking parameters from shared and copied links. |
-| **Share the car Up next queue** | On | Publishes the real upcoming tracks to the media session where peek-next would hide the car's Up next list. |
 | **Show Premium in the account row** | On | Shows Premium instead of Free in the account and plan rows; a label change only. |
 | **Skip audio ads** | On | Asks Spotify's player to skip an audio ad through its own next command, then seeks to its end if the player refuses, and mutes only as a last resort. Turning on Spotify's "Device broadcast status" improves detection. |
 | **Use the Premium plan icon** | On | Shows the bundled premium logo on the account/plan row instead of the white Spotify glyph. |

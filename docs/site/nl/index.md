@@ -1090,7 +1090,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.2.0.26 accept custom android auto media browsers allow custom android auto hosts block popup ads change package name disable ad breaks fix third party launchers widgets force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves offer the car library to any host remove shuffle restriction sanitize sharing links share the car up next queue show premium in the account row skip audio ads use the premium plan icon use the car home loader use the car library feed" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.2.0.26 android auto support block popup ads change package name disable ad breaks fix third party launchers widgets force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads use the premium plan icon" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Spotify](apps/spotify.md)
@@ -1098,10 +1098,9 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">9.2.0.26</span></p>
 <p class="dap-app-card__package">com.spotify.music</p>
 <details class="dap-app-card__patches">
-<summary>25 patches</summary>
+<summary>20 patches</summary>
 <ul>
-<li>Accept custom Android Auto media browsers <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Allow custom Android Auto hosts <span class="dap-app-card__target">9.2.0.26</span></li>
+<li>Android Auto support <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Block popup ads <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Change package name <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
 <li>Disable ad breaks <span class="dap-app-card__target">9.2.0.26 · standaard uit</span></li>
@@ -1116,15 +1115,11 @@ hide:
 <li>Hide shuffle controls <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Hide video ads <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Hide video shelves <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Offer the car library to any host <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Remove shuffle restriction <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Sanitize sharing links <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Share the car Up next queue <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Show Premium in the account row <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Skip audio ads <span class="dap-app-card__target">9.2.0.26</span></li>
 <li>Use the Premium plan icon <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Use the car Home loader <span class="dap-app-card__target">9.2.0.26</span></li>
-<li>Use the car library feed <span class="dap-app-card__target">9.2.0.26</span></li>
 </ul>
 </details>
 
