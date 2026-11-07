@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-11-07T20:16:16",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cf4107ac1ae7e04e1ef6426ac08542332d77adf4/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.53.6.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [cf4107ac1ae7](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cf4107ac1ae7e04e1ef6426ac08542332d77adf4). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.53.6](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.5...v1.53.6) (2026-11-07)\n\n### 🐛 Bug Fixes\n\n* **Deezer:** describe the verified Android Auto browser and queue ([cf4107a](https://gitlab.com/johninnld/nl-morphe-patches/commit/cf4107ac1ae7e04e1ef6426ac08542332d77adf4))",
-  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.53.6/downloads/patches-1.53.6.mpp",
+  "created_at": "2026-11-07T22:29:33",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5c3ad43afc26ba8be7f17ca68fcb9e4eefcb8b86/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.53.7.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [5c3ad43afc26](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/5c3ad43afc26ba8be7f17ca68fcb9e4eefcb8b86). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.53.7](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.6...v1.53.7) (2026-11-07)\n\n### 🐛 Bug Fixes\n\n* **Google Maps:** Hides the \"More from this app\" section title in every 26.44 account-sheet binder, so the legacy layout cannot bring it back. ([5c3ad43](https://gitlab.com/johninnld/nl-morphe-patches/commit/5c3ad43afc26ba8be7f17ca68fcb9e4eefcb8b86))",
+  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.53.7/downloads/patches-1.53.7.mpp",
   "signature_download_url": "",
-  "version": "1.53.6",
+  "version": "1.53.7",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }
