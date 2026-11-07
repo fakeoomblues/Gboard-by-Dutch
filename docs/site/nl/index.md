@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">60 apps</span> · Patchbundel: 1.48.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">61 apps</span> · Patchbundel: 1.48.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1370,6 +1370,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/youtube-music.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="zoom workplace us.zoom.videomeetings 7.2.1.43844 allow all android auto hosts" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Zoom Workplace](apps/zoom.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.2.1.43844</span></p>
+<p class="dap-app-card__package">us.zoom.videomeetings</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow all Android Auto hosts <span class="dap-app-card__target">7.2.1.43844</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/zoom.md){ .dap-app-card__link }
 
 </article>
 

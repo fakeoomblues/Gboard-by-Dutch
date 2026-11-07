@@ -332,6 +332,37 @@
       "options": []
     },
     {
+      "name": "Allow all Android Auto hosts",
+      "description": "Allows Zoom's native meeting and phone interface on any compatible projection host, including DriveDeck, without checking the host package or signing certificate. Keeps the patched app working with a new APK signing certificate and unavailable car details.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "us.zoom.videomeetings",
+          "name": "Zoom Workplace",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "60b75724b34686e52bde944969de120f16bd6d959788d54384494caedd4e445d"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.2.1.43844",
+              "versionCodes": {
+                "ARM64_V8A": 6702010
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Allow custom Android Auto hosts",
       "description": "Enables EasyPark on third-party Android Auto systems such as DriveDeck. Only install this patch if you use a third-party system. Optionally restrict access to listed host packages. EasyPark NL sign-in requires MicroG-RE; phone and email sign-in do not work.",
       "default": true,

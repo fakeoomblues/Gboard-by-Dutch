@@ -857,4 +857,14 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Gearslip music browser support | On | Any |
 
+## Zoom Workplace
+
+[What do the patches change?](../apps/zoom.md)
+
+`us.zoom.videomeetings`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow all Android Auto hosts | On | 7.2.1.43844 |
+
 [Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)

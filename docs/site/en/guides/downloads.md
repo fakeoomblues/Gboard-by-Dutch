@@ -20,6 +20,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Dumpert](../apps/dumpert.md) | 5.8.0 / 22001778 | [APKS](https://buzzheavier.com/nh0wyw185itn) |
 | [EasyPark](../apps/easypark.md) | 26.40.1 / 82640010 | [APKM](#local-original-inputs) |
 | [EasyPark NL](../apps/easypark-nl.md) | 26.42.4 / 82642040 | [APKS](#local-original-inputs) |
+| [Zoom Workplace](../apps/zoom.md) | 7.2.1.43844 / 6702010 | [APKS](#local-original-inputs) |
 | [ED](../apps/ed.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/pi3usslla0jt) |
 | [GVA](../apps/gva.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/1thesia58zm2) |
 | [FTM](../apps/ftm.md) | 2.6.8 / 58 | [APKS](https://buzzheavier.com/2cv2n5bgc3tn) |

@@ -21,6 +21,7 @@ APP_PAGES = {
     'com.waze': ('waze', 'mobility'),
     'net.easypark.android': ('easypark', 'mobility'),
     'com.parkmobile': ('easypark-nl', 'mobility'),
+    'us.zoom.videomeetings': ('zoom', 'other'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
