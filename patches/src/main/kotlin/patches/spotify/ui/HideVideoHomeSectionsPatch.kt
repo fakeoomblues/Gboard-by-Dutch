@@ -7,8 +7,8 @@ import patches.spotify.COMPATIBILITY_SPOTIFY
 
 private const val HOME_SECTION_RENDERER = "Lp/uqs;"
 
-/** Switch keys for WATCH_FEED, VIDEO_PROMO, VIDEO_BRAND_AD and VIDEO_CAROUSEL. */
-private val VIDEO_SWITCH_KEYS = setOf(15, 20, 23, 31)
+/** Switch keys for VIDEO_PROMO, VIDEO_BRAND_AD, VIDEO_CAROUSEL and WATCH_FEED. */
+private val VIDEO_SWITCH_KEYS = setOf(18, 21, 24, 42)
 
 /** The packed-switch key Spotify already uses for an unsupported section. */
 private const val SKIP_SWITCH_KEY = 5
