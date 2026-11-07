@@ -693,7 +693,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide premium settings sections | Aan | 9.2.0.26 |
 | Hide shuffle controls | Aan | 9.2.0.26 |
 | Hide video ads | Aan | 9.2.0.26 |
-| Hide video shelves | Aan | 9.2.0.26 |
+| Hide video shelves (safe) | Aan | 9.2.0.26 |
 | Remove shuffle restriction | Aan | 9.2.0.26 |
 | Sanitize sharing links | Aan | 9.2.0.26 |
 | Show Premium in the account row | Aan | 9.2.0.26 |
@@ -931,4 +931,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Allow all Android Auto hosts | Aan | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

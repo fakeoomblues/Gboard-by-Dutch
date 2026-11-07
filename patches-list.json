@@ -8003,7 +8003,7 @@
       "options": []
     },
     {
-      "name": "Hide video shelves",
+      "name": "Hide video shelves (safe)",
       "description": "Drops video/watch sections from Spotify's resolved Home feed, so video podcast and music-video shelves are not shown.",
       "default": true,
       "category": null,

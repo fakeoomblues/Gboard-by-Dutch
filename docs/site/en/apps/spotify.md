@@ -27,7 +27,7 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | **Hide Premium tab** | On | Removes the Premium tab from the bottom navigation bar. |
 | **Hide shuffle controls** | On | Removes the shuffle and Smart Shuffle buttons; Spotify Free still enforces its shuffled queue. |
 | **Hide video ads** | On | Disables the video ad plugin of the now-playing view. |
-| **Hide video shelves** | On | Drops video and watch sections from the resolved Home feed. |
+| **Hide video shelves (safe)** | On | Drops video and watch sections from the resolved Home feed. |
 | **Remove shuffle restriction** | On | Stops the Free shuffle upsell and lets the app use normal play order and shuffle controls. |
 | **Sanitize sharing links** | On | Removes `si` and `utm_*` tracking parameters from shared and copied links. |
 | **Show Premium in the account row** | On | Shows Premium instead of Free in the account and plan rows; a label change only. |

@@ -27,7 +27,7 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 | **Hide Premium tab** | Aan | Verwijdert het tabblad Premium uit de onderste navigatie. |
 | **Hide shuffle controls** | Aan | Verwijdert de knoppen Shuffle en Smart Shuffle; Spotify Free dwingt nog steeds een geschudde wachtrij af. |
 | **Hide video ads** | Aan | Schakelt de videoadvertentie-plugin van de now-playing-weergave uit. |
-| **Hide video shelves** | Aan | Verwijdert video- en kijksecties uit de opgeloste Home-feed. |
+| **Hide video shelves (safe)** | Aan | Verwijdert video- en kijksecties uit de opgeloste Home-feed. |
 | **Remove shuffle restriction** | Aan | Stopt de shuffle-upsell voor Free en laat de app normale afspeelvolgorde en shuffleknoppen gebruiken. |
 | **Sanitize sharing links** | Aan | Verwijdert de trackingparameters `si` en `utm_*` uit gedeelde en gekopieerde links. |
 | **Show Premium in the account row** | Aan | Toont Premium in plaats van Free in de account- en planrijen; alleen het label verandert. |

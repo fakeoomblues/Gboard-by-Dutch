@@ -24,7 +24,7 @@ private const val SKIP_SWITCH_KEY = 5
  */
 @Suppress("unused")
 val hideVideoHomeSectionsPatch = bytecodePatch(
-    name = "Hide video shelves",
+    name = "Hide video shelves (safe)",
     description = "Drops video/watch sections from Spotify's resolved Home feed, so video " +
         "podcast and music-video shelves are not shown.",
     default = true,
