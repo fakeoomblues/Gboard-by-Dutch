@@ -126,11 +126,11 @@ internal val hideAdsPatch = bytecodePatch(
         // building one. Both existing callers already skip a null result.
         AdPlacemarkFactoryFingerprint.method.leaveEarlyWhenHidingAds("const/4 v0, 0x0\nreturn-object v0")
 
-        // 26.44 builds search sponsored placemarks through a void collector
-        // instead of the List-returning builder these two gates patch. The pin
-        // factory above still suppresses the objects themselves.
-        if (packageMetadata.versionName != "26.44.06.1006895251") {
         // Sponsored placemarks list, built from a search response: never build it.
+        if (packageMetadata.versionName == "26.44.06.1006895251") {
+            AdsListBuilderFingerprint2644A.method.leaveEarlyWhenHidingAds("return-void")
+            AdsListBuilderFingerprint2644B.method.leaveEarlyWhenHidingAds("return-void")
+        } else {
         AdsListBuilderFingerprint.method.leaveEarlyWhenHidingAds(
             "sget-object v0, Ljava/util/Collections;->EMPTY_LIST:Ljava/util/List;\nreturn-object v0",
         )
@@ -216,6 +216,7 @@ internal val hideAdsPatch = bytecodePatch(
             ExternalLabel("ua_loop_head", loopHeadInstruction),
             ExternalLabel("carry_on", gate1Continue),
         )
+        }
 
         // Filter the unified row list at its typed getter. New Maps inlines the old row builder
         // into a much larger fragment method; filtering here preserves the independent case-5 gate
@@ -231,7 +232,6 @@ internal val hideAdsPatch = bytecodePatch(
                     move-result-object v$register
                 """)
             }
-        }
         }
     }
 }

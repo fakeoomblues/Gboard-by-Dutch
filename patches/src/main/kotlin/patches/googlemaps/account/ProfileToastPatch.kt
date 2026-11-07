@@ -35,9 +35,6 @@ internal val profileToastPatch = bytecodePatch(
 
     execute {
         if (MicrogSelection.replaces(this, "Remove sign-in prompts")) return@execute
-        // 26.44 rewrote this shared dispatcher case beyond the contiguous span
-        // this patch replaces; keep the other sign-in prompt removals working.
-        if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         // Modern builder: 10 real instructions, this row's whole case.
         ProfileClickModernFingerprint.let { fp ->
             val matches = fp.instructionMatches
@@ -51,9 +48,9 @@ internal val profileToastPatch = bytecodePatch(
                     start,
                     """
                         move-object/from16 v0, p0
-                        iget-object v0, v0, Lmrh;->a:Ljava/lang/Object;
-                        check-cast v0, Lvte;
-                        iget-object v0, v0, Lvte;->a:Ljava/lang/Object;
+                        iget-object v0, v0, Lmsc;->a:Ljava/lang/Object;
+                        check-cast v0, Loyk;
+                        iget-object v0, v0, Loyk;->a:Ljava/lang/Object;
                         check-cast v0, Landroid/content/Context;
                         const/4 v1, 0x1
                         sput-boolean v1, $SHAPES->SKIP_DISMISS:Z
@@ -62,7 +59,7 @@ internal val profileToastPatch = bytecodePatch(
                         invoke-static {v0, v1, v2}, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
                         move-result-object v0
                         invoke-virtual {v0}, Landroid/widget/Toast;->show()V
-                        sget-object v0, Lcttz;->a:Lcttz;
+                        sget-object v0, Lcucl;->a:Lcucl;
                         return-object v0
                     """,
                 )
@@ -75,6 +72,7 @@ internal val profileToastPatch = bytecodePatch(
         // method_id cap, so only method refs it already contains may be used:
         // Toast.makeText and Toast.show are both already called elsewhere in
         // this dex, and Lolm;->a is an existing field ref.
+        if (packageMetadata.versionName != "26.44.06.1006895251")
         ProfileClickLegacyFingerprint.let { fp ->
             val matches = fp.instructionMatches
             val start = matches.first().index

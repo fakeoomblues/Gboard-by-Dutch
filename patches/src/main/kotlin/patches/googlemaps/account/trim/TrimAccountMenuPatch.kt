@@ -55,7 +55,7 @@ private fun MutableMethod.removeRowsBuilt(start: Int, end: Int, expected: Int, w
     var rowStart = start
     for (i in start until end) {
         val c = call(i) ?: continue
-        if (c.definingClass == "Lbwix;" && c.name == "i" && (instructions[i] as Instruction35c).registerC == list) {
+        if (c.definingClass == "Lbwpw;" && c.name == "i" && (instructions[i] as Instruction35c).registerC == list) {
             rows += rowStart..i
             rowStart = i + 1
         }
@@ -100,13 +100,7 @@ val trimAccountMenuPatch = bytecodePatch(
             val m = fp.instructionMatches
             val start = m[2].index + 1 // right after Settings' own row-add
             val end = m.last().index   // right at the list finalize
-            try {
-                fp.method.removeRowsBuilt(start, end, 1, "Help & feedback", HELP_AND_FEEDBACK)
-            } catch (e: PatchException) {
-                // 26.44's builder emits extra setup between the last row and the
-                // finalize; the earlier trims are already applied, so keep them.
-                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
-            }
+            fp.method.removeRowsBuilt(start, end, 1, "Help & feedback", HELP_AND_FEEDBACK)
         }
 
         // Legacy builder: neither span references the ambiguous constructor
@@ -117,11 +111,7 @@ val trimAccountMenuPatch = bytecodePatch(
             val m = fp.instructionMatches
             val start = m[2].index + 1 // right after Settings' own row-add
             val end = m.last().index   // right at the list finalize
-            try {
-                fp.method.removeRowsBuilt(start, end, 2, "legacy Settings") { HELP_AND_FEEDBACK(it) || YOUR_DATA(it) }
-            } catch (e: PatchException) {
-                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
-            }
+            fp.method.removeRowsBuilt(start, end, 2, "legacy Settings") { HELP_AND_FEEDBACK(it) || YOUR_DATA(it) }
         }
         LegacyYourProfileFingerprint.let { fp ->
             val m = fp.instructionMatches
@@ -129,11 +119,7 @@ val trimAccountMenuPatch = bytecodePatch(
             // Legacy rows call straight through a typed register -- no setup
             // instructions -- so the kept row starts AT its own call.
             val end = m.last().index
-            try {
-                fp.method.removeWholeRows(start, end, "legacy Your-profile")
-            } catch (e: PatchException) {
-                if (packageMetadata.versionName != "26.44.06.1006895251") throw e
-            }
+            fp.method.removeWholeRows(start, end, "legacy Your-profile")
         }
     }
 }

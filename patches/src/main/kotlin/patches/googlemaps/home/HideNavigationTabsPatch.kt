@@ -17,9 +17,6 @@ internal val hideNavigationTabsPatch = bytecodePatch(
     dependsOn(sharedExtensionPatch, activityContextHookPatch)
 
     execute {
-        // 26.44 renamed the home fragment's tab-strip view holder and its binder;
-        // leaving the strip visible is safer than binding a guessed class.
-        if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         markPatched("hideTabsPatched")
 
         // Right after the strip's view holder is stored, hide its root view while
@@ -40,7 +37,7 @@ internal val hideNavigationTabsPatch = bytecodePatch(
             """
                 sget-boolean v2, $SHAPES->HIDE_TABS:Z
                 if-eqz v2, :tabs_done
-                invoke-virtual {v1}, Lbyzw;->a()Landroid/view/View;
+                invoke-virtual {v1}, Lbvgo;->a()Landroid/view/View;
                 move-result-object v2
                 if-eqz v2, :tabs_done
                 const/16 v1, 0x8

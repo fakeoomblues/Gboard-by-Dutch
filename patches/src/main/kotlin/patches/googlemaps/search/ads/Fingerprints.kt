@@ -25,6 +25,20 @@ internal object AdsListBuilderFingerprint : Fingerprint(
     parameters = listOf("Lcqdk;", "Lcevw;"),
 )
 
+/** 26.44's sponsored-placemark builders return void and fill a list. */
+internal object AdsListBuilderFingerprint2644A : Fingerprint(
+    name = "h",
+    returnType = "V",
+    parameters = listOf("Lcewy;", "Llzt;"),
+)
+
+internal object AdsListBuilderFingerprint2644B : Fingerprint(
+    name = "h",
+    returnType = "V",
+    parameters = listOf("Lcewy;", "Llzt;", "Lbwgj;"),
+)
+
+
 /**
  * Where the results processor decides whether to also merge in the response's
  * sponsored PLACEMARKS (as opposed to the unified list's ad rows, handled by
@@ -87,7 +101,7 @@ internal object SearchRowsFingerprint : Fingerprint(
     name = "M",
     returnType = "Ljava/util/List;",
     parameters = emptyList(),
-    custom = { method, _ -> method.definingClass == "Lavpa;" },
+    custom = { method, _ -> method.definingClass == "Lavuz;" },
 )
 
 /**

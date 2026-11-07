@@ -25,8 +25,8 @@ val wazeAlertsPatch = bytecodePatch(
 
     execute {
         markPatched("wazeAlertsPatched")
-        // 26.44 renamed and reordered the native warning-voice pipeline; the
-        // broadcast-driven alerts (speed, limits, cameras) do not depend on it.
+        // The 26.44 native warning-voice pipeline is a separate subsystem from
+        // the broadcast-driven Waze/Flitsmeister alerts used here.
         if (packageMetadata.versionName == "26.44.06.1006895251") return@execute
         bindMapsWarningVoice()
     }

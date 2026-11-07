@@ -44,7 +44,7 @@ private object AskMapsInNavigationFingerprint : Fingerprint(
 )
 
 /** SEARCH_LIST_NAVIGATION_HEADER_ASK_MAPS_MODE_BUTTON: loaded right after the "is Ask Maps on" checks. */
-private const val ASK_MAPS_SEARCH_HEADER_BUTTON = 0x7f141dac
+private const val ASK_MAPS_SEARCH_HEADER_BUTTON = 0x7f141db1
 
 /** ASK_MAPS_PLACE_ACTION_TEXT, "Ask": the place sheet's Ask action. */
 private const val ASK_MAPS_PLACE_ACTION = 0x7f1403d7
@@ -201,7 +201,6 @@ internal val hideAiPatch = bytecodePatch(
         // Hide AI seemed to stop working. It answers no, as where Google has not launched Ask Maps. The switch
         // is the one the search list checks (through a second one that also needs it) right before loading its
         // Ask Maps button label.
-        try {
         run {
             var header: Pair<String, Method>? = null
             classDefForEach { c ->
@@ -244,11 +243,6 @@ internal val hideAiPatch = bytecodePatch(
                     ExternalLabel("ask_maps_off", ret),
                 )
             }
-        }
-        } catch (e: PatchException) {
-            // 26.44's search header loads the Ask Maps label through a different
-            // switch chain; the chip factory above already returns null for it.
-            if (packageMetadata.versionName != "26.44.06.1006895251") throw e
         }
 
         // The place sheet's "Ask" action ("Pergunte" in Portuguese, issue #82): shown when the place's data

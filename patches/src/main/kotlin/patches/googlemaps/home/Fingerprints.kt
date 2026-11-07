@@ -27,8 +27,8 @@ internal object ExploreSheetStateFingerprint : Fingerprint(
 /** Where the home fragment binds the bottom tab strip's view holder, once. */
 internal object BottomTabStripBindFingerprint : Fingerprint(
     filters = listOf(
-        methodCall(definingClass = "Lagav;", name = "u", opcode = Opcode.INVOKE_INTERFACE),
+        methodCall(definingClass = "Laggd;", name = "u", opcode = Opcode.INVOKE_INTERFACE),
         opcode(Opcode.MOVE_RESULT_OBJECT, MatchAfterImmediately()),
-        fieldAccess(opcode = Opcode.IPUT_OBJECT, definingClass = "Lafsl;", name = "dc", location = MatchAfterImmediately()),
+        fieldAccess(opcode = Opcode.IPUT_OBJECT, definingClass = "Lafxp;", name = "dc", location = MatchAfterImmediately()),
     ),
 )
