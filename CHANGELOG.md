@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/4355d8e4940b2e63030bee6c2a50c9399a2b97f9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.52.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [4355d8e4940b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/4355d8e4940b2e63030bee6c2a50c9399a2b97f9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.52.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.52.1...v1.52.2) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **Spotify:** consolidate Spotify Android Auto support ([4355d8e](https://gitlab.com/johninnld/nl-morphe-patches/commit/4355d8e4940b2e63030bee6c2a50c9399a2b97f9))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5a214880eb01ffdda396c7a9417927d6a400ff68/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.52.0.**
