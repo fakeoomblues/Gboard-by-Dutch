@@ -47,6 +47,25 @@ No existing verifier or runtime observation framework was changed.
 These outputs are unsigned desktop patch checks. They were not installed on
 the phone and do not close the runtime, speech, GPS or car-UI gates.
 
+## Installed De-Waze failure isolated
+
+The owner subsequently enabled all three De-Waze location grants. Vela then
+reported healthy engine and data states while warning support remained
+unavailable. Read-only inspection of the installed 5.27.0.1 APK confirmed native
+hooks were bound, but `supportsEventProtocol` still accepted only
+5.26.90.901/1030746. This is the installed older adapter, not a failure of the
+newly built 5.27 admission. Apply the corrected bundle through Morphe before
+rechecking the warning connection; do not repeat the already working engine
+and data checks as if they were still failing.
+
+The owner also requested a location-settings shortcut in both receivers.
+It belongs directly under provider health and must target the currently
+selected De-Waze or FM package, never the receiver. Use Android's public app
+details settings action and explain “Permissions → Location → Allow all the
+time.” Android's direct permission editor is protected by
+`GRANT_RUNTIME_PERMISSIONS`; do not request that system permission or silently
+grant background access. The user makes the choice in Android settings.
+
 ## Physical phone update
 
 The owner authorized in-place navigation app updates through the phone's

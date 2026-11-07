@@ -114,6 +114,9 @@ public final class NativeUi {
                 hint(TelemetryRuntime.warningBridgeStatus(),composer);
                 hint(TelemetryRuntime.providerServiceStatus(),composer);
                 hint(TelemetryRuntime.dataStatus(),composer);
+                row(nl.johninnl.navigation.startup.ProviderSettings.locationTitle(java.util.Locale.getDefault().getLanguage().equals("nl")),false,
+                    action("provider_location",TelemetryRuntime::openProviderLocationSettings),composer);
+                hint(nl.johninnl.navigation.startup.ProviderSettings.locationHelp(TelemetryRuntime.providerName(),java.util.Locale.getDefault().getLanguage().equals("nl")),composer);
                 toggle(text("spoken","Spoken road warnings"),TelemetryRuntime.spokenEnabled(),toggleAction("spoken",TelemetryRuntime::setSpokenEnabled),text("spoken_hint","Uses Vela's voice and mute settings"),composer);
                 if(nl.johninnl.navigation.alerts.WarningProviders.supported(TelemetryRuntime.selected())){
                     nl.johninnl.navigation.alerts.WarningPreferences choices=TelemetryRuntime.warningPreferences();

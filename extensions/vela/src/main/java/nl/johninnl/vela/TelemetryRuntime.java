@@ -244,6 +244,11 @@ public final class TelemetryRuntime {
         try{return !voice.getClass().getField("n").getBoolean(voice)||voice.getClass().getField("o").getBoolean(voice);}catch(ReflectiveOperationException e){return false;}
     }
     public static String providerName() { return WarningProviders.supported(selected())?WarningProviders.displayName(selected()):"Vela"; }
+    public static void openProviderLocationSettings(){
+        android.app.Activity foreground=startup==null?null:startup.foregroundActivity();
+        if(!nl.johninnl.navigation.startup.ProviderSettings.openLocation(foreground==null?app:foreground,selected())&&app!=null)
+            android.widget.Toast.makeText(app,dutch()?"Kan de Android-appinstellingen niet openen":"Cannot open Android app settings",android.widget.Toast.LENGTH_LONG).show();
+    }
     /** Settings health: an engine or telemetry packet alone never proves the warning connection. */
     public static String warningBridgeStatus() {
         return nl.johninnl.navigation.startup.NavigationHealth.warnings(providerName(),

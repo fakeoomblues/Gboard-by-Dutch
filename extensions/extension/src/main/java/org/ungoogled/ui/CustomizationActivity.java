@@ -439,6 +439,20 @@ public final class CustomizationActivity extends Activity {
             TextView currentSub=(TextView)((LinearLayout)current.getChildAt(0)).getChildAt(1);
             current.setOnClickListener(v->WazeAlerts.ask());body.addView(current);
             live(()->currentSub.setText(ExternalTelemetry.status()));
+            boolean dutch=getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
+            LinearLayout location=rowBase(nl.johninnl.navigation.startup.ProviderSettings.locationTitle(dutch),"");
+            TextView locationSub=(TextView)((LinearLayout)location.getChildAt(0)).getChildAt(1);
+            Runnable updateLocation=()->{
+                String selected=ExternalTelemetry.source(this);
+                boolean supported=nl.johninnl.navigation.alerts.WarningProviders.supported(selected);
+                location.setVisibility(supported?View.VISIBLE:View.GONE);
+                if(supported)locationSub.setText(nl.johninnl.navigation.startup.ProviderSettings.locationHelp(nl.johninnl.navigation.alerts.WarningProviders.displayName(selected),dutch));
+            };
+            location.setOnClickListener(v->{
+                if(!nl.johninnl.navigation.startup.ProviderSettings.openLocation(this,ExternalTelemetry.source(this)))
+                    android.widget.Toast.makeText(this,dutch?"Kan de Android-appinstellingen niet openen":"Cannot open Android app settings",android.widget.Toast.LENGTH_LONG).show();
+            });
+            updateLocation.run();body.addView(location);live(updateLocation);
             body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
             buildNativeWarningControls(nativeControls);body.addView(nativeControls);
             LinearLayout kindsRow = rowBase("Map-pin and legacy alert types", WazeAlerts.kindsSummary(this));

@@ -33,6 +33,16 @@ public class TelemetryRuntimeTest {
   assertTrue(app.getSharedPreferences("vela_settings",0).getBoolean("flock_cameras_on",false));
   TelemetryRuntime.select("");assertTrue(app.getSharedPreferences("vela_settings",0).getBoolean("flock_cameras_on",false));
  }
+ @Test public void locationSettingsFollowTheSelectedProviderRatherThanTheReceiver(){
+  for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){
+   TelemetryRuntime.select(provider);TelemetryRuntime.openProviderLocationSettings();
+   android.content.Intent intent=org.robolectric.Shadows.shadowOf(app).getNextStartedActivity();
+   assertNotNull(intent);assertEquals(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,intent.getAction());
+   assertEquals("package:"+provider,intent.getDataString());assertEquals(provider,TelemetryRuntime.selected());
+  }
+  assertNull(nl.johninnl.navigation.startup.ProviderSettings.locationIntent("app.vela"));
+  assertNull(nl.johninnl.navigation.startup.ProviderSettings.locationIntent("unknown.package"));
+ }
  @Test public void nativeFallbackExpiryPublishesUnknownWithoutAnotherBroadcast(){
   TelemetryRuntime.resetForTest();final int[] updates={0};
   TelemetryRuntime.init(app,()->updates[0]++);TelemetryRuntime.select("com.waze");
