@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e00abbd156819e44b24184011b3246c631b8a8d4/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.51.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e00abbd15681](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e00abbd156819e44b24184011b3246c631b8a8d4). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.51.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.50.0...v1.51.0) (2026-11-07)
+
+### ✨ New Features
+
+* **Myspoti:** port patches to 2.4.0 ([e00abbd](https://gitlab.com/johninnld/nl-morphe-patches/commit/e00abbd156819e44b24184011b3246c631b8a8d4))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b9d831e5d816c9b936d3d44ef4209f23c87cb624/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.50.0.**
