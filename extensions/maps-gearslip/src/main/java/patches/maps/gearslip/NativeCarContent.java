@@ -151,7 +151,8 @@ public final class NativeCarContent {
         String type=source.getClass().getName();if(!"ssf".equals(type)&&!"ruo".equals(type))return;
         PANELS.post(()->{
             try{
-                // Read the same cached root after the original b() getter has returned.
+                // Read the cached root after the original d() SHOWN lifecycle
+                // callback returns; R8 can bypass the final b() view getter.
                 Object root="ssf".equals(type)?call(field(source,"aG"),"a"):field(source,"p");
                 if(root instanceof View)panel(source,(View)root);
             }catch(Exception error){Log.w("MapsNativeCar","Native panel root unavailable",error);}
@@ -250,7 +251,7 @@ public final class NativeCarContent {
         }
         return rows;
     }
-    private Page preview(Object source,View panel,NativeControls controls)throws Exception{
+    Page preview(Object source,View panel,NativeControls controls)throws Exception{
         List<String> labels=new ArrayList<>();collectText(panel,controls,labels);
         List<Row> rows=new ArrayList<>();for(String label:labels)rows.add(new Row(label,Collections.emptyList(),null));
         String title=rows.isEmpty()?context.getApplicationInfo().loadLabel(context.getPackageManager()).toString():rows.get(0).title;
@@ -260,12 +261,12 @@ public final class NativeCarContent {
         return new Page(details?Kind.DETAILS:Kind.PREVIEW,title,rows,actions,panel);
     }
     private static void collectText(View view,NativeControls controls,List<String> labels){
-        if(controls.nativeVisibility(view)!=View.VISIBLE||"start_navigation_action_button".equals(name(view)))return;
+        if(controls.nativeVisibility(view)!=View.VISIBLE||primaryStart(view))return;
         if(view instanceof TextView){String value=text(((TextView)view).getText());if(!value.isEmpty()&&(labels.isEmpty()||!labels.get(labels.size()-1).equals(value)))labels.add(value);}
         if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)collectText(((ViewGroup)view).getChildAt(i),controls,labels);
     }
     private static void collectActions(View view,NativeControls controls,List<Action> actions){
-        if(controls.nativeVisibility(view)!=View.VISIBLE||"start_navigation_action_button".equals(name(view)))return;
+        if(controls.nativeVisibility(view)!=View.VISIBLE||primaryStart(view))return;
         int before=actions.size();
         if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)collectActions(((ViewGroup)view).getChildAt(i),controls,actions);
         if(actions.size()!=before)return;
@@ -274,6 +275,10 @@ public final class NativeCarContent {
             if(title.isEmpty()){List<String> labels=new ArrayList<>();collectText(view,controls,labels);if(!labels.isEmpty())title=labels.get(0);}
             if(!title.isEmpty()){actions.add(new Action(view,title,"view",-1,enabled(view)));return;}
         }
+    }
+    private static boolean primaryStart(View view){
+        String id=name(view);
+        return "start_navigation_action_button".equals(id)||"place_details_navigation_footer_action_button".equals(id);
     }
     private String label(String name,String fallback){
         for(String pkg:new String[]{context.getPackageName(),"com.google.android.apps.maps"}){

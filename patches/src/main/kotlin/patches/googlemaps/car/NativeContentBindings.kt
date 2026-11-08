@@ -46,6 +46,7 @@ internal fun validateMapsNativeContent(classBy: (String) -> ClassDef) {
     field("Lssf;", "aG", "Lssi;")
     method("Lssi;", "a", emptyList(), "Landroid/view/View;")
     method("Lssf;", "b", emptyList(), "Landroid/view/View;")
+    method("Lssf;", "d", emptyList(), "Luvv;")
     method("Lssf;", "n", emptyList(), "Lstp;")
     method("Lstp;", "a", emptyList(), "Lsnt;")
     method("Lsnt;", "K", emptyList(), "Z")
@@ -55,6 +56,8 @@ internal fun validateMapsNativeContent(classBy: (String) -> ClassDef) {
     field("Lruo;", "a", "Lrvr;")
     field("Lruo;", "p", "Landroid/view/View;")
     method("Lruo;", "b", emptyList(), "Landroid/view/View;")
+    method("Lruo;", "d", emptyList(), "Luvv;")
+    method("Luvr;", "I", emptyList(), "Luvv;")
     for (name in listOf("b", "c", "d", "e", "f", "g", "m")) field("Lrvr;", name, "Lrvo;")
     for (name in listOf("h", "i")) field("Lrvr;", name, "Lrvp;")
     field("Lrvr;", "l", "Z")
@@ -80,6 +83,11 @@ internal fun validateMapsNativeContent(classBy: (String) -> ClassDef) {
     check(zoom.implementation!!.instructions.any { (it as? WideLiteralInstruction)?.wideLiteral == 0x7f0b0d88L }) {
         "Maps separate native car zoom widget changed"
     }
+    val shown=classBy("Luvr;").methods.single { it.name=="I"&&it.parameterTypes.isEmpty()&&it.returnType=="Luvv;" }
+    check(shown.implementation!!.instructions.any {
+        val ref=(it as? ReferenceInstruction)?.reference as? MethodReference
+        ref?.definingClass=="Luvr;"&&ref.name=="d"&&ref.parameterTypes.isEmpty()&&ref.returnType=="Luvv;"
+    }) { "Maps native overlay shown lifecycle changed" }
 }
 
 internal fun bindMapsNativeContent(
@@ -92,7 +100,9 @@ internal fun bindMapsNativeContent(
             .addInstructions(0, "invoke-static/range {p1 .. p1}, $CONTENT->capture(Ljava/lang/Object;)V")
     }
     for (owner in listOf("Lssf;", "Lruo;")) {
-        mutableMethod(owner, "b", emptyList(), "Landroid/view/View;")
+        // uvr.I() dispatches d() as the overlay enters SHOWN. The final b()
+        // getter is bypassed/inlined on the actual native preview path.
+        mutableMethod(owner, "d", emptyList(), "Luvv;")
             .addInstructions(0, "invoke-static/range {p0 .. p0}, $CONTENT->panelSource(Ljava/lang/Object;)V")
     }
     val suggestions = mutableMethod("Lrmo;", "a", emptyList(), "Ljava/util/List;")

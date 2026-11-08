@@ -7,6 +7,7 @@ import java.io.File
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import com.android.tools.smali.dexlib2.Opcode
@@ -16,6 +17,27 @@ import org.junit.Assume.assumeNotNull
 import org.junit.Test
 
 class MapsGuidanceComponentTest {
+    @Test fun panelHandoffRunsOnTheNativeShownLifecycleRatherThanTheBypassedViewGetter() {
+        val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
+        val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
+        val classes=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }.associateBy { it.type }
+        val changed=mutableMapOf<String,MutableMethod>()
+        bindMapsNativeContent({ classes.getValue(it) }) { owner,name,parameters,result ->
+            val key="$owner->$name(${parameters.joinToString("")})$result"
+            changed.getOrPut(key) { MutableMethod(classes.getValue(owner).methods.single { it.name==name&&it.parameterTypes.map(CharSequence::toString)==parameters&&it.returnType==result }) }
+        }
+        for(owner in listOf("Lssf;","Lruo;")) {
+            val original=classes.getValue(owner).methods.single { it.name=="d"&&it.parameterTypes.isEmpty()&&it.returnType=="Luvv;" }.implementation!!.instructions.toList()
+            val after=changed.getValue("$owner->d()Luvv;").instructions.toList()
+            assertEquals(original.size+1,after.size)
+            assertEquals("Lpatches/maps/gearslip/NativeCarContent;->panelSource(Ljava/lang/Object;)V",(after.first() as ReferenceInstruction).reference.toString())
+            original.forEachIndexed { index,instruction ->
+                assertEquals(instruction.opcode,after[index+1].opcode)
+                assertEquals((instruction as? ReferenceInstruction)?.reference?.toString(),(after[index+1] as? ReferenceInstruction)?.reference?.toString())
+            }
+            assertFalse("Do not depend on a final view getter that R8 can inline",changed.containsKey("$owner->b()Landroid/view/View;"))
+        }
+    }
     @Test fun privateTokenGuardExcludesBothUnsupportedClientsAndPreservesOtherConnectionPaths() {
         val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
         val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
