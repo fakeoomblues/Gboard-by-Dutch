@@ -40,7 +40,7 @@ public final class CompactSpeedView extends View {
         requestLayout();invalidate();
     }
     void bindCar(TelemetryStore.View snapshot,Double maximum,boolean imperial,boolean dark,String legacy,java.util.List<nl.johninnl.navigation.alerts.WarningEvent> events){
-        bind(snapshot,maximum,imperial,dark,legacy);carEvents=events;carPills=legacy.isEmpty();
+        bind(snapshot,maximum,imperial,dark,legacy);carEvents=events;carPills=true;
         String description=getContentDescription().toString();long now=android.os.SystemClock.elapsedRealtime();
         for(nl.johninnl.navigation.alerts.WarningEvent event:events){
             description+=", "+nl.johninnl.navigation.alerts.WarningView.carMessage(event);
@@ -59,7 +59,7 @@ public final class CompactSpeedView extends View {
         if(!hasContent()){setMeasuredDimension(0,0);return;}
         if(carPills){
             float width=dp(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH);
-            float height=dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()));
+            float height=dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()+(warning.isEmpty()?0:1)));
             float scale=Math.min(1f,Math.min(available(widthSpec,width)/width,available(heightSpec,height)/height));
             if(scale<.5f){setMeasuredDimension(0,0);return;}
             // Constrain the complete stack uniformly. Independent resolveSize calls
@@ -81,7 +81,7 @@ public final class CompactSpeedView extends View {
     @Override protected void onDraw(Canvas canvas) {
         if(carPills){
             nl.johninnl.navigation.alerts.CarWarningPills.draw(getContext(),canvas,new RectF(0,0,getWidth(),getHeight()),density,dark,imperial,
-                data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,carEvents,carTypeface,carGeometry);return;
+                data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,carEvents,carTypeface,carGeometry,!warning.isEmpty());return;
         }
         super.onDraw(canvas);float x=dp(10),y=dp(8),width=Math.max(0,getWidth()-dp(20));
         int normal=dark?Color.WHITE:0xff111d2d,error=0xffe8514a;

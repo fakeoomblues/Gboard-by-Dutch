@@ -69,7 +69,7 @@ public class ExternalTelemetryCarTest {
     @Test public void constrainedCarPillsKeepTheirAspectRatioAndWithholdUnreadableSizes()throws Exception{
         zone();CompactSpeedView view=new CompactSpeedView(app);view.bindCar(ExternalTelemetry.view(),100d,false,false,"",java.util.Collections.emptyList());
         view.measure(android.view.View.MeasureSpec.makeMeasureSpec(90,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
-        assertEquals(90,view.getMeasuredWidth());assertEquals(32,view.getMeasuredHeight());
+        assertEquals(90,view.getMeasuredWidth());assertEquals("The supplied218:70pill scales uniformly at half width",29,view.getMeasuredHeight());
         view.measure(android.view.View.MeasureSpec.makeMeasureSpec(89,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
         assertEquals(0,view.getMeasuredWidth());assertEquals(0,view.getMeasuredHeight());
     }

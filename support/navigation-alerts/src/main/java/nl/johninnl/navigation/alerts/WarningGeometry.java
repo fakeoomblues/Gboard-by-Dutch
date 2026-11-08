@@ -68,11 +68,10 @@ public final class WarningGeometry {
             return percent instanceof Integer&&(Integer)percent>=0&&(Integer)percent<=100&&at instanceof Long&&fresh((Long)at,now)
                 ?(Integer)percent/100f:null;
         }
-        Integer span=event.triggerMeters;
-        if(span==null||span<=0||!fresh(event.triggerObservedAt,now)){
-            if(event.rangeMeters==null||!fresh(event.rangeObservedAt,now)||!"native_ui_max_distance".equals(event.fields().get("range_origin")))return null;
-            span=event.rangeMeters;
-        }
+        // A native visual approach span owns the line; the separate audible
+        // trigger remains unchanged and is only a fallback when no UI span exists.
+        Integer span=event.rangeMeters!=null&&fresh(event.rangeObservedAt,now)&&"native_ui_max_distance".equals(event.fields().get("range_origin"))?event.rangeMeters:null;
+        if(span==null){if(event.triggerMeters==null||event.triggerMeters<=0||!fresh(event.triggerObservedAt,now))return null;span=event.triggerMeters;}
         return Math.max(0,Math.min(1,1f-distanceMeters/span.floatValue()));
     }
     public static boolean relationshipKnown(WarningEvent event,long now){return event.stateValid(now)&&!event.relationship.equals("unknown")&&fresh(event.relationshipObservedAt==null?event.observedAt:event.relationshipObservedAt,now);}

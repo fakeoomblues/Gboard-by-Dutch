@@ -23,9 +23,13 @@ public final class WarningIcons {
     }
 
     public static boolean draw(Context context,Canvas canvas,WarningEvent event,RectF slot){
-        if(context==null||event==null||slot.isEmpty())return false;
+        if(event==null)return false;
+        return drawKey(context,canvas,key(event),slot);
+    }
+    static boolean drawKey(Context context,Canvas canvas,String icon,RectF slot){
+        if(context==null||slot.isEmpty())return false;
         int pixels=Math.max(1,Math.min(256,(int)Math.ceil(Math.max(slot.width(),slot.height()))));
-        String icon=key(event),cacheKey=icon+":"+pixels;Bitmap image=images.get(cacheKey);
+        String cacheKey=icon+":"+pixels;Bitmap image=images.get(cacheKey);
         if(image==null){
             String asset="morphe/navigation-warning-icons/"+icon+".png";
             try{

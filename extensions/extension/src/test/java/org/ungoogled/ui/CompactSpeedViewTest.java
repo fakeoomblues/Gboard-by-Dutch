@@ -31,5 +31,14 @@ public class CompactSpeedViewTest {
   assertTrue(v.getHeight()>100);assertTrue(v.getHeight()<160);assertTrue(v.getContentDescription().toString().contains(message));
   assertTrue(v.getContentDescription().toString().contains("1200 m remaining")||v.getContentDescription().toString().contains("1.2 km remaining"));
  }
+ @Test public void legacyCarWarningsKeepFullAccessibilityTextWithoutDrawingAProsePanel(){
+  CompactSpeedView v=new CompactSpeedView(RuntimeEnvironment.getApplication());String message="Flitsmeister: a long warning which must be spoken rather than cover the map";
+  v.bindCar(TelemetryStore.View.empty("nl.flitsmeister"),100d,false,false,message,java.util.Collections.emptyList());measure(v);
+  assertEquals(Math.round(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH),v.getWidth());
+  assertEquals(Math.round(nl.johninnl.navigation.alerts.CarWarningPills.HEIGHT),v.getHeight());
+  assertEquals(message,v.getContentDescription());
+  Canvas c=new Canvas(Bitmap.createBitmap(v.getWidth(),v.getHeight(),Bitmap.Config.ARGB_8888));v.draw(c);
+  org.robolectric.shadows.ShadowCanvas rendered=Shadows.shadowOf(c);assertEquals(1,rendered.getTextHistoryCount());assertEquals("—",rendered.getDrawnTextEvent(0).text);
+ }
  private static void measure(View v){v.measure(View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST));v.layout(0,0,v.getMeasuredWidth(),v.getMeasuredHeight());}
 }
