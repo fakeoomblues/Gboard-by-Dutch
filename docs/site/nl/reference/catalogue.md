@@ -182,6 +182,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 9.0.26.3 |
 | Enable full streaming | Aan | 9.0.26.3 |
 | Remove advertising | Aan | 9.0.26.3 |
+| Remove premium upsell UI | Aan | 9.0.26.3 |
 | Remove subscription paywalls | Aan | 9.0.26.3 |
 
 ## DS Nieuws

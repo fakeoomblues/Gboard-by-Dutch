@@ -182,6 +182,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 9.0.26.3 |
 | Enable full streaming | On | 9.0.26.3 |
 | Remove advertising | On | 9.0.26.3 |
+| Remove premium upsell UI | On | 9.0.26.3 |
 | Remove subscription paywalls | On | 9.0.26.3 |
 
 ## DS Nieuws

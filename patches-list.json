@@ -9575,6 +9575,37 @@
       "options": []
     },
     {
+      "name": "Remove premium upsell UI",
+      "description": "Removes the Premium tab from the bottom navigation bar, the Get Premium button on the user profile, the conversion banner and Plan management row in Settings, and shows the free account plan as Deezer Premium. Account, catalogue, playback and the remaining Settings items are unchanged.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "deezer.android.app",
+          "name": "Deezer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "51a891a6c5d17b4e36a6f46bab675c1cae786a5af06f51d0105dab7ec6a94516"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.0.26.3",
+              "versionCodes": {
+                "ARM64_V8A": 9002603
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Remove promotional popups",
       "description": "Stops coupon offers opening over Home and search results.",
       "default": true,
