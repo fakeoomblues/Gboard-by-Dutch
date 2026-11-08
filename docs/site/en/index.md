@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patch bundle: 1.55.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">64 apps</span> · Patch bundle: 1.55.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -302,7 +302,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow any android auto host disable tracking enable full streaming remove advertising remove subscription paywalls" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow any android auto host disable tracking enable full streaming remove advertising remove premium upsell ui remove subscription paywalls" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Deezer](apps/deezer.md)
@@ -310,12 +310,13 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">9.0.26.3</span></p>
 <p class="dap-app-card__package">deezer.android.app</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
 <li>Allow any Android Auto host <span class="dap-app-card__target">9.0.26.3</span></li>
 <li>Disable tracking <span class="dap-app-card__target">9.0.26.3</span></li>
 <li>Enable full streaming <span class="dap-app-card__target">9.0.26.3</span></li>
 <li>Remove advertising <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Remove premium upsell UI <span class="dap-app-card__target">9.0.26.3</span></li>
 <li>Remove subscription paywalls <span class="dap-app-card__target">9.0.26.3</span></li>
 </ul>
 </details>
@@ -1091,42 +1092,6 @@ hide:
 </details>
 
 [Guide and downloads](apps/soundcloud.md){ .dap-app-card__link }
-
-</article>
-
-<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads disable ad breaks enable debuggable force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
-<p class="dap-app-card__category">Entertainment</p>
-
-### [Spotify](apps/spotify.md)
-
-<p class="dap-app-card__version">App versions: <span class="dap-data">9.1.94.1929</span></p>
-<p class="dap-app-card__package">com.spotify.music</p>
-<details class="dap-app-card__patches">
-<summary>19 patches</summary>
-<ul>
-<li>Android Auto Up next <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
-<li>Android Auto support <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Block popup ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Disable ad breaks <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
-<li>Enable debuggable <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
-<li>Force play order <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
-<li>Hide Premium tab <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide ad sections <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide download buttons <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide playlist ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide premium context-menu rows <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide premium settings sections <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide shuffle controls <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide video ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Hide video shelves (safe) <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Remove shuffle restriction <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Sanitize sharing links <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Show Premium in the account row <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Skip audio ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-</ul>
-</details>
-
-[Guide and downloads](apps/spotify.md){ .dap-app-card__link }
 
 </article>
 

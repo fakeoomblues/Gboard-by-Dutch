@@ -11,6 +11,15 @@ tasks.named<org.gradle.api.tasks.javadoc.Javadoc>("javadoc") {
     options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PACKAGE
 }
 
+// Spotify is withdrawn from the published bundle: its patched app gets accounts
+// restricted after a short period of use. Keep the sources in the checkout, but
+// compile neither the patches nor their extension into the MPP or its patch list
+// until that is fixed.
+kotlin.sourceSets.main { kotlin.exclude("patches/spotify/**") }
+tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
+    exclude("extensions/spotify.mpe")
+}
+
 val mapsKeySource = providers.environmentVariable("SHARED_MAPS_API_KEY")
     .orElse(providers.fileContents(rootProject.layout.projectDirectory.file(".community-maps-api-key")).asText)
 val generatedMapsKey = layout.buildDirectory.dir("generated/maps-key/kotlin")

@@ -675,34 +675,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Enable SoundCloud Go | On | 2026.10.28-release |
 | Home in Android Auto | On | 2026.10.28-release |
 
-## Spotify
-
-[What do the patches change?](../apps/spotify.md)
-
-`com.spotify.music`
-
-| Patch | Default | App versions |
-| --- | --- | --- |
-| Android Auto Up next | Off | 9.1.94.1929 |
-| Android Auto support | On | 9.1.94.1929 |
-| Block popup ads | On | 9.1.94.1929 |
-| Disable ad breaks | Off | 9.1.94.1929 |
-| Enable debuggable | Off | 9.1.94.1929 |
-| Force play order | Off | 9.1.94.1929 |
-| Hide Premium tab | On | 9.1.94.1929 |
-| Hide ad sections | On | 9.1.94.1929 |
-| Hide download buttons | On | 9.1.94.1929 |
-| Hide playlist ads | On | 9.1.94.1929 |
-| Hide premium context-menu rows | On | 9.1.94.1929 |
-| Hide premium settings sections | On | 9.1.94.1929 |
-| Hide shuffle controls | On | 9.1.94.1929 |
-| Hide video ads | On | 9.1.94.1929 |
-| Hide video shelves (safe) | On | 9.1.94.1929 |
-| Remove shuffle restriction | On | 9.1.94.1929 |
-| Sanitize sharing links | On | 9.1.94.1929 |
-| Show Premium in the account row | On | 9.1.94.1929 |
-| Skip audio ads | On | 9.1.94.1929 |
-
 ## TIDAL
 
 [What do the patches change?](../apps/tidal.md)
@@ -934,4 +906,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)
