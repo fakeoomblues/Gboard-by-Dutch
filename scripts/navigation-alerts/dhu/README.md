@@ -349,6 +349,16 @@ check remain open. Diagnose the actual native widget owners offline before
 another connected implementation batch. No physical phone was touched, and
 all owned runtime/build outputs were stopped and cleaned.
 
+Run195 identified the duplicate guidance column precisely: the native
+`zoom_widget_view` was already invisible. The visible reset/+/- controls were
+three ID-less TextViews created by `Shapes.attachTiles`; the phone navigation
+window picker had selected the real car decor. The fix records projected
+decors weakly at the existing `carSurface` boundary, removes any old phone
+column on that decor, and excludes it from phone picking/direct attachment.
+It preserves phone settings and held zoom state, and keeps retired car
+windows excluded after surface loss. New guidance/wide acceptance is required;
+do not claim that suppressing the native zoom widget fixed this separate path.
+
 ## Historical single Vela design frame
 
 The one-frame design gate described here was subsequently closed by the owner's

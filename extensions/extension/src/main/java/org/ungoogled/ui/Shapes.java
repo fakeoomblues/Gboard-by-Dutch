@@ -1615,6 +1615,17 @@ public final class Shapes {
     }
 
     static android.view.View navTiles;
+    private static final java.util.Set<android.view.ViewGroup> CAR_NAV_DECORS =
+            java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
+
+    /** A real projected decor never becomes a phone window after surface loss. */
+    static void hostedCarSurface(android.view.ViewGroup decor) {
+        if (decor == null) return;
+        CAR_NAV_DECORS.add(decor);
+        // Registration can arrive after a navigation tick. Remove only this
+        // decor's old phone column, preserving phone preference/zoom state.
+        if (navTiles != null && navTiles.getParent() == decor) hideTiles();
+    }
     /** What the column was built with, so a change of either switch rebuilds it. */
     private static boolean navTilesZoom, navTilesPower;
 
@@ -1653,6 +1664,7 @@ public final class Shapes {
     private static boolean navLandscape;
 
     static void attachTiles(android.view.ViewGroup decor) {
+        if (CAR_NAV_DECORS.contains(decor)) return;
         if (navTiles != null && navTiles.getParent() == decor) { repositionTiles(decor); return; }
         Context ctx = decor.getContext();
         float d = ctx.getResources().getDisplayMetrics().density;
@@ -2111,6 +2123,7 @@ public final class Shapes {
         long bestArea = -1;
         for (android.view.View root : roots) {
             if (!(root instanceof android.view.ViewGroup) || !root.isShown()) continue;
+            if (CAR_NAV_DECORS.contains(root)) continue;
             if (root.getClass().getName().indexOf("Popup") >= 0) continue;
             if (PowerSaving.isMinModeWindow(root)) continue;  // the power saving screen has its own nav_container
             try {

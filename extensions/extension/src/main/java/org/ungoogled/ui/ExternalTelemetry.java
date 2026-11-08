@@ -92,7 +92,7 @@ public final class ExternalTelemetry {
         if(owner==null)return;Runnable change=()->{
             WeakReference<ViewGroup> old=carRoots.get(owner);
             if(old==null||old.get()!=root)removeCarWidget(owner);
-            if(root==null){carRoots.remove(owner);carViewportSizes.remove(owner);}else{carRoots.put(owner,new WeakReference<>(root));carViewportSizes.put(owner,new int[]{viewport.left,viewport.top,viewport.right,viewport.bottom});}renderCar();
+            if(root==null){carRoots.remove(owner);carViewportSizes.remove(owner);}else{Shapes.hostedCarSurface(root);carRoots.put(owner,new WeakReference<>(root));carViewportSizes.put(owner,new int[]{viewport.left,viewport.top,viewport.right,viewport.bottom});}renderCar();
         };if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
     }
     private static void removeCarWidget(Object owner){CompactSpeedView value=carWidgets.remove(owner);if(value!=null&&value.getParent() instanceof ViewGroup)((ViewGroup)value.getParent()).removeView(value);}
