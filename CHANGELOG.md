@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cb0e71531750fc91cbe0f7d2092ca78052ee7b2c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.56.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cb0e71531750](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cb0e71531750fc91cbe0f7d2092ca78052ee7b2c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.56.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.56.0...v1.56.1) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** show mockup warning pills on the phone in Maps and Vela ([cb0e715](https://gitlab.com/johninnld/nl-morphe-patches/commit/cb0e71531750fc91cbe0f7d2092ca78052ee7b2c))
+* **Vela Maps:** show mockup warning pills on the phone in Maps and Vela ([cb0e715](https://gitlab.com/johninnld/nl-morphe-patches/commit/cb0e71531750fc91cbe0f7d2092ca78052ee7b2c))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c55a67755fad99750b3b7949df6c5272e2b6d78f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.56.0.**
