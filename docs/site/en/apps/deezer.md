@@ -16,7 +16,7 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | **Enable full streaming** | On | Keeps full-track playback enabled for the signed-in account: removes preview and device-limit verdicts, keeps offline and radio rights, clears the streaming time limit, and leaves catalogue entries playable through Deezer's own media service. |
 | **Remove advertising** | On | Disables banner, native, audio and preroll advertising. Playback continues without an ad break and the audio-ad launcher never receives its ad payload. |
 | **Disable tracking** | On | Disables Adjust initialization and events, Segment event delivery and its Braze destination, the Firebase Analytics/Crashlytics/Performance/Sessions collectors, Facebook automatic app events and advertising IDs. |
-| **Remove subscription paywalls** | On | Consumes the Premium tab before it launches, redirects the startup Premium activity to Home instead of exiting to the launcher, blocks the post-login premiumtab WebView paywall, and closes the artist paywall, trial-start and offer-dialog activities after their normal lifecycle starts. |
+| **Remove subscription paywalls** | On | Skips the startup plans page (treats the account as not waiting for payment and ignores the no-freemium startup redirect), consumes the Premium tab before it launches, redirects the startup Premium activity to Home instead of exiting to the launcher, blocks the post-login premiumtab WebView paywall, and closes the artist paywall, trial-start and offer-dialog activities after their normal lifecycle starts. |
 
 ## Playback
 

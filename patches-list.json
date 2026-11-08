@@ -9825,7 +9825,7 @@
     },
     {
       "name": "Remove subscription paywalls",
-      "description": "Stops the Premium tab and the startup Premium surface from blocking the app, redirecting the startup Premium activity to Home, and closes the artist paywall, trial-start and offer-dialog activities after their normal lifecycle starts. Account, sign-in and catalogue services are unchanged.",
+      "description": "Stops the startup plans page from blocking the app by treating the account as not waiting for payment and skipping the no-freemium startup redirect, stops the Premium tab and the startup Premium surface from blocking the app, redirecting the startup Premium activity to Home, and closes the artist paywall, trial-start and offer-dialog activities after their normal lifecycle starts. Account, sign-in and catalogue services are unchanged.",
       "default": true,
       "category": null,
       "compatiblePackages": [
