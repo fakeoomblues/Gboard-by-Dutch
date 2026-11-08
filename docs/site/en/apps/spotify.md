@@ -15,8 +15,8 @@ Select the universal original APK for this exact version in Morphe Manager.
 | **Android Auto support** | On | Makes the car media browser, Home and Library work with DriveDeck, Gearslip or another compatible Android Auto host, including Spotify's bundled car service. |
 | **Android Auto Up next** | Off | Publishes the real upcoming tracks so the car's Up next list is populated; opt-in while queue startup is verified. |
 | **Block popup ads** | On | Blocks fullscreen promotions shown when opening the app. |
-| **Change package name** | Off | Changes the package name and app name so the patched app can be installed beside the original. |
 | **Disable ad breaks** | Off | Asks Spotify's ads service to turn its audio ad slots off. Experimental: the request path is repaired for this version, but it needs a signed-in free account and real playback to confirm. |
+| **Enable debuggable** | Off | Marks the app debuggable so diagnostic tools can attach to it on a phone without root. Does not change how the app behaves. |
 | **Force play order** | Off | Sends shuffle=false so albums and playlists play in order; a server restriction may still apply. |
 | **Hide ad sections** | On | Removes brand ad sections from Home and Search. |
 | **Hide download buttons** | On | Hides download buttons on tracks, albums, playlists and podcasts; downloads and entitlements are unchanged. |
@@ -32,7 +32,7 @@ Select the universal original APK for this exact version in Morphe Manager.
 | **Show Premium in the account row** | On | Shows Premium instead of Free in the account and plan rows; a label change only. |
 | **Skip audio ads** | On | Asks Spotify's player to skip an audio ad through its own next command, then seeks to its end if the player refuses, and mutes only as a last resort. Turning on Spotify's "Device broadcast status" improves detection. |
 
-The community set also contained **Hide ad views**, **Hide context menu upsells** and **Diagnose Spotify client**. Their target classes are absent from 9.1.94.1929. The older **Fix third party launchers widgets** and **Use the Premium plan icon** controls were dropped for this version as well: the widget permission check and the plan logo renderer no longer exist in 9.1.94.1929. They are not offered rather than failing the whole patch run.
+The community set also contained **Hide ad views**, **Hide context menu upsells** and **Diagnose Spotify client**. Their target classes are absent from 9.1.94.1929. The older **Fix third party launchers widgets** and **Use the Premium plan icon** controls were dropped for this version as well: the widget permission check and the plan logo renderer no longer exist in 9.1.94.1929. They are not offered rather than failing the whole patch run. **Change package name** is no longer offered: Spotify's sign-in check (reCAPTCHA) only accepts the original package name, so a renamed app cannot log in or create an account.
 
 ## Car host access
 

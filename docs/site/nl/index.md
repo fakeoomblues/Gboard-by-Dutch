@@ -1094,7 +1094,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads change package name disable ad breaks force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads disable ad breaks enable debuggable force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Spotify](apps/spotify.md)
@@ -1107,8 +1107,8 @@ hide:
 <li>Android Auto Up next <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
 <li>Android Auto support <span class="dap-app-card__target">9.1.94.1929</span></li>
 <li>Block popup ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Change package name <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
 <li>Disable ad breaks <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
+<li>Enable debuggable <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
 <li>Force play order <span class="dap-app-card__target">9.1.94.1929 · standaard uit</span></li>
 <li>Hide Premium tab <span class="dap-app-card__target">9.1.94.1929</span></li>
 <li>Hide ad sections <span class="dap-app-card__target">9.1.94.1929</span></li>

@@ -685,8 +685,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Android Auto Up next | Uit | 9.1.94.1929 |
 | Android Auto support | Aan | 9.1.94.1929 |
 | Block popup ads | Aan | 9.1.94.1929 |
-| Change package name | Uit | 9.1.94.1929 |
 | Disable ad breaks | Uit | 9.1.94.1929 |
+| Enable debuggable | Uit | 9.1.94.1929 |
 | Force play order | Uit | 9.1.94.1929 |
 | Hide Premium tab | Aan | 9.1.94.1929 |
 | Hide ad sections | Aan | 9.1.94.1929 |

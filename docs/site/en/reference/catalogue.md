@@ -685,8 +685,8 @@ Check the supported app versions and default setting for each patch. The app pag
 | Android Auto Up next | Off | 9.1.94.1929 |
 | Android Auto support | On | 9.1.94.1929 |
 | Block popup ads | On | 9.1.94.1929 |
-| Change package name | Off | 9.1.94.1929 |
 | Disable ad breaks | Off | 9.1.94.1929 |
+| Enable debuggable | Off | 9.1.94.1929 |
 | Force play order | Off | 9.1.94.1929 |
 | Hide Premium tab | On | 9.1.94.1929 |
 | Hide ad sections | On | 9.1.94.1929 |
