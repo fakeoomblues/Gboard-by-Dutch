@@ -5,7 +5,9 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
@@ -19,6 +21,43 @@ private const val ORIGINAL = "com.google.android.apps.gmm.car.GmmCarProjectionSe
 private const val LEGACY_PROVIDER = "com.google.android.apps.gmm.car.projected.service.CarNavigationProviderService"
 private const val ADAPTER = "patches.maps.gearslip.NativeCarService"
 private const val ANDROID = "http://schemas.android.com/apk/res/android"
+
+/** Open the existing native editor locally when CAL owns the requesting car window. */
+internal fun bindMapsCarSearch(
+    classBy: (String) -> ClassDef,
+    mutableMethod: (String, String, List<String>, String) -> MutableMethod,
+) {
+    check(classBy("Lrhe;").fields.count { it.name == "l" && it.type == "Landroid/view/ViewGroup;" } == 1) {
+        "Maps' car Search window changed"
+    }
+    val original = classBy("Lrhe;").methods.single {
+        it.name == "G" && it.parameterTypes.isEmpty() && it.returnType == "V"
+    }
+    val instructions = original.implementation!!.instructions.toList()
+    check(original.implementation!!.registerCount >= 3) { "Maps' car Search has no scratch registers" }
+    val mode = (instructions.first() as? ReferenceInstruction)?.reference as? MethodReference
+    val gate = instructions[2] as? OffsetInstruction
+    val positions = instructions.runningFold(0) { pc, instruction -> pc + instruction.codeUnits }
+    val localIndex = gate?.let { positions.indexOf(positions[2] + it.codeOffset) } ?: -1
+    check(mode?.definingClass == "Lrhe;" && mode.name == "C" && mode.parameterTypes.isEmpty() && mode.returnType == "Z" &&
+        instructions[1].opcode == com.android.tools.smali.dexlib2.Opcode.MOVE_RESULT &&
+        instructions[2].opcode == com.android.tools.smali.dexlib2.Opcode.IF_EQZ && localIndex in instructions.indices &&
+        (instructions[localIndex] as? ReferenceInstruction)?.reference?.toString() == "Lrhe;->aB:Lsiy;" && instructions.drop(localIndex).any {
+        val ref = (it as? ReferenceInstruction)?.reference as? MethodReference
+        ref?.name == "aM" && ref.returnType == "Luvs;"
+    }) { "Maps' local Search editor branch changed" }
+    val method = mutableMethod("Lrhe;", "G", emptyList(), "V")
+    val body = method.implementation!!.instructions.toList()
+    method.addInstructionsWithLabels(0, """
+        iget-object v0, p0, Lrhe;->l:Landroid/view/ViewGroup;
+        invoke-static/range {v0 .. v0}, Lpatches/maps/gearslip/NativeCarSearch;->target(Landroid/view/View;)I
+        move-result v0
+        if-eqz v0, :original_car_search
+        const/4 v1, 0x1
+        if-eq v0, v1, :native_local_search
+        return-void
+    """, ExternalLabel("original_car_search", body[0]), ExternalLabel("native_local_search", body[localIndex]))
+}
 
 /** Keep unsupported private clients disconnected; never forge a retail-host grant. */
 internal fun guardMapsPrivateCarToken(method: MutableMethod) {
@@ -243,6 +282,9 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireMethod("Lbesz;", "f", listOf("Landroid/view/Surface;"), "V")
         requireField("Lbesz;", "b", "Ljava/lang/Object;")
         validateMapsGuidanceComponent { classDefBy(it) }
+        bindMapsCarSearch({ classDefBy(it) }) { owner, name, parameters, result ->
+            mutableClassDefBy(owner).methods.single { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameters && it.returnType == result }
+        }
         bindMapsNativeContent({ classDefBy(it) }) { owner, name, parameters, result ->
             mutableClassDefBy(owner).methods.single { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameters && it.returnType == result }
         }

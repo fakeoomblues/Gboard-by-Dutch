@@ -309,6 +309,31 @@ APKs/settings/GPS and stop the VM. Preserve failed attachment receipts; only
 the later fully covered app window supplies accepted behavior. No physical
 phone was touched.
 
+## Native Maps compact Search handoff
+
+Runs190/191 use the unchanged feab48a Maps APK, original AA17 and SDK DHU at
+800x480, with stationary GPS on the Netherlands A4. A first map tap can wake
+auto-hidden host controls. The immediate wake/action sequence (250ms between
+the two known targets) reached `ActionBinder`, the current native `rkp` model
+and `rhe.G()`. A13-second gap instead produced another Surface hit. Do not
+classify a Surface hit as a native Search action failure.
+
+The actual failed Search chose `rhe.C()==true`, invoked `qng.c` with the
+original `google.maps:?act=51`, and requested private `ICarRegionController`
+overlay closure. Our facade acknowledged that request, but the native queued
+central-display intent never ran. This is separate from action ownership or
+an empty native bound model. Static method evidence and original-results
+runtime receipts are retained under private runs190/191.
+
+Static tracing also proves that the URI handler calls `rhe.G()` again; merely
+forwarding it without a real region expansion would loop. The client patch
+therefore selects Maps' existing local editor branch for the recorded current
+CAL window. That native scene-construction branch is retained unchanged; no
+native mode result is forged. Unowned contexts keep the original host path,
+and scoped retired windows return without navigating a replacement. The
+correction still requires a rebuilt original-input APK and focused
+Search/editor/results/Back acceptance before being called fixed.
+
 ## Historical single Vela design frame
 
 The one-frame design gate described here was subsequently closed by the owner's

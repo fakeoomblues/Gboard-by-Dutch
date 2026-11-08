@@ -17,6 +17,30 @@ import org.junit.Assume.assumeNotNull
 import org.junit.Test
 
 class MapsGuidanceComponentTest {
+    @Test fun ownedCompactSearchUsesTheUnchangedNativeEditorAndPreservesTheUnownedHostPath() {
+        val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
+        val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
+        val classes=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }.associateBy { it.type }
+        val original=classes.getValue("Lrhe;").methods.single { it.name=="G" && it.parameterTypes.isEmpty() && it.returnType=="V" }
+        val mutable=MutableMethod(original)
+        bindMapsCarSearch({ classes.getValue(it) }) { _,_,_,_ -> mutable }
+        val before=original.implementation!!.instructions.toList();val after=mutable.instructions.toList()
+        assertEquals(before.size+7,after.size)
+        assertEquals("Lrhe;->l:Landroid/view/ViewGroup;",(after[0] as ReferenceInstruction).reference.toString())
+        assertEquals("Lpatches/maps/gearslip/NativeCarSearch;->target(Landroid/view/View;)I",(after[1] as ReferenceInstruction).reference.toString())
+        val pc=mutableListOf(0);after.forEach { pc.add(pc.last()+it.codeUnits) }
+        assertEquals(pc[7],pc[3]+(after[3] as OffsetInstruction).codeOffset)
+        val nativePc=before.runningFold(0) { p,instruction -> p+instruction.codeUnits }
+        val nativeLocal=nativePc.indexOf(nativePc[2]+(before[2] as OffsetInstruction).codeOffset)
+        assertEquals(pc[7+nativeLocal],pc[5]+(after[5] as OffsetInstruction).codeOffset)
+        before.forEachIndexed { i,instruction ->
+            assertEquals(instruction.opcode,after[i+7].opcode)
+            assertEquals((instruction as? ReferenceInstruction)?.reference?.toString(),(after[i+7] as? ReferenceInstruction)?.reference?.toString())
+        }
+        val owner=classes.getValue("Lrhe;")
+        val missing=ImmutableClassDef(owner.type,owner.accessFlags,owner.superclass,owner.interfaces,owner.sourceFile,owner.annotations,owner.fields.filter { it.name!="l" },owner.methods)
+        assertThrows(IllegalStateException::class.java) { bindMapsCarSearch({ if(it==owner.type)missing else classes.getValue(it) }) { _,_,_,_ -> mutable } }
+    }
     @Test fun panelHandoffRunsOnTheNativeShownLifecycleRatherThanTheBypassedViewGetter() {
         val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
         val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
