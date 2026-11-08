@@ -15,8 +15,8 @@ Selecteer de universele originele APK voor deze versie in Morphe Manager.
 | **Android Auto support** | Aan | Maakt de auto-mediabrowser, Home en Bibliotheek bruikbaar met DriveDeck, Gearslip of een andere compatibele Android Auto-host, inclusief de meegeleverde autoservice van Spotify. |
 | **Android Auto Up next** | Uit | Publiceert de echte komende nummers zodat de Up next-lijst in de auto gevuld is; optioneel terwijl het starten van de wachtrij wordt gecontroleerd. |
 | **Block popup ads** | Aan | Blokkeert volledige promotieschermen bij het openen van de app. |
-| **Change package name** | Uit | Wijzigt pakketnaam en appnaam zodat de gepatchte app naast het origineel kan staan. |
 | **Disable ad breaks** | Uit | Vraagt de advertentiedienst van Spotify de audio-advertentieslots uit te zetten. Experimenteel: het verzoekpad is voor deze versie hersteld, maar echte weergave met een gratis account is niet vastgesteld. |
+| **Enable debuggable** | Uit | Markeert de app als debugbaar zodat diagnosetools er zonder root aan kunnen koppelen. Verandert niets aan hoe de app werkt. |
 | **Force play order** | Uit | Stuurt shuffle=false zodat albums en afspeellijsten in volgorde spelen; een serverbeperking kan nog gelden. |
 | **Hide ad sections** | Aan | Verwijdert merksecties met advertenties van Home en Zoeken. |
 | **Hide download buttons** | Aan | Verbergt downloadknoppen op nummers, albums, afspeellijsten en podcasts; downloads en rechten blijven ongewijzigd. |
@@ -32,7 +32,7 @@ Selecteer de universele originele APK voor deze versie in Morphe Manager.
 | **Show Premium in the account row** | Aan | Toont Premium in plaats van Free in de account- en planrijen; alleen het label verandert. |
 | **Skip audio ads** | Aan | Vraagt de speler van Spotify een audioadvertentie over te slaan via zijn eigen volgende-knop, zoekt daarna naar het einde als de speler weigert en dempt pas als laatste redmiddel. Zet "Device broadcast status" in Spotify aan voor betere herkenning. |
 
-De community-set bevatte ook **Hide ad views**, **Hide context menu upsells** en **Diagnose Spotify client**. Hun doelklassen bestaan niet in 9.1.94.1929. Ook de oudere **Fix third party launchers widgets** en **Use the Premium plan icon** zijn voor deze versie verwijderd: de widget-permissiecontrole en de planlogo-renderer bestaan niet meer in 9.1.94.1929. Ze worden niet aangeboden in plaats van de hele patchrun te laten mislukken.
+De community-set bevatte ook **Hide ad views**, **Hide context menu upsells** en **Diagnose Spotify client**. Hun doelklassen bestaan niet in 9.1.94.1929. Ook de oudere **Fix third party launchers widgets** en **Use the Premium plan icon** zijn voor deze versie verwijderd: de widget-permissiecontrole en de planlogo-renderer bestaan niet meer in 9.1.94.1929. Ze worden niet aangeboden in plaats van de hele patchrun te laten mislukken. **Change package name** wordt niet meer aangeboden: Spotify's inlogcontrole (reCAPTCHA) accepteert alleen de oorspronkelijke pakketnaam, waardoor een hernoemde app niet kan inloggen of een account kan aanmaken.
 
 ## Toegang tot de auto-host
 

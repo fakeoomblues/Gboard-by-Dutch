@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patch bundle: 1.53.10</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patch bundle: 1.54.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1094,7 +1094,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads change package name disable ad breaks force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.1.94.1929 android auto up next android auto support block popup ads disable ad breaks enable debuggable force play order hide premium tab hide ad sections hide download buttons hide playlist ads hide premium context-menu rows hide premium settings sections hide shuffle controls hide video ads hide video shelves (safe) remove shuffle restriction sanitize sharing links show premium in the account row skip audio ads" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Spotify](apps/spotify.md)
@@ -1107,8 +1107,8 @@ hide:
 <li>Android Auto Up next <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
 <li>Android Auto support <span class="dap-app-card__target">9.1.94.1929</span></li>
 <li>Block popup ads <span class="dap-app-card__target">9.1.94.1929</span></li>
-<li>Change package name <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
 <li>Disable ad breaks <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
+<li>Enable debuggable <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
 <li>Force play order <span class="dap-app-card__target">9.1.94.1929 · default off</span></li>
 <li>Hide Premium tab <span class="dap-app-card__target">9.1.94.1929</span></li>
 <li>Hide ad sections <span class="dap-app-card__target">9.1.94.1929</span></li>
