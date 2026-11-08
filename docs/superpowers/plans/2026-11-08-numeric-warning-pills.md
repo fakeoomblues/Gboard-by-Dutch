@@ -13,7 +13,9 @@
 - [x] Use the existing fresh native geometry span for approach and independent telemetry section percent for active progress; never copy approach fill into the active bar or invent a clock/span. An unavailable section progress shows only its track.
 - [x] Copy all19 supplied256px icons byte-for-byte; use the mockup pack's supplied repair for its empty emergency file. Record updated catalogue hashes/provenance.
 - [x] Account for canonical verification using fresh Android/Python/docs and unchanged release/Medium receipts.
-- [ ] Patch the exact original Maps/Vela inputs and verify new packaged assets.
-- [ ] Produce a signed commit-derived engineering bundle; retain compact evidence and clean owned build/scratch. Broad emulator acceptance remains deferred by the owner; do not claim a new live-AA design capture from JVM rendering checks.
+- [x] Patch the exact original Maps/Vela inputs and verify new packaged assets.
+- [x] Produce a signed commit-derived engineering bundle; retain compact evidence and clean owned build/scratch. Broad emulator acceptance remains deferred by the owner; do not claim a new live-AA design capture from JVM rendering checks.
 
 **Review focus:** No visible native warning-name fallback, no duplicate speedometer, no fake0distance/average, no stale span/progress, no per-frame speech, no historic icon-byte claims after this asset update. Existing Exit and entry-focus issues remain separate.
+
+Result: executable source `5b03b286e6177675addac486955cf8f0e6ff68a5`, signed review bundle `~/Downloads/nl-morphe-navigation-5b03b286e617.mpp`. Original Maps28/Vela1 default patch sets succeeded with no failures and all19 new packaged asset hashes matched. Six rendered-output tests cover the revised shared pill. No new runtime or phone installation; live AA geometry of this revised shape remains deferred. Compact receipt and cleanup are in `.analysis/numeric-warning-pills-216/receipt.json`.

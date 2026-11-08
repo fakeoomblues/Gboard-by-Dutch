@@ -2,7 +2,7 @@
 
 Updated 8 November 2026.
 
-Owner UI revision216 supersedes the earlier visible fallback/average captions described below: the shared renderer now uses the supplied numeric/icon-only mockup pack, with the same average icon switching from entry metres to average km/h and an independent section bar. New256px icon provenance is in the current catalogue. Canonical renderer/build checks pass; a new original-AA capture and engineering artifact are tracked in `.analysis/numeric-warning-pills-216/receipt.json`. Prior drive images retain data/lifecycle proof but do not show this revised shape. The shortened-text defect is removed in the revised source rather than left as a post-GA styling task.
+Owner UI revision216 supersedes the earlier visible fallback/average captions described below: the shared renderer now uses the supplied numeric/icon-only mockup pack, with the same average icon switching from entry metres to average km/h and an independent section bar. New256px icon provenance is in the current catalogue. Canonical renderer/build checks pass; the signed engineering artifact and deferred original-AA capture are tracked in `.analysis/numeric-warning-pills-216/receipt.json`. Prior drive images retain data/lifecycle proof but do not show this revised shape. The shortened-text defect is removed in the revised source rather than left as a post-GA styling task.
  Owner requested a quota-conscious wrap-up: retain major user-impacting findings, defer the remaining validation and quality-of-life work. Deferred means unverified, not passed. No new APK, main promotion or release was produced by this closeout.
 
 ## Product-owner answer
