@@ -12,6 +12,8 @@ Read this checkpoint at task start and after context compaction, before resuming
 
 During a live acceptance window, execute the prepared UI/GPS checklist and collect evidence only. Defer source/history/tool research and implementation until the owned runtime is stopped. Record the stop deadline before starting; do not consume that deadline on offline investigation.
 
+When a drive capture shows an unexpected failure, stop the owned GPS replay as the next tool action and restore speed0 before analysis, commentary or more UI input. Apply this even when the cause or whether the behavior is intended is uncertain; classify it offline. A live replay must not continue while deciding how to investigate a failed frame.
+
 Before each batch, identify the concrete behaviour to change, the existing evidence that remains valid and the bounded acceptance steps. After a failed acceptance session, preserve evidence and diagnose offline before the next connected implementation batch. Retain mandatory verification gates.
 
 Preserve the documented reusable emulator baseline and known UI recipe while stopping owned runtimes and cleaning per-job scratch/output storage. Do not claim an initialized baseline exists until it has actually been saved and verified.

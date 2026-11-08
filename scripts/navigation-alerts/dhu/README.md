@@ -359,6 +359,35 @@ It preserves phone settings and held zoom state, and keeps retired car
 windows excluded after surface loss. New guidance/wide acceptance is required;
 do not claim that suppressing the native zoom widget fixed this separate path.
 
+Run197 verified the exact installed12cd912 APK, native Search/keyboard and
+guidance at1280x480, with the legacy phone column absent while the host's
+controls were awake. These close the wide UI gates only. Its real FM
+AVG_SPEED_CHECK warning appeared, and the first corresponding Maps TTS
+utterance returned0, started, finished and completed/quiesced natively.
+Head-unit audio remains unaccepted: the private read-only PCM probe saw no
+source8 sinks in AA's `:projection` process; other AA processes were observed
+with the existing crash/lifecycle observer but not this PCM probe.
+
+The existing A4 trace was replayed through the installed emulator's native
+GPS API, with100km/h and47.7degree bearing verified in Android GPS. The
+packaged `GpsState` proto labels speed as metres/second, but this emulator
+converted it as knots:27.7778 input produced14.291254m/s;53.99568 produced
+27.779976m/s. Preserve the failed and calibrated preflights; calibrate against
+the actual receiver rather than trusting that comment on another SDK build.
+The GPS operation used existing curl/SDK RPCs; no maintained replay runner or
+framework changed, and its private bearer-header file was removed afterward.
+
+The Maps viewport still moved to an A10 future maneuver while GPS was on A4.
+The failed frame was captured at point44, but operator analysis delayed the
+replay interrupt until point185. This is an incomplete failed drive, not
+acceptance. A recovery command then used the earlier point44; all later
+states, including a second TTS utterance, are excluded from continuous-drive
+proof. Follow the stop-first rule in AGENTS before analysing another failed
+drive frame. Compare the same-version stock Maps behavior before changing
+camera policy. The End request remained unconfirmed at the capture; FM was
+still running after disconnect, so native End/lease shutdown stay open.
+All owned runtime resources were stopped and cleaned; no phone was touched.
+
 ## Historical single Vela design frame
 
 The one-frame design gate described here was subsequently closed by the owner's
