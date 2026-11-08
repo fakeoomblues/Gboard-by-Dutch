@@ -109,8 +109,14 @@ Run172 at800x480 found that the visible native Search pill sends its tap to
 `ProjectionRenderer.click(200,140)` and does not open Search. Read-only173
 identified a compact ID-less native Search owner inside CardView; the named-ID
 adapter did not export it. Preserve this failed evidence and verify the connected
-Search handoff correction before a driving session. No1280x480 reflow, rotary,
-Start/Details or current-cohort genuine-feed acceptance is implied by setup.
+Search handoff correction before a driving session. Run175 then proved the
+host Search export/callback, but its initial ID-less native owner was replaced
+by the named native Search view before the click. The captured physical-view
+token was correctly rejected. Keep native-handler revocation; a host command
+must resolve the current eligible owner for its logical role inside the same
+authenticated car session. Verify that correction before driving. No1280x480
+reflow, rotary, Start/Details or current-cohort genuine-feed acceptance is
+implied by setup.
 
 The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not

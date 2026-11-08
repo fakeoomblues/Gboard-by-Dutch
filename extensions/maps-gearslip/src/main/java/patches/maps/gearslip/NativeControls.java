@@ -296,6 +296,11 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             conceal(restored);
         }
     }
+    void invoke(Role role) {
+        Control current = controls.get(role);
+        if (current == null) throw new SecurityException("Maps action was retired");
+        invoke(current);
+    }
     void invoke(NativeCarContent.Action action)throws Exception{
         if(action.model instanceof View){
             List<View> restored=reveal((View)action.model);

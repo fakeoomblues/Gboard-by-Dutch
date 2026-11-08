@@ -151,6 +151,16 @@ public final class NativeControlsTest {
         assertThrows(SecurityException.class, () -> controls.invoke(old));
         controls.invoke(controls.snapshot().get(0)); assertEquals(1, clicks);
     }
+    @Test public void logicalRolesUseTheLiveHandlerWhileRetiredAndUnavailableViewsStayRevoked() {
+        NativeControls.Control old=bind();group.removeView(button);button=button();
+        group.addView(button,new FrameLayout.LayoutParams(64,64));measure();
+        assertThrows(SecurityException.class,()->controls.invoke(old));
+        controls.invoke(NativeControls.Role.SETTINGS);assertEquals(1,clicks);
+        button.setEnabled(false);root.getViewTreeObserver().dispatchOnPreDraw();
+        assertThrows(SecurityException.class,()->controls.invoke(NativeControls.Role.SETTINGS));
+        assertEquals(1,clicks);group.removeView(button);measure();
+        assertThrows(SecurityException.class,()->controls.invoke(NativeControls.Role.SETTINGS));
+    }
     @Test public void disabledNativeActionsDisappearAndNotifyTheHost() {
         NativeControls.Control old = bind(); int before = updates; button.setEnabled(false);
         root.getViewTreeObserver().dispatchOnPreDraw(); assertTrue(controls.snapshot().isEmpty()); assertTrue(updates > before);

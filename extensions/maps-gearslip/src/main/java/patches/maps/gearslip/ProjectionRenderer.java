@@ -145,7 +145,10 @@ public final class ProjectionRenderer {
     void performControl(NativeControls.Control control) throws Exception {
         attachControls();
         if (controls == null) throw new SecurityException("Maps controls are unavailable");
-        controls.invoke(control);
+        // A CAL command represents a role in this authenticated car session.
+        // Maps replaces responsive native views between publishing and clicking
+        // a template; resolve the live owner without reviving the old handler.
+        controls.invoke(control.role);
     }
     private void attachControls() throws Exception {
         View view = decor();

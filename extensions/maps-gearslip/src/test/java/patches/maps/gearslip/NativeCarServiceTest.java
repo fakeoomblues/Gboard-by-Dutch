@@ -422,6 +422,18 @@ public final class NativeCarServiceTest {
         assertEquals(4, navigation.getMapActionStrip().getActions().size());
         assertEquals(View.INVISIBLE, group.getVisibility());
         new NavigationTemplate.Builder().setActionStrip(navigation.getActionStrip()).setMapActionStrip(navigation.getMapActionStrip()).build();
+        // AA can still deliver a displayed command while Maps swaps the native
+        // responsive owner. Use the current Search handler, never the retired view.
+        View oldSearch=group.findViewById(0x7f990010);group.removeView(oldSearch);
+        ImageView replacement=new ImageView(context);replacement.setId(0x7f990010);
+        replacement.setImageDrawable(new ColorDrawable(Color.BLUE));
+        replacement.setOnClickListener(v->clicks.merge(NativeControls.Role.SEARCH,10,Integer::sum));
+        group.addView(replacement,new FrameLayout.LayoutParams(64,64));
+        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        navigation.getActionStrip().getActions().get(0).getOnClickDelegate().sendClick(done());
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(Integer.valueOf(10),clicks.get(NativeControls.Role.SEARCH));
+        assertEquals(View.INVISIBLE,group.getVisibility());
         assertNotNull(navigation.getPanModeDelegate());
         navigation.getPanModeDelegate().sendPanModeChanged(true, done());
         navigation.getPanModeDelegate().sendPanModeChanged(false, done());
