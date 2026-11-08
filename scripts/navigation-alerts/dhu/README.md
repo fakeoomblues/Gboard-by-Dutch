@@ -193,6 +193,30 @@ voice-only recovery correction is tracked in
 runtime acceptance. Preserve original camera behavior for deliberate user step
 inspection and preserve native eligibility/queue behavior for recovery.
 
+210subsequently completed the entire288point A4 trace with the corrected
+c1a8a90eee91input. Native100km/h/bearing and installed/coldboot byte identity
+were verified. The actual current-position arrow remained blue onA4through zone
+progress and clear; the read-only probe recorded one voice-only recovery and no
+step-inspection call. Real panels showed average99/approximately40%/2.5km, then
+100/73%/1.1km; the final panel cleared and speed0rendered. This matched patched
+before/after car-Start scenario and native recovery trace closes the camera bug
+more directly than the earlier differing stock URI start. Do not rerun the full
+passing drive unless a relevant product change invalidates it.
+
+The end warning completed, but entry speech was interrupted after another
+Maps-process focus request. Native source8PCM16was retained losslessly and five
+real WAV excerpts exported. End remained unaccepted after visible top-X input;
+Vela/DPI/other sizes were deferred. Actual images/audio and precise limits are in
+`~/Downloads/Android-Auto-Functional-Review/Voice-Recovery-210.md`. All owned
+runtimes/forwards/server/header and guest PCM storage were cleaned.
+
+209was a setup failure, not a Maps regression: a package-level AA watcher caught
+projection and duplicated the explicit projection PID's framework hooks. Attach
+AA safety observers only to enumerated actual PIDs. Verify each hooks-ready
+process name, actual current PID and uniqueness before further attachments or
+accepted stimuli. Pending/new host processes are setup until covered. Independent
+camera/PCM probes observe different methods and do not duplicate base hooks.
+
 Use an explicit quiet-mode lifetime for Frida CLI clients and unbuffered stdout
 redirection to retain `send` messages. `-q` alone exits after load, and `-o` alone
 did not capture these records in205. Verify hooks-ready from retained output

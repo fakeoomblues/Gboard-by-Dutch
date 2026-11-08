@@ -26,6 +26,6 @@
 - [x] Preserve the user-facing original step-inspection method unchanged.
 - [x] Add unit coverage for fresh recovery, native eligibility, ended navigation, unsupported owner, exactly-once release, and absence of camera writes in generated DEX. Keep the existing native-shape fixture classes unchanged.
 - [x] Run canonical verification with the actual original Maps APK available to the native DEX regressions; retain all required gates and justified reuse.
-- [ ] Build/sign one immutable review MPP, patch the exact original Maps APK with default guards and verify signer/code/icons.
-- [ ] Run one bounded original-AA acceptance with the same car Start/FM/GPS scenario, observing the voice-only recovery and original inspection entry points. Prove current A4 following during genuine warning playback; stop GPS as the next tool action if any unexpected frame appears.
-- [ ] Retain genuine images, source/tool identities and failure limits, stop owned runtime and clean terminal build/scratch storage. Do not declare full AA completion while other explicit gates remain open.
+- [x] Build/sign one immutable review MPP, patch the exact original Maps APK with default guards and verify signer/code/icons.
+- [x] Run210 completed the same full car Start/FM/A4 scenario: blue current-position following, one voice-only recovery, zero inspect-step calls and genuine zone progress/clear. Entry focus interruption and End remain separate open gates.
+- [x] Retain genuine images/native PCM and precise limits; owned runtimes and terminal build/scratch cleaned. Full AA goal remains open for End/focus attribution, Vela density/other sizes, inputs and Waze.

@@ -8,6 +8,7 @@ Read this checkpoint at task start and after context compaction, before resuming
 - Replay the now-known UI steps instead of rediscovering them.
 - Finish connected code changes, build once, then run one focused acceptance session.
 - Reuse passing evidence; repeat checks only when relevant code changes invalidate it or a separately identified mandatory gate requires a check.
+- Inspect each prerequisite's actual terminal exit status before dependent work. A running exec handle is not success, and a child exit failure may be returned without a tool exception. Never continue UI/GPS from a failed readiness check.
 - Report progress as fixed behaviour, failed behaviour or a concrete blocker, not test counts. Probes required to meet a goal may be added, modified and run without separate approval under the owner's latest global rule. Keep other validation tooling frozen: fixtures, runners, observers and validation frameworks require explicit approval for the named change.
 
 During a live acceptance window, execute the prepared UI/GPS checklist and collect evidence only. Defer source/history/tool research and implementation until the owned runtime is stopped. Record the stop deadline before starting; do not consume that deadline on offline investigation.
@@ -60,6 +61,7 @@ These rules apply to every task and delegated task, ahead of skills that prescri
 
 ## Android runtime observation
 
+- Target Android Auto safety observers by enumerated process PID, never a package-level `-W com.google.android.projection.gearhead` alias. The alias can resolve to `:projection` and duplicate an explicit PID attachment. Keep exactly one unchanged safety-observer instance per verified PID; independent probes must observe different methods. Verify each hooks-ready PID/process name and uniqueness before further attachments or accepted stimuli. Treat setup as unaccepted until newly created required processes are covered.
 - For the owner's real driving/visual acceptance scenario, only GPS movement may be fabricated. Use genuine provider camera/report/zone data and the receivers' actual rendered UI. Do not inject synthetic alerts, zones, averages, warning states or UI for this proof. Existing controlled-input captures remain historical implementation/test evidence, not the requested simulated-drive evidence. Capture genuine DHU frames and optional scrcpy recordings, distinguishing phone and head-unit surfaces.
 - Approved exception (2026-11-07): the owner authorized normal DHU, screenshot and bounded logcat checks on the connected unrooted phone without Frida, preserving installed apps and data. Apply app updates through the phone's existing Morphe signing identity; do not uninstall, root or replace apps with differently signed test builds. Frida remains mandatory for emulator producer/receiver validation.
 - Keep Frida attached to every exercised producer/receiver process during short reproductions and longer Android validation sessions. Static checks and JVM unit tests do not require a device attachment.
