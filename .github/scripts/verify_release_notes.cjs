@@ -1,7 +1,7 @@
 "use strict";
 
 const {execFileSync} = require("node:child_process");
-const {appImpact, unreleasedCommitHashes} = require("./branded_release_notes.cjs");
+const {appImpact, unreleasedCommitHashes, normalizeAppName} = require("./branded_release_notes.cjs");
 const ROOT = "patches/src/main/kotlin/patches/";
 const compact = value => value.replace(/[^\p{L}\p{N}]/gu, "").toLowerCase();
 
@@ -32,7 +32,7 @@ function verifyNotes(context) {
       .filter(file => changed.includes(file));
     if (!files.some(isShared)) continue;
     const message = git("show", "-s", "--format=%B", hash);
-    const declared = /^Release-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(name => name.trim()) || [];
+    const declared = /^Release-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(name => normalizeAppName(name)) || [];
     if (!namesFor(files).length && !declared.length) throw new Error(`Shared-only commit ${hash} needs its own Release-Apps trailer`);
     for (const name of declared) {
       if (!allNames.has(name)) throw new Error(`Unknown Release-Apps name ${name}`);

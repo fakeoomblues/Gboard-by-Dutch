@@ -89,10 +89,18 @@ function unreleasedCommitHashes(context) {
   return new Set(hashes.split("\n").filter(Boolean));
 }
 
+// Short app names used in commit trailers. Keep the public release-note scope
+// equal to the app's Compatibility name so Morphe badges the right app.
+const APP_ALIASES = new Map([["maps", "Google Maps"], ["googlemaps", "Google Maps"]]);
+function normalizeAppName(name) {
+  const trimmed = String(name).trim();
+  return APP_ALIASES.get(trimmed.toLowerCase()) || trimmed;
+}
+
 // Apps whose files a commit edits without changing what that app's patches produce,
 // such as an adapter shared with another app. See the Unchanged-Apps note in CONTRIBUTING.md.
 function unchangedApps(message) {
-  return /^Unchanged-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(app => app.trim()) || [];
+  return /^Unchanged-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(app => normalizeAppName(app)) || [];
 }
 
 // Every public bullet is scoped: Morphe treats unscoped quoted patch names
@@ -147,7 +155,7 @@ function scopeCommits(commits, context) {
       return [{...commit, message: match[1] === "docs" ? commit.message
         : commit.message.replace(match[0], `${match[1]}(General)${match[3]}: ${match[4]}`)}];
     }
-    const apps = /^Release-Apps: (.+)$/mi.exec(commit.message)?.[1].split(",").map(app => app.trim());
+    const apps = /^Release-Apps: (.+)$/mi.exec(commit.message)?.[1].split(",").map(app => normalizeAppName(app));
     const unchanged = unchangedApps(commit.message);
     if (unchanged.some(app => apps?.includes(app))) throw new Error("An app cannot be both affected and unchanged");
     if (impact && unchanged.some(app => ![...impact.apps.values()].flat().includes(app))) throw new Error("Unknown Unchanged-Apps name");
@@ -174,4 +182,4 @@ function scopeCommits(commits, context) {
   });
 }
 
-module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact, unreleasedCommitHashes };
+module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact, unreleasedCommitHashes, normalizeAppName };
