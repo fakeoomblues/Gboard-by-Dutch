@@ -233,4 +233,22 @@ public final class NativeControlsTest {
         controls.hostedPanel(null);assertEquals(View.VISIBLE,menu.getVisibility());
         controls.hostedPanel(preview);menu.setVisibility(View.GONE);controls.hostedPanel(null);assertEquals(View.GONE,menu.getVisibility());
     }
+    @Test public void anUnmeasuredResponsiveCopyCannotReplaceTheRenderedHandler(){
+        FrameLayout unused=new FrameLayout(context);unused.setId(GROUP);ImageView duplicate=button();duplicate.setOnClickListener(v->clicks+=100);
+        unused.addView(duplicate,new FrameLayout.LayoutParams(64,64));root.addView(unused,new FrameLayout.LayoutParams(0,0));measure();
+        NativeControls.Control current=bind();assertSame(button,current.source);controls.invoke(current);assertEquals(1,clicks);
+        assertEquals(View.INVISIBLE,group.getVisibility());assertEquals(View.INVISIBLE,unused.getVisibility());
+    }
+    @Test public void everyRenderedNativeCopyYieldsToTheHostAndRetiredHandlersAreRevoked(){
+        FrameLayout front=new FrameLayout(context);front.setId(GROUP);ImageView current=button();current.setOnClickListener(v->clicks+=10);front.addView(current,new FrameLayout.LayoutParams(64,64));root.addView(front,new FrameLayout.LayoutParams(64,200));measure();
+        NativeControls.Control selected=bind();assertSame(current,selected.source);assertEquals(View.INVISIBLE,front.getVisibility());assertEquals(View.INVISIBLE,group.getVisibility());
+        controls.invoke(selected);assertEquals(10,clicks);
+        front.setVisibility(View.GONE);root.getViewTreeObserver().dispatchOnPreDraw();
+        assertThrows(SecurityException.class,()->controls.invoke(selected));NativeControls.Control replacement=controls.snapshot().get(0);assertSame(button,replacement.source);controls.invoke(replacement);assertEquals(11,clicks);
+        controls.close();assertEquals(View.GONE,front.getVisibility());assertEquals(View.VISIBLE,group.getVisibility());
+    }
+    @Test public void nativeAutoHideDoesNotRevokeAnOtherwiseEligibleHostAction(){
+        NativeControls.Control selected=bind();group.setAlpha(0);root.getViewTreeObserver().dispatchOnPreDraw();
+        assertEquals(1,controls.snapshot().size());controls.invoke(selected);assertEquals(1,clicks);assertEquals(0,group.getAlpha(),0);
+    }
 }

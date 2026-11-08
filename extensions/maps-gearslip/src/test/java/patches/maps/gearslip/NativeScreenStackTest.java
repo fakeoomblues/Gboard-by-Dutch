@@ -35,4 +35,12 @@ public final class NativeScreenStackTest {
         Bundle input=CarProtocol.searchTemplate("","Search",new android.os.Binder());stack.apply(input);stack.apply(input);assertEquals(2,decode(input).getTemplateInfosForScreenStack().size());
         stack.apply(guidance);assertEquals(1,decode(guidance).getTemplateInfosForScreenStack().size());
     }
+    @Test public void taskClassificationMatchesTheNormalSdkClientInsteadOfStackDepth()throws Exception{
+        NativeScreenStack stack=new NativeScreenStack();
+        for(String id:new String[]{"morphe-maps-home","morphe-maps-preview","morphe-maps-details","morphe-maps-preview"}){
+            Bundle value=page(id);stack.apply(value);TemplateWrapper actual=decode(value),normal=TemplateWrapper.wrap(actual.getTemplate());
+            assertEquals("Task depth is a host classification, not the app screen count",normal.getCurrentTaskStep(),actual.getCurrentTaskStep());
+            assertEquals("Leave refresh classification with the host",normal.isRefresh(),actual.isRefresh());
+        }
+    }
 }

@@ -285,7 +285,6 @@ final class CarProtocol {
         Bundle wrapper = object("androidx.car.app.model.TemplateWrapper");
         field(wrapper, "mTemplate", template);
         field(wrapper, "mId", primitive(id));
-        field(wrapper, "mCurrentTaskStep", primitive(1));
         screenStack(wrapper, false);
         return wrapper;
     }
@@ -301,7 +300,6 @@ final class CarProtocol {
         if("morphe-maps-input".equals(id)||"morphe-maps-controls".equals(id))
             stack.add(templateInfo("androidx.car.app.navigation.model.NavigationTemplate","morphe-maps-native"));
         field(wrapper,"mTemplateInfoForScreenStack",list(stack));
-        field(wrapper,"mCurrentTaskStep",primitive(stack.size()));
     }
 
     static Bundle templateInfo(String type,String id){

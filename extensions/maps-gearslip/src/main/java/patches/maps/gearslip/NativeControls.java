@@ -48,6 +48,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     private final ViewGroup root;
     private final Runnable changed;
     private final Map<Role, Control> controls = new EnumMap<>(Role.class);
+    private final Map<Role, List<View>> candidates = new EnumMap<>(Role.class);
     private final Map<View, Integer> hidden = new IdentityHashMap<>();
     private final Map<View, Integer> navigationHidden = new IdentityHashMap<>();
     private final Map<View, Integer> zoomHidden = new IdentityHashMap<>();
@@ -87,14 +88,8 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     @Override public void onGlobalLayout() {
         if (closed) return;
-        Map<Role, View> found = new EnumMap<>(Role.class);
-        collect(root, found);
-        boolean updated = false;
-        for (Role role : Role.values()) {
-            View source = found.get(role); Control old = controls.get(role);
-            if (source == null) { if (old != null) { controls.remove(role); updated = true; } }
-            else if (old == null || old.source != source) { controls.put(role, new Control(role, source)); updated = true; }
-        }
+        candidates.clear();collect(root);
+        boolean updated = selectSources();
         updated |= update();
         hideExportedControls();
         updateNavigationCards();
@@ -104,24 +99,42 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     @Override public boolean onPreDraw() {
         if (!closed) {
-            boolean updated = update(); hideExportedControls(); updateNavigationCards(); focusNativeEditor();
+            boolean updated = selectSources();updated|=update(); hideExportedControls(); updateNavigationCards(); focusNativeEditor();
             if (updated) changed.run();
             contentChanged.run();
         }
         return true;
     }
-    private void collect(View view, Map<Role, View> found) {
+    private void collect(View view) {
         String name = name(view);
         if (name != null && nativeVisibility(view) != View.GONE) for (Role role : Role.values()) {
             boolean matches = false;
             for (String candidate : role.names) if (candidate.equals(name)) { matches = true; break; }
             if (!matches) continue;
-            View source = clickable(view), previous = found.get(role);
-            if (source != null && (previous == null || (!nativeShown(previous) && nativeShown(source)))) found.put(role, source);
+            View source = clickable(view);
+            if(source!=null){List<View> copies=candidates.computeIfAbsent(role,key->new ArrayList<>());if(!copies.contains(source))copies.add(source);}
         }
         // Native destination panels are layered above the map's older controls.
         // Prefer the frontmost matching owner when both remain in the tree.
-        if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) collect(((ViewGroup) view).getChildAt(i), found);
+        if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) collect(((ViewGroup) view).getChildAt(i));
+    }
+    private boolean selectSources(){
+        boolean updated=false;
+        for(Role role:Role.values()){
+            View source=null;List<View> copies=candidates.get(role);
+            if(copies!=null)for(View candidate:copies)if(source==null||!rendered(source)&&rendered(candidate))source=candidate;
+            Control old=controls.get(role);
+            if(source==null){if(old!=null){controls.remove(role);updated=true;}}
+            else if(old==null||old.source!=source){controls.put(role,new Control(role,source));updated=true;}
+        }
+        return updated;
+    }
+    private boolean rendered(View view){
+        for(View node=view;node!=null;node=parent(node)){
+            if(nativeVisibility(node)!=View.VISIBLE||node.getAlpha()<=0||node.getWidth()<=0||node.getHeight()<=0)return false;
+            if(node==root)return true;
+        }
+        return false;
     }
     View clickable(View view) {
         if (nativeVisibility(view) == View.GONE) return null;
@@ -138,6 +151,8 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     private boolean update() {
         boolean updated = false;
         for (Control control : controls.values()) {
+            // Rendering chooses the active responsive copy. Native eligibility
+            // stays independent of pixel size/fading: the host owns placement.
             boolean available = enabled(control.source) && nativeVisibility(control.source) == View.VISIBLE;
             String title = title(control);
             Drawable drawable = drawable(control.source);
@@ -162,26 +177,30 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     private void hideExportedControls() {
         for (Control control : controls.values()) {
             if (!control.available) continue;
-            View cover = control.source;
-            for (View node = control.source; node != null && node != root; node = parent(node)) {
+            List<View> copies=candidates.get(control.role);
+            if(copies!=null)for(View source:copies)hideExportedControl(control.role,source);
+        }
+        Control plus=controls.get(Role.ZOOM_IN),minus=controls.get(Role.ZOOM_OUT);
+        if(plus!=null&&plus.available&&minus!=null&&minus.available)hideZoomWidget(root);
+        else restoreZoomWidget();
+    }
+    private void hideExportedControl(Role role,View source){
+            View cover = source;
+            for (View node = source; node != null && node != root; node = parent(node)) {
                 if ("map_buttons_view_container".equals(name(node))) { cover = node; break; }
             }
-            if (control.role == Role.SEARCH && parent(cover) != null && parent(cover).getClass().getName().endsWith(".CardView")) cover = parent(cover);
+            if (role == Role.SEARCH && parent(cover) != null && parent(cover).getClass().getName().endsWith(".CardView")) cover = parent(cover);
             View editor = find(cover, "destination_input_keyboard_search_edit_text");
             if (editor != null) {
                 // Re-hiding an active editor's ancestor would clear native focus
                 // before its asynchronous input-connection/IME work completes.
                 // Return only adapter-owned visibility to the native editor.
                 for (View restored : reveal(editor)) hidden.remove(restored);
-                continue;
+                return;
             }
             if (cover.getVisibility() == View.VISIBLE) {
                 hidden.put(cover, View.VISIBLE); cover.setVisibility(View.INVISIBLE);
             }
-        }
-        Control plus=controls.get(Role.ZOOM_IN),minus=controls.get(Role.ZOOM_OUT);
-        if(plus!=null&&plus.available&&minus!=null&&minus.available)hideZoomWidget(root);
-        else restoreZoomWidget();
     }
     private void hideZoomWidget(View view){
         // Maps26.44 also renders a separate rfi/vac zoom_widget_view. It is
@@ -342,7 +361,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             root.getViewTreeObserver().removeOnPreDrawListener(this);
         }
         for (Map.Entry<View, Integer> entry : hidden.entrySet()) if (entry.getKey().getVisibility() == View.INVISIBLE) entry.getKey().setVisibility(entry.getValue());
-        controls.clear(); hidden.clear(); focusSearch = false;
+        controls.clear(); candidates.clear(); hidden.clear(); focusSearch = false;
         contentChanged=()->{};
     }
 }

@@ -22,6 +22,7 @@ final class NativeScreenStack {
         List<Bundle> stack=new ArrayList<>();
         for(Entry entry:entries)stack.add(CarProtocol.templateInfo(entry.type,entry.id));
         CarProtocol.field(wrapper,"mTemplateInfoForScreenStack",CarProtocol.list(stack));
-        CarProtocol.field(wrapper,"mCurrentTaskStep",CarProtocol.primitive(stack.size()));
+        // As in the pinned ScreenManager, send the actual screen ledger and
+        // leave current task step/refresh classification at client defaults.
     }
 }

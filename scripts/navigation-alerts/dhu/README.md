@@ -72,6 +72,15 @@ old search screen just before that transition; the next frame was already in
 guidance. Neither frame proved that the intermediate preview was absent. Keep
 the prepared finite deadline; do not consume the preview window on investigation.
 
+Run164 subsequently proved the clean host preview, but the attempted Details
+tap was not an accepted callback test. Run165 traced `tap300362` to the native
+map Surface at `(220,352)`, not the Details delegate. Use the recorded callback
+boundary or visibly focused rotary input when accepting that action; do not
+change native eligibility in response to an ambiguous coordinate. Its awake
+guidance frame also shows two zoom pairs, so the earlier single-pair frame does
+not close duplicate-control acceptance. Measured and unmeasured copies of the
+same native IDs are retained in the private165 trace.
+
 The owner also authorized normal phone checks without Frida. Phone app updates
 must still use its existing Morphe signer/data; the engineering APK cache is for
 the owned emulator. The latest commit-derived MPP is in Mac Downloads; its copy/install on the
