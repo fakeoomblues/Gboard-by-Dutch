@@ -114,6 +114,30 @@ public final class ExternalTelemetry {
         };if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
     }
     private static void removeCarWidget(Object owner){CompactSpeedView value=carWidgets.remove(owner);if(value!=null&&value.getParent() instanceof ViewGroup)((ViewGroup)value.getParent()).removeView(value);}
+    /** One warning selection and pill presentation for the phone and every car surface. */
+    private static final class Pills {
+        final TelemetryStore.View info;final List<WarningEvent> events;final String message;final java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry;
+        Pills(TelemetryStore.View info,List<WarningEvent> events,String message,java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry){this.info=info;this.events=events;this.message=message;this.geometry=geometry;}
+        boolean empty(){return !info.zoneActive&&message.isEmpty()&&events.isEmpty();}
+        void bind(CompactSpeedView value,android.widget.TextView number,boolean dark){
+            value.carTypeface(number==null?null:number.getTypeface());value.carGeometry(geometry);
+            value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,events);
+        }
+    }
+    private static Pills pills(){
+        TelemetryStore.View info=view();
+        long now=SystemClock.elapsedRealtime();
+        List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
+            if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
+            if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
+            WarningPassage.Relevance relevance=MapsGuidanceCoordinator.relevance(event,fix,now,navigating);
+            return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
+        });
+        List<WarningEvent> events=new ArrayList<>();for(WarningEvent event:nativeEvents)if(!info.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))events.add(event);
+        java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
+        for(WarningEvent event:events)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
+        return new Pills(info,events,nativeEvents.isEmpty()?legacyWarning:"",geometry);
+    }
     private static void renderCar(){
         for(Object owner:new ArrayList<>(carRoots.keySet())){
             ViewGroup root=carRoots.get(owner).get();
@@ -122,26 +146,11 @@ public final class ExternalTelemetry {
             if(!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             int[] bounds=carViewportSizes.get(owner);
             if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
-            TelemetryStore.View info=view();
-            long now=SystemClock.elapsedRealtime();
-            List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
-                if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
-                if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
-                WarningPassage.Relevance relevance=MapsGuidanceCoordinator.relevance(event,fix,now,navigating);
-                return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
-            });
-            List<WarningEvent> pills=new ArrayList<>();for(WarningEvent event:nativeEvents)if(!info.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))pills.add(event);
-            String message=nativeEvents.isEmpty()?legacyWarning:"";
-            if(!info.zoneActive&&message.isEmpty()&&pills.isEmpty()){removeCarWidget(owner);continue;}
+            Pills pills=pills();
+            if(pills.empty()){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
-            float density=root.getResources().getDisplayMetrics().density;
             boolean dark=(root.getResources().getConfiguration().uiMode&android.content.res.Configuration.UI_MODE_NIGHT_MASK)==android.content.res.Configuration.UI_MODE_NIGHT_YES;
-            android.widget.TextView number=largestNativeText(carSpeedBadge(root));
-            value.carTypeface(number==null?null:number.getTypeface());
-            java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
-            for(WarningEvent event:pills)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
-            value.carGeometry(geometry);
-            value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,pills);
+            pills.bind(value,largestNativeText(carSpeedBadge(root)),dark);
             layoutCar(owner);
         }
     }
@@ -418,7 +427,8 @@ public final class ExternalTelemetry {
     private static void render(){
         renderCar();
         Activity activity=foreground.get();if(!modern()||activity==null||!widgetEnabled(activity)){removeWidget();return;}
-        if(!view().zoneActive&&compactWarning().isEmpty()){removeWidget();return;}
+        Pills pills=pills();
+        if(pills.empty()){removeWidget();return;}
         ViewGroup content=activity.findViewById(android.R.id.content);if(!(content instanceof FrameLayout))return;
         if(widget==null){widget=new CompactSpeedView(activity);widget.setOnClickListener(v->activity.startActivity(Screens.intent(activity,CustomizationActivity.class).putExtra(CustomizationActivity.EXTRA_PAGE,CustomizationActivity.PAGE_WAZE)));content.addView(widget);}
         float density=activity.getResources().getDisplayMetrics().density;
@@ -426,6 +436,7 @@ public final class ExternalTelemetry {
         lp.leftMargin=Math.round(16*density);lp.bottomMargin=Math.round(112*density);
         View badge=Shapes.findSpeedBadge(content);
         if(badge!=null){View card=Shapes.badgeCard(badge,content);int[] location=new int[2],origin=new int[2];card.getLocationOnScreen(location);content.getLocationOnScreen(origin);lp.leftMargin=Math.max(0,location[0]-origin[0]);lp.bottomMargin=Math.max(Math.round(24*density),content.getHeight()-(location[1]-origin[1])+Math.round(8*density));}
-        widget.setLayoutParams(lp);widget.refresh(Shapes.navDarkScheme());widget.bringToFront();
+        // The phone uses the same mockup-pack pills as Android Auto, stacked above Maps' own speed badge.
+        widget.setLayoutParams(lp);pills.bind(widget,badge==null?null:largestNativeText(badge),Shapes.navDarkScheme());widget.bringToFront();
     }
 }
