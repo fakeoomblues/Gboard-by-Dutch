@@ -63,6 +63,9 @@ public final class ProjectionRenderer {
     private volatile boolean keyboardRequested;
     private KeyboardListener keyboardListener;
     private NativeControls controls;
+    private final NativeCarContent content;
+    private String contentQuery;
+    private boolean hostedNavigation;
     private Runnable controlsChanged = () -> {};
     private java.util.function.BiConsumer<CharSequence,Integer> toast=(text,duration)->{};
     private Rect visibleArea, stableArea, appliedInsets;
@@ -107,6 +110,7 @@ public final class ProjectionRenderer {
         this.onFailure = onFailure;
         uiStateLease = UI_STATES.acquire(hostUid);
         initialUiState = uiStateLease.restored;
+        content=new NativeCarContent(this,service,()->controlsChanged.run());
     }
 
     /** The car host supplies its keyboard; the original Maps editor owns query handling. */
@@ -123,6 +127,21 @@ public final class ProjectionRenderer {
         return controls == null ? Collections.emptyList() : controls.snapshot();
     }
     String controlsTitle() { return controls == null ? "More controls" : controls.moreTitle(); }
+    NativeCarContent.Page content(String query)throws Exception{
+        attachControls();contentQuery=query;View root=decor();
+        NativeCarContent.Page page=content.show(root instanceof ViewGroup?(ViewGroup)root:null,controls,hostedNavigation,query);
+        if(controls!=null)controls.hostedPanel(page==null?null:page.panel);
+        return page;
+    }
+    List<NativeCarContent.Action> footerActions()throws Exception{
+        attachControls();View root=decor();return content.footer(root instanceof ViewGroup?(ViewGroup)root:null,controls);
+    }
+    void performContentAction(NativeCarContent.Action action)throws Exception{
+        attachControls();View root=decor();content.invoke(action,root instanceof ViewGroup?(ViewGroup)root:null,controls,hostedNavigation,contentQuery);
+    }
+    boolean contentBack(){return content.back();}
+    void contentDetails(){content.details();}
+    String contentDetailsTitle(){return content.detailsTitle();}
     void performControl(NativeControls.Control control) throws Exception {
         attachControls();
         if (controls == null) throw new SecurityException("Maps controls are unavailable");
@@ -132,6 +151,16 @@ public final class ProjectionRenderer {
         View view = decor();
         if (controls != null && !controls.owns(view)) { controls.close(); controls = null; }
         if (controls == null && view instanceof ViewGroup) controls = new NativeControls((ViewGroup) view, () -> controlsChanged.run());
+        if(controls!=null){
+            controls.hostedNavigation(hostedNavigation);
+            final ViewGroup root=(ViewGroup)view;
+            controls.setContentChangedListener(()->content.layoutChanged(root,controls,hostedNavigation,contentQuery));
+        }
+    }
+    void hostedNavigation(boolean active){
+        if(hostedNavigation==active)return;
+        hostedNavigation=active;
+        guard(()->{attachControls();telemetryNavigation(active);});
     }
 
     public void create(Intent value, Configuration config) {
@@ -154,6 +183,8 @@ public final class ProjectionRenderer {
         if (closed) return;
         closed = true;
         LocalCarUiSession.detach(this);
+        content.close(this);
+        telemetryNavigation(false);
         telemetrySession(false);
         main.removeCallbacks(bindTimeout);
         main.removeCallbacks(endScroll);
@@ -344,6 +375,8 @@ public final class ProjectionRenderer {
         initialUiState = null;
         nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
         created = true;
+        Object target=field(displayHolder(),"b");
+        if(target instanceof VirtualDisplay)NativeCarScopes.display(this,((VirtualDisplay)target).getDisplay().getDisplayId());
         appliedInsets = null; applyAreas();
         attachControls();
         if (resumed) { lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }
@@ -396,6 +429,11 @@ public final class ProjectionRenderer {
         try {telemetryType().getMethod("carSession",Context.class,Object.class,boolean.class).invoke(null,service,this,active);}
         catch(ClassNotFoundException absent) { /* The warning patch is optional. */ }
         catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car lifecycle unavailable",error);}
+    }
+    private void telemetryNavigation(boolean active){
+        try{telemetryType().getMethod("carNavigation",Context.class,Object.class,boolean.class).invoke(null,service,this,active);}
+        catch(ClassNotFoundException absent){ /* The warning patch is optional. */ }
+        catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car guidance unavailable",error);}
     }
     private void telemetrySurface(View root) {
         try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleBounds,stableBounds));}

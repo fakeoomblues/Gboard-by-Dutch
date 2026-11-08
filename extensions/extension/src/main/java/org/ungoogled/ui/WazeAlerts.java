@@ -196,9 +196,19 @@ public final class WazeAlerts {
     /** From the navigation camera hook: about once a second while guidance runs, false when it ends. */
     static void navigating(boolean on) {
         ExternalTelemetry.navigating(on);
-        if (navigating == on) return;
+        phoneNavigating=on;
+        navigationChanged();
+    }
+    private static boolean phoneNavigating,carNavigating;
+    static void carNavigation(boolean on){
+        carNavigating=on;
+        navigationChanged();
+    }
+    private static void navigationChanged(){
+        boolean active=phoneNavigating||carNavigating;
+        if(navigating==active)return;
         MAIN.post(() -> {
-            navigating = on;
+            navigating = phoneNavigating||carNavigating;
             listen();
         });
     }

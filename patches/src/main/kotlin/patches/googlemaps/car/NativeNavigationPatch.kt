@@ -161,7 +161,7 @@ private val nativeNavigationResources = resourcePatch {
 @Suppress("unused")
 val nativeCarNavigationPatch = bytecodePatch(
     name = "Native navigation for Gearslip and Android Auto",
-    description = "Shows this patched Maps app's live native map with app-owned car UI and standard navigation controls that Android Auto and compatible hosts can arrange.",
+    description = "Keeps Maps' native map and navigation engine, and supplies routing, ETA, destination lists and route-preview cards for Android Auto and compatible hosts to arrange around their controls and dock.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
@@ -243,6 +243,9 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireMethod("Lbesz;", "f", listOf("Landroid/view/Surface;"), "V")
         requireField("Lbesz;", "b", "Ljava/lang/Object;")
         validateMapsGuidanceComponent { classDefBy(it) }
+        bindMapsNativeContent({ classDefBy(it) }) { owner, name, parameters, result ->
+            mutableClassDefBy(owner).methods.single { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameters && it.returnType == result }
+        }
         requireMethod("Lblrr;","a",listOf("Lblrb;","Ljava/util/concurrent/Executor;"),"V")
         requireMethod("Lblrr;","c",listOf("Lblrb;"),"V")
         requireField("Lblrr;","b","Lblqy;")
@@ -253,7 +256,42 @@ val nativeCarNavigationPatch = bytecodePatch(
         requireField("Lblvb;","d","Lycx;")
         requireField("Lblvb;","i","I")
         requireField("Lblvb;","j","I")
+        requireField("Lblvb;","m","I")
+        requireField("Lblvb;","n","I")
+        requireField("Lblvb;","b","Lycj;")
+        requireField("Lycj;","N","Lcizm;")
+        requireField("Lnjz;","hN","Lcqya;")
+        requireMethod("Lawxs;","c",listOf("Lcizm;"),"Lcizm;")
+        requireMethod("Lblvb;","c",emptyList(),"I")
+        requireMethod("Lblvb;","d",emptyList(),"I")
         requireField("Lycx;","q","Landroid/text/Spanned;")
+        requireField("Lycx;","t","Ljava/lang/CharSequence;")
+        requireField("Lycx;","c","Lcboo;")
+        requireField("Lycx;","d","Lcjdp;")
+        requireField("Lycx;","e","Lcjdq;")
+        requireField("Lycx;","I","Lcjbk;")
+        requireField("Lycx;","f","I")
+        requireField("Lycx;","g","I")
+        requireField("Lycx;","S","Lycx;")
+        requireField("Lycx;","F","Ljava/util/List;")
+        requireField("Lybw;","a","Ljava/util/List;")
+        requireField("Lybw;","b","I")
+        requireField("Lybx;","a","Lcjax;")
+        requireField("Lybx;","b","Z")
+        mapOf(
+            "Lcboo;" to setOf("MANEUVER_UNKNOWN","DEPART","NAME_CHANGE","STRAIGHT","LANE_CHANGE","TURN","COUNTED_TURN","UTURN","ON_RAMP","OFF_RAMP","FORK","MERGE","FERRY","FERRY_TRAIN","ROUNDABOUT_ENTER","ROUNDABOUT_EXIT","ROUNDABOUT_ENTER_AND_EXIT","DESTINATION"),
+            "Lcjdp;" to setOf("SIDE_LEFT","SIDE_RIGHT","SIDE_UNSPECIFIED"),
+            "Lcjdq;" to setOf("TURN_UNKNOWN","TURN_SLIGHT","TURN_NORMAL","TURN_SHARP","TURN_KEEP","TURN_UTURN","TURN_STRAIGHT","TURN_MERGE","TURN_FORK"),
+            "Lcjbk;" to setOf("NONE","LEFT","RIGHT"),
+            "Lcjax;" to setOf("STRAIGHT","SLIGHT","NORMAL","SHARP","U_TURN","MERGE"),
+            "Lcizm;" to setOf("KILOMETERS","MILES","MILES_YARDS","REGIONAL"),
+        ).forEach { (owner,names) ->
+            val initializer=classDefBy(owner).methods.single { it.name == "<clinit>" }
+            val literals=initializer.implementation!!.instructions.mapNotNull {
+                ((it as? ReferenceInstruction)?.reference as? StringReference)?.string
+            }.toSet()
+            check(literals.containsAll(names)) { "Maps' native routing enum changed: $owner" }
+        }
         requireMethod("Lcom/google/android/libraries/geo/navcore/service/base/NavigationService;","onStartCommand",listOf("Landroid/content/Intent;","I","I"),"I")
         // The public session forwards the original same-UID provider protocol; it
         // does not retain its service after disconnect or override restore policy.

@@ -86,6 +86,7 @@ public final class LocalCarUiEntry {
         override.touchscreen=input.touchscreen;override.navigation=input.navigation;override.uiMode=input.uiMode;override.fontScale=1;
         ContextThemeWrapper themed=new ContextThemeWrapper(app.createConfigurationContext(override),0);
         themed.getTheme().setTo(app.getTheme());decorContext=themed;
+        NativeCarScopes.window(owner,app,decorContext);
         root=new FrameLayout(decorContext);root.setBackgroundColor(Color.BLACK);
         content=new FrameLayout(decorContext);content.setId(View.generateViewId());
         content.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);

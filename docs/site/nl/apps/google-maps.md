@@ -8,7 +8,7 @@ Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager. 
 
 ## Native Maps in Gearslip en Android Auto
 
-Onze patch **Native navigation for Gearslip and Android Auto** gebruikt in beide hosts de oorspronkelijke autokaart en navigatie-interface van de gepatchte app. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. DriveDeck wordt net als Gearslip geaccepteerd. Zoeken gebruikt het toetsenbord van de host. Het native Maps-scherm verzorgt resultaten, routevoorbeelden en navigatie-instructies.
+Onze patch **Native navigation for Gearslip and Android Auto** behoudt de eigen kaart en navigatiemotor van Maps. Android Auto of DriveDeck deelt de route-instructies, aankomstinformatie, bestemmingslijsten en routevoorbeelden in rond de beschikbare ruimte en het dock. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. Zoeken gebruikt het toetsenbord van de host; selecties en Start voeren nog steeds de oorspronkelijke Maps-acties uit.
 
 ![Ungoogled Maps met de native kaart in de officiële Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
 
@@ -20,11 +20,11 @@ Onze patch **Native navigation for Gearslip and Android Auto** gebruikt in beide
 
 Waze heeft een standaard navigatiedienst voor Android for Cars die autohosts kunnen vinden. De onderzochte Maps-versie gebruikt daarentegen Googles eigen projectiedienst. Na het hernoemen kon Gearslip de meldingsfunctie als berichtenapp herkennen en een leeg berichtenscherm openen. Alleen een navigatielabel toevoegen laat die twee interfaces nog niet met elkaar communiceren.
 
-We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eigen projectiedienst en oorspronkelijke autoweergave van de gepatchte versie. De adapter vervangt de externe AppDecor-afhankelijkheid door een eigen indeling en controllers. Android Auto blijft de host bij verbinding met de auto; Gearslip kan de client zelfstandig hosten. De acceptatie van deze vervanging staat in het [rapport over de publieke autoclient](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
+We bouwden een navigatieadapter die Gearslip en Android Auto verbindt met de eigen projectiedienst en oorspronkelijke autoweergave van de gepatchte versie. De adapter vervangt de externe AppDecor-afhankelijkheid lokaal en levert standaard kaartmodellen aan de Car App Library, volgens Vela's indeling door de host. Maps tekent de kaart; de host bepaalt de grootte en positie van de informatiekaarten. Android Auto blijft de host bij verbinding met de auto; Gearslip kan de client zelfstandig hosten. De acceptatie van deze vervanging staat in het [rapport over de publieke autoclient](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-04-maps-public-car-client.md).
 
 Het ondertekenen van de gepatchte APK veroorzaakt nog een probleem: Googles optionele privéclient voor voertuiggegevens weigert het nieuwe ondertekeningscertificaat. We hebben die client geïsoleerd zodat hij de kaart niet laat crashen, terwijl GPS-navigatie blijft werken. Zoeken vroeg om een aparte koppeling tussen het toetsenbord van de host en het native zoekveld van Maps. De kaart en het zoekveld moeten bovendien behouden blijven bij schermwijzigingen, het openen van het toetsenbord en opnieuw verbinden.
 
-Native zoeken, een route starten, navigeren en opnieuw verbinden zijn gecontroleerd in Gearslip en Googles officiële Android Auto Desktop Head Unit. Daarmee is niet iedere telefoon, auto of rit op de weg getest. Het [technische verslag](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/research/2026-11-02-maps-native-car-ui.md) beschrijft de uitvoering en testgrenzen.
+Eerdere versies met de native weergave zijn gecontroleerd op zoeken, een route starten, navigeren en opnieuw verbinden in Gearslip en Googles officiële Android Auto Desktop Head Unit. De overstap naar informatiekaarten van de host wordt afzonderlijk gecontroleerd; de afbeelding hierboven is van de eerdere weergave. Daarmee is niet iedere telefoon, auto of rit op de weg getest. Het [technische verslag](https://codeberg.org/JohninNL/nl-morphe-patches/src/branch/main/docs/research/2026-11-02-maps-native-car-ui.md) beschrijft de uitvoering en testgrenzen.
 
 ## Gegevens van Waze en Flitsmeister in Maps
 

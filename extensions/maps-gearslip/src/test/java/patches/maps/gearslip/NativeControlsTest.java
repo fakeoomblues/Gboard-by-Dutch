@@ -24,6 +24,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 32)
 public final class NativeControlsTest {
     private static final int GROUP = 0x7f990001, SETTINGS = 0x7f990002, SEARCH = 0x7f990003, EDITOR = 0x7f990004, INPUT_SEARCH = 0x7f990005;
+    private static final int NAV_CARD=0x7f990006,STATUS_CARD=0x7f990007,END=0x7f990008;
     private FrameLayout root, group;
     private ImageView button;
     private NativeControls controls;
@@ -39,6 +40,9 @@ public final class NativeControlsTest {
                 if (id == SEARCH) return "main_suggested_destinations_search_box";
                 if (id == EDITOR) return "destination_input_keyboard_search_edit_text";
                 if (id == INPUT_SEARCH) return "destination_input_search_box";
+                if(id==NAV_CARD)return "nav_card_view";
+                if(id==STATUS_CARD)return "status_card_view";
+                if(id==END)return "status_panel_close_button";
                 return super.getResourceEntryName(id);
             }
         };
@@ -179,5 +183,18 @@ public final class NativeControlsTest {
         bind(); controls.close(); assertEquals(View.VISIBLE, group.getVisibility());
         controls = null; bind(); group.setVisibility(View.GONE); controls.close();
         assertEquals(View.GONE, group.getVisibility());
+    }
+    @Test public void hostOwnsGuidanceCardsWhileTheOriginalStopActionRemainsUsable(){
+        FrameLayout nav=new FrameLayout(context),status=new FrameLayout(context);
+        nav.setId(NAV_CARD);status.setId(STATUS_CARD);
+        ImageView end=button();end.setId(END);status.addView(end,new FrameLayout.LayoutParams(64,64));
+        root.addView(nav,new FrameLayout.LayoutParams(400,180));root.addView(status,new FrameLayout.LayoutParams(400,100));measure();
+        controls=new NativeControls(root,()->updates++);controls.hostedNavigation(true);
+        assertEquals(View.INVISIBLE,nav.getVisibility());assertEquals(View.INVISIBLE,status.getVisibility());assertEquals(View.VISIBLE,root.getVisibility());
+        NativeControls.Control stop=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.END).findFirst().get();
+        controls.invoke(stop);assertEquals(1,clicks);assertEquals(View.INVISIBLE,status.getVisibility());
+        controls.hostedNavigation(false);assertEquals(View.VISIBLE,nav.getVisibility());assertEquals(View.VISIBLE,status.getVisibility());
+        controls.hostedNavigation(true);nav.setVisibility(View.GONE);controls.close();
+        assertEquals("A native retirement is preserved",View.GONE,nav.getVisibility());assertEquals(View.VISIBLE,status.getVisibility());
     }
 }

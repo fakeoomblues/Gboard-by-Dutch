@@ -10,9 +10,31 @@ public final class NativeGuidanceTest {
     public interface Marker{}
     public interface Listener extends Marker{void se(State value);}
     public enum Mode{OFF,GUIDING,CRUISING}
-    public static final class Step{public CharSequence q="Turn right";}
-    public static final class Progress{public Step d=new Step();public int i=120,j=15;}
-    public static final class Model{public Progress e(){return new Progress();}}
+    public enum Maneuver{TURN,MERGE}
+    public enum Side{SIDE_LEFT,SIDE_RIGHT,SIDE_UNSPECIFIED}
+    public enum Turn{TURN_NORMAL,TURN_STRAIGHT}
+    public enum DrivingSide{NONE,LEFT,RIGHT}
+    public enum Shape{STRAIGHT,NORMAL}
+    public enum Units{KILOMETERS,MILES,MILES_YARDS,REGIONAL}
+    public static final class Path{public Units N=Units.KILOMETERS;}
+    public static final class DistanceUtil{
+        public Units preference=Units.MILES_YARDS;
+        public Units c(Units route){return preference==Units.REGIONAL?route:preference;}
+    }
+    public static final class Direction{public Shape a=Shape.NORMAL;public boolean b=true;}
+    public static final class Lane{public List<Direction> a=new ArrayList<>();public int b=1;}
+    public static final class Step{
+        public CharSequence q="Turn right",t="Secondary cue";
+        public Maneuver c=Maneuver.TURN;public Side d=Side.SIDE_RIGHT;public Turn e=Turn.TURN_NORMAL;
+        public DrivingSide I=DrivingSide.RIGHT;public int f=-1,g=-1;public Step S;
+        public List<Lane> F=new ArrayList<>();
+    }
+    public static final class Progress{
+        public Path b=new Path();
+        public Step d=new Step();public int i=120,j=15,m=55000,n=12000;
+        public int c(){return 2220;}public int d(){return 600;}
+    }
+    public static final class Model{public Progress value=new Progress();public Progress e(){return value;}}
     public static final class Route{public Model a=new Model();}
     public static final class State{public Mode c;public Route b=new Route();State(Mode value){c=value;}}
     public static final class Source{
@@ -50,5 +72,26 @@ public final class NativeGuidanceTest {
     @Test public void guidingWithoutRouteDataRemainsLoadingRatherThanInventingProgress()throws Exception{
         State state=new State(Mode.GUIDING);state.b=null;
         NativeGuidance.Snapshot value=NativeGuidance.snapshot(state);assertTrue(value.guiding);assertNull(value.cue);
+    }
+    @Test public void stepAndRouteEstimatesRemainSeparateAndNativeNextStepIsPreserved()throws Exception{
+        State state=new State(Mode.GUIDING);
+        Step next=new Step();next.c=Maneuver.MERGE;next.q="Then merge";state.b.a.value.d.S=next;
+        Lane lane=new Lane();lane.a.add(new Direction());state.b.a.value.d.F.add(lane);
+        NativeGuidance.Snapshot snapshot=NativeGuidance.snapshot(state);
+        assertEquals(120,snapshot.meters);assertEquals(15,snapshot.seconds);
+        assertEquals(55000,snapshot.routeMeters);assertEquals(2220,snapshot.routeSeconds);
+        assertEquals(12000,snapshot.destinationMeters);assertEquals(600,snapshot.destinationSeconds);
+        assertEquals("KILOMETERS",snapshot.distanceUnits);
+        assertEquals("TURN",snapshot.current.maneuver);assertEquals("SIDE_RIGHT",snapshot.current.side);
+        assertEquals("TURN_NORMAL",snapshot.current.turn);assertEquals("RIGHT",snapshot.current.drivingSide);
+        assertEquals(-1,snapshot.current.roundaboutExit);assertEquals(-1,snapshot.current.roundaboutAngle);
+        assertEquals("Then merge",snapshot.next.cue);assertEquals("MERGE",snapshot.next.maneuver);
+        assertTrue(snapshot.current.lanes.get(0).get(0).right);assertTrue(snapshot.current.lanes.get(0).get(0).recommended);
+        lane.a.clear();assertEquals(1,snapshot.current.lanes.get(0).size());
+    }
+    @Test public void distanceUnitsComeFromTheNativePreferencePolicyRatherThanRoadSpeedUnits()throws Exception{
+        State state=new State(Mode.GUIDING);DistanceUtil units=new DistanceUtil();
+        assertEquals("MILES_YARDS",NativeGuidance.snapshot(state,units).distanceUnits);
+        units.preference=Units.REGIONAL;assertEquals("KILOMETERS",NativeGuidance.snapshot(state,units).distanceUnits);
     }
 }

@@ -27,6 +27,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         SEARCH("Search", "Zoeken", false, "main_suggested_destinations_search_box", "destination_input_search_box", "car_search_box"),
         SETTINGS("Settings", "Instellingen", false, "map_buttons_view_settings_button", "one_bar_settings_button_view"),
         SOUND("Sound", "Geluid", false, "map_buttons_view_mute_container"),
+        END("End navigation", "Navigatie stoppen", false, "status_panel_close_button"),
         VOICE("Voice search", "Spraakgestuurd zoeken", false, "car_mic_button"),
         REPORT("Report incident", "Incident melden", false, "map_buttons_view_report_incident_button"),
         CHARGING("Charging filters", "Laadfilters", false, "map_buttons_view_evcs_layer_map_filters_screen_container"),
@@ -48,7 +49,11 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     private final Runnable changed;
     private final Map<Role, Control> controls = new EnumMap<>(Role.class);
     private final Map<View, Integer> hidden = new IdentityHashMap<>();
+    private final Map<View, Integer> navigationHidden = new IdentityHashMap<>();
     private boolean closed, focusSearch;
+    private boolean hostedNavigation;
+    private View hostedPanel;
+    private Runnable contentChanged=()->{};
 
     NativeControls(ViewGroup root, Runnable changed) {
         this.root = root; this.changed = changed;
@@ -57,6 +62,13 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         onGlobalLayout();
     }
     boolean owns(View view) { return view == root; }
+    void setContentChangedListener(Runnable listener){contentChanged=listener;}
+    void hostedNavigation(boolean value) {
+        if(hostedNavigation==value)return;
+        hostedNavigation=value;
+        updateNavigationCards();
+    }
+    void hostedPanel(View value){if(hostedPanel==value)return;hostedPanel=value;updateNavigationCards();}
     List<Control> snapshot() {
         List<Control> result = new ArrayList<>();
         for (Control control : controls.values()) if (control.available) result.add(control);
@@ -77,13 +89,16 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         }
         updated |= update();
         hideExportedControls();
+        updateNavigationCards();
         focusNativeEditor();
         if (updated) changed.run();
+        contentChanged.run();
     }
     @Override public boolean onPreDraw() {
         if (!closed) {
-            boolean updated = update(); hideExportedControls(); focusNativeEditor();
+            boolean updated = update(); hideExportedControls(); updateNavigationCards(); focusNativeEditor();
             if (updated) changed.run();
+            contentChanged.run();
         }
         return true;
     }
@@ -157,9 +172,29 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             }
         }
     }
-    private int nativeVisibility(View view) {
+    int nativeVisibility(View view) {
         Integer previous = hidden.get(view);
+        Integer cardPrevious=navigationHidden.get(view);
+        if(cardPrevious!=null&&view.getVisibility()==View.INVISIBLE)return cardPrevious;
         return previous != null && view.getVisibility() == View.INVISIBLE ? previous : view.getVisibility();
+    }
+    private void updateNavigationCards(){
+        for(java.util.Iterator<Map.Entry<View,Integer>> iterator=navigationHidden.entrySet().iterator();iterator.hasNext();){
+            Map.Entry<View,Integer> entry=iterator.next();View view=entry.getKey();
+            boolean retain=view==hostedPanel||hostedNavigation&&("nav_card_view".equals(name(view))||"status_card_view".equals(name(view)));
+            if(!retain){if(view.getVisibility()==View.INVISIBLE)view.setVisibility(entry.getValue());iterator.remove();}
+        }
+        // Proven separate car slots in both native26.44 layout conductors.
+        // The parent also owns browsing, menus, speed and attribution.
+        if(hostedNavigation){hideNavigationSlot(root,"nav_card_view");hideNavigationSlot(root,"status_card_view");}
+        if(hostedPanel!=null&&hostedPanel.getVisibility()==View.VISIBLE){navigationHidden.put(hostedPanel,View.VISIBLE);hostedPanel.setVisibility(View.INVISIBLE);}
+    }
+    private void hideNavigationSlot(View view,String id){
+        if(id.equals(name(view))){
+            if(view.getVisibility()==View.VISIBLE){navigationHidden.put(view,View.VISIBLE);view.setVisibility(View.INVISIBLE);}
+            return;
+        }
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)hideNavigationSlot(((ViewGroup)view).getChildAt(i),id);
     }
     private boolean nativeShown(View view) {
         for (View node = view; node != null; node = parent(node)) if (nativeVisibility(node) != View.VISIBLE) return false;
@@ -184,6 +219,12 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             conceal(restored);
         }
     }
+    void invoke(NativeCarContent.Action action)throws Exception{
+        if(action.model instanceof View){
+            List<View> restored=reveal((View)action.model);
+            try{action.run();}finally{conceal(restored);}
+        }else action.run();
+    }
     private void focusNativeEditor() {
         if (!focusSearch) return;
         View editor = find(root, "destination_input_keyboard_search_edit_text");
@@ -196,18 +237,21 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     private List<View> reveal(View source) {
         List<View> restored = new ArrayList<>();
-        for (View node = source; node != null; node = parent(node)) if (hidden.containsKey(node) && node.getVisibility() == View.INVISIBLE) {
-            node.setVisibility(View.VISIBLE); restored.add(node);
+        for (View node = source; node != null; node = parent(node)) {
+            if((hidden.containsKey(node)&&node.getVisibility()==View.INVISIBLE)||(navigationHidden.containsKey(node)&&node.getVisibility()==View.INVISIBLE)){
+                node.setVisibility(View.VISIBLE); restored.add(node);
+            }
         }
         return restored;
     }
     private void conceal(List<View> restored) {
         for (View view : restored) if (view.getVisibility() == View.VISIBLE) {
-            if (find(view, "destination_input_keyboard_search_edit_text") != null) hidden.remove(view);
+            if(navigationHidden.containsKey(view))view.setVisibility(View.INVISIBLE);
+            else if (find(view, "destination_input_keyboard_search_edit_text") != null) hidden.remove(view);
             else view.setVisibility(View.INVISIBLE);
         }
     }
-    private static void touch(View view) {
+    static void touch(View view) {
         if (view.getWidth() <= 0 || view.getHeight() <= 0) throw new SecurityException("Maps action is not ready");
         long now = SystemClock.uptimeMillis();
         MotionEvent down = MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, view.getWidth() / 2f, view.getHeight() / 2f, 0);
@@ -257,13 +301,20 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         for (int x : new int[]{10, 24, 38}) canvas.drawCircle(x, 24, 3, paint);
         return bitmap;
     }
+    static Bitmap closeIcon(){
+        Bitmap bitmap=Bitmap.createBitmap(48,48,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(bitmap);
+        Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);paint.setColor(Color.BLACK);paint.setStrokeWidth(4);paint.setStrokeCap(Paint.Cap.ROUND);
+        canvas.drawLine(14,14,34,34,paint);canvas.drawLine(34,14,14,34,paint);return bitmap;
+    }
     void close() {
         if (closed) return; closed = true;
+        hostedNavigation=false;hostedPanel=null;updateNavigationCards();
         if (root.getViewTreeObserver().isAlive()) {
             root.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             root.getViewTreeObserver().removeOnPreDrawListener(this);
         }
         for (Map.Entry<View, Integer> entry : hidden.entrySet()) if (entry.getKey().getVisibility() == View.INVISIBLE) entry.getKey().setVisibility(entry.getValue());
         controls.clear(); hidden.clear(); focusSearch = false;
+        contentChanged=()->{};
     }
 }

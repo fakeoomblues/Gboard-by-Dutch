@@ -21,9 +21,16 @@ public class ExternalTelemetryCarTest {
     private void surface(Object owner,ViewGroup view)throws Exception{ExternalTelemetry.class.getMethod("carSurface",Object.class,ViewGroup.class).invoke(null,owner,view);Shadows.shadowOf(Looper.getMainLooper()).idle();}
     private boolean active()throws Exception{Field f=ExternalTelemetry.class.getDeclaredField("startup");f.setAccessible(true);Object client=f.get(null);return client!=null&&(Boolean)client.getClass().getMethod("activeSession").invoke(client);}
     @Before public void setup(){app=RuntimeEnvironment.getApplication();app.getSharedPreferences(Shapes.PREFS,0).edit().clear().commit();ExternalTelemetry.select(app,TelemetryStore.WAZE);}
-    @After public void cleanup()throws Exception{try{session(first,false);session(second,false);}catch(NoSuchMethodException absent){}ExternalTelemetry.select(app,"");}
+    @After public void cleanup()throws Exception{ExternalTelemetry.carNavigation(app,first,false);ExternalTelemetry.carNavigation(app,second,false);ExternalTelemetry.navigating(false);try{session(first,false);session(second,false);}catch(NoSuchMethodException absent){}ExternalTelemetry.select(app,"");}
     @Test public void realCarLifecycleKeepsSelectedProviderActiveWithoutPhoneActivity()throws Exception{
         assertFalse(active());session(first,true);assertTrue(active());session(second,true);session(first,false);assertTrue(active());session(second,false);assertFalse(active());
+    }
+    @Test public void nativeCarGuidanceSurvivesPhoneCameraAndTemporarySurfaceChanges()throws Exception{
+        ExternalTelemetry.carNavigation(app,first,true);Shadows.shadowOf(Looper.getMainLooper()).idle();assertTrue(active());
+        Field field=ExternalTelemetry.class.getDeclaredField("navigating");field.setAccessible(true);assertTrue(field.getBoolean(null));
+        ExternalTelemetry.navigating(false);surface(first,null);assertTrue(field.getBoolean(null));assertTrue(active());
+        ExternalTelemetry.carNavigation(app,second,true);ExternalTelemetry.carNavigation(app,first,false);Shadows.shadowOf(Looper.getMainLooper()).idle();assertTrue(field.getBoolean(null));
+        ExternalTelemetry.carNavigation(app,second,false);Shadows.shadowOf(Looper.getMainLooper()).idle();assertFalse(field.getBoolean(null));assertFalse(active());
     }
     @Test public void temporarySurfaceLossDoesNotEndCarSessionAndFinalCloseRemovesWidget()throws Exception{
         zone();

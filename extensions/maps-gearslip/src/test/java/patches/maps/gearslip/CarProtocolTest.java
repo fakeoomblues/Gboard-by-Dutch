@@ -34,7 +34,7 @@ public final class CarProtocolTest {
             androidx.car.app.navigation.model.Trip trip=(androidx.car.app.navigation.model.Trip)Bundleable.CREATOR.createFromParcel(wire).get();
             assertFalse(trip.isLoading());assertTrue(trip.getDestinations().isEmpty());assertTrue(trip.getDestinationTravelEstimates().isEmpty());
             assertEquals("Turn right",trip.getSteps().get(0).getCue().toString());assertNull(trip.getSteps().get(0).getManeuver());
-            assertEquals(120,trip.getStepTravelEstimates().get(0).getRemainingDistance().getDisplayDistance(),0);
+            assertEquals(100,trip.getStepTravelEstimates().get(0).getRemainingDistance().getDisplayDistance(),0);
             assertEquals(15,trip.getStepTravelEstimates().get(0).getRemainingTimeSeconds());
             assertEquals(1700000015000L,trip.getStepTravelEstimates().get(0).getArrivalTimeAtDestination().getTimeSinceEpochMillis());
         }finally{wire.recycle();}
@@ -45,6 +45,71 @@ public final class CarProtocolTest {
             androidx.car.app.navigation.model.Trip trip=(androidx.car.app.navigation.model.Trip)Bundleable.CREATOR.createFromParcel(wire).get();
             assertTrue(trip.isLoading());assertTrue(trip.getSteps().isEmpty());assertTrue(trip.getStepTravelEstimates().isEmpty());
         }finally{wire.recycle();}
+    }
+    @Test public void navigationCardsDecodeIntoTheHostRoutingAndEtaModels()throws Exception{
+        NativeGuidance.Direction direction=new NativeGuidance.Direction("NORMAL",true,true);
+        NativeGuidance.Step current=new NativeGuidance.Step("Turn right",null,"TURN","SIDE_RIGHT","TURN_NORMAL","RIGHT",-1,-1,
+                Collections.singletonList(Collections.singletonList(direction)));
+        NativeGuidance.Step next=new NativeGuidance.Step("Merge left",null,"MERGE","SIDE_LEFT","TURN_MERGE","RIGHT",-1,-1,Collections.emptyList());
+        NativeGuidance.Snapshot snapshot=new NativeGuidance.Snapshot(true,current.cue,120,15,current,next,55000,2220,12000,600);
+        NavigationTemplate template=(NavigationTemplate)decode(CarProtocol.navigationTemplate(snapshot,Collections.emptyList(),Collections.emptyList(),null,1700000000000L,false));
+        androidx.car.app.navigation.model.RoutingInfo info=(androidx.car.app.navigation.model.RoutingInfo)template.getNavigationInfo();
+        assertFalse(info.isLoading());assertEquals("Turn right",info.getCurrentStep().getCue().toString());
+        assertEquals(100,info.getCurrentDistance().getDisplayDistance(),0);
+        assertEquals(androidx.car.app.navigation.model.Maneuver.TYPE_TURN_NORMAL_RIGHT,info.getCurrentStep().getManeuver().getType());
+        assertEquals(128,info.getCurrentStep().getManeuver().getIcon().getIcon().getBitmap().getWidth());
+        assertEquals("Merge left",info.getNextStep().getCue().toString());
+        assertEquals(androidx.car.app.navigation.model.Maneuver.TYPE_MERGE_LEFT,info.getNextStep().getManeuver().getType());
+        assertNotNull(info.getCurrentStep().getLanesImage());
+        assertNull("Lane colors must retain the recommended/unrecommended distinction",info.getCurrentStep().getLanesImage().getTint());
+        assertEquals(androidx.car.app.navigation.model.LaneDirection.SHAPE_NORMAL_RIGHT,info.getCurrentStep().getLanes().get(0).getDirections().get(0).getShape());
+        assertTrue(info.getCurrentStep().getLanes().get(0).getDirections().get(0).isRecommended());
+        assertEquals(55,template.getDestinationTravelEstimate().getRemainingDistance().getDisplayDistance(),0);
+        assertEquals(androidx.car.app.model.Distance.UNIT_KILOMETERS,template.getDestinationTravelEstimate().getRemainingDistance().getDisplayUnit());
+        assertEquals(2220,template.getDestinationTravelEstimate().getRemainingTimeSeconds());
+        new NavigationTemplate.Builder().setNavigationInfo(info).setDestinationTravelEstimate(template.getDestinationTravelEstimate()).setActionStrip(template.getActionStrip()).build();
+    }
+    @Test public void unknownRouteEstimateNeverReusesTheNextTurnEstimate()throws Exception{
+        NavigationTemplate template=(NavigationTemplate)decode(CarProtocol.navigationTemplate(new NativeGuidance.Snapshot(true,"Continue",120,15),Collections.emptyList(),Collections.emptyList(),null,0,false));
+        assertNotNull(template.getNavigationInfo());assertNull(template.getDestinationTravelEstimate());
+    }
+    @Test public void unknownRoundaboutSideAndMissingExitRemainUnknown(){
+        NativeGuidance.Step unknown=new NativeGuidance.Step("Roundabout",null,"ROUNDABOUT_ENTER_AND_EXIT","SIDE_UNSPECIFIED","TURN_UNKNOWN","NONE",-1,-1,Collections.emptyList());
+        assertEquals(0,CarNavigationModels.maneuverType(unknown));
+        NativeGuidance.Step known=new NativeGuidance.Step("Second exit",null,"ROUNDABOUT_ENTER_AND_EXIT","SIDE_UNSPECIFIED","TURN_UNKNOWN","RIGHT",90,2,Collections.emptyList());
+        assertEquals(androidx.car.app.navigation.model.Maneuver.TYPE_ROUNDABOUT_ENTER_AND_EXIT_CCW,CarNavigationModels.maneuverType(known));
+    }
+    @Test public void nativeYardsPreferenceIsNotCollapsedIntoFeet()throws Exception{
+        NativeGuidance.Snapshot snapshot=new NativeGuidance.Snapshot(true,"Continue",100,15,null,null,55000,2220,12000,600,"MILES_YARDS");
+        NavigationTemplate template=(NavigationTemplate)decode(CarProtocol.navigationTemplate(snapshot,Collections.emptyList(),Collections.emptyList(),null,0,false));
+        androidx.car.app.navigation.model.RoutingInfo info=(androidx.car.app.navigation.model.RoutingInfo)template.getNavigationInfo();
+        assertEquals(androidx.car.app.model.Distance.UNIT_YARDS,info.getCurrentDistance().getDisplayUnit());
+        assertEquals(androidx.car.app.model.Distance.UNIT_MILES,template.getDestinationTravelEstimate().getRemainingDistance().getDisplayUnit());
+    }
+    @Test public void browsingUsesAHostListWithAllNativeRowsAndMapControls()throws Exception{
+        java.util.List<Bundle> rows=new java.util.ArrayList<>();
+        for(int i=0;i<80;i++)rows.add(CarProtocol.contentRow("Place "+i,Collections.singletonList("2 km"),clickListener(),true));
+        androidx.car.app.navigation.model.MapWithContentTemplate template=(androidx.car.app.navigation.model.MapWithContentTemplate)decode(
+                CarProtocol.pageTemplate("Maps",true,false,rows,Collections.emptyList(),Collections.emptyList(),Collections.singletonList(CarProtocol.panAction()),null,7));
+        ListTemplate content=(ListTemplate)template.getContentTemplate();assertEquals(80,content.getSingleList().getItems().size());
+        Row last=(Row)content.getSingleList().getItems().get(79);assertEquals("Place 79",last.getTitle().toString());assertTrue(last.isBrowsable());assertNotNull(last.getOnClickDelegate());
+        new ListTemplate.Builder().setTitle("Maps").setHeaderAction(content.getHeaderAction()).setSingleList(content.getSingleList()).build();
+        new androidx.car.app.navigation.model.MapWithContentTemplate.Builder().setContentTemplate(content).setMapController(template.getMapController()).setActionStrip(template.getActionStrip()).build();
+    }
+    @Test public void previewUsesAHostPaneAndGenuineStartDelegate()throws Exception{
+        androidx.car.app.navigation.model.MapWithContentTemplate template=(androidx.car.app.navigation.model.MapWithContentTemplate)decode(
+                CarProtocol.pageTemplate("Destination",false,true,Collections.singletonList(CarProtocol.contentRow("Destination",Collections.singletonList("5 min · 2 km"),null,true)),
+                        Collections.singletonList(CarProtocol.titledAction("Start",clickListener(),true)),Collections.emptyList(),Collections.emptyList(),null,7));
+        androidx.car.app.model.PaneTemplate content=(androidx.car.app.model.PaneTemplate)template.getContentTemplate();
+        assertEquals("Destination",content.getPane().getRows().get(0).getTitle().toString());assertEquals("Start",content.getPane().getActions().get(0).getTitle().toString());
+        assertNotNull(content.getPane().getActions().get(0).getOnClickDelegate());
+        new androidx.car.app.model.PaneTemplate.Builder(content.getPane()).setTitle("Destination").setHeaderAction(content.getHeaderAction()).build();
+    }
+    @Test public void olderNegotiatedHostsReceiveTheMapTemplateEquivalent()throws Exception{
+        androidx.car.app.navigation.model.MapTemplate template=(androidx.car.app.navigation.model.MapTemplate)decode(
+                CarProtocol.pageTemplate("Maps",true,false,Collections.singletonList(CarProtocol.contentRow("Place",Collections.emptyList(),clickListener(),true)),
+                        Collections.emptyList(),Collections.emptyList(),Collections.emptyList(),null,5));
+        assertEquals(1,template.getItemList().getItems().size());assertNotNull(template.getMapController());assertNotNull(template.getHeader());
     }
     @Test public void nativeControlsDecodeAsStandardHostActionsAndMapActions() throws Exception {
         Bitmap icon = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888); icon.eraseColor(Color.BLUE);

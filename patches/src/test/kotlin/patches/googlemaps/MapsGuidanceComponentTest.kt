@@ -43,6 +43,7 @@ class MapsGuidanceComponentTest {
         val classes = dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }.associateBy { it.type }
         validateMapsGuidanceComponent { classes.getValue(it) }
         validateMapsNavigationProvider { classes.getValue(it) }
+        validateMapsNativeContent { classes.getValue(it) }
         // An old interface can still exist while the actual application no longer
         // implements it. Reject that mismatch before emitting another broken APK.
         val app = classes.getValue("Lcom/google/android/apps/gmm/base/app/GoogleMapsApplication;")
@@ -57,5 +58,8 @@ class MapsGuidanceComponentTest {
         assertThrows(IllegalStateException::class.java) {
             validateMapsNavigationProvider { if (it == binder.type) missingDispatch else classes.getValue(it) }
         }
+        val action=classes.getValue("Lrvp;")
+        val missingClick=ImmutableClassDef(action.type,action.accessFlags,action.superclass,action.interfaces,action.sourceFile,action.annotations,action.fields,action.methods.filter { it.name!="d" })
+        assertThrows(IllegalStateException::class.java){validateMapsNativeContent { if(it==action.type)missingClick else classes.getValue(it) }}
     }
 }

@@ -8597,7 +8597,7 @@
     },
     {
       "name": "Native navigation for Gearslip and Android Auto",
-      "description": "Shows this patched Maps app's live native map with app-owned car UI and standard navigation controls that Android Auto and compatible hosts can arrange.",
+      "description": "Keeps Maps' native map and navigation engine, and supplies routing, ETA, destination lists and route-preview cards for Android Auto and compatible hosts to arrange around their controls and dock.",
       "default": true,
       "category": null,
       "compatiblePackages": [

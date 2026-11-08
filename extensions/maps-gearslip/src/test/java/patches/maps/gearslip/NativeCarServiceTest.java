@@ -119,7 +119,8 @@ public final class NativeCarServiceTest {
         java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
         update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertTrue(events.isEmpty());
         update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",120,15));assertEquals(java.util.Arrays.asList(2,4),events);
-        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",90,12));assertEquals(java.util.Arrays.asList(2,4,4),events);
+        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",90,12));assertEquals(java.util.Arrays.asList(2,4),events);
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));assertEquals(java.util.Arrays.asList(2,4,4),events);
         IBinder navigation=call(car,"ICarApp",9,data->data.writeString("navigation")).value.getBinder("tag_value");
         Response stopped=new Response();Parcel request=Parcel.obtain();
         try{request.writeInterfaceToken("androidx.car.app.navigation.INavigationManager");request.writeStrongBinder(stopped);request.setDataPosition(0);assertTrue(navigation.transact(2,request,null,IBinder.FLAG_ONEWAY));}
@@ -128,6 +129,13 @@ public final class NativeCarServiceTest {
         Intent stop=shadowOf(service).getNextStartedService();assertNotNull(stop);
         assertEquals("com.google.android.libraries.geo.navcore.service.base.NavigationService",stop.getComponent().getClassName());assertTrue(stop.getBooleanExtra("abortcurrentsession",false));
         update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,stopped.code);assertEquals(Integer.valueOf(3),events.get(events.size()-1));
+    }
+    @Test public void idleNativeRefreshesDoNotCloseAnOpenControlsScreen()throws Exception{
+        handshake(HOST);java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
+        java.lang.reflect.Field open=session.getClass().getDeclaredField("controlsOpen");open.setAccessible(true);open.setBoolean(session,true);
+        java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
+        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));
+        assertTrue(open.getBoolean(session));
     }
 
     @Test public void testHostPackageCannotAuthenticateInProduction() throws Exception {

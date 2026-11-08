@@ -55,13 +55,14 @@ public final class ExternalTelemetry {
     private static final RoadWarningEngine warnings=new RoadWarningEngine();
     private static Context app;
     private static String source="",publisherSession="",warning="",legacyWarning="";
-    private static boolean registered,navigating;
+    private static boolean registered,navigating,phoneNavigating;
     private static Location fix;
     private static long fixAt=-1,nativeSpeedAt=-1,nativeLimitAt=-1;
     private static Double nativeSpeed,nativeLimit;
     private static WeakReference<Activity> foreground=new WeakReference<>(null);
     private static CompactSpeedView widget;
     private static final java.util.Set<Object> carSessions=java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
+    private static final java.util.Set<Object> carNavigation=java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
     private static final Map<Object,WeakReference<ViewGroup>> carRoots=new java.util.WeakHashMap<>();
     private static final Map<Object,int[]> carViewportSizes=new java.util.WeakHashMap<>();
     private static final Map<Object,CompactSpeedView> carWidgets=new java.util.WeakHashMap<>();
@@ -70,6 +71,17 @@ public final class ExternalTelemetry {
     public static void carSession(Context context,Object owner,boolean visible){
         if(context==null||owner==null)return;
         Runnable change=()->{if(visible)carSessions.add(owner);else{carSessions.remove(owner);removeCarWidget(owner);carRoots.remove(owner);carViewportSizes.remove(owner);}refresh(context);};
+        if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
+    }
+    /** Native GUIDING is independent of phone camera updates and transient surface loss. */
+    public static void carNavigation(Context context,Object owner,boolean active){
+        if(context==null||owner==null)return;
+        Runnable change=()->{
+            if(active)carNavigation.add(owner);else carNavigation.remove(owner);
+            navigating=phoneNavigating||!carNavigation.isEmpty();
+            WazeAlerts.carNavigation(!carNavigation.isEmpty());
+            refresh(context);
+        };
         if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
     }
     /** The original Maps Presentation supplies this real host-bound decor, never a phone mirror. */
@@ -276,7 +288,7 @@ public final class ExternalTelemetry {
         if(value.hasSpeed()&&Float.isFinite(value.getSpeed())&&value.getSpeed()>=0&&value.getSpeed()*3.6<=500){nativeSpeed=value.getSpeed()*3.6;nativeSpeedAt=at;}
         update();
     }
-    static void navigating(boolean active){navigating=active;if(startup!=null)startup.select(source,active);update();}
+    static void navigating(boolean active){phoneNavigating=active;navigating=active||!carNavigation.isEmpty();if(startup!=null)startup.select(source,navigating||carActive());update();}
     static String provider(){return WarningProviders.supported(source)?WarningProviders.displayName(source):LEGACY.equals(source)?"Waze":"Google Maps";}
     static String status(){
         if(!modern())return LEGACY.equals(source)?WazeAlerts.legacyStatus():"Off · Google Maps";

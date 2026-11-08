@@ -82,7 +82,10 @@ final class CarProtocol {
         return delegate;
     }
 
-    private static Bundle icon(Bitmap bitmap) {
+    static Bundle icon(Bitmap bitmap) {
+        return icon(bitmap,true);
+    }
+    static Bundle icon(Bitmap bitmap,boolean tinted){
         Bundle compat = new Bundle();
         compat.putInt("type", 1); // IconCompat.TYPE_BITMAP, serialized by the public Bundler IMAGE type.
         compat.putParcelable("obj", bitmap);
@@ -91,9 +94,11 @@ final class CarProtocol {
         Bundle icon = object("androidx.car.app.model.CarIcon");
         field(icon, "mType", primitive(1));
         field(icon, "mIcon", image);
-        Bundle tint = object("androidx.car.app.model.CarColor");
-        field(tint, "mType", primitive(1)); // CarColor.DEFAULT lets the host choose its contrast.
-        field(icon, "mTint", tint);
+        if(tinted){
+            Bundle tint = object("androidx.car.app.model.CarColor");
+            field(tint, "mType", primitive(1)); // Monochrome controls follow host contrast.
+            field(icon, "mTint", tint);
+        }
         return icon;
     }
 
@@ -125,6 +130,51 @@ final class CarProtocol {
         field(row, "mOnClickDelegate", click(callback));
         return row;
     }
+    static Bundle contentRow(String title,List<String> texts,IBinder callback,boolean enabled){
+        Bundle row=object("androidx.car.app.model.Row");
+        field(row,"mTitle",text(title));List<Bundle> lines=new ArrayList<>();
+        for(String line:texts)if(lines.size()<2)lines.add(text(line));
+        field(row,"mTexts",list(lines));field(row,"mIsEnabled",primitive(enabled));field(row,"mIsBrowsable",primitive(callback!=null));
+        field(row,"mNumericDecoration",primitive(-1));field(row,"mMetadata",object("androidx.car.app.model.Metadata"));
+        if(callback!=null)field(row,"mOnClickDelegate",click(callback));return row;
+    }
+    static Bundle titledAction(String title,IBinder callback,boolean enabled){
+        Bundle action=object("androidx.car.app.model.Action");field(action,"mType",primitive(1));field(action,"mTitle",text(title));
+        field(action,"mIsEnabled",primitive(enabled));field(action,"mOnClickDelegate",click(callback));return action;
+    }
+    private static Bundle headerAction(boolean home){
+        Bundle action=object("androidx.car.app.model.Action");field(action,"mType",primitive(home?65538:65539));
+        if(home){Bundle icon=object("androidx.car.app.model.CarIcon");field(icon,"mType",primitive(5));field(action,"mIcon",icon);}
+        return action;
+    }
+    static Bundle pageTemplate(String title,boolean home,boolean preview,List<Bundle> rows,List<Bundle> paneActions,
+            List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,int api){
+        Bundle content;
+        if(preview){
+            Bundle pane=object("androidx.car.app.model.Pane");field(pane,"mRows",list(rows));field(pane,"mActionList",list(paneActions));field(pane,"mIsLoading",primitive(rows.isEmpty()));
+            content=object("androidx.car.app.model.PaneTemplate");field(content,"mPane",pane);
+        }else{
+            Bundle items=object("androidx.car.app.model.ItemList");field(items,"mItems",list(rows));
+            content=object("androidx.car.app.model.ListTemplate");field(content,"mSingleList",items);field(content,"mSectionedLists",emptyList());field(content,"mActions",emptyList());field(content,"mIsLoading",primitive(false));
+        }
+        field(content,"mTitle",text(title));field(content,"mHeaderAction",headerAction(home));
+        Bundle strip=object("androidx.car.app.model.ActionStrip");field(strip,"mActions",list(actions));
+        Bundle mapStrip=object("androidx.car.app.model.ActionStrip");field(mapStrip,"mActions",list(mapActions));
+        Bundle controller=object("androidx.car.app.navigation.model.MapController");field(controller,"mMapActionStrip",mapStrip);
+        if(panCallback!=null){Bundle pan=object("androidx.car.app.navigation.model.PanModeDelegateImpl");field(pan,"mStub",interfaceBinder("androidx.car.app.navigation.model.IPanModeListener$Stub",panCallback));field(controller,"mPanModeDelegate",pan);}
+        Bundle result;
+        if(api>=7){
+            result=object("androidx.car.app.navigation.model.MapWithContentTemplate");field(result,"mContentTemplate",content);
+        }else{
+            result=object("androidx.car.app.navigation.model.MapTemplate");
+            field(result,preview?"mPane":"mItemList",member(content,preview?"mPane":"mSingleList"));
+            Bundle header=object("androidx.car.app.model.Header");field(header,"mTitle",text(title));field(header,"mStartHeaderAction",headerAction(home));field(header,"mEndHeaderActions",emptyList());field(result,"mHeader",header);
+            // Retain the pre-Header field names for older host-side model classes.
+            field(result,"mTitle",text(title));field(result,"mHeaderAction",headerAction(home));field(result,"mMapActionStrip",mapStrip);
+        }
+        field(result,"mMapController",controller);field(result,"mActionStrip",strip);
+        return wrap(result,"morphe-maps-content");
+    }
 
     static Bundle binder(IBinder value) {
         Bundle bundle = new Bundle();
@@ -150,29 +200,13 @@ final class CarProtocol {
     }
 
     static Bundle trip(NativeGuidance.Snapshot value,long now){
-        Bundle trip=object("androidx.car.app.navigation.model.Trip");
-        field(trip,"mDestinations",emptyList());field(trip,"mDestinationTravelEstimates",emptyList());
-        boolean loading=value.cue==null||value.cue.isEmpty()||value.meters<0||value.seconds<0;
-        field(trip,"mIsLoading",primitive(loading));
-        if(loading){field(trip,"mSteps",emptyList());field(trip,"mStepTravelEstimates",emptyList());return trip;}
-        Bundle step=object("androidx.car.app.navigation.model.Step");
-        field(step,"mCue",text(value.cue));field(step,"mLanes",emptyList());
-        Bundle distance=object("androidx.car.app.model.Distance");
-        field(distance,"mDisplayDistance",primitive((double)value.meters));field(distance,"mDisplayUnit",primitive(1));
-        Bundle arrival=object("androidx.car.app.model.DateTimeWithZone");
-        long arrivalMillis=now+value.seconds*1000L;
-        java.util.TimeZone zone=java.util.TimeZone.getDefault();
-        field(arrival,"mTimeSinceEpochMillis",primitive(arrivalMillis));
-        field(arrival,"mZoneOffsetSeconds",primitive(zone.getOffset(arrivalMillis)/1000));
-        field(arrival,"mZoneShortName",primitive(zone.getDisplayName(zone.inDaylightTime(new java.util.Date(arrivalMillis)),java.util.TimeZone.SHORT)));
-        Bundle estimate=object("androidx.car.app.navigation.model.TravelEstimate");
-        field(estimate,"mRemainingDistance",distance);field(estimate,"mRemainingTimeSeconds",primitive((long)value.seconds));
-        field(estimate,"mArrivalTimeAtDestination",arrival);
-        Bundle color=object("androidx.car.app.model.CarColor");field(color,"mType",primitive(1));
-        field(estimate,"mRemainingDistanceColor",color);field(estimate,"mRemainingTimeColor",color);
-        field(trip,"mSteps",list(Collections.singletonList(step)));
-        field(trip,"mStepTravelEstimates",list(Collections.singletonList(estimate)));
-        return trip;
+        return CarNavigationModels.trip(value,now,false);
+    }
+
+    static Bundle navigationTemplate(NativeGuidance.Snapshot value,List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,long now,boolean imperial){
+        Bundle result=template(null,actions,mapActions,panCallback);
+        CarNavigationModels.apply(member(result,"mTemplate"),value,now,imperial);
+        return result;
     }
 
     static Bundle template(Throwable failure) {
@@ -228,12 +262,15 @@ final class CarProtocol {
     }
 
     static Bundle searchTemplate(String query, String hint, IBinder callback) {
+        return searchTemplate(query,hint,callback,Collections.emptyList());
+    }
+    static Bundle searchTemplate(String query,String hint,IBinder callback,List<Bundle> rows){
         Bundle delegate = object("androidx.car.app.model.SearchCallbackDelegateImpl");
         field(delegate, "mStubCallback", interfaceBinder("androidx.car.app.model.ISearchCallback$Stub", callback));
         Bundle back = object("androidx.car.app.model.Action");
         field(back, "mType", primitive(65539));
         Bundle items = object("androidx.car.app.model.ItemList");
-        field(items, "mItems", emptyList());
+        field(items, "mItems", list(rows));
         Bundle search = object("androidx.car.app.model.SearchTemplate");
         field(search, "mInitialSearchText", primitive(query));
         field(search, "mSearchHint", primitive(hint));
@@ -267,7 +304,7 @@ final class CarProtocol {
         field(wrapper,"mCurrentTaskStep",primitive(stack.size()));
     }
 
-    private static Bundle templateInfo(String type,String id){
+    static Bundle templateInfo(String type,String id){
         Bundle info=object("androidx.car.app.model.TemplateInfo");
         Bundle clazz=new Bundle();clazz.putInt("tag_class_type",8);clazz.putString("tag_value",type);
         field(info,"mTemplateClass",clazz);field(info,"mTemplateId",primitive(id));

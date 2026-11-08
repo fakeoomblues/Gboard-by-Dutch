@@ -54,6 +54,11 @@ public final class NativeCarService extends Service {
         IBinder host, appHost,navigationHost;
         NativeGuidance guidance;
         boolean navigating;
+        NativeGuidance.Snapshot navigation;
+        long lastTripAt=-1;
+        int api;
+        final NativeScreenStack screens=new NativeScreenStack();
+        Runnable tripUpdate;
         final List<IBinder> stopCallbacks=new ArrayList<>();
         Runnable stopTimeout;
         IBinder.DeathRecipient death;
@@ -146,6 +151,8 @@ public final class NativeCarService extends Service {
                 if (previous.binding.session == previous) previous.binding.session = null;
             }
             replacement = new Session(uid, binding);
+            replacement.api=api;
+            replacement.tripUpdate=()->sendTrip(replacement);
             binding.session = replacement;
             active = replacement;
         }
@@ -176,6 +183,7 @@ public final class NativeCarService extends Service {
     }
 
     private void close(Session session) {
+        main.removeCallbacks(session.tripUpdate);
         if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
         for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,new IllegalStateException("Car session closed before navigation stopped"));
         session.stopCallbacks.clear();
@@ -233,7 +241,11 @@ public final class NativeCarService extends Service {
     private interface Action { void run() throws Exception; }
 
     private void endNavigation(Session session){
+        main.removeCallbacks(session.tripUpdate);
+        session.navigation=null;
+        if(session.renderer!=null)session.renderer.hostedNavigation(false);
         if(!session.navigating)return;session.navigating=false;
+        session.controlsOpen=false;
         try{if(session.navigationHost!=null)CarProtocol.send(session.navigationHost,NAVIGATION_HOST,3,data->{});}
         catch(RemoteException|RuntimeException disconnected){Log.w("MapsNativeCar","Navigation host disconnected",disconnected);}
     }
@@ -242,13 +254,27 @@ public final class NativeCarService extends Service {
         try{
             if(!snapshot.guiding){
                 endNavigation(session);
+                invalidate(session);
                 if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
                 for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,null);
                 session.stopCallbacks.clear();return;
             }
             if(!session.navigating){CarProtocol.send(session.navigationHost,NAVIGATION_HOST,2,data->{});session.navigating=true;}
-            Bundle trip=CarProtocol.trip(snapshot,System.currentTimeMillis());
+            session.navigation=snapshot;
+            if(session.renderer!=null)session.renderer.hostedNavigation(true);
+            main.removeCallbacks(session.tripUpdate);
+            long delay=session.lastTripAt<0?0:Math.max(0,1000-(android.os.SystemClock.elapsedRealtime()-session.lastTripAt));
+            if(delay==0)sendTrip(session);else main.postDelayed(session.tripUpdate,delay);
+            invalidate(session);
+        }catch(Exception error){failed(session,error);}
+    }
+
+    private void sendTrip(Session session){
+        if(active!=session||session.closed||session.failure!=null||!session.navigating||session.navigation==null)return;
+        try{
+            Bundle trip=CarProtocol.trip(session.navigation,System.currentTimeMillis());
             CarProtocol.send(session.navigationHost,NAVIGATION_HOST,4,data->{data.writeInt(1);data.writeBundle(trip);});
+            session.lastTripAt=android.os.SystemClock.elapsedRealtime();
         }catch(Exception error){failed(session,error);}
     }
 
@@ -414,9 +440,9 @@ public final class NativeCarService extends Service {
                             try {
                                 NativeKeyboard input = session.keyboard;
                                 Bundle template = session.failure != null ? CarProtocol.template(session.failure)
-                                        : input != null ? CarProtocol.searchTemplate(input.text(), input.hint(), new SearchBinder(session, input))
+                                        : input != null ? searchTemplate(session,input)
                                         : controlsTemplate(session);
-                                CarProtocol.screenStack(template,session.controlsOpen);
+                                session.screens.apply(template);
                                 CarProtocol.complete(callback, template, null);
                             } catch (Exception error) { failed(session, error); CarProtocol.complete(callback, null, error); }
                         }
@@ -424,6 +450,7 @@ public final class NativeCarService extends Service {
                 } else if (code == 3) dispatch(session, callback, true, () -> {
                     if(session.keyboard!=null){clearKeyboard(session);session.renderer.back();}
                     else if (session.controlsOpen) session.controlsOpen = false;
+                    else if(session.renderer.contentBack()){}
                     else { clearKeyboard(session); session.renderer.back(); }
                     invalidate(session);
                 });
@@ -435,27 +462,81 @@ public final class NativeCarService extends Service {
     }
 
     private Bundle controlsTemplate(Session session) throws Exception {
+        NativeCarContent.Page page=session.renderer.content(null);
+        List<NativeCarContent.Action> nativeFooter=session.navigating?session.renderer.footerActions():java.util.Collections.emptyList();
         List<NativeControls.Control> mainControls = new ArrayList<>(), mapControls = new ArrayList<>(), overflow = new ArrayList<>();
         for (NativeControls.Control control : session.renderer.controls()) (control.role.map ? mapControls : mainControls).add(control);
+        if(!nativeFooter.isEmpty())mainControls.removeIf(control->control.role==NativeControls.Role.END);
+        if(session.navigating){
+            for(java.util.Iterator<NativeControls.Control> it=mainControls.iterator();it.hasNext();){
+                NativeControls.Control control=it.next();
+                if(control.role!=NativeControls.Role.SOUND&&control.role!=NativeControls.Role.END){overflow.add(control);it.remove();}
+            }
+        }
         // NavigationTemplate and its map strip each admit four standard CAL actions.
         // Reserve one map action for the host's own pan mode and use a standard list for overflow.
         while (mapControls.size() > 3) overflow.add(mapControls.remove(3));
-        if (mainControls.size() > 4 || (!overflow.isEmpty() && mainControls.size() > 3))
-            while (mainControls.size() > 3) overflow.add(0, mainControls.remove(mainControls.size() - 1));
+        boolean nativeMore=nativeFooter.size()>1;
+        int primaryCount=nativeFooter.isEmpty()?0:1;
+        boolean needsOverflow=!overflow.isEmpty()||nativeMore||mainControls.size()+primaryCount>4;
+        int inlineLimit=(needsOverflow?3:4)-primaryCount;
+        while(mainControls.size()>inlineLimit)overflow.add(0,mainControls.remove(mainControls.size()-1));
         if (session.controlsOpen) {
             List<Bundle> rows = new ArrayList<>();
             for (NativeControls.Control control : overflow) rows.add(CarProtocol.controlRow(control.title, new ActionBinder(session, control)));
+            for(int i=1;i<nativeFooter.size();i++){NativeCarContent.Action action=nativeFooter.get(i);rows.add(CarProtocol.contentRow(action.title,java.util.Collections.emptyList(),new ContentActionBinder(session,action),action.enabled));}
             if (!rows.isEmpty()) return CarProtocol.controlsTemplate(session.renderer.controlsTitle(), rows);
             session.controlsOpen = false;
         }
         List<Bundle> actions = new ArrayList<>(), mapActions = new ArrayList<>();
         for (NativeControls.Control control : mainControls)
-            actions.add(CarProtocol.action(control.title, control.icon, new ActionBinder(session, control)));
-        if (!overflow.isEmpty()) actions.add(CarProtocol.action(session.renderer.controlsTitle(), NativeControls.moreIcon(), new ActionBinder(session, null)));
+            actions.add(CarProtocol.action(null, control.icon, new ActionBinder(session, control)));
+        if(!nativeFooter.isEmpty())actions.add(CarProtocol.action(null,NativeControls.closeIcon(),new ContentActionBinder(session,nativeFooter.get(0))));
+        if (!overflow.isEmpty()||nativeMore) actions.add(CarProtocol.action(null, NativeControls.moreIcon(), new ActionBinder(session, null)));
         mapActions.add(CarProtocol.panAction());
         for (NativeControls.Control control : mapControls)
             mapActions.add(CarProtocol.action(null, control.icon, new ActionBinder(session, control)));
-        return CarProtocol.template(null, actions, mapActions, new PanBinder(session));
+        if(page!=null)return pageTemplate(session,page,actions,mapActions);
+        return CarProtocol.navigationTemplate(session.navigation,actions,mapActions,new PanBinder(session),System.currentTimeMillis(),false);
+    }
+
+    private Bundle searchTemplate(Session session,NativeKeyboard input)throws Exception{
+        NativeCarContent.Page page=session.renderer.content(input.text());
+        return CarProtocol.searchTemplate(input.text(),input.hint(),new SearchBinder(session,input),page==null?java.util.Collections.emptyList():contentRows(session,page));
+    }
+    private List<Bundle> contentRows(Session session,NativeCarContent.Page page){
+        List<Bundle> rows=new ArrayList<>();
+        for(NativeCarContent.Row row:page.rows)rows.add(CarProtocol.contentRow(row.title,row.texts,row.action==null?null:new ContentActionBinder(session,row.action),row.action==null||row.action.enabled));
+        return rows;
+    }
+    private Bundle pageTemplate(Session session,NativeCarContent.Page page,List<Bundle> actions,List<Bundle> mapActions){
+        List<Bundle> rows=contentRows(session,page),paneActions=new ArrayList<>();
+        boolean preview=page.kind==NativeCarContent.Kind.PREVIEW;
+        if(preview){
+            List<String> summary=new ArrayList<>();for(int i=1;i<page.rows.size();i++)summary.add(page.rows.get(i).title);
+            rows=page.rows.isEmpty()?java.util.Collections.emptyList():java.util.Collections.singletonList(CarProtocol.contentRow(page.title,
+                    summary.isEmpty()?java.util.Collections.emptyList():java.util.Collections.singletonList(String.join(" · ",summary)),null,true));
+            if(!page.rows.isEmpty()&&!page.actions.isEmpty()){
+                NativeCarContent.Action start=page.actions.get(0);paneActions.add(CarProtocol.titledAction(start.title,new ContentActionBinder(session,start),start.enabled));
+            }
+            if(!page.rows.isEmpty()&&(page.rows.size()>2||page.actions.size()>1))paneActions.add(CarProtocol.titledAction(session.renderer.contentDetailsTitle(),new ContentActionBinder(session,null),true));
+        }else if(page.kind==NativeCarContent.Kind.DETAILS){
+            for(NativeCarContent.Action action:page.actions)rows.add(CarProtocol.contentRow(action.title,java.util.Collections.emptyList(),new ContentActionBinder(session,action),action.enabled));
+        }
+        Bundle template=CarProtocol.pageTemplate(page.title,page.kind==NativeCarContent.Kind.HOME,preview,rows,paneActions,actions,mapActions,new PanBinder(session),session.api);
+        CarProtocol.field(template,"mId",CarProtocol.primitive("morphe-maps-"+page.kind.name().toLowerCase(java.util.Locale.ROOT)));
+        return template;
+    }
+
+    private final class ContentActionBinder extends Binder{
+        final Session session;final NativeCarContent.Action action;
+        ContentActionBinder(Session session,NativeCarContent.Action action){this.session=session;this.action=action;}
+        @Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            if(CarProtocol.basic("androidx.car.app.model.IOnClickListener",code,data,reply))return true;
+            if(code!=2)return false;IBinder callback=data.readStrongBinder();
+            try{requireSession(session);dispatch(session,callback,true,()->{if(action==null)session.renderer.contentDetails();else session.renderer.performContentAction(action);invalidate(session);});}
+            catch(Exception error){CarProtocol.complete(callback,null,error);}return true;
+        }
     }
 
     /** The host owns pan mode; leaving it must finish any native map drag. */

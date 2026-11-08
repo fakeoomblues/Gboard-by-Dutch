@@ -26,10 +26,23 @@ APKs were installed and their device bytes verified before stopping the VM.
 Private receipts: `.analysis/navigation-baseline-recovery-135` and
 `.analysis/navigation-aa17-provision-136`.
 
-Cold-boot persistence, normal first-run/developer setup, actual Java-hook coverage,
-TTS readiness and navigation remain unverified. Do not call this an initialized
-acceptance baseline until those have been saved and verified. All source apps
-were left stopped; provisioning generated no GPS or warning stimuli.
+Runs140–146 subsequently verified cold-boot persistence of the original AA17
+package/role, native AA consent/developer/head-unit setup, current Maps4bd962258729,
+and actual Java hooks. Run144 proved native Maps turn-by-turn rendering. Run146
+saved FM15 guest onboarding, native precise/always location permission, and Maps’
+FM source and reviewed Voice choices. Vela and Waze first-run remain incomplete
+in this replacement baseline. All owned runtimes are stopped between sessions.
+
+Run146 delivered only GPS stimuli on a real A4 road trace. Maps received genuine
+FM `AVG_SPEED_CHECK` events, displayed current100km/h and partial average99km/h,
+estimated20% progress and3.4km remaining; its warning speaker completed with
+`started=true` and `quiescent=true`. The current `SDL_AUDIODRIVER=dummy` session
+has callback/stream evidence, not retained speech PCM/content. The head-unit
+map incorrectly displayed a future A10 maneuver while recorded GPS remained on
+the A4. GPS was stopped and evidence retained for offline diagnosis; zone exit,
+full driving acceptance and Waze/Vela equivalence remain open. Private receipt:
+`.analysis/fm-maps-gps-acceptance-146/receipt.json`; unchanged review images and
+provenance are in `~/Downloads/Android-Auto-Functional-Review/FM-Maps-real-drive.md`.
 
 Use the existing cold-boot recipe with the new AVD name, `-writable-system`,
 `-no-snapshot`, `-no-window`, `-gpu host`, four cores and4096MB. Verify original
@@ -41,8 +54,9 @@ under the recovery receipt. Process inventory is not Java hook coverage.
 
 The owner also authorized normal phone checks without Frida. Phone app updates
 must still use its existing Morphe signer/data; the engineering APK cache is for
-the owned emulator. The newest local MPP is in phone Downloads, but its install
-and phone DHU acceptance remain open while the phone handoff is pending.
+the owned emulator. The latest commit-derived MPP is in Mac Downloads; its copy/install on the
+currently disconnected phone and phone DHU acceptance remain open. Do not infer
+phone delivery from a Mac artifact or an older phone bundle.
 
 For phone GPS replay, DHU's documented `location lat long accuracy altitude speed
 bearing` command accepts speed in metres per second: 100 km/h is
