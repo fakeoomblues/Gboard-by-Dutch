@@ -203,7 +203,7 @@ test("a held workspace keeps its named reason and blocks, then a watch tick swee
   await runFlow(options(f,{watchOnce:true}));
   f.dependencies.verify=async context=>{
     const nested=path.join(context.workspace,"nested");fs.mkdirSync(nested);
-    const code=`const fs=require('node:fs'),{spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{detached:true,stdio:'ignore',cwd:${JSON.stringify(nested)}});fs.writeFileSync(${JSON.stringify(pidFile)},String(child.pid));child.unref();setInterval(()=>{},1000);`;
+    const code=`const fs=require('node:fs'),{spawn}=require('node:child_process');const child=spawn(process.execPath,['-e','setInterval(()=>{},1000)'],{detached:true,stdio:'ignore',cwd:${JSON.stringify(nested)}});fs.writeFileSync(${JSON.stringify(pidFile)},String(child.pid));child.unref();`;
     const {spawn}=require('node:child_process');const outer=spawn(process.execPath,['-e',code],{detached:true,stdio:'ignore'});outer.unref();await new Promise(resolve=>setTimeout(resolve,300));pid=Number(fs.readFileSync(pidFile,'utf8'));
     context.processGroups=[{id:123456,stage:"controlled",quiescent:false}];throw new Error("original active-group failure");
   };
