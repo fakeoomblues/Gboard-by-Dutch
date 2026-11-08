@@ -297,6 +297,9 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         }
     }
     void invoke(Role role) {
+        // Maps can replace a reactive card before the next layout/pre-draw.
+        // Resolve commands against the current owned tree, not that frame cache.
+        onGlobalLayout();
         Control current = controls.get(role);
         if (current == null) throw new SecurityException("Maps action was retired");
         invoke(current);

@@ -118,6 +118,14 @@ authenticated car session. Verify that correction before driving. No1280x480
 reflow, rotary, Start/Details or current-cohort genuine-feed acceptance is
 implied by setup.
 
+Runs177/178 then exercised the7dcb5e9 role-dispatch build.177 reached the
+replacement native listener without exception, but Search did not open.178
+waited for the named Search owner and proved a cached eligible owner could be
+fully detached before the next layout callback; the strict guard rejected it.
+Refresh native control discovery against the current owned tree at command
+dispatch. Preserve both failed receipts; they do not prove Search or driving
+acceptance. The producer/receiver observers remained attached throughout.
+
 The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.

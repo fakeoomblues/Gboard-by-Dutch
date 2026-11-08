@@ -429,7 +429,7 @@ public final class NativeCarServiceTest {
         replacement.setImageDrawable(new ColorDrawable(Color.BLUE));
         replacement.setOnClickListener(v->clicks.merge(NativeControls.Role.SEARCH,10,Integer::sum));
         group.addView(replacement,new FrameLayout.LayoutParams(64,64));
-        root.getViewTreeObserver().dispatchOnGlobalLayout();
+        // Deliver the already displayed host action before a new layout callback.
         navigation.getActionStrip().getActions().get(0).getOnClickDelegate().sendClick(done());
         shadowOf(Looper.getMainLooper()).idle();
         assertEquals(Integer.valueOf(10),clicks.get(NativeControls.Role.SEARCH));

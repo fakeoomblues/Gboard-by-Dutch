@@ -161,6 +161,18 @@ public final class NativeControlsTest {
         assertEquals(1,clicks);group.removeView(button);measure();
         assertThrows(SecurityException.class,()->controls.invoke(NativeControls.Role.SETTINGS));
     }
+    @Test public void commandsRefreshAReplacedOwnerBeforeTheNextLayoutCallback() {
+        NativeControls.Control old=bind();group.removeView(button);
+        ImageView replacement=button();replacement.setOnClickListener(v->clicks+=10);
+        group.addView(replacement,new FrameLayout.LayoutParams(64,64));
+        // No layout, pre-draw or idle call: the old availability cache still exists.
+        controls.invoke(NativeControls.Role.SETTINGS);assertEquals(10,clicks);
+        assertSame(replacement,controls.snapshot().get(0).source);
+        assertThrows(SecurityException.class,()->controls.invoke(old));
+        group.removeView(replacement);
+        assertThrows(SecurityException.class,()->controls.invoke(NativeControls.Role.SETTINGS));
+        assertEquals(10,clicks);
+    }
     @Test public void disabledNativeActionsDisappearAndNotifyTheHost() {
         NativeControls.Control old = bind(); int before = updates; button.setEnabled(false);
         root.getViewTreeObserver().dispatchOnPreDraw(); assertTrue(controls.snapshot().isEmpty()); assertTrue(updates > before);
