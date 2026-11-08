@@ -155,7 +155,52 @@ The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.
 
+## Current genuine Vela/FM drive evidence (185)
+
+Reuse185 rather than rerunning the full A4 drive for reassurance. Normal Vela UI
+confirmed FMVoice/recommended categories and enabled spoken warnings and current
+car speed; car details were already enabled. The baseline now retains these
+choices. Three FM health indicators were green. Initial audio-unavailable status
+before the native navigation engine was not overridden.
+
+On originalAA17/DHU1280x480, the existing287-point A4 trace produced genuine
+zone states: average98/~20%/3.4km, then99/~62%/1.6km, followed by the source's
+zone-end warning and a cleared average panel. Current speed and limit both100
+rendered during the drive, and Vela kept following the actual A4 GPS position.
+The native GPS velocity was27.779976m/s. The semantic trace contains175UPSERTs,
+one ANNOUNCE at index1, a CLEAR and one ANNOUNCE at index2. Two distinct warning
+attempts started and finishedCOMPLETED/quiescent; no duplicate finish for either
+key was observed. This is natural provider/receiver evidence, not injected UI.
+
+185does not accept heading-specific relevance: the NMEA console preflight left
+native speed/course unchanged, and the reused geo-fix transport retained its
+actual bearing0. Preserve that limitation and the successful visual/voice-API
+proof. No fabricated heading, average, warning, readiness or grant was used.
+
+The final emulator-phone End query returned no target before teardown. No End
+click was sent;185navigation stopped through terminal force-stop.183normalEnd
+proof remains available. On next launch, inspect current navigation state before
+starting a new route. The GPS replay ended/restored speed0 at06:08:11UTC;
+terminal teardown finished8.4s beyond its planned deadline. Reserve more cleanup
+time rather than assuming an immediate phone UI transition at the stop boundary.
+
 ## Native audio capture candidate
+
+185supersedes the following static candidate: no SDLdisk raw file was produced.
+The exact SDK playback callback callsPa_OpenDefaultStream/Pa_StartStream, so
+SDLdummy/disk settings do not establish capture or muting of itsPortAudio path.
+Do not repeat speech sessions relying on that assumption. No Mac/physical-phone
+volume/default-device settings were changed, but head-unit audio content remains
+unaccepted. Original Android warningTTS/result/callback evidence remains valid.
+
+The native SDK data boundary isAudioCallback::dataAvailableCallback(int,uint64,
+byte*,size_t), preferred address0x100004c2c in hash4e42c054….
+Its callback instance stores codec at0x2c, channels at0x30 and sample rate at0x34.
+The inspected playback is16-bit. A goal-required read-only probe is staged in
+`.analysis/dhu-audio-boundary-186`; it preserves original methods and buffers.
+The separate no-phone/no-speech sandboxed native dry-run failed before spawn,
+so neither that probe nor the proposed silent host environment is accepted.
+Retain the static evidence and verify the host setup before another speech run.
 
 The shipped ARM64 DHU (`4e42c054167d6a09a6cff04bba0b62d88898d39e866f241e7393750d2e23c163`)
 contains SDL's `SDL_DISKAUDIOFILE` and `SDL_DISKAUDIOFILEIN` strings. A retained
