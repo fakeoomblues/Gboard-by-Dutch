@@ -76,6 +76,10 @@ internal fun validateMapsNativeContent(classBy: (String) -> ClassDef) {
     val constructor = classBy("Lpux;").methods.single { it.name == "<init>" }
     val ids = constructor.implementation!!.instructions.mapNotNull { (it as? WideLiteralInstruction)?.wideLiteral }.toSet()
     check(ids.containsAll(setOf(0x7f0b069dL, 0x7f0b0adeL))) { "Maps native car card slots changed" }
+    val zoom = classBy("Lrfi;").methods.single { it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == "Lbhjq;" }
+    check(zoom.implementation!!.instructions.any { (it as? WideLiteralInstruction)?.wideLiteral == 0x7f0b0d88L }) {
+        "Maps separate native car zoom widget changed"
+    }
 }
 
 internal fun bindMapsNativeContent(

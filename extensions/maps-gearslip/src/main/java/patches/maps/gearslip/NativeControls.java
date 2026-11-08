@@ -50,6 +50,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     private final Map<Role, Control> controls = new EnumMap<>(Role.class);
     private final Map<View, Integer> hidden = new IdentityHashMap<>();
     private final Map<View, Integer> navigationHidden = new IdentityHashMap<>();
+    private final Map<View, Integer> zoomHidden = new IdentityHashMap<>();
     private boolean closed, focusSearch;
     private boolean hostedNavigation;
     private View hostedPanel;
@@ -171,8 +172,26 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
                 hidden.put(cover, View.VISIBLE); cover.setVisibility(View.INVISIBLE);
             }
         }
+        Control plus=controls.get(Role.ZOOM_IN),minus=controls.get(Role.ZOOM_OUT);
+        if(plus!=null&&plus.available&&minus!=null&&minus.available)hideZoomWidget(root);
+        else restoreZoomWidget();
+    }
+    private void hideZoomWidget(View view){
+        // Maps26.44 also renders a separate rfi/vac zoom_widget_view. It is
+        // outside the exported map_buttons_view_container, including in GUIDING.
+        if("zoom_widget_view".equals(name(view))){
+            if(view.getVisibility()==View.VISIBLE){zoomHidden.put(view,View.VISIBLE);view.setVisibility(View.INVISIBLE);}
+            return;
+        }
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)hideZoomWidget(((ViewGroup)view).getChildAt(i));
+    }
+    private void restoreZoomWidget(){
+        for(Map.Entry<View,Integer> entry:zoomHidden.entrySet())if(entry.getKey().getVisibility()==View.INVISIBLE)entry.getKey().setVisibility(entry.getValue());
+        zoomHidden.clear();
     }
     int nativeVisibility(View view) {
+        Integer zoomPrevious=zoomHidden.get(view);
+        if(zoomPrevious!=null&&view.getVisibility()==View.INVISIBLE)return zoomPrevious;
         Integer previous = hidden.get(view);
         Integer cardPrevious=navigationHidden.get(view);
         if(cardPrevious!=null&&view.getVisibility()==View.INVISIBLE)return cardPrevious;
@@ -308,6 +327,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     void close() {
         if (closed) return; closed = true;
+        restoreZoomWidget();
         hostedNavigation=false;hostedPanel=null;updateNavigationCards();
         if (root.getViewTreeObserver().isAlive()) {
             root.getViewTreeObserver().removeOnGlobalLayoutListener(this);

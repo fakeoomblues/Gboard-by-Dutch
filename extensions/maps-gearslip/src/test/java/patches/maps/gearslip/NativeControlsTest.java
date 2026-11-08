@@ -25,6 +25,7 @@ import org.robolectric.annotation.Config;
 public final class NativeControlsTest {
     private static final int GROUP = 0x7f990001, SETTINGS = 0x7f990002, SEARCH = 0x7f990003, EDITOR = 0x7f990004, INPUT_SEARCH = 0x7f990005;
     private static final int NAV_CARD=0x7f990006,STATUS_CARD=0x7f990007,END=0x7f990008;
+    private static final int ZOOM_IN=0x7f990009,ZOOM_OUT=0x7f99000a,ZOOM_WIDGET=0x7f99000b;
     private FrameLayout root, group;
     private ImageView button;
     private NativeControls controls;
@@ -43,6 +44,9 @@ public final class NativeControlsTest {
                 if(id==NAV_CARD)return "nav_card_view";
                 if(id==STATUS_CARD)return "status_card_view";
                 if(id==END)return "status_panel_close_button";
+                if(id==ZOOM_IN)return "map_buttons_view_zoom_in";
+                if(id==ZOOM_OUT)return "map_buttons_view_zoom_out";
+                if(id==ZOOM_WIDGET)return "zoom_widget_view";
                 return super.getResourceEntryName(id);
             }
         };
@@ -196,5 +200,25 @@ public final class NativeControlsTest {
         controls.hostedNavigation(false);assertEquals(View.VISIBLE,nav.getVisibility());assertEquals(View.VISIBLE,status.getVisibility());
         controls.hostedNavigation(true);nav.setVisibility(View.GONE);controls.close();
         assertEquals("A native retirement is preserved",View.GONE,nav.getVisibility());assertEquals(View.VISIBLE,status.getVisibility());
+    }
+    @Test public void theSeparateNativeZoomWidgetYieldsOnlyToACompleteUsableHostPair(){
+        ImageView plus=button(),minus=button();plus.setId(ZOOM_IN);minus.setId(ZOOM_OUT);
+        group.addView(plus,new FrameLayout.LayoutParams(64,64));group.addView(minus,new FrameLayout.LayoutParams(64,64));
+        FrameLayout widget=new FrameLayout(context);widget.setId(ZOOM_WIDGET);root.addView(widget,new FrameLayout.LayoutParams(64,128));measure();
+        controls=new NativeControls(root,()->updates++);
+        assertEquals("The independent native widget must not duplicate the host pair",View.INVISIBLE,widget.getVisibility());
+        NativeControls.Control zoom=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.ZOOM_IN).findFirst().get();
+        controls.invoke(zoom);assertEquals(1,clicks);assertEquals(View.INVISIBLE,widget.getVisibility());
+        minus.setEnabled(false);root.getViewTreeObserver().dispatchOnPreDraw();
+        assertEquals("Keep native zoom when a complete host pair is unavailable",View.VISIBLE,widget.getVisibility());
+        minus.setEnabled(true);root.getViewTreeObserver().dispatchOnPreDraw();assertEquals(View.INVISIBLE,widget.getVisibility());
+        controls.close();assertEquals(View.VISIBLE,widget.getVisibility());
+    }
+    @Test public void nativeZoomRetirementIsNotUndoneByAdapterTeardown(){
+        ImageView plus=button(),minus=button();plus.setId(ZOOM_IN);minus.setId(ZOOM_OUT);
+        group.addView(plus,new FrameLayout.LayoutParams(64,64));group.addView(minus,new FrameLayout.LayoutParams(64,64));
+        FrameLayout widget=new FrameLayout(context);widget.setId(ZOOM_WIDGET);root.addView(widget,new FrameLayout.LayoutParams(64,128));measure();
+        controls=new NativeControls(root,()->updates++);assertEquals(View.INVISIBLE,widget.getVisibility());
+        widget.setVisibility(View.GONE);controls.close();assertEquals(View.GONE,widget.getVisibility());
     }
 }

@@ -45,3 +45,11 @@
 - [ ] Retain unchanged real screenshots, exact source/APK identities and limitations in the review folder. Stop owned runtimes, detach tracing, remove forwards and job scratch, preserve the initialized baseline. Reuse run146 genuine FM average/speed/announcement evidence unless relevant changes invalidate it.
 
 The full emulation/provider goal stays active. UI ownership is the current priority; no additional pill gallery or repeated design approval is required.
+
+## Current evidence (2026-11-08)
+
+The standard-card implementation is committed at `f56b82ff6f78`; canonical checkpoint150 and original-APK application passed. Native DHU153 at1280x480 renders public host-owned current/next directions and route ETA, left-aligned at equal width, beside the approved clean native speed/limit pair. Search152 renders the host keyboard and genuine recent-destination row after its transition settles. A two-second blended search frame is not a persistent duplicate-panel defect.
+
+DHU153 also exposes a real duplicate zoom widget. The shipped26.44 `rfi.a()` creates `zoom_widget_view` independently of the older exported `map_buttons_view_zoom_in/out` controls. Suppress that separate native widget only while both host zoom actions are usable; preserve native retirement and restore adapter-owned visibility at teardown. The connected follow-up includes behavioral tests and an original-APK guard for that separate slot. Its runtime fix is not yet accepted.
+
+Native route-preview handoff, dock/player reflow, other sizes/input/reconnect and complete host ownership of the speed/warning widgets remain open. The DriveDeck widget extension is still a contract/handover, not implemented support. The original source-camera-following failure and the remaining provider functional gates are also open. Do not present the153 frame as full UI acceptance.

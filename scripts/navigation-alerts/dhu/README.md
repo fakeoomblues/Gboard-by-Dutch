@@ -2,7 +2,7 @@
 
 1280x480 is the primary real-car viewport. DHU supports standard encoded resolutions; use 1280x720 with 240 total vertical margin and native cropmargins=true, yielding a 1280x480 presented viewport. This is native head-unit configuration, not post-processing of screenshots. Verify the requested margins, resulting view bounds and captured image dimensions during acceptance. DriveDeck uses a native 1280x480 surface. Other comparison profiles: 1280x720 and 800x480, each at 160dpi with touch and rotary controls enabled.
 
-## Current availability (2026-11-07)
+## Current availability (2026-11-08)
 
 The old `native_warnings_ui_api34` registration is historical: its directory lacks
 the saved configuration/userdata. Do not launch it or claim native51 is available.
@@ -52,10 +52,21 @@ compiled from its tracked source using cached Java bridge7.0.13; exact source,
 compiled artifact and tool hashes are in `observer-compile.json`/`tool-inputs.json`
 under the recovery receipt. Process inventory is not Java hook coverage.
 
+The saved Maps input is now `f56b82ff6f78`. Run152 confirmed the original Search
+callback and clean settled host keyboard/RECENTS list. Run153 confirmed genuine
+host-owned current/next direction and route-ETA cards at1280x480, with a native
+metric speed/limit pair. It also retained a duplicate native zoom widget; its
+fix remains a runtime gate. Preview ownership, dock reflow and the remaining
+sizes/inputs are unaccepted. The speed/warning host-widget extension remains
+unimplemented. Reuse the settled search and card-model proof, without claiming
+the full UI or provider goal passed. Private receipts and raw frames are in
+`.analysis/maps-host-click-diagnostic-152` and
+`.analysis/maps-host-guidance-acceptance-153`.
+
 The owner also authorized normal phone checks without Frida. Phone app updates
 must still use its existing Morphe signer/data; the engineering APK cache is for
 the owned emulator. The latest commit-derived MPP is in Mac Downloads; its copy/install on the
-currently disconnected phone and phone DHU acceptance remain open. Do not infer
+phone and phone DHU acceptance remain open. Do not infer
 phone delivery from a Mac artifact or an older phone bundle.
 
 For phone GPS replay, DHU's documented `location lat long accuracy altitude speed
