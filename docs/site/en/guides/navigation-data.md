@@ -69,14 +69,14 @@ Flitsmeister keeps Maps' independent Flock choices active. Only a fresh selected
 
 ### Vela Maps
 
-Vela's settings show separate **Warning bridge**, **Background service** and **Data** status lines after choosing a provider. **Warning bridge: connected** confirms the native warning API handshake; **Data: connected** confirms fresh provider observations. Missing speed or road data can still use Vela's own values. Incomplete warning coverage and audio readiness remain separate statuses. The currently released De-Waze provider uses the existing data bridge and reports **data only · native warnings unavailable** for the newer warning API; this does not mean its data connection failed. Repatch Vela, Maps and FM15 together for the native Flitsmeister warning bridge.
+Vela's settings show separate **Warning bridge**, **Background service** and **Data** status lines after choosing a provider. **Warning bridge: connected** confirms the native warning API handshake; **Data: connected** confirms fresh provider observations. Missing speed or road data can still use Vela's own values. Incomplete warning coverage and audio readiness remain separate statuses. Older provider builds can report **data only · native warnings unavailable** for the newer warning API even while their data feed works. Current compatible patched Waze and FM builds provide the warning handshake separately from engine and data status. Update the chosen provider and receiver together; a connected status alone does not establish complete live-warning coverage.
 
 1. Open navigation settings, then **Speed and road alerts**.
 2. Choose **De-Waze** or **Flitsmeister**. **Vela (native data)** restores the native source.
 3. Configure **Spoken road warnings** if wanted. It follows Vela's voice and mute settings.
 4. In the car settings, **Navigation provider** selects the same saved source. **Show zone and warning details** controls the additional car details.
 
-The compact display shows speed beside the limit. An active zone adds the observed average, progress and remaining distance; estimated progress is marked with ≈. The average stays unknown until enough distance and time have been observed.
+The current speed and limit remain together. On Android Auto, a separate warning pill shows the event icon and a qualified distance. Before an average-speed zone it shows distance to the entry; inside the zone it shows the observed average and an independent section-progress bar. The car pill omits warning-name prose, percentages and remaining-distance captions. Unknown values show **—**. The phone view and available zone details remain separate; an average stays unknown until enough distance and time have been observed.
 
 Flitsmeister keeps Vela's independent Flock display, voice and detour choices active. Only a fresh selected De-Waze feed retains the earlier native-Flock handoff; an unselected feed does not pause those features.
 
@@ -138,3 +138,7 @@ For developers, the [shared navigation broadcast contract](https://gitlab.com/jo
 Silent cold startup was also checked for all four Maps/Vela × Waze/Flitsmeister pairs on an Android 16 emulator, using the supplied originals and native engine health. This does not establish all manufacturer power policies or physical car behavior.
 
 The newer FM15 startup correction was checked separately on Android 14 with precise location allowed, background location denied and notifications denied. Both updated receiving apps started the actual FM engine with FM's screen closed. Android 16 support has unit and platform-source evidence; the physical-phone check remains pending. See the [startup evidence and limits](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-03-fm15-background-startup.md).
+
+## Known Maps Android Auto issues
+
+The car Exit action can leave Maps navigation active, and an FM zone-entry voice warning can be interrupted. These two issues are not fixed by the revised pills. Current Waze driving coverage, expanded music overlays and additional display profiles remain incompletely validated.

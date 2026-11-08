@@ -34,6 +34,8 @@ This uses our **Broadcast navigation data** patch in the provider app. Installin
 
 [Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 
+On Android Auto, the speed/limit pair stays separate from the compact event pill. Before an average-speed zone the pill shows entry distance; inside it shows the observed average with a fresh section-progress bar. Icons and numeric units replace long warning labels; missing values remain unknown.
+
 ## Where these patches come from
 
 The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.44.06.1006895251, extended **Waze alerts** with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
@@ -96,6 +98,8 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 External navigation data is received locally from the selected app on the same phone. OpenStreetMap camera layers download nearby camera positions. **Avoid Flock cameras** sends the route’s start and end to `brouter.de` when enabled. These controls start off in the external-data settings.
 
 ## Before using
+
+**Outstanding Maps issues:** the car Exit action can leave navigation active, and an FM zone-entry voice warning can be interrupted. These issues remain open in this release. Additional display profiles, music-overlay reflow and current Waze driving coverage remain incompletely validated.
 
 **Known limitation in this release:** external Waze/Flitsmeister warning cards and spoken alerts during Android Auto navigation are still experimental. Native navigation, provider data and a successful parked preview do not prove that every warning will appear or speak. Keep using the provider’s own alerts where you need dependable warning output. Repatch the provider and receiving map together for the updated connection and shutdown behavior.
 

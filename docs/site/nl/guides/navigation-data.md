@@ -69,14 +69,14 @@ Flitsmeister laat Maps' onafhankelijke Flock-keuzes actief. Alleen een verse ges
 
 ### Vela Maps
 
-Na het kiezen van een bron toont Vela in de instellingen aparte regels voor **Waarschuwingsbrug**, **Achtergrondservice** en **Gegevens**. **Waarschuwingsbrug: verbonden** bevestigt de verbinding met de native waarschuwings-API; **Gegevens: verbonden** bevestigt recente bronwaarnemingen. Ontbrekende snelheid of weggegevens kunnen nog op Vela's eigen waarden terugvallen. Onvolledige waarschuwingsdekking en audiogereedheid blijven aparte statussen. De huidige uitgebrachte De-Waze-bron gebruikt de bestaande gegevenskoppeling en meldt voor de nieuwere waarschuwings-API **alleen gegevens · native waarschuwingen niet beschikbaar**. Dat betekent niet dat de gegevensverbinding is mislukt. Patch Vela, Maps en FM15 samen opnieuw voor de native Flitsmeister-waarschuwingsbrug.
+Na het kiezen van een bron toont Vela in de instellingen aparte regels voor **Waarschuwingsbrug**, **Achtergrondservice** en **Gegevens**. **Waarschuwingsbrug: verbonden** bevestigt de verbinding met de native waarschuwings-API; **Gegevens: verbonden** bevestigt recente bronwaarnemingen. Ontbrekende snelheid of weggegevens kunnen nog op Vela's eigen waarden terugvallen. Onvolledige waarschuwingsdekking en audiogereedheid blijven aparte statussen. Oudere bronversies kunnen voor de nieuwere waarschuwings-API **alleen gegevens · native waarschuwingen niet beschikbaar** melden terwijl hun gegevenskoppeling werkt. Huidige compatibele gepatchte Waze- en FM-versies melden de waarschuwingsverbinding apart van motor- en gegevensstatus. Werk de gekozen bron en ontvanger samen bij; een verbonden status bewijst op zichzelf geen volledige dekking van livewaarschuwingen.
 
 1. Open de navigatie-instellingen en daarna **Snelheid en wegwaarschuwingen**.
 2. Kies **De-Waze** of **Flitsmeister**. **Vela (eigen gegevens)** herstelt de eigen bron.
 3. Stel zo gewenst **Gesproken wegwaarschuwingen** in. Deze optie volgt de stem- en dempinstellingen van Vela.
 4. In de auto-instellingen kiest **Navigatieprovider** dezelfde opgeslagen bron. **Traject- en waarschuwingsdetails tonen** regelt de extra autodetails.
 
-De compacte weergave toont snelheid naast de limiet. Een actief traject voegt het waargenomen gemiddelde, de voortgang en resterende afstand toe; geschatte voortgang krijgt ≈. Het gemiddelde blijft onbekend totdat voldoende afstand en tijd zijn waargenomen.
+De actuele snelheid en limiet blijven bij elkaar. Op Android Auto toont een aparte waarschuwingspil het symbool en een geldige afstand. Vóór een trajectcontrole is dat de afstand tot de ingang; binnen het traject verschijnen het waargenomen gemiddelde en een onafhankelijke voortgangsbalk voor dat traject. De autopil toont geen waarschuwingstekst, percentage of bijschrift met resterende afstand. Onbekende waarden krijgen **—**. De telefoonweergave en beschikbare trajectdetails blijven apart; een gemiddelde blijft onbekend totdat voldoende afstand en tijd zijn waargenomen.
 
 Flitsmeister laat Vela's onafhankelijke Flock-keuzes voor weergave, spraak en omrijden actief. Alleen een verse geselecteerde De-Waze-bron houdt de eerdere overname van eigen Flock aan; een niet-geselecteerde bron pauzeert die functies niet.
 
@@ -140,3 +140,7 @@ Voor ontwikkelaars beschrijft het [gedeelde navigatieprotocol](https://gitlab.co
 Stil koud starten is ook gecontroleerd voor alle vier combinaties van Maps/Vela en Waze/Flitsmeister op een Android 16-emulator, met de aangeleverde originelen en de eigen motorstatus van de bron. Dit bewijst niet alle energieregels van fabrikanten of gedrag in een fysieke auto.
 
 De nieuwere FM15-startoplossing is apart gecontroleerd op Android 14 met exacte locatie toegestaan, achtergrondlocatie geweigerd en meldingen geweigerd. Beide bijgewerkte kaartapps startten de echte FM-motor terwijl FM's scherm gesloten bleef. Voor Android 16 bestaan unitcontroles en onderbouwing uit de platformbron; de controle op de fysieke telefoon staat nog open. Zie het [startbewijs en de grenzen](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/research/2026-11-03-fm15-background-startup.md).
+
+## Bekende problemen met Maps op Android Auto
+
+De afsluitactie in de auto kan de Maps-navigatie actief laten en een gesproken FM-melding bij de ingang van een trajectcontrole kan worden onderbroken. De vernieuwde pillen verhelpen deze twee problemen niet. Livewaarschuwingen van Waze, uitgebreide muziekoverlays en extra schermprofielen zijn nog niet volledig gevalideerd.

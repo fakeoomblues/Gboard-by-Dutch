@@ -34,6 +34,8 @@ Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen
 
 [Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 
+Op Android Auto blijft het snelheids-/limietpaar apart van de compacte waarschuwingspil. Vóór een trajectcontrole toont de pil de afstand tot de ingang; binnen het traject toont deze het waargenomen gemiddelde met een nieuwe voortgangsbalk voor dat traject. Symbolen en getallen met eenheden vervangen lange waarschuwingsteksten; ontbrekende waarden blijven onbekend.
+
 ## Waar komen deze patches vandaan?
 
 De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.44.06.1006895251, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
@@ -96,6 +98,8 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 Externe navigatiegegevens worden lokaal ontvangen van de gekozen app op dezelfde telefoon. Cameralagen van OpenStreetMap downloaden cameraposities in de buurt. **Avoid Flock cameras** stuurt het begin en einde van de route naar `brouter.de` wanneer dit aanstaat. Deze functies beginnen uit in de instellingen voor externe gegevens.
 
 ## Voor gebruik
+
+**Openstaande Maps-problemen:** de afsluitactie in de auto kan de navigatie actief laten en een gesproken FM-melding bij de ingang van een trajectcontrole kan worden onderbroken. Deze problemen blijven in deze release open. Extra schermprofielen, de aanpassing aan muziekoverlays en livewaarschuwingen van de huidige Waze-versie zijn nog niet volledig gevalideerd.
 
 **Bekende beperking in deze release:** externe waarschuwingskaarten en gesproken meldingen van Waze/Flitsmeister tijdens Android Auto-navigatie zijn nog experimenteel. Werkende navigatie, brongegevens en een geslaagd geparkeerd voorbeeld bewijzen niet dat iedere waarschuwing verschijnt of klinkt. Gebruik de eigen meldingen van de bronapp wanneer u betrouwbare waarschuwingen nodig hebt. Patch de bronapp en ontvangende kaartapp samen opnieuw voor de bijgewerkte verbinding en het afsluitgedrag.
 
