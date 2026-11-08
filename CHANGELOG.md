@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f4353a97a1aeacd7a8288228865fea67e33d4044/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.53.10.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [f4353a97a1ae](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/f4353a97a1aeacd7a8288228865fea67e33d4044). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.53.10](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.9...v1.53.10) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **release:** stop the local-release fixture leaking a node helper ([f4353a9](https://gitlab.com/johninnld/nl-morphe-patches/commit/f4353a97a1aeacd7a8288228865fea67e33d4044))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/03754ea12945ebc49b9d3d245784b490661cd812/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.53.9.**
