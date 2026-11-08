@@ -76,12 +76,38 @@ public class MapsGuidanceCoordinatorNativeTest {
         assertFalse(MapsGuidanceCoordinator.cancelPreparedCallback(new bmyo(new Object(),new Object(),0)));
         assertFalse(MapsGuidanceCoordinator.cancelPreparedCallback(new bmyo(new Object(),new Object(),4)));
     }
-    @Test public void routeRegenerationUsesGuardedBaseFieldsDespiteObfuscatedSubclassShadowing()throws Exception{
-        anys owner=new anys();bmon base=owner;base.o=new ycx();base.e=new blvb();base.c=new RouteController();
-        field(MapsGuidanceCoordinator.class,"route").set(null,new java.lang.ref.WeakReference<>(owner));
-        java.lang.reflect.Method regenerate=MapsGuidanceCoordinator.class.getDeclaredMethod("regenerateCurrent");regenerate.setAccessible(true);regenerate.invoke(coordinator);
-        assertSame(base.o,base.lastPull);assertTrue(owner.o);assertFalse(field(MapsGuidanceCoordinator.class,"fault").getBoolean(coordinator));
+    static final class VoiceRoute extends bmon implements MapsGuidanceCoordinator.NativeReplay {
+        final boolean o=true;boolean eligible=true;int voiceCalls;ycx voiceStep;
+        public boolean morpheCanResumeGuidance(){return eligible&&((bmon)this).o!=null&&e!=null;}
+        public void morpheResumeGuidance(){if(morpheCanResumeGuidance()){voiceCalls++;voiceStep=((bmon)this).o;}}
     }
+    private void route(Object owner)throws Exception{field(MapsGuidanceCoordinator.class,"route").set(null,new java.lang.ref.WeakReference<>(owner));}
+    private void regenerate()throws Exception{java.lang.reflect.Method m=MapsGuidanceCoordinator.class.getDeclaredMethod("regenerateCurrent");m.setAccessible(true);m.invoke(coordinator);}
+    private boolean canRegenerate()throws Exception{java.lang.reflect.Method m=MapsGuidanceCoordinator.class.getDeclaredMethod("canRegenerate");m.setAccessible(true);return (Boolean)m.invoke(coordinator);}
+    @Test public void recoveryRequestsFreshNativeVoiceWithoutSelectingAPreviewStep()throws Exception{
+        VoiceRoute owner=new VoiceRoute();bmon base=owner;base.o=new ycx();base.e=new blvb();base.c=new RouteController();route(owner);
+        regenerate();assertSame(base.o,owner.voiceStep);assertEquals(1,owner.voiceCalls);
+        assertNull("The original u method inspects a map step and must never restore voice",base.lastPull);
+        base.o=new ycx();regenerate();assertSame("Resume uses the current step rather than a captured warning-era step",base.o,owner.voiceStep);assertEquals(2,owner.voiceCalls);
+        assertTrue(owner.o);assertFalse(field(MapsGuidanceCoordinator.class,"fault").getBoolean(coordinator));
+    }
+    @Test public void nativeEligibilityAndEndedNavigationPreventRecovery()throws Exception{
+        VoiceRoute owner=new VoiceRoute();bmon base=owner;base.o=new ycx();base.e=new blvb();base.c=new RouteController();route(owner);assertTrue(canRegenerate());
+        owner.eligible=false;assertFalse(canRegenerate());regenerate();assertEquals(0,owner.voiceCalls);
+        owner.eligible=true;base.c=new bmnv(){public boolean bv(){return false;}};assertFalse(canRegenerate());regenerate();assertEquals(0,owner.voiceCalls);
+        base.c=new RouteController();base.o=null;assertFalse(canRegenerate());base.o=new ycx();base.e=null;assertFalse(canRegenerate());
+    }
+    @Test public void anOwnerWithoutTheGuardedVoiceBridgeNeverFallsBackToStepInspection()throws Exception{
+        bmon old=new bmon();old.o=new ycx();old.e=new blvb();old.c=new RouteController();route(old);
+        assertFalse(canRegenerate());regenerate();assertNull(old.lastPull);
+    }
+    @Test public void releasingAWarningHoldRestoresNativeVoiceOnlyOnce()throws Exception{
+        VoiceRoute owner=new VoiceRoute();bmon base=owner;base.o=new ycx();base.e=new blvb();base.c=new RouteController();route(owner);
+        field(MapsGuidanceCoordinator.class,"holding").setBoolean(coordinator,true);field(MapsGuidanceCoordinator.class,"regenerate").setBoolean(coordinator,true);field(MapsGuidanceCoordinator.class,"holdToken").set(coordinator,"warning");
+        java.lang.reflect.Method release=MapsGuidanceCoordinator.class.getDeclaredMethod("releaseMain",String.class);release.setAccessible(true);release.invoke(coordinator,"warning");release.invoke(coordinator,"warning");
+        assertEquals(1,owner.voiceCalls);assertNull(base.lastPull);assertFalse(field(MapsGuidanceCoordinator.class,"holding").getBoolean(coordinator));
+    }
+
 }
 interface bnas{}
 interface bnau{void d(bnas callback);void l();}

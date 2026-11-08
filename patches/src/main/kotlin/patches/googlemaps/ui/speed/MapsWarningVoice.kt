@@ -126,6 +126,9 @@ internal fun validateMapsWarningVoice(classes:Iterable<ClassDef>):Map<String,Met
         Triple("Lbnad;","s","Ljava/util/concurrent/atomic/AtomicBoolean;"),
         Triple("Lbnad;","w","Lbnas;"),
         Triple("Lbmzz;","a","Lbnad;"),
+        Triple("Lbmon;","a","Lcqvj;"),
+        Triple("Lbmon;","b","Lcqvj;"),
+        Triple("Lbmon;","d","Landroid/content/Context;"),
         Triple("Lbmon;","c","Lbmnv;"),
         Triple("Lbmon;","e","Lblvb;"),
         Triple("Lbmon;","o","Lycx;"),
@@ -155,6 +158,12 @@ internal fun bindMapsWarningVoice() {
     listOf("dispatch(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V", "terminal(Ljava/lang/Object;Ljava/lang/Object;)V", "captureRoute(Ljava/lang/Object;)V", "routeEnded(Ljava/lang/Object;)V", "hooksInstalled()Z", "requestNativeFocus(Landroid/media/AudioManager;Landroid/media/AudioFocusRequest;)I", "cancelPreparedCallback(Ljava/lang/Object;)Z").forEach { signature ->
         check(extension.methods.count { it.toString()=="$COORDINATOR->$signature" }==1) { "Missing Maps warning extension $signature" }
     }
+    val replay=context.classDefBy(MAPS_NATIVE_REPLAY)
+    check(replay.methods.count { it.name==MAPS_CAN_RESUME_VOICE && it.parameterTypes.isEmpty() && it.returnType=="Z" }==1 &&
+        replay.methods.count { it.name==MAPS_RESUME_VOICE && it.parameterTypes.isEmpty() && it.returnType=="V" }==1) {
+        "Missing Maps native voice-only recovery interface"
+    }
+    bindMapsVoiceResume(context.mutableClassDefBy("Lbmon;"),originals.getValue("Lbmon;->u(Lycx;)V"))
     bindMapsNativeVoice(methods)
     val installed=extension.methods.single { it.name=="hooksInstalled" }
     installed.replaceInstruction(0,"const/4 v0, 0x1")

@@ -40,4 +40,25 @@ class MapsWarningVoiceTest {
             })
         }
     }
+    @Test fun voiceRecoveryRetainsOriginalEligibilityAndQueueWithoutCameraWrites() {
+        val path=System.getenv("MAPS_ORIGINAL_APK");assumeNotNull(path)
+        val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
+        val original=dex.dexEntryNames.asSequence().flatMap { dex.getEntry(it)!!.dexFile.classes.asSequence() }
+            .single { it.type=="Lbmon;" }.methods.single { it.toString()=="Lbmon;->u(Lycx;)V" }
+        val before=mapsVoiceFingerprint(original)
+        val generated=mapsVoiceResumeMethods(original)
+        assertEquals(setOf(MAPS_CAN_RESUME_VOICE,MAPS_RESUME_VOICE),generated.map { it.name }.toSet())
+        val nativeRefs=original.implementation!!.instructions.mapNotNull { (it as? ReferenceInstruction)?.reference?.toString() }.toSet()
+        val all=generated.flatMap { it.implementation!!.instructions.toList() }
+        val refs=all.mapNotNull { (it as? ReferenceInstruction)?.reference?.toString() }
+        for(ref in listOf("Lbudy;->y(Landroid/content/Context;)Z","Lbnby;->d(Lblvb;Lyda;)Lbncc;","Lbnaz;->j(Lbncc;Lbnbc;Lbnay;)Lcom/google/common/util/concurrent/ListenableFuture;","Lbnbc;->c:Lbnbc;")) {
+            assertTrue("Recovery must use the actual guarded native voice branch: $ref",ref in nativeRefs)
+            assertEquals(1,refs.count { it==ref })
+        }
+        assertFalse("Recovery cannot write native camera or selected-step state",all.any { it.opcode.toString().uppercase().startsWith("IPUT")||it.opcode.toString().uppercase().startsWith("SPUT") })
+        assertFalse(refs.any { it.startsWith("Lbmoi;")||it.startsWith("Lbmml;")||it.startsWith("Lbmmn;")||it.startsWith("Lbmoa;")||it.contains("->u(Lycx;)V")||it.contains("Ljava/util/Optional;") })
+        assertTrue(generated.all { it.parameterTypes.isEmpty() })
+        assertEquals("Generating recovery must leave the original user-facing inspect action unchanged",before,mapsVoiceFingerprint(original))
+    }
+
 }

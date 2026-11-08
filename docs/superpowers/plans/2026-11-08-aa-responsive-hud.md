@@ -35,6 +35,6 @@
 - [x] Uniformly measure constrained `CompactSpeedView` warning stacks.
 - [x] Add regressions for dock reflow/restore, repeated frames, native transforms, scaled parents, explicit unknown bounds, resize without GPS and Vela160/240/320dpi equivalence.
 - [x] Run the complete canonical verification command set, recording justified reuse for unchanged gates and fresh Android/Python/docs evidence.
-- [ ] Patch exact original Maps and Vela inputs with the signed review bundle; verify signer, original binding checks and unchanged19 icons.
-- [ ] After successful build, run one prepared bounded original-AA acceptance session and retain actual frames; no runtime claim from JVM tests.
-- [ ] Preserve receipts and signed inputs, stop owned processes and remove only terminal build/scratch outputs.
+- [x] Patch exact original Maps and Vela inputs with the signed review bundle; verify signer, original binding checks and unchanged19 icons.
+- [x] Run one bounded original-AA acceptance session205 and retain genuine frames. Maps/FM average/speed rendering is proved; camera failure stopped the run. Vela DPI/other-size gates remain open.
+- [x] Preserve receipts and signed inputs, stop owned processes and remove terminal outputs (204/205); stock comparison206 restored canonical AVD hashes exactly.

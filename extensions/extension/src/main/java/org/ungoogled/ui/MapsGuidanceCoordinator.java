@@ -23,6 +23,11 @@ import android.location.Location;
 /** Native Maps queue hold. Never writes mute preferences or stream volume. */
 public final class MapsGuidanceCoordinator {
     public interface Ready { void complete(boolean quiet,String reason); }
+    /** Installed on the guarded native owner; never changes camera or selected-step state. */
+    public interface NativeReplay {
+        boolean morpheCanResumeGuidance();
+        void morpheResumeGuidance();
+    }
     private static final Object LOCK=new Object();
     private static final Map<Object,Object> PLAYERS=new IdentityHashMap<>();
     private static WeakReference<Object> route=new WeakReference<>(null);
@@ -152,14 +157,22 @@ public final class MapsGuidanceCoordinator {
         }
         if(restore)regenerateCurrent();
     }
-    private boolean canRegenerate(){synchronized(LOCK){Object owner=route.get();if(owner==null)return false;try{return routeField(owner,"o").get(owner)!=null&&routeField(owner,"e").get(owner)!=null&&navigationActive(owner);}catch(ReflectiveOperationException | RuntimeException error){return false;}}}
-    /** Read current route and step at release. No captured turn text or stale ycx is replayed. */
+    private boolean canRegenerate(){
+        Object owner;synchronized(LOCK){owner=route.get();}
+        if(!(owner instanceof NativeReplay))return false;
+        // Native eligibility may consult AccessibilityManager; do not hold our
+        // queue lock across a framework/service call.
+        try{return navigationActive(owner)&&((NativeReplay)owner).morpheCanResumeGuidance();}
+        catch(ReflectiveOperationException|RuntimeException unavailable){return false;}
+    }
+    /** Request current native speech only. bmon.u also enters INSPECT_STEP and must not be used. */
     private void regenerateCurrent() {
-        Object owner;synchronized(LOCK){owner=route.get();}if(owner==null)return;
+        Object owner;synchronized(LOCK){owner=route.get();}
+        if(!(owner instanceof NativeReplay))return;
         try {
-            Object step=routeField(owner,"o").get(owner),model=routeField(owner,"e").get(owner);
-            if(step!=null && model!=null && navigationActive(owner))method(routeBase(owner),"u",Class.forName("ycx",false,app.getClassLoader())).invoke(owner,step);
-        }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
+            NativeReplay replay=(NativeReplay)owner;
+            if(navigationActive(owner)&&replay.morpheCanResumeGuidance())replay.morpheResumeGuidance();
+        }catch(ReflectiveOperationException|RuntimeException error){fault=true;}
     }
     public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;}});}
     public static void captureRoute(Object owner){synchronized(LOCK){route=new WeakReference<>(owner);cachedPolyline=null;cachedWarningRoute=null;}}

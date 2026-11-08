@@ -155,6 +155,50 @@ The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.
 
+## Responsive indicators and camera evidence (204–206)
+
+The DriveDeck-only custom-widget proposal is superseded. Original AA owns
+standard cards/actions; custom speed, warning and average indicators must respond
+to its surface callbacks. See `docs/contracts/car-navigation-widgets-v1.md`.
+
+Build204/source4c571859f182adds Maps native-speed-card safe-area placement and
+pre-draw warning alignment, uniform constrained pill measurement and Vela host-DPI
+speed scaling. Canonical verification, original Maps/Vela guarded patching,
+installed hashes and all19icon byte checks passed. In205, originalAA17/DHU1280x480
+rendered a genuine FM panel with average82km/h, approximately3% progress and4.1km
+remaining, aligned above the existing current/limit100/100badge. One genuine
+warning attempt completed with started/quiescent true. This is voice-API evidence,
+not recorded speech-content proof. No phone was used.
+
+205also reproduced the map-camera mismatch: white future-step arrow onA10 while
+actual GPS remainedA4. GPS stopped as the next tool action after the failed frame,
+and its finalizer/native Android confirmed speed0 after67points. Remaining DPI,
+Vela-new-layout and size/control gates were not exercised after that failure.
+Actual images/notes: `~/Downloads/Android-Auto-Functional-Review/Responsive-HUD-205.md`.
+
+206normally installed the32original signed Maps26.44splits in a private COW copy,
+then followed the blue current-position arrow onA4through the first70GPSpoints.
+Normal End returned to browsing. Stock used a phone navigation URI;205used the car
+recent/Start flow. Do not erase this control difference or claim final cause from
+the comparison alone. The canonical patched AVD was restored with every retained
+critical hash unchanged. One unregistered stock reference is retained under
+`~/.local/state/nl-morphe-patches/emulator-baseline-staged/stock-camera-206/` for the
+remaining matching-start control if needed; its provenance records installation,
+saved state, pending coldboot verification and exact retirement policy.
+
+Offline original-DEX inspection then established that the current speech-recovery
+call `bmon.u(ycx)` sets camera mode `INSPECT_STEP` before its voice branch. The
+voice-only recovery correction is tracked in
+`docs/superpowers/plans/2026-11-08-maps-voice-only-resume.md`; it still needs rendered
+runtime acceptance. Preserve original camera behavior for deliberate user step
+inspection and preserve native eligibility/queue behavior for recovery.
+
+Use an explicit quiet-mode lifetime for Frida CLI clients and unbuffered stdout
+redirection to retain `send` messages. `-q` alone exits after load, and `-o` alone
+did not capture these records in205. Verify hooks-ready from retained output
+before stimuli. Retire and verify each old handle terminal before arming another
+observer for the same process; a live watcher must never be duplicated.
+
 ## Current genuine Vela/FM drive evidence (185)
 
 Reuse185 rather than rerunning the full A4 drive for reassurance. Normal Vela UI
