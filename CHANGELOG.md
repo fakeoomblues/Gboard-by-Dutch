@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a84a6bc3035b272ddf3c24ae1444ccecf6125e04/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.54.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [a84a6bc3035b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/a84a6bc3035b272ddf3c24ae1444ccecf6125e04). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.54.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.53.10...v1.54.0) (2026-11-08)
+
+### ✨ New Features
+
+* **Spotify:** drop Change package name and add Enable debuggable ([a84a6bc](https://gitlab.com/johninnld/nl-morphe-patches/commit/a84a6bc3035b272ddf3c24ae1444ccecf6125e04))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f4353a97a1aeacd7a8288228865fea67e33d4044/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.53.10.**
