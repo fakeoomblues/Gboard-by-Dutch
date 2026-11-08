@@ -122,7 +122,7 @@ function checkout({cache,stateDir,owner,branch,head,id,env}) {
   if(git(["rev-parse","HEAD"],{cwd:workspace,env})!==head)throw new Error("Isolated checkout head differs from requested remote head");
   return workspace;
 }
-async function cleanupWorkspace({stateDir,workspace,env=process.env}) {
+async function cleanupWorkspace({stateDir,workspace,env=process.env,quiescent=workspaceQuiescent}) {
   const root=path.resolve(stateDir),directory=path.dirname(path.resolve(workspace)),id=path.basename(directory);
   if(!/^[a-f0-9-]{36}$/.test(id)||path.dirname(directory)!==path.join(root,"workspaces")||path.basename(workspace)!=="checkout")throw new Error("Refuse cleanup of unowned workspace");
   for(const target of [root,path.join(root,"workspaces"),directory])if(fs.lstatSync(target).isSymbolicLink())throw new Error("Refuse symlinked workspace cleanup");
@@ -134,7 +134,7 @@ async function cleanupWorkspace({stateDir,workspace,env=process.env}) {
   if(fs.existsSync(workspace)){
     if(fs.lstatSync(workspace).isSymbolicLink()||path.resolve(workspace,git(["rev-parse","--git-common-dir"],{cwd:workspace,env}))!==repository)throw new Error("Workspace Git ownership mismatch");
     let proofFailure;
-    if(!workspaceQuiescent(workspace,{stateDir:root,env,onFailure:reason=>{proofFailure=reason;}}))throw new Error("Owned workspace quiescence is unproved: "+(proofFailure||"live cwd/open handles or incomplete scan")+"; cleanup pending");
+    if(!quiescent(workspace,{stateDir:root,env,onFailure:reason=>{proofFailure=reason;}}))throw new Error("Owned workspace quiescence is unproved: "+(proofFailure||"live cwd/open handles or incomplete scan")+"; cleanup pending");
     git(["worktree","remove","--force",workspace],{cwd:repository,env});
   }
   // Only remove the marked run container; populated worktrees also prove their Git common directory.
@@ -154,7 +154,8 @@ lib.proc_pidfdinfo.argtypes=[ctypes.c_int,ctypes.c_int,ctypes.c_int,ctypes.c_voi
 lib.proc_pidpath.argtypes=[ctypes.c_int,ctypes.c_void_p,ctypes.c_uint32]
 system=ctypes.CDLL(None,use_errno=True)
 root=os.fsencode(os.path.realpath(sys.argv[1])).rstrip(b'/')
-if ctypes.sizeof(ctypes.c_void_p)!=8 or not root or not os.path.isdir(root):sys.exit(2)
+if ctypes.sizeof(ctypes.c_void_p)!=8 or not root or not os.path.isdir(root):
+    print('workspace-proof: invalid workspace root',file=sys.stderr);sys.exit(2)
 def within(value):
     path=value.split(b'\0',1)[0]
     if len(path)==1024:raise RuntimeError('truncated path')
@@ -168,13 +169,21 @@ def info(pid,flavor,size,arg=0):
     value=ctypes.create_string_buffer(size);ctypes.set_errno(0)
     n=lib.proc_pidinfo(pid,flavor,arg,value,size)
     return n,value.raw,ctypes.get_errno()
-ancestors=set()
-parent=os.getppid()
-while parent>1 and parent not in ancestors:
-    ancestors.add(parent)
-    n,bsd,error=info(parent,3,136)
-    if n!=136:sys.exit(2)
-    parent=struct.unpack_from('=I',bsd,16)[0]
+def walk_ancestors(parent,read,owned):
+    found=set()
+    while parent>1 and parent not in found:
+        found.add(parent)
+        n,bsd,error=read(parent)
+        if n!=136:
+            # Another user's ancestor, such as root's /usr/bin/login above a
+            # Terminal session, cannot be an owned job descendant and is never
+            # enumerated by the uid-scoped scan. Stop the walk there. An
+            # unreadable process of this user still fails closed.
+            if error==errno.EPERM and parent not in owned():break
+            print('workspace-proof: unreadable ancestor',file=sys.stderr);sys.exit(2)
+        parent=struct.unpack_from('=I',bsd,16)[0]
+    return found
+ancestors=walk_ancestors(os.getppid(),lambda pid:info(pid,3,136),pids)
 def protected_system_service(pid):
     # Sealed Apple platform services launched by launchd are not owned job
     # descendants. Do not mistake their protected internal fds for incomplete

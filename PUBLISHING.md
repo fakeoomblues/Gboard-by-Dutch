@@ -183,6 +183,14 @@ Receipts/state remain for audit and retry. Per-stage logs are capped at 2 MiB an
 
 Do not edit generated versions or delete failure state to hide an error. Diagnose the failed stage, refresh the relevant credential/tool if required, then use supported recovery/retry and verify all public results.
 
+Retry sequence for a failed `main` head:
+
+1. Read the run's private `verification.log` or stage log and receipt under `runs/<id>/`. Fix a product or test failure with a new commit; a retry is only for a cause outside the commit.
+2. If the receipt has `cleanupRequired`, wait for a watcher tick to resolve it. Explicit runs refuse while any cleanup is pending; only watch ticks sweep.
+3. Retry once: `node "$TOOLING/flow.cjs" --config "$CONFIG" --branch main --publish --retry-failed`. A terminal or agent shell is fine: the workspace proof stops its parent walk at another user's unreadable ancestor, such as root's `/usr/bin/login`.
+
+The release tests use a stand-in for the machine-wide workspace proof, except the dedicated held-workspace tests. Those, and the run's own cleanup, still scan every process of this user. Heavy concurrent builds from other jobs can report `unstable process list`; let them finish before retrying.
+
 ## Optional hosted fallback
 
 Normal pushes and mirror updates do not start hosted jobs. An explicit GitLab **Run pipeline** invocation with the `run_cloud_ci` input set to `true` retains the complete fallback; protected main publication and protected-main Pages gates still apply. It also needs the relevant protected/masked mirror credentials. Legacy Forgejo workflows remain manual, preventing a mirror push from starting another version-selection/build cycle.

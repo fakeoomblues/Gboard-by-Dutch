@@ -7,7 +7,10 @@ const path = require("node:path");
 const {execFileSync} = require("node:child_process");
 const {runFlow, templates, cleanupWorkspace, cleanupPages, readConfig, command, pruneEvidence, workspaceQuiescent, pagesInvocation, ensureApiCredentials} = require("../scripts/local-release/flow.cjs");
 const identity = {GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com"};
-function fixture(t) {
+// The native workspace proof scans every process of this user. Runs use a recorded
+// stand-in by default, so ordinary flow tests do not depend on unrelated machine
+// activity; nativeScan:true keeps the real proof for the held-workspace tests.
+function fixture(t,{nativeScan=false}={}) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),"local-release-test-"));
   t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
   const source=path.join(root,"source"),remote=path.join(root,"remote.git"),stateDir=path.join(root,"state");
@@ -22,6 +25,7 @@ function fixture(t) {
   function advance(branch,label){git(["checkout",branch]);const sha=commit(label);git(["fetch",source,`+refs/heads/${branch}:refs/heads/${branch}`],remote);return sha;}
   const calls=[];
   const dependencies={allowLocalRemote:true,verifyIdentity:async ctx=>calls.push(["identity",ctx.branch]),verify:async ctx=>calls.push(["verify",ctx.branch]),publish:async ctx=>{calls.push(["publish",ctx.branch,ctx.publish]);return ctx.publish?{version:"1.0.1",branch:ctx.branch}:{published:false,preview:true};},discover:async ctx=>calls.push(["discover",ctx.branch]),mirrorPreflight:async ctx=>calls.push(["mirror-preflight",ctx.branch]),mirrors:async ctx=>{calls.push(["mirrors",ctx.branch]);return {targets:[{target:"codeberg",verified:true},{target:"gitgud",verified:true}]};},cleanupPages:async()=>({cleanupRequired:false}),pages:async ctx=>{calls.push(["pages",ctx.branch]);return {verified:true,status:"verified"};},bootstrap:async()=>{}};
+  if(!nativeScan)dependencies.cleanupWorkspace=args=>cleanupWorkspace({...args,quiescent:()=>true});
   const config={stateDir,remoteUrl:remote};
   return {root,source,remote,stateDir,git,advance,initial,calls,dependencies,config};
 }
@@ -197,7 +201,7 @@ test("owned command timeout quiesces its child group before failed workspace cle
 });
 
 test("a held workspace keeps its named reason and blocks, then a watch tick sweeps it once free",async t=>{
-  const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)}),pidFile=path.join(f.root,"detached.pid");let pid;
+  const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)},{nativeScan:true}),pidFile=path.join(f.root,"detached.pid");let pid;
   t.after(()=>{if(pid)try{process.kill(-pid,"SIGKILL");}catch{}for(const cleanup of cleanups)cleanup();});
   f.config.environment={HOME:f.root};
   await runFlow(options(f,{watchOnce:true}));
@@ -329,7 +333,7 @@ test("Pages must return verified evidence even when its hook resolves",async t=>
 });
 
 for(const holding of ["cwd","open-handle","mapped-file"])test(`detached descendants with ${holding} keep the exact owned workspace until test teardown stops them`,async t=>{
-  const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)}),pidFile=path.join(f.root,"detached.pid");let pid;
+  const cleanups=[],f=fixture({after:callback=>cleanups.push(callback)},{nativeScan:true}),pidFile=path.join(f.root,"detached.pid");let pid;
   t.after(()=>{if(pid)try{process.kill(-pid,"SIGKILL");}catch{}for(const cleanup of cleanups)cleanup();});
   f.config.environment={HOME:f.root};
   f.dependencies.verify=async context=>{
@@ -385,6 +389,20 @@ test("native enumeration tolerates finite process churn and refuses ongoing chur
     if(expected==="QUIESCENT"||expected==="BUSY")assert.equal(execFileSync(python,["-c",source],{encoding:"utf8"}).trim(),expected);
     else assert.throws(()=>execFileSync(python,["-c",source],{encoding:"utf8",stdio:["ignore","pipe","pipe"]}),error=>error.status===2&&String(error.stderr).trim()==="workspace-proof: "+expected);
   }
+});
+
+test("native proof stops at another user's unreadable ancestor and fails closed for this user's",()=>{
+  let script;
+  workspaceQuiescent("/private/owned/checkout",{platform:"darwin",inspect:(_file,args)=>{script=args[1];return "QUIESCENT";}});
+  const walk=script.slice(script.indexOf("def walk_ancestors"),script.indexOf("ancestors=walk_ancestors"));
+  assert.ok(walk.startsWith("def walk_ancestors(parent,read,owned):"));
+  // Terminal chain: 40 zsh -> 30 claude -> 20 zsh -> 10 root-owned login (EPERM) -> launchd.
+  const prefix="import errno,struct,sys\nPARENTS={40:30,30:20,20:10,10:1}\nUNREADABLE=@BLOCKED@\nOWNED=@MINE@\ndef read(pid):\n    if pid in UNREADABLE:return 0,b'',UNREADABLE[pid]\n    return 136,b'\\0'*16+struct.pack('=I',PARENTS[pid])+b'\\0'*116,0\n";
+  const run=(unreadable,owned)=>execFileSync(process.platform==="darwin"?"/usr/bin/python3":"python3",["-c",prefix.replace("@BLOCKED@",unreadable).replace("@MINE@",owned)+walk+"print(sorted(walk_ancestors(40,read,lambda:OWNED)))\n"],{encoding:"utf8",stdio:["ignore","pipe","pipe"]}).trim();
+  assert.equal(run("{}","{40,30,20,10}"),"[10, 20, 30, 40]","A readable chain reaches launchd");
+  assert.equal(run("{10:errno.EPERM}","{40,30,20}"),"[10, 20, 30, 40]","Root's login ends the walk instead of the scan");
+  for(const [unreadable,owned] of [["{10:errno.EPERM}","{40,30,20,10}"],["{20:errno.ESRCH}","{40,30,20}"]])
+    assert.throws(()=>run(unreadable,owned),error=>error.status===2&&String(error.stderr).trim()==="workspace-proof: unreadable ancestor");
 });
 
 test("Pages reuses the native proof and keeps its live-owner PID guard",()=>{
