@@ -69,7 +69,14 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         hostedNavigation=value;
         updateNavigationCards();
     }
-    void hostedPanel(View value){if(hostedPanel==value)return;hostedPanel=value;updateNavigationCards();}
+    void hostedPanel(View value){value=panelCover(value);if(hostedPanel==value)return;hostedPanel=value;updateNavigationCards();}
+    private View panelCover(View value){
+        if(!"place_details_card_scrollable".equals(name(value)))return value;
+        // This proven menu slot also owns the preview's rounded card background.
+        // Hide it only for this hosted preview, never the map/speed/watermark parent.
+        for(View node=value;node!=null&&node!=root;node=parent(node))if("menu_frame_view".equals(name(node)))return node;
+        return value;
+    }
     List<Control> snapshot() {
         List<Control> result = new ArrayList<>();
         for (Control control : controls.values()) if (control.available) result.add(control);
@@ -281,6 +288,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     private static View parent(View view) { ViewParent parent = view.getParent(); return parent instanceof View ? (View) parent : null; }
     private static String name(View view) {
+        if(view==null)return null;
         if ((view.getId() >>> 24) == 0 || view.getId() == View.NO_ID) return null;
         try { return view.getResources().getResourceEntryName(view.getId()); }
         catch (android.content.res.Resources.NotFoundException missing) { return null; }

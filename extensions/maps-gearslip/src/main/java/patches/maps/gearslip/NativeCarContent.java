@@ -313,12 +313,12 @@ public final class NativeCarContent {
         collectText(view,controls,labels,true);
     }
     private static void collectText(View view,NativeControls controls,List<String> labels,boolean skipPrimary){
-        if(controls.nativeVisibility(view)!=View.VISIBLE||skipPrimary&&primaryStart(view))return;
-        if(view instanceof TextView){String value=text(((TextView)view).getText());if(!value.isEmpty()&&(labels.isEmpty()||!labels.get(labels.size()-1).equals(value)))labels.add(value);}
+        if(controls.nativeVisibility(view)!=View.VISIBLE||view.getAlpha()<=0||view.getWidth()<=0||view.getHeight()<=0||skipPrimary&&primaryStart(view))return;
+        if(view instanceof TextView){String value=text(((TextView)view).getText());if(!value.isEmpty()&&!value.matches("[\\s·•|]+")&&!labels.contains(value))labels.add(value);}
         if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)collectText(((ViewGroup)view).getChildAt(i),controls,labels,skipPrimary);
     }
     private static void collectActions(View view,NativeControls controls,List<Action> actions){
-        if(controls.nativeVisibility(view)!=View.VISIBLE||primaryStart(view))return;
+        if(controls.nativeVisibility(view)!=View.VISIBLE||view.getAlpha()<=0||primaryStart(view))return;
         int before=actions.size();
         if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)collectActions(((ViewGroup)view).getChildAt(i),controls,actions);
         if(actions.size()!=before)return;

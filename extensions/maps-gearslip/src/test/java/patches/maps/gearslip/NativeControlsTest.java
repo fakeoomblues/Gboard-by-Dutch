@@ -26,6 +26,7 @@ public final class NativeControlsTest {
     private static final int GROUP = 0x7f990001, SETTINGS = 0x7f990002, SEARCH = 0x7f990003, EDITOR = 0x7f990004, INPUT_SEARCH = 0x7f990005;
     private static final int NAV_CARD=0x7f990006,STATUS_CARD=0x7f990007,END=0x7f990008;
     private static final int ZOOM_IN=0x7f990009,ZOOM_OUT=0x7f99000a,ZOOM_WIDGET=0x7f99000b;
+    private static final int MENU=0x7f99000c,PREVIEW=0x7f99000d;
     private FrameLayout root, group;
     private ImageView button;
     private NativeControls controls;
@@ -47,6 +48,8 @@ public final class NativeControlsTest {
                 if(id==ZOOM_IN)return "map_buttons_view_zoom_in";
                 if(id==ZOOM_OUT)return "map_buttons_view_zoom_out";
                 if(id==ZOOM_WIDGET)return "zoom_widget_view";
+                if(id==MENU)return "menu_frame_view";
+                if(id==PREVIEW)return "place_details_card_scrollable";
                 return super.getResourceEntryName(id);
             }
         };
@@ -220,5 +223,14 @@ public final class NativeControlsTest {
         FrameLayout widget=new FrameLayout(context);widget.setId(ZOOM_WIDGET);root.addView(widget,new FrameLayout.LayoutParams(64,128));measure();
         controls=new NativeControls(root,()->updates++);assertEquals(View.INVISIBLE,widget.getVisibility());
         widget.setVisibility(View.GONE);controls.close();assertEquals(View.GONE,widget.getVisibility());
+    }
+    @Test public void aHostedPreviewAlsoSuppressesItsNativeCardBackgroundAndRestoresOnlyOwnedState()throws Exception{
+        FrameLayout menu=new FrameLayout(context),card=new FrameLayout(context),preview=new FrameLayout(context);menu.setId(MENU);preview.setId(PREVIEW);card.setBackgroundColor(Color.WHITE);
+        ImageView start=button();start.setId(View.NO_ID);preview.addView(start,new FrameLayout.LayoutParams(64,64));card.addView(preview,new FrameLayout.LayoutParams(400,240));menu.addView(card,new FrameLayout.LayoutParams(400,240));root.addView(menu,new FrameLayout.LayoutParams(400,240));measure();
+        controls=new NativeControls(root,()->updates++);controls.hostedPanel(preview);
+        assertEquals("The separate native card wrapper must not remain on the map",View.INVISIBLE,menu.getVisibility());assertEquals(View.VISIBLE,preview.getVisibility());assertEquals(View.VISIBLE,controls.nativeVisibility(menu));assertEquals(View.VISIBLE,root.getVisibility());
+        controls.invoke(new NativeCarContent.Action(start,"Start","view",-1,true));assertEquals(1,clicks);assertEquals(View.INVISIBLE,menu.getVisibility());
+        controls.hostedPanel(null);assertEquals(View.VISIBLE,menu.getVisibility());
+        controls.hostedPanel(preview);menu.setVisibility(View.GONE);controls.hostedPanel(null);assertEquals(View.GONE,menu.getVisibility());
     }
 }

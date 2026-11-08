@@ -64,6 +64,7 @@ public final class NativeCarContentTest {
         LocalCarUiSession.attach(first,intent->{},(text,duration)->{});content=new NativeCarContent(first,context,()->{});
     }
     @After public void cleanup(){if(content!=null)content.close(first);if(replacement!=null)replacement.close(second);controls.close();LocalCarUiSession.detach(first);LocalCarUiSession.detach(second);}
+    private void layoutViews(){root.measure(View.MeasureSpec.makeMeasureSpec(1280,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(480,View.MeasureSpec.EXACTLY));root.layout(0,0,1280,480);}
     @Test public void nativeReaderExportsTheWholeLogicalListAndOriginalPrimaryCallback()throws Exception{
         Home home=new Home();for(int i=0;i<80;i++)home.l.values.add(new Place("Place "+i));
         List<NativeCarContent.Row> rows=NativeCarContent.readHome(home);assertEquals(80,rows.size());
@@ -99,7 +100,7 @@ public final class NativeCarContentTest {
         FrameLayout panel=new FrameLayout(context);TextView destination=new TextView(context);destination.setText("Amsterdam");panel.addView(destination);
         TextView start=new TextView(context);start.setId(PRIMARY);start.setText("Start");start.setContentDescription("Start");start.setOnClickListener(v->fail("The duplicate view action must not replace native eligibility/Start"));panel.addView(start);
         int[] options={0};View routeOptions=new View(context);routeOptions.setContentDescription("Route options");routeOptions.setOnClickListener(v->options[0]++);panel.addView(routeOptions);
-        root.addView(panel,new FrameLayout.LayoutParams(400,300));Preview source=new Preview();
+        root.addView(panel,new FrameLayout.LayoutParams(400,300));layoutViews();Preview source=new Preview();
         NativeCarContent.Page page=content.preview(source,panel,controls);
         assertEquals("Amsterdam",page.title);assertEquals(1,page.rows.size());assertEquals(2,page.actions.size());
         assertEquals("Start",page.actions.get(0).title);assertEquals("Route options",page.actions.get(1).title);
@@ -110,7 +111,7 @@ public final class NativeCarContentTest {
         FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);
         for(int i=0;i<12;i++){TextView row=new TextView(context);row.setText("Route detail "+i);FrameLayout.LayoutParams params=new FrameLayout.LayoutParams(300,40);params.topMargin=i*40;panel.addView(row,params);}
         int[] starts={0};TextView start=new TextView(context);start.setId(PRIMARY);start.setText("Start");start.setOnClickListener(v->starts[0]++);panel.addView(start);
-        root.addView(panel,new FrameLayout.LayoutParams(400,150));
+        root.addView(panel,new FrameLayout.LayoutParams(400,150));layoutViews();
         NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page);assertEquals(NativeCarContent.Kind.PREVIEW,page.kind);
         assertEquals("The complete native scroll content is retained",12,page.rows.size());assertEquals("Route detail 11",page.rows.get(11).title);assertEquals(1,page.actions.size());assertEquals("Start",page.primaryAction.title);
         controls.hostedPanel(panel);assertEquals(View.INVISIBLE,panel.getVisibility());
@@ -119,7 +120,7 @@ public final class NativeCarContentTest {
         assertThrows(SecurityException.class,()->content.invoke(page.primaryAction,root,controls,false,null));assertEquals(1,starts[0]);
     }
     @Test public void aRetiredOrUnownedWindowCannotSupplyTheActualPreview()throws Exception{
-        FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);root.addView(panel);
+        FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);root.addView(panel);layoutViews();
         assertNull("A process/current-session fact alone proves no window",content.read(root,controls,false,null));
         NativeCarScopes.window(first,context);assertNotNull(content.read(root,controls,false,null));
         LocalCarUiSession.attach(second,intent->{},(text,duration)->{});replacement=new NativeCarContent(second,context,()->{});
@@ -128,22 +129,30 @@ public final class NativeCarContentTest {
     }
     @Test public void secondaryOptionsAreNotMislabelledAsThePrimaryNavigationAction()throws Exception{
         NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);
-        View options=new View(context);options.setContentDescription("Route options");options.setOnClickListener(v->{});panel.addView(options);root.addView(panel);
+        View options=new View(context);options.setContentDescription("Route options");options.setOnClickListener(v->{});panel.addView(options);root.addView(panel);layoutViews();
         NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page);assertNull(page.primaryAction);assertEquals(1,page.actions.size());assertEquals("Route options",page.actions.get(0).title);
     }
     @Test public void aNativePrimaryContainerKeepsItsRealChildClickHandler()throws Exception{
         NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);
-        FrameLayout primary=new FrameLayout(context);primary.setId(PRIMARY);TextView button=new TextView(context);button.setText("Start");int[] starts={0};button.setOnClickListener(v->starts[0]++);primary.addView(button);panel.addView(primary);root.addView(panel);
+        FrameLayout primary=new FrameLayout(context);primary.setId(PRIMARY);TextView button=new TextView(context);button.setText("Start");int[] starts={0};button.setOnClickListener(v->starts[0]++);primary.addView(button);panel.addView(primary);root.addView(panel);layoutViews();
         NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page.primaryAction);assertEquals(1,page.actions.size());
         content.invoke(page.primaryAction,root,controls,false,null);assertEquals(1,starts[0]);
     }
     @Test public void anOwnedNativeFooterRetainsExitAndOptionsWhenItsModelGetterIsBypassed()throws Exception{
         NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(STATUS);
         int[] stopped={0},options={0};TextView exit=new TextView(context);exit.setId(END);exit.setText("Stop navigation");exit.setOnClickListener(v->stopped[0]++);panel.addView(exit);
-        View option=new View(context);option.setContentDescription("Route options");option.setOnClickListener(v->options[0]++);panel.addView(option);root.addView(panel);
+        View option=new View(context);option.setContentDescription("Route options");option.setOnClickListener(v->options[0]++);panel.addView(option);root.addView(panel);layoutViews();
         List<NativeCarContent.Action> actions=content.footer(root,controls);assertEquals(2,actions.size());assertEquals("Stop navigation",actions.get(0).title);assertEquals("Route options",actions.get(1).title);
         controls.hostedNavigation(true);assertEquals(View.INVISIBLE,panel.getVisibility());
         content.invoke(actions.get(1),root,controls,true,null);content.invoke(actions.get(0),root,controls,true,null);assertEquals(1,options[0]);assertEquals(1,stopped[0]);assertEquals(View.INVISIBLE,panel.getVisibility());
         LocalCarUiSession.attach(second,intent->{},(text,duration)->{});replacement=new NativeCarContent(second,context,()->{});assertTrue(replacement.footer(root,controls).isEmpty());
+    }
+    @Test public void previewCaptionsIgnoreInactiveResponsiveVariantsAndDecorativeSeparators()throws Exception{
+        NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);
+        for(String text:new String[]{"Amsterdam","36 min","·","12:34","36 min"}){TextView label=new TextView(context);label.setText(text);panel.addView(label,new FrameLayout.LayoutParams(200,40));}
+        TextView unused=new TextView(context);unused.setText("36 m");panel.addView(unused,new FrameLayout.LayoutParams(0,0));
+        FrameLayout transparent=new FrameLayout(context);transparent.setAlpha(0);TextView inactive=new TextView(context);inactive.setText("Other ETA variant");transparent.addView(inactive);panel.addView(transparent,new FrameLayout.LayoutParams(200,40));
+        root.addView(panel,new FrameLayout.LayoutParams(400,240));layoutViews();NativeCarContent.Page page=content.read(root,controls,false,null);
+        assertNotNull(page);assertEquals(3,page.rows.size());assertEquals("Amsterdam",page.rows.get(0).title);assertEquals("36 min",page.rows.get(1).title);assertEquals("12:34",page.rows.get(2).title);
     }
 }

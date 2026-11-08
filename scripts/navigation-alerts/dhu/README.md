@@ -63,6 +63,15 @@ the full UI or provider goal passed. Private receipts and raw frames are in
 `.analysis/maps-host-click-diagnostic-152` and
 `.analysis/maps-host-guidance-acceptance-153`.
 
+Run162 subsequently captured the actual host-owned preview on `12d2601c4da5`.
+Its native card wrapper and repeated ETA captions remain a layout failure pending
+the connected correction. For exact-state screenshots, separate the touch and
+capture, wait externally for the recorded native page and host-area transition,
+then send the screenshot command by itself. In161, a fixed delay captured the
+old search screen just before that transition; the next frame was already in
+guidance. Neither frame proved that the intermediate preview was absent. Keep
+the prepared finite deadline; do not consume the preview window on investigation.
+
 The owner also authorized normal phone checks without Frida. Phone app updates
 must still use its existing Morphe signer/data; the engineering APK cache is for
 the owned emulator. The latest commit-derived MPP is in Mac Downloads; its copy/install on the
