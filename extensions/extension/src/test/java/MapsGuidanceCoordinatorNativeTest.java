@@ -18,8 +18,11 @@ public class MapsGuidanceCoordinatorNativeTest {
     MapsGuidanceCoordinator coordinator;
     static Field field(Class<?> type,String name)throws Exception{Field f=type.getDeclaredField(name);f.setAccessible(true);return f;}
     @Before public void setup()throws Exception{coordinator=new MapsGuidanceCoordinator(RuntimeEnvironment.getApplication());players().clear();}
-    @After public void cleanup()throws Exception{players().clear();field(MapsGuidanceCoordinator.class,"current").set(null,null);}
+    @After public void cleanup()throws Exception{players().clear();field(MapsGuidanceCoordinator.class,"current").set(null,null);field(MapsGuidanceCoordinator.class,"holder").set(null,new java.lang.ref.WeakReference<>(null));}
     @SuppressWarnings("unchecked") Map<Object,Object> players()throws Exception{return (Map<Object,Object>)field(MapsGuidanceCoordinator.class,"PLAYERS").get(null);}
+    void hold(MapsGuidanceCoordinator value)throws Exception{field(MapsGuidanceCoordinator.class,"holding").setBoolean(value,true);holder(new java.lang.ref.WeakReference<>(value));}
+    void holder(java.lang.ref.WeakReference<MapsGuidanceCoordinator> value)throws Exception{field(MapsGuidanceCoordinator.class,"holder").set(null,value);}
+    MapsGuidanceCoordinator holder()throws Exception{return ((java.lang.ref.WeakReference<MapsGuidanceCoordinator>)field(MapsGuidanceCoordinator.class,"holder").get(null)).get();}
     @Test public void ordinaryNativeDispatchKeepsOriginalCallbackAndDoesNotInventStart()throws Exception{
         bnad job=new bnad();bmzd player=new bmzd();bnas callback=new bnas(){};
         MapsGuidanceCoordinator.dispatch(job,player,callback);
@@ -62,6 +65,24 @@ public class MapsGuidanceCoordinatorNativeTest {
         // Null would throw if the guarded native focus API were actually called.
         assertEquals(AudioManager.AUDIOFOCUS_REQUEST_FAILED,MapsGuidanceCoordinator.requestNativeFocus(null,null));
         assertTrue(field(MapsGuidanceCoordinator.class,"regenerate").getBoolean(coordinator));
+        assertEquals(0,field(MapsGuidanceCoordinator.class,"nativeFocusInFlight").getInt(null));
+    }
+    @Test public void newlyConstructedIdleCoordinatorCannotEraseTheOwnedHold()throws Exception{
+        hold(coordinator);
+        MapsGuidanceCoordinator idle=new MapsGuidanceCoordinator(RuntimeEnvironment.getApplication());
+        assertEquals("A replacement constructor must not become the active hold owner",coordinator,holder());
+        assertEquals(AudioManager.AUDIOFOCUS_REQUEST_FAILED,MapsGuidanceCoordinator.requestNativeFocus(null,null));
+        assertTrue(field(MapsGuidanceCoordinator.class,"regenerate").getBoolean(coordinator));
+        assertFalse(field(MapsGuidanceCoordinator.class,"regenerate").getBoolean(idle));
+    }
+    @Test public void releasingTheHoldClearsTheOwnerEvenAfterReplacement()throws Exception{
+        field(MapsGuidanceCoordinator.class,"holding").setBoolean(coordinator,true);
+        field(MapsGuidanceCoordinator.class,"holdToken").set(coordinator,"warning");
+        holder(new java.lang.ref.WeakReference<>(coordinator));
+        new MapsGuidanceCoordinator(RuntimeEnvironment.getApplication());
+        java.lang.reflect.Method release=MapsGuidanceCoordinator.class.getDeclaredMethod("releaseMain",String.class);release.setAccessible(true);release.invoke(coordinator,"warning");
+        assertNull("A released coordinator must not keep fencing native focus",holder());
+        try{MapsGuidanceCoordinator.requestNativeFocus(null,null);fail("Original null manager");}catch(NullPointerException expected){}
         assertEquals(0,field(MapsGuidanceCoordinator.class,"nativeFocusInFlight").getInt(null));
     }
     @Test public void originalFocusExceptionDoesNotLeaveAnInFlightHoldFence()throws Exception{

@@ -249,8 +249,20 @@ public final class NativeCarService extends Service {
         try{if(session.navigationHost!=null)CarProtocol.send(session.navigationHost,NAVIGATION_HOST,3,data->{});}
         catch(RemoteException|RuntimeException disconnected){Log.w("MapsNativeCar","Navigation host disconnected",disconnected);}
     }
-    private void navigation(Session session,NativeGuidance.Snapshot snapshot){
-        if(active!=session||session.closed||session.failure!=null)return;
+    /**
+     * The visible footer action returns before the native stop transition (and its listener
+     * callback) is guaranteed. Re-read the authoritative native source on a bounded schedule
+     * so a missed listener emission cannot leave the host in guidance. Refresh never starts
+     * navigation and never fabricates a snapshot.
+     */
+    private void refreshGuidance(Session session){
+        NativeGuidance guidance=session.guidance;if(guidance==null)return;
+        guidance.refresh();
+        for(long delay:new long[]{120,400,1000})main.postDelayed(()->{
+            if(active==session&&session.guidance==guidance)guidance.refresh();
+        },delay);
+    }
+    private void navigation(Session session,NativeGuidance.Snapshot snapshot){        if(active!=session||session.closed||session.failure!=null)return;
         try{
             if(!snapshot.guiding){
                 endNavigation(session);
@@ -534,7 +546,7 @@ public final class NativeCarService extends Service {
         @Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
             if(CarProtocol.basic("androidx.car.app.model.IOnClickListener",code,data,reply))return true;
             if(code!=2)return false;IBinder callback=data.readStrongBinder();
-            try{requireSession(session);dispatch(session,callback,true,()->{if(action==null)session.renderer.contentDetails();else session.renderer.performContentAction(action);invalidate(session);});}
+            try{requireSession(session);dispatch(session,callback,true,()->{if(action==null)session.renderer.contentDetails();else session.renderer.performContentAction(action);refreshGuidance(session);invalidate(session);});}
             catch(Exception error){CarProtocol.complete(callback,null,error);}return true;
         }
     }

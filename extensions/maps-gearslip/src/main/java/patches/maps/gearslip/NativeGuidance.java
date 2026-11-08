@@ -51,6 +51,7 @@ final class NativeGuidance implements AutoCloseable {
     }
     private final Object source,listener;
     private final Object distanceUtil;
+    private final Consumer<Snapshot> callback;
     private final Class<?> marker;
     private boolean closed;
 
@@ -62,7 +63,7 @@ final class NativeGuidance implements AutoCloseable {
         this(source,listenerType,marker,executor,callback,failure,null);
     }
     NativeGuidance(Object source,Class<?> listenerType,Class<?> marker,Executor executor,Consumer<Snapshot> callback,Consumer<Throwable> failure,Object distanceUtil)throws Exception{
-        this.source=source;this.marker=marker;this.distanceUtil=distanceUtil;
+        this.source=source;this.marker=marker;this.distanceUtil=distanceUtil;this.callback=callback;
         listener=Proxy.newProxyInstance(listenerType.getClassLoader(),new Class<?>[]{listenerType},(proxy,method,args)->{
             if(method.getDeclaringClass()==Object.class){
                 if("hashCode".equals(method.getName()))return System.identityHashCode(proxy);
@@ -139,6 +140,12 @@ final class NativeGuidance implements AutoCloseable {
     private static String enumName(Object value){
         if(!(value instanceof Enum))throw new IllegalStateException("Maps native navigation enum changed");
         return ((Enum<?>)value).name();
+    }
+    /** Re-read the authoritative native source after a content action. Only cessation is reported. */
+    void refresh(){
+        if(closed)return;
+        try{Snapshot value=snapshot(field(source,"b"),distanceUtil);if(!value.guiding)callback.accept(value);}
+        catch(Exception ignored){/* Preserve the listener path and the native action result. */}
     }
     @Override public void close()throws Exception{
         if(closed)return;closed=true;method(source,"c",marker).invoke(source,listener);

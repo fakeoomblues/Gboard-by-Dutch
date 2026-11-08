@@ -69,6 +69,16 @@ public final class NativeGuidanceTest {
         guidance.close();guidance.close();source.emit(Mode.GUIDING);
         assertEquals(1,source.removals);assertEquals(3,values.size());
     }
+    @Test public void refreshReportsAuthoritativeCessationEvenIfTheListenerWasMissed()throws Exception{
+        Source source=new Source();List<NativeGuidance.Snapshot> values=new ArrayList<>();
+        NativeGuidance guidance=new NativeGuidance(source,Listener.class,Marker.class,Runnable::run,values::add,error->{throw new AssertionError(error);});
+        assertEquals(1,values.size());
+        source.b=new State(Mode.CRUISING); // Listener never delivered this transition.
+        guidance.refresh();assertEquals(2,values.size());assertFalse("A stale listener must not hide native cessation",values.get(1).guiding);
+        source.b=new State(Mode.GUIDING);
+        guidance.refresh();assertEquals("Refresh must never announce a navigation start",2,values.size());
+        guidance.close();
+    }
     @Test public void guidingWithoutRouteDataRemainsLoadingRatherThanInventingProgress()throws Exception{
         State state=new State(Mode.GUIDING);state.b=null;
         NativeGuidance.Snapshot value=NativeGuidance.snapshot(state);assertTrue(value.guiding);assertNull(value.cue);

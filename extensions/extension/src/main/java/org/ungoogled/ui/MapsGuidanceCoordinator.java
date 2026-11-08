@@ -32,6 +32,12 @@ public final class MapsGuidanceCoordinator {
     private static final Map<Object,Object> PLAYERS=new IdentityHashMap<>();
     private static WeakReference<Object> route=new WeakReference<>(null);
     private static MapsGuidanceCoordinator current;
+    /**
+     * The coordinator that actually owns the live audio hold. {@link #current} changes when
+     * another receiver/speaker constructs a coordinator; a newly constructed idle instance
+     * must never erase an existing hold or bypass its native focus/dispatch fence.
+     */
+    private static WeakReference<MapsGuidanceCoordinator> holder=new WeakReference<>(null);
     private static int nativeFocusInFlight;
     private static Object cachedPolyline;
     private static RoadWarningEngine.Route cachedWarningRoute;
@@ -86,7 +92,7 @@ public final class MapsGuidanceCoordinator {
     private void acquireMain(String token,WarningEvent.Priority priority,long deadline,Ready callback) {
         if(!isReady() || holding || waiting || SystemClock.elapsedRealtime()>=deadline){callback.complete(false,"GUIDANCE_UNAVAILABLE");return;}
         long version;
-        synchronized(LOCK){holdToken=token;regenerate=false;waiting=priority!=WarningEvent.Priority.P0;holding=priority==WarningEvent.Priority.P0;version=++generation;}
+        synchronized(LOCK){holdToken=token;regenerate=false;waiting=priority!=WarningEvent.Priority.P0;holding=priority==WarningEvent.Priority.P0;if(holding)holder=new WeakReference<>(this);version=++generation;}
         inspectGap(version,priority,deadline,callback);
     }
     private void inspectGap(long version,WarningEvent.Priority priority,long deadline,Ready callback) {
@@ -103,7 +109,7 @@ public final class MapsGuidanceCoordinator {
                         active=field(manager.getClass(),"p").get(manager);pending=field(manager.getClass(),"q").get(manager);
                         // Reserve the actual gap on the native serial executor, not later
                         // from a stale snapshot on main. Queue/focus hooks see it atomically.
-                        if(active==null&&pending==null){holding=true;waiting=false;}
+                        if(active==null&&pending==null){holding=true;waiting=false;holder=new WeakReference<>(MapsGuidanceCoordinator.this);}
                     }
                     main.post(()-> {
                         if(version!=generation || !(holding||waiting))return;
@@ -153,6 +159,7 @@ public final class MapsGuidanceCoordinator {
         synchronized(LOCK){
             if(!(holding||waiting) || token==null || !token.equals(holdToken))return;
             holding=false;waiting=false;holdToken=null;generation++;
+            if(holder.get()==this)holder=new WeakReference<>(null);
             restore=regenerate;regenerate=false;
         }
         if(restore)regenerateCurrent();
@@ -174,7 +181,7 @@ public final class MapsGuidanceCoordinator {
             if(navigationActive(owner)&&replay.morpheCanResumeGuidance())replay.morpheResumeGuidance();
         }catch(ReflectiveOperationException|RuntimeException error){fault=true;}
     }
-    public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;}});}
+    public void close(){main.post(()->{releaseMain(holdToken);synchronized(LOCK){if(current==this)current=null;if(holder.get()==this)holder=new WeakReference<>(null);}});}
     public static void captureRoute(Object owner){synchronized(LOCK){route=new WeakReference<>(owner);cachedPolyline=null;cachedWarningRoute=null;}}
     public static void routeEnded(Object owner){synchronized(LOCK){if(route.get()==owner){route.clear();cachedPolyline=null;cachedWarningRoute=null;}}}
     /** Directed native route takes precedence over a straight heading, including around bends. */
@@ -235,10 +242,18 @@ public final class MapsGuidanceCoordinator {
         Object controller=routeField(owner,"c").get(owner);return controller!=null&&(Boolean)method(controller.getClass(),"bv").invoke(controller);
     }
 
+    /** Caller must hold {@link #LOCK}. Prefer the live hold owner over a later idle instance. */
+    private static MapsGuidanceCoordinator holderLocked() {
+        MapsGuidanceCoordinator value=holder.get();
+        if(value!=null&&value.holding)return value;
+        return current!=null&&current.holding?current:null;
+    }
+
     /** Intercept only the native Maps navigation manager's focus call, never another app or stream. */
     public static int requestNativeFocus(AudioManager audio,AudioFocusRequest request) {
         synchronized(LOCK) {
-            if(current!=null && current.holding){current.regenerate=true;return AudioManager.AUDIOFOCUS_REQUEST_FAILED;}
+            MapsGuidanceCoordinator owner=holderLocked();
+            if(owner!=null){owner.regenerate=true;return AudioManager.AUDIOFOCUS_REQUEST_FAILED;}
             nativeFocusInFlight++;
         }
         // No Binder call is made while holding LOCK. Acquiring a hold waits for earlier calls to return.
@@ -247,8 +262,8 @@ public final class MapsGuidanceCoordinator {
     }
     /** Focus-denied callbacks take an earlier native return than bnau.d; release their prepared media too. */
     public static boolean cancelPreparedCallback(Object callback) {
-        MapsGuidanceCoordinator coordinator;synchronized(LOCK){coordinator=current;}
-        if(coordinator==null || !coordinator.holding)return false;
+        MapsGuidanceCoordinator coordinator;synchronized(LOCK){coordinator=holderLocked();}
+        if(coordinator==null)return false;
         try {
             if(field(callback.getClass(),"$cid").getInt(callback)!=2)return false;
             Object parent=field(callback.getClass(),"a").get(callback),job=field(parent.getClass(),"a").get(parent),player=field(callback.getClass(),"b").get(callback);
@@ -270,7 +285,7 @@ public final class MapsGuidanceCoordinator {
     public static void dispatch(Object job,Object player,Object callback) {
         MapsGuidanceCoordinator coordinator;
         synchronized(LOCK) {
-            coordinator=current;
+            coordinator=holderLocked();
             if(PLAYERS.size()>=128 && !PLAYERS.containsKey(job)) { if(coordinator!=null)coordinator.fault=true; }
             else PLAYERS.put(job,player);
         }
