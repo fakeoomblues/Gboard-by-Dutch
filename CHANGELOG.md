@@ -1,4 +1,61 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/88c4215093090cca1ced623df33ea3e9e1bec0a9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.55.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [88c421509309](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/88c4215093090cca1ced623df33ea3e9e1bec0a9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.55.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.54.0...v1.55.0) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** preserve native controller types in speed alerts ([8930209](https://gitlab.com/johninnld/nl-morphe-patches/commit/893020952b45a2ca683d6eeab1bbe0c9a75666bf))
+* **Flitsmeister:** render compact numeric warning pills ([5b03b28](https://gitlab.com/johninnld/nl-morphe-patches/commit/5b03b286e6177675addac486955cf8f0e6ff68a5))
+* **Flitsmeister:** renew audio ownership after slow readiness checks ([0ea60d3](https://gitlab.com/johninnld/nl-morphe-patches/commit/0ea60d32a718ec6a5a21c67986ad0f28ee1038ea))
+* **Google Maps:** adapt car indicators to Android Auto safe areas ([4c57185](https://gitlab.com/johninnld/nl-morphe-patches/commit/4c571859f18299232c871ffe7e5eec5c81af8b9d))
+* **Google Maps:** adapt panels from their owned native window ([12d2601](https://gitlab.com/johninnld/nl-morphe-patches/commit/12d2601c4da5e1b0d2d2eaf684959307a037018e))
+* **Google Maps:** bind car guidance to the current application component ([f0a9fd1](https://gitlab.com/johninnld/nl-morphe-patches/commit/f0a9fd1e9d32ad35fe1cbaa80f85a95e0743e056))
+* **Google Maps:** connect the current native navigation binder ([9ae36aa](https://gitlab.com/johninnld/nl-morphe-patches/commit/9ae36aa4de0474e710c190cfbc2e4bbbb30b585c))
+* **Google Maps:** correct destination and display delegation for 26.44 ([c6e6dcf](https://gitlab.com/johninnld/nl-morphe-patches/commit/c6e6dcf1fe20339d0226e9342447e7203aac5a98))
+* **Google Maps:** hand car cards and controls to host templates ([1bf645e](https://gitlab.com/johninnld/nl-morphe-patches/commit/1bf645e6ee6e66c346d140c8cdb965a93659d670))
+* **Google Maps:** hand compact native search to the car host ([5b638dd](https://gitlab.com/johninnld/nl-morphe-patches/commit/5b638dd596945af63d7df884e0f9b1aaff048508))
+* **Google Maps:** hand preview panels to the host when shown ([c60195c](https://gitlab.com/johninnld/nl-morphe-patches/commit/c60195c9e0151a0d620ffd62120cca8678465533))
+* **Google Maps:** keep phone navigation tiles off projected car windows ([12cd912](https://gitlab.com/johninnld/nl-morphe-patches/commit/12cd912ed410d5205739315727e4265d05fce38b))
+* **Google Maps:** leave the unsupported global private car client disconnected ([e3e1fb8](https://gitlab.com/johninnld/nl-morphe-patches/commit/e3e1fb88f6ea724b6da8f08b1c5e7df4a59de0c2))
+* **Google Maps:** make provider health clear at a glance ([f330438](https://gitlab.com/johninnld/nl-morphe-patches/commit/f3304380fca2b3ca804b60f2b1076da86f1ce7ed))
+* **Google Maps:** open compact car search in the owned native editor ([829277c](https://gitlab.com/johninnld/nl-morphe-patches/commit/829277cd208fadab00fe6fba941b329c0b04db16))
+* **Google Maps:** port warning audio and route relevance to 26.44 ([188728e](https://gitlab.com/johninnld/nl-morphe-patches/commit/188728eaa014006e07829c0fda6d1b249cb95510))
+* **Google Maps:** refresh native controls when car commands arrive ([feab48a](https://gitlab.com/johninnld/nl-morphe-patches/commit/feab48a5323dbaa753a4b1e41b60719a910f000d))
+* **Google Maps:** remove native preview remnants from host cards ([b6625b7](https://gitlab.com/johninnld/nl-morphe-patches/commit/b6625b76c9c81abb68abdbe30f8288b099878683))
+* **Google Maps:** render compact numeric warning pills ([5b03b28](https://gitlab.com/johninnld/nl-morphe-patches/commit/5b03b286e6177675addac486955cf8f0e6ff68a5))
+* **Google Maps:** renew audio ownership after slow readiness checks ([0ea60d3](https://gitlab.com/johninnld/nl-morphe-patches/commit/0ea60d32a718ec6a5a21c67986ad0f28ee1038ea))
+* **Google Maps:** resolve live native owners for car commands ([7dcb5e9](https://gitlab.com/johninnld/nl-morphe-patches/commit/7dcb5e960a5737808fd95764bec29bd601101de9))
+* **Google Maps:** resume guidance voice without inspecting the next turn ([c1a8a90](https://gitlab.com/johninnld/nl-morphe-patches/commit/c1a8a90eee91de15e40bc7c16a8de781783ab870))
+* **Google Maps:** select active controls and suppress native copies ([1665ea0](https://gitlab.com/johninnld/nl-morphe-patches/commit/1665ea06146727f9c0868fb23d760d8f5709a058))
+* **Google Maps:** suppress the separate native car zoom widget ([94ddf09](https://gitlab.com/johninnld/nl-morphe-patches/commit/94ddf091eea8d0ad62412252125aeec0a72f7cdc))
+* **Vela Maps:** adapt car indicators to Android Auto safe areas ([4c57185](https://gitlab.com/johninnld/nl-morphe-patches/commit/4c571859f18299232c871ffe7e5eec5c81af8b9d))
+* **Vela Maps:** keep warning pills clear of map controls ([abc9c66](https://gitlab.com/johninnld/nl-morphe-patches/commit/abc9c66fe7fbe91a966df1fe007665bc5d59f332))
+* **Vela Maps:** make provider health clear at a glance ([f330438](https://gitlab.com/johninnld/nl-morphe-patches/commit/f3304380fca2b3ca804b60f2b1076da86f1ce7ed))
+* **Vela Maps:** render compact numeric warning pills ([5b03b28](https://gitlab.com/johninnld/nl-morphe-patches/commit/5b03b286e6177675addac486955cf8f0e6ff68a5))
+* **Vela Maps:** renew audio ownership after slow readiness checks ([0ea60d3](https://gitlab.com/johninnld/nl-morphe-patches/commit/0ea60d32a718ec6a5a21c67986ad0f28ee1038ea))
+* **Waze:** admit the verified 5.27 native warning adapter ([bf0efbc](https://gitlab.com/johninnld/nl-morphe-patches/commit/bf0efbc39cfb03a145fe19031df2ba583f9fd0b1))
+* **Waze:** render compact numeric warning pills ([5b03b28](https://gitlab.com/johninnld/nl-morphe-patches/commit/5b03b286e6177675addac486955cf8f0e6ff68a5))
+* **Waze:** renew audio ownership after slow readiness checks ([0ea60d3](https://gitlab.com/johninnld/nl-morphe-patches/commit/0ea60d32a718ec6a5a21c67986ad0f28ee1038ea))
+
+### ✨ New Features
+
+* **Flitsmeister:** share native warning indicators across car displays ([97b29fd](https://gitlab.com/johninnld/nl-morphe-patches/commit/97b29fd80c1af1da62e2971d5d53c86f6cd4ccac))
+* **Google Maps:** open provider location settings from receiver setup ([9ba1456](https://gitlab.com/johninnld/nl-morphe-patches/commit/9ba1456c027f73c6e6c68abeab6e62199b716082))
+* **Google Maps:** share native warning indicators across car displays ([97b29fd](https://gitlab.com/johninnld/nl-morphe-patches/commit/97b29fd80c1af1da62e2971d5d53c86f6cd4ccac))
+* **Vela Maps:** open provider location settings from receiver setup ([9ba1456](https://gitlab.com/johninnld/nl-morphe-patches/commit/9ba1456c027f73c6e6c68abeab6e62199b716082))
+* **Vela Maps:** share native warning indicators across car displays ([97b29fd](https://gitlab.com/johninnld/nl-morphe-patches/commit/97b29fd80c1af1da62e2971d5d53c86f6cd4ccac))
+* **Waze:** share native warning indicators across car displays ([97b29fd](https://gitlab.com/johninnld/nl-morphe-patches/commit/97b29fd80c1af1da62e2971d5d53c86f6cd4ccac))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a84a6bc3035b272ddf3c24ae1444ccecf6125e04/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.54.0.**

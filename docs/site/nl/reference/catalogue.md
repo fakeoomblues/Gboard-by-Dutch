@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.54.0**
+**Patchbundel: 1.55.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
