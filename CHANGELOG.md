@@ -1,4 +1,31 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c55a67755fad99750b3b7949df6c5272e2b6d78f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.56.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [c55a67755fad](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/c55a67755fad99750b3b7949df6c5272e2b6d78f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.56.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.55.0...v1.56.0) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **General:** stop publishing the Spotify patches ([aab20ba](https://gitlab.com/johninnld/nl-morphe-patches/commit/aab20ba245bd369e8cd9442f73f67451f1ad0f8f))
+* **release:** accept maps trailer alias ([c55a677](https://gitlab.com/johninnld/nl-morphe-patches/commit/c55a67755fad99750b3b7949df6c5272e2b6d78f))
+* **release:** exclude GitGud from automated releases ([f1b7eb1](https://gitlab.com/johninnld/nl-morphe-patches/commit/f1b7eb11caf41957234879232ee89dcbfd9adb4f))
+
+### ✨ New Features
+
+* **Deezer:** remove premium UI and branding ([83b35e4](https://gitlab.com/johninnld/nl-morphe-patches/commit/83b35e412dd164777c7667684da67c379d2cf702))
+
+### 🔧 Improvements
+
+* **Google Maps:** harden guidance hold ownership and Exit refresh ([51a90f8](https://gitlab.com/johninnld/nl-morphe-patches/commit/51a90f8e6d38ff8842457707d907ef6fa6f72563))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/88c4215093090cca1ced623df33ea3e9e1bec0a9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.55.0.**
