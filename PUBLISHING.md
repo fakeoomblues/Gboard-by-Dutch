@@ -6,7 +6,7 @@ The enforceable rules are in [AGENTS.md](AGENTS.md). This file contains the setu
 
 A user LaunchAgent periodically invokes the local release watcher. The first successful invocation baselines the existing `main` head without publishing historical work. Later approved branch updates run the complete local verification, build/sign and publication flow. Feature branches never publish. The dev prerelease channel is retired; `main` is the only maintained release channel.
 
-GitLab is the source/version authority. One canonical signed MPP is published to GitLab, then the same published bytes are mirrored to Codeberg and GitGud in parallel. Each destination is authenticated separately and its public download is verified. No mirror selects another version, rewrites source metadata or force-pushes conflicting refs.
+GitLab is the source/version authority. One canonical signed MPP is published to GitLab, then the same published bytes are mirrored to Codeberg. GitGud is excluded from automated releases and must not be published by the local release flow. Each destination is authenticated separately and its public download is verified. No mirror selects another version, rewrites source metadata or force-pushes conflicting refs.
 
 Every `main` release also rebuilds and publishes the production Pages site from committed release metadata. Main documentation-only/no-release updates may refresh the site too. GitLab Pages requires a Pages job, so that small tagged job runs on this Mac's protected project runner; it does not consume shared-runner minutes. The build/test/release watcher itself is independent of hosted runners.
 
@@ -84,9 +84,9 @@ The private store defaults to `~/Library/Application Support/nl-morphe-local-rel
 | Private input | Local source/reference | Environment/use | Remote CI counterpart |
 | --- | --- | --- | --- |
 | GitLab API key | `~/.ci`, `GITLAB` entry | `GITLAB_TOKEN`; publisher `johninnld` | Existing protected/masked `JOHNINNL_GITLAB_TOKEN` |
-| GitGud API key | `~/.ci`, `GITGUD` entry | `GITGUD_TOKEN`; mirror owner `JohninNL` | `GITGUD_TOKEN` for optional cloud mirroring; legacy name `JOHNINNL_GITGUD_TOKEN` |
+| Legacy GitGud API key (excluded from releases) | `~/.ci`, `GITGUD` entry | `GITGUD_TOKEN` only for a deliberate legacy manual mirror | Not used by automated releases |
 | Codeberg API key | `~/.ci`, `CODEBERG` entry | `CODEBERG_TOKEN`; mirror owner `JohninNL` | `CODEBERG_TOKEN` for optional cloud mirroring; legacy name `JOHNINNL_CODEBERG_TOKEN` |
-| GitLab/GitGud/Codeberg SSH identities | Verified private paths selected by configuration (`GITLAB_SSH_KEY`, `GITGUD_SSH_KEY`, `CODEBERG_SSH_KEY`) | Git transport only; one destination key per operation | Not copied to hosted CI |
+| GitLab/Codeberg SSH identities | Verified private paths selected by configuration (`GITLAB_SSH_KEY`, `CODEBERG_SSH_KEY`) | Git transport only; one destination key per operation | Not copied to hosted CI |
 | Morphe Ed25519 signing seed | Private `secrets/morphe-signing-key` | `MORPHE_SIGNING_KEY` | Existing protected/masked `MORPHE_SIGNING_KEY` |
 | Shared Maps application key | Private `secrets/maps-api-key`; existing ignored `.community-maps-api-key` may be the setup source | `SHARED_MAPS_API_KEY` | Existing protected/masked `SHARED_MAPS_API_KEY` |
 | Bright article signing key | Private `secrets/bright-signing-key`; existing ignored `.bright-article-signing-key` may be the setup source | `BRIGHT_ARTICLE_SIGNING_KEY` | Existing protected/masked `BRIGHT_ARTICLE_SIGNING_KEY` |
@@ -123,7 +123,7 @@ Local jobs read `~/.ci` afresh. Other existing signing/application credentials a
 
 Scope project permissions to the relevant `nl-morphe-patches` project. The account must also have the required project role. Git metadata always remains exactly `johninnl <349981574+johninnl@users.noreply.github.com>`.
 
-For fine-grained GitLab/GitGud release tokens:
+For fine-grained GitLab release tokens:
 
 | Boundary | Resource | Actions |
 | --- | --- | --- |
@@ -175,7 +175,7 @@ Branch commands preview by default. Preview never invokes tagged recovery, mirro
 
 Every terminal job, successful or failed, executes cleanup. It first retains a compact receipt, redacted bounded log tails and bounded release-safety JSON, then removes its owned checkout, generated output, installed job dependencies, temporary files and per-run repository. These are disposable build outputs, not the primary checkout or credential/input store.
 
-Release success requires GitLab discovery/signature verification, both mirror confirmations and main Pages verification where applicable. Independent downstream results are all accounted for even when one fails. Partial publication records retain per-destination outcomes. Existing canonical signed bytes are reused during idempotent recovery; a different signed rebuild cannot silently replace the canonical artifact.
+Release success requires GitLab discovery/signature verification, the Codeberg mirror confirmation and main Pages verification where applicable. Independent downstream results are all accounted for even when one fails. Partial publication records retain per-destination outcomes. Existing canonical signed bytes are reused during idempotent recovery; a different signed rebuild cannot silently replace the canonical artifact.
 
 Owned process groups must be stopped before deletion. If quiescence or cleanup cannot be proved, mark `cleanupRequired`, preserve the original failure and block later work until the pending cleanup is resolved. A still-active Pages job is cleaned only after it becomes terminal; later watcher ticks retry that cleanup even without a new source head.
 

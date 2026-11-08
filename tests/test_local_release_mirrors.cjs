@@ -1,4 +1,6 @@
 "use strict";
+// Keep coverage for the legacy GitGud helper while releases default to Codeberg.
+process.env.MORPHE_RELEASE_MIRRORS = "codeberg,gitgud";
 const assert=require("node:assert/strict");
 const {test}=require("node:test");
 const fs=require("node:fs");

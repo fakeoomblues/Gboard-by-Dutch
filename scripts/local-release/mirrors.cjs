@@ -10,6 +10,12 @@ const TARGETS={
   codeberg:{base:"https://codeberg.org",repository:"JohninNL/nl-morphe-patches",owner:"JohninNL",token:"CODEBERG_TOKEN",api:"/api/v1",sshKey:"CODEBERG_SSH_KEY",ssh:"git@codeberg.org:JohninNL/nl-morphe-patches.git"},
   gitgud:{base:"https://gitgud.io",repository:"JohninNL/nl-morphe-patches",owner:"JohninNL",token:"GITGUD_TOKEN",api:"/api/v4",sshKey:"GITGUD_SSH_KEY",ssh:"git@ssh.gitgud.io:JohninNL/nl-morphe-patches.git"},
 };
+// GitGud is excluded from automated releases. Its target and helpers remain for
+// the legacy manual mirror workflow, but only list it explicitly for tests or a
+// deliberate legacy run.
+const ENABLED_TARGETS=(process.env.MORPHE_RELEASE_MIRRORS||"codeberg").split(",").map(value=>value.trim()).filter(Boolean);
+for(const name of ENABLED_TARGETS)if(!TARGETS[name])throw new Error("Unknown release mirror: "+name);
+function enabledTargets(){return ENABLED_TARGETS;}
 const CANONICAL={base:"https://gitlab.com",repository:"johninnld/nl-morphe-patches",owner:"johninnld",token:"GITLAB_TOKEN",sshKey:"GITLAB_SSH_KEY",ssh:"git@gitlab.com:johninnld/nl-morphe-patches.git"};
 const CODEBERG_RELEASE_LIMIT=5;
 const SHA=/^[a-f0-9]{40}$/;
@@ -134,7 +140,7 @@ async function checkTarget(name,context){
   return {refs};
 }
 async function settledTargets(context,task){
-  const names=Object.keys(TARGETS),settled=await Promise.allSettled(names.map(name=>task(name)));
+  const names=enabledTargets(),settled=await Promise.allSettled(names.map(name=>task(name)));
   const targets={};settled.forEach((row,index)=>{targets[names[index]]=row.status==="fulfilled"?{status:"fulfilled",...row.value}:{status:"rejected",error:redact(row.reason?.message||"Mirror failed",context.env)};});
   return {format:1,branch:context.branch,head:context.head,complete:settled.every(row=>row.status==="fulfilled"),targets};
 }
@@ -253,7 +259,7 @@ async function mirrorReleases(options={}){
   }
   catch(error){
     const result={format:1,complete:false,phase:"validation",targets:{}};
-    for(const name of Object.keys(TARGETS))result.targets[name]={status:"rejected",error:redact(error.message,options.env||process.env)};
+    for(const name of enabledTargets())result.targets[name]={status:"rejected",error:redact(error.message,options.env||process.env)};
     saveResult(options.cwd||process.cwd(),result);throw error;
   }
   if(!source){const result={format:1,branch:context.branch,head:context.head,complete:true,skipped:"no-release",targets:{}};saveResult(context.cwd,result);return result;}
