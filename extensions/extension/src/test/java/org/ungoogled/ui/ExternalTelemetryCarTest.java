@@ -53,6 +53,27 @@ public class ExternalTelemetryCarTest {
         target.invoke(null,first,root,new android.graphics.Rect());Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(0,root.getChildCount());assertTrue(active());
     }
 
+    @Test public void nativeLayoutResizeRepositionsWarningWithoutAnotherGpsOrProviderUpdate()throws Exception{
+        zone();FrameLayout root=new FrameLayout(app);root.layout(0,0,1280,480);session(first,true);surface(first,root);
+        android.view.View pill=root.getChildAt(0);FrameLayout.LayoutParams before=(FrameLayout.LayoutParams)pill.getLayoutParams();
+        int originalRight=before.leftMargin+pill.getMeasuredWidth();
+        root.layout(0,0,700,300);root.getViewTreeObserver().dispatchOnPreDraw();
+        FrameLayout.LayoutParams after=(FrameLayout.LayoutParams)pill.getLayoutParams();
+        assertSame(pill,root.getChildAt(0));assertTrue(after.leftMargin+pill.getMeasuredWidth()<=700);assertTrue(after.topMargin+pill.getMeasuredHeight()<=300);
+        assertEquals(after.leftMargin,pill.getLeft());assertEquals(after.topMargin,pill.getTop());
+        assertTrue("This frame's actual pixels must already be inside the resized reservation",pill.getRight()<=700&&pill.getBottom()<=300);
+        assertTrue(after.leftMargin+pill.getMeasuredWidth()<originalRight);
+        session(first,false);assertEquals(0,root.getChildCount());
+        root.getViewTreeObserver().dispatchOnPreDraw();assertEquals(0,root.getChildCount());
+    }
+    @Test public void constrainedCarPillsKeepTheirAspectRatioAndWithholdUnreadableSizes()throws Exception{
+        zone();CompactSpeedView view=new CompactSpeedView(app);view.bindCar(ExternalTelemetry.view(),100d,false,false,"",java.util.Collections.emptyList());
+        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(90,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
+        assertEquals(90,view.getMeasuredWidth());assertEquals(32,view.getMeasuredHeight());
+        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(89,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
+        assertEquals(0,view.getMeasuredWidth());assertEquals(0,view.getMeasuredHeight());
+    }
+
     private void zone()throws Exception{
         org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(5));long now=android.os.SystemClock.elapsedRealtime();
         Field f=ExternalTelemetry.class.getDeclaredField("store");f.setAccessible(true);TelemetryStore store=(TelemetryStore)f.get(null);

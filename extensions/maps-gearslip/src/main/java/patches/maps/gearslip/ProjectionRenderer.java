@@ -57,7 +57,6 @@ public final class ProjectionRenderer {
     private Configuration configuration;
     private Surface surface;
     private int width, height, dpi;
-    private final Rect visibleBounds=new Rect(), stableBounds=new Rect();
     private int nativeWidth, nativeHeight, nativeDpi;
     private boolean bound, created, resumed, closed, failed;
     private volatile boolean keyboardRequested;
@@ -228,6 +227,9 @@ public final class ProjectionRenderer {
             // A host can replace/hide its surface just to display its keyboard. The Maps
             // activity and native editor must survive that target change.
             boolean sameCanvas = nativeWidth == w && nativeHeight == h && nativeDpi == density;
+            // Areas belong to the old surface geometry. Do not reuse them while
+            // waiting for AA's callbacks for the resized/replaced canvas.
+            if(width!=w||height!=h||dpi!=density){visibleArea=stableArea=null;appliedInsets=null;}
             if (surface != null && surface != value) detachSurface();
             surface = value; width = w; height = h; dpi = density;
             if (created && !sameCanvas) resizeCanvas(w, h, density);
@@ -235,8 +237,8 @@ public final class ProjectionRenderer {
         });
     }
     public void surfaceDestroyed() { guard(this::detachSurface); }
-    public void visibleArea(Rect area) { guard(() -> { visibleArea = area == null ? null : new Rect(area); visibleBounds.set(area == null ? new Rect() : area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
-    public void stableArea(Rect area) { guard(() -> { stableArea = area == null ? null : new Rect(area); stableBounds.set(area == null ? new Rect() : area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
+    public void visibleArea(Rect area) { guard(() -> { visibleArea = area == null ? null : new Rect(area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
+    public void stableArea(Rect area) { guard(() -> { stableArea = area == null ? null : new Rect(area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
     private Rect insets(int w, int h) {
         Rect canvas = new Rect(0, 0, w, h), safe = visibleArea == null ? null : new Rect(visibleArea);
         if (safe == null || safe.isEmpty() || !safe.intersect(canvas)) safe = stableArea == null ? null : new Rect(stableArea);
@@ -259,7 +261,7 @@ public final class ProjectionRenderer {
         // Warnings move with the currently visible native controls. The stable
         // area reserves space even for hidden controls; intersecting it here
         // prevents alignment with Maps after those controls disappear.
-        Rect area=visible!=null&&!visible.isEmpty()?visible:stable;
+        Rect area=visible!=null?visible:stable;
         if(area==null||area.isEmpty()||!result.intersect(area))result.setEmpty();
         return result;
     }
@@ -439,7 +441,7 @@ public final class ProjectionRenderer {
         catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car guidance unavailable",error);}
     }
     private void telemetrySurface(View root) {
-        try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleBounds,stableBounds));}
+        try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleArea,stableArea));}
         catch(ClassNotFoundException absent) { /* The warning patch is optional. */ }
         catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car surface unavailable",error);}
     }

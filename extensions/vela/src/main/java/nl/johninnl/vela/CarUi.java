@@ -248,9 +248,9 @@ public final class CarUi {
             Double limit = TelemetryRuntime.carLimitKmh((Double)field(renderer, "r"));
             TelemetryStore.View view = TelemetryRuntime.view();
             String warning = TelemetryRuntime.carWarnings().isEmpty()?TelemetryRuntime.compactCarWarningText():"";
-            float radius = Math.max(22f, Math.min(46f,
-                    Math.min(((Number)field(renderer,"h")).intValue(), ((Number)field(renderer,"i")).intValue()) / 18f));
-            Layout layout = compactLayout(safe, Math.max(.7f, radius / 46f), false, warning.isEmpty()?0:Math.min(4,warning.split("\n").length));
+            Float hostDensity=DENSITIES.get(renderer);float density=hostDensity==null?1f:hostDensity;
+            float scale=speedScale(((Number)field(renderer,"h")).intValue(),((Number)field(renderer,"i")).intValue(),density);
+            Layout layout = compactLayout(safe, scale, false, warning.isEmpty()?0:Math.min(4,warning.split("\n").length),density);
             if (layout == null) return true;
             renderCompact(canvas, layout, current, limit, TelemetryStore.View.empty(TelemetryRuntime.selected()), warning, imperial, dark,
                     (Paint)field(renderer,"l0"), (Paint)field(renderer,"m0"), (Paint)field(renderer,"p0"),
@@ -273,13 +273,20 @@ public final class CarUi {
     static Layout compactLayout(Rect safe, float requestedScale, boolean zone, boolean warning) {
         return compactLayout(safe,requestedScale,zone,warning?1:0);
     }
+    static float speedScale(int width,int height,float density) {
+        float radius=Math.max(22f,Math.min(46f,Math.min(width,height)/density/18f));
+        return Math.max(.7f,radius/46f)*density;
+    }
     static Layout compactLayout(Rect safe, float requestedScale, boolean zone, int warningLines) {
+        return compactLayout(safe,requestedScale,zone,warningLines,1f);
+    }
+    static Layout compactLayout(Rect safe, float requestedScale, boolean zone, int warningLines,float density) {
         warningLines=Math.max(0,Math.min(4,warningLines));
         float height = (zone ? 134f : 68f) + warningLines * 22f;
-        float scale = Math.min(1f, requestedScale);
-        scale = Math.min(scale, Math.min((safe.width()-16f)/156f, (safe.height()-16f)/height));
-        if (scale < .5f) return null;
-        float margin = 8f;
+        float margin=8f*density;
+        float scale = Math.min(density, requestedScale);
+        scale = Math.min(scale, Math.min((safe.width()-2*margin)/156f, (safe.height()-2*margin)/height));
+        if (scale < .5f*density) return null;
         RectF bounds = new RectF(safe.right-margin-156f*scale, safe.bottom-margin-height*scale,
                 safe.right-margin, safe.bottom-margin);
         return new Layout(bounds, scale, zone, warningLines);

@@ -61,6 +61,20 @@ public class CarUiTest {
         assertTrue(CarUi.overlayViewport(new Rect(1115,0,1190,460),null,1190,460,1f).isEmpty());
     }
 
+    @Test public void speedPairUsesTheSameHostDensityAsWarningPills() {
+        Rect logical=new Rect(420,30,1110,448);
+        CarUi.Layout baseline=CarUi.compactLayout(logical,CarUi.speedScale(1190,460,1),false,0,1);
+        assertNotNull(baseline);
+        for(float density:new float[]{1.5f,2f}) {
+            Rect pixels=new Rect(Math.round(logical.left*density),Math.round(logical.top*density),Math.round(logical.right*density),Math.round(logical.bottom*density));
+            CarUi.Layout scaled=CarUi.compactLayout(pixels,CarUi.speedScale(Math.round(1190*density),Math.round(460*density),density),false,0,density);
+            assertNotNull(scaled);
+            assertEquals(baseline.pair.width()*density,scaled.pair.width(),.01f);
+            assertEquals(baseline.pair.height()*density,scaled.pair.height(),.01f);
+            assertEquals(baseline.pair.right*density,scaled.pair.right,.01f);
+            assertEquals(baseline.pair.bottom*density,scaled.pair.bottom,.01f);
+        }
+    }
     @Test public void nativeSelectionAndDisabledCarKeepTheOriginalRenderer() {
         Canvas canvas=new Canvas(Bitmap.createBitmap(260,220,Bitmap.Config.ARGB_8888));
         assertFalse(CarUi.compact(new Object(),canvas));

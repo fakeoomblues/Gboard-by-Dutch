@@ -66,11 +66,24 @@ public final class ExternalTelemetry {
     private static final Map<Object,WeakReference<ViewGroup>> carRoots=new java.util.WeakHashMap<>();
     private static final Map<Object,int[]> carViewportSizes=new java.util.WeakHashMap<>();
     private static final Map<Object,CompactSpeedView> carWidgets=new java.util.WeakHashMap<>();
+    private static final Map<Object,CarLayout> carLayouts=new java.util.WeakHashMap<>();
+    private static final class CarLayout implements android.view.ViewTreeObserver.OnPreDrawListener {
+        final WeakReference<Object> owner;
+        final WeakReference<ViewGroup> root;
+        final CarSpeedPlacement speed=new CarSpeedPlacement();
+        CarLayout(Object owner,ViewGroup root){this.owner=new WeakReference<>(owner);this.root=new WeakReference<>(root);root.getViewTreeObserver().addOnPreDrawListener(this);}
+        @Override public boolean onPreDraw(){Object key=owner.get();if(key!=null)layoutCar(key);return true;}
+        void close(){ViewGroup view=root.get();if(view!=null&&view.getViewTreeObserver().isAlive())view.getViewTreeObserver().removeOnPreDrawListener(this);speed.restore();}
+    }
+    private static void removeCarSurface(Object owner){
+        CarLayout layout=carLayouts.remove(owner);if(layout!=null)layout.close();
+        removeCarWidget(owner);carRoots.remove(owner);carViewportSizes.remove(owner);
+    }
     private static boolean carActive(){return !carSessions.isEmpty();}
     /** Called only by an actual resumed native projection session; independent of its surface. */
     public static void carSession(Context context,Object owner,boolean visible){
         if(context==null||owner==null)return;
-        Runnable change=()->{if(visible)carSessions.add(owner);else{carSessions.remove(owner);removeCarWidget(owner);carRoots.remove(owner);carViewportSizes.remove(owner);}refresh(context);};
+        Runnable change=()->{if(visible)carSessions.add(owner);else{carSessions.remove(owner);removeCarSurface(owner);}refresh(context);};
         if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
     }
     /** Native GUIDING is independent of phone camera updates and transient surface loss. */
@@ -91,15 +104,22 @@ public final class ExternalTelemetry {
         final android.graphics.Rect viewport=area==null?new android.graphics.Rect():new android.graphics.Rect(area);
         if(owner==null)return;Runnable change=()->{
             WeakReference<ViewGroup> old=carRoots.get(owner);
-            if(old==null||old.get()!=root)removeCarWidget(owner);
-            if(root==null){carRoots.remove(owner);carViewportSizes.remove(owner);}else{Shapes.hostedCarSurface(root);carRoots.put(owner,new WeakReference<>(root));carViewportSizes.put(owner,new int[]{viewport.left,viewport.top,viewport.right,viewport.bottom});}renderCar();
+            if(old==null||old.get()!=root)removeCarSurface(owner);
+            if(root!=null){
+                Shapes.hostedCarSurface(root);carRoots.put(owner,new WeakReference<>(root));
+                carViewportSizes.put(owner,new int[]{viewport.left,viewport.top,viewport.right,viewport.bottom});
+                if(!carLayouts.containsKey(owner))carLayouts.put(owner,new CarLayout(owner,root));
+            }
+            renderCar();
         };if(Looper.myLooper()==Looper.getMainLooper())change.run();else MAIN.post(change);
     }
     private static void removeCarWidget(Object owner){CompactSpeedView value=carWidgets.remove(owner);if(value!=null&&value.getParent() instanceof ViewGroup)((ViewGroup)value.getParent()).removeView(value);}
     private static void renderCar(){
         for(Object owner:new ArrayList<>(carRoots.keySet())){
             ViewGroup root=carRoots.get(owner).get();
-            if(root==null||!carSessions.contains(owner)||!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
+            if(root==null||!carSessions.contains(owner)){removeCarSurface(owner);continue;}
+            layoutCar(owner);
+            if(!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             int[] bounds=carViewportSizes.get(owner);
             if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
             TelemetryStore.View info=view();
@@ -122,16 +142,37 @@ public final class ExternalTelemetry {
             for(WarningEvent event:pills)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
             value.carGeometry(geometry);
             value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,pills);
-            int left=bounds==null?0:bounds[0],top=bounds==null?0:bounds[1];
-            int right=bounds!=null&&bounds[2]>left?bounds[2]:root.getWidth(),bottom=bounds!=null&&bounds[3]>top?bounds[3]:root.getHeight();
-            android.graphics.Rect area=carInfoArea(root,new android.graphics.Rect(left,top,right,bottom));
-            left=area.left;top=area.top;right=area.right;bottom=area.bottom;
-            int width=Math.max(0,right-left),height=Math.max(0,bottom-top);
-            int margin=Math.round(16*density);value.measure(View.MeasureSpec.makeMeasureSpec(Math.max(0,width-2*margin),View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(Math.max(0,height-2*margin),View.MeasureSpec.AT_MOST));
-            if(value.getMeasuredWidth()<=0||value.getMeasuredHeight()<=0){removeCarWidget(owner);continue;}
-            FrameLayout.LayoutParams layout=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.TOP|Gravity.START);
-            layout.leftMargin=Math.max(left+margin,right-value.getMeasuredWidth()-margin);layout.topMargin=Math.max(top+margin,bottom-value.getMeasuredHeight()-margin);value.setLayoutParams(layout);value.bringToFront();
+            layoutCar(owner);
         }
+    }
+
+    /** Layout callbacks and native speed animations must not wait for another provider packet. */
+    private static void layoutCar(Object owner){
+        CarLayout state=carLayouts.get(owner);if(state==null)return;
+        ViewGroup root=state.root.get();if(root==null||!carSessions.contains(owner))return;
+        int[] bounds=carViewportSizes.get(owner);
+        android.graphics.Rect viewport=bounds==null?new android.graphics.Rect():new android.graphics.Rect(bounds[0],bounds[1],bounds[2],bounds[3]);
+        if(!viewport.intersect(0,0,root.getWidth(),root.getHeight()))viewport.setEmpty();
+        android.graphics.Rect speed=state.speed.place(root,carSpeedBadge(root),viewport);
+        CompactSpeedView value=carWidgets.get(owner);if(value==null)return;
+        int margin=Math.round(16*root.getResources().getDisplayMetrics().density);
+        android.graphics.Rect area=carInfoArea(viewport,speed,occupiedCarView(root,"map_buttons_view_branding_watermark_container"),margin);
+        int width=Math.max(0,area.width()-2*margin),height=Math.max(0,area.height()-2*margin);
+        value.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.AT_MOST));
+        if(value.getMeasuredWidth()<=0||value.getMeasuredHeight()<=0){value.setVisibility(View.INVISIBLE);return;}
+        value.setVisibility(View.VISIBLE);
+        int left=area.right-value.getMeasuredWidth()-margin,top=area.bottom-value.getMeasuredHeight()-margin;
+        ViewGroup.LayoutParams previous=value.getLayoutParams();
+        FrameLayout.LayoutParams old=previous instanceof FrameLayout.LayoutParams?(FrameLayout.LayoutParams)previous:null;
+        if(old==null||old.leftMargin!=left||old.topMargin!=top||old.width!=value.getMeasuredWidth()||old.height!=value.getMeasuredHeight()){
+            FrameLayout.LayoutParams layout=new FrameLayout.LayoutParams(value.getMeasuredWidth(),value.getMeasuredHeight(),Gravity.TOP|Gravity.LEFT);
+            layout.leftMargin=left;layout.topMargin=top;value.setLayoutParams(layout);
+        }
+        // Pre-draw runs after this traversal's normal child layout. Updating
+        // LayoutParams alone would draw one stale frame beneath the new cover.
+        if(value.getLeft()!=left||value.getTop()!=top||value.getRight()!=left+value.getMeasuredWidth()||value.getBottom()!=top+value.getMeasuredHeight())
+            value.layout(left,top,left+value.getMeasuredWidth(),top+value.getMeasuredHeight());
+        if(root.indexOfChild(value)!=root.getChildCount()-1)value.bringToFront();
     }
 
     static android.graphics.Rect carInfoArea(ViewGroup root,android.graphics.Rect viewport){

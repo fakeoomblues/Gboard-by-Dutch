@@ -54,11 +54,17 @@ public final class CompactSpeedView extends View {
     boolean hasContent(){return data.zoneActive||!warning.isEmpty()||!carEvents.isEmpty();}
     private float dp(float value){return value*density;}
     private float sp(float value){return value*getResources().getDisplayMetrics().scaledDensity;}
+    private static float available(int spec,float desired){return MeasureSpec.getMode(spec)==MeasureSpec.UNSPECIFIED?desired:MeasureSpec.getSize(spec);}
     @Override protected void onMeasure(int widthSpec,int heightSpec) {
         if(!hasContent()){setMeasuredDimension(0,0);return;}
         if(carPills){
-            setMeasuredDimension(resolveSize(Math.round(dp(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH)),widthSpec),
-                resolveSize(Math.round(dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()))),heightSpec));return;
+            float width=dp(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH);
+            float height=dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()));
+            float scale=Math.min(1f,Math.min(available(widthSpec,width)/width,available(heightSpec,height)/height));
+            if(scale<.5f){setMeasuredDimension(0,0);return;}
+            // Constrain the complete stack uniformly. Independent resolveSize calls
+            // leave empty columns and shrink the actual drawing a second time.
+            setMeasuredDimension(Math.round(width*scale),Math.round(height*scale));return;
         }
         float fontScale=Math.max(1,getResources().getDisplayMetrics().scaledDensity/density);
         float desiredWidth=(warning.isEmpty()?dp(200):dp(280))*Math.min(1.5f,fontScale);
