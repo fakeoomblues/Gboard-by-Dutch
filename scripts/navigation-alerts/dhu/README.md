@@ -126,6 +126,31 @@ Refresh native control discovery against the current owned tree at command
 dispatch. Preserve both failed receipts; they do not prove Search or driving
 acceptance. The producer/receiver observers remained attached throughout.
 
+Run183 then read the actual Vela `op3.k` result: a non-loading native
+RoutePreviewNavigationTemplate with three rows, selection delegate and Go/click
+delegate. The actual AA preview subsequently rendered all three routes and Go.
+Normal head-unit Go entered genuine stationary A4 guidance with a foreground
+NavigationService; native guidance TTS returned0 and its matching utterance
+started/completed. Normal emulator-phone End returned to landing. The dashboard
+reflowed Vela's pane/actions/map beside its stock media panel. No app code changed
+between181 and183; retain181's blank panel and do not claim its intermittence is
+fixed.183 is not moving-GPS, FM-warning/zone or recorded-speech-content proof.
+
+Reuse the saved guest/metric/provider setup and normal AA launcher. At the wide
+profile, SDK PNGs are1280x720 with the480px viewport between120px margins; keep
+them unchanged. In the prepared console recipe, Vela's recent Meester Visserplein
+row uses `tap 270 139`, and its selected route's Go uses `tap 125 202`. Wait for the
+actual returned non-loading route template and visible rows/Go before capture;
+wait for the genuine guidance transition after Go instead of accepting an early
+preview frame. The prior repeated row/Go misses are not navigation failures by
+themselves. Native phone End was at126,2228 in183's matching inspected layout;
+re-read the layout before reusing a phone coordinate.
+
+The late Maps input in183 did not reach its bound-model gate. Preserve180's
+actual native click-delegate proof; do not replace it with the alternate wide
+Surface hit (`tap 1074 174` became994,164). The next missing fact is the actual
+host ActionBinder/session/input boundary before another native-action fix.
+
 The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.
