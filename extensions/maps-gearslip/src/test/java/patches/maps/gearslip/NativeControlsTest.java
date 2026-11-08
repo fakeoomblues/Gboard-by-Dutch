@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +29,7 @@ public final class NativeControlsTest {
     private static final int NAV_CARD=0x7f990006,STATUS_CARD=0x7f990007,END=0x7f990008;
     private static final int ZOOM_IN=0x7f990009,ZOOM_OUT=0x7f99000a,ZOOM_WIDGET=0x7f99000b;
     private static final int MENU=0x7f99000c,PREVIEW=0x7f99000d;
+    private static final int SEARCH_LABEL=0x7f99000e;
     private FrameLayout root, group;
     private ImageView button;
     private NativeControls controls;
@@ -36,6 +39,13 @@ public final class NativeControlsTest {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         Resources original = activity.getResources();
         Resources resources = new Resources(activity.getAssets(), original.getDisplayMetrics(), original.getConfiguration()) {
+            @Override public int getIdentifier(String name, String type, String pkg) {
+                if ("SEARCH".equals(name) && "string".equals(type)) return SEARCH_LABEL;
+                return super.getIdentifier(name, type, pkg);
+            }
+            @Override public CharSequence getText(int id) {
+                return id == SEARCH_LABEL ? "Zoeken" : super.getText(id);
+            }
             @Override public String getResourceEntryName(int id) {
                 if (id == GROUP) return "map_buttons_view_container";
                 if (id == SETTINGS) return "map_buttons_view_settings_button";
@@ -73,6 +83,45 @@ public final class NativeControlsTest {
         assertEquals(1, controls.snapshot().size()); return controls.snapshot().get(0);
     }
     @After public void close() { if (controls != null) controls.close(); }
+    public static final class CardView extends FrameLayout {
+        public CardView(Context context) { super(context); }
+    }
+    private FrameLayout compactSearch(CardView card, String label, int[] count) {
+        FrameLayout owner=new FrameLayout(context);
+        owner.setOnClickListener(v->{assertTrue("The native handler keeps its visible owner",v.isShown());count[0]++;});
+        RelativeLayout content=new RelativeLayout(context);
+        ImageView image=new ImageView(context);image.setImageDrawable(new ColorDrawable(Color.BLUE));
+        FrameLayout icon=new FrameLayout(context);icon.addView(image,new FrameLayout.LayoutParams(48,48));
+        TextView text=new TextView(context);text.setText(label);
+        content.addView(icon,new RelativeLayout.LayoutParams(64,64));content.addView(text,new RelativeLayout.LayoutParams(180,48));
+        owner.addView(content,new FrameLayout.LayoutParams(300,64));card.addView(owner,new FrameLayout.LayoutParams(300,64));
+        return owner;
+    }
+    @Test public void idlessCompactSearchExportsTheNativeLocalizedHandlerAndHidesItsCard() {
+        int[] count={0};CardView card=new CardView(context);FrameLayout owner=compactSearch(card,"Zoeken",count);
+        ImageView account=new ImageView(context);account.setOnClickListener(v->count[0]+=100);owner.addView(account,new FrameLayout.LayoutParams(48,48));
+        root.addView(card,new FrameLayout.LayoutParams(300,64));measure();controls=new NativeControls(root,()->updates++);
+        NativeControls.Control search=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.SEARCH).findFirst().get();
+        assertSame(owner,search.source);assertEquals(View.INVISIBLE,card.getVisibility());controls.invoke(search);
+        assertEquals(1,count[0]);assertEquals(View.INVISIBLE,card.getVisibility());
+        controls.close();assertEquals(View.VISIBLE,card.getVisibility());
+    }
+    @Test public void compactSearchUsesTheRenderedCopyAndRetiresDetachedCallbacks() {
+        int[] current={0},unused={0};CardView card=new CardView(context),offscreen=new CardView(context);
+        FrameLayout owner=compactSearch(card,"Zoeken",current);compactSearch(offscreen,"Zoeken",unused);
+        root.addView(card,new FrameLayout.LayoutParams(300,64));root.addView(offscreen,new FrameLayout.LayoutParams(0,0));measure();
+        controls=new NativeControls(root,()->updates++);NativeControls.Control search=controls.snapshot().stream().filter(c->c.role==NativeControls.Role.SEARCH).findFirst().get();
+        assertSame(owner,search.source);assertEquals(View.INVISIBLE,offscreen.getVisibility());controls.invoke(search);
+        assertEquals(1,current[0]);assertEquals(0,unused[0]);root.removeView(card);measure();
+        assertThrows(SecurityException.class,()->controls.invoke(search));
+    }
+    @Test public void unrelatedIdlessCardsAndLooseSearchLabelsDoNotBecomeSearchActions() {
+        CardView card=new CardView(context);compactSearch(card,"Other native action",new int[]{0});root.addView(card,new FrameLayout.LayoutParams(300,64));
+        FrameLayout plain=new FrameLayout(context);CardView detached=new CardView(context);FrameLayout loose=compactSearch(detached,"Zoeken",new int[]{0});
+        detached.removeView(loose);plain.addView(loose);root.addView(plain,new FrameLayout.LayoutParams(300,64));measure();
+        controls=new NativeControls(root,()->updates++);assertFalse(controls.snapshot().stream().anyMatch(c->c.role==NativeControls.Role.SEARCH));
+        assertEquals(View.VISIBLE,card.getVisibility());assertEquals(View.VISIBLE,plain.getVisibility());
+    }
     @Test public void exportsNativeActionsWithoutReparentingOrResizingTheNativeMap() {
         NativeControls.Control control = bind();
         assertEquals(NativeControls.Role.SETTINGS, control.role); assertEquals("Settings", control.title);

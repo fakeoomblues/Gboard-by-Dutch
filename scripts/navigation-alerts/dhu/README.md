@@ -96,6 +96,22 @@ before the bounded drive; only GPS may be simulated. Do not inject warnings or
 substitute the head unit's separate vehicle-speed sensor for a genuine provider
 GPS speed. See the [official DHU sensor guide](https://developer.android.com/training/cars/testing/dhu#sensors).
 
+Runs169–171 installed the complete current1665 cohort (Maps26.44, Vela0.5.2621,
+FM15 and De-Waze5.27.0.1) and verified all four installed APK hashes after a
+cold boot. Normal guest/onboarding, precise location, system voice, FM/Waze
+background location and Vela metric selection are saved. The authoritative
+input paths and per-app remaining setup are in the baseline's
+`inputs/acceptance-inputs.json`. Arm FM's spawn observer before launching either
+receiver, including before selecting FM in settings: selection itself can start
+its managed provider. Run171's unobserved initial FM startup is not acceptance.
+
+Run172 at800x480 found that the visible native Search pill sends its tap to
+`ProjectionRenderer.click(200,140)` and does not open Search. Read-only173
+identified a compact ID-less native Search owner inside CardView; the named-ID
+adapter did not export it. Preserve this failed evidence and verify the connected
+Search handoff correction before a driving session. No1280x480 reflow, rotary,
+Start/Details or current-cohort genuine-feed acceptance is implied by setup.
+
 The remaining sections retain the prior setup and UI recipe as historical
 recovery information. Preserve surviving inputs and exported evidence; do not
 assume missing private manifests or scripts can be reused.

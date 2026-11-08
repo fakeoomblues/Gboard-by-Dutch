@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -107,8 +109,8 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     private void collect(View view) {
         String name = name(view);
-        if (name != null && nativeVisibility(view) != View.GONE) for (Role role : Role.values()) {
-            boolean matches = false;
+        if (nativeVisibility(view) != View.GONE) for (Role role : Role.values()) {
+            boolean matches = role == Role.SEARCH && searchCard(view);
             for (String candidate : role.names) if (candidate.equals(name)) { matches = true; break; }
             if (!matches) continue;
             View source = clickable(view);
@@ -117,6 +119,36 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         // Native destination panels are layered above the map's older controls.
         // Prefer the frontmost matching owner when both remain in the tree.
         if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) collect(((ViewGroup) view).getChildAt(i));
+    }
+    private static boolean card(View view) {
+        return view != null && "CardView".equals(view.getClass().getSimpleName());
+    }
+    private boolean searchCard(View view) {
+        // The compact native car layout also has an ID-less Search owner.
+        // Bind its original listener and native localized label, never every
+        // generic nbl touch wrapper or arbitrary text reading "Search".
+        if (!card(parent(view)) || !view.hasOnClickListeners() || !(view instanceof ViewGroup)) return false;
+        ViewGroup owner = (ViewGroup) view;
+        for (int j = 0; j < owner.getChildCount(); j++) {
+            if (!(owner.getChildAt(j) instanceof RelativeLayout)) continue;
+            ViewGroup content = (ViewGroup) owner.getChildAt(j);
+            boolean label = false, image = false;
+            for (int i = 0; i < content.getChildCount(); i++) {
+                View child = content.getChildAt(i);
+                if (child instanceof TextView) label |= searchLabel((TextView) child);
+                else image |= drawable(child) != null;
+            }
+            if (label && image) return true;
+        }
+        return false;
+    }
+    private boolean searchLabel(TextView view) {
+        for (String resource : new String[]{"SEARCH", "CAR_SEARCH_HINT"}) {
+            int id = view.getResources().getIdentifier(resource, "string", "com.google.android.apps.maps");
+            if (id == 0) id = view.getResources().getIdentifier(resource, "string", root.getContext().getPackageName());
+            if (id != 0 && android.text.TextUtils.equals(view.getText(), view.getResources().getText(id))) return true;
+        }
+        return false;
     }
     private boolean selectSources(){
         boolean updated=false;
@@ -189,7 +221,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             for (View node = source; node != null && node != root; node = parent(node)) {
                 if ("map_buttons_view_container".equals(name(node))) { cover = node; break; }
             }
-            if (role == Role.SEARCH && parent(cover) != null && parent(cover).getClass().getName().endsWith(".CardView")) cover = parent(cover);
+            if (role == Role.SEARCH && card(parent(cover))) cover = parent(cover);
             View editor = find(cover, "destination_input_keyboard_search_edit_text");
             if (editor != null) {
                 // Re-hiding an active editor's ancestor would clear native focus
