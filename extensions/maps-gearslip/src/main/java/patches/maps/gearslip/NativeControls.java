@@ -116,7 +116,7 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         // Prefer the frontmost matching owner when both remain in the tree.
         if (view instanceof ViewGroup) for (int i = ((ViewGroup) view).getChildCount() - 1; i >= 0; i--) collect(((ViewGroup) view).getChildAt(i), found);
     }
-    private View clickable(View view) {
+    View clickable(View view) {
         if (nativeVisibility(view) == View.GONE) return null;
         // A named container can own its ripple/touch action while its children
         // expose other actions (profile, clear or collapse). Preserve that owner.

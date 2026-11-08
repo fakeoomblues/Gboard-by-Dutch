@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32)
 public final class NativeCarContentTest {
-    private static final int HOME=0x7f990020,PRIMARY=0x7f990021;
+    private static final int HOME=0x7f990020,PRIMARY=0x7f990021,PREVIEW=0x7f990022,STATUS=0x7f990023,END=0x7f990024;
     private final Object first=new Object(),second=new Object();
     private Context context;
     private FrameLayout root;
@@ -55,7 +55,7 @@ public final class NativeCarContentTest {
     @Before public void setup(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();Resources original=activity.getResources();
         Resources resources=new Resources(activity.getAssets(),original.getDisplayMetrics(),original.getConfiguration()){
-            @Override public String getResourceEntryName(int id){if(id==HOME)return "main_suggested_destinations_card";if(id==PRIMARY)return "place_details_navigation_footer_action_button";return super.getResourceEntryName(id);}
+            @Override public String getResourceEntryName(int id){if(id==HOME)return "main_suggested_destinations_card";if(id==PRIMARY)return "place_details_navigation_footer_action_button";if(id==PREVIEW)return "place_details_card_scrollable";if(id==STATUS)return "status_card_view";if(id==END)return "status_panel_close_button";return super.getResourceEntryName(id);}
         };
         context=new ContextWrapper(activity){@Override public Resources getResources(){return resources;}};
         root=new FrameLayout(context);FrameLayout card=new FrameLayout(context);card.setId(HOME);root.addView(card,new FrameLayout.LayoutParams(400,300));activity.setContentView(root);
@@ -104,5 +104,46 @@ public final class NativeCarContentTest {
         assertEquals("Amsterdam",page.title);assertEquals(1,page.rows.size());assertEquals(2,page.actions.size());
         assertEquals("Start",page.actions.get(0).title);assertEquals("Route options",page.actions.get(1).title);
         page.actions.get(0).run();page.actions.get(1).run();assertEquals(1,source.starts);assertEquals(1,options[0]);
+    }
+    @Test public void theActualOwnedPreviewKeepsOffscreenContentAndTheOriginalButtonHandler()throws Exception{
+        NativeCarScopes.window(first,context);
+        FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);
+        for(int i=0;i<12;i++){TextView row=new TextView(context);row.setText("Route detail "+i);FrameLayout.LayoutParams params=new FrameLayout.LayoutParams(300,40);params.topMargin=i*40;panel.addView(row,params);}
+        int[] starts={0};TextView start=new TextView(context);start.setId(PRIMARY);start.setText("Start");start.setOnClickListener(v->starts[0]++);panel.addView(start);
+        root.addView(panel,new FrameLayout.LayoutParams(400,150));
+        NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page);assertEquals(NativeCarContent.Kind.PREVIEW,page.kind);
+        assertEquals("The complete native scroll content is retained",12,page.rows.size());assertEquals("Route detail 11",page.rows.get(11).title);assertEquals(1,page.actions.size());assertEquals("Start",page.primaryAction.title);
+        controls.hostedPanel(panel);assertEquals(View.INVISIBLE,panel.getVisibility());
+        content.invoke(page.primaryAction,root,controls,false,null);assertEquals(1,starts[0]);assertEquals(View.INVISIBLE,panel.getVisibility());
+        start.setEnabled(false);NativeCarContent.Page disabled=content.read(root,controls,false,null);assertFalse(disabled.primaryAction.enabled);
+        assertThrows(SecurityException.class,()->content.invoke(page.primaryAction,root,controls,false,null));assertEquals(1,starts[0]);
+    }
+    @Test public void aRetiredOrUnownedWindowCannotSupplyTheActualPreview()throws Exception{
+        FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);root.addView(panel);
+        assertNull("A process/current-session fact alone proves no window",content.read(root,controls,false,null));
+        NativeCarScopes.window(first,context);assertNotNull(content.read(root,controls,false,null));
+        LocalCarUiSession.attach(second,intent->{},(text,duration)->{});replacement=new NativeCarContent(second,context,()->{});
+        assertNull("The replaced reader cannot emit its old window",content.read(root,controls,false,null));
+        assertNull("The replacement cannot borrow an old window",replacement.read(root,controls,false,null));
+    }
+    @Test public void secondaryOptionsAreNotMislabelledAsThePrimaryNavigationAction()throws Exception{
+        NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);
+        View options=new View(context);options.setContentDescription("Route options");options.setOnClickListener(v->{});panel.addView(options);root.addView(panel);
+        NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page);assertNull(page.primaryAction);assertEquals(1,page.actions.size());assertEquals("Route options",page.actions.get(0).title);
+    }
+    @Test public void aNativePrimaryContainerKeepsItsRealChildClickHandler()throws Exception{
+        NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);
+        FrameLayout primary=new FrameLayout(context);primary.setId(PRIMARY);TextView button=new TextView(context);button.setText("Start");int[] starts={0};button.setOnClickListener(v->starts[0]++);primary.addView(button);panel.addView(primary);root.addView(panel);
+        NativeCarContent.Page page=content.read(root,controls,false,null);assertNotNull(page.primaryAction);assertEquals(1,page.actions.size());
+        content.invoke(page.primaryAction,root,controls,false,null);assertEquals(1,starts[0]);
+    }
+    @Test public void anOwnedNativeFooterRetainsExitAndOptionsWhenItsModelGetterIsBypassed()throws Exception{
+        NativeCarScopes.window(first,context);FrameLayout panel=new FrameLayout(context);panel.setId(STATUS);
+        int[] stopped={0},options={0};TextView exit=new TextView(context);exit.setId(END);exit.setText("Stop navigation");exit.setOnClickListener(v->stopped[0]++);panel.addView(exit);
+        View option=new View(context);option.setContentDescription("Route options");option.setOnClickListener(v->options[0]++);panel.addView(option);root.addView(panel);
+        List<NativeCarContent.Action> actions=content.footer(root,controls);assertEquals(2,actions.size());assertEquals("Stop navigation",actions.get(0).title);assertEquals("Route options",actions.get(1).title);
+        controls.hostedNavigation(true);assertEquals(View.INVISIBLE,panel.getVisibility());
+        content.invoke(actions.get(1),root,controls,true,null);content.invoke(actions.get(0),root,controls,true,null);assertEquals(1,options[0]);assertEquals(1,stopped[0]);assertEquals(View.INVISIBLE,panel.getVisibility());
+        LocalCarUiSession.attach(second,intent->{},(text,duration)->{});replacement=new NativeCarContent(second,context,()->{});assertTrue(replacement.footer(root,controls).isEmpty());
     }
 }

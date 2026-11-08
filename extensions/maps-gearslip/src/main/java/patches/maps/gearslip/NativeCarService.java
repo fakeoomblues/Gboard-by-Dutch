@@ -516,10 +516,10 @@ public final class NativeCarService extends Service {
             List<String> summary=new ArrayList<>();for(int i=1;i<page.rows.size();i++)summary.add(page.rows.get(i).title);
             rows=page.rows.isEmpty()?java.util.Collections.emptyList():java.util.Collections.singletonList(CarProtocol.contentRow(page.title,
                     summary.isEmpty()?java.util.Collections.emptyList():java.util.Collections.singletonList(String.join(" · ",summary)),null,true));
-            if(!page.rows.isEmpty()&&!page.actions.isEmpty()){
-                NativeCarContent.Action start=page.actions.get(0);paneActions.add(CarProtocol.titledAction(start.title,new ContentActionBinder(session,start),start.enabled));
+            if(!page.rows.isEmpty()&&page.primaryAction!=null){
+                NativeCarContent.Action start=page.primaryAction;paneActions.add(CarProtocol.titledAction(start.title,new ContentActionBinder(session,start),start.enabled));
             }
-            if(!page.rows.isEmpty()&&(page.rows.size()>2||page.actions.size()>1))paneActions.add(CarProtocol.titledAction(session.renderer.contentDetailsTitle(),new ContentActionBinder(session,null),true));
+            if(!page.rows.isEmpty()&&(page.rows.size()>2||page.actions.size()>(page.primaryAction==null?0:1)))paneActions.add(CarProtocol.titledAction(session.renderer.contentDetailsTitle(),new ContentActionBinder(session,null),true));
         }else if(page.kind==NativeCarContent.Kind.DETAILS){
             for(NativeCarContent.Action action:page.actions)rows.add(CarProtocol.contentRow(action.title,java.util.Collections.emptyList(),new ContentActionBinder(session,action),action.enabled));
         }
