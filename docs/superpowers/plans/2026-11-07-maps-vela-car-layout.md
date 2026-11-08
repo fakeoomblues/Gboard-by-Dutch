@@ -1,5 +1,6 @@
 # Maps Vela-style car layout implementation plan
 
+> Current scope (8 November): the historical DriveDeck widget-extension proposal below is superseded by `docs/contracts/car-navigation-widgets-v1.md`. Original AA is the required host. See `docs/handover/2026-11-08-navigation-aa-ga.md` for verified UI state, known defects and owner-deferred post-GA coverage.
 > **For agentic workers:** Execute this connected batch inline using the executing-plans skill. Repository batching and frozen-tooling rules take precedence over per-step test or runtime cycles.
 
 **Goal:** Make patched Maps navigation cards participate in the Android Auto host layout, using Vela's proven public-template ownership and the owner's approved speed/warning presentation.
