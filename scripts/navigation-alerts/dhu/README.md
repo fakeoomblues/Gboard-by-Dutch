@@ -331,8 +331,23 @@ therefore selects Maps' existing local editor branch for the recorded current
 CAL window. That native scene-construction branch is retained unchanged; no
 native mode result is forged. Unowned contexts keep the original host path,
 and scoped retired windows return without navigating a replacement. The
-correction still requires a rebuilt original-input APK and focused
-Search/editor/results/Back acceptance before being called fixed.
+correction was rebuilt from the original APK and exercised in run193.
+
+Run193 verified the exact installed829277c APK and actual800x480 Search,
+touch-keyboard input `amsterdam`, genuine results, route preview, Route
+details/Back, rotary Start and normal host End. Its unchanged SDK frames and
+provenance are in the private `Maps-Search-fixed-193` review folder. Preserve
+these passing gates; native guidance speech/PCM and driving are not accepted
+by this stationary session. A planned result-scroll input landed after the
+asynchronous preview transition, so scrolling is not claimed.
+
+The actual guidance frame also exposed native white map controls underneath
+the host's black strip near the speed badge. Their persistence was not timed.
+The run stopped after retaining that finding and normal End;1280x480
+Search/reconnect, lower Details scrolling and the new APK's next-coldboot byte
+check remain open. Diagnose the actual native widget owners offline before
+another connected implementation batch. No physical phone was touched, and
+all owned runtime/build outputs were stopped and cleaned.
 
 ## Historical single Vela design frame
 
