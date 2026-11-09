@@ -1,4 +1,29 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/045f7b05c38f350dbe7f072072eeb08786592ed7/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.58.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [045f7b05c38f](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/045f7b05c38f350dbe7f072072eeb08786592ed7). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.58.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.57.1...v1.58.0) (2026-11-09)
+
+### 🐛 Bug Fixes
+
+* **Angry Birds 2:** keep the Sentry DSN meta-data present but empty ([c043e6b](https://gitlab.com/johninnld/nl-morphe-patches/commit/c043e6bc8db67ff211844ed51a12aa000fc160f4))
+* **Angry Birds 2:** keep the withdrawn Angry Birds 2 declaration resolvable ([045f7b0](https://gitlab.com/johninnld/nl-morphe-patches/commit/045f7b05c38f350dbe7f072072eeb08786592ed7))
+
+### ✨ New Features
+
+* **Angry Birds 2:** add parked-app, hide-ads and disable-tracking patches for three Android Auto games ([d557144](https://gitlab.com/johninnld/nl-morphe-patches/commit/d5571440be9e4367d08f94a6e35e9a1d9a20b767))
+* **Angry Birds 2:** drop Angry Birds 2, whose Play content pack refuses re-signed installs ([8fb765e](https://gitlab.com/johninnld/nl-morphe-patches/commit/8fb765ebb20950414d43e085c7a295cd00a5a11d))
+* **Beach Buggy Racing:** add parked-app, hide-ads and disable-tracking patches for three Android Auto games ([d557144](https://gitlab.com/johninnld/nl-morphe-patches/commit/d5571440be9e4367d08f94a6e35e9a1d9a20b767))
+* **Candy Crush Soda Saga:** add parked-app, hide-ads and disable-tracking patches for three Android Auto games ([d557144](https://gitlab.com/johninnld/nl-morphe-patches/commit/d5571440be9e4367d08f94a6e35e9a1d9a20b767))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/541317da5f6e8dd3d13d636ed032f0d1049f2676/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.57.1.**

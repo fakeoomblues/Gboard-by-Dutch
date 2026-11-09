@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.57.1**
+**Patch bundle: 1.58.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -92,9 +92,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Parked app for Android Auto | On | 2026.11.02 |
-| Hide ads | On | 2026.11.02 |
 | Disable tracking | On | 2026.11.02 |
+| Hide ads | On | 2026.11.02 |
+| Parked app for Android Auto | On | 2026.11.02 |
 
 ## bol
 
@@ -159,9 +159,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Parked app for Android Auto | On | 1.330.1 |
-| Hide ads | On | 1.330.1 |
 | Disable tracking | On | 1.330.1 |
+| Hide ads | On | 1.330.1 |
+| Parked app for Android Auto | On | 1.330.1 |
 
 ## De Morgen
 

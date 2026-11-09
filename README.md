@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.57.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.57.1)** · 65 apps · 329 patches
+**Patch bundle [v1.58.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.58.0)** · 67 apps · 335 patches
 
 ### Weather
 
@@ -108,6 +108,8 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [Apple Music](docs/site/en/apps/apple-music.md) | See guide | 7.0.0 | APKM | 1 |
+| [Beach Buggy Racing](docs/site/en/apps/beach-buggy-racing.md) | Ads · Tracking | 2026.11.02 | APKM | 3 |
+| [Candy Crush Soda Saga](docs/site/en/apps/candy-crush-soda-saga.md) | Ads · Tracking | 1.330.1 | APKM | 3 |
 | [Deezer](docs/site/en/apps/deezer.md) | Tracking | 9.0.26.3 | APKM | 6 |
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |

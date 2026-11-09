@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.57.1**
+**Patchbundel: 1.58.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -92,9 +92,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Parked app for Android Auto | Aan | 2026.11.02 |
-| Hide ads | Aan | 2026.11.02 |
 | Disable tracking | Aan | 2026.11.02 |
+| Hide ads | Aan | 2026.11.02 |
+| Parked app for Android Auto | Aan | 2026.11.02 |
 
 ## bol
 
@@ -159,9 +159,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Parked app for Android Auto | Aan | 1.330.1 |
-| Hide ads | Aan | 1.330.1 |
 | Disable tracking | Aan | 1.330.1 |
+| Hide ads | Aan | 1.330.1 |
+| Parked app for Android Auto | Aan | 1.330.1 |
 
 ## De Morgen
 

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patch bundle: 1.57.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.58.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -168,6 +168,26 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="entertainment" data-search="beach buggy racing com.vectorunit.purple.googleplay 2026.11.02 disable tracking hide ads parked app for android auto" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Beach Buggy Racing](apps/beach-buggy-racing.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.11.02</span></p>
+<p class="dap-app-card__package">com.vectorunit.purple.googleplay</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">2026.11.02</span></li>
+<li>Hide ads <span class="dap-app-card__target">2026.11.02</span></li>
+<li>Parked app for Android Auto <span class="dap-app-card__target">2026.11.02</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/beach-buggy-racing.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="other" data-search="bol com.bol.shop 2026.23.1 disable play license check disable tracking hide consent screens hide promotional content hide sponsored content" markdown>
 <p class="dap-app-card__category">Other</p>
 
@@ -252,6 +272,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/buienradar.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="candy crush soda saga com.king.candycrushsodasaga 1.330.1 disable tracking hide ads parked app for android auto" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Candy Crush Soda Saga](apps/candy-crush-soda-saga.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.330.1</span></p>
+<p class="dap-app-card__package">com.king.candycrushsodasaga</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">1.330.1</span></li>
+<li>Hide ads <span class="dap-app-card__target">1.330.1</span></li>
+<li>Parked app for Android Auto <span class="dap-app-card__target">1.330.1</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/candy-crush-soda-saga.md){ .dap-app-card__link }
 
 </article>
 
