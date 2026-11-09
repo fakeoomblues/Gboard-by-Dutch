@@ -20,18 +20,32 @@ internal val angryBirdsAdsGate = bytecodePatch {
     execute {
         val owner = mutableClassDefBy(ADS_SDK)
 
-        val load = owner.methods.singleOrNull {
-            it.name == "load" && it.returnType == "V" &&
-                it.parameterTypes.toList() == listOf("Ljava/lang/String;")
-        } ?: error("Angry Birds 2 ad load entry changed")
-        check(load.implementation?.instructions?.firstOrNull()?.opcode != Opcode.RETURN_VOID) {
-            "Angry Birds 2 ad load already patched"
+        // Fire the game's own no-fill error instead of returning silently: the C# loader waits
+        // for onAdReady or onAdError, and a silent skip leaves it spinning on the start screen.
+        val errorCall = { label: String, code: String ->
+            """
+            const/4 v0, $code
+            const-string v1, "$label"
+            invoke-virtual { p0, v0, v1 }, $ADS_SDK->onAdError(ILjava/lang/String;)V
+            return-void
+            """
         }
-        load.addInstructions(0, "return-void")
 
-        // The synthetic runnable dispatched by show() is the only caller of AdsSdkBase.show().
-        // Patching it keeps the UI-thread dispatch: the listener callback runs exactly where
-        // the game expects its JNI callbacks.
+        // The synthetic load runnable is the only caller of AdsSdkBase.load.
+        val load = Fingerprint(
+            definingClass = ADS_SDK,
+            returnType = "V",
+            filters = listOf(methodCall(definingClass = ADS_SDK_BASE, name = "load")),
+        ).let { fingerprint ->
+            fingerprint.method.also {
+                check(it.definingClass == ADS_SDK) { "Angry Birds 2 ad load target changed" }
+            }
+        }
+        check(load.name != "load") { "Angry Birds 2 ad load target is the public method" }
+        load.addInstructions(0, errorCall("NoFill", "-0x3"))
+
+        // The synthetic show runnable is the only caller of AdsSdkBase.show; patching it keeps
+        // the UI-thread dispatch so the listener callback runs where the game expects it.
         val show = Fingerprint(
             definingClass = ADS_SDK,
             returnType = "V",
@@ -42,15 +56,8 @@ internal val angryBirdsAdsGate = bytecodePatch {
             }
         }
         check(show.name != "show") { "Angry Birds 2 ad show target is the public method" }
-        show.addInstructions(
-            0,
-            """
-            const/4 v0, 0x1
-            const-string v1, "ads disabled"
-            invoke-virtual { p0, v0, v1 }, $ADS_SDK->onAdError(ILjava/lang/String;)V
-            return-void
-            """,
-        )
+        // -9 needs const/16; const/4 only holds -8..7.
+        show.addInstructions(0, errorCall("ShowFailed", "-0x9").replaceFirst("const/4", "const/16"))
     }
 }
 

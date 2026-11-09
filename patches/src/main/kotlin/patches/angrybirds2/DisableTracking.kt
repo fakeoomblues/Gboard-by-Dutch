@@ -26,40 +26,35 @@ internal val angryBirdsTrackingGate = bytecodePatch {
     dependsOn(originalInput, trackingResources)
 
     execute {
-        // Install referrer (Play, Facebook, Instagram providers) feeds the attribution table.
-        val referrer = mutableClassDefBy(ATTRIBUTION).methods.singleOrNull {
-            it.name == "getInstallReferrer" && it.returnType == "V" && it.parameterTypes.size == 1
-        } ?: error("Angry Birds 2 install referrer entry changed")
-        check(referrer.implementation?.instructions?.firstOrNull()?.opcode != Opcode.RETURN_VOID) {
-            "Angry Birds 2 install referrer already patched"
-        }
-        referrer.addInstructions(0, "return-void")
-
-        // Advertising ID, app set ID and user agent handed to the C# analytics layer: complete
-        // immediately with empty values, matching the "unavailable" shape the game already handles.
-        val deviceInfo = mutableClassDefBy(DEVICE_INFO)
-        val listener = "Lcom/rovio/beacon/DeviceInfo${'$'}AsyncIdsListener;"
-        // getAsyncIdentifiers(Z, listener) keeps the listener in p2; getAdvertisingId(listener) in p1.
-        for ((name, parameters, listenerRegister) in listOf(
-            Triple("getAsyncIdentifiers", 2, "p2"),
-            Triple("getAdvertisingId", 1, "p1"),
-        )) {
-            val method = deviceInfo.methods.singleOrNull {
-                it.name == name && it.returnType == "V" && it.parameterTypes.size == parameters
-            } ?: error("Angry Birds 2 device identifiers entry changed: $name")
-            check(method.implementation?.instructions?.firstOrNull()?.opcode != Opcode.RETURN_VOID) {
-                "Angry Birds 2 device identifiers already patched: $name"
+        // Neutralize tracking at the data level with the original threading intact: the
+        // originals always complete their listeners on their own threads, and a silent skip or
+        // a synchronous callback would hang the C# bootstrap (observed on device).
+        fun forceReturn(owner: String, name: String, kind: String, value: String, marker: Opcode) {
+            val method = mutableClassDefBy(owner).methods.singleOrNull {
+                it.name == name && it.parameterTypes.isEmpty() && it.returnType == kind
+            } ?: error("Angry Birds 2 tracking entry changed: $name")
+            val body = method.implementation?.instructions?.toList().orEmpty()
+            check(body.isNotEmpty() && body.first().opcode != marker) {
+                "Angry Birds 2 tracking already patched: $name"
             }
-            method.addInstructions(
-                0,
-                """
-                const-string v0, ""
-                const/4 v1, 0x0
-                invoke-interface { $listenerRegister, v0, v1, v0, v0 }, $listener->onComplete(Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;)V
-                return-void
-                """,
-            )
+            method.addInstructions(0, "$value\n${if (kind == "V") "return-void" else if (kind == "Z") "return v0" else "return-object v0"}")
         }
+
+        // Advertising identifiers handed to the C# analytics layer.
+        forceReturn(DEVICE_INFO, "getAdvertisingIdentifier", "Ljava/lang/String;",
+            "const-string v0, \"\"", Opcode.RETURN_OBJECT)
+        forceReturn(DEVICE_INFO, "getAdvertisingTrackingEnabled", "Z",
+            "const/4 v0, 0x0", Opcode.RETURN)
+        forceReturn(DEVICE_INFO, "getAppSetId", "Ljava/lang/String;",
+            "const-string v0, \"\"", Opcode.RETURN_OBJECT)
+
+        // Install-referrer attribution: report it as already queried so the C# bootstrap skips
+        // the Play/Facebook/Instagram referrer queries entirely; no listener is ever involved.
+        forceReturn(ATTRIBUTION, "hasQueriedReferrer", "Z",
+            "const/4 v0, 0x1", Opcode.RETURN)
+        // Meta (Facebook/Instagram) referrer JSON: the DeviceInfo wrapper null-checks this.
+        forceReturn(ATTRIBUTION, "getMetaInstallReferrer", "Lorg/json/JSONObject;",
+            "const/4 v0, 0x0", Opcode.RETURN_OBJECT)
     }
 }
 
