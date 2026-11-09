@@ -17,7 +17,6 @@ APP_PAGES = {
     'com.alibaba.aliexpresshd': ('aliexpress', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'com.king.candycrushsodasaga': ('candy-crush-soda-saga', 'entertainment'),
-    'com.rovio.baba': ('angry-birds-2', 'entertainment'),
     'com.vectorunit.purple.googleplay': ('beach-buggy-racing', 'entertainment'),
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),
     'app.wuplay.android': ('wuplay-mobile', 'entertainment'),

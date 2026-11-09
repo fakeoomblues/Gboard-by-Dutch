@@ -64,18 +64,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Skip splash promotions | Aan | 8.180.0, 8.180.1 |
 | Spoof signature | Aan | 8.180.0, 8.180.1 |
 
-## Angry Birds 2
-
-[Wat veranderen de patches?](../apps/angry-birds-2.md)
-
-`com.rovio.baba`
-
-| Patch | Standaard | App-versies |
-| --- | --- | --- |
-| Parked app for Android Auto | Aan | 26.7.2 |
-| Hide ads | Aan | 26.7.2 |
-| Disable tracking | Aan | 26.7.2 |
-
 ## Apple Music
 
 [Wat veranderen de patches?](../apps/apple-music.md)

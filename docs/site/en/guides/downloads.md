@@ -10,7 +10,6 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
 | [AliExpress](../apps/aliexpress.md) | 8.180.1 / 80005998 | [APK](#local-original-inputs) |
-| [Angry Birds 2](../apps/angry-birds-2.md) | 26.7.2 / 50303381 | [APKM](#local-original-inputs) |
 | [Beach Buggy Racing](../apps/beach-buggy-racing.md) | 2026.11.02 / 220 | [APKM](#local-original-inputs) |
 | [bol](../apps/bol.md) | 2026.23.1 / 430517 | [APKS](#local-original-inputs) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |

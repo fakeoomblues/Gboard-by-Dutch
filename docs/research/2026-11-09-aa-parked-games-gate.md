@@ -119,6 +119,16 @@ not `onAdError(I,Ljava/lang/String;)V` — and the Candy SDK-init patch calls th
   strings present in the patched dex files. Reports and patched APKs:
   `build/validation/parked-games/`.
 
+## Outcome (2026-11-09)
+
+Angry Birds 2 was dropped from the bundle after device testing: the game boots and no longer
+crashes, but stalls on its loading screen because its ~200MB of game content is a **Play-delivered
+asset pack** (Play Core `syncPacks` fails with `PACK_UNAVAILABLE (-2)`). Play only serves that
+pack to installations whose signing certificate matches the Play listing, so a re-signed (patched)
+install can never fetch it. This is a Play Store content-delivery restriction, not a patch
+defect — no patch-level or Play Integrity workaround applies. Candy Crush Soda Saga and Beach
+Buggy Racing ship all content inside the APKM and are unaffected.
+
 ## Not yet verified
 
 No patched APK has been installed on a phone with a car host attached, so the games being

@@ -4,7 +4,6 @@ Choose an app to see its patches, defaults and supported original file.
 
 | App | Version | Build |
 | --- | --- | --- |
-| [Angry Birds 2](../angry-birds-2.md) | 26.7.2 | 50303381 |
 | [Beach Buggy Racing](../beach-buggy-racing.md) | 2026.11.02 | 220 |
 | [Candy Crush Soda Saga](../candy-crush-soda-saga.md) | 1.330.1 | 13300010 |
 | [Dumpert](../dumpert.md) | 5.8.0 | 22001778 |

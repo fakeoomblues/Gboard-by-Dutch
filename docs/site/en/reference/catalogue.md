@@ -64,18 +64,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Skip splash promotions | On | 8.180.0, 8.180.1 |
 | Spoof signature | On | 8.180.0, 8.180.1 |
 
-## Angry Birds 2
-
-[What do the patches change?](../apps/angry-birds-2.md)
-
-`com.rovio.baba`
-
-| Patch | Default | App versions |
-| --- | --- | --- |
-| Parked app for Android Auto | On | 26.7.2 |
-| Hide ads | On | 26.7.2 |
-| Disable tracking | On | 26.7.2 |
-
 ## Apple Music
 
 [What do the patches change?](../apps/apple-music.md)
