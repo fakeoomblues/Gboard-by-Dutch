@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.57.0**
+**Patch bundle: 1.57.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -895,7 +895,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Auto-hide navigation bar on car displays | On | 21.30.216 |
-| Automotive layout on car displays | Off | 21.30.216 |
+| Automotive layout on car displays | On | 21.30.216 |
 | Parked app for Android Auto | On | Any |
 
 ## YouTube Music

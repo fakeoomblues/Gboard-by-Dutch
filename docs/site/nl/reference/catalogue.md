@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.57.0**
+**Patchbundel: 1.57.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -895,7 +895,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Auto-hide navigation bar on car displays | Aan | 21.30.216 |
-| Automotive layout on car displays | Uit | 21.30.216 |
+| Automotive layout on car displays | Aan | 21.30.216 |
 | Parked app for Android Auto | Aan | Alle versies |
 
 ## YouTube Music

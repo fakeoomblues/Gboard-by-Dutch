@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patchbundel: 1.57.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patchbundel: 1.57.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1429,7 +1429,7 @@ hide:
 <summary>3 patches</summary>
 <ul>
 <li>Auto-hide navigation bar on car displays <span class="dap-app-card__target">21.30.216</span></li>
-<li>Automotive layout on car displays <span class="dap-app-card__target">21.30.216 · standaard uit</span></li>
+<li>Automotive layout on car displays <span class="dap-app-card__target">21.30.216</span></li>
 <li>Parked app for Android Auto <span class="dap-app-card__target">Alle versies</span></li>
 </ul>
 </details>

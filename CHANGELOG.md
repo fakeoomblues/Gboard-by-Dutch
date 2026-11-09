@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/541317da5f6e8dd3d13d636ed032f0d1049f2676/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.57.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [541317da5f6e](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/541317da5f6e8dd3d13d636ed032f0d1049f2676). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.57.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.57.0...v1.57.1) (2026-11-09)
+
+### 🐛 Bug Fixes
+
+* **YouTube:** work with Morphe's Change form factor and support mirroring car hosts ([541317d](https://gitlab.com/johninnld/nl-morphe-patches/commit/541317da5f6e8dd3d13d636ed032f0d1049f2676))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/efab8aa637a65d607a85b26d89b4e83d46b96c22/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.57.0.**
