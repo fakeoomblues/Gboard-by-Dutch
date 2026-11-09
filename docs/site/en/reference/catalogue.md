@@ -64,6 +64,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Skip splash promotions | On | 8.180.0, 8.180.1 |
 | Spoof signature | On | 8.180.0, 8.180.1 |
 
+## Angry Birds 2
+
+[What do the patches change?](../apps/angry-birds-2.md)
+
+`com.rovio.baba`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Parked app for Android Auto | On | 26.7.2 |
+| Hide ads | On | 26.7.2 |
+| Disable tracking | On | 26.7.2 |
+
 ## Apple Music
 
 [What do the patches change?](../apps/apple-music.md)
@@ -83,6 +95,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Unlock Premium | On | 1.2 |
+
+## Beach Buggy Racing
+
+[What do the patches change?](../apps/beach-buggy-racing.md)
+
+`com.vectorunit.purple.googleplay`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Parked app for Android Auto | On | 2026.11.02 |
+| Hide ads | On | 2026.11.02 |
+| Disable tracking | On | 2026.11.02 |
 
 ## bol
 
@@ -138,6 +162,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Premium banner | On | 7.4.8 |
 | Hide ads | On | 7.4.8 |
 | Skip consent screens | On | 7.4.8 |
+
+## Candy Crush Soda Saga
+
+[What do the patches change?](../apps/candy-crush-soda-saga.md)
+
+`com.king.candycrushsodasaga`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Parked app for Android Auto | On | 1.330.1 |
+| Hide ads | On | 1.330.1 |
+| Disable tracking | On | 1.330.1 |
 
 ## De Morgen
 

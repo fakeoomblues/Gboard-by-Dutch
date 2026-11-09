@@ -64,6 +64,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Skip splash promotions | Aan | 8.180.0, 8.180.1 |
 | Spoof signature | Aan | 8.180.0, 8.180.1 |
 
+## Angry Birds 2
+
+[Wat veranderen de patches?](../apps/angry-birds-2.md)
+
+`com.rovio.baba`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Parked app for Android Auto | Aan | 26.7.2 |
+| Hide ads | Aan | 26.7.2 |
+| Disable tracking | Aan | 26.7.2 |
+
 ## Apple Music
 
 [Wat veranderen de patches?](../apps/apple-music.md)
@@ -83,6 +95,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Unlock Premium | Aan | 1.2 |
+
+## Beach Buggy Racing
+
+[Wat veranderen de patches?](../apps/beach-buggy-racing.md)
+
+`com.vectorunit.purple.googleplay`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Parked app for Android Auto | Aan | 2026.11.02 |
+| Hide ads | Aan | 2026.11.02 |
+| Disable tracking | Aan | 2026.11.02 |
 
 ## bol
 
@@ -138,6 +162,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide Premium banner | Aan | 7.4.8 |
 | Hide ads | Aan | 7.4.8 |
 | Skip consent screens | Aan | 7.4.8 |
+
+## Candy Crush Soda Saga
+
+[Wat veranderen de patches?](../apps/candy-crush-soda-saga.md)
+
+`com.king.candycrushsodasaga`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Parked app for Android Auto | Aan | 1.330.1 |
+| Hide ads | Aan | 1.330.1 |
+| Disable tracking | Aan | 1.330.1 |
 
 ## De Morgen
 

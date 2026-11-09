@@ -4,6 +4,9 @@ Kies een app voor de patches, standaardkeuzes en het ondersteunde originele best
 
 | App | Versie | Build |
 | --- | --- | --- |
+| [Angry Birds 2](../angry-birds-2.md) | 26.7.2 | 50303381 |
+| [Beach Buggy Racing](../beach-buggy-racing.md) | 2026.11.02 | 220 |
+| [Candy Crush Soda Saga](../candy-crush-soda-saga.md) | 1.330.1 | 13300010 |
 | [Dumpert](../dumpert.md) | 5.8.0 | 22001778 |
 | [KIJK Android](../kijk.md) | 9.8.0 | 2026101500 |
 | [KIJK Android TV](../kijk-android-tv.md) | 7.2.7 | 10003 |

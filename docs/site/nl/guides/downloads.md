@@ -10,10 +10,13 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [9292](../apps/9292.md) | 2.48.1 / 32189 | [APKM](https://www.apkmirror.com/apk/9292/9292-pt-travel-route-planner/9292-travel-planner-e-ticket-2-48-1-release/) |
 | [AD](../apps/ad.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/mqhxrgsf0wdu) |
 | [AliExpress](../apps/aliexpress.md) | 8.180.1 / 80005998 | [APK](#local-original-inputs) |
+| [Angry Birds 2](../apps/angry-birds-2.md) | 26.7.2 / 50303381 | [APKM](#local-original-inputs) |
+| [Beach Buggy Racing](../apps/beach-buggy-racing.md) | 2026.11.02 / 220 | [APKM](#local-original-inputs) |
 | [bol](../apps/bol.md) | 2026.23.1 / 430517 | [APKS](#local-original-inputs) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |
 | [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/9fl1lzedekqp) |
 | [Buienradar](../apps/buienradar.md) | 7.4.8 / 7897 | [APKM](https://buzzheavier.com/v4m79608e677) |
+| [Candy Crush Soda Saga](../apps/candy-crush-soda-saga.md) | 1.330.1 / 13300010 | [APKM](#local-original-inputs) |
 | [DS Nieuws](../apps/dsnieuws.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/xekgzljrg2lg) |
 | [De Morgen](../apps/demorgen.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/ci8cm8ebuwf2) |
 | [De Tijd](../apps/detijd.md) | 5.6.1 / 5060100 | [APKS](https://buzzheavier.com/57j3z167r1n2) |
