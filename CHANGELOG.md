@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/efab8aa637a65d607a85b26d89b4e83d46b96c22/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.57.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [efab8aa637a6](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/efab8aa637a65d607a85b26d89b4e83d46b96c22). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.57.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.56.1...v1.57.0) (2026-11-09)
+
+### ✨ New Features
+
+* **YouTube:** detect car displays for parked YouTube on Android Auto and DriveDeck ([efab8aa](https://gitlab.com/johninnld/nl-morphe-patches/commit/efab8aa637a65d607a85b26d89b4e83d46b96c22))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cb0e71531750fc91cbe0f7d2092ca78052ee7b2c/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.56.1.**

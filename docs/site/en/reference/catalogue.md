@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.56.1**
+**Patch bundle: 1.57.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -885,6 +885,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Add Gearslip car interface | Off | 0.1.9-alpha |
+
+## YouTube
+
+[What do the patches change?](../apps/youtube.md)
+
+`com.google.android.youtube`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Auto-hide navigation bar on car displays | On | 21.30.216 |
+| Automotive layout on car displays | Off | 21.30.216 |
+| Parked app for Android Auto | On | Any |
 
 ## YouTube Music
 

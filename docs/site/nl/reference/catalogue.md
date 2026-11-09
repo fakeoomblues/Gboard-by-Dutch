@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.56.1**
+**Patchbundel: 1.57.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -885,6 +885,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Add Gearslip car interface | Uit | 0.1.9-alpha |
+
+## YouTube
+
+[Wat veranderen de patches?](../apps/youtube.md)
+
+`com.google.android.youtube`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Auto-hide navigation bar on car displays | Aan | 21.30.216 |
+| Automotive layout on car displays | Uit | 21.30.216 |
+| Parked app for Android Auto | Aan | Alle versies |
 
 ## YouTube Music
 

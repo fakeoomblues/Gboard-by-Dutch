@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">64 apps</span> · Patch bundle: 1.56.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">65 apps</span> · Patch bundle: 1.57.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1415,6 +1415,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/wuplay-mobile.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="youtube com.google.android.youtube 21.30.216 any auto-hide navigation bar on car displays automotive layout on car displays parked app for android auto" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [YouTube](apps/youtube.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">21.30.216, Any</span></p>
+<p class="dap-app-card__package">com.google.android.youtube</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Auto-hide navigation bar on car displays <span class="dap-app-card__target">21.30.216</span></li>
+<li>Automotive layout on car displays <span class="dap-app-card__target">21.30.216 · default off</span></li>
+<li>Parked app for Android Auto <span class="dap-app-card__target">Any</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/youtube.md){ .dap-app-card__link }
 
 </article>
 

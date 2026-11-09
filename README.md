@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.56.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.56.1)** · 64 apps · 326 patches
+**Patch bundle [v1.57.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.57.0)** · 65 apps · 329 patches
 
 ### Weather
 
@@ -123,6 +123,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Videoland Android TV](docs/site/en/apps/videoland-android-tv.md) | Ads · Tracking | 1.117.0 | APKS | 3 |
 | [Wuplay Android TV](docs/site/en/apps/wuplay.md) | See guide | 0.9.4-beta | APK | 1 |
 | [WuPlay Mobile](docs/site/en/apps/wuplay-mobile.md) | See guide | 0.1.9-alpha | APK | 1 |
+| [YouTube](docs/site/en/apps/youtube.md) | See guide | 21.30.216, Any | APK | 3 |
 | [YouTube Music](docs/site/en/apps/youtube-music.md) | See guide | Any | APK | 1 |
 
 ### Other apps
