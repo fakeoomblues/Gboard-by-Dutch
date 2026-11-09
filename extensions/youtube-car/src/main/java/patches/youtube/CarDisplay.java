@@ -5,6 +5,7 @@ import android.companion.virtual.VirtualDevice;
 import android.companion.virtual.VirtualDeviceManager;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * Finds whether YouTube is shown on a car display: a parked app on Android Auto, DriveDeck or another car host.
@@ -28,6 +30,11 @@ import java.util.Locale;
  * Android Auto reports its projection through the public car connection provider, DriveDeck names its
  * guest display {@code drivedeck-guest-<package>} and its virtual device {@code DriveDeck}, and a host
  * can give the display the car UI mode. The "any external display" detection needs none of these.
+ * <p>
+ * Car hosts that cannot place another app on the car display yet, such as Gearslip, graphene-auto and
+ * MyCar, mirror the phone screen instead, so YouTube stays on the phone display. Android 15 and later
+ * tell an app when its window is captured; while a car host is installed, a captured window counts
+ * as shown in the car. This only adds hosts: Android Auto never depends on this list.
  */
 public final class CarDisplay {
     static final String TAG = "NlYouTubeCar";
@@ -39,10 +46,26 @@ public final class CarDisplay {
 
     /** Parts of the names that car hosts give their displays and virtual devices. */
     private static final String[] CAR_HOST_NAMES = {
-            "drivedeck", "gearslip", "gearhead", "android auto", "androidauto", "automotive",
+            "drivedeck", "gearslip", "graphene", "mycar", "gearhead", "android auto", "androidauto", "automotive",
     };
 
+    /**
+     * Car hosts that show the phone screen in the car by capturing it. Also declared in the manifest queries.
+     */
+    static final String[] MIRRORING_CAR_HOSTS = {
+            "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev",
+            "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev",
+            "io.github.psychobarge.grapheneauto",
+            "io.github.sirionero.mycar",
+    };
+
+    /** If the activity is on a display of a car host. */
+    private static volatile boolean onCarScreen;
+    /** If the activity is captured while a car host is installed, which shows it in the car. */
+    private static volatile boolean mirroredToCar;
     private static volatile boolean onCarDisplay;
+    private static Consumer<Integer> recordingCallback;
+    private static WeakReference<WindowManager> recordingWindowManagerRef = new WeakReference<>(null);
     private static WeakReference<Activity> activityRef = new WeakReference<>(null);
     private static int activityDisplayId = Display.INVALID_DISPLAY;
 
@@ -75,8 +98,12 @@ public final class CarDisplay {
         try {
             activityRef = new WeakReference<>(activity);
             activityDisplayId = getDisplayId(activity);
-            onCarDisplay = isCarDisplay(activity);
-            Log.i(TAG, "Main activity on display " + activityDisplayId + ", car display: " + onCarDisplay);
+            onCarScreen = isCarDisplay(activity);
+            mirroredToCar = false;
+            watchScreenCapture(activity);
+            onCarDisplay = onCarScreen || mirroredToCar;
+            Log.i(TAG, "Main activity on display " + activityDisplayId + ", car display: " + onCarScreen
+                    + ", mirrored to a car: " + mirroredToCar);
         } catch (RuntimeException ex) {
             Log.e(TAG, "onMainActivityCreate failure", ex);
         }
@@ -117,10 +144,15 @@ public final class CarDisplay {
         if (displayId == activityDisplayId) return;
         activityDisplayId = displayId;
 
-        final boolean wasOnCarDisplay = onCarDisplay;
-        onCarDisplay = isCarDisplay(activity);
-        Log.i(TAG, "Main activity moved to display " + displayId + ", car display: " + onCarDisplay);
+        onCarScreen = isCarDisplay(activity);
+        Log.i(TAG, "Main activity moved to display " + displayId + ", car display: " + onCarScreen);
+        update(activity);
+    }
 
+    /** The layout comes from the requests the activity made, so with the layout patch the activity is recreated. */
+    private static void update(Activity activity) {
+        final boolean wasOnCarDisplay = onCarDisplay;
+        onCarDisplay = onCarScreen || mirroredToCar;
         if (wasOnCarDisplay != onCarDisplay && isLayoutPatchIncluded()) {
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (!activity.isFinishing() && !activity.isDestroyed()) {
@@ -128,6 +160,53 @@ public final class CarDisplay {
                 }
             });
         }
+    }
+
+    /**
+     * Android 15 and later report whether the windows of the app are captured, such as by a car host
+     * that mirrors the phone screen. The current state is reported right away, before the first requests.
+     */
+    private static void watchScreenCapture(Activity activity) {
+        if (Build.VERSION.SDK_INT < 35) return;
+        try {
+            WindowManager previous = recordingWindowManagerRef.get();
+            if (previous != null && recordingCallback != null) {
+                previous.removeScreenRecordingCallback(recordingCallback);
+            }
+            if (!isCarHostInstalled(activity)) {
+                recordingCallback = null;
+                return;
+            }
+            WindowManager windowManager = activity.getWindowManager();
+            WeakReference<Activity> owner = new WeakReference<>(activity);
+            Consumer<Integer> callback = state -> {
+                Activity current = owner.get();
+                if (current == null || current != activityRef.get()) return;
+                mirroredToCar = state == WindowManager.SCREEN_RECORDING_STATE_VISIBLE;
+                Log.i(TAG, "Mirrored to a car: " + mirroredToCar);
+                update(current);
+            };
+            final int state = windowManager.addScreenRecordingCallback(activity.getMainExecutor(), callback);
+            recordingCallback = callback;
+            recordingWindowManagerRef = new WeakReference<>(windowManager);
+            mirroredToCar = state == WindowManager.SCREEN_RECORDING_STATE_VISIBLE;
+        } catch (RuntimeException ex) {
+            // Without the permission, or not available on this device.
+            Log.i(TAG, "Screen capture is not reported: " + ex);
+        }
+    }
+
+    private static boolean isCarHostInstalled(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        for (String host : MIRRORING_CAR_HOSTS) {
+            try {
+                packageManager.getPackageInfo(host, 0);
+                return true;
+            } catch (PackageManager.NameNotFoundException ignored) {
+                // Not installed.
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("deprecation")

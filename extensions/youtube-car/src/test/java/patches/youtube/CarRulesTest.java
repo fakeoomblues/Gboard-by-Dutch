@@ -14,10 +14,20 @@ public class CarRulesTest {
         assertTrue(CarDisplay.isCarHostName("drivedeck-guest-app.morphe.android.youtube"));
         assertTrue(CarDisplay.isCarHostName("DriveDeck"));
         assertTrue(CarDisplay.isCarHostName("Android Auto"));
+        assertTrue(CarDisplay.isCarHostName("gearslip-projection"));
+        assertTrue(CarDisplay.isCarHostName("mycar-projection"));
         assertFalse(CarDisplay.isCarHostName("Overlay #1"));
         assertFalse(CarDisplay.isCarHostName("HDMI Screen"));
         assertFalse(CarDisplay.isCarHostName(""));
         assertFalse(CarDisplay.isCarHostName(null));
+    }
+
+    @Test public void mirroringCarHostsIncludeEveryRequestedClient() {
+        java.util.List<String> hosts = Arrays.asList(CarDisplay.MIRRORING_CAR_HOSTS);
+        assertTrue(hosts.contains("app.johninnl.drivedeck"));
+        assertTrue(hosts.contains("app.seb3thehacker.gearslip"));
+        assertTrue(hosts.contains("io.github.psychobarge.grapheneauto"));
+        assertTrue(hosts.contains("io.github.sirionero.mycar"));
     }
 
     @Test public void phoneRequestsKeepTheirFormFactor() {

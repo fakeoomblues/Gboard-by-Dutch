@@ -57,15 +57,10 @@ private val testedVersion = Compatibility(
     apkFileType = ApkFileType.APK, targets = listOf(AppTarget(version = "21.30.216", versionCode = 1561187872)),
 )
 
-private val experimentalVersion = Compatibility(
-    name = "YouTube", packageName = "com.google.android.youtube",
-    apkFileType = ApkFileType.APK,
-    targets = listOf(AppTarget(version = "21.30.216", versionCode = 1561187872, isExperimental = true)),
-)
-
 private val detectionValues = mapOf("Car displays" to "car", "Any external display" to "any")
 private const val DETECTION_DESCRIPTION =
-    "Car displays: Android Auto, DriveDeck and hosts that use the car UI mode. " +
+    "Car displays: Android Auto, DriveDeck and hosts that use the car UI mode, and on Android 15 and later " +
+        "phone mirroring by DriveDeck, Gearslip, graphene-auto or MyCar. " +
         "Any external display: also other car hosts, but also a TV or a monitor."
 
 /** "any" wins when both car display patches are selected with different detection. */
@@ -79,9 +74,48 @@ private fun BytecodePatchContext.returnConstant(method: String, smali: String) {
     owner.methods.single { it.name == method }.addInstructions(0, smali)
 }
 
+/** Car hosts that mirror the phone screen; the extension checks if one is installed. */
+private val mirroringCarHosts = listOf(
+    "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev",
+    "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev",
+    "io.github.psychobarge.grapheneauto",
+    "io.github.sirionero.mycar",
+)
+
+/** Lets the app see whether its window is captured (Android 15+) and whether a mirroring car host is installed. */
+private val carDisplayManifestPatch = resourcePatch {
+    execute {
+        document("AndroidManifest.xml").use { manifest ->
+            val root = manifest.documentElement
+            fun Element.children(tag: String) = (0 until childNodes.length)
+                .map { childNodes.item(it) }.filterIsInstance<Element>().filter { it.tagName == tag }
+
+            if (root.children("uses-permission").none {
+                    it.getAttributeNS(ANDROID, "name") == "android.permission.DETECT_SCREEN_RECORDING"
+                }
+            ) {
+                root.appendChild(manifest.createElement("uses-permission").apply {
+                    setAttributeNS(ANDROID, "android:name", "android.permission.DETECT_SCREEN_RECORDING")
+                })
+            }
+
+            val application = root.children("application").first()
+            val queries = root.children("queries").firstOrNull()
+                ?: manifest.createElement("queries").also { root.insertBefore(it, application) }
+            val declared = queries.children("package").map { it.getAttributeNS(ANDROID, "name") }.toSet()
+            mirroringCarHosts.filter { it !in declared }.forEach { host ->
+                queries.appendChild(manifest.createElement("package").apply {
+                    setAttributeNS(ANDROID, "android:name", host)
+                })
+            }
+        }
+    }
+}
+
 /** Finds the car display when the main activity is created or moved, for the car display patches. */
 private val carDisplayDetectionPatch = bytecodePatch {
     extendWith("extensions/youtube-car.mpe")
+    dependsOn(carDisplayManifestPatch)
 
     execute {
         check(packageMetadata.packageName in packages) { "Unsupported YouTube package" }
@@ -198,12 +232,10 @@ val youtubeCarNavigationBarAutoHide = bytecodePatch(
 @Suppress("unused")
 val youtubeCarDisplayLayout = bytecodePatch(
     name = "Automotive layout on car displays",
-    description = "Experimental. Uses the automotive layout on a car display, such as a parked app on Android Auto or DriveDeck, " +
-        "and the original layout on the phone. Disable Morphe's Change form factor patch: both set the layout of the requests.",
-    // Morphe's Change form factor is on by default, and patching stops while both are selected.
-    default = false,
+    description = "Uses the automotive layout on a car display, such as a parked app on Android Auto or DriveDeck, " +
+        "and the original layout on the phone. Works with Morphe's Change form factor: on a car display this patch decides.",
 ) {
-    compatibleWith(experimentalVersion)
+    compatibleWith(testedVersion)
     dependsOn(carDisplayDetectionPatch)
 
     val detection by stringOption(
@@ -221,31 +253,36 @@ val youtubeCarDisplayLayout = bytecodePatch(
         hookClientContext()
     }
 
-    // After every other patch executed, so Morphe's Change form factor, if selected, finds the original code.
+    // After every other patch executed, so Morphe's Change form factor, if selected, finds the original code
+    // and this patch can follow it.
     finalize {
-        // Morphe's Change form factor replaces the same form factor; the order of the two is not defined.
-        val morpheFormFactor = innerTubeClientConfigFingerprint(formFactorEnumConstructorFingerprint.classDef.type)
-            .method.instructions.any {
-                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass == MORPHE_FORM_FACTOR
-            }
-        if (morpheFormFactor) {
-            throw PatchException(
-                "Disable Morphe's \"Change form factor\" patch to use \"Automotive layout on car displays\"",
-            )
-        }
-
-        // The form factor of every request.
-        innerTubeClientConfigFingerprint(formFactorEnumConstructorFingerprint.classDef.type).let {
+        // The form factor of every request. Morphe's Change form factor, if selected, sets it right after the
+        // field is read; this patch then runs after it, so on a car display the automotive layout is used.
+        val morpheFormFactorIncluded = innerTubeClientConfigFingerprint(formFactorEnumConstructorFingerprint.classDef.type).let {
+            val method = it.method
             val index = it.instructionMatches.last().index
-            val register = it.method.getInstruction<TwoRegisterInstruction>(index).registerA
-            it.method.addInstructions(
-                index + 1,
+            val register = method.getInstruction<TwoRegisterInstruction>(index).registerA
+            val instructions = method.instructions.toList()
+            val morpheCall = (index + 1 until minOf(index + 8, instructions.size)).firstOrNull { i ->
+                ((instructions[i] as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass == MORPHE_FORM_FACTOR
+            }
+            val insertIndex = if (morpheCall != null && instructions.getOrNull(morpheCall + 1)?.opcode == Opcode.MOVE_RESULT) {
+                morpheCall + 2
+            } else {
+                index + 1
+            }
+            method.addInstructions(
+                insertIndex,
                 """
                     invoke-static/range { v$register .. v$register }, $CAR_LAYOUT->getUniversalFormFactor(I)I
                     move-result v$register
                 """,
             )
+            morpheCall != null
         }
+
+        // Morphe's Change form factor has its own guard for this, which changes the code this one matches.
+        if (morpheFormFactorIncluded) return@finalize
 
         // The tablet form factor can make the app parse an item section a page does not have.
         repeatedItemSectionRendererFingerprint.let {
