@@ -93,3 +93,16 @@ internal fun disableComponents(manifest: Document, vararg names: String) {
     }
     check(remaining.isEmpty()) { "Manifest components not found: $remaining" }
 }
+
+/** Sets an application-level meta-data string value, creating the element when absent. */
+internal fun setMetaData(manifest: Document, name: String, value: String) {
+    val application = manifest.getElementsByTagName("application").item(0) as Element
+    val nodes = manifest.getElementsByTagName("meta-data")
+    val existing = (0 until nodes.length).map { nodes.item(it) as Element }
+        .filter { it.getAttributeNS(ANDROID, "name") == name }
+    check(existing.size <= 1) { "Duplicate meta-data flag: $name" }
+    (existing.singleOrNull() ?: manifest.createElement("meta-data").also {
+        it.setAttributeNS(ANDROID, "android:name", name)
+        application.appendChild(it)
+    }).setAttributeNS(ANDROID, "android:value", value)
+}

@@ -5,7 +5,7 @@ import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import com.android.tools.smali.dexlib2.Opcode
 import patches.shared.disableMeasurementAndAttribution
-import patches.shared.removeMetaData
+import patches.shared.setMetaData
 
 internal const val DEVICE_INFO = "Lcom/rovio/beacon/DeviceInfo;"
 internal const val ATTRIBUTION = "Lcom/rovio/beacon/Attribution;"
@@ -15,8 +15,9 @@ private val trackingResources = resourcePatch {
     execute {
         document("AndroidManifest.xml").use { manifest ->
             disableMeasurementAndAttribution(manifest)
-            // No DSN means the Sentry Android auto-init stays disabled.
-            removeMetaData(manifest, "io.sentry.dsn")
+            // An empty DSN disables the Sentry SDK cleanly; removing the meta-data makes the
+            // auto-init provider crash with "DSN is required".
+            setMetaData(manifest, "io.sentry.dsn", "")
         }
     }
 }
