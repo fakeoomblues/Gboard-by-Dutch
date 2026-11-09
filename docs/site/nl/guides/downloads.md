@@ -61,6 +61,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
+| [YouTube](../apps/youtube.md) | 21.30.216 / 1561187872 | [APK](#local-original-inputs) |
 | [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
 | [Apple Music](../apps/apple-music.md) | 7.0.0 / 1614 | [APKM](#local-original-inputs) |
 | [TIDAL](../apps/tidal.md) | 2.216.0 / 10020 | [APKM](#local-original-inputs) |

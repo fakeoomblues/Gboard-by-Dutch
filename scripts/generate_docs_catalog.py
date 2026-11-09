@@ -29,6 +29,8 @@ APP_PAGES = {
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
     'app.morphe.android.apps.youtube.music': ('youtube-music', 'entertainment'),
+    'com.google.android.youtube': ('youtube', 'entertainment'),
+    'app.morphe.android.youtube': ('youtube', 'entertainment'),
     'app.myspoti.stable': ('myspoti', 'entertainment'),
     'com.soundcloud.android': ('soundcloud', 'entertainment'),
     'com.google.android.inputmethod.latin': ('gboard', 'other'),
@@ -87,8 +89,8 @@ def _app_groups(data):
     groups = {}
     for patch in (data or {}).get('patches', []):
         for package in patch.get('compatiblePackages') or []:
-            # YT Music Morphe is the patched installation, not a second original app.
-            if package['packageName'] == 'app.morphe.android.apps.youtube.music':
+            # YT Music Morphe and YouTube Morphe are patched installations, not second original apps.
+            if package['packageName'] in {'app.morphe.android.apps.youtube.music', 'app.morphe.android.youtube'}:
                 continue
             key = (package['packageName'], package.get('formFactor'))
             groups.setdefault(key, {'package': package, 'patches': []})['patches'].append((patch, package))

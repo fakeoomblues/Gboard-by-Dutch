@@ -171,6 +171,7 @@ nav:
       - Entertainment:
           - apps/entertainment/index.md
           - apps/podimo.md
+          - apps/youtube.md
           - apps/youtube-music.md
           - apps/myspoti.md
           - apps/soundcloud.md
