@@ -26,8 +26,8 @@ Kies één bron en één ontvangende kaartapp. Beide bronnen installeren kan ook
 | --- | --- | --- |
 | [Waze](../apps/waze.md) | 5.26.90.901, volledige APKM | **Broadcast navigation data** |
 | [Flitsmeister](../apps/flitsmeister.md) | 14.17 / 1287 of 15.0 / 1289, volledige APKS/APKM | **Broadcast navigation data**; houd **Fix PairIP startup** aan |
-| [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710, volledige APK | **Waze alerts**; kies ook **Native navigation for Gearslip and Android Auto** voor de native auto-interface |
-| [Vela Maps](../apps/vela.md) | 0.5.2621, volledige APK | **External speed controls** |
+| [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710, volledige APK | **Receive alerts from a third-party application**; kies ook **Native navigation for any Android Auto host** voor de native auto-interface |
+| [Vela Maps](../apps/vela.md) | 0.5.2621, volledige APK | **Receive alerts from a third-party application** |
 
 Pas deze patches uit Dutch App Patches toe in Morphe Manager. Kies voor Maps alleen patches uit deze bron; de aangepaste bearinmind-opties zitten er al in. Installeer de resultaten en rond de eerste instellingen af op de telefoon. Gebruik voor een ontvangende navigatie-app in Android Auto de [KingInstaller-handleiding](android-auto.md).
 

@@ -390,8 +390,11 @@ internal fun bindVelaLocationProvider(constructor: MutableMethod) {
 
 @Suppress("unused")
 val externalSpeedControlsPatch = bytecodePatch(
-    name = "External speed controls",
-    description = "Use De-Waze or Flitsmeister speed, limits, road warnings and partial average-zone progress in Vela and Android Auto, with native fallback, silent provider startup and automatic engine recovery.",
+    name = "Receive alerts from a third-party application",
+    description = "Receives road warnings, current speed, speed limits and average-zone progress from a third-party " +
+        "application through an extendable provider interface, in Vela and on Android Auto, with native fallback, silent " +
+        "provider startup and automatic engine recovery. Today it supports the patched Waze (De-Waze) and Flitsmeister " +
+        "from Dutch App Patches (gitlab.com/johninnld/nl-morphe-patches); further providers can be added.",
     default = true,
 ) {
     compatibleWith(vela)

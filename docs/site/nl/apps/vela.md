@@ -14,7 +14,7 @@ Gebruik gepatchte Waze of Flitsmeister als lokale bron voor actuele snelheid, li
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **External speed controls** | Aan | Voegt De-Waze en Flitsmeister toe als bronnen voor snelheid en wegwaarschuwingen in Vela en Android Auto, met compacte weergave van snelheid, limiet, gedeeltelijk gemiddelde en voorwaarschuwingen. |
+| **Receive alerts from a third-party application** | Aan | Ontvangt snelheid, limieten, wegwaarschuwingen en trajectcontroles van een externe app in Vela en op Android Auto, met compacte weergave van snelheid, limiet, gedeeltelijk gemiddelde en voorwaarschuwingen. Nu ondersteunt dit de gepatchte De-Waze en Flitsmeister uit deze patches; de bronkoppeling is gebouwd om meer apps toe te voegen. |
 
 ## Advertentie- en trackingdiensten
 

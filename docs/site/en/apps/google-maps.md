@@ -8,7 +8,7 @@ Select the complete original APK for this exact version in Morphe Manager. Andro
 
 ## Native Maps in Gearslip and Android Auto
 
-Our **Native navigation for Gearslip and Android Auto** patch keeps Maps' own map and navigation engine. Android Auto or DriveDeck arranges the directions, ETA, destination lists and route-preview cards around the available space and dock. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. Search uses the host's keyboard; selections and Start still invoke Maps' original actions.
+Our **Native navigation for any Android Auto host** patch keeps Maps' own map and navigation engine and works with any Android Auto compatible host, such as Google's Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. The host arranges the directions, ETA, destination lists and route-preview cards around the available space and dock. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. Search uses the host's keyboard; selections and Start still invoke Maps' original actions.
 
 On the idle map the car list starts with **Search**, followed by places Maps has already offered. Maps' Settings and guidance-audio panel opens as a car list with its own switches, so a host that keeps the left side for its own cards no longer covers it.
 
@@ -30,7 +30,7 @@ Earlier native-renderer builds were checked for search, route start, guidance an
 
 ## Waze and Flitsmeister data inside Maps
 
-Our extension to **Waze alerts** lets you choose patched Waze or Flitsmeister as a local navigation-data source. Alongside road-alert pins, it can show current speed, the road limit and an observed average through an average-speed zone, with progress and remaining distance. Available reports can also produce advance warnings.
+**Receive alerts from a third-party application** lets you choose a third-party app as a local navigation-data source. Today that is the patched Waze (De-Waze) or Flitsmeister from these patches; the provider interface is built so more apps can be added. Alongside road-alert pins, it can show current speed, the road limit and an observed average through an average-speed zone, with progress and remaining distance. Available reports can also produce advance warnings.
 
 This uses our **Broadcast navigation data** patch in the provider app. Installing ordinary Waze or Flitsmeister is not enough. The original Waze **Share Waze Alerts with external applications** mode remains available as a separate alert-sharing choice.
 
@@ -40,7 +40,7 @@ On Android Auto, the speed/limit pair stays separate from the compact event pill
 
 ## Where these patches come from
 
-The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.44.06.1006895251, extended **Waze alerts** with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for Gearslip and Android Auto**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
+The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.44.06.1006895251, extended their **Waze alerts** (now **Receive alerts from a third-party application**) with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for any Android Auto host**. The inherited display, offline-map, privacy and other controls keep their upstream credit.
 
 Select Maps patches from **Dutch App Patches only** for a patching attempt. Our bundle already contains the adapted upstream controls. Selecting overlapping Maps patches from bearinmind patches as well can run incompatible versions of the same shared hooks.
 
@@ -50,14 +50,14 @@ Select Maps patches from **Dutch App Patches only** for a patching attempt. Our 
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Native navigation for Gearslip and Android Auto** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The adapter owns its car UI resources; see the acceptance limits above. |
+| **Native navigation for any Android Auto host** | On | Adds a navigation entry that runs this patched app's original Android Auto map UI, including under its separate package name. The adapter owns its car UI resources; see the acceptance limits above. |
 | **Use the system voice for navigation** | Off | Reads navigation directions with the phone's selected text-to-speech engine instead of Google TTS, including DriveDeck when it is selected. |
 
 ### Extended by this project
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Waze alerts** | On | Adds Waze and Flitsmeister as local sources for road-alert pins, approach chimes, speed, limits and observed average-speed zones. Starts off. |
+| **Receive alerts from a third-party application** | On | Receives road-alert pins, approach chimes, speed, limits and observed average-speed zones from a third-party app. Today: patched De-Waze and Flitsmeister; extendable to more providers. Starts off. |
 | **Change app name** | On | Sets the launcher and app-switcher name (default: Ungoogled Maps) and offers six supplied icon styles on light or dark backgrounds. |
 
 ### Adapted from bearinmind patches
@@ -113,7 +113,7 @@ Keep **Change package name** selected to install beside stock Maps; the default 
 
 In **Change app name**, use **App icon** to choose Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin, or Folded map, each on a light or dark background. **Automatic** follows the **Legacy icon** patch; **Original Google Maps** keeps Google’s original launcher icon. An explicit choice takes precedence over Legacy icon. These choices apply to the regular and round launcher icons. Explicit choices leave the stock splash screen in place; in-app artwork still follows your other selected patches, such as Blue pin. With Automatic, Legacy icon keeps its existing splash-screen behavior. Name and icon can be configured independently, and changing them requires patching again.
 
-For native car navigation, keep **Native navigation for Gearslip and Android Auto** selected and grant the patched Maps app precise location access. Gearslip then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
+For native car navigation, keep **Native navigation for any Android Auto host** selected and grant the patched Maps app precise location access. A host such as Gearslip or DriveDeck then discovers one navigation tile instead of treating Maps as a messenger. For Android Auto, install the patched APK through KingInstaller and check its installation result; use its Shizuku mode if the normal method does not record the expected installer. Select **Ungoogled Maps** or your chosen app name in the car launcher so the session uses the patched copy.
 
 Open the account menu’s **Customization** and **Waze & external data source** rows to configure the selected patches. A patch marked **On** above is selected by default when patching; camera layers and external sources still require enabling in the app. **120 refresh rate** also starts off in Customization.
 

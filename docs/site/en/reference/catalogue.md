@@ -278,6 +278,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Allow any Android Auto host | On | 14.17, 15.0 |
 | Broadcast navigation data | On | 14.17, 15.0 |
 | Disable partner services | On | 14.17, 15.0 |
 | Disable tracking | On | 14.17, 15.0 |
@@ -285,7 +286,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Guest mode | On | 14.17, 15.0 |
 | Hide Pro notices | On | 14.17, 15.0 |
 | Hide ads | On | 14.17, 15.0 |
-| Support Gearslip and DriveDeck | On | 14.17, 15.0 |
 | Unlock Pro | On | 14.17, 15.0 |
 | Use the system voice for navigation | Off | 15.0 |
 
@@ -359,10 +359,11 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads and clutter | On | 26.44.06.1006895251 |
 | Legacy icon | On | 26.44.06.1006895251 |
 | Location provider toggle | On | 26.44.06.1006895251 |
-| Native navigation for Gearslip and Android Auto | On | 26.44.06.1006895251 |
+| Native navigation for any Android Auto host | On | 26.44.06.1006895251 |
 | Offline saved places | On | 26.44.06.1006895251 |
 | Power saving mode | On | 26.44.06.1006895251 |
 | Proxy | On | 26.44.06.1006895251 |
+| Receive alerts from a third-party application | On | 26.44.06.1006895251 |
 | Rectangle shapes | On | 26.44.06.1006895251 |
 | Remove permissions | On | 26.44.06.1006895251 |
 | Remove sign-in prompts | On | 26.44.06.1006895251 |
@@ -371,7 +372,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speeding chime | On | 26.44.06.1006895251 |
 | Trim account menu | On | 26.44.06.1006895251 |
 | Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Waze alerts | On | 26.44.06.1006895251 |
 | Zoom controls in navigation | On | 26.44.06.1006895251 |
 
 ## GVA
@@ -759,7 +759,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| External speed controls | On | 0.5.2621 |
+| Receive alerts from a third-party application | On | 0.5.2621 |
 
 ## Videoland Android
 
@@ -823,6 +823,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Alert distances | On | 5.26.90.901, 5.27.0.1 |
 | All moods | Off | 5.26.90.901, 5.27.0.1 |
+| Allow any Android Auto host | On | 5.26.90.901, 5.27.0.1 |
 | Allow high refresh rate | Off | 5.26.90.901, 5.27.0.1 |
 | Auto zoom | Off | 5.26.90.901, 5.27.0.1 |
 | Average speed zone bar | On | 5.26.90.901, 5.27.0.1 |
@@ -859,7 +860,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Speed limit controls | Off | 5.26.90.901, 5.27.0.1 |
 | Speed limit sign | Off | 5.26.90.901, 5.27.0.1 |
 | Stay awake in the background | Off | 5.26.90.901, 5.27.0.1 |
-| Support Gearslip | On | 5.26.90.901, 5.27.0.1 |
 | Use the system voice for navigation | Off | 5.27.0.1 |
 | YT Music Morphe in Waze | On | Any |
 

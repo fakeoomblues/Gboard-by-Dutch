@@ -278,6 +278,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Allow any Android Auto host | Aan | 14.17, 15.0 |
 | Broadcast navigation data | Aan | 14.17, 15.0 |
 | Disable partner services | Aan | 14.17, 15.0 |
 | Disable tracking | Aan | 14.17, 15.0 |
@@ -285,7 +286,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Guest mode | Aan | 14.17, 15.0 |
 | Hide Pro notices | Aan | 14.17, 15.0 |
 | Hide ads | Aan | 14.17, 15.0 |
-| Support Gearslip and DriveDeck | Aan | 14.17, 15.0 |
 | Unlock Pro | Aan | 14.17, 15.0 |
 | Use the system voice for navigation | Uit | 15.0 |
 
@@ -359,10 +359,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads and clutter | Aan | 26.44.06.1006895251 |
 | Legacy icon | Aan | 26.44.06.1006895251 |
 | Location provider toggle | Aan | 26.44.06.1006895251 |
-| Native navigation for Gearslip and Android Auto | Aan | 26.44.06.1006895251 |
+| Native navigation for any Android Auto host | Aan | 26.44.06.1006895251 |
 | Offline saved places | Aan | 26.44.06.1006895251 |
 | Power saving mode | Aan | 26.44.06.1006895251 |
 | Proxy | Aan | 26.44.06.1006895251 |
+| Receive alerts from a third-party application | Aan | 26.44.06.1006895251 |
 | Rectangle shapes | Aan | 26.44.06.1006895251 |
 | Remove permissions | Aan | 26.44.06.1006895251 |
 | Remove sign-in prompts | Aan | 26.44.06.1006895251 |
@@ -371,7 +372,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speeding chime | Aan | 26.44.06.1006895251 |
 | Trim account menu | Aan | 26.44.06.1006895251 |
 | Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Waze alerts | Aan | 26.44.06.1006895251 |
 | Zoom controls in navigation | Aan | 26.44.06.1006895251 |
 
 ## GVA
@@ -759,7 +759,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| External speed controls | Aan | 0.5.2621 |
+| Receive alerts from a third-party application | Aan | 0.5.2621 |
 
 ## Videoland Android
 
@@ -823,6 +823,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Alert distances | Aan | 5.26.90.901, 5.27.0.1 |
 | All moods | Uit | 5.26.90.901, 5.27.0.1 |
+| Allow any Android Auto host | Aan | 5.26.90.901, 5.27.0.1 |
 | Allow high refresh rate | Uit | 5.26.90.901, 5.27.0.1 |
 | Auto zoom | Uit | 5.26.90.901, 5.27.0.1 |
 | Average speed zone bar | Aan | 5.26.90.901, 5.27.0.1 |
@@ -859,7 +860,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Speed limit controls | Uit | 5.26.90.901, 5.27.0.1 |
 | Speed limit sign | Uit | 5.26.90.901, 5.27.0.1 |
 | Stay awake in the background | Uit | 5.26.90.901, 5.27.0.1 |
-| Support Gearslip | Aan | 5.26.90.901, 5.27.0.1 |
 | Use the system voice for navigation | Uit | 5.27.0.1 |
 | YT Music Morphe in Waze | Aan | Alle versies |
 

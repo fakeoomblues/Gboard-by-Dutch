@@ -1,38 +1,29 @@
 package patches.maps.gearslip;
 
-/** Host claims are capabilities only after the Binder caller owns the package. */
+/**
+ * Any Android Auto compatible host may drive the car screens (Google's Android Auto, DriveDeck,
+ * Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto, AARE, ...). A host claim is only accepted when
+ * the Binder caller actually owns that package, so one app cannot pose as another.
+ */
 final class HostPolicy {
-    // Gearslip and its DriveDeck rebrand, release and development builds, whichever key signs them.
-    // DriveDeck's LiteRT and wireless-qualification variants are the builds that host DHU sessions.
-    private static final String[] CAR_HOSTS = {
+    // DriveDeck/Gearslip render a turn whose distance Maps has not produced yet; other hosts may
+    // rebuild the model with the car library's builder, which requires a distance.
+    private static final String[] UNKNOWN_DISTANCE_HOSTS = {
         "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev",
         "app.johninnl.drivedeck.litert", "app.johninnl.drivedeck.wireless"
     };
-    private static final String ANDROID_AUTO = "com.google.android.projection.gearhead";
-    // Verified original and rotated signing lineage of Android Auto 16.8.661874.
-    private static final String GOOGLE_ORIGINAL = "fdb00c43dbde8b51cb312aa81d3b5fa17713adb94b28f598d77f8eb89daceedf";
-    private static final String GOOGLE_CURRENT = "1ca8dcc0bed3cbd872d2cb791200c0292ca9975768a82d676b8b424fb65b5295";
     private HostPolicy() {}
 
-    static boolean permits(String packageName, int uid, String[] ownedPackages,
-                           String[] currentSigners, String[] signingHistory) {
-        if (uid < 0 || packageName == null || !contains(ownedPackages, packageName)) return false;
-        if (contains(CAR_HOSTS, packageName)) return true;
-        if (!ANDROID_AUTO.equals(packageName) || currentSigners == null || currentSigners.length == 0) return false;
-        if (currentSigners.length > 1) {
-            for (String signer : currentSigners) if (!google(signer)) return false;
-            return true;
-        }
-        if (signingHistory != null) for (String signer : signingHistory) if (google(signer)) return true;
-        return google(currentSigners[0]);
+    static boolean permits(String packageName, int uid, String[] ownedPackages) {
+        return uid >= 0 && packageName != null && contains(ownedPackages, packageName);
     }
 
-    private static boolean google(String digest) {
-        return GOOGLE_ORIGINAL.equals(digest) || GOOGLE_CURRENT.equals(digest);
+    static boolean rendersUnknownTurnDistance(String packageName) {
+        return contains(UNKNOWN_DISTANCE_HOSTS, packageName);
     }
 
     private static boolean contains(String[] values, String candidate) {
-        if (values != null) for (String value : values) if (candidate.equals(value)) return true;
+        if (values != null && candidate != null) for (String value : values) if (candidate.equals(value)) return true;
         return false;
     }
 }

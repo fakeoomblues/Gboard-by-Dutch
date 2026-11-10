@@ -199,12 +199,14 @@ private val nativeNavigationResources = resourcePatch {
 
 @Suppress("unused")
 val nativeCarNavigationPatch = bytecodePatch(
-    name = "Native navigation for Gearslip and Android Auto",
-    description = "Keeps Maps' native map and navigation engine, and supplies routing, ETA, destination lists and route-preview cards for Android Auto and compatible hosts to arrange around their controls and dock.",
+    name = "Native navigation for any Android Auto host",
+    description = "Keeps Maps' native map and navigation engine and serves it to any Android Auto compatible host: " +
+        "Google's Android Auto and community hosts such as DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. Supplies routing, ETA, destination lists, " +
+        "route previews and settings as standard car screens that the host arranges around its controls and dock.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_MAPS)
-    dependsOn(nativeNavigationResources)
+    dependsOn(nativeNavigationResources, patches.shared.androidAutoHostVisibility)
     extendWith("extensions/maps-gearslip.mpe")
     execute {
         fun requireMethod(type: String, name: String, parameters: List<String>, returns: String) {

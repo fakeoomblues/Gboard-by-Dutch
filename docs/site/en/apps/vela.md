@@ -14,7 +14,7 @@ Use patched Waze or Flitsmeister as a local source for current speed, limits and
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **External speed controls** | On | Adds De-Waze and Flitsmeister as speed/road-warning providers in Vela and Android Auto, with compact speed, limit, partial-average and advance-warning details. |
+| **Receive alerts from a third-party application** | On | Receives speed, limits, road warnings and partial-average zones from a third-party app in Vela and on Android Auto, with compact speed, limit, partial-average and advance-warning details. Today it supports the patched De-Waze and Flitsmeister from these patches; the provider interface is built to take more apps. |
 
 ## Advertising and tracking services
 

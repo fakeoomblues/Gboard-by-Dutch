@@ -154,10 +154,9 @@ public final class NativeCarServiceTest {
         assertTrue(open.getBoolean(session));
     }
 
-    @Test public void testHostPackageCannotAuthenticateInProduction() throws Exception {
-        String testHost = HOST + ".morphetest";
-        shadowOf(service.getPackageManager()).setPackagesForUid(HOST_UID, testHost);
-        Response response = handshakeResponse(testHost);
+    @Test public void aHostCannotClaimAPackageItsUidDoesNotOwn() throws Exception {
+        shadowOf(service.getPackageManager()).setPackagesForUid(HOST_UID, "some.other.app");
+        Response response = handshakeResponse(HOST);
         assertSecurity(response);
     }
 

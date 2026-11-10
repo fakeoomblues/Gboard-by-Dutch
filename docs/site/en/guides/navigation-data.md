@@ -26,8 +26,8 @@ Choose one provider and one receiving map app. You can install both providers, t
 | --- | --- | --- |
 | [Waze](../apps/waze.md) | 5.26.90.901, complete APKM | **Broadcast navigation data** |
 | [Flitsmeister](../apps/flitsmeister.md) | 14.17 / 1287 or 15.0 / 1289, complete APKS/APKM | **Broadcast navigation data**; keep **Fix PairIP startup** enabled |
-| [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710, complete APK | **Waze alerts**; also select **Native navigation for Gearslip and Android Auto** for the native car interface |
-| [Vela Maps](../apps/vela.md) | 0.5.2621, complete APK | **External speed controls** |
+| [Google Maps](../apps/google-maps.md) | 26.43.05.1002020710, complete APK | **Receive alerts from a third-party application**; also select **Native navigation for any Android Auto host** for the native car interface |
+| [Vela Maps](../apps/vela.md) | 0.5.2621, complete APK | **Receive alerts from a third-party application** |
 
 Apply these patches from Dutch App Patches in Morphe Manager. For Maps, select its patches from this source only; the adapted bearinmind controls are already included. Install the resulting apps and complete first-run setup on the phone. For a receiving navigation app used in Android Auto, follow the [KingInstaller installation guide](android-auto.md).
 

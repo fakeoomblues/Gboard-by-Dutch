@@ -23,7 +23,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik voor 15.0 het 
 | **Guest mode** | Aan | Voegt Doorgaan als gast toe, laat de app zonder inloggen openen en verbergt het grote accountaanmaakblok. |
 | **Hide Pro notices** | Aan | Verbergt automatische Pro/Plus-aanbiedingen, badges en Android Auto-upgradeberichten. |
 | **Hide ads** | Aan | Verwijdert commerciële locatiepromoties, hun afbeeldingen en reclamemeldingen. Verbergt in 15.0 aanbiedingen voor niet-gekochte betaalde soundpacks; bruikbare stemmen blijven selecteerbaar. Verkeerswaarschuwingen blijven. |
-| **Support Gearslip and DriveDeck** | Aan | Accepteert Gearslip en DriveDeck als autohost op pakketnaam, met welke sleutel ze ook zijn ondertekend, zodat DriveDeck werkt zonder dat de originele Gearslip is geïnstalleerd. Andere hosts houden de Android Auto-validatie. |
+| **Allow any Android Auto host** | Aan | Laat elke Android Auto-compatibele host de autoschermen van Flitsmeister gebruiken, zoals Google Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto en AARE, ongeacht pakketnaam of ondertekeningssleutel. |
 | **Unlock Pro** | Aan | Schakelt lokaal geregelde Pro-opties in. De menu-avatar krijgt in 15.0 de eigen PRO-badge van de app als cosmetische wijziging. Functies waarvoor accountactivering nodig is blijven afhankelijk van de dienst. |
 
 ## Advertentie- en trackingdiensten

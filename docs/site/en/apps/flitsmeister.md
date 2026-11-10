@@ -23,7 +23,7 @@ Select the exact original file in Morphe Manager. For 15.0, use the complete bui
 | **Guest mode** | On | Adds Continue as guest, lets you reopen without signing in, and hides the large account sign-up card. |
 | **Hide Pro notices** | On | Hides automatic Pro/Plus offers, badges and Android Auto upgrade notices. |
 | **Hide ads** | On | Removes commercial location-based promotions, their images and advertising notifications. In 15.0, hides unowned paid soundpack offers while keeping usable voice selection. Traffic warnings remain. |
-| **Support Gearslip and DriveDeck** | On | Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so DriveDeck works without the original Gearslip installed. Other hosts keep Android Auto validation. |
+| **Allow any Android Auto host** | On | Lets any Android Auto compatible host run Flitsmeister's car screens, such as Google's Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE, whatever its package name or signing key. |
 | **Unlock Pro** | On | Enables locally controlled Pro options. In 15.0, the menu avatar uses the native PRO badge as a cosmetic change. Features requiring account activation still depend on the service. |
 
 ## Advertising and tracking services

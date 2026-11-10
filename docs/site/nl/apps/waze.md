@@ -18,7 +18,7 @@ Gebruik het volledige originele APKM-archief voor deze versie in Morphe Manager.
 | Telemetrie | **Remove telemetry** stopt ook het ophalen van de advertentie-ID en verbergt een opgeslagen ID, gooit gebruiksgegevens weg die al klaarstonden om te versturen, blokkeert automatische diagnoselogs en zet Firebase Sessions uit. Je kunt logs nog steeds zelf versturen. |
 | Toestemming | Nieuw: **Skip consent screens** beantwoordt privacy- en voorwaardenvragen zonder scherm en weigert gepersonaliseerde advertenties. |
 | Muziek | Nieuw: **SoundCloud in Waze** en **YT Music Morphe in Waze** voegen beide diensten toe aan de ingebouwde audiospeler. |
-| Andere apps | Nieuw: **Broadcast navigation data** deelt snelheids- en trajectgegevens met andere apps en met **Support Gearslip** kan Gearslip Waze draaien, ook een gepatchte Gearslip. |
+| Andere apps | Nieuw: **Broadcast navigation data** deelt snelheids- en trajectgegevens met andere apps en met **Allow any Android Auto host** kan elke Android Auto-compatibele host Waze draaien. |
 | Waarschuwingen delen | **Share Waze Alerts with external applications** stopt nu direct als je het uitzet en wist waarschuwingen die al gedeeld waren. |
 
 De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches).
@@ -34,7 +34,7 @@ De elf optionele functies hieronder zijn voor deze Waze-versie aangepast uit [Fo
 | **Broadcast navigation data** | Aan | Deelt actuele snelheid, snelheidslimieten, wegmeldingen en naderende/actieve trajectcontroles met andere apps terwijl Waze op de achtergrond draait. Geen overlay nodig. |
 | **Skip consent screens** | Aan | Rondt privacy- en voorwaardenkeuzes zonder scherm af en weigert gepersonaliseerde advertenties. Lees de toelichting hieronder. |
 | **SoundCloud in Waze** | Aan | Voegt SoundCloud toe aan de ingebouwde audiospeler. Show list toont de ingelogde Feed en afspeelbare mixes, niet je persoonlijke bibliotheek. |
-| **Support Gearslip** | Aan | Accepteert Gearslip en DriveDeck als autohost op pakketnaam, met welke sleutel ze ook zijn ondertekend, zodat een gepatchte Gearslip blijft werken. Andere hosts houden de Android Auto-validatie. |
+| **Allow any Android Auto host** | Aan | Laat elke Android Auto-compatibele host de autoschermen van Waze gebruiken, zoals Google Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto en AARE, ongeacht pakketnaam of ondertekeningssleutel. |
 | **YT Music Morphe in Waze** | Aan | Voegt YT Music Morphe toe aan de ingebouwde audiospeler. Show list toont ondersteunde Home-aanbevelingen en mixes, niet je persoonlijke bibliotheek. |
 
 ### Uit bearinmind patches, hier uitgebreid

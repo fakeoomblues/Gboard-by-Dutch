@@ -466,7 +466,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads support gearslip and drivedeck unlock pro use the system voice for navigation" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="flitsmeister nl.flitsmeister 14.17 15.0 allow any android auto host broadcast navigation data disable partner services disable tracking fix pairip startup guest mode hide pro notices hide ads unlock pro use the system voice for navigation" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Flitsmeister](apps/flitsmeister.md)
@@ -476,6 +476,7 @@ hide:
 <details class="dap-app-card__patches">
 <summary>10 patches</summary>
 <ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Broadcast navigation data <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Disable partner services <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Disable tracking <span class="dap-app-card__target">14.17, 15.0</span></li>
@@ -483,7 +484,6 @@ hide:
 <li>Guest mode <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Hide Pro notices <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">14.17, 15.0</span></li>
-<li>Support Gearslip and DriveDeck <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Unlock Pro <span class="dap-app-card__target">14.17, 15.0</span></li>
 <li>Use the system voice for navigation <span class="dap-app-card__target">15.0 · default off</span></li>
 </ul>
@@ -561,7 +561,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.44.06.1006895251 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for gearslip and android auto offline saved places power saving mode proxy rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu use the system voice for navigation waze alerts zoom controls in navigation" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="google maps com.google.android.apps.maps 26.44.06.1006895251 26.43.05.1002020710 120 refresh rate account sheet cleanup add microg-re support add original microg support any media app avoid flock cameras better offline maps black theme blue pin bypass play services checks change app name change package name customization screen flock cameras follow playing media hide ads and clutter legacy icon location provider toggle native navigation for any android auto host offline saved places power saving mode proxy receive alerts from a third-party application rectangle shapes remove permissions remove sign-in prompts remove telemetry speed cameras speeding chime trim account menu use the system voice for navigation zoom controls in navigation" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Google Maps](apps/google-maps.md)
@@ -589,10 +589,11 @@ hide:
 <li>Hide ads and clutter <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Legacy icon <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Location provider toggle <span class="dap-app-card__target">26.44.06.1006895251</span></li>
-<li>Native navigation for Gearslip and Android Auto <span class="dap-app-card__target">26.44.06.1006895251</span></li>
+<li>Native navigation for any Android Auto host <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Offline saved places <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Power saving mode <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Proxy <span class="dap-app-card__target">26.44.06.1006895251</span></li>
+<li>Receive alerts from a third-party application <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Rectangle shapes <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Remove permissions <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Remove sign-in prompts <span class="dap-app-card__target">26.44.06.1006895251</span></li>
@@ -601,7 +602,6 @@ hide:
 <li>Speeding chime <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Trim account menu <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Use the system voice for navigation <span class="dap-app-card__target">26.43.05.1002020710, 26.44.06.1006895251 · default off</span></li>
-<li>Waze alerts <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 <li>Zoom controls in navigation <span class="dap-app-card__target">26.44.06.1006895251</span></li>
 </ul>
 </details>
@@ -1219,7 +1219,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="vela maps app.vela 0.5.2621 external speed controls" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="vela maps app.vela 0.5.2621 receive alerts from a third-party application" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Vela Maps](apps/vela.md)
@@ -1229,7 +1229,7 @@ hide:
 <details class="dap-app-card__patches">
 <summary>1 patch</summary>
 <ul>
-<li>External speed controls <span class="dap-app-card__target">0.5.2621</span></li>
+<li>Receive alerts from a third-party application <span class="dap-app-card__target">0.5.2621</span></li>
 </ul>
 </details>
 
@@ -1321,7 +1321,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 5.27.0.1 any alert distances all moods allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background support gearslip use the system voice for navigation yt music morphe in waze" markdown>
+<article class="dap-app-card" data-category="mobility" data-search="waze com.waze 5.26.90.901 5.27.0.1 any alert distances all moods allow any android auto host allow high refresh rate auto zoom average speed zone bar bigger alert pins bigger speedometer broadcast navigation data car alerts as notifications car reconnect grace period car traffic meter change app name and icon extra map info flock cameras full black hide ads hide recent destinations lane guidance map skin native camera and hazard controls navigation distances no ai reporting no google assistant open without device location remove permissions remove sign-in prompts remove telemetry report speed limit share waze alerts with external applications skip consent screens soundcloud in waze speed bump controls speed camera alerts speed camera sound at any speed speed cameras everywhere speed limit controls speed limit sign stay awake in the background use the system voice for navigation yt music morphe in waze" markdown>
 <p class="dap-app-card__category">Traffic</p>
 
 ### [Waze](apps/waze.md)
@@ -1333,6 +1333,7 @@ hide:
 <ul>
 <li>Alert distances <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
 <li>All moods <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
+<li>Allow any Android Auto host <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
 <li>Allow high refresh rate <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
 <li>Auto zoom <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
 <li>Average speed zone bar <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
@@ -1369,7 +1370,6 @@ hide:
 <li>Speed limit controls <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
 <li>Speed limit sign <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
 <li>Stay awake in the background <span class="dap-app-card__target">5.26.90.901, 5.27.0.1 · default off</span></li>
-<li>Support Gearslip <span class="dap-app-card__target">5.26.90.901, 5.27.0.1</span></li>
 <li>Use the system voice for navigation <span class="dap-app-card__target">5.27.0.1 · default off</span></li>
 <li>YT Music Morphe in Waze <span class="dap-app-card__target">Any</span></li>
 </ul>

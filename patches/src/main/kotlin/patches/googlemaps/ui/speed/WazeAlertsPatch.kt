@@ -10,10 +10,12 @@ import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
 
 @Suppress("unused")
 val wazeAlertsPatch = bytecodePatch(
-    name = "Waze alerts",
-    description = "Shows nearby Waze and Flitsmeister alerts as map pins with ahead-of-you chimes and notes. " +
-        "Supports our navigation broadcasts for current speed, speed limits and average-speed zones, " +
-        "plus bearinmind's Waze Share alerts with Maps feed. Choose a provider in Waze & external data source; " +
+    name = "Receive alerts from a third-party application",
+    description = "Receives road alerts, current speed, speed limits and average-speed zones from a third-party " +
+        "application through an extendable provider interface, and shows them as map pins, car pills, chimes and voice. " +
+        "Today it supports the patched Waze (De-Waze) and Flitsmeister from Dutch App Patches " +
+        "(gitlab.com/johninnld/nl-morphe-patches), plus bearinmind's Waze Share alerts with Maps feed; further providers " +
+        "can be added. Choose a provider in Waze & external data source; " +
         "external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
     default = true,
 ) {

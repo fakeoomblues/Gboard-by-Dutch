@@ -2,10 +2,6 @@ package patches.maps.gearslip;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.content.pm.SigningInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Binder;
@@ -18,7 +14,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.Surface;
 import android.view.inputmethod.EditorInfo;
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,16 +123,7 @@ public final class NativeCarService extends Service {
         }
         String host = CarProtocol.member(handshake, "mHostPackageName").getString("tag_value");
         int api = CarProtocol.member(handshake, "mHostCarAppApiLevel").getInt("tag_value");
-        String[] current = null, history = null;
-        if ("com.google.android.projection.gearhead".equals(host)) {
-            PackageInfo info = getPackageManager().getPackageInfo(host, PackageManager.GET_SIGNING_CERTIFICATES);
-            SigningInfo signing = info.signingInfo;
-            if (signing != null) {
-                current = digests(signing.getApkContentsSigners());
-                if (!signing.hasMultipleSigners()) history = digests(signing.getSigningCertificateHistory());
-            }
-        }
-        if (!HostPolicy.permits(host, uid, getPackageManager().getPackagesForUid(uid), current, history)) {
+        if (!HostPolicy.permits(host, uid, getPackageManager().getPackagesForUid(uid))) {
             throw new SecurityException("Unrecognized car host or caller package mismatch");
         }
         if (api < 5 || api > 7) throw new IllegalArgumentException("Unsupported car API level " + api);
@@ -153,7 +139,7 @@ public final class NativeCarService extends Service {
                 if (previous.binding.session == previous) previous.binding.session = null;
             }
             replacement = new Session(uid, binding);
-            replacement.api=api;replacement.unknownTurnDistance=!"com.google.android.projection.gearhead".equals(host);
+            replacement.api=api;replacement.unknownTurnDistance=HostPolicy.rendersUnknownTurnDistance(host);
             replacement.tripUpdate=()->sendTrip(replacement);
             binding.session = replacement;
             active = replacement;
@@ -162,17 +148,6 @@ public final class NativeCarService extends Service {
         return replacement;
     }
 
-    private static String[] digests(Signature[] signatures) throws Exception {
-        if (signatures == null) return null;
-        String[] hashes = new String[signatures.length];
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        for (int i = 0; i < signatures.length; i++) {
-            StringBuilder text = new StringBuilder(64);
-            for (byte value : digest.digest(signatures[i].toByteArray())) text.append(String.format(java.util.Locale.ROOT, "%02x", value & 255));
-            hashes[i] = text.toString();
-        }
-        return hashes;
-    }
 
     private void release(Session session) {
         if (session == null) return;

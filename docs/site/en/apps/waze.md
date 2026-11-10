@@ -18,7 +18,7 @@ Select the complete original APKM archive for this version in Morphe Manager.
 | Telemetry | **Remove telemetry** also stops advertising ID collection and hides any saved ID, discards usage events already queued for upload, blocks automatic diagnostic log uploads and turns off Firebase Sessions. You can still send logs yourself. |
 | Consent | New: **Skip consent screens** answers privacy and terms prompts without showing them and declines personalized ads. |
 | Music | New: **SoundCloud in Waze** and **YT Music Morphe in Waze** add both services to the built-in audio player. |
-| Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Support Gearslip** lets Gearslip run Waze, including a patched Gearslip. |
+| Other apps | New: **Broadcast navigation data** shares speed and zone data with other apps, and **Allow any Android Auto host** lets any Android Auto compatible host run Waze. |
 | Alert sharing | **Share Waze Alerts with external applications** now stops at once when you switch it off and clears alerts it already shared. |
 
 The eleven optional controls below are adapted from [Forsigh Waze Patches](https://github.com/Forsigh/waze-patches) for this Waze version.
@@ -34,7 +34,7 @@ The eleven optional controls below are adapted from [Forsigh Waze Patches](https
 | **Broadcast navigation data** | On | Shares current speed, road limits, road alerts and approaching/active average-speed zones with other apps while Waze runs in the background. No overlay required. |
 | **Skip consent screens** | On | Answers privacy and terms consent silently and declines ad personalization without showing a screen. |
 | **SoundCloud in Waze** | On | Adds SoundCloud to Waze's built-in audio player. Show list displays the signed-in Feed and playable mixes, not the personal Library. SoundCloud Home recommendations are not included. |
-| **Support Gearslip** | On | Accepts Gearslip and DriveDeck as car hosts by package name, whichever key signed them, so a patched Gearslip keeps working. Other hosts keep Android Auto validation. |
+| **Allow any Android Auto host** | On | Lets any Android Auto compatible host run Waze's car screens, such as Google's Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE, whatever its package name or signing key. |
 | **YT Music Morphe in Waze** | On | Adds YT Music Morphe to Waze's built-in audio player. Show list displays supported Home recommendations and mixes, not your personal Library. Available shelves depend on the installed client. |
 
 ### From bearinmind patches, extended here

@@ -8,7 +8,7 @@ Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager. 
 
 ## Native Maps in Gearslip en Android Auto
 
-Onze patch **Native navigation for Gearslip and Android Auto** behoudt de eigen kaart en navigatiemotor van Maps. Android Auto of DriveDeck deelt de route-instructies, aankomstinformatie, bestemmingslijsten en routevoorbeelden in rond de beschikbare ruimte en het dock. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. Zoeken gebruikt het toetsenbord van de host; selecties en Start voeren nog steeds de oorspronkelijke Maps-acties uit.
+Onze patch **Native navigation for any Android Auto host** behoudt de eigen kaart en navigatiemotor van Maps en werkt met elke Android Auto-compatibele host, zoals Google Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto en AARE. De host deelt de route-instructies, aankomstinformatie, bestemmingslijsten en routevoorbeelden in rond de beschikbare ruimte en het dock. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. Zoeken gebruikt het toetsenbord van de host; selecties en Start voeren nog steeds de oorspronkelijke Maps-acties uit.
 
 Op de kaart zonder route begint de autolijst met **Zoeken**, gevolgd door plaatsen die Maps al aanbiedt. Het Maps-paneel voor instellingen en gesproken begeleiding opent als autolijst met de eigen schakelaars, zodat een host die de linkerkant voor eigen kaarten gebruikt het niet meer bedekt.
 
@@ -30,7 +30,7 @@ Eerdere versies met de native weergave zijn gecontroleerd op zoeken, een route s
 
 ## Gegevens van Waze en Flitsmeister in Maps
 
-Onze uitbreiding op **Waze alerts** laat je gepatchte Waze of Flitsmeister kiezen als lokale bron van navigatiegegevens. Naast wegmeldingen op de kaart kan deze koppeling actuele snelheid, de maximumsnelheid en een waargenomen gemiddelde tijdens een trajectcontrole tonen, met voortgang en resterende afstand. Beschikbare meldingen kunnen ook voorwaarschuwingen geven.
+**Receive alerts from a third-party application** laat je een externe app kiezen als lokale bron van navigatiegegevens. Nu zijn dat de gepatchte Waze (De-Waze) of Flitsmeister uit deze patches; de bronkoppeling is gebouwd om meer apps toe te voegen. Naast wegmeldingen op de kaart kan deze koppeling actuele snelheid, de maximumsnelheid en een waargenomen gemiddelde tijdens een trajectcontrole tonen, met voortgang en resterende afstand. Beschikbare meldingen kunnen ook voorwaarschuwingen geven.
 
 Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen de gewone Waze of Flitsmeister installeren is niet voldoende. De oorspronkelijke Waze-modus **Share Waze Alerts with external applications** blijft als aparte keuze voor het delen van meldingen beschikbaar.
 
@@ -40,7 +40,7 @@ Op Android Auto blijft het snelheids-/limietpaar apart van de compacte waarschuw
 
 ## Waar komen deze patches vandaan?
 
-De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.44.06.1006895251, breidden **Waze alerts** uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for Gearslip and Android Auto** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
+De 30 oorspronkelijke Maps-opties komen uit [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) van bearinmindcat. We pasten ze aan voor Maps 26.44.06.1006895251, breidden hun **Waze alerts** (nu **Receive alerts from a third-party application**) uit met onze gedeelde navigatiegegevens, voegden lichte en donkere launchericonen toe aan **Change app name**, en voegden **Native navigation for any Android Auto host** toe. De overgenomen scherm-, offlinekaart-, privacy- en overige opties blijven aan de oorspronkelijke maker toegeschreven.
 
 Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bundel bevat de aangepaste oorspronkelijke opties al. Ook overlappende Maps-patches uit bearinmind patches kiezen kan verschillende versies van dezelfde gedeelde koppelingen uitvoeren.
 
@@ -50,14 +50,14 @@ Kies bij het patchen van Maps alleen patches uit **Dutch App Patches**. Onze bun
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Native navigation for Gearslip and Android Auto** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. De adapter beheert de eigen auto-interface; zie de acceptatiegrenzen hierboven. |
+| **Native navigation for any Android Auto host** | Aan | Voegt een navigatie-ingang toe die de oorspronkelijke Android Auto-kaartinterface van deze gepatchte app gebruikt, ook onder een aparte pakketnaam. De adapter beheert de eigen auto-interface; zie de acceptatiegrenzen hierboven. |
 | **Use the system voice for navigation** | Uit | Leest navigatie-aanwijzingen voor met de tekst-naar-spraak-engine die op de telefoon is gekozen in plaats van Google TTS, ook DriveDeck als die is gekozen. |
 
 ### Uitgebreid door dit project
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Waze alerts** | Aan | Voegt Waze en Flitsmeister toe als lokale bronnen voor wegmeldingen, voorwaarschuwingen, snelheid, limieten en waargenomen trajectcontroles. Begint uit. |
+| **Receive alerts from a third-party application** | Aan | Ontvangt wegmeldingen, voorwaarschuwingen, snelheid, limieten en waargenomen trajectcontroles van een externe app. Nu: gepatchte De-Waze en Flitsmeister; uitbreidbaar met meer bronnen. Begint uit. |
 | **Change app name** | Aan | Stelt de naam in de launcher en appkiezer in (standaard: Ungoogled Maps) en biedt zes meegeleverde icoonstijlen met een lichte of donkere achtergrond. |
 
 ### Aangepast vanuit bearinmind patches
@@ -113,7 +113,7 @@ Laat **Change package name** geselecteerd om naast de oorspronkelijke Maps-app t
 
 Kies bij **App icon** in **Change app name** uit Classic pin, Outlined pin, Classic map tile, Raised map pin, Gradient pin of Folded map, elk met een lichte of donkere achtergrond. **Automatic** volgt de patch **Legacy icon**; **Original Google Maps** behoudt Googles oorspronkelijke launchericoon. Een expliciete keuze gaat vóór Legacy icon. De keuzes gelden voor het gewone en ronde launchericoon. Een expliciete keuze behoudt het oorspronkelijke opstartscherm; afbeeldingen in de app volgen je overige gekozen patches, zoals Blue pin. Bij Automatic behoudt Legacy icon zijn bestaande wijziging van het opstartscherm. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht.
 
-Laat voor native autonavigatie **Native navigation for Gearslip and Android Auto** geselecteerd en geef de gepatchte Maps-app toegang tot de exacte locatie. Gearslip vindt dan één navigatietegel in plaats van Maps als berichtenapp te behandelen. Installeer de gepatchte APK voor Android Auto via KingInstaller en controleer het installatieresultaat; gebruik de Shizuku-modus als de normale methode niet de verwachte installer vastlegt. Kies **Ungoogled Maps** of je eigen appnaam in de autolauncher, zodat de sessie de gepatchte versie gebruikt.
+Laat voor native autonavigatie **Native navigation for any Android Auto host** geselecteerd en geef de gepatchte Maps-app toegang tot de exacte locatie. Een host zoals Gearslip of DriveDeck vindt dan één navigatietegel in plaats van Maps als berichtenapp te behandelen. Installeer de gepatchte APK voor Android Auto via KingInstaller en controleer het installatieresultaat; gebruik de Shizuku-modus als de normale methode niet de verwachte installer vastlegt. Kies **Ungoogled Maps** of je eigen appnaam in de autolauncher, zodat de sessie de gepatchte versie gebruikt.
 
 Open **Customization** en **Waze & external data source** in het accountmenu om de gekozen patches in te stellen. **Aan** in de tabel betekent dat de patch standaard geselecteerd is tijdens het patchen; cameralagen en externe bronnen moeten daarnaast in de app worden aangezet. **120 refresh rate** begint ook uit in Customization.
 

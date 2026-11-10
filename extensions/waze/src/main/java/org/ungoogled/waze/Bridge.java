@@ -25,7 +25,7 @@ import java.util.Map;
  * Java through AlerterNativeManager.updateAlertersRepository(NativeAlertRepositoryUpdate). The patch
  * calls alerts() from there with that update; this reads each alert's type, title, position and
  * trigger distance and broadcasts them on the phone (org.ungoogled.waze.ALERTS, plain intent extras)
- * to whichever app is listening -- Ungoogled Maps with Waze alerts turned on draws them on its map.
+ * to whichever app is listening -- Ungoogled Maps with "Receive alerts from a third-party application" draws them on its map.
  * Nothing leaves the phone. While there are alerts the same list goes out again every minute, so
  * Maps knows Waze is still running; once Waze is gone, Maps drops them a few minutes later. A Maps
  * that has just started, or just had the alerts switched on, asks for the list
