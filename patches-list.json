@@ -164,6 +164,40 @@
       "options": []
     },
     {
+      "name": "Add microG-RE support",
+      "description": "Routes SoundCloud's Google services -- sign-in and listening notifications over Firebase Cloud Messaging, Cast, the ads identifier and in-app review -- through an installed MicroG-RE (MicroG-RE or ReVanced GmsCore) on phones without Google Play services. The sign-in itself is SoundCloud's own web login and needs neither. Off on phones with real Play services.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.soundcloud.android",
+          "name": "SoundCloud",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2026.11.02-release",
+              "versionCodes": {
+                "ARM64_V8A": 379060,
+                "ARMEABI_V7A": 379060,
+                "X86_64": 379060,
+                "X86": 379060
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Add original microG support",
       "description": "Signs in through original microG on ROMs with signature spoofing. Keeps Maps' own package name; allow signature spoofing for it.",
       "default": false,
@@ -2174,15 +2208,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "2026.10.28-release",
+              "version": "2026.11.02-release",
               "versionCodes": {
-                "ARM64_V8A": 379050,
-                "ARMEABI_V7A": 379050,
-                "X86_64": 379050,
-                "X86": 379050
+                "ARM64_V8A": 379060,
+                "ARMEABI_V7A": 379060,
+                "X86_64": 379060,
+                "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 28,
               "description": null
             }
           ]
@@ -2208,15 +2242,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "2026.10.28-release",
+              "version": "2026.11.02-release",
               "versionCodes": {
-                "ARM64_V8A": 379050,
-                "ARMEABI_V7A": 379050,
-                "X86_64": 379050,
-                "X86": 379050
+                "ARM64_V8A": 379060,
+                "ARMEABI_V7A": 379060,
+                "X86_64": 379060,
+                "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 28,
               "description": null
             }
           ]
@@ -3956,7 +3990,7 @@
     },
     {
       "name": "Enable SoundCloud Go",
-      "description": "Enables local Go+ plan controls, hides Go upsells and consumer-plan transition screens, and disables client ad requests and display placements. Paid streams, downloads and audio quality still depend on the account's server access.",
+      "description": "Enables local Go+ plan controls and the offline_sync, no_audio_ads and hq_audio feature switches from the /configuration response, hides Go upsells and consumer-plan transition screens, and disables client ad requests and display placements. SoundCloud's servers still decide which streams, downloads and audio quality the account may fetch: high-bitrate audio and encrypted offline copies stay tied to a real Go+ subscription.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -3972,15 +4006,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "2026.10.28-release",
+              "version": "2026.11.02-release",
               "versionCodes": {
-                "ARM64_V8A": 379050,
-                "ARMEABI_V7A": 379050,
-                "X86_64": 379050,
-                "X86": 379050
+                "ARM64_V8A": 379060,
+                "ARMEABI_V7A": 379060,
+                "X86_64": 379060,
+                "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 28,
               "description": null
             }
           ]
@@ -7863,15 +7897,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "2026.10.28-release",
+              "version": "2026.11.02-release",
               "versionCodes": {
-                "ARM64_V8A": 379050,
-                "ARMEABI_V7A": 379050,
-                "X86_64": 379050,
-                "X86": 379050
+                "ARM64_V8A": 379060,
+                "ARMEABI_V7A": 379060,
+                "X86_64": 379060,
+                "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 28,
               "description": null
             }
           ]

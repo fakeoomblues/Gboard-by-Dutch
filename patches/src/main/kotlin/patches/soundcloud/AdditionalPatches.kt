@@ -67,13 +67,31 @@ val disableConsentPatch = bytecodePatch(
 @Suppress("unused")
 val enablePremiumPatch = bytecodePatch(
     name = "Enable SoundCloud Go",
-    description = "Enables local Go+ plan controls, hides Go upsells and consumer-plan transition screens, " +
-        "and disables client ad requests and display placements. Paid streams, downloads and audio quality " +
-        "still depend on the account's server access.",
+    description = "Enables local Go+ plan controls and the offline_sync, no_audio_ads and hq_audio feature " +
+        "switches from the /configuration response, hides Go upsells and consumer-plan transition screens, " +
+        "and disables client ad requests and display placements. SoundCloud's servers still decide which " +
+        "streams, downloads and audio quality the account may fetch: high-bitrate audio and encrypted " +
+        "offline copies stay tied to a real Go+ subscription.",
 ) {
     compatibleWith(soundcloud)
     dependsOn(originalInput)
+    extendWith("extensions/soundcloud.mpe")
     execute {
+        // Force the three Go feature switches where the /configuration response is parsed. The
+        // constructor stores the flag through its (String, boolean) delegation, so rewriting p2
+        // before the original body runs covers every later read, including the feature preferences
+        // update and its observable. The constructor has no local registers, so the static helper
+        // takes the parameter registers directly and move-result writes p2 back.
+        val goPlus = "Lnl/johninnl/soundcloud/GoPlus;"
+        exact("configuration/plans/Feature", "<init>", "V", STRING, "Z", "Ljava/util/List;").apply {
+            if (implementation!!.registerCount != 4)
+                throw PatchException("SoundCloud feature constructor gained local registers")
+            addInstructions(0, """
+                invoke-static {p1, p2}, $goPlus->feature(${STRING}Z)Z
+                move-result p2
+            """)
+        }
+
         // Keep backend parsing and normal plan storage updates; replace only the client plan values.
         exact("configuration/plans/UserConsumerPlan", "<init>", "V", STRING, "Z", STRING,
             "Ljava/util/List;", STRING, STRING).addInstructions(0, """

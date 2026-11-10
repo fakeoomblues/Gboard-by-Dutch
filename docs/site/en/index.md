@@ -1114,20 +1114,21 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.10.28-release disable analytics disable consent popup enable soundcloud go home in android auto" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="soundcloud com.soundcloud.android 2026.11.02-release add microg-re support disable analytics disable consent popup enable soundcloud go home in android auto" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [SoundCloud](apps/soundcloud.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">2026.10.28-release</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.11.02-release</span></p>
 <p class="dap-app-card__package">com.soundcloud.android</p>
 <details class="dap-app-card__patches">
-<summary>4 patches</summary>
+<summary>5 patches</summary>
 <ul>
-<li>Disable analytics <span class="dap-app-card__target">2026.10.28-release</span></li>
-<li>Disable consent popup <span class="dap-app-card__target">2026.10.28-release</span></li>
-<li>Enable SoundCloud Go <span class="dap-app-card__target">2026.10.28-release</span></li>
-<li>Home in Android Auto <span class="dap-app-card__target">2026.10.28-release</span></li>
+<li>Add microG-RE support <span class="dap-app-card__target">2026.11.02-release · default off</span></li>
+<li>Disable analytics <span class="dap-app-card__target">2026.11.02-release</span></li>
+<li>Disable consent popup <span class="dap-app-card__target">2026.11.02-release</span></li>
+<li>Enable SoundCloud Go <span class="dap-app-card__target">2026.11.02-release</span></li>
+<li>Home in Android Auto <span class="dap-app-card__target">2026.11.02-release</span></li>
 </ul>
 </details>
 

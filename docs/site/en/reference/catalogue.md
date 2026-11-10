@@ -694,10 +694,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable analytics | On | 2026.10.28-release |
-| Disable consent popup | On | 2026.10.28-release |
-| Enable SoundCloud Go | On | 2026.10.28-release |
-| Home in Android Auto | On | 2026.10.28-release |
+| Add microG-RE support | Off | 2026.11.02-release |
+| Disable analytics | On | 2026.11.02-release |
+| Disable consent popup | On | 2026.11.02-release |
+| Enable SoundCloud Go | On | 2026.11.02-release |
+| Home in Android Auto | On | 2026.11.02-release |
 
 ## TIDAL
 
@@ -942,4 +943,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

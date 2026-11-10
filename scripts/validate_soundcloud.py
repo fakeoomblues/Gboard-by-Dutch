@@ -7,7 +7,7 @@ import subprocess
 import zipfile
 
 
-PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go"]
+PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go", "Add microG-RE support"]
 
 
 def main():
@@ -43,12 +43,28 @@ def main():
         assert result.get("success") and not result.get("failedPatches"), result
         assert set(result.get("appliedPatches", [])) == set(names), result
         assert (result.get("packageName"), result.get("packageVersion")) == (
-            "com.soundcloud.android", "2026.10.28-release"), result
+            "com.soundcloud.android", "2026.11.02-release"), result
         assert {s["step"] for s in result["stepResults"]} >= {"PATCHING", "REBUILDING"}
         assert all(s["success"] for s in result["stepResults"]), result
         with zipfile.ZipFile(output) as rebuilt:
             actual_abis = {p.split("/")[1] for p in rebuilt.namelist()
                            if p.startswith("lib/") and p.endswith(".so")}
+            manifest = rebuilt.read("AndroidManifest.xml")
+
+        def manifest_has(value):
+            utf16 = value.encode("utf-16-le")
+            return value.encode() in manifest or utf16 in manifest
+
+        assert manifest_has("com.soundcloud.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"), "manifest lost SoundCloud permissions"
+        if "Add microG-RE support" in names:
+            assert not manifest_has("com.google.android.c2dm.permission.RECEIVE"), "c2dm permission not routed to microG"
+            assert not manifest_has("com.google.android.gms.permission.AD_ID"), "ads-id permission not routed to microG"
+            for required in ("app.revanced.android.c2dm.permission.RECEIVE",
+                             "app.revanced.android.gms.permission.AD_ID",
+                             "app.revanced.android.gms.SPOOFED_PACKAGE_NAME",
+                             "app.revanced.android.gms.SPOOFED_PACKAGE_SIGNATURE",
+                             "app.revanced.MICROG_PACKAGE_NAME"):
+                assert manifest_has(required), "manifest misses " + required
         assert actual_abis == expected_abis, (actual_abis, expected_abis)
         subprocess.run(["java", "-cp", str(args.cli.resolve()),
                         str(Path(__file__).resolve().parents[1] / "tests/SoundcloudDexRegression.java"),
