@@ -377,15 +377,18 @@ test("native scan failures retain a bounded reason without trusting arbitrary st
   }
 });
 
-test("native enumeration tolerates finite process churn and refuses ongoing churn or unknown scans",()=>{
+test("native enumeration tolerates finite churn and children of scanned processes, and refuses unknown ongoing churn or scans",()=>{
   let script;
   workspaceQuiescent("/private/owned/checkout",{platform:"darwin",inspect:(_file,args)=>{script=args[1];return "QUIESCENT";}});
   const body=script.slice(script.indexOf("try:\n    seen=set()"));
   assert.ok(body.startsWith("try:\n"));
+  assert.ok(script.includes("def parent(pid):"),"The proof can name a new process's parent");
   const prefix="import sys\nclass Clock:\n    tick=0\n    def monotonic(self):\n        self.tick+=1\n        return self.tick\ntime=Clock()\ncalls=0\ndef pids():\n    global calls\n    calls+=1\n    return set(range(1,LIMIT+1 if calls>LIMIT else calls+1))\n";
   const python=process.platform==="darwin"?"/usr/bin/python3":"python3";
-  for(const [limit,inspection,expected] of [[8,"return False","QUIESCENT"],[8,"return True","BUSY"],[1000,"return False","unstable process list"],[8,"raise RuntimeError('incomplete fd scan')","incomplete fd scan"]]){
-    const source=prefix.replaceAll("LIMIT",String(limit))+"def inspect(pid):\n    "+inspection+"\n"+body;
+  // PARENT: an unknown parent (unrelated churn source) or an already-scanned one (pid 1).
+  for(const [limit,inspection,expected,parent] of [[8,"return False","QUIESCENT","-1"],[8,"return True","BUSY","-1"],[1000,"return False","unstable process list","-1"],[8,"raise RuntimeError('incomplete fd scan')","incomplete fd scan","-1"],
+      [1000,"return False","QUIESCENT","1"],[1000,"return pid>1","BUSY","1"]]){
+    const source=prefix.replaceAll("LIMIT",String(limit))+"def parent(pid):\n    return "+parent+"\n"+"def inspect(pid):\n    "+inspection+"\n"+body;
     if(expected==="QUIESCENT"||expected==="BUSY")assert.equal(execFileSync(python,["-c",source],{encoding:"utf8"}).trim(),expected);
     else assert.throws(()=>execFileSync(python,["-c",source],{encoding:"utf8",stdio:["ignore","pipe","pipe"]}),error=>error.status===2&&String(error.stderr).trim()==="workspace-proof: "+expected);
   }

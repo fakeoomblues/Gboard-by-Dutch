@@ -235,6 +235,10 @@ def inspect(pid):
         address=following
     else:raise RuntimeError('mapping scan exceeded bound')
     return False
+def parent(pid):
+    n,bsd,error=info(pid,3,136)
+    if n==136:return struct.unpack_from('=I',bsd,16)[0]
+    return 0 if error==errno.ESRCH else -1
 try:
     seen=set()
     # New, short-lived processes can appear during each enumeration. Give that
@@ -245,7 +249,18 @@ try:
         for pid in current-seen:
             if inspect(pid):print('BUSY');sys.exit(0)
         seen.update(current)
-        if pids()<=seen:print('QUIESCENT');sys.exit(0)
+        fresh=pids()-seen
+        if not fresh:print('QUIESCENT');sys.exit(0)
+        # Unrelated sessions of this user keep spawning helpers (shells, ps,
+        # build workers), so a moment with no new PID may never come. A child
+        # born from an already-scanned non-holder can only inherit that
+        # parent's cwd, fds and mappings; scanning the child completes the
+        # proof. A path opened afterwards is the same race any scan has.
+        # Churn from unknown parents still waits, then fails closed.
+        if all(parent(pid) in seen or parent(pid)==0 for pid in fresh):
+            for pid in fresh:
+                if inspect(pid):print('BUSY');sys.exit(0)
+            print('QUIESCENT');sys.exit(0)
     raise RuntimeError('unstable process list')
 except Exception as problem:
     reason=str(problem) if isinstance(problem,RuntimeError) else type(problem).__name__
