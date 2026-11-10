@@ -16,6 +16,25 @@ public class WarningSchedulerTest {
     final List<PlaybackGrant.Outcome> observed=new ArrayList<>();
     Source source;WarningScheduler scheduler;long sequence;
     @Before public void setup(){source=new Source();scheduler=new WarningScheduler(time,policy,speaker,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent event,PlaybackGrant.Outcome value){observed.add(value);}});scheduler.connected(source,snapshot(Collections.emptyList()));}
+    /** Real engines are never ready for an empty language; only a voice prepared before any event makes idle status READY. */
+    class LanguageSpeaker extends Speaker {final String idle;final List<String> prepared=new ArrayList<>();LanguageSpeaker(String idle){this.idle=idle;}
+        @Override public void prepare(String language){super.prepare(language);prepared.add(language);}
+        @Override public boolean ready(String language,WarningAudioOwner.Mode mode){return mode==WarningAudioOwner.Mode.SILENT||prepared.contains(language)&&!language.isEmpty();}
+        @Override public String defaultLanguage(){return idle;}}
+    @Test public void idleReceiverPreparesTheProviderLocaleBeforeTheFirstWarning(){
+        LanguageSpeaker voice=new LanguageSpeaker("nl-NL");
+        scheduler=new WarningScheduler(time,policy,voice,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent e,PlaybackGrant.Outcome o){}});
+        scheduler.connected(source,snapshot(Collections.emptyList()));scheduler.refresh();time.now+=300;scheduler.refresh();
+        assertEquals(Collections.singletonList("nl-NL"),voice.prepared);assertEquals("READY",scheduler.status());
+        WarningEvent e=event("first",1,1,WarningEvent.Operation.ANNOUNCE);source.add(e);scheduler.events(source,Collections.singletonList(e));
+        assertTrue("A differing event language still prepares its own voice",voice.prepared.contains("en"));
+    }
+    @Test public void withoutAnIdleLanguageTheReceiverStillReportsItsVoiceUnavailable(){
+        LanguageSpeaker voice=new LanguageSpeaker("und");
+        scheduler=new WarningScheduler(time,policy,voice,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent e,PlaybackGrant.Outcome o){}});
+        scheduler.connected(source,snapshot(Collections.emptyList()));scheduler.refresh();
+        assertTrue(voice.prepared.stream().allMatch(String::isEmpty));assertEquals("SPEAKER_UNAVAILABLE",scheduler.status());
+    }
     @Test public void nativeEmergencyWithoutGeometryStartsImmediatelyAndEnqueueIsNotCompletion(){
         WarningEvent e=event("ambulance",0,1,WarningEvent.Operation.ANNOUNCE);source.add(e);scheduler.events(source,Arrays.asList(e));
         assertEquals(1,speaker.calls);assertNotNull(source.pending);assertFalse(observed.contains(PlaybackGrant.Outcome.COMPLETED));

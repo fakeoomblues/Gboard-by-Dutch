@@ -59,7 +59,7 @@ Choosing the app's own data or ending the receiving session disconnects startup 
 1. Open the account menu, then **Waze & external data source**.
 2. Open **Navigation data source** and choose **De-Waze · navigation data** or **Flitsmeister · navigation data**.
 3. Enable **Compact speed and average-speed control** if you want the speed, limit and active-zone details together.
-4. For De-Waze and legacy alerts, open **Road alert types** and select the categories you want; only police reports start selected there. Native Flitsmeister warning audio has its own category/output review, described [below](#native-flitsmeister-warning-audio).
+4. For De-Waze and legacy alerts, open **Road alert types** and select the categories you want; only police reports start selected there. Native Flitsmeister warning audio has its own category/output choices, described [below](#native-flitsmeister-warning-audio).
 5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Only reports with known positions become map pins.
 6. Check **Source now** for the provider status. Tap it to request an available snapshot. Automatic startup uses the separate provider API; a snapshot request never makes an old observation fresh.
 
@@ -76,7 +76,7 @@ Vela's settings show separate **Warning bridge**, **Background service** and **D
 3. Configure **Spoken road warnings** if wanted. It follows Vela's voice and mute settings.
 4. In the car settings, **Navigation provider** selects the same saved source. **Show zone and warning details** controls the additional car details.
 
-The current speed and limit remain together. On Android Auto, a separate warning pill shows the event icon and a qualified distance. Before an average-speed zone it shows distance to the entry; inside the zone it shows the observed average and an independent section-progress bar. The car pill omits warning-name prose, percentages and remaining-distance captions. Unknown values show **—**. The phone view and available zone details remain separate; an average stays unknown until enough distance and time have been observed.
+The current speed and limit remain together. On Android Auto, a separate warning pill shows the event icon and a qualified distance. Before an average-speed zone it shows distance to the entry; inside the zone it shows the observed average and an independent section-progress bar. The car pill omits warning-name prose, percentages and remaining-distance captions. Unknown values show **—**. A point warning (camera, trap, road block) appears only with a distance: Flitsmeister's own look-ahead distance along the road, or the map's route distance. A point the route clearly misses stays hidden, and a pill survives a brief GPS dropout for 3 seconds instead of blinking. FM keeps a still-active warning on screen until FM removes it. The phone view and available zone details remain separate; an average stays unknown until enough distance and time have been observed.
 
 Flitsmeister keeps Vela's independent Flock display, voice and detour choices active. Only a fresh selected De-Waze feed retains the earlier native-Flock handoff; an unselected feed does not pause those features.
 
@@ -86,7 +86,7 @@ These warning controls remain a development feature. Flitsmeister 15.0's models 
 
 This development warning mode targets **Flitsmeister 14.17 (version code 1287)** and now **15.0 (version code 1289)** with matching updated provider and receiver patches. Existing FM15 core support does not make an older installed bundle a native-warning build. Update both sides together when this change is available. An older receiver can still use its legacy feed, but must be updated or have its Flitsmeister source disabled before another map takes exclusive warning audio.
 
-With compatible builds on both sides, choose **Flitsmeister**. In Maps, open **Flitsmeister warning audio** and **Flitsmeister warning categories**, then **Review Flitsmeister warnings** and tap **Use these choices** in the confirmation dialog. In Vela, open **Flitsmeister warning audio**, review the output and categories, then tap **Use these warning choices**. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories.
+With compatible builds on both sides, choose **Flitsmeister**. Warning audio works straight away with the recommended choices (Voice; cameras, average-speed zones, road danger, emergency vehicles and police); nothing needs confirming. To change them, open **Flitsmeister warning audio** and **Flitsmeister warning categories** in Maps, or **Flitsmeister warning audio** in Vela. The same applies to De-Waze. Explicit previous mute and alert-type choices remain selected; an explicit Maps chime choice migrates to Tone. Map-pin visibility is separate from audible categories.
 
 Choose Voice, Tone or Silent. Native Maps/Vela mute still caps that choice: alerts-only mode uses Tone, and full native mute stays Silent. Voice uses an available installed offline-capable voice. Native announcements do not wait for the old camera-distance or global cooldown heuristic. Missing distance stays unknown, and a moving emergency is not discarded because the car is stationary or the event has no point coordinates.
 
@@ -98,8 +98,7 @@ A warning received after reconnecting keeps its original deadline. A clearly pas
 
 | Warning audio status | What to do |
 | --- | --- |
-| **Review warning categories and output** | Review the FM output and category choices, then confirm them. |
-| **Audio ready** | The receiver is ready for a future eligible warning. Check the separate provider status for engine/data reception. |
+| **Audio ready** | The receiver prepared a voice in the phone's language when the source connected and is ready for a future eligible warning. Check the separate provider status for engine/data reception. |
 | **Alerts handled by Google Maps / Vela** | The named map owns warning audio. Change or disable its FM source if you want the other map to handle it. |
 | **Warning audio unavailable** | Check the receiving app's voice engine, voice download and native mute setting. Select Tone explicitly if that is the output you want. |
 | **Waiting for previous audio to stop** | Keep the vehicle parked, stop both receiving maps and their speech engine, then use parked recovery after confirming that no output remains. |
@@ -128,7 +127,7 @@ Changing provider, leaving a zone or losing fresh zone observations clears the p
 | One receiver gets data but another does not | Remove or correct the provider patch's optional **Receiver package**, then repatch the provider if you change that option. |
 | Speed works but no average appears | A fresh active-zone observation is required, followed by enough observed time and distance. A camera report alone is not an active zone. |
 | No map pins in Maps | Enable the map display and pin categories. Pins need a fresh report with a known position. |
-| FM data arrives but there is no warning audio | For the new mode, review the separate FM audio/categories, confirm the choices and check the warning audio status above. The old chime switch and estimated approach distance do not control native FM announcements. |
+| FM data arrives but there is no warning audio | Check the separate FM audio/categories and the warning audio status above. The old chime switch and estimated approach distance do not control native FM announcements. |
 | Data stops when the screen locks | Check the source status and phone battery restrictions. Return to the receiving map to retry a blocked silent start. Background-only restarts have different Android restrictions from selecting FM in a visible map. |
 
 Google Maps' consumer display and fallback were checked with controlled provider replays. Vela's background reception, phone/car display and advance speech were checked on an Android 16 emulator with Gearslip. Native Maps navigation has separate Gearslip and official Android Auto Desktop Head Unit checks. These results do not establish every combination of provider, phone, physical car display or live-road accuracy.

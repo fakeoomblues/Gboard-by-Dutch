@@ -59,7 +59,7 @@ public class ExternalSettingsTest {
         output.performClick();AlertDialog outputs=ShadowAlertDialog.getLatestAlertDialog();assertNotNull(outputs);
         outputs.getListView().performItemClick(null,1,1);
         assertEquals(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.TONE,ExternalTelemetry.warningPreferences(activity).mode());
-        assertFalse(ExternalTelemetry.warningPreferences(activity).reviewed());assertTrue(fm.reviewed());assertEquals(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.SILENT,fm.mode());
+        assertTrue(ExternalTelemetry.warningPreferences(activity).reviewed());assertTrue(fm.reviewed());assertEquals(nl.johninnl.navigation.alerts.WarningAudioOwner.Mode.SILENT,fm.mode());
         ExternalTelemetry.select(activity,"");activity.finish();
     }
     @Test public void mapsCarTextUsesNativeNotificationVariantsWithoutChangingPhoneText() throws Exception {

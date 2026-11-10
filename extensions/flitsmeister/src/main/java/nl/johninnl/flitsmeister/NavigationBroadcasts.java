@@ -91,6 +91,7 @@ public final class NavigationBroadcasts {
     /** Capture before Flitsmeister substitutes the last speed into missing-speed fixes. */
     public static void location(Location original) {
         if (original == null) return;
+        if (NativeWarnings.endpoint() != null) NativeWarnings.ahead();
         final Location fix = new Location(original);
         final long token = generation, received = SystemClock.elapsedRealtime();
         final long measured = fix.getElapsedRealtimeNanos()/1_000_000;

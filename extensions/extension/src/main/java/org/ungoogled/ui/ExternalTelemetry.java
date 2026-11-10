@@ -55,6 +55,7 @@ public final class ExternalTelemetry {
     private static final RoadWarningEngine warnings=new RoadWarningEngine();
     private static Context app;
     private static String source="",publisherSession="",warning="",legacyWarning="";
+    private static final nl.johninnl.navigation.alerts.PointPillGate POINT_PILLS=new nl.johninnl.navigation.alerts.PointPillGate();
     private static boolean registered,navigating,phoneNavigating;
     private static Location fix;
     private static long fixAt=-1,nativeSpeedAt=-1,nativeLimitAt=-1;
@@ -130,13 +131,14 @@ public final class ExternalTelemetry {
         List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
             if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
             if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
-            WarningPassage.Relevance relevance=MapsGuidanceCoordinator.relevance(event,fix,now,navigating);
-            return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
+            return POINT_PILLS.visible(event.warningId,MapsGuidanceCoordinator.relevance(event,fix,now,navigating),MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating)!=null,now);
         });
         List<WarningEvent> events=new ArrayList<>();for(WarningEvent event:nativeEvents)if(!info.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))events.add(event);
         java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
         for(WarningEvent event:events)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
-        return new Pills(info,events,nativeEvents.isEmpty()?legacyWarning:"",geometry);
+        // Withheld provider warnings must not resurface through the untyped legacy text.
+        boolean provider=!nativeWarnings.carMessages(now,event->warningPreferences==null||warningPreferences.enabled(event)).isEmpty();
+        return new Pills(info,events,nativeEvents.isEmpty()&&!provider?legacyWarning:"",geometry);
     }
     private static void renderCar(){
         for(Object owner:new ArrayList<>(carRoots.keySet())){
@@ -273,6 +275,7 @@ public final class ExternalTelemetry {
                 public void prepare(String language,WarningAudioOwner.Mode mode){speaker.prepare(language,mode);}
                 public boolean ready(String language,WarningAudioOwner.Mode mode){return speaker.isReady(language,mode);}
                 public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return speaker.effectiveMode(mode);}
+                public String defaultLanguage(){return WarningScheduler.systemLanguage();}
                 public boolean speak(WarningEvent event,PlaybackGrant grant,long deadline,WarningScheduler.Callback callback){return speaker.speak(event,grant,deadline,new MapsWarningSpeaker.Listener(){public void started(PlaybackGrant value){callback.started(value);}public void finished(PlaybackGrant value,PlaybackGrant.Outcome outcome,boolean quiet){callback.finished(value,outcome,quiet);}});}
                 public void cancel(PlaybackGrant grant){speaker.cancel(grant);}
             },new WarningScheduler.Observer(){

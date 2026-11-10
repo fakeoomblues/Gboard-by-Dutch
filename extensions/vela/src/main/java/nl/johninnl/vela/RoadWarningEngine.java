@@ -75,9 +75,11 @@ public final class RoadWarningEngine {
                 warningOwn=ownKey;warningOwnCorridor=corridor;warningOwnProjection=project(ownLatitude,ownLongitude);
                 warningOwnValid=warningOwnProjection!=null&&warningOwnProjection.lateral<=corridor&&!ambiguous(ownLatitude,ownLongitude,warningOwnProjection.along,corridor);
             }
-            if(!warningOwnValid)return unknown;Projection own=warningOwnProjection;
+            // A target far from every leg of this route is off-route wherever the car is;
+            // one ambiguous or drifting own fix must not reopen it as unverified.
             Projection next=target(targetLatitude,targetLongitude);
             if(next==null||next.lateral>Math.max(30,accuracy*2))return nl.johninnl.navigation.alerts.WarningPassage.Relevance.OFF_ROUTE;
+            if(!warningOwnValid)return unknown;Projection own=warningOwnProjection;
             if(passageCorridor!=corridor){passageTargets.clear();passageCorridor=corridor;}
             Coordinate key=new Coordinate(targetLatitude,targetLongitude);
             if(!passageTargets.containsKey(key)){

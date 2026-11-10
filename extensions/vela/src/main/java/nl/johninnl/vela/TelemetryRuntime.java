@@ -94,6 +94,7 @@ public final class TelemetryRuntime {
                 public boolean ready(String language,WarningAudioOwner.Mode mode){return nativeSpeaker.isReady(language,mode);}
                 public boolean ready(WarningEvent event,WarningAudioOwner.Mode mode){return nativeSpeaker.canSpeak(event,mode);}
                 public WarningAudioOwner.Mode effective(WarningAudioOwner.Mode mode){return nativeSpeaker.effectiveMode(mode);}
+                public String defaultLanguage(){return WarningScheduler.systemLanguage();}
                 public boolean speak(WarningEvent event,PlaybackGrant grant,long deadline,WarningScheduler.Callback callback){return nativeSpeaker.speak(event,grant,deadline,new VelaWarningSpeaker.Listener(){public void started(PlaybackGrant value){callback.started(value);}public void finished(PlaybackGrant value,PlaybackGrant.Outcome outcome,boolean quiet){callback.finished(value,outcome,quiet);}});}
                 public void cancel(PlaybackGrant grant){nativeSpeaker.cancel(grant);}
             },new WarningScheduler.Observer(){
@@ -280,15 +281,16 @@ public final class TelemetryRuntime {
         if(semanticWarning!=null)return providerName()+"\n"+nativeWarnings.messages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));
         return compactLegacyWarningText();
     }
-    static String compactCarWarningText(){String messages=nativeWarnings.carMessages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));return messages.isEmpty()?compactLegacyWarningText():providerName()+"\n"+messages;}
+    /** Unfiltered provider text is never a fallback for warnings the pill selection withheld. */
+    static String compactCarWarningText(){String messages=nativeWarnings.carMessages(SystemClock.elapsedRealtime(),event->warningPreferences==null||warningPreferences.enabled(event));return messages.isEmpty()?compactLegacyWarningText():carWarnings().isEmpty()?"":providerName()+"\n"+messages;}
     static java.util.List<nl.johninnl.navigation.alerts.WarningEvent> carWarnings(){
         long now=SystemClock.elapsedRealtime();return nativeWarnings.carEvents(now,event->{
             if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
             if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
-            WarningPassage.Relevance relevance=warningRelevance(event,now);
-            return relevance!=WarningPassage.Relevance.PASSED&&relevance!=WarningPassage.Relevance.OFF_ROUTE;
+            return POINT_PILLS.visible(event.warningId,warningRelevance(event,now),carWarningGeometry(event,now)!=null,now);
         });
     }
+    private static final nl.johninnl.navigation.alerts.PointPillGate POINT_PILLS=new nl.johninnl.navigation.alerts.PointPillGate();
     private static WarningPassage.Relevance warningRelevance(WarningEvent event,long now){
         if(!event.relevance.equals("point_ahead"))return WarningPassage.Relevance.RELEVANT;
         Boolean guidance=sessionGuidanceState();if(guidance==null)return WarningPassage.Relevance.CONTEXT_UNVERIFIED;

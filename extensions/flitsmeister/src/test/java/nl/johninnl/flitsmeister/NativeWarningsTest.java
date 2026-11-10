@@ -32,7 +32,7 @@ public class NativeWarningsTest {
     private final List<Bundle> events = new ArrayList<>();
     private Context app;
     @Before public void before() { app=RuntimeEnvironment.getApplication(); NativeWarnings.resetForTest(app, events::add); }
-    @After public void after(){NativeWarnings.setEndpointForTest(null);}
+    @After public void after(){NativeWarnings.setEndpointForTest(null);nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.FLOW.value=Collections.emptyList();}
     public static class BaseReport {
         public String getId(){return "danger-7";}
         public String getReportType(){return "INCIDENT";}
@@ -205,6 +205,27 @@ public class NativeWarningsTest {
         assertEquals(first+1,last().getLong("announcement_index"));
         NativeWarnings.reports(Collections.emptyList());
         assertEquals("CLEAR",last().getString("operation"));
+    }
+    @Test public void alertedReportCarriesFmLookaheadDistanceAndStaysAliveWithoutBusChanges(){
+        Incident report=new Incident();
+        nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.FLOW.value=Collections.singletonList(new nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.Ahead(report,420f));
+        NativeWarnings.reports(Collections.singletonList(new Alerted(report)));
+        Bundle first=new Bundle(last());
+        assertEquals("UPSERT",first.getString("operation"));assertEquals(420,first.getInt("distance_m"));
+        assertEquals("native_lookahead",first.getString("distance_origin"));assertFalse(first.getBoolean("distance_estimated"));
+        int count=events.size();NativeWarnings.ahead();assertEquals("An unchanged fresh distance is not re-sent every fix",count,events.size());
+        nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.FLOW.value=Collections.singletonList(new nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.Ahead(report,380f));
+        NativeWarnings.ahead();assertEquals(count+1,events.size());assertEquals(380,last().getInt("distance_m"));
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(first.getLong("announcement_index"),last().getLong("announcement_index"));
+        assertEquals("Distance alone never changes the warning revision",first.getLong("revision"),last().getLong("revision"));
+        nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge.FLOW.value=Collections.emptyList();
+        for(int second=0;second<45;second++){org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(1));NativeWarnings.ahead();}
+        long now=android.os.SystemClock.elapsedRealtime();
+        assertEquals("UPSERT",last().getString("operation"));assertFalse("A report gone from the look-ahead keeps no distance",last().containsKey("distance_m"));
+        assertTrue("Still-alerted state is renewed inside its display window",last().getLong("state_until_elapsed_ms")>now);
+        NativeWarnings.reports(Collections.emptyList());assertEquals("CLEAR",last().getString("operation"));
+        count=events.size();org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(11));NativeWarnings.ahead();
+        assertEquals("A cleared report is never revived",count,events.size());
     }
     @Test public void acceptedNativeRepeatAfterStateExpiryDoesNotReuseItsAuthorityKey(){
         Incident report=new Incident();

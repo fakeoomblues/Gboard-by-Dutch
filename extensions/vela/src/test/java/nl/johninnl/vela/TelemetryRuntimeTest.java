@@ -79,15 +79,15 @@ public class TelemetryRuntimeTest {
   assertTrue("active car navigation speaks while phone UI and service are absent",voice.last.startsWith("Speed camera"));
  }
  @Test public void selectedProviderStartupFollowsNavigationAndNativeSourceStopsIt(){
-  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(true);
-  assertFalse(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.setNavigationActive(false);
-  assertTrue(TelemetryRuntime.statusText().contains("paused"));TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
+  assertTrue(TelemetryRuntime.providerServiceStatus().contains("paused"));TelemetryRuntime.setNavigationActive(true);
+  assertFalse(TelemetryRuntime.providerServiceStatus().contains("paused"));TelemetryRuntime.setNavigationActive(false);
+  assertTrue(TelemetryRuntime.providerServiceStatus().contains("paused"));TelemetryRuntime.select("");assertEquals("Vela",TelemetryRuntime.statusText());
  }
  @Test public void visibleCarSessionStartsProviderWithoutPhoneActivityOrMapFrame() throws Exception {
   Object session=new Object();java.lang.reflect.Method visible=TelemetryRuntime.class.getMethod("setCarSessionVisible",Object.class,boolean.class);
-  assertTrue(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,true);
-  assertFalse(TelemetryRuntime.statusText().contains("paused"));visible.invoke(null,session,false);
-  assertTrue(TelemetryRuntime.statusText().contains("paused"));
+  assertTrue(TelemetryRuntime.providerServiceStatus().contains("paused"));visible.invoke(null,session,true);
+  assertFalse(TelemetryRuntime.providerServiceStatus().contains("paused"));visible.invoke(null,session,false);
+  assertTrue(TelemetryRuntime.providerServiceStatus().contains("paused"));
  }
  @Test public void bothProvidersDistinguishIncomingDataFromAnUnconnectedWarningBridge() throws Exception {
   for(String provider:new String[]{TelemetryStore.WAZE,TelemetryStore.FLITSMEISTER}){

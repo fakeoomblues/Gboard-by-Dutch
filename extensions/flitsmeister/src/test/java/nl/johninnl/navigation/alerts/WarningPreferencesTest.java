@@ -9,7 +9,7 @@ import org.robolectric.annotation.Config;
 public class WarningPreferencesTest {
     SharedPreferences prefs;
     @Before public void setup(){prefs=RuntimeEnvironment.getApplication().getSharedPreferences("warnings",0);prefs.edit().clear().commit();}
-    @Test public void freshMapsUsesRecommendedVoiceAndRequiresOneExplicitReview(){WarningPreferences p=new WarningPreferences(prefs,true);assertEquals(WarningAudioOwner.Mode.VOICE,p.mode());assertEquals(WarningPreferences.RECOMMENDED,p.categories());assertFalse(p.reviewed());p.confirm();assertTrue(new WarningPreferences(prefs,true).reviewed());}
+    @Test public void freshMapsUsesRecommendedVoiceWithoutConfirmation(){WarningPreferences p=new WarningPreferences(prefs,true);assertEquals(WarningAudioOwner.Mode.VOICE,p.mode());assertEquals(WarningPreferences.RECOMMENDED,p.categories());assertTrue(p.reviewed());assertEquals("Voice",p.summary(false));}
     @Test public void explicitLegacyPoliceAndMuteRemainSelected(){prefs.edit().putInt("waze_alerts_kinds",1).putBoolean("waze_alerts_chime",false).commit();WarningPreferences p=new WarningPreferences(prefs,true);assertEquals(WarningPreferences.POLICE,p.categories());assertEquals(WarningAudioOwner.Mode.SILENT,p.mode());assertTrue(p.origin().contains("legacy_explicit"));}
     @Test public void explicitLegacyChimeRemainsToneRatherThanEnablingVoice(){prefs.edit().putBoolean("waze_alerts_chime",true).commit();assertEquals(WarningAudioOwner.Mode.TONE,new WarningPreferences(prefs,true).mode());}
     @Test public void absentVelaPreferenceIsNotAnExplicitMute(){WarningPreferences p=new WarningPreferences(prefs,false);assertEquals(WarningAudioOwner.Mode.VOICE,p.mode());assertEquals("recommended",p.origin());}
@@ -18,7 +18,7 @@ public class WarningPreferencesTest {
         WarningPreferences fm=new WarningPreferences(prefs,true);fm.mode(WarningAudioOwner.Mode.SILENT);fm.categories(WarningPreferences.EMERGENCY);fm.confirm();
         java.util.Map<String,?> original=new java.util.HashMap<>(prefs.getAll());
         WarningPreferences waze=new WarningPreferences(prefs,true,WarningProviders.WAZE);
-        assertFalse(waze.reviewed());assertEquals(WarningAudioOwner.Mode.VOICE,waze.mode());assertEquals(WarningPreferences.RECOMMENDED,waze.categories());
+        assertTrue(waze.reviewed());assertEquals(WarningAudioOwner.Mode.VOICE,waze.mode());assertEquals(WarningPreferences.RECOMMENDED,waze.categories());
         waze.mode(WarningAudioOwner.Mode.TONE);waze.categories(WarningPreferences.ROAD_DANGER);waze.confirm();
         for(String key:original.keySet())assertEquals("Existing FM preference bytes remain unchanged: "+key,original.get(key),prefs.getAll().get(key));
         assertEquals(WarningPreferences.EMERGENCY,new WarningPreferences(prefs,true).categories());
@@ -29,7 +29,7 @@ public class WarningPreferencesTest {
         prefs.edit().putInt("waze_alerts_kinds",1).putBoolean("waze_alerts_chime",false).commit();
         WarningPreferences fm=new WarningPreferences(prefs,true);fm.categories(WarningPreferences.ALL);fm.confirm();
         WarningPreferences waze=new WarningPreferences(prefs,true,WarningProviders.WAZE);
-        assertEquals(WarningAudioOwner.Mode.SILENT,waze.mode());assertEquals(WarningPreferences.POLICE,waze.categories());assertFalse(waze.reviewed());
+        assertEquals(WarningAudioOwner.Mode.SILENT,waze.mode());assertEquals(WarningPreferences.POLICE,waze.categories());assertTrue(waze.reviewed());
         assertEquals(1,prefs.getInt("morphe_native_warnings_waze_legacy_types",0));assertEquals(WarningPreferences.ALL,fm.categories());
     }
     @Test public void profilesRetainDistinctNativeNamespacesAndBoundedCapabilitySets(){

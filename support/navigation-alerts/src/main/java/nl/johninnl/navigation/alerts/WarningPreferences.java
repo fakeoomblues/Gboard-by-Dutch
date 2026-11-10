@@ -35,7 +35,8 @@ public final class WarningPreferences {
         edit.putString(PREFIX+"mode",mode.name()).putInt(PREFIX+"categories",categories).putString(PREFIX+"origin",origin)
                 .putInt(PREFIX+"review",0).putBoolean(PREFIX+"initialized",true).apply();
     }
-    public boolean reviewed(){return prefs.getInt(PREFIX+"review",0)>=1;}
+    /** Recommended or migrated choices apply immediately; editing them is optional and never gates warning audio. */
+    public boolean reviewed(){return true;}
     public void confirm(){prefs.edit().putInt(PREFIX+"review",1).apply();}
     public String origin(){return prefs.getString(PREFIX+"origin","");}
     public WarningAudioOwner.Mode mode(){try{return WarningAudioOwner.Mode.valueOf(prefs.getString(PREFIX+"mode","SILENT"));}catch(RuntimeException invalid){return WarningAudioOwner.Mode.SILENT;}}
@@ -55,7 +56,7 @@ public final class WarningPreferences {
     }
     public String summary(boolean nl){
         String output=mode()==WarningAudioOwner.Mode.VOICE?(nl?"Spraak":"Voice"):mode()==WarningAudioOwner.Mode.TONE?(nl?"Toon":"Tone"):(nl?"Stil":"Silent");
-        return (reviewed()?"":(nl?"Keuzes controleren · ":"Review choices · "))+output;
+        return output;
     }
     public static int categoryOf(WarningEvent e){
         // Waze's emergency-vehicle hazard is a point report, not a moving responder.

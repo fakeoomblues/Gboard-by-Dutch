@@ -30,6 +30,8 @@ public final class WarningScheduler {
         default void prepare(String language,WarningAudioOwner.Mode mode){if(mode!=WarningAudioOwner.Mode.SILENT)prepare(language);}
         default boolean ready(WarningEvent event,WarningAudioOwner.Mode mode){return ready(event.languageTag,mode);}
         WarningAudioOwner.Mode effective(WarningAudioOwner.Mode requested);
+        /** Language prepared before the first event, normally the provider's own UI locale. */
+        default String defaultLanguage(){return "";}
         boolean speak(WarningEvent payload,PlaybackGrant grant,long originalDeadline,Callback callback);
         void cancel(PlaybackGrant grant);
     }
@@ -194,6 +196,13 @@ public final class WarningScheduler {
         long now=time.now();handled.entrySet().removeIf(e->e.getValue()<=now);
         for(Pending p:new ArrayList<>(queue.values()))if(now>=p.authority.announceUntil){queue.remove(p.key);terminal(p,PlaybackGrant.Outcome.EXPIRED);}
     }
+    /** Providers tag events with their UI locale; preparing it at startup keeps an idle receiver ready. */
+    /** Providers use the phone locale unless a per-app override exists; a mismatch only switches voice on the first event. */
+    public static String systemLanguage(){
+        try{android.os.LocaleList locales=android.content.res.Resources.getSystem().getConfiguration().getLocales();return locales.isEmpty()?"":locales.get(0).toLanguageTag();}
+        catch(RuntimeException unavailable){return "";}
+    }
+    private String idleLanguage(){String value=speaker.defaultLanguage();return value==null||value.equals("und")?"":value;}
     private void pump(){
         if(pumping||reconcilingSnapshot){again=true;return;}pumping=true;
         try{do{again=false;pumpOne();}while(again);}finally{pumping=false;}
@@ -227,7 +236,7 @@ public final class WarningScheduler {
         if(unknownOutput){setStatus("AUDIO_UNCERTAIN");return;}
         if(next==null&&contextHeld&&active==null){setStatus("CONTEXT_UNVERIFIED");return;}
         if(controlBusy)return;
-        String language=audible!=null?audible.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:preparedLanguage;
+        String language=audible!=null?audible.payload.languageTag:active!=null?active.pending.payload.languageTag:previewRequested?previewLanguage:!preparedLanguage.isEmpty()?preparedLanguage:idleLanguage();
         boolean changedPreparation=!language.equals(preparedLanguage)||preparedMode!=mode;
         boolean retryPreparation=active==null&&(next!=null||previewRequested)&&mode!=WarningAudioOwner.Mode.SILENT&&!language.isEmpty()&&!language.equals("und")
                 &&now>=nextPrepare&&!speaker.ready(language,mode);

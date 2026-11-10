@@ -101,9 +101,11 @@ public class ExternalTelemetryTest {
         SpeedAlerts.onNativeSpeedMps(Float.POSITIVE_INFINITY);assertNull(ExternalTelemetry.speedMps());
     }
     @Test public void selectedProviderStartupFollowsNavigationAndOffStopsIt(){
-        ExternalTelemetry.select(app,TelemetryStore.WAZE);assertTrue(ExternalTelemetry.status().contains("paused"));
-        ExternalTelemetry.navigating(true);assertFalse(ExternalTelemetry.status().contains("paused"));
-        ExternalTelemetry.navigating(false);assertTrue(ExternalTelemetry.status().contains("paused"));
+        // Provider startup lines only; the separate warning-audio line may itself say audio is paused.
+        java.util.function.Supplier<String> provider=()->ExternalTelemetry.status().replace(ExternalTelemetry.warningAudioStatus(),"");
+        ExternalTelemetry.select(app,TelemetryStore.WAZE);assertTrue(provider.get().contains("paused"));
+        ExternalTelemetry.navigating(true);assertFalse(provider.get().contains("paused"));
+        ExternalTelemetry.navigating(false);assertTrue(provider.get().contains("paused"));
         ExternalTelemetry.select(app,"");assertEquals("Off · Google Maps",ExternalTelemetry.status());
     }
 }

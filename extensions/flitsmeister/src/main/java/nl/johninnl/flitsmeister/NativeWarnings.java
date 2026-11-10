@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -58,8 +59,11 @@ public final class NativeWarnings {
     // announcements distinct for this process/session without retaining expired models.
     private static long announcementCounter;
     private static final class Record {
-        Bundle fields; long revision=1,index; boolean listed;
+        Bundle fields; long revision=1,index,emittedAt; boolean listed;
+        java.lang.ref.WeakReference<Object> report;
     }
+    /** Listed state is renewed well inside its 30s display window while FM keeps the report alerted. */
+    static final long STATE_RENEW_MS=10000,DISTANCE_RENEW_MS=3000;static final int DISTANCE_STEP_M=5;
     /** Patch-time original-DEX guards and the matching capture audit pin each native profile. */
     private static int auditedNativeProfile(Context context){
         try{
@@ -337,13 +341,65 @@ public final class NativeWarnings {
                     copyNativeTextFields(old.fields,fields);
                     for(String key:new String[]{"native_text_key","template_id"})if(old.fields.containsKey(key))fields.putString(key,old.fields.getString(key));
                 }else fields.putString("language_tag",initial.language);
+                aheadDistance(fields,report,SystemClock.elapsedRealtime());
                 update(id,fields,text,origin,phase,false,false,"report_state",true);
+                Record listed=records.get(id);if(listed!=null)listed.report=new java.lang.ref.WeakReference<>(report);
             }
             for(String id:new ArrayList<>(records.keySet())){
                 Record record=records.get(id);
                 if(record.listed&&!seen.contains(id)&&!"exit".equals(record.fields.getString("phase")))clear(id);
             }
         });
+    }
+    /**
+     * Per FM location fix: attach FM's own look-ahead distance (measured along the road it
+     * matched ahead) to still-alerted reports and renew their display state. Never announces,
+     * clears or changes identity; a report missing from the look-ahead keeps no distance.
+     */
+    public static void ahead(){capture(()->{
+        if(!captureEnabled)return;
+        long now=SystemClock.elapsedRealtime();List<?> entries=aheadEntries();
+        for(Map.Entry<String,Record> item:new ArrayList<>(records.entrySet())){
+            Record record=item.getValue();Bundle old=record.fields;
+            if(!record.listed||old==null||"CLEAR".equals(old.getString("operation"))||"exit".equals(old.getString("phase")))continue;
+            Object report=record.report==null?null:record.report.get();if(report==null)continue;
+            Bundle fields=new Bundle(old);
+            if(!"native_lookahead".equals(fields.getString("distance_origin"))&&fields.containsKey("distance_m"))continue;
+            for(String key:new String[]{"distance_m","distance_observed_elapsed_ms","distance_estimated","distance_origin","native_ahead_on_road"})fields.remove(key);
+            Double distance=aheadDistance(fields,report,entries,now);
+            boolean had=old.containsKey("distance_m")&&"native_lookahead".equals(old.getString("distance_origin"));
+            boolean moved=distance!=null&&had&&Math.abs(distance-old.getInt("distance_m"))>=DISTANCE_STEP_M;
+            long age=now-record.emittedAt;
+            if(!(moved||(distance!=null)!=had||distance!=null&&age>=DISTANCE_RENEW_MS||age>=STATE_RENEW_MS))continue;
+            for(String key:new String[]{"protocol_version","provider_session","sequence","issued_elapsed_ms","announce_until_elapsed_ms"})fields.remove(key);
+            update(item.getKey(),fields,fields.getString("message",""),fields.getString("message_origin","native_resource"),fields.getString("phase","active"),false,false,"report_state",true);
+        }
+    });}
+    private static void aheadDistance(Bundle fields,Object report,long now){
+        if(fields.containsKey("distance_m"))return;
+        aheadDistance(fields,report,aheadEntries(),now);
+    }
+    private static Double aheadDistance(Bundle fields,Object report,List<?> entries,long now){
+        if(entries==null||report==null)return null;
+        for(Object entry:entries){
+            Object base=optional(entry,"getBaseReport");if(base==null||base!=report&&!base.equals(report))continue;
+            Object distance=optional(entry,"getDistanceInMeters");if(!(distance instanceof Number))return null;
+            double value=((Number)distance).doubleValue();if(!Double.isFinite(value)||value<0||value>1000000)return null;
+            fields.putInt("distance_m",(int)Math.round(value));fields.putLong("distance_observed_elapsed_ms",now);fields.putBoolean("distance_estimated",false);
+            fields.putString("distance_origin","native_lookahead");
+            Object onRoad=optional(entry,"isOnLookAheadPolyline");if(onRoad instanceof Boolean)fields.putBoolean("native_ahead_on_road",(Boolean)onRoad);
+            return value;
+        }
+        return null;
+    }
+    /** FM15 publishes its road-matched reports ahead through this StateFlow; older FM has none. */
+    private static List<?> aheadEntries(){
+        try{
+            Class<?> bridge=Class.forName("nl.flitsmeister.fmcore.service.lookahead.RelevantReportsAheadBridge");
+            Object flow=bridge.getMethod("getRelevantReports").invoke(bridge.getField("INSTANCE").get(null));
+            Object value=flow==null?null:flow.getClass().getMethod("getValue").invoke(flow);
+            return value instanceof List?(List<?>)value:null;
+        }catch(ReflectiveOperationException|RuntimeException unavailable){return null;}
     }
     public static void stopped(){capture(()->{for(String id:new ArrayList<>(records.keySet()))clear(id);captureEnabled=false;anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();});}
     private static synchronized void capture(Runnable action){
@@ -401,7 +457,7 @@ public final class NativeWarnings {
         fields.putString("capture_path",path);fields.putBoolean("native_local_mute_bypass",bypass);
         fields.putString("relevance",relevance(fields,phase));
         if(!NativeWarningText.useful(text)&&!"display_only".equals(fields.getString("category")))fields.putString("capture_diagnostic","MISSING_NATIVE_TEXT");
-        record.fields=new Bundle(fields);record.listed|=listed;emit(fields);
+        record.fields=new Bundle(fields);record.listed|=listed;record.emittedAt=now;emit(fields);
     }
     private static void clear(String id){
         Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;
@@ -490,8 +546,10 @@ public final class NativeWarnings {
         return fields.getString("native_family","")+":"+id;
     }
     private static boolean semanticChange(Bundle old,Bundle next){
+        // FM's per-fix look-ahead distance is display geometry; it never re-versions the warning.
+        boolean lookahead="native_lookahead".equals(old.getString("distance_origin"))||"native_lookahead".equals(next.getString("distance_origin"));
         for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_is_traffic_light","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","native_early_distance_m","native_early_max_distance_m","native_early_heading_degrees","distance_m","distance_observed_elapsed_ms","range_m","range_observed_elapsed_ms","relative_bearing_degrees","relationship","relationship_observed_elapsed_ms","road_speed_limit_kmh","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
-            if(!java.util.Objects.equals(old.get(key),next.get(key)))return true;
+            if(!(lookahead&&key.startsWith("distance_"))&&!java.util.Objects.equals(old.get(key),next.get(key)))return true;
         return false;
     }
     private static void overflow(){if(endpoint!=null)endpoint.captureOverflow();}

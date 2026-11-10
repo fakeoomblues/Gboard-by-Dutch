@@ -418,13 +418,6 @@ public final class CustomizationActivity extends Activity {
             previewRow.setOnClickListener(v->ExternalTelemetry.previewWarning(this));body.addView(previewRow);
             LinearLayout recoveryRow=rowBase("Recover warning audio while parked","Open "+provider+"'s confirmation after stopping the previous receiver and speech engine");
             recoveryRow.setOnClickListener(v->ExternalTelemetry.recoverWarningAudio(this));body.addView(recoveryRow);
-            if(!nativeChoices.reviewed()){
-                LinearLayout review=rowBase("Review "+provider+" warnings","Your previous explicit mute and alert choices are preserved. Choose categories and output, then enable these choices.");
-                review.setOnClickListener(v->new android.app.AlertDialog.Builder(this).setTitle("Use these warning choices?")
-                    .setMessage("Output: "+nativeChoices.mode().name()+". Your selected categories apply to warning audio. Google Maps mute settings still apply. Complete warning coverage also requires an updated "+provider+" patch.")
-                    .setPositiveButton("Use these choices",(dialog,which)->{nativeChoices.confirm();ExternalTelemetry.warningChoicesChanged();outputSub.setText(nativeChoices.summary(false));review.setVisibility(View.GONE);})
-                    .setNegativeButton("Cancel",null).show());body.addView(review);
-            }
             if(nl.johninnl.navigation.alerts.WarningProviders.WAZE.equals(selected))body.addView(rowBase("Managed Waze output","Managed Waze alerts use these Maps audio choices. Waze's local camera-sound and below-limit settings apply only to Waze's own playback."));
     }
 

@@ -62,6 +62,10 @@ public class CarWarningFrameTest {
         TelemetryRuntime.select(TelemetryStore.WAZE);WarningPreferences choices=TelemetryRuntime.warningPreferences();choices.categories(WarningPreferences.ROAD_DANGER);choices.confirm();
         Bundle b=WarningCodec.encode(event("road_danger"));b.putString("native_type","HAZARD");b.putString("native_subtype","HAZARD_TYPE_ON_ROAD_OBJECT");b.putString("relevance","point_ahead");b.putString("message","Object on road");
         view.events(Collections.singletonList(WarningCodec.decode(b,SystemClock.elapsedRealtime())));
+        assertEquals("A point without any distance never draws a pill",0,pixels(draw(new Renderer())));
+        assertEquals("Withheld provider text does not resurface as compact text","",TelemetryRuntime.compactCarWarningText());
+        b.putLong("sequence",b.getLong("sequence")+1);b.putInt("distance_m",300);b.putLong("distance_observed_elapsed_ms",SystemClock.elapsedRealtime());b.putBoolean("distance_estimated",false);
+        view.events(Collections.singletonList(WarningCodec.decode(b,SystemClock.elapsedRealtime())));
         assertEquals("De-Waze\nObject on road",TelemetryRuntime.nativeCarWarningText());assertTrue(pixels(draw(new Renderer()))>20);
         TelemetryRuntime.select(TelemetryStore.FLITSMEISTER);assertEquals("",TelemetryRuntime.nativeCarWarningText());assertEquals(0,pixels(draw(new Renderer())));
     }
