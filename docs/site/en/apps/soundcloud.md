@@ -14,6 +14,7 @@ Select the complete publisher-signed APKM archive for this exact build (Android 
 | **Disable analytics** | On | Stops SoundCloud's event storage and dispatch through its analytics handler, preserving the worker's own shutdown path. Other tracking services remain active. |
 | **Disable consent popup** | On | Skips the OneTrust popup using the app's no-op consent controller. Does not grant consent or disable tracking; select Disable analytics separately. |
 | **Enable SoundCloud Go** | On | Enables local Go+ plan controls, hides Go upsells and consumer-plan transition screens, disables client ad requests and display placements, and forces the offline_sync, no_audio_ads and hq_audio switches from the /configuration response on. See below for what those switches can and cannot do. |
+| **Ignore device limit** | On | SoundCloud signs in on up to ten devices, and only the app enforces it: the /configuration response marks the device authorized or not, an unauthorized sign-in never finishes, and a later refresh signs the device out and revokes its token. The patch ignores that state, so signing in and staying signed in no longer depend on it. |
 | **Add microG-RE support** | Off | Routes SoundCloud's Google services — sign-in and listening notifications over Firebase Cloud Messaging, Cast, the ads identifier and in-app review — through an installed MicroG-RE (MicroG-RE or ReVanced GmsCore) on phones without Google Play services. The sign-in itself is SoundCloud's own web login and needs neither. Leave off on phones with real Play services. |
 
 ## Why Home was empty in the car
@@ -21,6 +22,10 @@ Select the complete publisher-signed APKM archive for this exact build (Android 
 SoundCloud's car Home tab reads an older discovery feed, while the phone Home uses the newer Home sections. Feed and Library already worked because they use your own stream and collection. The patch asks the phone's GraphQL SDUI Home service for its sections, rather than the separate library-banner endpoint used by the earlier patch, when the car opens Home. It applies to Android Auto, Gearslip, DriveDeck and other media hosts that browse SoundCloud.
 
 Music Home uses an ungrouped cover grid. Tracks inside playlists and albums retain the app's track-list presentation.
+
+## The ten-device limit
+
+SoundCloud lets an account sign in on up to ten devices, and the enforcement is entirely in the app: `/configuration` returns a `device_management` state for the device, and the app reads it through three checks. An unauthorized **new** sign-in never finishes (the token is issued, but the app refuses to register it); an unauthorized **existing** device is signed out on the next configuration refresh, and its token is revoked. Ignore device limit makes those three checks answer *authorized*, so sign-in and staying signed in no longer depend on the device count. Playback and streaming code never consults the state, so nothing else changes. SoundCloud's servers still know how many devices are registered; if they ever start rejecting requests beyond this handshake, no client patch can help.
 
 ## The Go switches, honestly
 

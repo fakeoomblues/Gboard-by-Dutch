@@ -7,7 +7,7 @@ import subprocess
 import zipfile
 
 
-PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go", "Add microG-RE support"]
+PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go", "Add microG-RE support", "Ignore device limit"]
 
 
 def main():

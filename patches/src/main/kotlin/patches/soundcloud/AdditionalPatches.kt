@@ -65,6 +65,30 @@ val disableConsentPatch = bytecodePatch(
 }
 
 @Suppress("unused")
+val ignoreDeviceLimitPatch = bytecodePatch(
+    name = "Ignore device limit",
+    description = "SoundCloud signs in on up to ten devices: the /configuration response marks " +
+        "the device authorized or not, and only the app itself reads that flag -- a new sign-in that " +
+        "is marked unauthorized never finishes, and a configuration refresh signs an existing device " +
+        "out and revokes its token. This patch ignores the unauthorized state, so signing in and " +
+        "staying signed in no longer depend on it. SoundCloud's servers still know the device count; " +
+        "if they ever enforce it beyond this handshake, the patch cannot help.",
+) {
+    compatibleWith(soundcloud)
+    dependsOn(originalInput)
+    execute {
+        // Both gates read the state only through these predicates, which read the parsed
+        // field directly: DefaultSignInOperations.b() refuses the sign-in (DEVICE_CONFLICT
+        // when recoverable, DEVICE_BLOCK otherwise), and ConfigurationManager.d() logs the
+        // device out and revokes its token on the next configuration refresh.
+        for (predicate in listOf("isUnauthorized", "isRecoverableBlock", "isUnrecoverableBlock"))
+            exact("foundation/domain/configuration/DeviceManagement", predicate, "Z")
+                .addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+    }
+}
+
+
+@Suppress("unused")
 val enablePremiumPatch = bytecodePatch(
     name = "Enable SoundCloud Go",
     description = "Enables local Go+ plan controls and the offline_sync, no_audio_ads and hq_audio feature " +

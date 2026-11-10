@@ -699,6 +699,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable consent popup | On | 2026.11.02-release |
 | Enable SoundCloud Go | On | 2026.11.02-release |
 | Home in Android Auto | On | 2026.11.02-release |
+| Ignore device limit | On | 2026.11.02-release |
 
 ## TIDAL
 

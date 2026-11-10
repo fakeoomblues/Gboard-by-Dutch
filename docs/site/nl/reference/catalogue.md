@@ -699,6 +699,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable consent popup | Aan | 2026.11.02-release |
 | Enable SoundCloud Go | Aan | 2026.11.02-release |
 | Home in Android Auto | Aan | 2026.11.02-release |
+| Ignore device limit | Aan | 2026.11.02-release |
 
 ## TIDAL
 

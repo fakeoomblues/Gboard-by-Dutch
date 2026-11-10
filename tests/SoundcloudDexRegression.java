@@ -58,6 +58,7 @@ class SoundcloudDexRegression {
         var names = Set.of(Arrays.copyOfRange(args, 1, args.length));
         boolean analytics = names.contains("Disable analytics"), consent = names.contains("Disable consent popup"), go = names.contains("Enable SoundCloud Go");
         boolean home = names.contains("Home in Android Auto"), microg = names.contains("Add microG-RE support");
+        boolean devices = names.contains("Ignore device limit");
         returnsVoid(method("analytics/base/TrackingHandler", "handleMessage", "Landroid/os/Message;"), false);
         var tracking = code(method("analytics/base/TrackingHandler", "a", "Landroid/os/Message;"));
         boolean blocked = tracking.get(0).getOpcode() == Opcode.IGET &&
@@ -140,6 +141,14 @@ class SoundcloudDexRegression {
             }
         }
         check(routed == microg, "core Play services names rewritten exactly with the microG patch");
+        // The device limit's two gates read the /configuration device-management state only
+        // through the three predicates; each early-returns false with the patch.
+        for (String predicate : List.of("isUnauthorized", "isRecoverableBlock", "isUnrecoverableBlock")) {
+            var gate = code(method("foundation/domain/configuration/DeviceManagement", predicate));
+            check((gate.get(0).getOpcode() == Opcode.CONST_4 &&
+                ((NarrowLiteralInstruction) gate.get(0)).getNarrowLiteral() == 0 &&
+                gate.get(1).getOpcode() == Opcode.RETURN) == devices, "device gate " + predicate);
+        }
         System.out.println("PASS emitted DEX: " + names);
     }
 }

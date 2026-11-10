@@ -14,6 +14,7 @@ Selecteer het volledige, door de uitgever ondertekende APKM-archief voor precies
 | **Disable analytics** | Aan | Stopt het opslaan en versturen van gebeurtenissen via de eigen analytics-handler van SoundCloud, met behoud van het afsluiten van de worker. Andere trackingdiensten blijven actief. |
 | **Disable consent popup** | Aan | Slaat de OneTrust-pop-up over met de bestaande lege toestemmingscontroller. Geeft geen toestemming en schakelt tracking niet uit; selecteer Disable analytics apart. |
 | **Enable SoundCloud Go** | Aan | Activeert lokale Go+-bediening, verbergt Go-aanbiedingen en schermen voor wijzigingen van het luisterabonnement, schakelt advertentieverzoeken en weergaveplekken uit, en zet de offline_sync-, no_audio_ads- en hq_audio-schakelaars uit het /configuration-antwoord permanent aan. Zie hieronder wat die schakelaars wel en niet kunnen. |
+| **Ignore device limit** | Aan | SoundCloud logt in op maximaal tien apparaten, en alleen de app handhaaft dat: het /configuration-antwoord markeert het apparaat als geautoriseerd of niet, een ongeautoriseerde nieuwe aanmelding wordt nooit afgerond, en een latere verversing meldt het apparaat af en trekt zijn token in. De patch negeert die status, zodat inloggen en ingelogd blijven er niet langer van afhangen. |
 | **Add microG-RE support** | Uit | Leidt de Google-diensten van SoundCloud — aanmeld- en luistermeldingen via Firebase Cloud Messaging, Cast, de advertentie-id en in-app-review — via een geïnstalleerde MicroG-RE (MicroG-RE of ReVanced GmsCore) op telefoons zonder Google Play-diensten. Het inloggen zelf is de eigen weblogin van SoundCloud en heeft dat niet nodig. Uitlaten op telefoons met echte Play-diensten. |
 
 ## Waarom Home in de auto leeg was
@@ -21,6 +22,10 @@ Selecteer het volledige, door de uitgever ondertekende APKM-archief voor precies
 De Home-tab van SoundCloud in de auto leest een oudere ontdekfeed, terwijl de telefoon-Home de nieuwere Home-secties gebruikt. Feed en Bibliotheek werkten al, omdat die je eigen stream en collectie gebruiken. De patch vraagt de telefoonsecties op bij de GraphQL-SDUI-Home-dienst van de app, in plaats van het afzonderlijke bibliotheekbanner-endpoint van de eerdere patch, zodra de auto Home opent. Dit geldt voor Android Auto, Gearslip, DriveDeck en andere mediahosts die SoundCloud doorbladeren.
 
 Muziek-Home gebruikt een coverraster zonder sectiegroepen. Tracks binnen playlists en albums behouden de tracklijst van de app.
+
+## De limiet van tien apparaten
+
+SoundCloud laat een account inloggen op maximaal tien apparaten, en de handhaving zit volledig in de app: `/configuration` geeft een `device_management`-status voor het apparaat, die de app via drie controles leest. Een ongeautoriseerde **nieuwe** aanmelding wordt nooit afgerond (de token wordt uitgegeven, maar de app weigert te registreren); een ongeautoriseerd **bestaand** apparaat wordt bij de volgende configuratie-verversing afgemeld en zijn token wordt ingetrokken. Ignore device limit laat die drie controles *geautoriseerd* antwoorden, zodat inloggen en ingelogd blijven niet langer van het apparaataantal afhangen. Afspeel- en streamcode raadpleegt de status nooit, dus verder verandert er niets. De servers van SoundCloud weten nog steeds hoeveel apparaten er geregistreerd zijn; als ze ooit beyond deze handshake verzoeken gaan weigeren, kan geen client-patch helpen.
 
 ## De Go-schakelaars, eerlijk
 

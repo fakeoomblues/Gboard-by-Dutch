@@ -91,6 +91,20 @@ early-returns, zero remaining `com.google`/`com.google.android.gms` const-string
 the microG scenarios). `:extensions:soundcloud:test` covers `GoPlusTest` (3 checks) beside the
 existing mapper tests.
 
+## Ignore device limit
+
+Follow-up analysis the same day: SoundCloud caps sign-in at ten devices, and the whole
+enforcement is client-side. `/configuration` carries `device_management:
+{authorized, recoverable}`, read only through three `DeviceManagement` predicates:
+`DefaultSignInOperations.b()` refuses to finish an unauthorized new sign-in (the OAuth
+token is already issued; DEVICE_CONFLICT when recoverable, DEVICE_BLOCK otherwise), and
+`ConfigurationManager.d()` logs an unauthorized signed-in device out on the next
+configuration refresh and revokes its token. No playback or streaming code reads the
+state. The patch early-returns false from the three predicates; the device-limit
+scenarios are covered by the same rebuild validation (now seven scenarios). Server-side
+enforcement beyond this handshake would defeat any client patch, and an unpatched app
+that already hit the conflict has already revoked its token: sign in again once patched.
+
 ## Validation limits
 
 No account was used and no emulator session was run for the microG path: FCM delivery through
