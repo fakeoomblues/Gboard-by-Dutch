@@ -149,6 +149,16 @@ class SoundcloudDexRegression {
                 ((NarrowLiteralInstruction) gate.get(0)).getNarrowLiteral() == 0 &&
                 gate.get(1).getOpcode() == Opcode.RETURN) == devices, "device gate " + predicate);
         }
+        // The sign-in registration handshake returns Optional.empty() instead of running.
+        var registration = code(method("onboarding/auth/DefaultSignInOperations", "b", "Z",
+            ROOT + "api/oauth/Token;"));
+        boolean skips = registration.get(0).getOpcode() == Opcode.INVOKE_STATIC &&
+            ((ReferenceInstruction) registration.get(0)).getReference() instanceof MethodReference skipped &&
+            skipped.getDefiningClass().equals("Lcom/soundcloud/java/optional/Optional;") &&
+            skipped.getName().equals("a") &&
+            registration.get(1).getOpcode() == Opcode.MOVE_RESULT_OBJECT &&
+            registration.get(2).getOpcode() == Opcode.RETURN_OBJECT;
+        check(skips == devices, "sign-in registration handshake skipped");
         System.out.println("PASS emitted DEX: " + names);
     }
 }

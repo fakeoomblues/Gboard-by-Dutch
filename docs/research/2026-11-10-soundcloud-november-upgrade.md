@@ -100,10 +100,17 @@ enforcement is client-side. `/configuration` carries `device_management:
 token is already issued; DEVICE_CONFLICT when recoverable, DEVICE_BLOCK otherwise), and
 `ConfigurationManager.d()` logs an unauthorized signed-in device out on the next
 configuration refresh and revokes its token. No playback or streaming code reads the
-state. The patch early-returns false from the three predicates; the device-limit
-scenarios are covered by the same rebuild validation (now seven scenarios). Server-side
-enforcement beyond this handshake would defeat any client patch, and an unpatched app
-that already hit the conflict has already revoked its token: sign in again once patched.
+state. The patch early-returns false from the three predicates.
+
+A first phone review (signed in as device eleven) still failed with the app's web-auth
+error screen (`error_soundcloud_no_response` / `error_server_problems_message`), with an
+OkHttp response-body leak in the process log: with the predicates neutralized, the
+registration request itself is refused over HTTP before any flag exists. The patch now
+also skips the registration handshake at sign-in (`DefaultSignInOperations.b()` returns
+`Optional.empty()`), which covers both the flags and the refused request; the startup
+configuration fetch, whose failures are only error-reported and never fatal, takes over.
+The install stays unregistered in SoundCloud's device list. Server-side enforcement
+beyond these handshakes would defeat any client patch.
 
 ## Validation limits
 

@@ -7915,7 +7915,7 @@
     },
     {
       "name": "Ignore device limit",
-      "description": "SoundCloud signs in on up to ten devices: the /configuration response marks the device authorized or not, and only the app itself reads that flag -- a new sign-in that is marked unauthorized never finishes, and a configuration refresh signs an existing device out and revokes its token. This patch ignores the unauthorized state, so signing in and staying signed in no longer depend on it. SoundCloud's servers still know the device count; if they ever enforce it beyond this handshake, the patch cannot help.",
+      "description": "SoundCloud signs in on up to ten devices: the /configuration response marks the device authorized or not, and only the app itself enforces that -- a new sign-in that is marked unauthorized never finishes, the server can also refuse the registration request outright, and a configuration refresh signs an existing device out and revokes its token. This patch skips the registration call at sign-in and ignores the unauthorized state, so signing in and staying signed in no longer depend on it. The install then stays unregistered in SoundCloud's device list, and if the servers ever enforce the count beyond these handshakes, the patch cannot help.",
       "default": true,
       "category": null,
       "compatiblePackages": [

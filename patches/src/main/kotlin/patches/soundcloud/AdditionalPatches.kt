@@ -68,11 +68,13 @@ val disableConsentPatch = bytecodePatch(
 val ignoreDeviceLimitPatch = bytecodePatch(
     name = "Ignore device limit",
     description = "SoundCloud signs in on up to ten devices: the /configuration response marks " +
-        "the device authorized or not, and only the app itself reads that flag -- a new sign-in that " +
-        "is marked unauthorized never finishes, and a configuration refresh signs an existing device " +
-        "out and revokes its token. This patch ignores the unauthorized state, so signing in and " +
-        "staying signed in no longer depend on it. SoundCloud's servers still know the device count; " +
-        "if they ever enforce it beyond this handshake, the patch cannot help.",
+        "the device authorized or not, and only the app itself enforces that -- a new sign-in that " +
+        "is marked unauthorized never finishes, the server can also refuse the registration request " +
+        "outright, and a configuration refresh signs an existing device out and revokes its token. " +
+        "This patch skips the registration call at sign-in and ignores the unauthorized state, so " +
+        "signing in and staying signed in no longer depend on it. The install then stays unregistered " +
+        "in SoundCloud's device list, and if the servers ever enforce the count beyond these " +
+        "handshakes, the patch cannot help.",
 ) {
     compatibleWith(soundcloud)
     dependsOn(originalInput)
@@ -84,6 +86,19 @@ val ignoreDeviceLimitPatch = bytecodePatch(
         for (predicate in listOf("isUnauthorized", "isRecoverableBlock", "isUnrecoverableBlock"))
             exact("foundation/domain/configuration/DeviceManagement", predicate, "Z")
                 .addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+
+        // The registration request itself can also be refused over HTTP for a device past
+        // the limit, which fails the sign-in before any flag exists. Skip the registration
+        // handshake entirely: the sign-in proceeds without registering this install, and
+        // the startup configuration fetch (whose failures are only reported, never fatal)
+        // takes over as on a fresh session.
+        exact("onboarding/auth/DefaultSignInOperations", "b",
+            "Lcom/soundcloud/java/optional/Optional;", "Z", "${ROOT}api/oauth/Token;")
+            .addInstructions(0, """
+                invoke-static {}, Lcom/soundcloud/java/optional/Optional;->a()Lcom/soundcloud/java/optional/Optional;
+                move-result-object v0
+                return-object v0
+            """)
     }
 }
 
