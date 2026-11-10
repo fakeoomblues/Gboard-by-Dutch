@@ -7,7 +7,7 @@ import subprocess
 import zipfile
 
 
-PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go", "Add microG-RE support", "Ignore device limit"]
+PATCHES = ["Disable analytics", "Disable consent popup", "Enable SoundCloud Go", "Ignore device limit"]
 
 
 def main():
@@ -56,15 +56,6 @@ def main():
             return value.encode() in manifest or utf16 in manifest
 
         assert manifest_has("com.soundcloud.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"), "manifest lost SoundCloud permissions"
-        if "Add microG-RE support" in names:
-            assert not manifest_has("com.google.android.c2dm.permission.RECEIVE"), "c2dm permission not routed to microG"
-            assert not manifest_has("com.google.android.gms.permission.AD_ID"), "ads-id permission not routed to microG"
-            for required in ("app.revanced.android.c2dm.permission.RECEIVE",
-                             "app.revanced.android.gms.permission.AD_ID",
-                             "app.revanced.android.gms.SPOOFED_PACKAGE_NAME",
-                             "app.revanced.android.gms.SPOOFED_PACKAGE_SIGNATURE",
-                             "app.revanced.MICROG_PACKAGE_NAME"):
-                assert manifest_has(required), "manifest misses " + required
         assert actual_abis == expected_abis, (actual_abis, expected_abis)
         subprocess.run(["java", "-cp", str(args.cli.resolve()),
                         str(Path(__file__).resolve().parents[1] / "tests/SoundcloudDexRegression.java"),

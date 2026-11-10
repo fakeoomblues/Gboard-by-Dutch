@@ -14,8 +14,7 @@ Select the complete publisher-signed APKM archive for this exact build (Android 
 | **Disable analytics** | On | Stops SoundCloud's event storage and dispatch through its analytics handler, preserving the worker's own shutdown path. Other tracking services remain active. |
 | **Disable consent popup** | On | Skips the OneTrust popup using the app's no-op consent controller. Does not grant consent or disable tracking; select Disable analytics separately. |
 | **Enable SoundCloud Go** | On | Enables local Go+ plan controls, hides Go upsells and consumer-plan transition screens, disables client ad requests and display placements, and forces the offline_sync, no_audio_ads and hq_audio switches from the /configuration response on. See below for what those switches can and cannot do. |
-| **Ignore device limit** | On | SoundCloud signs in on up to ten devices, and only the app enforces it: the /configuration response marks the device authorized or not, an unauthorized sign-in never finishes, and a later refresh signs the device out and revokes its token. The patch ignores that state, so signing in and staying signed in no longer depend on it. |
-| **Add microG-RE support** | Off | Routes SoundCloud's Google services — sign-in and listening notifications over Firebase Cloud Messaging, Cast, the ads identifier and in-app review — through an installed MicroG-RE (MicroG-RE or ReVanced GmsCore) on phones without Google Play services. The sign-in itself is SoundCloud's own web login and needs neither. Leave off on phones with real Play services. |
+| **Ignore device limit** | On | SoundCloud signs in on up to ten devices, and only the app enforces it: the /configuration response marks the device authorized or not, an unauthorized sign-in never finishes, and a later refresh signs the device out and revokes its token. The patch skips the registration handshake and ignores that state, so signing in and staying signed in no longer depend on it. |
 
 ## Why Home was empty in the car
 
@@ -38,10 +37,6 @@ What the switches cannot do:
 - **No audio ads** does work locally, and the patch's ad-request overrides cover the same ground more broadly.
 
 Local Go+ state never establishes server-side access. Paid streams, downloads and audio quality stay tied to the account.
-
-## Sign in through microG-RE
-
-SoundCloud signs in through its own web page in a browser tab (`secure.soundcloud.com`, returning over the `sc://` deep link), so logging in — with email or the Google button — works on any phone, with or without Google services. What does need Google Play services is everything around the account: notifications ride Firebase Cloud Messaging, which registers through Play services, and the app gates Cast, the ads identifier and in-app review on its Play services check. On a degoogled phone none of that runs. Add microG-RE support points every Play services name in the app and its manifest at MicroG-RE, answers the availability check itself, and tells microG to vouch for stock SoundCloud's package and publisher certificate, so those services work through microG. Turn it off when real Play services is installed.
 
 ## Advertising and tracking services
 

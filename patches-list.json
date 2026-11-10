@@ -164,40 +164,6 @@
       "options": []
     },
     {
-      "name": "Add microG-RE support",
-      "description": "Routes SoundCloud's Google services -- sign-in and listening notifications over Firebase Cloud Messaging, Cast, the ads identifier and in-app review -- through an installed MicroG-RE (MicroG-RE or ReVanced GmsCore) on phones without Google Play services. The sign-in itself is SoundCloud's own web login and needs neither. Off on phones with real Play services.",
-      "default": false,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.soundcloud.android",
-          "name": "SoundCloud",
-          "description": null,
-          "apkFileType": "APKM",
-          "appIconColor": null,
-          "signatures": [
-            "aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "2026.11.02-release",
-              "versionCodes": {
-                "ARM64_V8A": 379060,
-                "ARMEABI_V7A": 379060,
-                "X86_64": 379060,
-                "X86": 379060
-              },
-              "isExperimental": false,
-              "minSdk": 29,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Add original microG support",
       "description": "Signs in through original microG on ROMs with signature spoofing. Keeps Maps' own package name; allow signature spoofing for it.",
       "default": false,

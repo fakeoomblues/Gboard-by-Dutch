@@ -91,6 +91,21 @@ early-returns, zero remaining `com.google`/`com.google.android.gms` const-string
 the microG scenarios). `:extensions:soundcloud:test` covers `GoPlusTest` (3 checks) beside the
 existing mapper tests.
 
+## Add microG-RE support — withdrawn before release
+
+An Add microG-RE support control was built for this release: manifest permission
+routing (c2dm, ads ID), package visibility, spoofed identity metadata naming stock
+SoundCloud and its publisher certificate, availability-check success on all four
+embedded overloads, and the shared GmsCore name routing (MorpheApp commit 31a66d95,
+the same port the AliExpress patch carries). It validated in all scenarios.
+
+Withdrawn before release at the owner's direction: SoundCloud's sign-in is its own
+web flow in a browser tab and needs no Google services — confirmed on-device by
+signing in with the control absent — and nothing else in the owner's use depends on
+microG (push, Cast, ads identifier and in-app review remain Play-services features,
+off by default). The control, its validation wiring and its documentation were
+removed again before publishing; the analysis is retained here.
+
 ## Ignore device limit
 
 Follow-up analysis the same day: SoundCloud caps sign-in at ten devices, and the whole

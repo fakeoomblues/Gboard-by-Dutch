@@ -24,14 +24,6 @@ class SoundcloudDexRegression {
         return result;
     }
     static void check(boolean ok, String label) { if (!ok) throw new AssertionError(label); }
-    static Method absolute(String owner, String name, String... parameters) {
-        List<Method> matches = new ArrayList<>();
-        for (Method m : classes.get(owner).getMethods())
-            if (m.getName().equals(name) && m.getParameterTypes().stream().map(Object::toString).toList().equals(List.of(parameters)))
-                matches.add(m);
-        if (matches.size() != 1) throw new AssertionError(owner + "->" + name + ": " + matches.size());
-        return matches.get(0);
-    }
     static void returnsVoid(Method method, boolean enabled) {
         check((code(method).get(0).getOpcode() == Opcode.RETURN_VOID) == enabled, method.toString());
     }
@@ -57,7 +49,7 @@ class SoundcloudDexRegression {
             classes.put(c.getType(), c);
         var names = Set.of(Arrays.copyOfRange(args, 1, args.length));
         boolean analytics = names.contains("Disable analytics"), consent = names.contains("Disable consent popup"), go = names.contains("Enable SoundCloud Go");
-        boolean home = names.contains("Home in Android Auto"), microg = names.contains("Add microG-RE support");
+        boolean home = names.contains("Home in Android Auto");
         boolean devices = names.contains("Ignore device limit");
         returnsVoid(method("analytics/base/TrackingHandler", "handleMessage", "Landroid/os/Message;"), false);
         var tracking = code(method("analytics/base/TrackingHandler", "a", "Landroid/os/Message;"));
@@ -118,29 +110,6 @@ class SoundcloudDexRegression {
         }
         check(classes.containsKey("Lnl/johninnl/soundcloud/GoPlus;") == (go || home), "extension merged with its patches");
 
-        // microG-RE support: availability reports success and the core GMS names are routed.
-        for (String owner : List.of("Lcom/google/android/gms/common/GoogleApiAvailability;",
-                "Lcom/google/android/gms/common/GoogleApiAvailabilityLight;"))
-            for (Method availability : List.of(absolute(owner, "isGooglePlayServicesAvailable", "Landroid/content/Context;"),
-                    absolute(owner, "isGooglePlayServicesAvailable", "Landroid/content/Context;", "I"))) {
-                var instructions = code(availability);
-                boolean zero = instructions.get(0).getOpcode() == Opcode.CONST ||
-                    instructions.get(0).getOpcode() == Opcode.CONST_4;
-                check((zero && ((NarrowLiteralInstruction) instructions.get(0)).getNarrowLiteral() == 0 &&
-                    instructions.get(1).getOpcode() == Opcode.RETURN) == microg, availability.toString());
-            }
-        boolean routed = true;
-        for (Map.Entry<String, ClassDef> entry : classes.entrySet()) {
-            if (entry.getKey().startsWith("Lnl/johninnl/")) continue;
-            for (Method m : entry.getValue().getMethods()) {
-                if (m.getImplementation() == null) continue;
-                for (Instruction in : code(m)) {
-                    if (!(in instanceof ReferenceInstruction r) || !(r.getReference() instanceof StringReference s)) continue;
-                    if (s.getString().equals("com.google") || s.getString().equals("com.google.android.gms")) routed = false;
-                }
-            }
-        }
-        check(routed == microg, "core Play services names rewritten exactly with the microG patch");
         // The device limit's two gates read the /configuration device-management state only
         // through the three predicates; each early-returns false with the patch.
         for (String predicate : List.of("isUnauthorized", "isRecoverableBlock", "isUnrecoverableBlock")) {

@@ -15,7 +15,6 @@ Selecteer het volledige, door de uitgever ondertekende APKM-archief voor precies
 | **Disable consent popup** | Aan | Slaat de OneTrust-pop-up over met de bestaande lege toestemmingscontroller. Geeft geen toestemming en schakelt tracking niet uit; selecteer Disable analytics apart. |
 | **Enable SoundCloud Go** | Aan | Activeert lokale Go+-bediening, verbergt Go-aanbiedingen en schermen voor wijzigingen van het luisterabonnement, schakelt advertentieverzoeken en weergaveplekken uit, en zet de offline_sync-, no_audio_ads- en hq_audio-schakelaars uit het /configuration-antwoord permanent aan. Zie hieronder wat die schakelaars wel en niet kunnen. |
 | **Ignore device limit** | Aan | SoundCloud logt in op maximaal tien apparaten, en alleen de app handhaaft dat: het /configuration-antwoord markeert het apparaat als geautoriseerd of niet, een ongeautoriseerde nieuwe aanmelding wordt nooit afgerond, en een latere verversing meldt het apparaat af en trekt zijn token in. De patch slaat de registratie bij het inloggen volledig over en laat de statuscontroles *geautoriseerd* antwoorden, zodat het inloggen afrondt zonder registratie en ingelogd blijven niet langer van het apparaataantal afhangt. |
-| **Add microG-RE support** | Uit | Leidt de Google-diensten van SoundCloud — aanmeld- en luistermeldingen via Firebase Cloud Messaging, Cast, de advertentie-id en in-app-review — via een geïnstalleerde MicroG-RE (MicroG-RE of ReVanced GmsCore) op telefoons zonder Google Play-diensten. Het inloggen zelf is de eigen weblogin van SoundCloud en heeft dat niet nodig. Uitlaten op telefoons met echte Play-diensten. |
 
 ## Waarom Home in de auto leeg was
 
@@ -38,10 +37,6 @@ Wat de schakelaars niet kunnen:
 - **Geen audio-advertenties** werkt wel lokaal, en de advertentie-overrides van de patch dekken hetzelfde grondgebied breder.
 
 Lokale Go+-status bewijst nooit toegang aan de serverkant. Betaalde streams, downloads en audiokwaliteit blijven gekoppeld aan het account.
-
-## Inloggen via microG-RE
-
-SoundCloud logt in via een eigen webpagina in een browsertabblad (`secure.soundcloud.com`, terug via de `sc://`-deeplink), dus inloggen — met e-mail of de Google-knop — werkt op elke telefoon, met of zonder Google-diensten. Wat wél Google Play-diensten nodig heeft, is alles eromheen: meldingen rijden op Firebase Cloud Messaging, dat via Play-diensten registreert, en de app poort Cast, de advertentie-id en in-app-review op zijn Play-diensten-controle. Op een ontkgoogelde telefoon draait dat allemaal niet. Add microG-RE support wijst elke Play-dienennaam in de app en het manifest naar MicroG-RE, beantwoordt de beschikbaarheidscontrole zelf, en laat microG vouchers afgeven voor het pakket en het uitgeverscertificaat van stock-SoundCloud, zodat die diensten via microG werken. Zet uit wanneer echte Play-diensten geïnstalleerd is.
 
 ## Advertentie- en trackingdiensten
 

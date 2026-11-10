@@ -694,7 +694,6 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Add microG-RE support | Off | 2026.11.02-release |
 | Disable analytics | On | 2026.11.02-release |
 | Disable consent popup | On | 2026.11.02-release |
 | Enable SoundCloud Go | On | 2026.11.02-release |

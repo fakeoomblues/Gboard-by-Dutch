@@ -694,7 +694,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Add microG-RE support | Uit | 2026.11.02-release |
 | Disable analytics | Aan | 2026.11.02-release |
 | Disable consent popup | Aan | 2026.11.02-release |
 | Enable SoundCloud Go | Aan | 2026.11.02-release |
