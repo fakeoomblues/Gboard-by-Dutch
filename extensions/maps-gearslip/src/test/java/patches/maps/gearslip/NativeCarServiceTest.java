@@ -130,6 +130,22 @@ public final class NativeCarServiceTest {
         assertEquals("com.google.android.libraries.geo.navcore.service.base.NavigationService",stop.getComponent().getClassName());assertTrue(stop.getBooleanExtra("abortcurrentsession",false));
         update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,stopped.code);assertEquals(Integer.valueOf(3),events.get(events.size()-1));
     }
+    @Test public void freeDriveGuidanceReportsDoNotRefreshTheHostEverySecond()throws Exception{
+        handshake(HOST);java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
+        int[] invalidations={0};
+        Binder app=new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            data.enforceInterface("androidx.car.app.IAppHost");if(code==2)invalidations[0]++;if(reply!=null)reply.writeNoException();return true;}};
+        Binder navigation=new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            data.enforceInterface("androidx.car.app.navigation.INavigationHost");if(reply!=null)reply.writeNoException();return true;}};
+        java.lang.reflect.Field appHost=session.getClass().getDeclaredField("appHost");appHost.setAccessible(true);appHost.set(session,app);
+        java.lang.reflect.Field navigationHost=session.getClass().getDeclaredField("navigationHost");navigationHost.setAccessible(true);navigationHost.set(session,navigation);
+        java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
+        for(int i=0;i<5;i++)update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));
+        assertEquals("Idle location-driven reports leave the host template alone",0,invalidations[0]);
+        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",120,15));assertEquals(1,invalidations[0]);
+        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals("Leaving guidance refreshes once",2,invalidations[0]);
+        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,invalidations[0]);
+    }
     @Test public void idleNativeRefreshesDoNotCloseAnOpenControlsScreen()throws Exception{
         handshake(HOST);java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
         java.lang.reflect.Field open=session.getClass().getDeclaredField("controlsOpen");open.setAccessible(true);open.setBoolean(session,true);

@@ -185,6 +185,14 @@ public final class NativeControlsTest {
         assertSame(control, controls.snapshot().get(0)); assertNotSame(icon, control.icon); assertTrue(updates > before);
         assertEquals("The tap diagnostic reports how the owner ran", "performClick", controls.invoke(control)); assertEquals(1, clicks);
     }
+    @Test public void aRebuiltDrawableWithIdenticalPixelsDoesNotRefreshTheHost() {
+        NativeControls.Control control = bind(); android.graphics.Bitmap icon = control.icon;
+        button.setImageDrawable(new ColorDrawable(Color.RED)); root.getViewTreeObserver().dispatchOnPreDraw();
+        android.graphics.Bitmap red = control.icon; int before = updates;
+        button.setImageDrawable(new ColorDrawable(Color.RED)); root.getViewTreeObserver().dispatchOnPreDraw();
+        assertSame("Same pixels keep the published icon", red, control.icon); assertEquals("No host refresh for an identical capture", before, updates);
+        assertNotSame(icon, red);
+    }
     @Test public void aDisabledNativeOwnerCannotBeBypassedThroughACalAction() {
         NativeControls.Control control = bind(); group.setEnabled(false);
         SecurityException refused = assertThrows(SecurityException.class, () -> controls.invoke(control)); assertEquals(0, clicks);

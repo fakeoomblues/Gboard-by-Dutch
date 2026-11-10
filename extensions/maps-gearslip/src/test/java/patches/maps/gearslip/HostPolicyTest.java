@@ -14,7 +14,7 @@ public final class HostPolicyTest {
         assertTrue(HostPolicy.permits(GEARSLIP, 10042, new String[]{"another.app", GEARSLIP}, null, null));
     }
     @Test public void driveDeckAndDevelopmentBuildsWorkWithAnySigningKey() {
-        for (String host : new String[]{GEARSLIP + ".dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev"}) {
+        for (String host : new String[]{GEARSLIP + ".dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev", "app.johninnl.drivedeck.litert", "app.johninnl.drivedeck.wireless"}) {
             assertTrue(host, HostPolicy.permits(host, 10042, new String[]{host}, null, null));
             assertFalse(host, HostPolicy.permits(host, 10042, new String[]{"another.app"}, null, null));
         }

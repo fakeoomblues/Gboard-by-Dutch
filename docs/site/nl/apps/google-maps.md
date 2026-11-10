@@ -10,6 +10,8 @@ Selecteer de volledige originele APK voor deze exacte versie in Morphe Manager. 
 
 Onze patch **Native navigation for Gearslip and Android Auto** behoudt de eigen kaart en navigatiemotor van Maps. Android Auto of DriveDeck deelt de route-instructies, aankomstinformatie, bestemmingslijsten en routevoorbeelden in rond de beschikbare ruimte en het dock. Dit werkt ook met een gewijzigde pakketnaam, zodat Ungoogled Maps naast de originele Maps-app kan staan. Zoeken gebruikt het toetsenbord van de host; selecties en Start voeren nog steeds de oorspronkelijke Maps-acties uit.
 
+Op de kaart zonder route begint de autolijst met **Zoeken**, gevolgd door plaatsen die Maps al aanbiedt. Het Maps-paneel voor instellingen en gesproken begeleiding opent als autolijst met de eigen schakelaars, zodat een host die de linkerkant voor eigen kaarten gebruikt het niet meer bedekt.
+
 ![Ungoogled Maps met de native kaart in de officiële Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
 
 *De hernoemde gepatchte app in Googles Android Auto Desktop Head Unit, met een testlocatie in Amsterdam.*

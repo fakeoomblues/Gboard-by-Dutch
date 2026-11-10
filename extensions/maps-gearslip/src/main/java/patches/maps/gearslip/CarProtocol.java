@@ -130,6 +130,19 @@ final class CarProtocol {
         field(row, "mOnClickDelegate", click(callback));
         return row;
     }
+    /** A Row whose Toggle reports checked changes through androidx.car.app IOnCheckedChangeListener. */
+    static Bundle toggleRow(String title,List<String> texts,boolean checked,boolean enabled,IBinder callback){
+        Bundle row=object("androidx.car.app.model.Row");
+        field(row,"mTitle",text(title));List<Bundle> lines=new ArrayList<>();
+        for(String line:texts)if(lines.size()<2)lines.add(text(line));
+        field(row,"mTexts",list(lines));field(row,"mIsEnabled",primitive(enabled));field(row,"mIsBrowsable",primitive(false));
+        field(row,"mNumericDecoration",primitive(-1));field(row,"mMetadata",object("androidx.car.app.model.Metadata"));
+        Bundle delegate=object("androidx.car.app.model.OnCheckedChangeDelegateImpl");
+        field(delegate,"mStub",interfaceBinder("androidx.car.app.model.IOnCheckedChangeListener$Stub",callback));
+        Bundle toggle=object("androidx.car.app.model.Toggle");
+        field(toggle,"mIsChecked",primitive(checked));field(toggle,"mIsEnabled",primitive(enabled));field(toggle,"mOnCheckedChangeDelegate",delegate);
+        field(row,"mToggle",toggle);return row;
+    }
     static Bundle contentRow(String title,List<String> texts,IBinder callback,boolean enabled){
         Bundle row=object("androidx.car.app.model.Row");
         field(row,"mTitle",text(title));List<Bundle> lines=new ArrayList<>();
@@ -204,8 +217,11 @@ final class CarProtocol {
     }
 
     static Bundle navigationTemplate(NativeGuidance.Snapshot value,List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,long now,boolean imperial){
+        return navigationTemplate(value,actions,mapActions,panCallback,now,imperial,false);
+    }
+    static Bundle navigationTemplate(NativeGuidance.Snapshot value,List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,long now,boolean imperial,boolean unknownTurnDistance){
         Bundle result=template(null,actions,mapActions,panCallback);
-        CarNavigationModels.apply(member(result,"mTemplate"),value,now,imperial);
+        CarNavigationModels.apply(member(result,"mTemplate"),value,now,imperial,unknownTurnDistance);
         return result;
     }
 

@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 
 /** Native Maps content and callbacks, presented through the same host templates as Vela. */
 public final class NativeCarContent {
-    enum Kind { HOME, RECENTS, SEARCH, PREVIEW, DETAILS }
+    enum Kind { HOME, RECENTS, SEARCH, PREVIEW, DETAILS, SETTINGS }
     static final class Action {
         final Object model;
         final String title,method;
@@ -45,8 +45,14 @@ public final class NativeCarContent {
         final String title;
         final List<String> texts;
         final Action action;
-        Row(String title,List<String> texts,Action action){this.title=title;this.texts=Collections.unmodifiableList(new ArrayList<>(texts));this.action=action;}
+        /** Native switch state for a toggle row; null for an ordinary row. */
+        final Boolean checked;
+        Row(String title,List<String> texts,Action action){this(title,texts,action,null);}
+        Row(String title,List<String> texts,Action action,Boolean checked){this.title=title;this.texts=Collections.unmodifiableList(new ArrayList<>(texts));this.action=action;this.checked=checked;}
     }
+    /** Host-only commands; they resolve the live native owner when run, never a cached view. */
+    static final String SEARCH_COMMAND="morphe:search",PAGE_DOWN="morphe:pageDown",PAGE_UP="morphe:pageUp";
+    private static final Object SEARCH_MODEL=new Object();
     static final class Page {
         final Kind kind;
         final String title;
@@ -68,7 +74,7 @@ public final class NativeCarContent {
         }
         String signature(){
             StringBuilder out=new StringBuilder(kind.name()).append('|').append(title);
-            for(Row row:rows){out.append('|').append(row.title).append(row.texts);if(row.action!=null)out.append(System.identityHashCode(row.action.model)).append(row.action.enabled);}
+            for(Row row:rows){out.append('|').append(row.title).append(row.texts).append(row.checked);if(row.action!=null)out.append(System.identityHashCode(row.action.model)).append(row.action.enabled);}
             for(Action action:actions)out.append('|').append(System.identityHashCode(action.model)).append(action.title).append(action.enabled);
             return out.toString();
         }
@@ -174,6 +180,10 @@ public final class NativeCarContent {
             List<Row> rows=results?readSearch(source):readRecents(source);
             return new Page(results?Kind.SEARCH:Kind.RECENTS,query,rows,Collections.emptyList(),null);
         }
+        // Maps draws its Settings/Sound panel on the map surface, where a host's own left
+        // panel can cover it. Present the same native rows as a host list instead.
+        View settings=find(root,"settings_dialog_setting_list");
+        if(ownedWindow(root)&&visible(settings,root,controls)){details=false;return settings(settings,root,controls);}
         View panel=findPanel(root,controls,previewPanels);
         if(panel!=null){Object overlay=previewPanels.get(panel).get();return preview(call(call(overlay,"n"),"a"),panel,controls);}
         // The active optimized family can render this same native panel without
@@ -187,7 +197,15 @@ public final class NativeCarContent {
         List<?> suggestions=suggestionValues.get();
         if((source!=null||suggestions!=null)&&visible(homePanel,root,controls))
             return new Page(Kind.HOME,context.getApplicationInfo().loadLabel(context.getPackageManager()).toString(),source!=null?readHome(source):readHomeRows(suggestions),Collections.emptyList(),homePanel);
-        return null;
+        // Compact car layouts have only a search box and no suggestion card. Still give the
+        // host Vela's idle list: Search first, then places Maps already handed to the adapter.
+        if(!ownedWindow(root)||!controls.available(NativeControls.Role.SEARCH))return null;
+        List<Row> rows=new ArrayList<>();String search=controls.title(NativeControls.Role.SEARCH);
+        rows.add(new Row(search,Collections.emptyList(),new Action(SEARCH_MODEL,search,SEARCH_COMMAND,-1,true)));
+        Object recentSource=recents.get();
+        try{if(source!=null)rows.addAll(readHome(source));else if(suggestions!=null)rows.addAll(readHomeRows(suggestions));else if(recentSource!=null)rows.addAll(readRecents(recentSource));}
+        catch(Exception unavailable){Log.w("MapsNativeCar","Native idle places unavailable",unavailable);}
+        return new Page(Kind.HOME,context.getApplicationInfo().loadLabel(context.getPackageManager()).toString(),rows,Collections.emptyList(),null);
     }
     Page show(ViewGroup root,NativeControls controls,boolean guiding,String query)throws Exception{
         Page value=read(root,controls,guiding,query);displayed=value;
@@ -208,6 +226,11 @@ public final class NativeCarContent {
         boolean allowed=current!=null&&current.contains(action);
         if(guiding&&!allowed)for(Action footerAction:footer(root,controls))if(footerAction.same(action)){allowed=true;break;}
         if(!allowed)throw new SecurityException("Native card action was replaced");
+        if(SEARCH_COMMAND.equals(action.method)){controls.invoke(NativeControls.Role.SEARCH);notifyChanged();return;}
+        if(PAGE_DOWN.equals(action.method)||PAGE_UP.equals(action.method)){
+            View list=(View)action.model;int step=Math.max(1,list.getHeight()*4/5);
+            list.scrollBy(0,PAGE_DOWN.equals(action.method)?step:-step);notifyChanged();return;
+        }
         controls.invoke(action);notifyChanged();
     }
     boolean back(){if(!details)return false;details=false;changed.run();return true;}
@@ -292,6 +315,80 @@ public final class NativeCarContent {
         collectActions(panel,controls,actions);
         return new Page(details?Kind.DETAILS:Kind.PREVIEW,title,rows,actions,panel,primary);
     }
+    private Page settings(View list,ViewGroup root,NativeControls controls){
+        List<String> heading=new ArrayList<>();View bar=find(root,"title_bar_title");if(bar!=null)collectText(bar,controls,heading,false);
+        String title=heading.isEmpty()?label("SETTINGS","Settings"):heading.get(0);
+        View recycler=find(list,"recycler_view");List<Row> rows=new ArrayList<>();
+        if(recycler instanceof ViewGroup){
+            ViewGroup items=(ViewGroup)recycler;boolean dutch=dutch();
+            if(items.canScrollVertically(-1)){String previous=dutch?"Vorige":"Previous";rows.add(new Row(previous,Collections.emptyList(),new Action(items,previous,PAGE_UP,-1,true)));}
+            for(int i=0;i<items.getChildCount();i++)settingsRows(items.getChildAt(i),controls,rows,dutch);
+            if(items.canScrollVertically(1)){String more=dutch?"Meer instellingen":"More settings";rows.add(new Row(more,Collections.emptyList(),new Action(items,more,PAGE_DOWN,-1,true)));}
+        }
+        return new Page(Kind.SETTINGS,title,rows,Collections.emptyList(),list);
+    }
+    /** One native settings item: a switch row, an icon-button group (guidance audio) or a plain row. */
+    static void settingsRows(View item,NativeControls controls,List<Row> rows,boolean dutch){
+        if(controls.nativeVisibility(item)!=View.VISIBLE||item.getWidth()<=0||item.getHeight()<=0)return;
+        List<String> labels=new ArrayList<>();collectText(item,controls,labels,false);
+        android.widget.CompoundButton toggle=toggle(item,controls);
+        if(toggle!=null&&!labels.isEmpty()){
+            View target=clickableOwner(toggle,item);String title=labels.get(0);
+            rows.add(new Row(title,labels.subList(1,labels.size()),new Action(target,title,"view",-1,enabled(target)),toggle.isChecked()));return;
+        }
+        List<View> buttons=new ArrayList<>();iconButtons(item,controls,buttons);
+        if(buttons.size()>=2){
+            String title=labels.isEmpty()?"":labels.get(0);
+            if(!title.isEmpty())rows.add(new Row(title,labels.subList(1,labels.size()),null));
+            String[] fallback=buttons.size()!=3?null:dutch?new String[]{"Gedempt","Alleen meldingen","Niet gedempt"}:new String[]{"Muted","Alerts only","Unmuted"};
+            for(int b=0;b<buttons.size();b++){
+                View button=buttons.get(b);String name=text(button.getContentDescription());
+                if(name.isEmpty())name=fallback!=null?fallback[b]:title+" "+(b+1);
+                // Maps marks the active mode only in its status line ("Muted", "Unmuted").
+                boolean active=selected(button)||labels.size()>1&&labels.get(1).equalsIgnoreCase(name);
+                List<String> state=active?Collections.singletonList(dutch?"Gekozen":"Selected"):Collections.emptyList();
+                rows.add(new Row(name,state,new Action(button,name,"view",-1,enabled(button))));
+            }
+            return;
+        }
+        if(labels.isEmpty())return;
+        View target=controls.clickable(item);String title=labels.get(0);
+        rows.add(new Row(title,labels.subList(1,labels.size()),target==null?null:new Action(target,title,"view",-1,enabled(target))));
+    }
+    private static android.widget.CompoundButton toggle(View view,NativeControls controls){
+        if(controls.nativeVisibility(view)!=View.VISIBLE)return null;
+        if(view instanceof android.widget.CompoundButton)return (android.widget.CompoundButton)view;
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++){android.widget.CompoundButton found=toggle(((ViewGroup)view).getChildAt(i),controls);if(found!=null)return found;}
+        return null;
+    }
+    /** The clickable row that owns a switch toggles it natively; fall back to the switch itself. */
+    private static View clickableOwner(View view,View item){
+        for(View node=view;node!=null;node=node.getParent() instanceof View?(View)node.getParent():null){
+            if(node.hasOnClickListeners()||node.isClickable())return node;if(node==item)break;
+        }
+        return view;
+    }
+    private static void iconButtons(View view,NativeControls controls,List<View> buttons){
+        if(controls.nativeVisibility(view)!=View.VISIBLE||view.getWidth()<=0||view.getHeight()<=0)return;
+        if((view.hasOnClickListeners()||view.isClickable())&&!(view instanceof TextView)&&!hasText(view)&&hasImage(view)){buttons.add(view);return;}
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)iconButtons(((ViewGroup)view).getChildAt(i),controls,buttons);
+    }
+    private static boolean hasText(View view){
+        if(view instanceof TextView)return !text(((TextView)view).getText()).isEmpty();
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)if(hasText(((ViewGroup)view).getChildAt(i)))return true;
+        return false;
+    }
+    private static boolean hasImage(View view){
+        if(view instanceof android.widget.ImageView)return true;
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)if(hasImage(((ViewGroup)view).getChildAt(i)))return true;
+        return false;
+    }
+    private static boolean selected(View view){
+        if(view.isSelected()||view.isActivated())return true;
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)if(selected(((ViewGroup)view).getChildAt(i)))return true;
+        return false;
+    }
+    private boolean dutch(){return "nl".equals(context.getResources().getConfiguration().getLocales().get(0).getLanguage());}
     private Page previewView(View panel,NativeControls controls){
         List<String> labels=new ArrayList<>();collectText(panel,controls,labels);
         List<Row> rows=new ArrayList<>();for(String label:labels)rows.add(new Row(label,Collections.emptyList(),null));

@@ -57,6 +57,8 @@ public final class NativeCarService extends Service {
         NativeGuidance.Snapshot navigation;
         long lastTripAt=-1;
         int api;
+        /** DriveDeck/Gearslip render a turn whose distance Maps has not produced yet; Android Auto's model requires one. */
+        boolean unknownTurnDistance;
         final NativeScreenStack screens=new NativeScreenStack();
         Runnable tripUpdate;
         final List<IBinder> stopCallbacks=new ArrayList<>();
@@ -151,7 +153,7 @@ public final class NativeCarService extends Service {
                 if (previous.binding.session == previous) previous.binding.session = null;
             }
             replacement = new Session(uid, binding);
-            replacement.api=api;
+            replacement.api=api;replacement.unknownTurnDistance=!"com.google.android.projection.gearhead".equals(host);
             replacement.tripUpdate=()->sendTrip(replacement);
             binding.session = replacement;
             active = replacement;
@@ -265,8 +267,11 @@ public final class NativeCarService extends Service {
     private void navigation(Session session,NativeGuidance.Snapshot snapshot){        if(active!=session||session.closed||session.failure!=null)return;
         try{
             if(!snapshot.guiding){
+                // Free-drive Maps reports its non-guiding state on every location update.
+                // Only the transition out of guidance changes the host template.
+                boolean wasGuiding=session.navigating||session.navigation!=null;
                 endNavigation(session);
-                invalidate(session);
+                if(wasGuiding)invalidate(session);
                 if(session.stopTimeout!=null)main.removeCallbacks(session.stopTimeout);
                 for(IBinder callback:session.stopCallbacks)CarProtocol.complete(callback,null,null);
                 session.stopCallbacks.clear();return;
@@ -509,7 +514,7 @@ public final class NativeCarService extends Service {
         for (NativeControls.Control control : mapControls)
             mapActions.add(CarProtocol.action(null, control.icon, new ActionBinder(session, control)));
         if(page!=null)return pageTemplate(session,page,actions,mapActions);
-        return CarProtocol.navigationTemplate(session.navigation,actions,mapActions,new PanBinder(session),System.currentTimeMillis(),false);
+        return CarProtocol.navigationTemplate(session.navigation,actions,mapActions,new PanBinder(session),System.currentTimeMillis(),false,session.unknownTurnDistance);
     }
 
     private Bundle searchTemplate(Session session,NativeKeyboard input)throws Exception{
@@ -518,7 +523,10 @@ public final class NativeCarService extends Service {
     }
     private List<Bundle> contentRows(Session session,NativeCarContent.Page page){
         List<Bundle> rows=new ArrayList<>();
-        for(NativeCarContent.Row row:page.rows)rows.add(CarProtocol.contentRow(row.title,row.texts,row.action==null?null:new ContentActionBinder(session,row.action),row.action==null||row.action.enabled));
+        for(NativeCarContent.Row row:page.rows){
+            if(row.checked!=null&&row.action!=null)rows.add(CarProtocol.toggleRow(row.title,row.texts,row.checked,row.action.enabled,new ToggleBinder(session,row.action,row.checked)));
+            else rows.add(CarProtocol.contentRow(row.title,row.texts,row.action==null?null:new ContentActionBinder(session,row.action),row.action==null||row.action.enabled));
+        }
         return rows;
     }
     private Bundle pageTemplate(Session session,NativeCarContent.Page page,List<Bundle> actions,List<Bundle> mapActions){
@@ -547,6 +555,19 @@ public final class NativeCarService extends Service {
             if(CarProtocol.basic("androidx.car.app.model.IOnClickListener",code,data,reply))return true;
             if(code!=2)return false;IBinder callback=data.readStrongBinder();
             try{requireSession(session);dispatch(session,callback,true,()->{if(action==null)session.renderer.contentDetails();else session.renderer.performContentAction(action);refreshGuidance(session);invalidate(session);});}
+            catch(Exception error){CarProtocol.complete(callback,null,error);}return true;
+        }
+    }
+
+    /** A host toggle flips the native switch only when the requested state differs from the shown one. */
+    private final class ToggleBinder extends Binder{
+        private static final String DESCRIPTOR="androidx.car.app.model.IOnCheckedChangeListener";
+        final Session session;final NativeCarContent.Action action;final boolean shown;
+        ToggleBinder(Session session,NativeCarContent.Action action,boolean shown){this.session=session;this.action=action;this.shown=shown;attachInterface(null,DESCRIPTOR);}
+        @Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            if(CarProtocol.basic(DESCRIPTOR,code,data,reply))return true;
+            if(code!=2)return false;boolean checked=data.readInt()!=0;IBinder callback=data.readStrongBinder();
+            try{requireSession(session);dispatch(session,callback,true,()->{if(checked!=shown)session.renderer.performContentAction(action);invalidate(session);});}
             catch(Exception error){CarProtocol.complete(callback,null,error);}return true;
         }
     }

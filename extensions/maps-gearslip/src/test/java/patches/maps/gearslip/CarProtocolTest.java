@@ -39,6 +39,24 @@ public final class CarProtocolTest {
             assertEquals(1700000015000L,trip.getStepTravelEstimates().get(0).getArrivalTimeAtDestination().getTimeSinceEpochMillis());
         }finally{wire.recycle();}
     }
+    @Test public void toggleRowDecodesIntoAHostToggleWhoseChangeReachesTheAdapter()throws Exception{
+        boolean[] requested={false};int[] calls={0};
+        android.os.Binder listener=new android.os.Binder(){
+            @Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+                if(code==android.os.IBinder.INTERFACE_TRANSACTION){if(reply!=null)reply.writeString("androidx.car.app.model.IOnCheckedChangeListener");return true;}
+                if(code!=2)return false;data.enforceInterface("androidx.car.app.model.IOnCheckedChangeListener");requested[0]=data.readInt()!=0;calls[0]++;return true;
+            }
+        };
+        Parcel wire=Parcel.obtain();
+        try{
+            wire.writeBundle(CarProtocol.toggleRow("Traffic",java.util.Collections.singletonList("Shown on the map"),false,true,listener));wire.setDataPosition(0);
+            androidx.car.app.model.Row row=(androidx.car.app.model.Row)Bundleable.CREATOR.createFromParcel(wire).get();
+            assertEquals("Traffic",row.getTitle().toString());assertEquals("Shown on the map",row.getTexts().get(0).toString());
+            assertNotNull(row.getToggle());assertFalse(row.getToggle().isChecked());assertTrue(row.getToggle().isEnabled());
+            row.getToggle().getOnCheckedChangeDelegate().sendCheckedChange(true,new androidx.car.app.OnDoneCallback(){});
+            assertEquals(1,calls[0]);assertTrue(requested[0]);
+        }finally{wire.recycle();}
+    }
     @Test public void loadingTripContainsNoFabricatedSteps()throws Exception{
         Parcel wire=Parcel.obtain();
         try{wire.writeBundle(CarProtocol.trip(new NativeGuidance.Snapshot(true,null,0,0),0));wire.setDataPosition(0);
@@ -68,6 +86,18 @@ public final class CarProtocolTest {
         assertEquals(androidx.car.app.model.Distance.UNIT_KILOMETERS,template.getDestinationTravelEstimate().getRemainingDistance().getDisplayUnit());
         assertEquals(2220,template.getDestinationTravelEstimate().getRemainingTimeSeconds());
         new NavigationTemplate.Builder().setNavigationInfo(info).setDestinationTravelEstimate(template.getDestinationTravelEstimate()).setActionStrip(template.getActionStrip()).build();
+    }
+    @Test public void anInstructionWithoutANativeDistanceReachesDriveDeckButStaysLoadingForAndroidAuto()throws Exception{
+        NativeGuidance.Step current=new NativeGuidance.Step("Head north on Oudezijds Achterburgwal",null,"STRAIGHT","SIDE_UNSPECIFIED","TURN_STRAIGHT","RIGHT",-1,-1,Collections.emptyList());
+        NativeGuidance.Snapshot snapshot=new NativeGuidance.Snapshot(true,current.cue,-1,-1,current,null,55000,3300,55000,3300);
+        androidx.car.app.navigation.model.RoutingInfo hosted=(androidx.car.app.navigation.model.RoutingInfo)((NavigationTemplate)decode(
+            CarProtocol.navigationTemplate(snapshot,Collections.emptyList(),Collections.emptyList(),null,1700000000000L,false,true))).getNavigationInfo();
+        assertFalse("DriveDeck shows the instruction instead of 'Finding a route'",hosted.isLoading());
+        assertEquals("Head north on Oudezijds Achterburgwal",hosted.getCurrentStep().getCue().toString());
+        assertNull("An unknown distance is never invented",hosted.getCurrentDistance());
+        androidx.car.app.navigation.model.RoutingInfo google=(androidx.car.app.navigation.model.RoutingInfo)((NavigationTemplate)decode(
+            CarProtocol.navigationTemplate(snapshot,Collections.emptyList(),Collections.emptyList(),null,1700000000000L,false,false))).getNavigationInfo();
+        assertTrue("Android Auto's model requires a distance, so it keeps loading",google.isLoading());assertNull(google.getCurrentStep());
     }
     @Test public void unknownRouteEstimateNeverReusesTheNextTurnEstimate()throws Exception{
         NavigationTemplate template=(NavigationTemplate)decode(CarProtocol.navigationTemplate(new NativeGuidance.Snapshot(true,"Continue",120,15),Collections.emptyList(),Collections.emptyList(),null,0,false));

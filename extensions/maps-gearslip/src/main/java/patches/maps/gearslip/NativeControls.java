@@ -74,11 +74,16 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
     }
     void hostedPanel(View value){value=panelCover(value);if(hostedPanel==value)return;hostedPanel=value;updateNavigationCards();}
     private View panelCover(View value){
-        if(!"place_details_card_scrollable".equals(name(value)))return value;
+        if(!"place_details_card_scrollable".equals(name(value))&&!"settings_dialog_setting_list".equals(name(value)))return value;
         // This proven menu slot also owns the preview's rounded card background.
         // Hide it only for this hosted preview, never the map/speed/watermark parent.
         for(View node=value;node!=null&&node!=root;node=parent(node))if("menu_frame_view".equals(name(node)))return node;
         return value;
+    }
+    boolean available(Role role){Control control=controls.get(role);return control!=null&&control.available;}
+    String title(Role role){
+        Control control=controls.get(role);if(control!=null&&control.title!=null&&!control.title.isEmpty())return control.title;
+        return "nl".equals(root.getResources().getConfiguration().getLocales().get(0).getLanguage())?role.dutch:role.english;
     }
     List<Control> snapshot() {
         List<Control> result = new ArrayList<>();
@@ -190,9 +195,16 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
             Drawable drawable = drawable(control.source);
             int stamp = drawable == null ? control.source.getWidth() * 31 + control.source.getHeight()
                     : System.identityHashCode(drawable) * 31 + Arrays.hashCode(drawable.getState()) + drawable.getLevel();
-            if (control.icon == null || control.stamp != stamp) {
+            if (control.role == Role.SEARCH) {
+                // The native search box leads with a place pin or arrow glyph, not a search
+                // affordance. Export one stable magnifier; it never triggers a refresh itself.
+                if (control.icon == null) { control.icon = searchIcon(); control.stamp = 0; updated = true; }
+            } else if (control.icon == null || control.stamp != stamp) {
                 Bitmap icon = icon(control.source, drawable);
-                if (icon != null) { control.icon = icon; control.stamp = stamp; updated = true; }
+                // Maps can rebuild a button's drawable on every location update. Only changed
+                // pixels are a new host model; an identical capture must not invalidate the host.
+                if (icon != null && control.icon != null && icon.sameAs(control.icon)) control.stamp = stamp;
+                else if (icon != null) { control.icon = icon; control.stamp = stamp; updated = true; }
             }
             available &= control.icon != null;
             if (available != control.available || !title.equals(control.title)) updated = true;
@@ -382,6 +394,14 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         } else {
             canvas.scale(48f / view.getWidth(), 48f / view.getHeight()); view.draw(canvas);
         }
+        return bitmap;
+    }
+    static Bitmap searchIcon() {
+        Bitmap bitmap = Bitmap.createBitmap(48, 48, Bitmap.Config.ARGB_8888);
+        bitmap.setDensity(Bitmap.DENSITY_NONE);
+        Canvas canvas = new Canvas(bitmap); Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG); paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE); paint.setStrokeWidth(4.5f); paint.setStrokeCap(Paint.Cap.ROUND);
+        canvas.drawCircle(20, 20, 11, paint); canvas.drawLine(28.5f, 28.5f, 39, 39, paint);
         return bitmap;
     }
     static Bitmap moreIcon() {

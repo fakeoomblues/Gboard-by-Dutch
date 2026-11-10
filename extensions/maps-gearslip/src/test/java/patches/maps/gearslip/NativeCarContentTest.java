@@ -23,7 +23,8 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32)
 public final class NativeCarContentTest {
-    private static final int HOME=0x7f990020,PRIMARY=0x7f990021,PREVIEW=0x7f990022,STATUS=0x7f990023,END=0x7f990024;
+    private static final int HOME=0x7f990020,PRIMARY=0x7f990021,PREVIEW=0x7f990022,STATUS=0x7f990023,END=0x7f990024,
+        MENU=0x7f990025,SETTINGS=0x7f990026,RECYCLER=0x7f990027,TITLE=0x7f990028,SEARCH_BOX=0x7f990029;
     private final Object first=new Object(),second=new Object();
     private Context context;
     private FrameLayout root;
@@ -55,7 +56,9 @@ public final class NativeCarContentTest {
     @Before public void setup(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();Resources original=activity.getResources();
         Resources resources=new Resources(activity.getAssets(),original.getDisplayMetrics(),original.getConfiguration()){
-            @Override public String getResourceEntryName(int id){if(id==HOME)return "main_suggested_destinations_card";if(id==PRIMARY)return "place_details_navigation_footer_action_button";if(id==PREVIEW)return "place_details_card_scrollable";if(id==STATUS)return "status_card_view";if(id==END)return "status_panel_close_button";return super.getResourceEntryName(id);}
+            @Override public String getResourceEntryName(int id){if(id==HOME)return "main_suggested_destinations_card";if(id==PRIMARY)return "place_details_navigation_footer_action_button";if(id==PREVIEW)return "place_details_card_scrollable";if(id==STATUS)return "status_card_view";if(id==END)return "status_panel_close_button";
+                if(id==MENU)return "menu_frame_view";if(id==SETTINGS)return "settings_dialog_setting_list";if(id==RECYCLER)return "recycler_view";if(id==TITLE)return "title_bar_title";if(id==SEARCH_BOX)return "main_suggested_destinations_search_box";
+                return super.getResourceEntryName(id);}
         };
         context=new ContextWrapper(activity){@Override public Resources getResources(){return resources;}};
         root=new FrameLayout(context);FrameLayout card=new FrameLayout(context);card.setId(HOME);root.addView(card,new FrameLayout.LayoutParams(400,300));activity.setContentView(root);
@@ -118,6 +121,47 @@ public final class NativeCarContentTest {
         content.invoke(page.primaryAction,root,controls,false,null);assertEquals(1,starts[0]);assertEquals(View.INVISIBLE,panel.getVisibility());
         start.setEnabled(false);NativeCarContent.Page disabled=content.read(root,controls,false,null);assertFalse(disabled.primaryAction.enabled);
         assertThrows(SecurityException.class,()->content.invoke(page.primaryAction,root,controls,false,null));assertEquals(1,starts[0]);
+    }
+    private static android.widget.LinearLayout item(Context context){android.widget.LinearLayout row=new android.widget.LinearLayout(context);row.setOrientation(android.widget.LinearLayout.VERTICAL);return row;}
+    private static TextView label(Context context,String value){TextView view=new TextView(context);view.setText(value);return view;}
+    @Test public void nativeSettingsPanelBecomesAHostListWithItsOwnSwitchAndAudioModes()throws Exception{
+        NativeCarScopes.window(first,context);
+        FrameLayout menu=new FrameLayout(context);menu.setId(MENU);android.widget.LinearLayout list=item(context);list.setId(SETTINGS);
+        TextView title=label(context,"Settings");title.setId(TITLE);list.addView(title);
+        android.widget.LinearLayout recycler=item(context);recycler.setId(RECYCLER);list.addView(recycler);
+        android.widget.LinearLayout audio=item(context);audio.addView(label(context,"Guidance audio"));audio.addView(label(context,"Unmuted"));
+        int[] modes=new int[3];android.widget.LinearLayout group=new android.widget.LinearLayout(context);
+        for(int i=0;i<3;i++){final int index=i;FrameLayout button=new FrameLayout(context);button.addView(new android.widget.ImageView(context),new FrameLayout.LayoutParams(36,36));button.setOnClickListener(v->modes[index]++);group.addView(button,new android.widget.LinearLayout.LayoutParams(100,60));if(i==2)button.setSelected(true);}
+        audio.addView(group);recycler.addView(audio);
+        int[] routes={0};android.widget.LinearLayout route=item(context);route.addView(label(context,"Route options"));route.setOnClickListener(v->routes[0]++);recycler.addView(route);
+        android.widget.LinearLayout traffic=new android.widget.LinearLayout(context);traffic.addView(label(context,"Traffic"));android.widget.Switch toggle=new android.widget.Switch(context);traffic.addView(toggle);traffic.setOnClickListener(v->toggle.toggle());recycler.addView(traffic);
+        menu.addView(list,new FrameLayout.LayoutParams(420,392));root.addView(menu,new FrameLayout.LayoutParams(420,392));layoutViews();
+        NativeCarContent.Page page=content.read(root,controls,false,null);
+        assertNotNull(page);assertEquals(NativeCarContent.Kind.SETTINGS,page.kind);assertEquals("Settings",page.title);
+        List<String> titles=new ArrayList<>();for(NativeCarContent.Row row:page.rows)titles.add(row.title);
+        assertEquals(java.util.Arrays.asList("Guidance audio","Muted","Alerts only","Unmuted","Route options","Traffic"),titles);
+        assertEquals(Collections.singletonList("Unmuted"),page.rows.get(0).texts);assertNull(page.rows.get(0).action);
+        assertEquals("The native selected audio mode is marked",Collections.singletonList("Selected"),page.rows.get(3).texts);assertTrue(page.rows.get(1).texts.isEmpty());
+        ((android.view.ViewGroup)group).getChildAt(2).setSelected(false);
+        assertEquals("Without a native flag the status line marks the mode",Collections.singletonList("Selected"),content.read(root,controls,false,null).rows.get(3).texts);
+        NativeCarContent.Row trafficRow=page.rows.get(5);assertEquals(Boolean.FALSE,trafficRow.checked);assertNull(page.rows.get(4).checked);
+        controls.hostedPanel(list);assertEquals("The covered native panel is hidden while hosted",View.INVISIBLE,menu.getVisibility());
+        content.invoke(page.rows.get(1).action,root,controls,false,null);assertEquals(1,modes[0]);
+        content.invoke(trafficRow.action,root,controls,false,null);assertTrue("The host toggle uses the native row handler",toggle.isChecked());
+        assertEquals(Boolean.TRUE,content.read(root,controls,false,null).rows.get(5).checked);
+        content.invoke(page.rows.get(4).action,root,controls,false,null);assertEquals(1,routes[0]);
+    }
+    @Test public void compactIdleLayoutStillOffersSearchFirstLikeVela()throws Exception{
+        NativeCarScopes.window(first,context);
+        int[] searches={0};FrameLayout box=new FrameLayout(context);box.setId(SEARCH_BOX);box.setOnClickListener(v->searches[0]++);
+        box.addView(new android.widget.ImageView(context),new FrameLayout.LayoutParams(36,36));root.addView(box,new FrameLayout.LayoutParams(396,56));layoutViews();
+        root.getViewTreeObserver().dispatchOnGlobalLayout();root.getViewTreeObserver().dispatchOnPreDraw();
+        assertTrue(controls.available(NativeControls.Role.SEARCH));
+        NativeCarContent.Page page=content.read(root,controls,false,null);
+        assertNotNull("No suggestion card: the host still gets an idle list",page);assertEquals(NativeCarContent.Kind.HOME,page.kind);
+        assertEquals("Search",page.rows.get(0).title);
+        content.invoke(page.rows.get(0).action,root,controls,false,null);assertEquals(1,searches[0]);
+        assertNull("Guidance keeps the navigation card instead",content.read(root,controls,true,null));
     }
     @Test public void aRetiredOrUnownedWindowCannotSupplyTheActualPreview()throws Exception{
         FrameLayout panel=new FrameLayout(context);panel.setId(PREVIEW);TextView title=new TextView(context);title.setText("Preview");panel.addView(title);root.addView(panel);layoutViews();

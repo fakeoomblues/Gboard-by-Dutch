@@ -3,8 +3,10 @@ package patches.maps.gearslip;
 /** Host claims are capabilities only after the Binder caller owns the package. */
 final class HostPolicy {
     // Gearslip and its DriveDeck rebrand, release and development builds, whichever key signs them.
+    // DriveDeck's LiteRT and wireless-qualification variants are the builds that host DHU sessions.
     private static final String[] CAR_HOSTS = {
-        "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev"
+        "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev",
+        "app.johninnl.drivedeck.litert", "app.johninnl.drivedeck.wireless"
     };
     private static final String ANDROID_AUTO = "com.google.android.projection.gearhead";
     // Verified original and rotated signing lineage of Android Auto 16.8.661874.
