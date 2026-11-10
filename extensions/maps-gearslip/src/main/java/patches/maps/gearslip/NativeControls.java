@@ -284,25 +284,29 @@ final class NativeControls implements ViewTreeObserver.OnGlobalLayoutListener, V
         }
         return false;
     }
-    void invoke(Control control) {
-        if (closed || controls.get(control.role) != control || !control.available || !enabled(control.source) || nativeVisibility(control.source) != View.VISIBLE)
-            throw new SecurityException("Maps action was retired");
+    /** Returns how the native owner was activated; a refusal names the failed condition. */
+    String invoke(Control control) {
+        String reason = closed ? "closed" : controls.get(control.role) != control ? "replaced" : !control.available ? "unavailable"
+                : !enabled(control.source) ? "disabled" : nativeVisibility(control.source) != View.VISIBLE ? "hidden" : null;
+        if (reason != null) throw new SecurityException("Maps action was retired (" + reason + ")");
         List<View> restored = reveal(control.source);
         try {
             if (control.role == Role.SEARCH) focusSearch = true;
-            if (!control.source.performClick()) touch(control.source);
+            if (control.source.performClick()) return "performClick";
+            touch(control.source);
+            return "touch";
         } finally {
             // Both changes occur in one main-thread callback, before any frame is drawn.
             conceal(restored);
         }
     }
-    void invoke(Role role) {
+    String invoke(Role role) {
         // Maps can replace a reactive card before the next layout/pre-draw.
         // Resolve commands against the current owned tree, not that frame cache.
         onGlobalLayout();
         Control current = controls.get(role);
-        if (current == null) throw new SecurityException("Maps action was retired");
-        invoke(current);
+        if (current == null) throw new SecurityException("Maps action was retired (not found)");
+        return invoke(current);
     }
     void invoke(NativeCarContent.Action action)throws Exception{
         if(action.model instanceof View){

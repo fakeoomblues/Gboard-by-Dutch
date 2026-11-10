@@ -584,9 +584,18 @@ public final class NativeCarService extends Service {
             try {
                 requireSession(session);
                 dispatch(session, callback, true, () -> {
-                    if (session.keyboard != null) throw new SecurityException("Navigation actions are inactive during search input");
-                    if (control == null) session.controlsOpen = true;
-                    else { session.controlsOpen = false; session.renderer.performControl(control); }
+                    // Owner-approved tap diagnostic (2026-11-10): one line per delivered host tap.
+                    String role = control == null ? "MORE" : control.role.name();
+                    try {
+                        if (session.keyboard != null) throw new SecurityException("Navigation actions are inactive during search input");
+                        String outcome = "opened";
+                        if (control == null) session.controlsOpen = true;
+                        else { session.controlsOpen = false; outcome = session.renderer.performControl(control); }
+                        Log.i("MapsNativeCar", "tap " + role + " outcome=" + outcome);
+                    } catch (Exception refused) {
+                        Log.i("MapsNativeCar", "tap " + role + " refused: " + refused.getMessage());
+                        throw refused;
+                    }
                     invalidate(session);
                 });
             } catch (Exception error) { CarProtocol.complete(callback, null, error); }

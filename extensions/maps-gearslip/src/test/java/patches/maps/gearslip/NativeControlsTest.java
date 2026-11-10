@@ -183,11 +183,12 @@ public final class NativeControlsTest {
         NativeControls.Control control = bind(); android.graphics.Bitmap icon = control.icon; int before = updates;
         button.setImageDrawable(new ColorDrawable(Color.RED)); root.getViewTreeObserver().dispatchOnPreDraw();
         assertSame(control, controls.snapshot().get(0)); assertNotSame(icon, control.icon); assertTrue(updates > before);
-        controls.invoke(control); assertEquals(1, clicks);
+        assertEquals("The tap diagnostic reports how the owner ran", "performClick", controls.invoke(control)); assertEquals(1, clicks);
     }
     @Test public void aDisabledNativeOwnerCannotBeBypassedThroughACalAction() {
         NativeControls.Control control = bind(); group.setEnabled(false);
-        assertThrows(SecurityException.class, () -> controls.invoke(control)); assertEquals(0, clicks);
+        SecurityException refused = assertThrows(SecurityException.class, () -> controls.invoke(control)); assertEquals(0, clicks);
+        assertEquals("The tap diagnostic names the failed condition", "Maps action was retired (disabled)", refused.getMessage());
         root.getViewTreeObserver().dispatchOnPreDraw(); assertTrue(controls.snapshot().isEmpty());
     }
     @Test public void searchFocusesTheActiveNativeEditorRatherThanAnOlderHiddenEditor() {
