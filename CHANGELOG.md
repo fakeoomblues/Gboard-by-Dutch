@@ -1,4 +1,26 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cece6f2ad9db72a3cd5b2fb5098395ed0b5a1aa6/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.59.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cece6f2ad9db](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cece6f2ad9db72a3cd5b2fb5098395ed0b5a1aa6). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.59.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.59.0...v1.59.1) (2026-11-10)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** ready warning audio by default and keep FM pills stable ([63ae580](https://gitlab.com/johninnld/nl-morphe-patches/commit/63ae580eb151ed9383b41380c9b685d714d109d3))
+* **Google Maps:** log each car action tap and why Maps refused it ([4e6b4e5](https://gitlab.com/johninnld/nl-morphe-patches/commit/4e6b4e5fc976d32b26246010a0d83074f24ad462))
+* **Google Maps:** ready warning audio by default and keep FM pills stable ([63ae580](https://gitlab.com/johninnld/nl-morphe-patches/commit/63ae580eb151ed9383b41380c9b685d714d109d3))
+* **release:** let the workspace proof finish under unrelated process churn ([abf06eb](https://gitlab.com/johninnld/nl-morphe-patches/commit/abf06eb865bc25c55312a47709e802abfa9bb403))
+* **release:** scan each observed process once instead of awaiting a churn-free instant ([cece6f2](https://gitlab.com/johninnld/nl-morphe-patches/commit/cece6f2ad9db72a3cd5b2fb5098395ed0b5a1aa6))
+* **Vela Maps:** ready warning audio by default and keep FM pills stable ([63ae580](https://gitlab.com/johninnld/nl-morphe-patches/commit/63ae580eb151ed9383b41380c9b685d714d109d3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9d000483e4d91b2d9c5661f7d2caca74d3e43285/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.59.0.**
