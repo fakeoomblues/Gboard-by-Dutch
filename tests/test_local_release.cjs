@@ -354,7 +354,7 @@ test("workspace native proof is bounded, fail-closed and receives no credentials
   assert.equal(typeof workspaceQuiescent,"function");
   let seen;
   const result=workspaceQuiescent("/private/owned/checkout",{platform:"darwin",stateDir:"/private/owned",env:{PATH:"/usr/bin",GITLAB_TOKEN:"must-not-forward"},inspect:(file,args,options)=>{seen={file,args,options};return "QUIESCENT\n";}});
-  assert.equal(result,true);assert.equal(seen.file,"/usr/bin/python3");assert.ok(seen.args[1].includes("proc_pidfdinfo"));assert.ok(seen.args[1].includes("info(pid,8,1272,address)"));assert.ok(seen.args.includes("/private/owned/checkout"));assert.equal(seen.options.timeout,30000);assert.equal(seen.options.env.HOME,"/private/owned");assert.equal(seen.options.env.GITLAB_TOKEN,undefined);
+  assert.equal(result,true);assert.equal(seen.file,"/usr/bin/python3");assert.ok(seen.args[1].includes("proc_pidfdinfo"));assert.ok(seen.args[1].includes("info(pid,8,1272,address)"));assert.ok(seen.args.includes("/private/owned/checkout"));assert.equal(seen.options.timeout,120000);assert.equal(seen.options.env.HOME,"/private/owned");assert.equal(seen.options.env.GITLAB_TOKEN,undefined);
   for(const inspect of [()=>"BUSY\n",()=>"",()=>"unexpected output",()=>{throw Object.assign(new Error("unavailable"),{code:"ENOENT"});},()=>{throw Object.assign(new Error("timeout"),{code:"ETIMEDOUT"});},()=>{throw Object.assign(new Error("partial scan"),{status:1,stdout:"",stderr:""});}])assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"darwin",stateDir:"/private/owned",inspect}),false);
   assert.equal(workspaceQuiescent("/private/owned/checkout",{platform:"linux",inspect:()=>{throw Object.assign(new Error("no handles"),{status:1,stdout:"",stderr:""});}}),true);
 });

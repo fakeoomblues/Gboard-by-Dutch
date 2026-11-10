@@ -254,12 +254,16 @@ except Exception as problem:
     print('workspace-proof: '+reason[:120],file=sys.stderr)
     sys.exit(2)
 `;
+// A full pass reads every mapping of every process of this user. Large build JVMs and
+// emulators from unrelated sessions make that take tens of seconds under load (~7s idle),
+// so the bound only catches a genuinely stuck scan; any incomplete scan still fails closed.
+const WORKSPACE_PROOF_TIMEOUT_MS=120000;
 /** A command group can exit while a detached descendant still holds the checkout. */
 function workspaceQuiescent(workspace,{stateDir=path.dirname(workspace),env=process.env,inspect=execFileSync,platform=process.platform,onFailure=()=>{}}={}) {
   try{
     const mac=platform==="darwin";
     const output=inspect(mac?"/usr/bin/python3":"lsof",mac?["-c",MAC_WORKSPACE_PROOF,workspace]:["-n","-P","+D",workspace],{
-      cwd:stateDir,env:{PATH:env.PATH,HOME:stateDir,LANG:"C",LC_ALL:"C"},encoding:"utf8",stdio:["ignore","pipe","pipe"],timeout:30000,maxBuffer:2*1024*1024,
+      cwd:stateDir,env:{PATH:env.PATH,HOME:stateDir,LANG:"C",LC_ALL:"C"},encoding:"utf8",stdio:["ignore","pipe","pipe"],timeout:WORKSPACE_PROOF_TIMEOUT_MS,maxBuffer:2*1024*1024,
     });
     const quiet=mac?String(output).trim()==="QUIESCENT":!String(output).trim();
     if(!quiet)onFailure(String(output).trim()==="BUSY"?"live workspace holder":"unexpected native scan output");
