@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/82c90902829703aff7b1248182f1deb4b9bcc927/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.59.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [82c909028297](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/82c90902829703aff7b1248182f1deb4b9bcc927). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.59.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.59.1...v1.59.2) (2026-11-10)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** host the idle list, Settings and turn card the way Vela does ([f55849f](https://gitlab.com/johninnld/nl-morphe-patches/commit/f55849f1eba2cfe3301de3bd93cbdb394ccb9009))
+* **release:** give the workspace proof room for heavy unrelated processes ([82c9090](https://gitlab.com/johninnld/nl-morphe-patches/commit/82c90902829703aff7b1248182f1deb4b9bcc927))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cece6f2ad9db72a3cd5b2fb5098395ed0b5a1aa6/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.59.1.**
