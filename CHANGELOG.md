@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e58379e89a67f044f61a9808d767945f56c0d38a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.60.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e58379e89a67](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e58379e89a67f044f61a9808d767945f56c0d38a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.60.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.59.2...v1.60.0) (2026-11-10)
+
+### ✨ New Features
+
+* **Flitsmeister:** name navigation patches for any Android Auto host and any alert provider ([e58379e](https://gitlab.com/johninnld/nl-morphe-patches/commit/e58379e89a67f044f61a9808d767945f56c0d38a))
+* **Google Maps:** name navigation patches for any Android Auto host and any alert provider ([e58379e](https://gitlab.com/johninnld/nl-morphe-patches/commit/e58379e89a67f044f61a9808d767945f56c0d38a))
+* **Vela Maps:** name navigation patches for any Android Auto host and any alert provider ([e58379e](https://gitlab.com/johninnld/nl-morphe-patches/commit/e58379e89a67f044f61a9808d767945f56c0d38a))
+* **Waze:** name navigation patches for any Android Auto host and any alert provider ([e58379e](https://gitlab.com/johninnld/nl-morphe-patches/commit/e58379e89a67f044f61a9808d767945f56c0d38a))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/82c90902829703aff7b1248182f1deb4b9bcc927/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.59.2.**
