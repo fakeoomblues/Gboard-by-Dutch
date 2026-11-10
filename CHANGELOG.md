@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9d000483e4d91b2d9c5661f7d2caca74d3e43285/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.59.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9d000483e4d9](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9d000483e4d91b2d9c5661f7d2caca74d3e43285). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.59.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.58.0...v1.59.0) (2026-11-10)
+
+### 🐛 Bug Fixes
+
+* **SoundCloud:** never fail patching over a manifest minimum-SDK difference ([c782ed6](https://gitlab.com/johninnld/nl-morphe-patches/commit/c782ed6752569c1d3fa97c313932bedea8727d9d))
+* **SoundCloud:** skip the sign-in registration handshake past the device limit ([9c13645](https://gitlab.com/johninnld/nl-morphe-patches/commit/9c136457e2e8e12ab5fa51752ba59b486bdcd405))
+
+### ✨ New Features
+
+* **SoundCloud:** ignore the ten-device sign-in limit ([1698a4c](https://gitlab.com/johninnld/nl-morphe-patches/commit/1698a4c287d6327c9791fb832cdc6e3a93c010b3))
+* **SoundCloud:** upgrade to November release, force Go switches and add microG-RE support ([4b64e24](https://gitlab.com/johninnld/nl-morphe-patches/commit/4b64e2495017ae8bb42b5e9c0ba49ea6bad730df))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/045f7b05c38f350dbe7f072072eeb08786592ed7/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.58.0.**
