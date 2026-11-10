@@ -8,7 +8,11 @@ import app.morphe.patcher.patch.resourcePatch
 import java.security.MessageDigest
 import javax.xml.parsers.DocumentBuilderFactory
 
-/** Compatibility declarations are catalog metadata; enforce original inputs at execution too. */
+/** Compatibility declarations are catalog metadata; enforce original inputs at execution too.
+ * Package, version, build and signer pin the publisher input. The manifest minimum SDK is
+ * not enforced: publishers ship variants of one build with different manifest minSdk values
+ * (SoundCloud's 2026.11.02-release exists as Android 9+ and Android 10+ APKM archives with
+ * byte-identical base APKs), so a minSdk difference alone must not fail patching. */
 @JvmOverloads
 internal fun validateOriginalInput(
     target: Compatibility, metadata: PackageMetadata, minSdk: Int?,
@@ -25,9 +29,6 @@ internal fun validateOriginalInput(
             .joinToString("") { "%02x".format(it.toInt() and 0xff) }
     }.toSet()
     check(signers.isNotEmpty() && target.signatures.orEmpty().containsAll(signers)) { "Untrusted or missing ${target.name} signer" }
-    val allowedMinSdks = builds.mapNotNull { it.minSdk }.toSet() + additionalMinSdks +
-        additionalMinSdksByVersion[metadata.versionName].orEmpty()
-    check(minSdk != null && minSdk in allowedMinSdks) { "Unsupported ${target.name} manifest minSdk" }
 }
 
 /** Every mutating dependency also depends on this read-only preflight. */

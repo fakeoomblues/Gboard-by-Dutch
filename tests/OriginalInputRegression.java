@@ -113,8 +113,11 @@ class OriginalInputRegression {
             reject(app[0]+" untrusted signer",()->validate(target,metadata(original,app[2],original.getVersionName(),original.getVersionCode(),other),sdk));
             List<X509Certificate> mixed=new ArrayList<>(trusted);mixed.addAll(other);
             reject(app[0]+" mixed signer",()->validate(target,metadata(original,app[2],original.getVersionName(),original.getVersionCode(),mixed),sdk));
-            reject(app[0]+" wrong manifest minSdk",()->validate(target,original,sdk+1));
-            reject(app[0]+" missing manifest minSdk",()->validate(target,original,null));
+            // Minimum-SDK differences must not fail patching: publishers ship variants of one
+            // build with different manifest minSdk values (SoundCloud's November release as
+            // Android 9+ and Android 10+ APKM archives, byte-identical base APKs).
+            validate(target,original,sdk+1);check(true,app[0]+" different manifest minSdk accepted");
+            validate(target,original,null);check(true,app[0]+" missing manifest minSdk accepted");
             // Exercise the actual production resource patch, not just its validator.
             PatcherConfig config=config(new File(originals,app[0]+"/base.apk"),scratch,app[0]);
             try(ResourcePatchContext context=new ResourcePatchContext(config)) {
@@ -142,9 +145,7 @@ class OriginalInputRegression {
                 }
                 resourceMetadata.set(context,original);
                 java.nio.file.Files.writeString(context.get("AndroidManifest.xml",false).toPath(),"<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"><uses-sdk android:minSdkVersion=\"999\"/></manifest>");
-                boolean rejected=false;
-                try{guard.execute(context);}catch(IllegalStateException expected){rejected=true;}
-                check(rejected,app[0]+" actual resource guard bad manifest rejected");
+                guard.execute(context);check(true,app[0]+" actual resource guard accepts any manifest minSdk");
             }
         }
         // The strict production resolver must reject ambiguity and missing targets.

@@ -13,6 +13,15 @@ Home in Android Auto — were re-verified against this build before anything was
   `aff930d671fa0a57b8c41d1678cc2a8ea717075a74e346942a140afa441339d2`, so the compatibility
   signature set needed no change.
 
+The publisher ships 379060 in two APKM variants: the Android 10+ download the phone uses
+(manifest minSdk 29, also what the v4n1x checkout declares for this release) and the
+Android 9+ 2arch archive this Mac validated (minSdk 28) — with byte-identical base APKs,
+so the manifests differ only in the minimum. The first phone review run failed the
+original-input guard's minSdk check on the 28-only target. Following the owner's rule
+that a manifest minimum-SDK difference must never fail patching, the guard now pins the
+input by package, version, version code and signer only; the catalog target documents
+the Android 10+ variant.
+
 ## Go feature switches
 
 The additional control requested from the local `soundcloud-patches` checkout (v4n1x, release

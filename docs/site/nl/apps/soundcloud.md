@@ -4,7 +4,7 @@
 
 [Gebruik je originele APKM](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer het volledige, door de uitgever ondertekende APKM-archief voor precies deze build (Android 9+), inclusief de apparaatbestanden.
+Selecteer het volledige, door de uitgever ondertekende APKM-archief voor precies deze build (Android 10+), inclusief de apparaatbestanden.
 
 ## Patches
 

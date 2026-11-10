@@ -4,7 +4,7 @@
 
 [Use your original APKM](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select the complete publisher-signed APKM archive for this exact build (Android 9+), including its device files.
+Select the complete publisher-signed APKM archive for this exact build (Android 10+), including its device files.
 
 ## Patches
 

@@ -189,7 +189,7 @@
                 "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 28,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2216,7 +2216,7 @@
                 "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 28,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -2250,7 +2250,7 @@
                 "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 28,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -4014,7 +4014,7 @@
                 "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 28,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -7905,7 +7905,7 @@
                 "X86": 379060
               },
               "isExperimental": false,
-              "minSdk": 28,
+              "minSdk": 29,
               "description": null
             }
           ]
