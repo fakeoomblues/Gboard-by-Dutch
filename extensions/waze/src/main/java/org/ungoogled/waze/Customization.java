@@ -131,6 +131,8 @@ public final class Customization {
                 "Shares them with patched apps such as Ungoogled Maps and Vela Maps"});
         LABELS.put("navigationBroadcasts", new String[]{"Broadcast navigation data",
                 "Road limit and zone data for other apps; keeps Waze active in the background"});
+        LABELS.put("areaReports", new String[]{"Reports around you in the background",
+                "Loads police, hazard and crash reports by area, without Waze's map. Restart Waze after changes"});
         LABELS.put("stayAwake", new String[]{"Stay awake in the background",
                 "Keeps Waze running for Maps"});
         LABELS.put("biggerPins", new String[]{"Bigger alert pins",

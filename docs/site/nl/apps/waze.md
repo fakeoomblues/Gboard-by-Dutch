@@ -105,6 +105,10 @@ Hide ads en Remove telemetry beperken de ondersteunde advertenties, crashrapport
 
 **Voor automatisch starten vanuit Maps/Vela: zet bij Android App-info → Waze / De-Waze → Machtigingen → Locatie de toegang op ‘Altijd toestaan’. ‘Alleen toestaan bij gebruik van de app’ is onvoldoende voor betrouwbaar stil starten.** Zie de [stappen voor locatietoegang](../guides/navigation-data.md#2-stel-de-bron-eenmaal-in), ook bij **Android blocked background startup**.
 
+Maps en Vela tonen een pil voor elke melding die Waze toont, ook meldingen die Waze zonder geluid toont, bijvoorbeeld een melding die je al bent gepasseerd of die Waze met andere groepeert. Alleen meldingen die Waze uitspreekt worden gesproken, en Waze spreekt elke melding één keer uit. Ontvangen Maps en Vela allebei Waze-meldingen, dan krijgt de app op het autoscherm de luidspreker tussen twee meldingen door.
+
+Draait Waze op de achtergrond voor Maps of Vela, dan laadt Waze politie-, gevaar- en ongevalmeldingen voor de omgeving waar je rijdt, niet voor het gebied dat de eigen Waze-kaart het laatst toonde. Zonder deze aanpassing hield Waze de meldingen van je vertrekpunt. De schakelaar heet **Reports around you in the background** onder Customization; hij staat standaard aan en werkt na een herstart van Waze. Waze bepaalt nog steeds zelf welke meldingen gelden, net als op het eigen scherm.
+
 Bijgewerkte navigatiegegevenspatches voegen stil starten en controle van de bronmotor toe. Na eenmalige broninstellingen en locatietoegang start Maps/Vela de gekozen Waze- of Flitsmeister-motor zonder het scherm te openen en probeert herstelbare onderbrekingen opnieuw tijdens kaartgebruik. Patch beide kanten opnieuw voor de start-API; de oudere Share alerts-koppeling blijft handmatig starten vereisen. Zie de [installatiegids voor navigatiegegevens](../guides/navigation-data.md).
 
 Open na het patchen **Customization** in het zijmenu onder **Shut off**. Daar stel je de toegepaste functies in. Speed camera alerts, Flock cameras en Average speed zone bar staan daar eerst uit, ook als je de patches hebt geselecteerd. Herstart Waze na wijzigingen aan de kaartstijl of waarschuwingspictogrammen.

@@ -105,6 +105,10 @@ Hide ads and Remove telemetry reduce the supported advertising, crash reporting 
 
 **For automatic startup from Maps/Vela, open Android App info → Waze / De-Waze → Permissions → Location and select ‘Allow all the time’. ‘Allow only while using the app’ is insufficient for reliable silent startup.** Follow the [location permission steps](../guides/navigation-data.md#2-set-up-the-provider-once), including if you see **Android blocked background startup**.
 
+Maps and Vela show a pill for every alert Waze shows, including alerts Waze shows without sound, for example a report you have already passed or one it groups with others. Only alerts Waze announces are spoken, and Waze announces each report once. When Maps and Vela both receive Waze alerts, the app on the car screen gets the speaker between announcements.
+
+While Waze runs in the background for Maps or Vela, it loads police, hazard and crash reports for the area around you rather than for the last area its own map showed. Without this, Waze kept the reports from where you started. The switch is **Reports around you in the background** under Customization; it is on by default and takes effect after Waze restarts. Waze still decides which reports count, as it does on its own screen.
+
 Updated navigation-data patches add silent provider startup and native-engine health checks. After one-time provider setup and location permission, Maps/Vela starts the selected Waze or Flitsmeister engine without opening its screen, and retries recoverable stoppages while the map is in use. Repatch both sides to add the startup API; the older Share alerts bridge keeps its manual startup requirement. See the [navigation-data setup guide](../guides/navigation-data.md).
 
 After patching, open **Customization** in the side menu below **Shut off** to configure the features you applied. Speed camera alerts, Flock cameras and Average speed zone bar start off there even when their patches are selected. Restart Waze after changing map or alert-pin settings.

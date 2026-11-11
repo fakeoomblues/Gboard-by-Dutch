@@ -17,7 +17,7 @@ public final class SpeedAlerts {
     private static long chimedAt;
     private static final java.util.Map<Object,NativeInputs> nativeWidgets=new java.util.WeakHashMap<>();
     private static final ThreadLocal<Boolean> refreshing=ThreadLocal.withInitial(()->false);
-    private static final class NativeInputs {
+    static final class NativeInputs {
         Float speed; Integer limit; Object units;
         NativeInputs(){}
         NativeInputs(NativeInputs value){speed=value.speed;limit=value.limit;units=value.units;}
@@ -27,6 +27,25 @@ public final class SpeedAlerts {
     static void writeNativeSpeed(Object wrapper,float speed){}
     static void writeNativeLimit(Object wrapper,int limit,Object units){}
     static boolean nativeWidgetAttached(Object wrapper){return false;}
+
+    /**
+     * The limit an attached native Maps widget still shows. Maps calls its limit setter only when the
+     * limit changes, so a long stretch under one limit produces no further observations; the widget's
+     * held value, not the age of its last setter call, is the current native limit.
+     */
+    static Double heldNativeLimitKmh(){
+        synchronized(nativeWidgets){return heldLimitKmh(nativeWidgets,SpeedAlerts::nativeWidgetAttached,SpeedAlerts::nativeUnits);}
+    }
+    static Double heldLimitKmh(java.util.Map<Object,NativeInputs> widgets,java.util.function.Predicate<Object> attached,java.util.function.ToIntBiFunction<Object,Object> units){
+        Double held=null;
+        for(java.util.Map.Entry<Object,NativeInputs> entry:widgets.entrySet()){
+            NativeInputs value=entry.getValue();
+            if(entry.getKey()==null||value.limit==null||value.limit<=0||!attached.test(entry.getKey()))continue;
+            int selected=units.applyAsInt(entry.getKey(),value.units);if(selected<0)continue;
+            double kmh=value.limit*(selected==1?1.0:1.609344);if(kmh<=500)held=kmh;
+        }
+        return held;
+    }
 
     public static void onNativeSpeedInput(Object wrapper,float speed){
         if(refreshing.get())return;

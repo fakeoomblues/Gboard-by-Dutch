@@ -55,6 +55,16 @@ public class ExternalTelemetryTest {
         Location l=new Location("gps");l.setLatitude(52);l.setLongitude(5);l.setSpeed(20);l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());ExternalTelemetry.fix(l);
         assertEquals(20,ExternalTelemetry.speedMps(),0);assertNull(ExternalTelemetry.limitKmh());
     }
+    @Test public void anAttachedNativeWidgetKeepsItsUnchangedLimitButNotAfterDetachingOrClearing(){
+        java.util.Map<Object,SpeedAlerts.NativeInputs> widgets=new java.util.LinkedHashMap<>();
+        Object widget=new Object();SpeedAlerts.NativeInputs inputs=new SpeedAlerts.NativeInputs();inputs.limit=100;widgets.put(widget,inputs);
+        boolean[] attached={true};
+        assertEquals("Maps set 100 once; the widget still shows it",100,SpeedAlerts.heldLimitKmh(widgets,w->attached[0],(w,u)->1),0);
+        inputs.limit=50;assertEquals("Miles are converted",50*1.609344,SpeedAlerts.heldLimitKmh(widgets,w->attached[0],(w,u)->0),.001);
+        inputs.limit=-1;assertNull("Maps cleared the limit",SpeedAlerts.heldLimitKmh(widgets,w->attached[0],(w,u)->1));
+        inputs.limit=100;attached[0]=false;assertNull("A detached widget shows nothing",SpeedAlerts.heldLimitKmh(widgets,w->attached[0],(w,u)->1));
+        attached[0]=true;assertNull("Unknown units are not guessed",SpeedAlerts.heldLimitKmh(widgets,w->attached[0],(w,u)->-1));
+    }
     @Test public void measuredZeroSurvivesAndAnotherProviderCannotSupplyMissingFields() throws Exception {
         ExternalTelemetry.select(app,TelemetryStore.WAZE);long now=SystemClock.elapsedRealtime();Map<String,Object> waz=TelemetryStoreTest.packet(TelemetryStore.WAZE,"w",1,now);waz.put("current_speed_kmh",0d);waz.put("road_speed_limit_status","unknown");deliver(waz);
         deliver(TelemetryStoreTest.packet(TelemetryStore.FLITSMEISTER,"fm",1,now));

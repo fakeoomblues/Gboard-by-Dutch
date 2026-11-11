@@ -87,7 +87,7 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
     description = "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. Includes a silent startup and health API for patched Maps/Vela; no overlay required.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
-    dependsOn(wazeStayAwakePatch, startupResources)
+    dependsOn(wazeStayAwakePatch, startupResources, wazeConfigOverridesPatch)
     val receiverPackage by stringOption(
         key = "receiverPackage", default = "", title = "Receiver package",
         description = "Optional target app package. Blank broadcasts to running compatible local receivers.",
@@ -113,6 +113,11 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         }
         returnString(NAVIGATION_BROADCASTS, "receiverPackage", target)
         declareWazeToggle("navigationBroadcasts")
+        // Waze's classic report feed follows the map area it last showed on screen: in the background
+        // (feeding Maps/Vela, no Waze map drawn) it stops reporting that area and keeps the reports of
+        // where it started. Waze's insights feed loads reports by map cells around the car instead,
+        // without a map. Waze reads this value once at startup, so a change applies after a restart.
+        keepWazeConfig("areaReports", "CONFIG_VALUE_INSIGHTS_INFRA_INSIGHTS_API_ENABLED", true)
         WazeApplicationCreateFingerprint.method.addInstruction(0,
             "invoke-static { p0 }, $NAVIGATION_BROADCASTS->init(Landroid/app/Application;)V")
         NativeSpeedLimitFingerprint.method.addInstruction(0,

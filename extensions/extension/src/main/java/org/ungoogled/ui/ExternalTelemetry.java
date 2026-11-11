@@ -337,7 +337,7 @@ public final class ExternalTelemetry {
     }
     static TelemetryStore.View view(){return store.view(SystemClock.elapsedRealtime());}
     static Float speedMps(){Double external=view().currentKmh;if(external!=null)return (float)(external/3.6);if(freshNative(nativeSpeedAt,5000)&&nativeSpeed!=null)return nativeSpeed.floatValue()/3.6f;return null;}
-    static Double limitKmh(){Double external=view().limitKmh;return external!=null?external:freshNative(nativeLimitAt,30000)?nativeLimit:null;}
+    static Double limitKmh(){Double external=view().limitKmh;if(external!=null)return external;if(freshNative(nativeLimitAt,30000))return nativeLimit;return SpeedAlerts.heldNativeLimitKmh();}
     private static boolean freshNative(long at,long age){long now=SystemClock.elapsedRealtime();return at>=0&&now>=at&&now-at<=age;}
     static void nativeSpeedMps(float speed) {
         nativeSpeedAt=SystemClock.elapsedRealtime();

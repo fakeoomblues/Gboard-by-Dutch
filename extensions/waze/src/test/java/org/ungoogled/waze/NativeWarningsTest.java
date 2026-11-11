@@ -134,7 +134,9 @@ public class NativeWarningsTest {
     @Test public void nativeSilenceAndInvalidityCancelPreviousAuthority(){
         Descriptor d=new Descriptor("2","HAZARD",3);repository(d);NativeWarnings.sound(d.id);
         assertEquals(1,announcements());d.info.silent="Familiar";repository(d);
-        assertEquals("CLEAR",events.get(2).getString("operation"));assertEquals("display_only",last().getString("category"));
+        assertEquals("CLEAR",events.get(2).getString("operation"));
+        assertEquals("A silently shown valid alert stays visible state","road_danger",last().getString("category"));
+        assertTrue(last().getBoolean("native_visual_only"));assertEquals("UPSERT",last().getString("operation"));
         assertEquals("Familiar",last().getString("native_silent_activation"));NativeWarnings.sound(d.id);assertEquals(1,announcements());
         d.info.silent=null;d.info.validation.valid=false;repository(d);NativeWarnings.sound(d.id);assertEquals(1,announcements());
         d.info.validation.valid=true;repository(d);assertEquals(1,announcements());
