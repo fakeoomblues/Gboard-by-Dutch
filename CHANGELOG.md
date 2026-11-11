@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9462c60b2408967d6bc13b42bbf9f69b31770b9c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.66.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9462c60b2408](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9462c60b2408967d6bc13b42bbf9f69b31770b9c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.66.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.65.0...v1.66.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Gboard:** add a Rambler personal dictionary and contact names, and name the Standard choice Parakeet ([9462c60](https://gitlab.com/johninnld/nl-morphe-patches/commit/9462c60b2408967d6bc13b42bbf9f69b31770b9c))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cb6e0aeeaca8287449497c51a7da0bad3594fdcb/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.65.0.**
