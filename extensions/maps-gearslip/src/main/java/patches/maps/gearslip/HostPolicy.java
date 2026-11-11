@@ -6,20 +6,10 @@ package patches.maps.gearslip;
  * the Binder caller actually owns that package, so one app cannot pose as another.
  */
 final class HostPolicy {
-    // DriveDeck/Gearslip render a turn whose distance Maps has not produced yet; other hosts may
-    // rebuild the model with the car library's builder, which requires a distance.
-    private static final String[] UNKNOWN_DISTANCE_HOSTS = {
-        "app.seb3thehacker.gearslip", "app.seb3thehacker.gearslip.dev", "app.johninnl.drivedeck", "app.johninnl.drivedeck.dev",
-        "app.johninnl.drivedeck.litert", "app.johninnl.drivedeck.wireless"
-    };
     private HostPolicy() {}
 
     static boolean permits(String packageName, int uid, String[] ownedPackages) {
         return uid >= 0 && packageName != null && contains(ownedPackages, packageName);
-    }
-
-    static boolean rendersUnknownTurnDistance(String packageName) {
-        return contains(UNKNOWN_DISTANCE_HOSTS, packageName);
     }
 
     private static boolean contains(String[] values, String candidate) {

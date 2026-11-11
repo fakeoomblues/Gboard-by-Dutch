@@ -6,34 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
-/** Vela's public template ownership, using Maps' actual step and route observations. */
+/** The car cluster's Trip, built from Maps' actual step observations; Maps draws its own cards. */
 final class CarNavigationModels {
     private CarNavigationModels() {}
-
-    static void apply(Bundle template,NativeGuidance.Snapshot value,long now,boolean imperial){apply(template,value,now,imperial,false);}
-    /**
-     * Maps can show an instruction before it has a distance for it (start of a route, not yet
-     * snapped). A host that accepts an unknown distance gets the turn without inventing one;
-     * otherwise the card stays loading, as the library's model requires a distance.
-     */
-    static void apply(Bundle template,NativeGuidance.Snapshot value,long now,boolean imperial,boolean unknownTurnDistance){
-        if(value==null||!value.guiding)return;
-        String units=value.distanceUnits==null?imperial?"MILES":"KILOMETERS":value.distanceUnits;
-        Bundle routing=CarProtocol.object("androidx.car.app.navigation.model.RoutingInfo");
-        boolean cue=value.cue!=null&&!value.cue.isEmpty();
-        boolean loading=!cue||value.meters<0&&!unknownTurnDistance;
-        CarProtocol.field(routing,"mIsLoading",CarProtocol.primitive(loading));
-        if(!loading){
-            CarProtocol.field(routing,"mCurrentStep",step(value.current,value.cue));
-            if(value.meters>=0)CarProtocol.field(routing,"mCurrentDistance",distance(value.meters,units));
-            if(value.next!=null&&value.next.cue!=null&&!value.next.cue.isEmpty())
-                CarProtocol.field(routing,"mNextStep",step(value.next,value.next.cue));
-        }
-        CarProtocol.field(template,"mNavigationInfo",routing);
-        // i/j describe the next maneuver. Only m/c() describe the whole route.
-        if(value.routeMeters>=0&&value.routeSeconds>=0)
-            CarProtocol.field(template,"mDestinationTravelEstimate",estimate(value.routeMeters,value.routeSeconds,now,units));
-    }
 
     static Bundle trip(NativeGuidance.Snapshot value,long now,boolean imperial){
         String units=value.distanceUnits==null?imperial?"MILES":"KILOMETERS":value.distanceUnits;

@@ -25,8 +25,6 @@ import androidx.car.app.IAppManager;
 import androidx.car.app.SurfaceContainer;
 import androidx.car.app.serialization.Bundleable;
 import androidx.car.app.model.TemplateWrapper;
-import androidx.car.app.model.ListTemplate;
-import androidx.car.app.model.Row;
 import androidx.car.app.navigation.model.NavigationTemplate;
 import org.junit.After;
 import org.junit.Before;
@@ -130,30 +128,6 @@ public final class NativeCarServiceTest {
         assertEquals("com.google.android.libraries.geo.navcore.service.base.NavigationService",stop.getComponent().getClassName());assertTrue(stop.getBooleanExtra("abortcurrentsession",false));
         update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,stopped.code);assertEquals(Integer.valueOf(3),events.get(events.size()-1));
     }
-    @Test public void freeDriveGuidanceReportsDoNotRefreshTheHostEverySecond()throws Exception{
-        handshake(HOST);java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
-        int[] invalidations={0};
-        Binder app=new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
-            data.enforceInterface("androidx.car.app.IAppHost");if(code==2)invalidations[0]++;if(reply!=null)reply.writeNoException();return true;}};
-        Binder navigation=new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
-            data.enforceInterface("androidx.car.app.navigation.INavigationHost");if(reply!=null)reply.writeNoException();return true;}};
-        java.lang.reflect.Field appHost=session.getClass().getDeclaredField("appHost");appHost.setAccessible(true);appHost.set(session,app);
-        java.lang.reflect.Field navigationHost=session.getClass().getDeclaredField("navigationHost");navigationHost.setAccessible(true);navigationHost.set(session,navigation);
-        java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
-        for(int i=0;i<5;i++)update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));
-        assertEquals("Idle location-driven reports leave the host template alone",0,invalidations[0]);
-        update.invoke(service,session,new NativeGuidance.Snapshot(true,"Turn right",120,15));assertEquals(1,invalidations[0]);
-        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals("Leaving guidance refreshes once",2,invalidations[0]);
-        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));assertEquals(2,invalidations[0]);
-    }
-    @Test public void idleNativeRefreshesDoNotCloseAnOpenControlsScreen()throws Exception{
-        handshake(HOST);java.lang.reflect.Field active=NativeCarService.class.getDeclaredField("active");active.setAccessible(true);Object session=active.get(service);
-        java.lang.reflect.Field open=session.getClass().getDeclaredField("controlsOpen");open.setAccessible(true);open.setBoolean(session,true);
-        java.lang.reflect.Method update=NativeCarService.class.getDeclaredMethod("navigation",session.getClass(),NativeGuidance.Snapshot.class);update.setAccessible(true);
-        update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));update.invoke(service,session,new NativeGuidance.Snapshot(false,null,0,0));
-        assertTrue(open.getBoolean(session));
-    }
-
     @Test public void aHostCannotClaimAPackageItsUidDoesNotOwn() throws Exception {
         shadowOf(service.getPackageManager()).setPackagesForUid(HOST_UID, "some.other.app");
         Response response = handshakeResponse(HOST);
@@ -166,20 +140,6 @@ public final class NativeCarServiceTest {
         handshake(HOST);
         assertSecurity(call(earlier, "IAppManager", 2, data -> {}));
     }
-    @Test public void panCapabilityRejectsAnotherUidAndAReplacedSessionWithARealCallback() throws Exception {
-        handshake(HOST);
-        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true);
-        Object session = active.get(service);
-        Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses())
-                .filter(c -> c.getSimpleName().equals("PanBinder")).findFirst().get();
-        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass());
-        constructor.setAccessible(true); IBinder pan = (IBinder) constructor.newInstance(service, session);
-        ShadowBinder.setCallingUid(HOST_UID + 1);
-        assertSecurity(call(pan, "navigation.model.IPanModeListener", 2, data -> data.writeInt(1)));
-        ShadowBinder.setCallingUid(HOST_UID); handshake(HOST);
-        assertSecurity(call(pan, "navigation.model.IPanModeListener", 2, data -> data.writeInt(0)));
-    }
-
     @Test public void unbindingClosesPreviouslyIssuedCapabilities() throws Exception {
         handshake(HOST);
         IBinder app = manager();
@@ -366,35 +326,31 @@ public final class NativeCarServiceTest {
         constructor.setAccessible(true); return (IBinder) constructor.newInstance(service, session);
     }
 
-    private IBinder actionCapability() throws Exception {
+    /** A host search row issued for this session, whose native row Maps no longer offers. */
+    private IBinder searchRowCapability() throws Exception {
         java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true);
         Object session = active.get(service);
         java.lang.reflect.Field renderer = session.getClass().getDeclaredField("renderer"); renderer.setAccessible(true);
-        renderer.set(session, new ProjectionRenderer(service, error -> { throw new AssertionError(error); }));
+        if (renderer.get(session) == null) renderer.set(session, new ProjectionRenderer(service, error -> { throw new AssertionError(error); }));
         Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses())
-                .filter(candidate -> candidate.getSimpleName().equals("ActionBinder")).findFirst().get();
-        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass(), NativeControls.Control.class);
-        constructor.setAccessible(true); return (IBinder) constructor.newInstance(service, session, null);
+                .filter(candidate -> candidate.getSimpleName().equals("ContentActionBinder")).findFirst().get();
+        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass(), NativeCarContent.Action.class);
+        constructor.setAccessible(true);
+        return (IBinder) constructor.newInstance(service, session, new NativeCarContent.Action(new Object(), "Destination", "j", -1, true));
     }
 
-    @Test public void standardActionCallbacksRequireTheAuthenticatedHostUid() throws Exception {
-        handshake(HOST); IBinder action = actionCapability();
+    @Test public void searchRowCallbacksRequireTheAuthenticatedHostUid() throws Exception {
+        handshake(HOST); IBinder row = searchRowCapability();
         ShadowBinder.setCallingUid(HOST_UID + 1);
-        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
+        assertSecurity(call(row, "model.IOnClickListener", 2, data -> {}));
         ShadowBinder.setCallingUid(HOST_UID);
-        assertEquals(2, call(action, "model.IOnClickListener", 2, data -> {}).code);
+        assertSecurity("A row Maps no longer offers is refused without failing the session", call(row, "model.IOnClickListener", 2, data -> {}));
+        assertEquals("androidx.car.app.navigation.model.NavigationTemplate", template(manager()).getString("tag_class_name"));
     }
 
-    @Test public void standardActionCallbacksCannotReviveAReplacedSession() throws Exception {
-        handshake(HOST); IBinder action = actionCapability(); handshake(HOST);
-        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
-    }
-
-    @Test public void oldNavigationActionsCannotInterruptTheHostKeyboard() throws Exception {
-        handshake(HOST); IBinder action = actionCapability(); ProjectedEditor editor = focusEditor("Amsterdam");
-        assertSecurity(call(action, "model.IOnClickListener", 2, data -> {}));
-        assertEquals("androidx.car.app.model.SearchTemplate", template(manager()).getString("tag_class_name"));
-        assertEquals("Amsterdam", editor.field.getText().toString());
+    @Test public void searchRowCallbacksCannotReviveAReplacedSession() throws Exception {
+        handshake(HOST); IBinder row = searchRowCapability(); handshake(HOST);
+        assertSecurity(call(row, "model.IOnClickListener", 2, data -> {}));
     }
 
     public static final class TemplatePresentation {
@@ -408,66 +364,184 @@ public final class NativeCarServiceTest {
         public void m(int state, boolean flag) {}
         public void k() {}
     }
-    @Test public void anUnmodifiedCalHostReceivesNativeActionsAndAStandardOverflowList() throws Exception {
-        handshake(HOST);
+    /** Maps' own car scene with its native buttons and cards, attached to the session's renderer. */
+    private FrameLayout nativeScene() throws Exception {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         java.util.Map<Integer, String> names = new java.util.HashMap<>(); names.put(0x7f990001, "map_buttons_view_container");
+        names.put(0x7f990002, "nav_card_view"); names.put(0x7f990003, "status_card_view");
         Resources original = activity.getResources();
         Resources resources = new Resources(activity.getAssets(), original.getDisplayMetrics(), original.getConfiguration()) {
             @Override public String getResourceEntryName(int id) { return names.containsKey(id) ? names.get(id) : super.getResourceEntryName(id); }
         };
         Context context = new ContextWrapper(activity) { @Override public Resources getResources() { return resources; } };
         FrameLayout root = new FrameLayout(context), group = new FrameLayout(context); group.setId(0x7f990001);
-        root.addView(group, new FrameLayout.LayoutParams(640, 480)); activity.setContentView(root);
-        java.util.Map<NativeControls.Role, Integer> clicks = new java.util.EnumMap<>(NativeControls.Role.class);
+        root.addView(group, new FrameLayout.LayoutParams(640, 480));
+        for (int id : new int[]{0x7f990002, 0x7f990003}) { FrameLayout card = new FrameLayout(context); card.setId(id); root.addView(card, new FrameLayout.LayoutParams(420, 88)); }
         int id = 0x7f990010;
-        for (NativeControls.Role role : NativeControls.Role.values()) {
-            names.put(id, role.names[0]); ImageView view = new ImageView(context); view.setId(id++);
-            view.setImageDrawable(new ColorDrawable(Color.BLUE)); view.setOnClickListener(v -> clicks.merge(role, 1, Integer::sum));
-            group.addView(view, new FrameLayout.LayoutParams(64, 64));
+        for (String name : new String[]{"main_suggested_destinations_search_box", "map_buttons_view_settings_button", "map_buttons_view_mute_container",
+                "map_buttons_view_report_incident_button", "recenter_button_container", "map_buttons_view_zoom_in", "map_buttons_view_zoom_out", "map_buttons_view_compass"}) {
+            names.put(id, name); ImageView view = new ImageView(context); view.setId(id++);
+            view.setImageDrawable(new ColorDrawable(Color.BLUE)); group.addView(view, new FrameLayout.LayoutParams(64, 64));
         }
+        activity.setContentView(root);
         java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
         ProjectionRenderer renderer = new ProjectionRenderer(service, error -> { throw new AssertionError(error); });
         java.lang.reflect.Field created = ProjectionRenderer.class.getDeclaredField("created"); created.setAccessible(true); created.set(renderer, true);
         java.lang.reflect.Field nativeController = ProjectionRenderer.class.getDeclaredField("controller"); nativeController.setAccessible(true);
         nativeController.set(renderer, new TemplateController(activity.getWindow()));
         java.lang.reflect.Field current = session.getClass().getDeclaredField("renderer"); current.setAccessible(true); current.set(session, renderer);
+        return root;
+    }
+    private static void assertAllNativeViewsShown(View view) {
+        assertEquals("Maps' own car UI must stay visible: " + view, View.VISIBLE, view.getVisibility());
+        if (view instanceof android.view.ViewGroup) for (int i = 0; i < ((android.view.ViewGroup) view).getChildCount(); i++) assertAllNativeViewsShown(((android.view.ViewGroup) view).getChildAt(i));
+    }
+
+    @Test public void everyHostShowsMapsOwnCarUiOnAPlainMapScreen() throws Exception {
+        handshake(HOST);
+        FrameLayout root = nativeScene();
         IBinder app = manager(); NavigationTemplate navigation = (NavigationTemplate) decodedTemplate(app);
-        assertEquals(4, navigation.getActionStrip().getActions().size());
-        assertEquals(4, navigation.getMapActionStrip().getActions().size());
-        assertEquals(View.INVISIBLE, group.getVisibility());
-        new NavigationTemplate.Builder().setActionStrip(navigation.getActionStrip()).setMapActionStrip(navigation.getMapActionStrip()).build();
-        // AA can still deliver a displayed command while Maps swaps the native
-        // responsive owner. Use the current Search handler, never the retired view.
-        View oldSearch=group.findViewById(0x7f990010);group.removeView(oldSearch);
-        ImageView replacement=new ImageView(context);replacement.setId(0x7f990010);
-        replacement.setImageDrawable(new ColorDrawable(Color.BLUE));
-        replacement.setOnClickListener(v->clicks.merge(NativeControls.Role.SEARCH,10,Integer::sum));
-        group.addView(replacement,new FrameLayout.LayoutParams(64,64));
-        // Deliver the already displayed host action before a new layout callback.
-        navigation.getActionStrip().getActions().get(0).getOnClickDelegate().sendClick(done());
-        shadowOf(Looper.getMainLooper()).idle();
-        assertEquals(Integer.valueOf(10),clicks.get(NativeControls.Role.SEARCH));
-        assertEquals(View.INVISIBLE,group.getVisibility());
-        assertNotNull(navigation.getPanModeDelegate());
+        assertNotNull("The template contract requires an action strip", navigation.getActionStrip());
+        assertTrue("Maps draws its own buttons; the host must not duplicate them", navigation.getActionStrip().getActions().isEmpty());
+        assertEquals("Only the standard Pan action, which a touchscreen host does not draw", 1, navigation.getMapActionStrip().getActions().size());
+        assertEquals(androidx.car.app.model.Action.TYPE_PAN, navigation.getMapActionStrip().getActions().get(0).getType());
+        assertNotNull("Pan mode lets hosts send drags and pinches", navigation.getPanModeDelegate());
         navigation.getPanModeDelegate().sendPanModeChanged(true, done());
         navigation.getPanModeDelegate().sendPanModeChanged(false, done());
         shadowOf(Looper.getMainLooper()).idle();
-        navigation.getActionStrip().getActions().get(3).getOnClickDelegate().sendClick(done());
+        assertNull(navigation.getNavigationInfo()); assertNull(navigation.getDestinationTravelEstimate());
         shadowOf(Looper.getMainLooper()).idle();
-        ListTemplate more = (ListTemplate) decodedTemplate(app);
-        Row row = more.getSingleList().getItems().stream().map(item -> (Row) item)
-                .filter(item -> item.getTitle().toString().equals("Report incident")).findFirst().get();
-        row.getOnClickDelegate().sendClick(done()); shadowOf(Looper.getMainLooper()).idle();
-        assertEquals(Integer.valueOf(1), clicks.get(NativeControls.Role.REPORT));
-        assertEquals(View.INVISIBLE, group.getVisibility()); assertTrue(decodedTemplate(app) instanceof NavigationTemplate);
+        assertAllNativeViewsShown(root);
+    }
+
+    @Test public void guidanceFeedsTheClusterWhileMapsDrawsItsOwnCards() throws Exception {
+        handshake(HOST);
+        FrameLayout root = nativeScene();
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
+        int[] invalidations = {0}; java.util.List<Integer> events = new java.util.ArrayList<>();
+        Binder app = new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            data.enforceInterface("androidx.car.app.IAppHost");if(code==2)invalidations[0]++;if(reply!=null)reply.writeNoException();return true;}};
+        Binder host = new Binder(){@Override protected boolean onTransact(int code,Parcel data,Parcel reply,int flags){
+            data.enforceInterface("androidx.car.app.navigation.INavigationHost");events.add(code);if(reply!=null)reply.writeNoException();return true;}};
+        java.lang.reflect.Field appHost = session.getClass().getDeclaredField("appHost"); appHost.setAccessible(true); appHost.set(session, app);
+        java.lang.reflect.Field navigationHost = session.getClass().getDeclaredField("navigationHost"); navigationHost.setAccessible(true); navigationHost.set(session, host);
+        java.lang.reflect.Method update = NativeCarService.class.getDeclaredMethod("navigation", session.getClass(), NativeGuidance.Snapshot.class); update.setAccessible(true);
+        for (int i = 0; i < 5; i++) update.invoke(service, session, new NativeGuidance.Snapshot(false, null, 0, 0));
+        assertTrue("Free-drive reports on every location update reach neither host", events.isEmpty()); assertEquals(0, invalidations[0]);
+        update.invoke(service, session, new NativeGuidance.Snapshot(true, "Turn right", 120, 15));
+        update.invoke(service, session, new NativeGuidance.Snapshot(true, "Turn right", 90, 12));
+        shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(1));
+        assertEquals("Navigation start plus trip updates for the cluster", java.util.Arrays.asList(2, 4, 4), events);
+        assertEquals("Turn changes are drawn by Maps, not by refreshing the host", 0, invalidations[0]);
+        NavigationTemplate navigation = (NavigationTemplate) decodedTemplate(manager());
+        assertNull("No host turn card on top of Maps' own", navigation.getNavigationInfo());
+        assertTrue(navigation.getActionStrip().getActions().isEmpty());
+        update.invoke(service, session, new NativeGuidance.Snapshot(false, null, 0, 0));
+        assertEquals(Integer.valueOf(3), events.get(events.size() - 1)); assertEquals("Leaving guidance does not refresh the host either", 0, invalidations[0]);
+        shadowOf(Looper.getMainLooper()).idle(); assertAllNativeViewsShown(root);
+    }
+
+    @Test public void nativeUiStillBridgesTextInputThroughTheHostKeyboard() throws Exception {
+        handshake(HOST);
+        nativeScene();
+        ProjectedEditor editor = focusEditor("Amsterdam");
+        IBinder manager = manager(), search = searchCallback(manager);
+        assertEquals(2, call(search, "model.ISearchCallback", 2, data -> data.writeString("Dam")).code);
+        assertEquals("Dam", editor.field.getText().toString());
+        assertEquals(2, call(search, "model.ISearchCallback", 3, data -> data.writeString("Museumplein")).code);
+        assertEquals("Museumplein", editor.submitted);
+        NavigationTemplate navigation = (NavigationTemplate) decodedTemplate(manager);
+        assertTrue("After input, the host returns to Maps' own screen", navigation.getActionStrip().getActions().isEmpty());
+        assertSecurity(call(search, "model.ISearchCallback", 2, data -> data.writeString("stale")));
+    }
+
+    @Test public void hostBackGoesToMapsOwnBackStack() throws Exception {
+        handshake(HOST);
+        FrameLayout root = nativeScene(); int[] backs = {0};
+        root.setFocusable(true); root.requestFocus();
+        root.setOnKeyListener((view, key, event) -> { if (key == android.view.KeyEvent.KEYCODE_BACK && event.getAction() == android.view.KeyEvent.ACTION_UP) backs[0]++; return true; });
+        assertEquals(2, call(manager(), "IAppManager", 3, data -> {}).code);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("The host Back key reaches Maps' native panels", 1, backs[0]);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test public void exactHostOverlaysReachMapsOnlyFromTheAuthenticatedHost() throws Exception {
+        handshake(HOST);
+        nativeScene();
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
+        java.lang.reflect.Field current = session.getClass().getDeclaredField("renderer"); current.setAccessible(true);
+        ProjectionRenderer renderer = (ProjectionRenderer) current.get(session);
+        Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses())
+                .filter(candidate -> candidate.getSimpleName().equals("OverlayBinder")).findFirst().get();
+        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass());
+        constructor.setAccessible(true); IBinder callback = (IBinder) constructor.newInstance(service, session);
+        java.lang.reflect.Field overlays = ProjectionRenderer.class.getDeclaredField("hostOverlays"); overlays.setAccessible(true);
+        sendOverlays(callback, 1, 12, 404, 276, 468);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(java.util.Collections.singletonList(new android.graphics.Rect(12, 404, 276, 468)), overlays.get(renderer));
+        ShadowBinder.setCallingUid(HOST_UID + 1);
+        sendOverlays(callback, 0);
+        ShadowBinder.setCallingUid(HOST_UID);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("Another UID cannot move Maps' elements", 1, ((java.util.List<?>) overlays.get(renderer)).size());
+        sendOverlays(callback, NativeCarService.MAX_OVERLAYS + 1);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("An oversized update is ignored", 1, ((java.util.List<?>) overlays.get(renderer)).size());
+        sendOverlays(callback, 0);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(((java.util.List<?>) overlays.get(renderer)).isEmpty());
+    }
+    @Test public void mapsBoxesReachTheHostAsOneOneWayTransaction() throws Exception {
+        handshake(HOST);
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
+        java.util.List<android.graphics.Rect> received = new java.util.ArrayList<>(); int[] flags = {-1};
+        Binder host = new Binder() { @Override protected boolean onTransact(int code, Parcel data, Parcel reply, int f) {
+            assertEquals(2, code); flags[0] = f; data.enforceInterface(NativeCarService.OVERLAY_HOST);
+            int count = data.readInt();
+            for (int i = 0; i < count; i++) received.add(new android.graphics.Rect(data.readInt(), data.readInt(), data.readInt(), data.readInt()));
+            return true; } };
+        java.lang.reflect.Field overlayHost = session.getClass().getDeclaredField("overlayHost"); overlayHost.setAccessible(true); overlayHost.set(session, host);
+        java.lang.reflect.Method send = NativeCarService.class.getDeclaredMethod("sendOccupied", session.getClass(), java.util.List.class); send.setAccessible(true);
+        java.util.List<android.graphics.Rect> areas = java.util.Arrays.asList(new android.graphics.Rect(10, 12, 74, 204), new android.graphics.Rect(84, 294, 504, 444));
+        send.invoke(service, session, areas);
+        assertEquals(areas, received);
+        assertEquals(IBinder.FLAG_ONEWAY, flags[0] & IBinder.FLAG_ONEWAY);
+    }
+    @Test public void onlyTheHostCanTellWhereItsDragBegan() throws Exception {
+        handshake(HOST); nativeScene();
+        java.lang.reflect.Field active = NativeCarService.class.getDeclaredField("active"); active.setAccessible(true); Object session = active.get(service);
+        java.lang.reflect.Field current = session.getClass().getDeclaredField("renderer"); current.setAccessible(true);
+        ProjectionRenderer renderer = (ProjectionRenderer) current.get(session);
+        Class<?> type = java.util.Arrays.stream(NativeCarService.class.getDeclaredClasses()).filter(c -> c.getSimpleName().equals("OverlayBinder")).findFirst().get();
+        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(NativeCarService.class, session.getClass()); constructor.setAccessible(true);
+        IBinder callback = (IBinder) constructor.newInstance(service, session);
+        java.lang.reflect.Field x = ProjectionRenderer.class.getDeclaredField("hostStartX"); x.setAccessible(true);
+        ShadowBinder.setCallingUid(HOST_UID + 1); sendStart(callback, 300f, 120f); ShadowBinder.setCallingUid(HOST_UID);
+        shadowOf(Looper.getMainLooper()).idle(); assertEquals(0f, x.getFloat(renderer), 0f);
+        sendStart(callback, 300f, 120f); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(300f, x.getFloat(renderer), 0f);
+    }
+    private static void sendStart(IBinder callback, float x, float y) throws Exception {
+        Parcel data = Parcel.obtain();
+        try { data.writeInterfaceToken(NativeCarService.OVERLAY_CALLBACK); data.writeFloat(x); data.writeFloat(y); assertTrue(callback.transact(2, data, null, IBinder.FLAG_ONEWAY)); }
+        finally { data.recycle(); }
     }
     private static androidx.car.app.OnDoneCallback done() {
         return new androidx.car.app.OnDoneCallback() {
             @Override public void onSuccess(Bundleable response) {}
-            @Override public void onFailure(Bundleable error) { throw new AssertionError("CAL action was rejected"); }
+            @Override public void onFailure(Bundleable error) { throw new AssertionError("CAL callback was rejected"); }
         };
     }
+    private static void sendOverlays(IBinder callback, int count, int... edges) throws Exception {
+        Parcel data = Parcel.obtain();
+        try {
+            data.writeInterfaceToken(NativeCarService.OVERLAY_CALLBACK); data.writeInt(count);
+            for (int edge : edges) data.writeInt(edge);
+            assertTrue(callback.transact(1, data, null, IBinder.FLAG_ONEWAY));
+        } finally { data.recycle(); }
+    }
+
     private static Object decodedTemplate(IBinder app) throws Exception {
         Response response = call(app, "IAppManager", 2, data -> {}); assertEquals(2, response.code);
         Parcel wire = Parcel.obtain();
@@ -541,9 +615,10 @@ public final class NativeCarServiceTest {
         IBinder manager = response.value.getBinder("tag_value"); assertNotNull(manager); return manager;
     }
 
-    private static void assertSecurity(Response response) {
-        assertEquals(3, response.code);
-        assertEquals(4, CarProtocol.member(response.value, "mErrorType").getInt("tag_value"));
+    private static void assertSecurity(Response response) { assertSecurity("Expected a security refusal", response); }
+    private static void assertSecurity(String message, Response response) {
+        assertEquals(message, 3, response.code);
+        assertEquals(message, 4, CarProtocol.member(response.value, "mErrorType").getInt("tag_value"));
     }
 
     private static Response call(IBinder target, String descriptor, int code, CarProtocol.Writer writer) throws Exception {

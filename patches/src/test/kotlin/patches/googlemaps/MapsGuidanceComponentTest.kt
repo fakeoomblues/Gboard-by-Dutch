@@ -7,7 +7,6 @@ import java.io.File
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assert.assertFalse
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import com.android.tools.smali.dexlib2.Opcode
@@ -41,7 +40,7 @@ class MapsGuidanceComponentTest {
         val missing=ImmutableClassDef(owner.type,owner.accessFlags,owner.superclass,owner.interfaces,owner.sourceFile,owner.annotations,owner.fields.filter { it.name!="l" },owner.methods)
         assertThrows(IllegalStateException::class.java) { bindMapsCarSearch({ if(it==owner.type)missing else classes.getValue(it) }) { _,_,_,_ -> mutable } }
     }
-    @Test fun panelHandoffRunsOnTheNativeShownLifecycleRatherThanTheBypassedViewGetter() {
+    @Test fun onlyTheSearchModelCaptureIsHookedAndItPreservesTheOriginalMethod() {
         val path=System.getenv("MAPS_CAR_ORIGINAL_APK");assumeNotNull(path)
         val dex=DexFileFactory.loadDexContainer(File(path!!),Opcodes.forApi(29))
         val classes=dex.dexEntryNames.flatMap { dex.getEntry(it)!!.dexFile.classes }.associateBy { it.type }
@@ -50,16 +49,18 @@ class MapsGuidanceComponentTest {
             val key="$owner->$name(${parameters.joinToString("")})$result"
             changed.getOrPut(key) { MutableMethod(classes.getValue(owner).methods.single { it.name==name&&it.parameterTypes.map(CharSequence::toString)==parameters&&it.returnType==result }) }
         }
-        for(owner in listOf("Lssf;","Lruo;")) {
-            val original=classes.getValue(owner).methods.single { it.name=="d"&&it.parameterTypes.isEmpty()&&it.returnType=="Luvv;" }.implementation!!.instructions.toList()
-            val after=changed.getValue("$owner->d()Luvv;").instructions.toList()
-            assertEquals(original.size+1,after.size)
-            assertEquals("Lpatches/maps/gearslip/NativeCarContent;->panelSource(Ljava/lang/Object;)V",(after.first() as ReferenceInstruction).reference.toString())
+        assertEquals(setOf("Lqca;->a(Lbhhr;)Ljava/lang/Object;","Lqbc;->a(Lbhhr;)Ljava/lang/Object;","Lsnk;->a(Lbhhr;)Ljava/lang/Object;"),changed.keys)
+        for(owner in listOf("Lqca;","Lqbc;","Lsnk;")) {
+            // Switch payloads and their alignment NOPs are regenerated when a method is edited; compare real instructions.
+            val original=classes.getValue(owner).methods.single { it.name=="a"&&it.parameterTypes.map(CharSequence::toString)==listOf("Lbhhr;")&&it.returnType=="Ljava/lang/Object;" }.implementation!!.instructions.filterNot { it.opcode.format.isPayloadFormat||it.opcode==Opcode.NOP }
+            val after=changed.getValue("$owner->a(Lbhhr;)Ljava/lang/Object;").instructions.filterNot { it.opcode.format.isPayloadFormat||it.opcode==Opcode.NOP }
+            val firstDiff=original.indices.firstOrNull { it+1>=after.size||original[it].opcode!=after[it+1].opcode }
+            assertEquals("$owner first difference at $firstDiff: original ${firstDiff?.let { i -> original.subList(maxOf(0,i-2),minOf(original.size,i+3)).map { it.opcode } }} after ${firstDiff?.let { i -> after.subList(maxOf(0,i-1),minOf(after.size,i+4)).map { it.opcode } }}",original.size+1,after.size)
+            assertEquals("Lpatches/maps/gearslip/NativeCarContent;->capture(Ljava/lang/Object;)V",(after.first() as ReferenceInstruction).reference.toString())
             original.forEachIndexed { index,instruction ->
                 assertEquals(instruction.opcode,after[index+1].opcode)
                 assertEquals((instruction as? ReferenceInstruction)?.reference?.toString(),(after[index+1] as? ReferenceInstruction)?.reference?.toString())
             }
-            assertFalse("Do not depend on a final view getter that R8 can inline",changed.containsKey("$owner->b()Landroid/view/View;"))
         }
     }
     @Test fun privateTokenGuardExcludesBothUnsupportedClientsAndPreservesOtherConnectionPaths() {
@@ -104,8 +105,8 @@ class MapsGuidanceComponentTest {
         assertThrows(IllegalStateException::class.java) {
             validateMapsNavigationProvider { if (it == binder.type) missingDispatch else classes.getValue(it) }
         }
-        val action=classes.getValue("Lrvp;")
-        val missingClick=ImmutableClassDef(action.type,action.accessFlags,action.superclass,action.interfaces,action.sourceFile,action.annotations,action.fields,action.methods.filter { it.name!="d" })
+        val action=classes.getValue("Lqcr;")
+        val missingClick=ImmutableClassDef(action.type,action.accessFlags,action.superclass,action.interfaces,action.sourceFile,action.annotations,action.fields,action.methods.filter { it.name!="j" })
         assertThrows(IllegalStateException::class.java){validateMapsNativeContent { if(it==action.type)missingClick else classes.getValue(it) }}
     }
 }

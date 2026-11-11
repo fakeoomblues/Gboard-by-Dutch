@@ -23,4 +23,20 @@ public class WarningViewportTest {
   assertEquals(new Rect(),carWindow.getClass().getMethod("getBounds").invoke(carWindow));assertEquals(1280,car.screenWidthDp);assertEquals(480,car.screenHeightDp);assertEquals(160,car.densityDpi);
   assertEquals(new Rect(0,0,1080,2400),window.getClass().getMethod("getBounds").invoke(window));
  }
+    @Test public void warningPillsStayAboveAHostPlayerOnTheRightButIgnoreOneOnTheLeft() {
+        android.graphics.Rect left = ProjectionRenderer.warningViewport(1216, 480, new android.graphics.Rect(0, 0, 1216, 480), null,
+                java.util.Collections.singletonList(new android.graphics.Rect(12, 404, 276, 468)));
+        org.junit.Assert.assertEquals(480, left.bottom);
+        android.graphics.Rect right = ProjectionRenderer.warningViewport(1216, 480, new android.graphics.Rect(0, 0, 1216, 480), null,
+                java.util.Collections.singletonList(new android.graphics.Rect(940, 404, 1204, 468)));
+        org.junit.Assert.assertEquals(404, right.bottom);
+        android.graphics.Rect full = ProjectionRenderer.warningViewport(1216, 480, new android.graphics.Rect(0, 0, 1216, 480), null,
+                java.util.Collections.singletonList(new android.graphics.Rect(860, 12, 1204, 468)));
+        org.junit.Assert.assertEquals("Pills stay left of a full player card", 860, full.right);
+        org.junit.Assert.assertEquals(480, full.bottom);
+        // Regression (owner capture 02:18): a compact card in the top-right pushed the speedometer left.
+        android.graphics.Rect compact = ProjectionRenderer.warningViewport(1280, 480, new android.graphics.Rect(64, 0, 1280, 480), null,
+                java.util.Collections.singletonList(new android.graphics.Rect(917, 12, 1268, 136)));
+        org.junit.Assert.assertEquals("A compact card at the top leaves the speedometer bottom-right", new android.graphics.Rect(64, 0, 1280, 480), compact);
+    }
 }

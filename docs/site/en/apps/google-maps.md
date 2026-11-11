@@ -8,9 +8,9 @@ Select the complete original APK for this exact version in Morphe Manager. Andro
 
 ## Native Maps in Gearslip and Android Auto
 
-Our **Native navigation for any Android Auto host** patch keeps Maps' own map and navigation engine and works with any Android Auto compatible host, such as Google's Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. The host arranges the directions, ETA, destination lists and route-preview cards around the available space and dock. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps. Search uses the host's keyboard; selections and Start still invoke Maps' original actions.
+Our **Native navigation for any Android Auto host** patch shows Maps' own car interface on any Android Auto compatible host, such as Google's Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. Maps draws everything itself, exactly as in Google's Android Auto: the map, the turn and ETA cards, the Settings, Sound and Compass buttons, zoom, Search, Settings, route options and place panels. The host shows that screen and passes your taps and drags through. It works with a renamed package, so Ungoogled Maps can appear beside stock Maps.
 
-On the idle map the car list starts with **Search**, followed by places Maps has already offered. Maps' Settings and guidance-audio panel opens as a car list with its own switches, so a host that keeps the left side for its own cards no longer covers it.
+Typing in Maps' search field opens the host's keyboard; the matching Maps suggestions appear in the host's search screen while you type. The Sound button cycles through muted, alerts only and unmuted, as in Android Auto. Maps keeps its layout clear of the host's own controls and dock, using the free area the host reports. On DriveDeck, Maps also tells the host where its own buttons and cards are, and DriveDeck places its floating player in the free space beside them instead of covering them. On Google's Android Auto the first tap after a few seconds without touching the screen only wakes the screen; tap again to press a button.
 
 ![Ungoogled Maps running its native map in the official Android Auto Desktop Head Unit](../../assets/images/maps/native-android-auto.png){ loading=lazy }
 

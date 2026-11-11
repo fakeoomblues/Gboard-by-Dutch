@@ -61,14 +61,31 @@ public final class ProjectionRenderer {
     private boolean bound, created, resumed, closed, failed;
     private volatile boolean keyboardRequested;
     private KeyboardListener keyboardListener;
-    private NativeControls controls;
     private final NativeCarContent content;
     private String contentQuery;
     private boolean hostedNavigation;
-    private Runnable controlsChanged = () -> {};
+    private Runnable contentChanged = () -> {};
     private java.util.function.BiConsumer<CharSequence,Integer> toast=(text,duration)->{};
     private Rect visibleArea, stableArea, appliedInsets;
+    /** The host's floating pieces over this surface (DriveDeck's player), in surface pixels; warnings keep clear. */
+    private List<Rect> hostOverlays = Collections.emptyList();
+    /** Receives where Maps' own boxes are, for a host that places its floating pieces in the free space. */
+    private java.util.function.Consumer<List<Rect>> occupiedListener;
+    private List<Rect> occupiedSent;
+    private View occupiedRoot;
+    private boolean occupiedPending;
+    /** Maps animates its cards; at most this often is the layout read again while it draws. */
+    static final long OCCUPIED_INTERVAL_MS = 50;
+    private final Runnable reportOccupied = this::reportOccupiedNow;
+    private final android.view.ViewTreeObserver.OnPreDrawListener occupiedDraw = () -> {
+        if (!occupiedPending) { occupiedPending = true; main.postDelayed(reportOccupied, OCCUPIED_INTERVAL_MS); }
+        return true;
+    };
     private long downTime;
+    /** A host-reported drag start is used only by a drag that follows within this time. */
+    static final long HOST_START_MS = 600;
+    private float hostStartX, hostStartY;
+    private long hostStartAt = Long.MIN_VALUE / 2;
     private float touchX, touchY;
     private final Runnable endScroll = () -> guard(this::finishTouch);
     private final Runnable bindTimeout = () -> fail(new IllegalStateException("Maps' native car service did not connect"));
@@ -109,7 +126,7 @@ public final class ProjectionRenderer {
         this.onFailure = onFailure;
         uiStateLease = UI_STATES.acquire(hostUid);
         initialUiState = uiStateLease.restored;
-        content=new NativeCarContent(this,service,()->controlsChanged.run());
+        content=new NativeCarContent(this,service,()->contentChanged.run());
     }
 
     /** The car host supplies its keyboard; the original Maps editor owns query handling. */
@@ -119,50 +136,22 @@ public final class ProjectionRenderer {
     }
 
     public void setKeyboardListener(KeyboardListener listener) { keyboardListener = listener; }
-    void setControlsChangedListener(Runnable listener) { controlsChanged = listener; }
+    /** Maps' native search rows changed; the host refreshes them only while its keyboard is open. */
+    void setContentChangedListener(Runnable listener) { contentChanged = listener; }
     void setToastListener(java.util.function.BiConsumer<CharSequence,Integer> listener){toast=listener;}
-    List<NativeControls.Control> controls() throws Exception {
-        attachControls();
-        return controls == null ? Collections.emptyList() : controls.snapshot();
-    }
-    String controlsTitle() { return controls == null ? "More controls" : controls.moreTitle(); }
+    /** Maps' own recents/search rows for the host keyboard's query. */
     NativeCarContent.Page content(String query)throws Exception{
-        attachControls();contentQuery=query;View root=decor();
-        NativeCarContent.Page page=content.show(root instanceof ViewGroup?(ViewGroup)root:null,controls,hostedNavigation,query);
-        if(controls!=null)controls.hostedPanel(page==null?null:page.panel);
-        return page;
-    }
-    List<NativeCarContent.Action> footerActions()throws Exception{
-        attachControls();View root=decor();return content.footer(root instanceof ViewGroup?(ViewGroup)root:null,controls);
+        contentQuery=query;
+        return content.read(query);
     }
     void performContentAction(NativeCarContent.Action action)throws Exception{
-        attachControls();View root=decor();content.invoke(action,root instanceof ViewGroup?(ViewGroup)root:null,controls,hostedNavigation,contentQuery);
+        content.invoke(action,contentQuery);
     }
-    boolean contentBack(){return content.back();}
-    void contentDetails(){content.details();}
-    String contentDetailsTitle(){return content.detailsTitle();}
-    String performControl(NativeControls.Control control) throws Exception {
-        attachControls();
-        if (controls == null) throw new SecurityException("Maps controls are unavailable");
-        // A CAL command represents a role in this authenticated car session.
-        // Maps replaces responsive native views between publishing and clicking
-        // a template; resolve the live owner without reviving the old handler.
-        return controls.invoke(control.role);
-    }
-    private void attachControls() throws Exception {
-        View view = decor();
-        if (controls != null && !controls.owns(view)) { controls.close(); controls = null; }
-        if (controls == null && view instanceof ViewGroup) controls = new NativeControls((ViewGroup) view, () -> controlsChanged.run());
-        if(controls!=null){
-            controls.hostedNavigation(hostedNavigation);
-            final ViewGroup root=(ViewGroup)view;
-            controls.setContentChangedListener(()->content.layoutChanged(root,controls,hostedNavigation,contentQuery));
-        }
-    }
+    /** Maps draws its own guidance; the warning patch only learns whether the host is navigating. */
     void hostedNavigation(boolean active){
         if(hostedNavigation==active)return;
         hostedNavigation=active;
-        guard(()->{attachControls();telemetryNavigation(active);});
+        guard(()->telemetryNavigation(active));
     }
 
     public void create(Intent value, Configuration config) {
@@ -190,7 +179,7 @@ public final class ProjectionRenderer {
         telemetrySession(false);
         main.removeCallbacks(bindTimeout);
         main.removeCallbacks(endScroll);
-        if (controls != null) { controls.close(); controls = null; }
+        releaseOverlays();
         try { destroySurface(); } catch (Exception error) { Log.w("MapsNativeCar", "Native car cleanup failed", error); }
         if (bound) {
             try { service.unbindService(connection); } catch (IllegalArgumentException ignored) {}
@@ -198,7 +187,7 @@ public final class ProjectionRenderer {
         bound = false;
         controller = null;
         keyboardListener = null;
-        controlsChanged = () -> {};
+        contentChanged = () -> {};
         visibleArea = stableArea = appliedInsets = null;
     }
     public void newIntent(Intent value) {
@@ -217,7 +206,7 @@ public final class ProjectionRenderer {
                 call(controller, "t", new Class<?>[]{android.content.res.Resources.class}, service.getResources());
                 Object activity = field(controller, "J");
                 if (activity != null) call(activity, "b", new Class<?>[]{Configuration.class}, configuration);
-                attachControls();
+                watchOccupied();
             }
         });
     }
@@ -237,6 +226,50 @@ public final class ProjectionRenderer {
         });
     }
     public void surfaceDestroyed() { guard(this::detachSurface); }
+    /** The host's floating pieces (DriveDeck's player); Maps' layout stays as Google draws it. */
+    void overlays(List<Rect> value) {
+        if (closed || failed) return;
+        List<Rect> copy = new ArrayList<>();
+        if (value != null) for (Rect rect : value) if (rect != null && !rect.isEmpty()) copy.add(new Rect(rect));
+        hostOverlays = Collections.unmodifiableList(copy);
+        if (resumed) guard(() -> telemetrySurface(decor()));
+    }
+    /** Starts reporting Maps' occupied boxes; the host offers to place its floating pieces around them. */
+    void setOccupiedListener(java.util.function.Consumer<List<Rect>> listener) {
+        occupiedListener = listener;
+        occupiedSent = null;
+        guard(this::watchOccupied);
+    }
+    private void watchOccupied() throws Exception {
+        View root = occupiedListener == null ? null : decor();
+        if (root == occupiedRoot) return;
+        if (occupiedRoot != null) occupiedRoot.getViewTreeObserver().removeOnPreDrawListener(occupiedDraw);
+        occupiedRoot = root;
+        occupiedSent = null;
+        if (root != null) { root.getViewTreeObserver().addOnPreDrawListener(occupiedDraw); root.invalidate(); }
+    }
+    private void reportOccupiedNow() {
+        occupiedPending = false;
+        if (closed || failed || occupiedListener == null || !(occupiedRoot instanceof ViewGroup)) return;
+        try {
+            List<Rect> areas = NativeOccupiedAreas.of((ViewGroup) occupiedRoot);
+            if (areas.equals(occupiedSent)) return;
+            occupiedSent = areas;
+            occupiedListener.accept(Collections.unmodifiableList(areas));
+        } catch (RuntimeException error) {
+            // Reporting free space to the host is a placement hint; it never ends the car session.
+            Log.w("MapsNativeCar", "Maps layout report unavailable", error);
+        }
+    }
+    private void releaseOverlays() {
+        main.removeCallbacks(reportOccupied);
+        occupiedPending = false;
+        if (occupiedRoot != null) occupiedRoot.getViewTreeObserver().removeOnPreDrawListener(occupiedDraw);
+        occupiedRoot = null;
+        occupiedListener = null;
+        occupiedSent = null;
+        hostOverlays = Collections.emptyList();
+    }
     public void visibleArea(Rect area) { guard(() -> { visibleArea = area == null ? null : new Rect(area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
     public void stableArea(Rect area) { guard(() -> { stableArea = area == null ? null : new Rect(area); applyAreas(); if (resumed) telemetrySurface(decor()); }); }
     private Rect insets(int w, int h) {
@@ -255,6 +288,22 @@ public final class ProjectionRenderer {
         call(presentation, "A", new Class<?>[]{Rect.class}, insets);
         if (surface != null && surface.isValid()) controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
         appliedInsets = new Rect(insets);
+    }
+    /**
+     * As below, kept clear of a host overlay in the lower right, where the speedometer and warning
+     * pills sit: above a low piece (the floating player), left of one reaching down from the top (a
+     * full player card). A piece that stays in the upper half (a compact card) leaves them alone.
+     */
+    static Rect warningViewport(int width,int height,Rect visible,Rect stable,List<Rect> overlays){
+        Rect result=warningViewport(width,height,visible,stable);
+        if(result.isEmpty()||overlays==null)return result;
+        for(Rect overlay:overlays){
+            if(!Rect.intersects(overlay,result)||overlay.right<=result.centerX()||overlay.bottom<=result.centerY())continue;
+            if(overlay.top>result.centerY())result.bottom=Math.min(result.bottom,overlay.top);
+            else result.right=Math.min(result.right,overlay.left);
+        }
+        if(result.bottom<=result.top||result.right<=result.left)result.setEmpty();
+        return result;
     }
     static Rect warningViewport(int width,int height,Rect visible,Rect stable){
         Rect result=new Rect(0,0,Math.max(0,width),Math.max(0,height));
@@ -300,6 +349,8 @@ public final class ProjectionRenderer {
         value.orientation=w>=h?Configuration.ORIENTATION_LANDSCAPE:Configuration.ORIENTATION_PORTRAIT;
         return value;
     }
+    /** Ends a drag the host stopped feeding (for example on leaving pan mode). */
+    public void endGesture() { guard(this::finishTouch); }
     public void back() {
         guard(() -> {
             finishTouch();
@@ -320,12 +371,27 @@ public final class ProjectionRenderer {
             downTime = 0;
         });
     }
-    public void endGesture() { guard(this::finishTouch); }
+    /**
+     * Where the host saw the finger go down for the drag that follows (DriveDeck sends it; the
+     * Car App Library itself reports drags only as distances). Kept briefly for that drag.
+     */
+    void gestureStart(float x, float y) {
+        if (!Float.isFinite(x) || !Float.isFinite(y)) return;
+        hostStartX = x; hostStartY = y; hostStartAt = SystemClock.uptimeMillis();
+    }
     public void scroll(float distanceX, float distanceY) {
         guard(() -> {
             if (downTime == 0) {
                 downTime = SystemClock.uptimeMillis();
-                touchX = width / 2f; touchY = height / 2f;
+                float[] anchor = downTime - hostStartAt <= HOST_START_MS ? new float[]{hostStartX, hostStartY} : null;
+                hostStartAt = Long.MIN_VALUE / 2;
+                boolean fromHost = anchor != null;
+                View root = decor();
+                if (anchor == null) anchor = dragAnchor(root instanceof ViewGroup ? (ViewGroup) root : null, distanceX, distanceY, width, height);
+                touchX = anchor[0]; touchY = anchor[1];
+                // Owner-approved drag diagnostic (2026-11-11): one line per host drag.
+                Log.i("MapsNativeCar", "drag start (" + Math.round(touchX) + "," + Math.round(touchY) + ") " + (fromHost ? "from host" : "chosen")
+                        + " over " + (root instanceof ViewGroup ? NativeOccupiedAreas.describe(root, touchX, touchY) : "no window"));
                 touch(MotionEvent.ACTION_DOWN, touchX, touchY);
             }
             touchX = Math.max(1, Math.min(width - 1, touchX - distanceX));
@@ -334,6 +400,41 @@ public final class ProjectionRenderer {
             main.removeCallbacks(endScroll);
             main.postDelayed(endScroll, 100);
         });
+    }
+    /**
+     * Where a drag without a known start begins. A mostly vertical drag goes to the list drawn on
+     * top (any RecyclerView, including Maps' paged car lists, or a scroll/list view): search
+     * results, categories, Settings, route options, place details. Otherwise it pans the map from
+     * the middle of the surface. The list itself does the scrolling, as under a real finger.
+     */
+    static float[] dragAnchor(ViewGroup root, float distanceX, float distanceY, int width, int height) {
+        float[] map = {width / 2f, height / 2f};
+        View list = Math.abs(distanceY) < Math.abs(distanceX) ? null : topList(root);
+        if (list == null) return map;
+        Rect visible = new Rect();
+        if (!list.getGlobalVisibleRect(visible)) return map;
+        int[] origin = new int[2];
+        root.getLocationInWindow(origin);
+        return new float[]{visible.exactCenterX() - origin[0], visible.exactCenterY() - origin[1]};
+    }
+    /** The visible list drawn last (on top), depth first in drawing order; null when none is shown. */
+    static View topList(View view) {
+        if (view == null || view.getVisibility() != View.VISIBLE || view.getAlpha() == 0f || view.getWidth() <= 0 || view.getHeight() <= 0) return null;
+        View found = null;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) { View inner = topList(group.getChildAt(i)); if (inner != null) found = inner; }
+        }
+        if (found != null) return found;
+        return isList(view) && view.getGlobalVisibleRect(new Rect()) ? view : null;
+    }
+    private static boolean isList(View view) {
+        if (view instanceof android.widget.AbsListView || view instanceof android.widget.ScrollView) return true;
+        for (Class<?> type = view.getClass(); type != null && type != View.class; type = type.getSuperclass()) {
+            String name = type.getName();
+            if (name.endsWith("RecyclerView") || name.endsWith("NestedScrollView")) return true;
+        }
+        return view.canScrollVertically(1) || view.canScrollVertically(-1);
     }
     public void fling(float velocityX, float velocityY) {
         scroll(-velocityX / 15f, -velocityY / 15f);
@@ -367,7 +468,7 @@ public final class ProjectionRenderer {
             call(holder, "f", new Class<?>[]{Surface.class}, surface);
             controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
             applyAreas();
-            attachControls();
+            watchOccupied();
             if(resumed)telemetrySurface(decor());
             return;
         }
@@ -383,7 +484,7 @@ public final class ProjectionRenderer {
         Object target=field(displayHolder(),"b");
         if(target instanceof VirtualDisplay)NativeCarScopes.display(this,((VirtualDisplay)target).getDisplay().getDisplayId());
         appliedInsets = null; applyAreas();
-        attachControls();
+        watchOccupied();
         if (resumed) { lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }
     }
     Bundle restoredUiState() {
@@ -413,7 +514,6 @@ public final class ProjectionRenderer {
     private void destroySurface() throws Exception {
         telemetrySurface(null);
         finishTouch();
-        if (controls != null) { controls.close(); controls = null; }
         if (controller != null && created) {
             // The native STOP transition saves J.e(Bundle) into n. Pull it before
             // DESTROY clears native fields; its Binder callback may arrive later.
@@ -441,7 +541,7 @@ public final class ProjectionRenderer {
         catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car guidance unavailable",error);}
     }
     private void telemetrySurface(View root) {
-        try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleArea,stableArea));}
+        try {telemetryType().getMethod("carSurface",Object.class,android.view.ViewGroup.class,Rect.class).invoke(null,this,root instanceof android.view.ViewGroup?root:null,warningViewport(width,height,visibleArea,stableArea,hostOverlays));}
         catch(ClassNotFoundException absent) { /* The warning patch is optional. */ }
         catch(ReflectiveOperationException|RuntimeException error){Log.w("MapsNativeCar","Warning car surface unavailable",error);}
     }

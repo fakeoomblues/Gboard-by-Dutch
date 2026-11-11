@@ -102,47 +102,6 @@ final class CarProtocol {
         return icon;
     }
 
-    static Bundle action(String title, Bitmap bitmap, IBinder callback) {
-        Bundle action = object("androidx.car.app.model.Action");
-        field(action, "mType", primitive(1));
-        field(action, "mIsEnabled", primitive(true));
-        if (title != null) field(action, "mTitle", text(title));
-        field(action, "mIcon", icon(bitmap));
-        field(action, "mOnClickDelegate", click(callback));
-        return action;
-    }
-
-    static Bundle panAction() {
-        Bundle action = object("androidx.car.app.model.Action");
-        field(action, "mType", primitive(65540)); // Action.PAN: standard host pan mode, not a private command.
-        field(action, "mIsEnabled", primitive(true));
-        Bundle icon = object("androidx.car.app.model.CarIcon");
-        field(icon, "mType", primitive(7));
-        field(action, "mIcon", icon);
-        return action;
-    }
-
-    static Bundle controlRow(String title, IBinder callback) {
-        Bundle row = object("androidx.car.app.model.Row");
-        field(row, "mTitle", text(title)); field(row, "mTexts", emptyList());
-        field(row, "mIsEnabled", primitive(true)); field(row, "mNumericDecoration", primitive(-1));
-        field(row, "mMetadata", object("androidx.car.app.model.Metadata"));
-        field(row, "mOnClickDelegate", click(callback));
-        return row;
-    }
-    /** A Row whose Toggle reports checked changes through androidx.car.app IOnCheckedChangeListener. */
-    static Bundle toggleRow(String title,List<String> texts,boolean checked,boolean enabled,IBinder callback){
-        Bundle row=object("androidx.car.app.model.Row");
-        field(row,"mTitle",text(title));List<Bundle> lines=new ArrayList<>();
-        for(String line:texts)if(lines.size()<2)lines.add(text(line));
-        field(row,"mTexts",list(lines));field(row,"mIsEnabled",primitive(enabled));field(row,"mIsBrowsable",primitive(false));
-        field(row,"mNumericDecoration",primitive(-1));field(row,"mMetadata",object("androidx.car.app.model.Metadata"));
-        Bundle delegate=object("androidx.car.app.model.OnCheckedChangeDelegateImpl");
-        field(delegate,"mStub",interfaceBinder("androidx.car.app.model.IOnCheckedChangeListener$Stub",callback));
-        Bundle toggle=object("androidx.car.app.model.Toggle");
-        field(toggle,"mIsChecked",primitive(checked));field(toggle,"mIsEnabled",primitive(enabled));field(toggle,"mOnCheckedChangeDelegate",delegate);
-        field(row,"mToggle",toggle);return row;
-    }
     static Bundle contentRow(String title,List<String> texts,IBinder callback,boolean enabled){
         Bundle row=object("androidx.car.app.model.Row");
         field(row,"mTitle",text(title));List<Bundle> lines=new ArrayList<>();
@@ -151,44 +110,6 @@ final class CarProtocol {
         field(row,"mNumericDecoration",primitive(-1));field(row,"mMetadata",object("androidx.car.app.model.Metadata"));
         if(callback!=null)field(row,"mOnClickDelegate",click(callback));return row;
     }
-    static Bundle titledAction(String title,IBinder callback,boolean enabled){
-        Bundle action=object("androidx.car.app.model.Action");field(action,"mType",primitive(1));field(action,"mTitle",text(title));
-        field(action,"mIsEnabled",primitive(enabled));field(action,"mOnClickDelegate",click(callback));return action;
-    }
-    private static Bundle headerAction(boolean home){
-        Bundle action=object("androidx.car.app.model.Action");field(action,"mType",primitive(home?65538:65539));
-        if(home){Bundle icon=object("androidx.car.app.model.CarIcon");field(icon,"mType",primitive(5));field(action,"mIcon",icon);}
-        return action;
-    }
-    static Bundle pageTemplate(String title,boolean home,boolean preview,List<Bundle> rows,List<Bundle> paneActions,
-            List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,int api){
-        Bundle content;
-        if(preview){
-            Bundle pane=object("androidx.car.app.model.Pane");field(pane,"mRows",list(rows));field(pane,"mActionList",list(paneActions));field(pane,"mIsLoading",primitive(rows.isEmpty()));
-            content=object("androidx.car.app.model.PaneTemplate");field(content,"mPane",pane);
-        }else{
-            Bundle items=object("androidx.car.app.model.ItemList");field(items,"mItems",list(rows));
-            content=object("androidx.car.app.model.ListTemplate");field(content,"mSingleList",items);field(content,"mSectionedLists",emptyList());field(content,"mActions",emptyList());field(content,"mIsLoading",primitive(false));
-        }
-        field(content,"mTitle",text(title));field(content,"mHeaderAction",headerAction(home));
-        Bundle strip=object("androidx.car.app.model.ActionStrip");field(strip,"mActions",list(actions));
-        Bundle mapStrip=object("androidx.car.app.model.ActionStrip");field(mapStrip,"mActions",list(mapActions));
-        Bundle controller=object("androidx.car.app.navigation.model.MapController");field(controller,"mMapActionStrip",mapStrip);
-        if(panCallback!=null){Bundle pan=object("androidx.car.app.navigation.model.PanModeDelegateImpl");field(pan,"mStub",interfaceBinder("androidx.car.app.navigation.model.IPanModeListener$Stub",panCallback));field(controller,"mPanModeDelegate",pan);}
-        Bundle result;
-        if(api>=7){
-            result=object("androidx.car.app.navigation.model.MapWithContentTemplate");field(result,"mContentTemplate",content);
-        }else{
-            result=object("androidx.car.app.navigation.model.MapTemplate");
-            field(result,preview?"mPane":"mItemList",member(content,preview?"mPane":"mSingleList"));
-            Bundle header=object("androidx.car.app.model.Header");field(header,"mTitle",text(title));field(header,"mStartHeaderAction",headerAction(home));field(header,"mEndHeaderActions",emptyList());field(result,"mHeader",header);
-            // Retain the pre-Header field names for older host-side model classes.
-            field(result,"mTitle",text(title));field(result,"mHeaderAction",headerAction(home));field(result,"mMapActionStrip",mapStrip);
-        }
-        field(result,"mMapController",controller);field(result,"mActionStrip",strip);
-        return wrap(result,"morphe-maps-content");
-    }
-
     static Bundle binder(IBinder value) {
         Bundle bundle = new Bundle();
         bundle.putInt("tag_class_type", 9);
@@ -216,40 +137,41 @@ final class CarProtocol {
         return CarNavigationModels.trip(value,now,false);
     }
 
-    static Bundle navigationTemplate(NativeGuidance.Snapshot value,List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,long now,boolean imperial){
-        return navigationTemplate(value,actions,mapActions,panCallback,now,imperial,false);
-    }
-    static Bundle navigationTemplate(NativeGuidance.Snapshot value,List<Bundle> actions,List<Bundle> mapActions,IBinder panCallback,long now,boolean imperial,boolean unknownTurnDistance){
-        Bundle result=template(null,actions,mapActions,panCallback);
-        CarNavigationModels.apply(member(result,"mTemplate"),value,now,imperial,unknownTurnDistance);
+    /**
+     * Without a failure, Maps' plain map screen: a NavigationTemplate whose required action strip
+     * is empty, with no map actions, pan mode or navigation info, because Maps draws all of those.
+     * With a failure, an error message naming the actual cause.
+     */
+    /**
+     * The plain map screen with the standard Pan action in its map strip and a pan-mode listener.
+     * Hosts send drags, flings and pinches only to a template that offers Pan; on a touchscreen
+     * they do not draw the button (Car App Library), so nothing appears over Maps' own UI.
+     */
+    static Bundle mapTemplate(IBinder panCallback) {
+        Bundle result = template(null);
+        Bundle template = member(result, "mTemplate");
+        Bundle pan = object("androidx.car.app.model.Action");
+        field(pan, "mType", primitive(65540)); // Action.TYPE_PAN
+        field(pan, "mIsEnabled", primitive(true));
+        Bundle icon = object("androidx.car.app.model.CarIcon");
+        field(icon, "mType", primitive(7)); // CarIcon.TYPE_PAN
+        field(pan, "mIcon", icon);
+        Bundle strip = object("androidx.car.app.model.ActionStrip");
+        field(strip, "mActions", list(java.util.Collections.singletonList(pan)));
+        field(template, "mMapActionStrip", strip);
+        Bundle delegate = object("androidx.car.app.navigation.model.PanModeDelegateImpl");
+        field(delegate, "mStub", interfaceBinder("androidx.car.app.navigation.model.IPanModeListener$Stub", panCallback));
+        field(template, "mPanModeDelegate", delegate);
         return result;
     }
 
     static Bundle template(Throwable failure) {
-        return template(failure, Collections.emptyList(), Collections.emptyList());
-    }
-
-    static Bundle template(Throwable failure, List<Bundle> actions, List<Bundle> mapActions) {
-        return template(failure, actions, mapActions, null);
-    }
-
-    static Bundle template(Throwable failure, List<Bundle> actions, List<Bundle> mapActions, IBinder panCallback) {
         Bundle template;
         if (failure == null) {
             Bundle strip = object("androidx.car.app.model.ActionStrip");
-            field(strip, "mActions", list(actions));
+            field(strip, "mActions", emptyList());
             template = object("androidx.car.app.navigation.model.NavigationTemplate");
             field(template, "mActionStrip", strip);
-            if (!mapActions.isEmpty()) {
-                Bundle mapStrip = object("androidx.car.app.model.ActionStrip");
-                field(mapStrip, "mActions", list(mapActions));
-                field(template, "mMapActionStrip", mapStrip);
-            }
-            if (panCallback != null) {
-                Bundle pan = object("androidx.car.app.navigation.model.PanModeDelegateImpl");
-                field(pan, "mStub", interfaceBinder("androidx.car.app.navigation.model.IPanModeListener$Stub", panCallback));
-                field(template, "mPanModeDelegate", pan);
-            }
         } else {
             Throwable cause = failure;
             for (int i = 0; i < 8 && cause.getCause() != null && cause.getCause() != cause; i++) cause = cause.getCause();
@@ -265,16 +187,6 @@ final class CarProtocol {
             field(template, "mActionList", emptyList());
         }
         return wrap(template, failure == null ? "morphe-maps-native" : "morphe-maps-error");
-    }
-
-    static Bundle controlsTemplate(String title, List<Bundle> rows) {
-        Bundle items = object("androidx.car.app.model.ItemList");
-        field(items, "mItems", list(rows));
-        Bundle back = object("androidx.car.app.model.Action"); field(back, "mType", primitive(65539));
-        Bundle template = object("androidx.car.app.model.ListTemplate");
-        field(template, "mTitle", text(title)); field(template, "mHeaderAction", back);
-        field(template, "mSingleList", items); field(template, "mSectionedLists", emptyList());
-        return wrap(template, "morphe-maps-controls");
     }
 
     static Bundle searchTemplate(String query, String hint, IBinder callback) {
@@ -301,19 +213,17 @@ final class CarProtocol {
         Bundle wrapper = object("androidx.car.app.model.TemplateWrapper");
         field(wrapper, "mTemplate", template);
         field(wrapper, "mId", primitive(id));
-        screenStack(wrapper, false);
+        screenStack(wrapper);
         return wrapper;
     }
 
-    /** Public CAL screen metadata is top first, matching the local Back path. */
-    static void screenStack(Bundle wrapper, boolean controlsParent) {
+    /** Public CAL screen metadata is top first, matching the local Back path: input sits on Maps' map screen. */
+    static void screenStack(Bundle wrapper) {
         String id=member(wrapper,"mId").getString("tag_value");
         String type=member(wrapper,"mTemplate").getString("tag_class_name");
         List<Bundle> stack=new ArrayList<>();
         stack.add(templateInfo(type,id));
-        if("morphe-maps-input".equals(id)&&controlsParent)
-            stack.add(templateInfo("androidx.car.app.model.ListTemplate","morphe-maps-controls"));
-        if("morphe-maps-input".equals(id)||"morphe-maps-controls".equals(id))
+        if("morphe-maps-input".equals(id))
             stack.add(templateInfo("androidx.car.app.navigation.model.NavigationTemplate","morphe-maps-native"));
         field(wrapper,"mTemplateInfoForScreenStack",list(stack));
     }

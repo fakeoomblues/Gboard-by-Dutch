@@ -18,10 +18,4 @@ public final class HostPolicyTest {
         assertFalse(HostPolicy.permits("app.johninnl.drivedeck", 10042, null));
         assertFalse(HostPolicy.permits(null, 10042, new String[]{"app.johninnl.drivedeck"}));
     }
-    @Test public void onlyHostsKnownToRenderItGetATurnWithoutDistance() {
-        assertTrue(HostPolicy.rendersUnknownTurnDistance("app.johninnl.drivedeck"));
-        assertTrue(HostPolicy.rendersUnknownTurnDistance("app.seb3thehacker.gearslip"));
-        assertFalse(HostPolicy.rendersUnknownTurnDistance(AUTO));
-        assertFalse(HostPolicy.rendersUnknownTurnDistance("app.unknown.host"));
-    }
 }

@@ -15,8 +15,8 @@ final class NativeScreenStack {
         String id=CarProtocol.member(wrapper,"mId").getString("tag_value");
         String type=CarProtocol.member(wrapper,"mTemplate").getString("tag_class_name");
         int previous=-1;for(int i=0;i<entries.size();i++)if(entries.get(i).id.equals(id)){previous=i;break;}
-        boolean home="morphe-maps-home".equals(id),newNavigation="morphe-maps-native".equals(id)&&previous<0;
-        if(home||newNavigation)entries.clear();
+        // Maps' own map screen is the root; the keyboard (or an error) sits on top of it.
+        if("morphe-maps-native".equals(id)&&previous<0)entries.clear();
         else if(previous>=0)entries.subList(0,previous+1).clear();
         entries.add(0,new Entry(id,type));
         List<Bundle> stack=new ArrayList<>();

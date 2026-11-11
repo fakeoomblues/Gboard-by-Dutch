@@ -79,4 +79,10 @@ public final class ProjectionAreaTest {
         renderer.visibleArea(new Rect(-10, -10, 1400, 600));
         assertEquals(new Rect(), controller.k.insets);
     }
+    @Test public void aHostPlayerNeverChangesMapsLayout() throws Exception {
+        ProjectionRenderer renderer = renderer();
+        renderer.overlays(java.util.Collections.singletonList(new Rect(12, 404, 276, 468)));
+        renderer.overlays(java.util.Collections.singletonList(new Rect(12, 12, 276, 468)));
+        assertEquals("Maps keeps the layout Google draws; the host places its player", 0, controller.k.updates);
+    }
 }

@@ -8379,7 +8379,7 @@
     },
     {
       "name": "Native navigation for any Android Auto host",
-      "description": "Keeps Maps' native map and navigation engine and serves it to any Android Auto compatible host: Google's Android Auto and community hosts such as DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. Supplies routing, ETA, destination lists, route previews and settings as standard car screens that the host arranges around its controls and dock.",
+      "description": "Shows Maps' own car interface, as in Google's Android Auto, on any Android Auto compatible host: Google's Android Auto and community hosts such as DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto and AARE. Maps draws its map, turn and ETA cards, buttons, search, settings and route panels itself; the host shows the screen, passes touches through and supplies its keyboard for typing.",
       "default": true,
       "category": null,
       "compatiblePackages": [
