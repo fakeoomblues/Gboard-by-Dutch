@@ -1,4 +1,23 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/09cba97f94d990dae51eb54c1fb3a7ea70667d19/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.63.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [09cba97f94d9](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/09cba97f94d990dae51eb54c1fb3a7ea70667d19). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.63.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.62.0...v1.63.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Flitsmeister:** repeat a camera after a minute and play Flitsmeister's alert sounds in Maps and Vela ([09cba97](https://gitlab.com/johninnld/nl-morphe-patches/commit/09cba97f94d990dae51eb54c1fb3a7ea70667d19))
+* **Google Maps:** repeat a camera after a minute and play Flitsmeister's alert sounds in Maps and Vela ([09cba97](https://gitlab.com/johninnld/nl-morphe-patches/commit/09cba97f94d990dae51eb54c1fb3a7ea70667d19))
+* **Vela Maps:** repeat a camera after a minute and play Flitsmeister's alert sounds in Maps and Vela ([09cba97](https://gitlab.com/johninnld/nl-morphe-patches/commit/09cba97f94d990dae51eb54c1fb3a7ea70667d19))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/00f73d8bc00d7bcf4ac3bf4f59f01fea0a088e7f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.62.0.**
