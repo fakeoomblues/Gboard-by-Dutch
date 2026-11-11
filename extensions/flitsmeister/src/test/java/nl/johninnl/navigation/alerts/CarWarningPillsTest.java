@@ -65,6 +65,42 @@ public class CarWarningPillsTest {
         b.putInt("trigger_m",500);b.putInt("range_m",1000);b.putLong("range_observed_elapsed_ms",now);b.putBoolean("range_estimated",false);b.putString("range_origin","native_ui_max_distance");
         WarningEvent nativeEvent=WarningCodec.decode(b,now);assertEquals(.7f,CarWarningPills.approachProgress(nativeEvent,now),.001f);assertEquals(Integer.valueOf(500),nativeEvent.triggerMeters);
     }
+    @Test public void speedPillIsTheStacksBottomRowWithTheLimitSignAndCurrentSpeed(){
+        Canvas canvas=new Canvas(Bitmap.createBitmap(400,300,Bitmap.Config.ARGB_8888));
+        CarWarningPills.draw(RuntimeEnvironment.getApplication(),canvas,new RectF(0,0,400,300),1,true,false,
+            false,null,50d,null,0,false,Collections.singletonList(event("SPEED_TRAP",300)),null,null,false,true,57d);
+        List<String> drawn=text(Shadows.shadowOf(canvas));
+        assertEquals("Warning readout first, then sign and speed",Arrays.asList("300","m","50","57","km/h"),drawn);
+        assertEquals(2*CarWarningPills.HEIGHT+CarWarningPills.GAP,CarWarningPills.height(false,1,true),0);
+        assertEquals(CarWarningPills.HEIGHT,CarWarningPills.height(false,0,true),0);
+    }
+    @Test public void speedReadoutsNeverInventZeroOrALimit(){
+        assertEquals("— km/h",CarWarningPills.speedLabel(null,false));
+        assertEquals("— mph",CarWarningPills.speedLabel(Double.NaN,true));
+        assertEquals("0 km/h",CarWarningPills.speedLabel(0d,false));
+        assertEquals("62 mph",CarWarningPills.speedLabel(100d,true));
+        assertEquals("—",CarWarningPills.limitLabel(null,false));
+        assertEquals("—",CarWarningPills.limitLabel(0d,false));
+        assertEquals("81",CarWarningPills.limitLabel(130d,true));
+        assertFalse(CarWarningPills.overspeed(55d,50d));
+        assertTrue(CarWarningPills.overspeed(55.1d,50d));
+        assertFalse("Unknown limit is never speeding",CarWarningPills.overspeed(200d,null));
+    }
+    @Test public void withoutAProviderSpanTheLineRunsFromWhereThePillFirstAppeared(){
+        CarWarningPills.resetApproachForTest();
+        Bundle b=WarningCodec.encode(event("SPEED_TRAP",1000));b.remove("trigger_m");b.remove("trigger_observed_elapsed_ms");b.remove("trigger_estimated");
+        WarningEvent trap=WarningCodec.decode(b,SystemClock.elapsedRealtime());
+        assertEquals("First drawn at 1000 m: empty",0f,CarWarningPills.approach(trap,1000),0.001f);
+        assertEquals("300 m left of 1000 m: 70%",0.7f,CarWarningPills.approach(trap,300),0.001f);
+        assertEquals("A farther report becomes the new start",0f,CarWarningPills.approach(trap,1200),0.001f);
+        assertNull(CarWarningPills.approach(trap,null));
+        Canvas canvas=new Canvas(Bitmap.createBitmap(400,300,Bitmap.Config.ARGB_8888));
+        CarWarningPills.draw(RuntimeEnvironment.getApplication(),canvas,new RectF(0,0,400,300),1,false,false,false,null,100d,null,0,false,Collections.singletonList(trap));
+        assertEquals("Card, track and fill",3,Shadows.shadowOf(canvas).getRoundRectPaintHistoryCount());
+    }
+    @Test public void mockupPackSize(){
+        assertEquals(218,CarWarningPills.WIDTH,0);assertEquals(70,CarWarningPills.HEIGHT,0.001);
+    }
     @Test public void postedLimitIsASpeedValueWithoutADistanceBar(){
         Bundle b=WarningCodec.encode(event("MAXIMUM_SPEED",300));b.putString("category","maximum_speed");b.putInt("road_speed_limit_kmh",100);
         ShadowCanvas canvas=draw(false,null,null,Collections.singletonList(WarningCodec.decode(b,SystemClock.elapsedRealtime())));

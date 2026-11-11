@@ -31,6 +31,15 @@ public class CarSpeedPlacementTest {
         assertNull(placement.place(root,card,new Rect(0,0,100,50)));
         assertNotNull(placement.place(root,card,new Rect(0,0,1280,480)));assertEquals(.8f,card.getAlpha(),0);
     }
+    @Test public void aSpeedPillConcealsTheCardWithoutLosingItsNativeAlpha(){
+        card.setAlpha(.9f);
+        assertNull("A concealed card reserves no area of its own",placement.place(root,card,new Rect(0,0,1280,480),true));
+        assertEquals(0,card.getAlpha(),0);
+        for(int i=0;i<4;i++)placement.place(root,card,new Rect(0,0,1280,480),true);
+        assertEquals("No alpha flicker on repeated frames",0,card.getAlpha(),0);
+        assertNotNull(placement.place(root,card,new Rect(0,0,1280,480),false));assertEquals(.9f,card.getAlpha(),0);
+        placement.place(root,card,new Rect(0,0,1280,480),true);placement.restore();assertEquals(.9f,card.getAlpha(),0);
+    }
     @Test public void nativeAnimationChangesRemainAuthoritativeAndAreRestoredOnDetach(){
         placement.place(root,card,new Rect(400,20,1000,370));
         card.setTranslationX(-20);card.setTranslationY(-10);card.setAlpha(.7f);

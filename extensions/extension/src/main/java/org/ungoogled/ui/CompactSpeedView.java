@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.view.View;
 
-/** Supplementary warnings and observed average-zone progress; Maps draws speed and limit. */
+/** Warning, average-zone and speed pills; Maps' own speed card is hidden while the speed pill shows. */
 public final class CompactSpeedView extends View {
     private final Paint ink=new Paint(Paint.ANTI_ALIAS_FLAG),fill=new Paint(Paint.ANTI_ALIAS_FLAG);
     private TelemetryStore.View data=TelemetryStore.View.empty("");
@@ -19,7 +19,8 @@ public final class CompactSpeedView extends View {
     private float totalHeight;
     private int bottomClearance;
     private android.text.StaticLayout warningLayout;
-    private boolean carPills;
+    private boolean carPills,carSpeed;
+    private Double carSpeedKmh;
     private Typeface carTypeface;
     private java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> carGeometry=java.util.Collections.emptyMap();
     private java.util.List<nl.johninnl.navigation.alerts.WarningEvent> carEvents=java.util.Collections.emptyList();
@@ -32,7 +33,7 @@ public final class CompactSpeedView extends View {
         bind(ExternalTelemetry.view(),ExternalTelemetry.limitKmh(),PowerSaving.miles(),dark,ExternalTelemetry.compactWarning());
     }
     void bind(TelemetryStore.View snapshot,Double maximum,boolean imperial,boolean dark,String warning) {
-        carPills=false;carEvents=java.util.Collections.emptyList();
+        carPills=false;carSpeed=false;carSpeedKmh=null;carEvents=java.util.Collections.emptyList();
         data=snapshot;limit=maximum;this.imperial=imperial;this.dark=dark;this.warning=warning;
         String average=!data.zoneActive?"":data.averageKmh==null?"Observed partial average pending":"Observed partial average "+Math.round(imperial?data.averageKmh/1.609344:data.averageKmh)+(imperial?" mph":" km/h");
         String progress=data.zoneActive?", "+(data.progressEstimated?"approximately ":"")+Math.round(data.progressPercent==null?0:data.progressPercent)+" percent, "+ExternalTelemetry.distance(data.remainingMeters,imperial)+" remaining":"";
@@ -40,8 +41,17 @@ public final class CompactSpeedView extends View {
         requestLayout();invalidate();
     }
     void bindCar(TelemetryStore.View snapshot,Double maximum,boolean imperial,boolean dark,String legacy,java.util.List<nl.johninnl.navigation.alerts.WarningEvent> events){
-        bind(snapshot,maximum,imperial,dark,legacy);carEvents=events;carPills=true;
+        bindCar(snapshot,maximum,imperial,dark,legacy,events,false,null);
+    }
+    /** With [speed], the bottom pill shows [speedKmh] beside the [maximum] sign. */
+    void bindCar(TelemetryStore.View snapshot,Double maximum,boolean imperial,boolean dark,String legacy,java.util.List<nl.johninnl.navigation.alerts.WarningEvent> events,boolean speed,Double speedKmh){
+        bind(snapshot,maximum,imperial,dark,legacy);carEvents=events;carPills=true;carSpeed=speed;carSpeedKmh=speedKmh;
         String description=getContentDescription().toString();long now=android.os.SystemClock.elapsedRealtime();
+        if(speed){
+            String spoken=(speedKmh==null?"Current speed unknown":"Current speed "+nl.johninnl.navigation.alerts.CarWarningPills.speedLabel(speedKmh,imperial))
+                +", "+(maximum==null?"speed limit unknown":"speed limit "+nl.johninnl.navigation.alerts.CarWarningPills.limitLabel(maximum,imperial));
+            description=description.isEmpty()?spoken:spoken+", "+description;
+        }
         for(nl.johninnl.navigation.alerts.WarningEvent event:events){
             description+=", "+nl.johninnl.navigation.alerts.WarningView.carMessage(event);
             nl.johninnl.navigation.alerts.WarningGeometry geometry=carGeometry.get(event.warningId);
@@ -51,7 +61,9 @@ public final class CompactSpeedView extends View {
     }
     void carTypeface(Typeface face){carTypeface=face;}
     void carGeometry(java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry){carGeometry=geometry;}
-    boolean hasContent(){return data.zoneActive||!warning.isEmpty()||!carEvents.isEmpty();}
+    boolean hasContent(){return data.zoneActive||!warning.isEmpty()||!carEvents.isEmpty()||carPills&&carSpeed;}
+    /** Whether the stack ends in the speed pill, which takes the place of Maps' own speed card. */
+    boolean showsSpeed(){return carPills&&carSpeed;}
     private float dp(float value){return value*density;}
     private float sp(float value){return value*getResources().getDisplayMetrics().scaledDensity;}
     private static float available(int spec,float desired){return MeasureSpec.getMode(spec)==MeasureSpec.UNSPECIFIED?desired:MeasureSpec.getSize(spec);}
@@ -59,7 +71,7 @@ public final class CompactSpeedView extends View {
         if(!hasContent()){setMeasuredDimension(0,0);return;}
         if(carPills){
             float width=dp(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH);
-            float height=dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()+(warning.isEmpty()?0:1)));
+            float height=dp(nl.johninnl.navigation.alerts.CarWarningPills.height(data.zoneActive,carEvents.size()+(warning.isEmpty()?0:1),carSpeed));
             float scale=Math.min(1f,Math.min(available(widthSpec,width)/width,available(heightSpec,height)/height));
             if(scale<.5f){setMeasuredDimension(0,0);return;}
             // Constrain the complete stack uniformly. Independent resolveSize calls
@@ -81,7 +93,8 @@ public final class CompactSpeedView extends View {
     @Override protected void onDraw(Canvas canvas) {
         if(carPills){
             nl.johninnl.navigation.alerts.CarWarningPills.draw(getContext(),canvas,new RectF(0,0,getWidth(),getHeight()),density,dark,imperial,
-                data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,carEvents,carTypeface,carGeometry,!warning.isEmpty());return;
+                data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,carEvents,carTypeface,carGeometry,!warning.isEmpty(),
+                carSpeed,carSpeedKmh);return;
         }
         super.onDraw(canvas);float x=dp(10),y=dp(8),width=Math.max(0,getWidth()-dp(20));
         int normal=dark?Color.WHITE:0xff111d2d,error=0xffe8514a;

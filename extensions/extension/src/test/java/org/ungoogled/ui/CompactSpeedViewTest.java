@@ -40,5 +40,21 @@ public class CompactSpeedViewTest {
   Canvas c=new Canvas(Bitmap.createBitmap(v.getWidth(),v.getHeight(),Bitmap.Config.ARGB_8888));v.draw(c);
   org.robolectric.shadows.ShadowCanvas rendered=Shadows.shadowOf(c);assertEquals(1,rendered.getTextHistoryCount());assertEquals("—",rendered.getDrawnTextEvent(0).text);
  }
+ @Test public void speedPillReplacesMapsCardBelowTheWarnings(){
+  CompactSpeedView v=new CompactSpeedView(RuntimeEnvironment.getApplication());
+  v.bindCar(TelemetryStore.View.empty("nl.flitsmeister"),50d,false,true,"",java.util.Collections.emptyList(),true,43.2);measure(v);
+  assertTrue(v.hasContent());assertTrue(v.showsSpeed());
+  assertEquals(Math.round(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH),v.getWidth());
+  assertEquals(Math.round(nl.johninnl.navigation.alerts.CarWarningPills.HEIGHT),v.getHeight());
+  assertEquals("Current speed 43 km/h, speed limit 50",v.getContentDescription().toString());
+  Canvas c=new Canvas(Bitmap.createBitmap(v.getWidth(),v.getHeight(),Bitmap.Config.ARGB_8888));v.draw(c);
+  java.util.List<String> drawn=new java.util.ArrayList<>();org.robolectric.shadows.ShadowCanvas r=Shadows.shadowOf(c);for(int i=0;i<r.getTextHistoryCount();i++)drawn.add(r.getDrawnTextEvent(i).text);
+  assertEquals(java.util.Arrays.asList("50","43","km/h"),drawn);
+  v.bindCar(TelemetryStore.View.empty("nl.flitsmeister"),null,false,true,"warning",java.util.Collections.emptyList(),true,null);measure(v);
+  assertEquals("A warning pill stacks above the speed pill",Math.round(nl.johninnl.navigation.alerts.CarWarningPills.height(false,1,true)),v.getHeight());
+  assertTrue(v.getContentDescription().toString().startsWith("Current speed unknown, speed limit unknown"));
+  v.bindCar(TelemetryStore.View.empty("nl.flitsmeister"),50d,false,true,"",java.util.Collections.emptyList());measure(v);
+  assertFalse("Without Maps' card there is no speed pill",v.showsSpeed());assertEquals(0,v.getMeasuredHeight());
+ }
  private static void measure(View v){v.measure(View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST),View.MeasureSpec.makeMeasureSpec(500,View.MeasureSpec.AT_MOST));v.layout(0,0,v.getMeasuredWidth(),v.getMeasuredHeight());}
 }

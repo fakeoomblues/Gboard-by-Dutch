@@ -9,12 +9,31 @@ import android.os.SystemClock;
 import java.util.List;
 import java.util.Locale;
 
-/** App-rendered, independent pills bounded by the current host-supplied visible area. */
+/**
+ * App-rendered, independent pills bounded by the current host-supplied visible area: warning and
+ * average-zone pills, and below them one speed pill (speed-limit sign and current speed). Maps and
+ * Vela draw the same stack on the phone and on every car display, at the mockup pack's 218x70 size.
+ */
 public final class CarWarningPills {
     private CarWarningPills() {}
-    public static final float WIDTH=180,HEIGHT=WIDTH*70f/218f,GAP=10;
+    public static final float WIDTH=218,HEIGHT=WIDTH*70f/218f,GAP=12;
     private static float u(float value){return value*WIDTH/218f;}
-    public static float height(boolean zone,int warnings){int count=(zone?1:0)+warnings;return count==0?0:count*HEIGHT+(count-1)*GAP;}
+    public static float height(boolean zone,int warnings){return height(zone,warnings,false);}
+    public static float height(boolean zone,int warnings,boolean speed){int count=(zone?1:0)+warnings+(speed?1:0);return count==0?0:count*HEIGHT+(count-1)*GAP;}
+    /** The current speed's readout, number then unit; unknown is a dash, never zero. */
+    public static String speedLabel(Double speedKmh,boolean imperial){
+        String unit=imperial?" mph":" km/h";
+        if(speedKmh==null||!Double.isFinite(speedKmh)||speedKmh<0)return "—"+unit;
+        return Math.round(imperial?speedKmh/1.609344:speedKmh)+unit;
+    }
+    /** The sign's number; an unknown limit stays a dash, never zero or a guessed default. */
+    public static String limitLabel(Double limitKmh,boolean imperial){
+        return limitKmh==null||!Double.isFinite(limitKmh)||limitKmh<=0?"—":String.valueOf(Math.round(imperial?limitKmh/1.609344:limitKmh));
+    }
+    /** More than 5 km/h over a known limit, as the earlier combined badge marked it. */
+    public static boolean overspeed(Double speedKmh,Double limitKmh){
+        return speedKmh!=null&&limitKmh!=null&&Double.isFinite(speedKmh)&&Double.isFinite(limitKmh)&&limitKmh>0&&speedKmh>limitKmh+5;
+    }
     public static boolean zoneEvent(WarningEvent event){return (WarningPreferences.categoryOf(event)==WarningPreferences.ZONE||IndicatorContract.kind(event)==IndicatorContract.Kind.AVERAGE_SPEED)&&event.phase!=WarningEvent.Phase.EXIT&&!Boolean.TRUE.equals(event.fields().get("native_zone_alarm"));}
     public static String distance(Integer meters,boolean imperial){
         if(meters==null||meters<0)return "—";
@@ -44,11 +63,20 @@ public final class CarWarningPills {
     /** Untyped legacy warnings keep an icon/placeholder; their prose stays in speech/accessibility. */
     public static void draw(Context context,Canvas canvas,RectF area,float requestedScale,boolean dark,boolean imperial,
             boolean zone,Double averageKmh,Double limitKmh,Double progress,int remaining,boolean estimated,List<WarningEvent> events,Typeface nativeTypeface,java.util.Map<String,WarningGeometry> geometry,boolean untypedWarning){
-        int warnings=events.size()+(untypedWarning?1:0),count=warnings+(zone?1:0);if(count==0||area.isEmpty())return;
-        float scale=Math.min(requestedScale,Math.min(area.width()/WIDTH,area.height()/height(zone,warnings)));
+        draw(context,canvas,area,requestedScale,dark,imperial,zone,averageKmh,limitKmh,progress,remaining,estimated,events,nativeTypeface,geometry,untypedWarning,false,null);
+    }
+    /**
+     * The whole stack, bottom-right in [area] and scaled down uniformly when it does not fit. With
+     * [speed] the speed pill is its bottom row: limit sign from [limitKmh], readout from [speedKmh].
+     */
+    public static void draw(Context context,Canvas canvas,RectF area,float requestedScale,boolean dark,boolean imperial,
+            boolean zone,Double averageKmh,Double limitKmh,Double progress,int remaining,boolean estimated,List<WarningEvent> events,Typeface nativeTypeface,java.util.Map<String,WarningGeometry> geometry,boolean untypedWarning,
+            boolean speed,Double speedKmh){
+        int warnings=events.size()+(untypedWarning?1:0),count=warnings+(zone?1:0)+(speed?1:0);if(count==0||area.isEmpty())return;
+        float scale=Math.min(requestedScale,Math.min(area.width()/WIDTH,area.height()/height(zone,warnings,speed)));
         if(scale<.5f)return;
         int saved=canvas.save();canvas.clipRect(area);
-        float left=area.right-WIDTH*scale,top=area.bottom-height(zone,warnings)*scale;
+        float left=area.right-WIDTH*scale,top=area.bottom-height(zone,warnings,speed)*scale;
         canvas.translate(left,top);canvas.scale(scale,scale);
         Paint text=new Paint(Paint.ANTI_ALIAS_FLAG),fill=new Paint(Paint.ANTI_ALIAS_FLAG);
         Typeface face=Typeface.create(nativeTypeface,Typeface.NORMAL);
@@ -64,6 +92,7 @@ public final class CarWarningPills {
             String label=nonspatial?(value==null?"—":value):known?distance(point.distanceMeters,imperial):"—";
             readout(canvas,text,label,face,dark);
             Float fraction=point==null||nonspatial?null:point.progress(event,now);
+            if(fraction==null&&known&&!nonspatial)fraction=approach(event,point.distanceMeters);
             if(fraction!=null)bar(canvas,fill,fraction,dark);
             canvas.translate(0,HEIGHT+GAP);
         }
@@ -78,9 +107,49 @@ public final class CarWarningPills {
             // This is section distance progress, independent of every approach event/span.
             Float section=progress!=null&&Double.isFinite(progress)&&progress>=0&&progress<=100?progress.floatValue()/100f:null;
             bar(canvas,fill,section,dark);
+            canvas.translate(0,HEIGHT+GAP);
         }
+        if(speed)speedPill(canvas,text,fill,face,dark,imperial,speedKmh,limitKmh);
         canvas.restoreToCount(saved);
     }
+    /** The speed pill alone at ([left],[top]), [scale] pixels per unit. */
+    public static void drawSpeed(Canvas canvas,float left,float top,float scale,boolean dark,boolean imperial,Double speedKmh,Double limitKmh,Typeface nativeTypeface){
+        int saved=canvas.save();canvas.translate(left,top);canvas.scale(scale,scale);
+        speedPill(canvas,new Paint(Paint.ANTI_ALIAS_FLAG),new Paint(Paint.ANTI_ALIAS_FLAG),Typeface.create(nativeTypeface,Typeface.NORMAL),dark,imperial,speedKmh,limitKmh);
+        canvas.restoreToCount(saved);
+    }
+    private static void speedPill(Canvas canvas,Paint text,Paint fill,Typeface face,boolean dark,boolean imperial,Double speedKmh,Double limitKmh){
+        card(canvas,fill,dark);
+        // The limit sign takes the icon slot: white disc, red ring when known, grey with a dash when not.
+        RectF slot=iconSlot();float cx=slot.centerX(),cy=slot.centerY(),radius=slot.width()/2,ring=u(5);
+        boolean known=limitKmh!=null&&Double.isFinite(limitKmh)&&limitKmh>0;
+        fill.setStyle(Paint.Style.FILL);fill.setColor(0xffffffff);canvas.drawCircle(cx,cy,radius,fill);
+        fill.setStyle(Paint.Style.STROKE);fill.setStrokeWidth(ring);fill.setColor(known?0xffd32f2f:0xff8993a0);
+        canvas.drawCircle(cx,cy,radius-ring/2,fill);fill.setStyle(Paint.Style.FILL);
+        String sign=limitLabel(limitKmh,imperial);
+        Paint number=new Paint(text);number.setTypeface(Typeface.create(face,Typeface.BOLD));number.setColor(0xff111111);number.setTextAlign(Paint.Align.CENTER);
+        number.setTextSize(u(sign.length()>2?20:24));float room=(radius-ring)*1.6f;
+        if(number.measureText(sign)>room)number.setTextSize(number.getTextSize()*room/number.measureText(sign));
+        Paint.FontMetrics metrics=number.getFontMetrics();canvas.drawText(sign,cx,cy-(metrics.ascent+metrics.descent)/2,number);
+        text.setTypeface(face);text.setColor(overspeed(speedKmh,limitKmh)?0xffe8514a:dark?0xffffffff:0xff242424);
+        distanceLabel(canvas,text,speedLabel(speedKmh,imperial),u(44));
+    }
+    /** Distance at which each warning was first drawn (its largest), by warning; bounded. */
+    private static final java.util.Map<String,Integer> FIRST_SHOWN=new java.util.LinkedHashMap<String,Integer>(16,.75f,true){
+        @Override protected boolean removeEldestEntry(java.util.Map.Entry<String,Integer> eldest){return size()>64;}
+    };
+    /**
+     * Approach line when the provider gives no visual span or trigger: progress from the distance at
+     * which the pill first appeared (the mockup's approach_distance) to the point itself.
+     */
+    static synchronized Float approach(WarningEvent event,Integer meters){
+        if(meters==null||meters<0)return null;
+        String key=event.warningId;
+        Integer span=FIRST_SHOWN.get(key);
+        if(span==null||meters>span){FIRST_SHOWN.put(key,meters);span=meters;}
+        return span<=0?null:Math.max(0,Math.min(1,1f-meters/span.floatValue()));
+    }
+    static synchronized void resetApproachForTest(){FIRST_SHOWN.clear();}
     private static RectF iconSlot(){return new RectF(u(14),u(9),u(66),u(61));}
     private static void readout(Canvas canvas,Paint text,String label,Typeface face,boolean dark){
         text.setTypeface(face);text.setColor(dark?0xffffffff:0xff242424);distanceLabel(canvas,text,label,u(37));

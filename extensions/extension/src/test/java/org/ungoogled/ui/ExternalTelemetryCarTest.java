@@ -68,12 +68,26 @@ public class ExternalTelemetryCarTest {
     }
     @Test public void constrainedCarPillsKeepTheirAspectRatioAndWithholdUnreadableSizes()throws Exception{
         zone();CompactSpeedView view=new CompactSpeedView(app);view.bindCar(ExternalTelemetry.view(),100d,false,false,"",java.util.Collections.emptyList());
-        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(90,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
-        assertEquals(90,view.getMeasuredWidth());assertEquals("The supplied218:70pill scales uniformly at half width",29,view.getMeasuredHeight());
-        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(89,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
+        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(109,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
+        assertEquals(109,view.getMeasuredWidth());assertEquals("The supplied218:70pill scales uniformly at half width",35,view.getMeasuredHeight());
+        view.measure(android.view.View.MeasureSpec.makeMeasureSpec(108,android.view.View.MeasureSpec.AT_MOST),android.view.View.MeasureSpec.makeMeasureSpec(200,android.view.View.MeasureSpec.AT_MOST));
         assertEquals(0,view.getMeasuredWidth());assertEquals(0,view.getMeasuredHeight());
     }
 
+    @Test public void phoneStackMovesBesideTheMapButtonColumnOnlyWhenItWouldCoverIt(){
+        FrameLayout content=new FrameLayout(app);android.view.View tiles=new android.view.View(app);
+        content.addView(tiles,new FrameLayout.LayoutParams(64,300));
+        android.app.Activity host=org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();host.setContentView(content);
+        content.measure(android.view.View.MeasureSpec.makeMeasureSpec(1080,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(2000,android.view.View.MeasureSpec.EXACTLY));
+        content.layout(0,0,1080,2000);tiles.layout(16,1400,80,1700);
+        android.view.View previous=Shapes.navTiles;Shapes.navTiles=tiles;
+        try{
+            assertEquals("Warnings above the speed pill would cover the column",88,ExternalTelemetry.phoneColumnClearance(content,10,1500,218,152,8));
+            assertEquals("The speed pill alone sits below it",10,ExternalTelemetry.phoneColumnClearance(content,10,1720,218,70,8));
+            tiles.setVisibility(android.view.View.GONE);
+            assertEquals("A hidden column does not move the stack",10,ExternalTelemetry.phoneColumnClearance(content,10,1500,218,152,8));
+        }finally{Shapes.navTiles=previous;}
+    }
     private void zone()throws Exception{
         org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(5));long now=android.os.SystemClock.elapsedRealtime();
         Field f=ExternalTelemetry.class.getDeclaredField("store");f.setAccessible(true);TelemetryStore store=(TelemetryStore)f.get(null);

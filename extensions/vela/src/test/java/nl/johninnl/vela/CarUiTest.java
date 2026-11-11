@@ -5,7 +5,6 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import java.util.Map;
 import org.junit.After;
@@ -28,8 +27,6 @@ public class CarUiTest {
         Rect actual=CarUi.overlayViewport(visible,stable,1190,460);
         assertEquals(visible,actual);assertNotSame(visible,actual);
         assertEquals(new Rect(12,12,1178,448),stable);
-        CarUi.Layout badge=CarUi.compactLayout(actual,1,false,false);
-        assertNotNull(badge);assertTrue(badge.bounds.right<1090);
         visible.set(12,12,1178,448);
         assertEquals("A new callback can expand up to the map-action column",new Rect(12,12,1110,448),CarUi.overlayViewport(visible,stable,1190,460));
         assertEquals("Earlier frames retain their own geometry",new Rect(420,90,1090,448),actual);
@@ -52,8 +49,6 @@ public class CarUiTest {
         Rect host=new Rect(428,36,1154,460),zoomMinus=new Rect(1114,384,1178,448);
         Rect safe=CarUi.overlayViewport(host,host,1190,460,1f);
         assertTrue("The full warning pill and shadow clear the native button",safe.right+3<zoomMinus.left);
-        CarUi.Layout speed=CarUi.compactLayout(safe,1,false,false);
-        assertNotNull(speed);assertTrue(speed.bounds.right+3<zoomMinus.left);
         Rect doubled=CarUi.overlayViewport(new Rect(856,72,2308,920),null,2380,920,2f);
         assertTrue("Reserve the control lane in host dp",doubled.right+6<zoomMinus.left*2);
         assertEquals("Do not shrink an already narrower host reservation",new Rect(428,36,1000,460),
@@ -61,85 +56,48 @@ public class CarUiTest {
         assertTrue(CarUi.overlayViewport(new Rect(1115,0,1190,460),null,1190,460,1f).isEmpty());
     }
 
-    @Test public void speedPairUsesTheSameHostDensityAsWarningPills() {
-        Rect logical=new Rect(420,30,1110,448);
-        CarUi.Layout baseline=CarUi.compactLayout(logical,CarUi.speedScale(1190,460,1),false,0,1);
-        assertNotNull(baseline);
-        for(float density:new float[]{1.5f,2f}) {
-            Rect pixels=new Rect(Math.round(logical.left*density),Math.round(logical.top*density),Math.round(logical.right*density),Math.round(logical.bottom*density));
-            CarUi.Layout scaled=CarUi.compactLayout(pixels,CarUi.speedScale(Math.round(1190*density),Math.round(460*density),density),false,0,density);
-            assertNotNull(scaled);
-            assertEquals(baseline.pair.width()*density,scaled.pair.width(),.01f);
-            assertEquals(baseline.pair.height()*density,scaled.pair.height(),.01f);
-            assertEquals(baseline.pair.right*density,scaled.pair.right,.01f);
-            assertEquals(baseline.pair.bottom*density,scaled.pair.bottom,.01f);
-        }
-    }
     @Test public void nativeSelectionAndDisabledCarKeepTheOriginalRenderer() {
         Canvas canvas=new Canvas(Bitmap.createBitmap(260,220,Bitmap.Config.ARGB_8888));
         assertFalse(CarUi.compact(new Object(),canvas));
         TelemetryRuntime.select("com.waze");TelemetryRuntime.setCarEnabled(false);
         assertFalse(CarUi.compact(new Object(),canvas));
     }
-    @Test public void clusterFitsHostInsetsAndSplitDashboardAreas() {
-        for(Rect safe:new Rect[]{new Rect(48,36,296,208),new Rect(400,80,620,300),
-                new Rect(600,80,790,260),new Rect(24,32,1256,688)}) {
-            CarUi.Layout layout=CarUi.compactLayout(safe,1,true,true);
-            assertNotNull(layout);
-            assertTrue(layout.bounds.left>=safe.left);
-            assertTrue(layout.bounds.top>=safe.top);
-            assertTrue(layout.bounds.right<=safe.right);
-            assertTrue(layout.bounds.bottom<=safe.bottom);
-            assertTrue(layout.bar.left>=layout.bounds.left);
-            assertTrue(layout.bar.right<=layout.bounds.right);
-            assertTrue(layout.bar.bottom<layout.pair.top);
-            assertTrue(layout.bar.height()<=4);
-        }
+    /** The fields the native renderer exposes to the hooks, with run89's real surface geometry. */
+    public static final class Renderer {
+        public Rect K=new Rect(428,36,1154,460),u0=null;
+        public Double q=0d,r=50d;
+        public boolean l(){return true;}
     }
-    @Test public void extremelySmallHostAreaDoesNotCoverItsControls() {
-        assertNull(CarUi.compactLayout(new Rect(0,0,80,60),1,true,true));
-        CarUi.Layout speedOnly=CarUi.compactLayout(new Rect(0,0,180,100),1,false,false);
-        assertNotNull(speedOnly);assertNull(speedOnly.bar);
-    }
-    @Test public void mapTextContainsOnlyAverageUnitsProgressAndDistance() {
-        assertEquals("Ø90 km/h",CarUi.averageText(90d,false));
-        assertEquals("Ø56 mph",CarUi.averageText(90d,true));
-        assertEquals("≈35%",CarUi.progressText(35d,true));
-        assertEquals("35%",CarUi.progressText(35d,false));
-        assertEquals("1.2km",CarUi.distanceText(1200,false));
-        assertEquals("0.7mi",CarUi.distanceText(1200,true));
-        assertEquals("Ø— km/h",CarUi.averageText(null,false));
-        assertEquals("Ø0 km/h",CarUi.averageText(0d,false));
-    }
-    @Test public void partialSemanticsRemainInTheModelAfterCompactFormatting() {
-        TelemetryStore.View view=zone();
-        assertTrue(view.partialAverage);assertTrue(view.progressEstimated);
-        assertEquals("Ø90 km/h",CarUi.averageText(view.averageKmh,false));
-        assertTrue(view.partialAverage);assertTrue(view.progressEstimated);
+    @Test public void nativeSpeedDisplayBecomesTheStacksSpeedPillLeftOfTheButtons() {
+        TelemetryRuntime.select("com.waze");TelemetryRuntime.setCarEnabled(true);
+        Renderer renderer=new Renderer();
+        Canvas speedCanvas=new Canvas(Bitmap.createBitmap(1190,460,Bitmap.Config.ARGB_8888));
+        assertTrue("The native display is replaced",CarUi.compact(renderer,speedCanvas));
+        assertTrue("The native display hook itself draws nothing",texts(speedCanvas).isEmpty());
+        Canvas frame=new Canvas(Bitmap.createBitmap(1190,460,Bitmap.Config.ARGB_8888));
+        CarUi.warningFrame(renderer,frame);
+        java.util.List<String> drawn=texts(frame);
+        assertTrue(drawn.toString(),drawn.contains("50"));
+        assertTrue("A stale speed is unknown, never zero",drawn.contains("—"));
+        assertTrue(drawn.contains("km/h"));
+        Canvas next=new Canvas(Bitmap.createBitmap(1190,460,Bitmap.Config.ARGB_8888));
+        CarUi.warningFrame(renderer,next);
+        assertTrue("Without this frame's native display there is no speed pill",texts(next).isEmpty());
     }
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
-    public void badgeStaysInsideTheSafeAreaAndNeverMutatesNativePaints() {
-        Bitmap bitmap=Bitmap.createBitmap(260,220,Bitmap.Config.ARGB_8888);
-        Canvas canvas=new Canvas(bitmap);
-        CarUi.Layout layout=CarUi.compactLayout(new Rect(20,20,240,200),1,true,false);
-        Paint number=new Paint(Paint.ANTI_ALIAS_FLAG),unit=new Paint(Paint.ANTI_ALIAS_FLAG);
-        Paint limit=new Paint(Paint.ANTI_ALIAS_FLAG),disc=new Paint(Paint.ANTI_ALIAS_FLAG),ring=new Paint(Paint.ANTI_ALIAS_FLAG);
-        number.setTextSize(9);number.setColor(Color.MAGENTA);ring.setColor(0xffd32f2f);
-        CarUi.renderCompact(canvas,layout,"0",100d,zone(),"",false,false,number,unit,limit,disc,ring);
-        assertEquals(9,number.getTextSize(),0);assertEquals(Color.MAGENTA,number.getColor());
-        assertTrue(Color.alpha(bitmap.getPixel((int)layout.bounds.left+3,(int)layout.bounds.top+3))<255);
-        assertEquals("The combined badge has a light background",Color.WHITE,
-                bitmap.getPixel((int)layout.pair.centerX(),(int)layout.pair.top+6));
-        assertEquals("The limit sign is on the left of the current speed",0xffd32f2f,
-                bitmap.getPixel((int)layout.pair.left+34,(int)layout.pair.top+4));
-        assertTrue(layout.bar.bottom<layout.pair.top);
-        assertEquals(0xff1f6feb,bitmap.getPixel((int)(layout.bar.left+layout.bar.width()*.1),(int)layout.bar.centerY()));
-        assertEquals(0xffc5cbd0,bitmap.getPixel((int)(layout.bar.left+layout.bar.width()*.8),(int)layout.bar.centerY()));
-        for(int y=0;y<bitmap.getHeight();y++)for(int x=0;x<bitmap.getWidth();x++) {
-            if(x<layout.bounds.left||x>layout.bounds.right||y<layout.bounds.top||y>layout.bounds.bottom)
-                assertEquals("draw outside host cluster",0,bitmap.getPixel(x,y));
-        }
+    public void speedPillSitsBottomRightClearOfTheMapButtons() {
+        TelemetryRuntime.select("com.waze");TelemetryRuntime.setCarEnabled(true);
+        Renderer renderer=new Renderer();
+        Bitmap bitmap=Bitmap.createBitmap(1190,460,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(bitmap);
+        CarUi.compact(renderer,canvas);CarUi.warningFrame(renderer,canvas);
+        Rect safe=CarUi.overlayViewport(renderer.K,null,1190,460,1f);safe.inset(8,8);
+        int width=Math.round(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH),height=Math.round(nl.johninnl.navigation.alerts.CarWarningPills.HEIGHT);
+        assertEquals("The dark pill fills its centre",0xff20242b,bitmap.getPixel(safe.right-width/2,safe.bottom-6));
+        assertTrue(Color.alpha(bitmap.getPixel(safe.right-width/2,safe.bottom-height-4))==0);
+        for(int y=0;y<bitmap.getHeight();y++)for(int x=safe.right+2;x<bitmap.getWidth();x++)
+            assertEquals("Nothing under Vela's map buttons",0,Color.alpha(bitmap.getPixel(x,y)));
     }
+    private static java.util.List<String> texts(Canvas c){org.robolectric.shadows.ShadowCanvas s=org.robolectric.Shadows.shadowOf(c);java.util.List<String> out=new java.util.ArrayList<>();for(int i=0;i<s.getTextHistoryCount();i++)out.add(s.getDrawnTextEvent(i).text);return out;}
     private static TelemetryStore.View zone() {
         TelemetryStore store=new TelemetryStore();store.select("com.waze");
         Map<String,Object> packet=TelemetryStoreTest.packet("com.waze","test",1,5000);

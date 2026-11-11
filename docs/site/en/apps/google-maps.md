@@ -36,7 +36,7 @@ This uses our **Broadcast navigation data** patch in the provider app. Installin
 
 [Set up Waze or Flitsmeister data in Google Maps and Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 
-On Android Auto, the speed/limit pair stays separate from the compact event pill. Before an average-speed zone the pill shows entry distance; inside it shows the observed average with a fresh section-progress bar. Icons and numeric units replace long warning labels; missing values remain unknown.
+On the phone and on Android Auto, a speed pill takes the place of Maps' own speed card: the speed-limit sign beside your current speed. Warning pills of the same size stack above it. Before an average-speed zone the pill shows entry distance with a line that fills as you approach; inside it shows the observed average with a fresh section-progress bar. Icons and numeric units replace long warning labels; missing values stay unknown (**—**). On the phone the stack moves beside the map buttons rather than cover them.
 
 ## Where these patches come from
 

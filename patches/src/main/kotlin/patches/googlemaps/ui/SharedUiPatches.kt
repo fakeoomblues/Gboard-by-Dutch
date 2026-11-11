@@ -115,6 +115,14 @@ internal val activityContextHookPatch = bytecodePatch(
 
 /** org.ungoogled.ui.Screens: opens the extension's screens, inside a host when they are not declared. */
 private const val SCREENS = "Lorg/ungoogled/ui/Screens;"
+
+/**
+ * The patch's own extension code: the Maps UI extension, the shared navigation-alert and startup
+ * libraries and the car adapter. Their drawing (the warning and speed pills, for one) follows the
+ * mockup pack, so the shape and colour rewrites leave it alone.
+ */
+internal fun ownExtensionClass(type: String) =
+    type.startsWith("Lorg/ungoogled/") || type.startsWith("Lnl/johninnl/") || type.startsWith("Lpatches/maps/")
 /** androidx.core's AppComponentFactory, which Maps' manifest names: it creates every Activity of the app. */
 private const val COMPONENT_FACTORY = "androidx.core.app.CoreComponentFactory"
 /** Stock Maps' open-source licences screen, Screens.HOST. */
@@ -367,12 +375,12 @@ internal val shapeShimsPatch = bytecodePatch(
         val roundAvatars = ROUND_AVATARS.toMutableSet()
         val painters = mutableSetOf<AvatarPainter>()
         classDefForEach { classDef ->
-            if (classDef.type.startsWith("Lorg/ungoogled/")) return@classDefForEach
+            if (ownExtensionClass(classDef.type)) return@classDefForEach
             avatarPainter(classDef)?.let { painters += it; roundAvatars += classDef.type }
         }
         if (painters.size != AvatarPainter.entries.size) throw PatchException("avatar circle crop or monogram painter not found: $painters")
         classDefForEach { classDef ->
-            if (classDef.type.startsWith("Lorg/ungoogled/")) return@classDefForEach
+            if (ownExtensionClass(classDef.type)) return@classDefForEach
             if (classDef.superclass in shapeSubclasses) reparent += classDef.type
             val classRules = if (classDef.type in roundAvatars) colourRules else rules
             for (method in classDef.methods) {
@@ -413,7 +421,7 @@ internal val shapeShimsPatch = bytecodePatch(
         ).joinToString("|").toRegex()
         val leftovers = mutableListOf<String>()
         classDefForEach { classDef ->
-            if (classDef.type.startsWith("Lorg/ungoogled/")) return@classDefForEach
+            if (ownExtensionClass(classDef.type)) return@classDefForEach
             for (method in classDef.methods) {
                 for (insn in method.implementation?.instructions ?: continue) {
                     if (insn.opcode == Opcode.INVOKE_SUPER || insn.opcode == Opcode.INVOKE_SUPER_RANGE) continue

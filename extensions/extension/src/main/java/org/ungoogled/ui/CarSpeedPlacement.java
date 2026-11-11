@@ -14,7 +14,10 @@ final class CarSpeedPlacement {
     private float nativeAlpha, appliedAlpha;
     private final java.util.Map<ViewGroup,boolean[]> clips=new java.util.WeakHashMap<>();
 
-    Rect place(ViewGroup root, View next, Rect safe) {
+    Rect place(ViewGroup root, View next, Rect safe) { return place(root, next, safe, false); }
+
+    /** With [conceal] the card keeps its place but is not drawn: an app speed pill replaces it. */
+    Rect place(ViewGroup root, View next, Rect safe, boolean conceal) {
         View previous = card.get();
         if (previous != next) {
             restore();
@@ -53,8 +56,8 @@ final class CarSpeedPlacement {
         appliedX = nativeX + offsetX; appliedY = nativeY + offsetY;
         if (next.getTranslationX() != appliedX) next.setTranslationX(appliedX);
         if (next.getTranslationY() != appliedY) next.setTranslationY(appliedY);
-        setAlpha(next, nativeAlpha);
-        if (nativeAlpha <= 0 || !visible(next, root)) { restoreClips(); return null; }
+        setAlpha(next, conceal ? 0 : nativeAlpha);
+        if (conceal || nativeAlpha <= 0 || !visible(next, root)) { restoreClips(); return null; }
         bounds.offset(dx, dy);
         // The dedicated card can sit in a tightly measured native wrapper.
         // Let this moved child reach its safe position without translating the

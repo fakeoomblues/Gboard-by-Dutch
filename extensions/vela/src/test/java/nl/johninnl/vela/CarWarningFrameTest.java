@@ -17,7 +17,7 @@ import org.robolectric.annotation.*;
 public class CarWarningFrameTest {
     Application app;WarningView view;
     public static class Renderer {
-        public boolean I=false,drive=false;public int snapshots;public Paint m0=new Paint(Paint.ANTI_ALIAS_FLAG);
+        public boolean I=false,drive=false;public int snapshots;public Double q=0d,r=100d;public Paint m0=new Paint(Paint.ANTI_ALIAS_FLAG);
         public void s(){snapshots++;}public Rect u(){return new Rect(25,20,295,210);}public boolean n(){return drive;}public boolean l(){return false;}
     }
     @Before public void setup()throws Exception{
@@ -32,7 +32,18 @@ public class CarWarningFrameTest {
     private Bitmap draw(Renderer renderer){Bitmap image=Bitmap.createBitmap(320,240,Bitmap.Config.ARGB_8888);CarUi.warningFrame(renderer,new Canvas(image));return image;}
     private int pixels(Bitmap image){int count=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if(image.getPixel(x,y)!=0)count++;return count;}
     @Test public void browseWarningDrawsWithoutNavigationLocationSpeedOrNativeSpeedDisplay(){Renderer renderer=new Renderer();renderer.m0.setColor(Color.MAGENTA);renderer.m0.setTextSize(11);app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",false).commit();Bitmap image=draw(renderer);assertTrue("Native warning must draw on a browsing frame with no GPS/speed fields",pixels(image)>20);assertEquals(Color.MAGENTA,renderer.m0.getColor());assertEquals(11,renderer.m0.getTextSize(),0);for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if(x<25||x>=295||y<20||y>=210)assertEquals("Host control area unchanged",0,image.getPixel(x,y));}
-    @Test public void warningPillHasItsOwnLayerAndReservesTheNativeSpeedSlot(){Renderer renderer=new Renderer();renderer.drive=true;app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",true).commit();Bitmap image=draw(renderer);assertTrue("Warning pill must remain visible with the normal speed display",pixels(image)>20);for(int y=160;y<210;y++)for(int x=25;x<295;x++)assertEquals("The warning layer must leave the speed slot free",0,image.getPixel(x,y));app.getSharedPreferences("vela_settings",0).edit().putBoolean("car_speed_on",false).commit();assertTrue("Warnings are independent of native SpeedDisplay",pixels(draw(renderer))>20);}
+    @Test public void warningPillStacksAboveTheSpeedPillOnlyWhenTheNativeSpeedDisplayRan(){
+        Renderer renderer=new Renderer();renderer.drive=true;
+        Bitmap image=Bitmap.createBitmap(320,240,Bitmap.Config.ARGB_8888);Canvas canvas=new Canvas(image);
+        assertTrue(CarUi.compact(renderer,canvas));CarUi.warningFrame(renderer,canvas);
+        // Safe area 33..232 x 28..202 (8 dp inset, Vela's 80 dp button lane): two rows at scale 199/218.
+        assertTrue("Speed pill in the bottom row",image.getPixel(132,190)!=0);
+        assertTrue("Warning pill above it",image.getPixel(132,80)!=0);
+        for(int y=0;y<image.getHeight();y++)for(int x=234;x<image.getWidth();x++)assertEquals("Vela's button lane stays clear",0,image.getPixel(x,y));
+        Bitmap warningOnly=draw(renderer);
+        assertTrue("Without the native display the warning takes the bottom row",warningOnly.getPixel(132,190)!=0);
+        assertEquals("and nothing stacks above it",0,warningOnly.getPixel(132,80));
+    }
     @Test public void semanticChangesAndClearRefreshTheActualRendererWithoutAnotherGpsFrame(){Renderer renderer=new Renderer();draw(renderer);CarUi.warningChanged();int arrived=renderer.snapshots;assertTrue(arrived>0);CarUi.warningChanged();assertEquals("Unchanged semantic state does not regenerate snapshots",arrived,renderer.snapshots);view.clear();CarUi.warningChanged();assertEquals("Clear refreshes the original surface without GPS",arrived+1,renderer.snapshots);}
     @Test public void distanceChangesRefreshThePillEvenWhenTheMessageStaysTheSame(){
         Renderer renderer=new Renderer();draw(renderer);CarUi.warningChanged();int before=renderer.snapshots;

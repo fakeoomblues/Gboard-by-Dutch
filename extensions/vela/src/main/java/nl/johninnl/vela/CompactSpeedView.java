@@ -3,9 +3,7 @@ package nl.johninnl.vela;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.view.View;
 import nl.johninnl.navigation.alerts.CarWarningPills;
 import nl.johninnl.navigation.alerts.WarningEvent;
@@ -15,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Phone counterpart of the Android Auto layout, in Vela's existing speed-widget slot: the same combined
- * speed badge as {@link CarUi#renderCompact} with the shared mockup-pack warning pills stacked above it.
+ * Phone counterpart of the Android Auto layout, in Vela's existing speed-widget slot: the shared
+ * mockup-pack stack, warning pills above the speed pill (limit sign and current speed).
  */
 public final class CompactSpeedView extends View {
-    static final float BADGE_WIDTH=156,BADGE_HEIGHT=68,SHADOW=3;
+    static final float SHADOW=3;
     private TelemetryStore.View data=TelemetryStore.View.empty("");
     private Float current;
     private Double limit;
@@ -78,27 +76,19 @@ public final class CompactSpeedView extends View {
         return out.toString();
     }
     private int warnings(){return events.size()+(untyped?1:0);}
-    private float stackHeight(){return CarWarningPills.height(data.zoneActive,warnings())*density;}
+    private float stackHeight(){return CarWarningPills.height(data.zoneActive,warnings(),true)*density;}
     private float dp(float value){return value*density;}
     @Override protected void onMeasure(int widthSpec,int heightSpec) {
-        float stack=stackHeight();
-        float width=Math.max(BADGE_WIDTH,stack>0?CarWarningPills.WIDTH:0)+2*SHADOW;
-        float height=(stack>0?stack+dp(CarWarningPills.GAP):0)+dp(BADGE_HEIGHT+2*SHADOW+bottomClearance);
+        float width=CarWarningPills.WIDTH+2*SHADOW;
+        float height=stackHeight()+dp(2*SHADOW+bottomClearance);
         setMeasuredDimension(resolveSize((int)Math.ceil(dp(width)),widthSpec),resolveSize((int)Math.ceil(height),heightSpec));
     }
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float x=dp(SHADOW),y=dp(SHADOW),stack=stackHeight();
-        if(stack>0) {
-            CarWarningPills.draw(getContext(),canvas,new RectF(x,y,x+dp(CarWarningPills.WIDTH),y+stack),density,dark,imperial,
-                data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,events,null,geometry,untyped);
-            y+=stack+dp(CarWarningPills.GAP);
-        }
-        String speed=current==null?"—":String.valueOf(Math.round(shownMps*(imperial?2.236936f:3.6f)));
-        Paint number=new Paint(Paint.ANTI_ALIAS_FLAG),unit=new Paint(Paint.ANTI_ALIAS_FLAG),sign=new Paint(Paint.ANTI_ALIAS_FLAG);
-        number.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));unit.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL));sign.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));
-        CarUi.renderCompact(canvas,new CarUi.Layout(new RectF(x,y,x+dp(BADGE_WIDTH),y+dp(BADGE_HEIGHT)),density,false,0),speed,limit,
-            TelemetryStore.View.empty(data.provider),"",imperial,dark,number,unit,sign,new Paint(Paint.ANTI_ALIAS_FLAG),new Paint(Paint.ANTI_ALIAS_FLAG));
+        float x=dp(SHADOW),y=dp(SHADOW);
+        Double speed=current==null?null:(double)shownMps*3.6;
+        CarWarningPills.draw(getContext(),canvas,new RectF(x,y,x+dp(CarWarningPills.WIDTH),y+stackHeight()),density,dark,imperial,
+            data.zoneActive,data.averageKmh,limit,data.progressPercent,data.remainingMeters,data.progressEstimated,events,null,geometry,untyped,true,speed);
     }
     @Override protected void onDetachedFromWindow(){if(animation!=null)animation.cancel();super.onDetachedFromWindow();}
 }

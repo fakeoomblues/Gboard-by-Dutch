@@ -118,14 +118,24 @@ public final class ExternalTelemetry {
     /** One warning selection and pill presentation for the phone and every car surface. */
     private static final class Pills {
         final TelemetryStore.View info;final List<WarningEvent> events;final String message;final java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry;
-        Pills(TelemetryStore.View info,List<WarningEvent> events,String message,java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry){this.info=info;this.events=events;this.message=message;this.geometry=geometry;}
-        boolean empty(){return !info.zoneActive&&message.isEmpty()&&events.isEmpty();}
+        /** Maps currently shows its own speed card, which the speed pill replaces. */
+        final boolean speed;
+        Pills(TelemetryStore.View info,List<WarningEvent> events,String message,java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry,boolean speed){this.info=info;this.events=events;this.message=message;this.geometry=geometry;this.speed=speed;}
+        boolean empty(){return !info.zoneActive&&message.isEmpty()&&events.isEmpty()&&!speed;}
         void bind(CompactSpeedView value,android.widget.TextView number,boolean dark){
             value.carTypeface(number==null?null:number.getTypeface());value.carGeometry(geometry);
-            value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,events);
+            Float mps=speedMps();
+            value.bindCar(info,limitKmh(),PowerSaving.miles(),dark,message,events,speed,mps==null?null:mps*3.6);
         }
     }
-    private static Pills pills(){
+    /** Maps decides when its speed card shows (navigation, its own setting); the pill follows it. */
+    static boolean nativeSpeedShown(View card){
+        if(card==null||!card.isAttachedToWindow()||card.getWidth()<=0||card.getHeight()<=0)return false;
+        for(View node=card;node!=null;node=parentView(node))if(node.getVisibility()!=View.VISIBLE)return false;
+        return true;
+    }
+    private static Pills pills(){return pills(false);}
+    private static Pills pills(boolean speed){
         TelemetryStore.View info=view();
         long now=SystemClock.elapsedRealtime();
         List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
@@ -138,7 +148,7 @@ public final class ExternalTelemetry {
         for(WarningEvent event:events)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
         // Withheld provider warnings must not resurface through the untyped legacy text.
         boolean provider=!nativeWarnings.carMessages(now,event->warningPreferences==null||warningPreferences.enabled(event)).isEmpty();
-        return new Pills(info,events,nativeEvents.isEmpty()&&!provider?legacyWarning:"",geometry);
+        return new Pills(info,events,nativeEvents.isEmpty()&&!provider?legacyWarning:"",geometry,speed);
     }
     private static void renderCar(){
         for(Object owner:new ArrayList<>(carRoots.keySet())){
@@ -148,7 +158,7 @@ public final class ExternalTelemetry {
             if(!modern()||app==null||!widgetEnabled(app)){removeCarWidget(owner);continue;}
             int[] bounds=carViewportSizes.get(owner);
             if(bounds!=null&&(bounds[2]<=bounds[0]||bounds[3]<=bounds[1])){removeCarWidget(owner);continue;}
-            Pills pills=pills();
+            Pills pills=pills(nativeSpeedShown(carSpeedBadge(root)));
             if(pills.empty()){removeCarWidget(owner);continue;}
             CompactSpeedView value=carWidgets.get(owner);if(value==null){value=new CompactSpeedView(root.getContext());carWidgets.put(owner,value);root.addView(value);}
             boolean dark=(root.getResources().getConfiguration().uiMode&android.content.res.Configuration.UI_MODE_NIGHT_MASK)==android.content.res.Configuration.UI_MODE_NIGHT_YES;
@@ -164,8 +174,10 @@ public final class ExternalTelemetry {
         int[] bounds=carViewportSizes.get(owner);
         android.graphics.Rect viewport=bounds==null?new android.graphics.Rect():new android.graphics.Rect(bounds[0],bounds[1],bounds[2],bounds[3]);
         if(!viewport.intersect(0,0,root.getWidth(),root.getHeight()))viewport.setEmpty();
-        android.graphics.Rect speed=state.speed.place(root,carSpeedBadge(root),viewport);
-        CompactSpeedView value=carWidgets.get(owner);if(value==null)return;
+        CompactSpeedView value=carWidgets.get(owner);
+        // While the speed pill shows, Maps' card keeps its layout slot but is not drawn.
+        android.graphics.Rect speed=state.speed.place(root,carSpeedBadge(root),viewport,value!=null&&value.showsSpeed());
+        if(value==null)return;
         int margin=Math.round(16*root.getResources().getDisplayMetrics().density);
         android.graphics.Rect area=carInfoArea(viewport,speed,occupiedCarView(root,"map_buttons_view_branding_watermark_container"),margin);
         int width=Math.max(0,area.width()-2*margin),height=Math.max(0,area.height()-2*margin);
@@ -233,7 +245,8 @@ public final class ExternalTelemetry {
         return largest;
     }
     private static View namedCarView(View view,String name){
-        if(view.getId()!=View.NO_ID){try{if(name.equals(view.getResources().getResourceEntryName(view.getId())))return view;}catch(android.content.res.Resources.NotFoundException ignored){}}
+        // Generated ids (package byte 0) have no entry name; asking would log an error every frame.
+        if(view.getId()!=View.NO_ID&&(view.getId()>>>24)!=0){try{if(name.equals(view.getResources().getResourceEntryName(view.getId())))return view;}catch(android.content.res.Resources.NotFoundException ignored){}}
         if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View found=namedCarView(group.getChildAt(i),name);if(found!=null)return found;}}
         return null;
     }
@@ -425,21 +438,52 @@ public final class ExternalTelemetry {
     static void pause(Activity activity){if(startup!=null)startup.onActivityPaused(activity);if(foreground.get()==activity){foreground.clear();removeWidget();}}
     private static void removeWidget(){
         if(widget!=null&&widget.getParent() instanceof ViewGroup)((ViewGroup)widget.getParent()).removeView(widget);
-        widget=null;
+        widget=null;concealPhoneCard(null);
+    }
+    /** Left edge that keeps a stack at (left,top,width,height) beside the visible map-button column, or [left]. */
+    static int phoneColumnClearance(ViewGroup content,int left,int top,int width,int height,int gap){
+        View tiles=Shapes.navTiles;
+        if(tiles==null||!tiles.isAttachedToWindow()||tiles.getVisibility()!=View.VISIBLE||tiles.getWidth()<=0)return left;
+        int[] at=new int[2],origin=new int[2];tiles.getLocationOnScreen(at);content.getLocationOnScreen(origin);
+        android.graphics.Rect column=new android.graphics.Rect(at[0]-origin[0],at[1]-origin[1],at[0]-origin[0]+tiles.getWidth(),at[1]-origin[1]+tiles.getHeight());
+        return android.graphics.Rect.intersects(column,new android.graphics.Rect(left,top,left+width,top+height))?column.right+gap:left;
+    }
+    private static WeakReference<View> concealedCard=new WeakReference<>(null);
+    private static float concealedAlpha=1f;
+    /** Hide [card] (Maps' phone speed card) under the speed pill; null shows the previous one again. */
+    private static void concealPhoneCard(View card){
+        View previous=concealedCard.get();
+        if(previous!=null&&previous!=card&&previous.getAlpha()==0f)previous.setAlpha(concealedAlpha);
+        if(card==null){concealedCard.clear();return;}
+        if(previous!=card){concealedAlpha=card.getAlpha();concealedCard=new WeakReference<>(card);}
+        else if(card.getAlpha()!=0f)concealedAlpha=card.getAlpha();
+        if(card.getAlpha()!=0f)card.setAlpha(0f);
     }
     private static void render(){
         renderCar();
         Activity activity=foreground.get();if(!modern()||activity==null||!widgetEnabled(activity)){removeWidget();return;}
-        Pills pills=pills();
+        ViewGroup content=activity.findViewById(android.R.id.content);if(!(content instanceof FrameLayout)){removeWidget();return;}
+        View badge=Shapes.findSpeedBadge(content);
+        View card=badge==null?null:Shapes.badgeCard(badge,content);
+        Pills pills=pills(nativeSpeedShown(card));
         if(pills.empty()){removeWidget();return;}
-        ViewGroup content=activity.findViewById(android.R.id.content);if(!(content instanceof FrameLayout))return;
         if(widget==null){widget=new CompactSpeedView(activity);widget.setOnClickListener(v->activity.startActivity(Screens.intent(activity,CustomizationActivity.class).putExtra(CustomizationActivity.EXTRA_PAGE,CustomizationActivity.PAGE_WAZE)));content.addView(widget);}
         float density=activity.getResources().getDisplayMetrics().density;
         FrameLayout.LayoutParams lp=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT,Gravity.BOTTOM|Gravity.START);
         lp.leftMargin=Math.round(16*density);lp.bottomMargin=Math.round(112*density);
-        View badge=Shapes.findSpeedBadge(content);
-        if(badge!=null){View card=Shapes.badgeCard(badge,content);int[] location=new int[2],origin=new int[2];card.getLocationOnScreen(location);content.getLocationOnScreen(origin);lp.leftMargin=Math.max(0,location[0]-origin[0]);lp.bottomMargin=Math.max(Math.round(24*density),content.getHeight()-(location[1]-origin[1])+Math.round(8*density));}
-        // The phone uses the same mockup-pack pills as Android Auto, stacked above Maps' own speed badge.
+        if(card!=null){
+            int[] location=new int[2],origin=new int[2];card.getLocationOnScreen(location);content.getLocationOnScreen(origin);
+            lp.leftMargin=Math.max(0,location[0]-origin[0]);
+            // The speed pill takes the card's place, bottom-aligned with it; warnings alone stack above it.
+            int bottom=content.getHeight()-(location[1]-origin[1]);
+            lp.bottomMargin=pills.speed?Math.max(0,bottom-card.getHeight()):Math.max(Math.round(24*density),bottom+Math.round(8*density));
+        }
+        // Warnings stack upward from the speed pill; keep the stack clear of the map-button column above it.
+        int stack=Math.round(nl.johninnl.navigation.alerts.CarWarningPills.height(pills.info.zoneActive,pills.events.size()+(pills.message.isEmpty()?0:1),pills.speed)*density);
+        int column=phoneColumnClearance(content,lp.leftMargin,content.getHeight()-lp.bottomMargin-stack,Math.round(nl.johninnl.navigation.alerts.CarWarningPills.WIDTH*density),stack,Math.round(8*density));
+        if(column>lp.leftMargin)lp.leftMargin=column;
+        concealPhoneCard(pills.speed?card:null);
+        // The phone uses the same mockup-pack pills as Android Auto, the speed pill in place of Maps' own badge.
         widget.setLayoutParams(lp);pills.bind(widget,badge==null?null:largestNativeText(badge),Shapes.navDarkScheme());widget.bringToFront();
     }
 }

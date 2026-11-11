@@ -36,7 +36,7 @@ Hiervoor is onze patch **Broadcast navigation data** in de bronapp nodig. Alleen
 
 [Waze of Flitsmeister koppelen aan Google Maps en Vela Maps](../guides/navigation-data.md){ .md-button .md-button--primary }
 
-Op Android Auto blijft het snelheids-/limietpaar apart van de compacte waarschuwingspil. Vóór een trajectcontrole toont de pil de afstand tot de ingang; binnen het traject toont deze het waargenomen gemiddelde met een nieuwe voortgangsbalk voor dat traject. Symbolen en getallen met eenheden vervangen lange waarschuwingsteksten; ontbrekende waarden blijven onbekend.
+Op de telefoon en op Android Auto neemt een snelheidspil de plaats in van de eigen snelheidskaart van Maps: het snelheidsbord naast je actuele snelheid. Waarschuwingspillen van hetzelfde formaat stapelen erboven. Vóór een trajectcontrole toont de pil de afstand tot de ingang met een lijn die volloopt terwijl je nadert; binnen het traject toont deze het waargenomen gemiddelde met een nieuwe voortgangsbalk voor dat traject. Symbolen en getallen met eenheden vervangen lange waarschuwingsteksten; ontbrekende waarden blijven onbekend (**—**). Op de telefoon schuift de stapel naast de kaartknoppen in plaats van ze te bedekken.
 
 ## Waar komen deze patches vandaan?
 
