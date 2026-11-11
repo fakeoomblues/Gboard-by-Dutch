@@ -387,15 +387,23 @@ val parakeetVoiceTyping = bytecodePatch(
                     setAttributeNS(ANDROID, "android:label", "@string/morphe_parakeet_title")
                 })
             }
-            for ((folder, title, summary) in listOf(
-                Triple("values", "Parakeet voice typing", "On-device speech recognition, Dutch and English without switching"),
-                Triple("values-nl", "Parakeet-spraakinvoer", "Spraakherkenning op de telefoon, Nederlands en Engels zonder wisselen"),
+            for ((folder, texts) in listOf(
+                "values" to listOf(
+                    "Parakeet voice typing", "On-device speech recognition, Dutch and English without switching",
+                    "Parakeet", "Voice typing on your phone with NVIDIA Parakeet, set up under Parakeet voice typing",
+                ),
+                "values-nl" to listOf(
+                    "Parakeet-spraakinvoer", "Spraakherkenning op de telefoon, Nederlands en Engels zonder wisselen",
+                    "Parakeet", "Spraakinvoer op je telefoon met NVIDIA Parakeet, in te stellen onder Parakeet-spraakinvoer",
+                ),
             )) {
                 val path = "res/$folder/strings.xml"
                 if (folder != "values" && !get(path).isFile) continue
                 document(path).use { strings ->
                     val root = strings.documentElement
-                    for ((key, value) in listOf("morphe_parakeet_title" to title, "morphe_parakeet_summary" to summary)) {
+                    val keys = listOf("morphe_parakeet_title", "morphe_parakeet_summary",
+                        "morphe_parakeet_selector_title", "morphe_parakeet_selector_summary")
+                    for ((key, value) in keys.zip(texts)) {
                         root.appendChild(strings.createElement("string").apply {
                             setAttribute("name", key)
                             textContent = value
@@ -421,6 +429,16 @@ val parakeetVoiceTyping = bytecodePatch(
                         })
                     }
                     root.insertBefore(preference, first.nextSibling)
+                    // With Rambler offered, Gboard's dictation choice is Rambler or Standard; Standard
+                    // voice typing is Parakeet once set up, so name the choice after it.
+                    if (screen.endsWith("setting_voice_unified.xml")) {
+                        val selectors = xml.getElementsByTagName("*").let { nodes -> (0 until nodes.length).map { nodes.item(it) as Element } }
+                            .filter { it.getAttributeNS(ANDROID, "fragment").endsWith(".TraditionalVoiceSettingsFragment") }
+                        val standard = selectors.singleOrNull()
+                            ?: throw PatchException("Expected one Standard voice typing choice, found ${selectors.size}")
+                        standard.setAttributeNS(ANDROID, "android:title", "@string/morphe_parakeet_selector_title")
+                        standard.setAttributeNS(ANDROID, "android:summary", "@string/morphe_parakeet_selector_summary")
+                    }
                 }
                 screens++
             }

@@ -11,7 +11,9 @@ Selecteer de arm64-v8a-APK van Google voor precies deze build (Android 12L+).
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Parakeet voice typing** | Aan | Voegt **Parakeet-spraakinvoer** toe aan Gboard-instellingen → Spraakinvoer. Zodra je daar een model downloadt en het aanzet, zet de microfoontoets spraak op de telefoon zelf om in tekst met NVIDIA Parakeet, in plaats van met de spraakherkenning van Google. Elke zin wordt herkend in de taal waarin je hem uitspreekt, dus Nederlands en Engels werken in hetzelfde dictaat zonder te wisselen. Zolang er geen model klaarstaat, gebruikt Gboard gewoon de spraakinvoer van Google. De gepatchte Gboard krijgt het Parakeet-app-icoon. |
-| **Rambler voice typing** | Uit | Voegt Rambler van Google toe aan Gboard-instellingen → Spraakinvoer, als keuze naast Standaard. Kies je **Rambler**, dan stuurt de microfoontoets je spraak naar de servers van Google. Die maken er afgewerkte tekst van en voeren gesproken bewerkingen uit, zoals "verwijder de laatste zin". Standaard blijft de standaardkeuze; met Parakeet voice typing erbij blijft Standaard Parakeet gebruiken. |
+| **Rambler voice typing** | Uit | Voegt Rambler van Google toe aan Gboard-instellingen → Spraakinvoer, als keuze naast Parakeet (de standaard-spraakinvoer van Gboard). Kies je **Rambler**, dan stuurt de microfoontoets je spraak naar de servers van Google. Die maken er afgewerkte tekst van en voeren gesproken bewerkingen uit, zoals "verwijder de laatste zin". Parakeet blijft de standaardkeuze. |
+| **Rambler personal dictionary** | Uit | Voegt de **lijst met spraakcorrecties** van Rambler toe aan Gboard-instellingen → Spraakinvoer → Rambler: namen en woorden die je toevoegt, importeert of exporteert. Rambler krijgt ze bij elk dictaat mee en schrijft ze daardoor goed. Werkt alleen samen met Rambler voice typing. |
+| **Rambler contact names** | Uit | Vult de lijst met spraakcorrecties met de namen uit je contacten. Namen die je verwijdert, komen niet terug; nieuwe contacten komen erbij zodra Rambler weer start. Werkt alleen samen met Rambler personal dictionary en toegang tot je contacten. |
 | **Change package name** | Aan | Installeert de gepatchte Gboard onder een eigen pakketnaam (standaard app.morphe.android.inputmethod.latin), zodat hij naast de standaard-Gboard staat die op de meeste telefoons is ingebouwd. Je standaard-Gboard, de instellingen en het woordenboek blijven onaangeroerd; kies het gepatchte toetsenbord in de toetsenbordinstellingen van Android. |
 | **Custom branding** | Uit | Verandert de appnaam in de launcher, de toetsenbordlijst van Android en de app-informatie, en het app-icoon (standaard Parakeet, het originele Gboard-icoon of vijf andere ontwerpen), zodat je het gepatchte toetsenbord makkelijk onderscheidt van de standaardversie. |
 | **Clipboard Enhancements** | Aan | Bepaalt hoe lang gekopieerde fragmenten bewaard blijven, hoeveel er worden bewaard, hoeveel voorbeeldregels een kaart toont en of kaarten een aftelling, aanmaaktijd, volgnummer en kolomaantal tonen. |
@@ -40,18 +42,27 @@ Tik op de microfoontoets en praat. De tekst verschijnt terwijl je praat en staat
 
 Rambler is de eigen spraakinvoer van Google met Gemini. Rambler schrijft niet elk woord letterlijk uit, maar maakt van wat je zegt afgewerkte tekst en voert gesproken correcties uit. Google zet Rambler alleen aan op een deel van de Pixel-telefoons; deze patch biedt het ook op andere telefoons aan.
 
-Open na het patchen Gboard-instellingen → Spraakinvoer en kies **Rambler** of **Standaard**. Standaard blijft gekozen tot je dat zelf verandert.
+Open na het patchen Gboard-instellingen → Spraakinvoer en kies **Rambler** of **Parakeet**. Parakeet is de standaard-spraakinvoer van Gboard, door de Parakeet-patch hernoemd, en blijft gekozen tot je dat zelf verandert. Zonder Parakeet-model gebruikt die keuze de standaardherkenning van Google.
 
 - Rambler heeft een internetverbinding nodig en stuurt je spraak naar Google. Google beperkt hoeveel je per dag kunt dicteren.
-- Parakeet regelt alleen de standaard-spraakinvoer. Kan Rambler Google niet bereiken, dan valt Gboard terug op zijn eigen standaardherkenning van Google, niet op Parakeet.
+- Parakeet regelt alleen de keuze Parakeet. Kan Rambler Google niet bereiken, dan valt Gboard terug op zijn eigen standaardherkenning van Google, niet op Parakeet.
 - Of de servers van Google Rambler accepteren op een telefoon buiten hun uitrol, beslist Google. Andere Gboard-mods melden dat het werkt; met deze patches is het nog niet op een telefoon bevestigd.
+
+### Persoonlijk woordenboek voor Rambler
+
+Met **Rambler personal dictionary** toont Gboard-instellingen → Spraakinvoer → Rambler de eigen **lijst met spraakcorrecties** van Gboard. Rambler krijgt deze woorden bij elk dictaat mee en schrijft namen en ongewone woorden daardoor goed.
+
+- Kies in het menu van de lijst **Importeren** om woorden toe te voegen: typ of plak namen, gescheiden door komma's of nieuwe regels. **Exporteren** deelt de lijst als tekst.
+- Selecteer woorden om ze te verwijderen, of maak de lijst leeg met **Alle gecorrigeerde woorden wissen**.
+- **Contactnamen** vraagt Gboard om toegang tot je contacten. Met **Rambler contact names** komen de namen uit je contacten daarna in de lijst zodra Rambler start, en nieuwe contacten later ook. Namen die je verwijdert, blijven weg. Contacten zonder naam, alleen een e-mailadres of een telefoonnummer worden overgeslagen.
+- Het eigen persoonlijke woordenboek van Gboard onder Instellingen → Woordenboek blijft alleen voor typen, zoals Gboard op dat scherm meldt.
 
 ## Voor gebruik
 
 - Een telefoon met 64-bit ARM is nodig. Houd tijdens het downloaden ongeveer 1,4 GB vrij; het geïnstalleerde model neemt ongeveer 650 MB in beslag.
 - Tijdens het dicteren gebruikt het model ongeveer 700 MB geheugen. Na vijf minuten zonder gebruik wordt het weer vrijgegeven, dus de eerste zin na een pauze duurt even iets langer.
 - Met Change package name aan is de gepatchte Gboard een aparte app met eigen instellingen: zet hem aan via Android-instellingen → Toetsenbord en kies hem daarna. Zonder die patch kan hij niet worden geïnstalleerd op telefoons waarop Gboard is ingebouwd. Functies die afhangen van de eigen app-handtekening van Google werken in de gepatchte versie mogelijk niet; Parakeet heeft ze niet nodig.
-- De tien Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
+- De twaalf Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
 - Gecontroleerd op een Android 14-emulator: de instelling, de download en Nederlands, Engels en gemengd Nederlands-Engels dicteren in een tekstveld, plus stilte en achtergrondgeluid zonder losse tekst. Dicteren op een telefoon is nog niet bevestigd.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md)

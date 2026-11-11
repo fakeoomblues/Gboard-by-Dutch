@@ -317,6 +317,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Custom branding | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler contact names | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler personal dictionary | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |
@@ -944,4 +946,4 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Allow all Android Auto hosts | Aan | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

@@ -5,6 +5,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -38,13 +39,20 @@ private val ramblerStandardDefault = bytecodePatch(
     compatibleWith(gboard)
 
     execute {
-        val method = onCreateExtension()
-        val index = firstRunRamblerDefaultIndex(method.implementation?.instructions?.toList().orEmpty())
-        val register = (method.implementation!!.instructions.elementAt(index) as OneRegisterInstruction).registerA
-        val mutable = mutableClassDefBy(method.definingClass).methods.single {
-            it.name == method.name && it.parameterTypes == method.parameterTypes && it.returnType == method.returnType
-        }
+        val mutable = mutableOnCreateExtension()
+        val instructions = mutable.implementation?.instructions?.toList().orEmpty()
+        val index = firstRunRamblerDefaultIndex(instructions)
+        val register = (instructions[index] as OneRegisterInstruction).registerA
         mutable.replaceInstruction(index, "const/4 v$register, 0x0")
+    }
+}
+
+/** Gboard's Rambler extension start-up method, as the patch context's mutable copy. */
+context(context: BytecodePatchContext)
+internal fun mutableOnCreateExtension(): MutableMethod {
+    val method = onCreateExtension()
+    return context.mutableClassDefBy(method.definingClass).methods.single {
+        it.name == method.name && it.parameterTypes == method.parameterTypes && it.returnType == method.returnType
     }
 }
 
@@ -95,9 +103,9 @@ internal fun firstRunRamblerDefaultIndex(instructions: List<Instruction>): Int {
 @Suppress("unused")
 val ramblerVoiceTyping = bytecodePatch(
     name = "Rambler voice typing",
-    description = "Adds Google's Rambler to Gboard settings → Voice typing, as a choice next to Standard. Rambler sends " +
-        "your speech to Google's servers, which turn it into finished text and carry out spoken edits. Standard stays " +
-        "the default and keeps using Parakeet voice typing when that patch is applied.",
+    description = "Adds Google's Rambler to Gboard settings → Voice typing, as a choice next to Standard voice typing, " +
+        "which Parakeet voice typing renames to Parakeet. Rambler sends your speech to Google's servers, which turn it " +
+        "into finished text and carry out spoken edits. Standard (Parakeet) stays the default.",
     default = false,
 ) {
     compatibleWith(gboard)
