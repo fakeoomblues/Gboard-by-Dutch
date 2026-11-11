@@ -16,6 +16,8 @@ public final class WarningEvent {
     public static final long STATE_WINDOW_MS = 30000;
     public final String providerSession, warningId, nativeType, nativeSubtype, category,
             message, languageTag, messageOrigin, relevance, relationship, supersedes, repeatReason;
+    /** The provider's own alert sound for this announcement, as an asset file name; empty when none. */
+    public final String nativeSound;
     public final long sequence, revision, announcementIndex, observedAt, issuedAt, announceUntil, stateUntil;
     public final Operation operation;
     public final Priority priority;
@@ -66,6 +68,8 @@ public final class WarningEvent {
         messageOrigin = text("message_origin", false);
         supersedes = text("supersedes", false);
         repeatReason = text("repeat_reason", false);
+        nativeSound = text("native_sound", false);
+        if (!nativeSound.isEmpty() && !ProviderSound.validName(nativeSound)) throw invalid("NATIVE_SOUND");
         if (utf8Bytes(message) > 4096) throw invalid("MESSAGE_SIZE");
         if (operation == Operation.ANNOUNCE && !hasText(message)) throw invalid("MESSAGE_REQUIRED");
         if (!message.isEmpty()) {

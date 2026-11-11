@@ -112,6 +112,47 @@ class NativeWarningHooks15Test {
         assertTrue("Invocation checks must not be vacuous",checkedInvokes>100)
     }
 
+    @Test fun aRepeatedCameraReturnsAfterOneMinuteAndSilentSignalsAreReported(){
+        val classes=original();val changed=roots(classes).mapValues{MutableMethod(it.value)}
+        bindFlitsmeisterNativeWarnings(changed)
+        val alert=changed.getValue("Lfc0;->J(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;Z)V").implementation!!.instructions.toList()
+        val window=alert.withIndex().single{(it.value as? ReferenceInstruction)?.reference?.toString()=="Lye7;->g(ILaf7;)J"}
+        val minutes=alert[window.index-1]
+        assertEquals(Opcode.CONST_4,minutes.opcode);assertEquals(1L,(minutes as WideLiteralInstruction).wideLiteral)
+        assertEquals("The window takes the one-minute literal",(minutes as OneRegisterInstruction).registerA,(window.value as FiveRegisterInstruction).registerC)
+        assertEquals("Laf7;->q:Laf7;",(alert[window.index-2] as ReferenceInstruction).reference.toString())
+        assertEquals(Opcode.MOVE_RESULT_WIDE,alert[window.index+1].opcode)
+        val regular=changed.getValue("Lfci;->l(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;ZZLjava/lang/String;Ls39;)V")
+        val silent=captures(regular,"noSound").single();val code=regular.implementation!!.instructions.toList()
+        assertEquals(Opcode.IF_EQZ,code[silent.index+1].opcode)
+        assertEquals("Lfci;->f()Lkdi;",(code[silent.index+2] as ReferenceInstruction).reference.toString())
+        val registers=silent.value as FiveRegisterInstruction
+        assertEquals(listOf(11,12),listOf(registers.registerC,registers.registerD))
+        val assembled=assemble(classes,changed)
+        assertEquals(1,captures(assembled.getValue("Lfci;->l(Lnl/flitsmeister/fmcore/data/model/reports/BaseReport;ZZLjava/lang/String;Ls39;)V"),"noSound").size)
+    }
+
+    @Test fun fmsChosenSoundAndItsOnScreenSetAreObservedAtTheirJoins(){
+        val classes=original()
+        val wanted=setOf("Ldci;->invoke(Ljava/lang/Object;)Ljava/lang/Object;","Lwd6;->z(Lma1;)V","Lwd6;->A(Lma1;)V")
+        val originals=classes.flatMap{it.methods}.filter{it.toString() in wanted}.associateBy{it.toString()};assertEquals(3,originals.size)
+        val changed=originals.mapValues{MutableMethod(it.value)}
+        bindFlitsmeisterSoundAndVisibility15(changed.getValue("Ldci;->invoke(Ljava/lang/Object;)Ljava/lang/Object;"),changed.getValue("Lwd6;->z(Lma1;)V"),changed.getValue("Lwd6;->A(Lma1;)V"))
+        val sound=changed.getValue("Ldci;->invoke(Ljava/lang/Object;)Ljava/lang/Object;")
+        val hook=captures(sound,"sound").single();val code=sound.implementation!!.instructions.toList()
+        assertEquals(listOf(2,3,6),(hook.value as FiveRegisterInstruction).let{listOf(it.registerC,it.registerD,it.registerE)})
+        assertEquals("Ldci;->q:Ls39;",(code[hook.index+1] as ReferenceInstruction).reference.toString())
+        assertEquals(0,captures(changed.getValue("Lwd6;->z(Lma1;)V"),"visible").single().index)
+        assertEquals(0,captures(changed.getValue("Lwd6;->A(Lma1;)V"),"hidden").single().index)
+        originals.forEach{(signature,method)->assertEquals("Preserve every original reference in $signature",nativeRefs(method),nativeRefs(changed.getValue(signature)))}
+        val pool=DexPool(Opcodes.forApi(29));val owners=changed.values.map{it.definingClass}.toSet()
+        classes.filter{it.type in owners}.forEach{cls->pool.internClass(ImmutableClassDef(cls.type,cls.accessFlags,cls.superclass,cls.interfaces,cls.sourceFile,cls.annotations,cls.fields,cls.methods.map{changed[it.toString()]?:it}))}
+        val store=MemoryDataStore();val bytes=try{pool.writeTo(store);store.data}finally{store.close()}
+        val assembled=DexBackedDexFile.fromInputStream(Opcodes.forApi(29),ByteArrayInputStream(bytes)).classes.flatMap{it.methods}.filter{it.toString() in wanted}
+        assertEquals(3,assembled.size)
+        assertThrows("A second application is refused",IllegalStateException::class.java){bindFlitsmeisterSoundAndVisibility15(sound,changed.getValue("Lwd6;->z(Lma1;)V"),changed.getValue("Lwd6;->A(Lma1;)V"))}
+    }
+
     @Test fun aChangedRootOrSecondApplicationFailsBeforeAnyOtherMethodIsMutated(){
         val originals=roots(original());val changed=originals.mapValues{MutableMethod(it.value)}
         val altered=changed.getValue("Lyy2;->a(Lbemobile/cits/sdk/core/model/response/generalObjects/BaseEvent;)V")

@@ -44,10 +44,12 @@ public final class WarningAudioOwner {
         public final long epoch,until;
         public final Mode mode;
         public final boolean ready;
+        /** The owner's own screen is on the car display. */
+        public final boolean projected;
         private final Client client;
-        private Lease(Client client,String token,long epoch,long until,Mode mode,boolean ready) {
+        private Lease(Client client,String token,long epoch,long until,Mode mode,boolean ready,boolean projected) {
             this.client=client;uid=client.uid;packageName=client.packageName;this.token=token;
-            this.epoch=epoch;this.until=until;this.mode=mode;this.ready=ready;
+            this.epoch=epoch;this.until=until;this.mode=mode;this.ready=ready;this.projected=projected;
         }
     }
     public static final class Claim {
@@ -110,7 +112,7 @@ public final class WarningAudioOwner {
     }
     public synchronized void legacyReceiverActive(boolean active) {
         if(active&&!legacy&&owner!=null){
-            owner=new Lease(owner.client,owner.token,owner.epoch,owner.until,owner.mode,false);
+            owner=new Lease(owner.client,owner.token,owner.epoch,owner.until,owner.mode,false,owner.projected);
             if(pending!=null)pendingRevoked=true;
         }
         legacy=active;
@@ -121,33 +123,42 @@ public final class WarningAudioOwner {
         return lease!=null && sameClient(lease.client,client);
     }
 
-    public synchronized Claim claim(int uid,Client client,Mode mode,boolean ready,long now) {
+    public synchronized Claim claim(int uid,Client client,Mode mode,boolean ready,long now) { return claim(uid,client,mode,ready,false,now); }
+    /**
+     * A receiver on the car display takes the speaker from a background owner, but only between
+     * announcements: never while a grant is pending, playing or uncertain. The previous owner then
+     * sees a new epoch and is revoked through the normal ownership-change path.
+     */
+    public synchronized Claim claim(int uid,Client client,Mode mode,boolean ready,boolean projected,long now) {
         checkClient(uid,client);advance(now);
         Code blocked=blocked();if(blocked!=null)return new Claim(blocked,null);
         Code usable=usable(client,mode,ready);
         if(usable!=Code.OK) {
             if(usable==Code.SPEAKER_UNAVAILABLE && owner!=null && sameClient(owner.client,client) && !consumerDead)
-                owner=new Lease(client,owner.token,owner.epoch,owner.until,mode,false);
+                owner=new Lease(client,owner.token,owner.epoch,owner.until,mode,false,projected);
             return new Claim(usable,null);
         }
-        if(owner!=null && (!sameClient(owner.client,client) || consumerDead))return new Claim(Code.BUSY,owner);
-        if(owner==null) {
+        boolean takeover=owner!=null && !sameClient(owner.client,client) && projected && (!owner.projected || consumerDead) && pending==null;
+        if(owner!=null && (!sameClient(owner.client,client) || consumerDead) && !takeover)return new Claim(Code.BUSY,owner);
+        if(owner==null || takeover) {
             if(epoch==Long.MAX_VALUE)return new Claim(Code.OVERFLOW,null);
-            owner=new Lease(client,UUID.randomUUID().toString(),++epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT);
-        }else owner=new Lease(client,owner.token,owner.epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT);
+            owner=new Lease(client,UUID.randomUUID().toString(),++epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT,projected);
+            consumerDead=false;
+        }else owner=new Lease(client,owner.token,owner.epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT,projected);
         return new Claim(Code.OK,owner);
     }
 
-    public synchronized Claim renew(int uid,Client client,String token,long epoch,Mode mode,boolean ready,long now) {
+    public synchronized Claim renew(int uid,Client client,String token,long epoch,Mode mode,boolean ready,long now) { return renew(uid,client,token,epoch,mode,ready,false,now); }
+    public synchronized Claim renew(int uid,Client client,String token,long epoch,Mode mode,boolean ready,boolean projected,long now) {
         checkClient(uid,client);advance(now);
         if(!owns(client,token,epoch))return new Claim(Code.STALE_OWNER,null);
         Code blocked=blocked();if(blocked!=null)return new Claim(blocked,null);
         Code usable=usable(client,mode,ready);
         if(usable!=Code.OK) {
-            owner=new Lease(client,owner.token,owner.epoch,owner.until,mode,false);
+            owner=new Lease(client,owner.token,owner.epoch,owner.until,mode,false,projected);
             return new Claim(usable,owner); // An unavailable adapter does not keep extending its lease.
         }
-        owner=new Lease(client,owner.token,owner.epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT);
+        owner=new Lease(client,owner.token,owner.epoch,now+OWNER_LEASE_MS,mode,ready || mode==Mode.SILENT,projected);
         return new Claim(Code.OK,owner);
     }
 
@@ -161,7 +172,7 @@ public final class WarningAudioOwner {
         advance(now);
         if(owner!=null && owner.uid==uid && owner.client.registration.equals(registration)) {
             consumerDead=true;
-            owner=new Lease(owner.client,owner.token,owner.epoch,owner.until,owner.mode,false);
+            owner=new Lease(owner.client,owner.token,owner.epoch,owner.until,owner.mode,false,owner.projected);
             if(pending!=null)pendingRevoked=true;
         }
     }

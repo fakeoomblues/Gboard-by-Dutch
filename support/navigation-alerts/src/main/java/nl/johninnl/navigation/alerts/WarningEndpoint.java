@@ -205,9 +205,10 @@ public final class WarningEndpoint implements Closeable {
                 if(!r.synced)return WarningWire.status("RESYNC_REQUIRED");
                 WarningAudioOwner.Mode mode=WarningAudioOwner.Mode.valueOf(WarningWire.text(q,"mode"));
                 boolean ready=WarningWire.flag(q,"ready");
+                boolean projected=q.containsKey("projected")&&WarningWire.flag(q,"projected");
                 WarningAudioOwner.Claim claim=code==WarningWire.CLAIM_AUDIO?
-                        audio.claim(uid,r.client,mode,ready,clock.getAsLong()):
-                        audio.renew(uid,r.client,WarningWire.text(q,"owner_token"),WarningWire.number(q,"owner_epoch"),mode,ready,clock.getAsLong());
+                        audio.claim(uid,r.client,mode,ready,projected,clock.getAsLong()):
+                        audio.renew(uid,r.client,WarningWire.text(q,"owner_token"),WarningWire.number(q,"owner_epoch"),mode,ready,projected,clock.getAsLong());
                 result=WarningWire.status(claim.code.name());
                 if(claim.lease!=null)result.putString("owner_package",claim.lease.packageName);
                 if(ownLease(r,claim.lease))result.putBundle("lease",lease(claim.lease));

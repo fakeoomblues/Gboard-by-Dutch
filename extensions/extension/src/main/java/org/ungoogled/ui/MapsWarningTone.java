@@ -14,21 +14,32 @@ final class MapsWarningTone {
     interface Track {
         int write(short[] pcm);void play();long head();void pause();void stop();void release();int state();int playState();
     }
-    interface Factory { Track create(short[] pcm,AudioAttributes attributes,Handler handler,Runnable marker); }
+    interface Factory {
+        Track create(short[] pcm,AudioAttributes attributes,Handler handler,Runnable marker);
+        /** Provider sounds carry their own decoded rate and channel count. */
+        default Track create(short[] pcm,int rate,int channels,AudioAttributes attributes,Handler handler,Runnable marker){return create(pcm,attributes,handler,marker);}
+    }
     static final int RATE=44100;
     private final Handler handler;
     private final LongSupplier clock;
     private final Factory factory;
     private Session active;
     private volatile boolean fault;
-    MapsWarningTone(Handler handler){this(handler,SystemClock::elapsedRealtime,NativeTrack::new);}
+    MapsWarningTone(Handler handler){this(handler,SystemClock::elapsedRealtime,new Factory(){
+        public Track create(short[] pcm,AudioAttributes attributes,Handler h,Runnable marker){return new NativeTrack(pcm,RATE,1,attributes,h,marker);}
+        public Track create(short[] pcm,int rate,int channels,AudioAttributes attributes,Handler h,Runnable marker){return new NativeTrack(pcm,rate,channels,attributes,h,marker);}
+    });}
     MapsWarningTone(Handler handler,LongSupplier clock,Factory factory){this.handler=handler;this.clock=clock;this.factory=factory;}
     boolean ready(){return !fault && AudioTrack.getMinBufferSize(RATE,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT)>0;}
-    void play(long deadline,AudioAttributes attributes,Events events) {
+    void play(long deadline,AudioAttributes attributes,Events events){play(null,RATE,1,deadline,attributes,events);}
+    /** Plays the provider's own decoded sound, or the receiver chime when [provider] is null. */
+    void play(short[] provider,int rate,int channels,long deadline,AudioAttributes attributes,Events events) {
         if(active!=null || fault || clock.getAsLong()>=deadline){events.finished(PlaybackGrant.Outcome.NOT_STARTED,true);return;}
-        short[] pcm=Chime.warningPcm();Session session=new Session(deadline,pcm.length,events);active=session;
+        short[] pcm=provider==null?Chime.warningPcm():provider;
+        if(channels<1 || pcm.length%channels!=0){events.finished(PlaybackGrant.Outcome.NOT_STARTED,true);return;}
+        Session session=new Session(deadline,pcm.length/channels,events);active=session;
         try {
-            session.track=factory.create(pcm,attributes,handler,()->poll(session));
+            session.track=provider==null?factory.create(pcm,attributes,handler,()->poll(session)):factory.create(pcm,rate,channels,attributes,handler,()->poll(session));
             if(session.track.write(pcm)!=pcm.length || session.track.state()!=AudioTrack.STATE_INITIALIZED)throw new IllegalStateException("TONE_BUFFER");
             session.playRequested=true;session.track.play();poll(session);
         }catch(RuntimeException failure){fault=true;terminate(session,PlaybackGrant.Outcome.FAILED);}
@@ -90,15 +101,15 @@ final class MapsWarningTone {
     }
     private static final class NativeTrack implements Track {
         final AudioTrack track;
-        NativeTrack(short[] pcm,AudioAttributes attributes,Handler handler,Runnable marker) {
+        NativeTrack(short[] pcm,int rate,int channels,AudioAttributes attributes,Handler handler,Runnable marker) {
             track=new AudioTrack.Builder().setAudioAttributes(attributes)
-                    .setAudioFormat(new AudioFormat.Builder().setSampleRate(RATE).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
+                    .setAudioFormat(new AudioFormat.Builder().setSampleRate(rate).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setChannelMask(channels==2?AudioFormat.CHANNEL_OUT_STEREO:AudioFormat.CHANNEL_OUT_MONO).build())
                     .setBufferSizeInBytes(pcm.length*2).setTransferMode(AudioTrack.MODE_STATIC).build();
             track.setPlaybackPositionUpdateListener(new AudioTrack.OnPlaybackPositionUpdateListener(){
                 @Override public void onMarkerReached(AudioTrack ignored){marker.run();}
                 @Override public void onPeriodicNotification(AudioTrack ignored){}
             },handler);
-            if(track.setNotificationMarkerPosition(pcm.length)!=AudioTrack.SUCCESS){track.release();throw new IllegalStateException("TONE_MARKER");}
+            if(track.setNotificationMarkerPosition(pcm.length/channels)!=AudioTrack.SUCCESS){track.release();throw new IllegalStateException("TONE_MARKER");}
         }
         public int write(short[] pcm){return track.write(pcm,0,pcm.length);}
         public void play(){track.play();}

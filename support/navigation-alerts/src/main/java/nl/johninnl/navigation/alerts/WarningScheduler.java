@@ -24,6 +24,8 @@ public final class WarningScheduler {
         /** Only positive, fresh evidence of passage; unknown GPS/relationship is not passage. */
         boolean passed(WarningEvent event,long now);
         default WarningPassage.Relevance relevance(WarningEvent event,long now){return passed(event,now)?WarningPassage.Relevance.PASSED:WarningPassage.Relevance.RELEVANT;}
+        /** True only while this receiver's own screen is the one on the car display. */
+        default boolean projected(){return false;}
     }
     public interface Speaker {
         void prepare(String language);boolean ready(String language,WarningAudioOwner.Mode mode);
@@ -44,6 +46,9 @@ public final class WarningScheduler {
         String identity();
         CompletableFuture<WarningConnection.Claim> claim(WarningAudioOwner.Mode mode,boolean ready);
         CompletableFuture<WarningConnection.Claim> renew(WarningConnection.Lease lease,WarningAudioOwner.Mode mode,boolean ready);
+        /** A receiver whose screen is on the car may take the speaker from a background receiver between announcements. */
+        default CompletableFuture<WarningConnection.Claim> claim(WarningAudioOwner.Mode mode,boolean ready,boolean projected){return claim(mode,ready);}
+        default CompletableFuture<WarningConnection.Claim> renew(WarningConnection.Lease lease,WarningAudioOwner.Mode mode,boolean ready,boolean projected){return renew(lease,mode,ready);}
         CompletableFuture<WarningConnection.Attempt> begin(WarningConnection.Lease lease,WarningEvent event,String nonce);
         CompletableFuture<WarningConnection.Attempt> decide(WarningConnection.Lease lease,WarningEvent event,String nonce,PlaybackGrant.Outcome decision);
         CompletableFuture<String> outcome(PlaybackGrant grant,PlaybackGrant.Outcome outcome,boolean quiescent);
@@ -251,7 +256,7 @@ public final class WarningScheduler {
         if(lease==null || now>=nextRenew || lease.mode!=mode) {
             if(now<nextClaim)return;
             Transport source=transport;long version=generation;controlBusy=true;nextClaim=now+250;
-            CompletableFuture<WarningConnection.Claim> request=lease==null?source.claim(mode,ready):source.renew(lease,mode,ready);
+            CompletableFuture<WarningConnection.Claim> request=lease==null?source.claim(mode,ready,policy.projected()):source.renew(lease,mode,ready,policy.projected());
             request.whenComplete((reply,error)->time.execute(()-> {
                 if(version!=generation || source!=transport)return;controlBusy=false;
                 if(error!=null){lease=null;setStatus("DELIVERY_INTERRUPTED");return;}

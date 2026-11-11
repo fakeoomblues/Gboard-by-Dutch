@@ -280,6 +280,7 @@ public final class ExternalTelemetry {
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
                 public boolean active(){return warningPreferences.reviewed()&&WarningProviders.supported(source)&&(navigating||carActive()||foreground.get()!=null||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
+                public boolean projected(){return carActive();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){return MapsGuidanceCoordinator.passed(event,fix,now);}
                 public nl.johninnl.navigation.alerts.WarningPassage.Relevance relevance(WarningEvent event,long now){return MapsGuidanceCoordinator.relevance(event,fix,now,navigating);}
@@ -297,7 +298,7 @@ public final class ExternalTelemetry {
             });
             semantic=new nl.johninnl.navigation.alerts.WarningSession(app,new nl.johninnl.navigation.alerts.WarningConnection.Listener(){
                 public void snapshot(nl.johninnl.navigation.alerts.WarningConnection.Snapshot value){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(current!=null&&current.consume(value.providerSession,()->{nativeWarnings.snapshot(value);scheduler.connected(current.connection(),value);}))semanticRender();}
-                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->{nativeWarnings.events(values);scheduler.events(current.connection(),values);}))semanticRender();}
+                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){for(WarningEvent value:values)if(value.operation==WarningEvent.Operation.ANNOUNCE)MapsWarningSpeaker.prefetch(app,value);nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->{nativeWarnings.events(values);scheduler.events(current.connection(),values);}))semanticRender();}
                 public void ownerRevoked(long epoch){scheduler.revoked(epoch);}
                 public void disconnected(String reason){nativeWarnings.clear();scheduler.disconnected();semanticRender();}
             });

@@ -77,6 +77,7 @@ public final class TelemetryRuntime {
             scheduler=new WarningScheduler(new WarningScheduler.Policy(){
                 public boolean active(){return warningPreferences.reviewed()&&WarningProviders.supported(selected())&&(nativeGuidance()||carActive()||SystemClock.elapsedRealtime()-phoneAt<=5000||startup!=null&&startup.activeSession());}
                 public WarningAudioOwner.Mode mode(){return warningPreferences.mode();}
+                public boolean projected(){return !visibleCarSessions.isEmpty();}
                 public boolean enabled(WarningEvent event){return warningPreferences.enabled(event);}
                 public boolean passed(WarningEvent event,long now){
                     Boolean guidance=sessionGuidanceState();
@@ -103,7 +104,7 @@ public final class TelemetryRuntime {
             });
             semantic=new nl.johninnl.navigation.alerts.WarningSession(app,new nl.johninnl.navigation.alerts.WarningConnection.Listener(){
                 public void snapshot(nl.johninnl.navigation.alerts.WarningConnection.Snapshot value){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(current!=null&&current.consume(value.providerSession,()->{nativeWarnings.snapshot(value);scheduler.connected(current.connection(),value);}))semanticRender();}
-                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->{nativeWarnings.events(values);scheduler.events(current.connection(),values);}))semanticRender();}
+                public void events(java.util.List<nl.johninnl.navigation.alerts.WarningEvent> values){for(nl.johninnl.navigation.alerts.WarningEvent value:values)if(value.operation==nl.johninnl.navigation.alerts.WarningEvent.Operation.ANNOUNCE)VelaWarningSpeaker.prefetch(app,value);nl.johninnl.navigation.alerts.WarningSession current=semantic;if(!values.isEmpty()&&current!=null&&current.consume(values.get(0).providerSession,()->{nativeWarnings.events(values);scheduler.events(current.connection(),values);}))semanticRender();}
                 public void ownerRevoked(long epoch){scheduler.revoked(epoch);}
                 public void disconnected(String reason){nativeWarnings.clear();scheduler.disconnected();semanticRender();}
             });

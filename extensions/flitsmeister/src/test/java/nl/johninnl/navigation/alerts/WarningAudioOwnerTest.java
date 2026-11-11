@@ -76,6 +76,27 @@ public class WarningAudioOwnerTest {
         assertEquals(WarningAudioOwner.Code.COVERAGE_INCOMPLETE,begin(a,c,l,20,NOW).code);
     }
 
+    @Test public void carScreenReceiverTakesTheSpeakerFromABackgroundOwnerOnlyBetweenAnnouncements() {
+        WarningCapabilities p=profile(true);MemoryStore store=new MemoryStore();WarningAudioOwner a=owner(store,journal(),p);
+        WarningAudioOwner.Client background=client(10001,p),car=client(10002,p),phone=client(10003,p);
+        WarningAudioOwner.Lease first=a.claim(background.uid,background,WarningAudioOwner.Mode.VOICE,true,false,NOW).lease;
+        assertFalse(first.projected);
+        assertEquals("A background claimant never takes over",WarningAudioOwner.Code.BUSY,a.claim(phone.uid,phone,WarningAudioOwner.Mode.VOICE,true,false,NOW).code);
+        // Mid-announcement the car screen waits for the grant to finish.
+        PlaybackGrant grant=begin(a,background,first,20,NOW).grant;assertNotNull(grant);
+        assertEquals(WarningAudioOwner.Code.BUSY,a.claim(car.uid,car,WarningAudioOwner.Mode.VOICE,true,true,NOW).code);
+        assertEquals(WarningAudioOwner.Code.OK,a.outcome(background.uid,background.consumerNonce,grant,PlaybackGrant.Outcome.STARTED,false,NOW));
+        assertEquals(WarningAudioOwner.Code.OK,a.outcome(background.uid,background.consumerNonce,grant,PlaybackGrant.Outcome.COMPLETED,true,NOW+100));
+        WarningAudioOwner.Claim taken=a.claim(car.uid,car,WarningAudioOwner.Mode.VOICE,true,true,NOW+200);
+        assertEquals(WarningAudioOwner.Code.OK,taken.code);assertTrue(taken.lease.projected);assertTrue(taken.lease.epoch>first.epoch);
+        assertEquals("The previous owner is fenced",WarningAudioOwner.Code.STALE_OWNER,a.renew(background.uid,background,first.token,first.epoch,WarningAudioOwner.Mode.VOICE,true,false,NOW+200).code);
+        assertEquals("Between car screens first-come stays",WarningAudioOwner.Code.BUSY,a.claim(background.uid,background,WarningAudioOwner.Mode.VOICE,true,true,NOW+200).code);
+        // Leaving the car screen gives up the priority on the next renewal.
+        WarningAudioOwner.Lease left=a.renew(car.uid,car,taken.lease.token,taken.lease.epoch,WarningAudioOwner.Mode.VOICE,true,false,NOW+300).lease;
+        assertFalse(left.projected);
+        assertEquals(WarningAudioOwner.Code.OK,a.claim(background.uid,background,WarningAudioOwner.Mode.VOICE,true,true,NOW+400).code);
+    }
+
     @Test public void leaseExpiryWithoutGrantAllowsFailoverAndFencesOldEpoch() {
         WarningCapabilities p=profile(true);WarningAudioOwner a=owner(new MemoryStore(),journal(),p);WarningAudioOwner.Client c=client(10001,p),d=client(10002,p);
         WarningAudioOwner.Lease first=a.claim(c.uid,c,WarningAudioOwner.Mode.VOICE,true,NOW).lease;

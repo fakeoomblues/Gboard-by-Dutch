@@ -261,11 +261,13 @@ public final class WarningConnection implements Closeable,WarningScheduler.Trans
                 || payload.revision<authority.revision || payload.operation==WarningEvent.Operation.CLEAR)throw new IllegalArgumentException("ANNOUNCEMENT_PAYLOAD");
         return new Candidate(authority,payload);
     }
-    public CompletableFuture<Claim> claim(WarningAudioOwner.Mode mode,boolean ready) {
-        return submit(()-> { Bundle q=request();q.putString("mode",mode.name());q.putBoolean("ready",ready);Claim reply=new Claim(transact(WarningWire.CLAIM_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
+    public CompletableFuture<Claim> claim(WarningAudioOwner.Mode mode,boolean ready) { return claim(mode,ready,false); }
+    public CompletableFuture<Claim> renew(Lease lease,WarningAudioOwner.Mode mode,boolean ready) { return renew(lease,mode,ready,false); }
+    public CompletableFuture<Claim> claim(WarningAudioOwner.Mode mode,boolean ready,boolean projected) {
+        return submit(()-> { Bundle q=request();q.putString("mode",mode.name());q.putBoolean("ready",ready);q.putBoolean("projected",projected);Claim reply=new Claim(transact(WarningWire.CLAIM_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
     }
-    public CompletableFuture<Claim> renew(Lease lease,WarningAudioOwner.Mode mode,boolean ready) {
-        return submit(()-> { Bundle q=owned(lease);q.putString("mode",mode.name());q.putBoolean("ready",ready);Claim reply=new Claim(transact(WarningWire.RENEW_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
+    public CompletableFuture<Claim> renew(Lease lease,WarningAudioOwner.Mode mode,boolean ready,boolean projected) {
+        return submit(()-> { Bundle q=owned(lease);q.putString("mode",mode.name());q.putBoolean("ready",ready);q.putBoolean("projected",projected);Claim reply=new Claim(transact(WarningWire.RENEW_AUDIO,q));if(reply.lease!=null)knownLease=reply.lease;return reply; });
     }
     public CompletableFuture<Attempt> begin(Lease lease,WarningEvent event,String attemptNonce) { return attempt(lease,event,attemptNonce,null); }
     public CompletableFuture<Attempt> decide(Lease lease,WarningEvent event,String attemptNonce,PlaybackGrant.Outcome decision) { return attempt(lease,event,attemptNonce,decision); }

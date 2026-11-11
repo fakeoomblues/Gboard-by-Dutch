@@ -46,6 +46,22 @@ public class MapsWarningToneTest {
     @Test public void missingPlaybackHeadExpiresWithoutInventingCompletion(){
         play();tick(5001);assertEquals(Collections.singletonList("NOT_STARTED:true"),outcomes);assertEquals(1,track.releases);
     }
+    @Test public void providerSoundPlaysAtItsOwnRateAndChannelsAndCompletesOnFrames(){
+        int[] format=new int[2];
+        tone=new MapsWarningTone(new Handler(Looper.getMainLooper()),SystemClock::elapsedRealtime,new MapsWarningTone.Factory(){
+            public MapsWarningTone.Track create(short[] pcm,AudioAttributes attributes,Handler handler,Runnable marker){throw new AssertionError("Provider sound must not use the chime factory");}
+            public MapsWarningTone.Track create(short[] pcm,int rate,int channels,AudioAttributes attributes,Handler handler,Runnable marker){format[0]=rate;format[1]=channels;track.frames=pcm.length/channels;return track;}
+        });
+        short[] stereo=new short[4800];
+        tone.play(stereo,48000,2,deadline,new AudioAttributes.Builder().build(),new MapsWarningTone.Events(){public void started(){outcomes.add("STARTED");}public void finished(PlaybackGrant.Outcome outcome,boolean quiescent){outcomes.add(outcome+":"+quiescent);}});
+        assertArrayEquals(new int[]{48000,2},format);assertEquals(2400,track.frames);
+        track.head=2399;tick(10);assertEquals(Collections.singletonList("STARTED"),outcomes);
+        track.head=2400;tick(10);assertEquals(Arrays.asList("STARTED","COMPLETED:true"),outcomes);
+    }
+    @Test public void malformedProviderSoundNeverPlays(){
+        tone.play(new short[3],48000,2,deadline,new AudioAttributes.Builder().build(),new MapsWarningTone.Events(){public void started(){outcomes.add("STARTED");}public void finished(PlaybackGrant.Outcome outcome,boolean quiescent){outcomes.add(outcome+":"+quiescent);}});
+        assertEquals(Collections.singletonList("NOT_STARTED:true"),outcomes);assertEquals(0,track.plays);
+    }
     private static final class FakeTrack implements MapsWarningTone.Track {
         int state=AudioTrack.STATE_NO_STATIC_DATA,playState=AudioTrack.PLAYSTATE_STOPPED,frames,plays,stops,releases,releaseFailures;long head;boolean partial;
         public int write(short[] pcm){state=AudioTrack.STATE_INITIALIZED;return partial?pcm.length/2:pcm.length;}

@@ -38,6 +38,8 @@ This uses our **Broadcast navigation data** patch in the provider app. Installin
 
 On the phone and on Android Auto, a speed pill takes the place of Maps' own speed card: the speed-limit sign beside your current speed. Warning pills of the same size stack above it. Before an average-speed zone the pill shows entry distance with a line that fills as you approach; inside it shows the observed average with a fresh section-progress bar. Icons and numeric units replace long warning labels; missing values stay unknown (**—**). On the phone the stack moves beside the map buttons rather than cover them.
 
+With Flitsmeister, the pills follow what Flitsmeister itself shows, so a camera it shows again also comes back in Maps even when Flitsmeister does not announce it a second time. Flitsmeister's own alert sound (camera, average-speed zone, traffic jam or incident signal) plays before the spoken warning, or replaces the chime when warnings are set to tone. When Maps and Vela both receive warnings, the app on the car screen gets the speaker between announcements.
+
 ## Where these patches come from
 
 The 30 original Maps controls come from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches) by bearinmindcat. We adapted them for Maps 26.44.06.1006895251, extended their **Waze alerts** (now **Receive alerts from a third-party application**) with our shared navigation-data integration, added light/dark launcher choices to **Change app name**, and added **Native navigation for any Android Auto host**. The inherited display, offline-map, privacy and other controls keep their upstream credit.

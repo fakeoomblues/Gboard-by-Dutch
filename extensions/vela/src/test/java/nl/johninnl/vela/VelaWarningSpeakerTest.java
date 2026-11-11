@@ -94,6 +94,24 @@ public class VelaWarningSpeakerTest {
     @Test public void nativeStopAfterSubmissionAndLateTerminalCannotReleaseANewerRoute(){WarningEvent e=event();speaker.speak(e,grant(e),results);VelaWarningSpeaker.dispatch(guide.closure);String id=engine.id;VelaWarningSpeaker.nativeStop(guide);guide.s=1;VelaWarningSpeaker.utteranceStopped(new NativeListener(guide),id,false);idle();assertEquals(0,guide.releases);assertEquals(1,guide.s);assertEquals(Arrays.asList(false,true),results.quiet);}
     @Test public void submissionFailureAndModeCapsAreTruthful(){engine.result=TextToSpeech.ERROR;WarningEvent e=event();speaker.speak(e,grant(e),results);VelaWarningSpeaker.dispatch(guide.closure);idle();assertEquals(Collections.singletonList(PlaybackGrant.Outcome.FAILED),results.outcomes);assertEquals(Collections.singletonList(true),results.quiet);guide.n=true;guide.o=true;assertEquals(WarningAudioOwner.Mode.TONE,speaker.effectiveMode(WarningAudioOwner.Mode.VOICE));assertTrue(speaker.isReady("nl",WarningAudioOwner.Mode.TONE));guide.o=false;assertEquals(WarningAudioOwner.Mode.SILENT,speaker.effectiveMode(WarningAudioOwner.Mode.VOICE));guide.n=false;guide.m=true;assertFalse(speaker.isReady("nl"));}
     @Test public void nativeRouteArrivalCancelsOnlyOwnedToneAndBalancesNativeFocus(){guide.n=true;guide.o=true;WarningEvent base=event();Bundle normal=WarningCodec.encode(base);normal.putInt("priority",1);WarningEvent e=WarningCodec.decode(normal,SystemClock.elapsedRealtime());PlaybackGrant g=grant(e,WarningAudioOwner.Mode.TONE);assertTrue(speaker.speak(e,g,results));VelaWarningSpeaker.nativeSpeech(guide);idle();assertEquals(PlaybackGrant.Outcome.CANCELLED,results.outcomes.get(0));assertTrue(results.quiet.get(0));assertEquals(1,guide.releases);assertEquals(0,engine.calls);}
+    @Test public void providerSoundPlaysFirstThenTheSameAttemptSpeaksItsText(){
+        nl.johninnl.navigation.alerts.ProviderSound.remember(nl.johninnl.navigation.alerts.ProviderSound.FLITSMEISTER,"flitser.m4a",new nl.johninnl.navigation.alerts.ProviderSound.Pcm(new short[2205],22050,1));
+        Bundle encoded=WarningCodec.encode(event());encoded.putString("native_sound","flitser.m4a");WarningEvent e=WarningCodec.decode(encoded,SystemClock.elapsedRealtime());
+        PlaybackGrant g=grant(e);assertTrue(speaker.speak(e,g,results));
+        assertNull("Speech waits for the provider sound",guide.closure);assertEquals(1,outputs.jobs.size());
+        outputs.next();idle();
+        assertNotNull("The same attempt continues with the spoken text",guide.closure);
+        VelaWarningSpeaker.dispatch(guide.closure);assertEquals(1,engine.calls);assertEquals(e.message,engine.text);
+        assertTrue(results.outcomes.isEmpty());
+    }
+    @Test public void toneModeUsesTheProviderSoundInsteadOfTheChimeAndNeverSpeaks(){
+        guide.n=true;guide.o=true;
+        nl.johninnl.navigation.alerts.ProviderSound.remember(nl.johninnl.navigation.alerts.ProviderSound.FLITSMEISTER,"trajectcontrole_start.m4a",new nl.johninnl.navigation.alerts.ProviderSound.Pcm(new short[2205],22050,1));
+        Bundle encoded=WarningCodec.encode(event());encoded.putString("native_sound","trajectcontrole_start.m4a");WarningEvent e=WarningCodec.decode(encoded,SystemClock.elapsedRealtime());
+        PlaybackGrant g=grant(e,WarningAudioOwner.Mode.TONE);assertTrue(speaker.speak(e,g,results));
+        outputs.next();idle();
+        assertEquals(1,results.outcomes.size());assertNull(guide.closure);assertEquals(0,engine.calls);
+    }
     @Test public void staticToneMustWriteItsInitialBufferBeforeRequiringInitializedState(){StaticTrack track=new StaticTrack();assertEquals(AudioTrack.STATE_NO_STATIC_DATA,track.getState());assertTrue(VelaWarningSpeaker.loadTone(track,VelaWarningSpeaker.tonePcm()));assertEquals(1,track.writes);assertEquals(AudioTrack.STATE_INITIALIZED,track.getState());track.release();}
     @Test public void incompleteStaticToneWriteOrInvalidTrackCannotReachPlayback(){for(int scenario=0;scenario<3;scenario++){StaticTrack track=new StaticTrack();if(scenario==0)track.partial=true;else if(scenario==1)track.badAfter=true;else track.state=AudioTrack.STATE_UNINITIALIZED;assertFalse(VelaWarningSpeaker.loadTone(track,VelaWarningSpeaker.tonePcm()));assertEquals(scenario==2?0:1,track.writes);track.release();}}
     @Test public void toneRetainsNativePcmEnvelopeAndGap(){short[] pcm=VelaWarningSpeaker.tonePcm();int note=22050*110/1000;assertEquals(note*2+661,pcm.length);assertEquals(0,pcm[0]);assertEquals(0,pcm[note-1]);for(int i=note;i<note+661;i++)assertEquals(0,pcm[i]);assertArrayEquals(Arrays.copyOfRange(pcm,0,note),Arrays.copyOfRange(pcm,note+661,pcm.length));int peak=0;for(short sample:pcm)peak=Math.max(peak,Math.abs((int)sample));assertTrue(peak>9000 && peak<=9500);}

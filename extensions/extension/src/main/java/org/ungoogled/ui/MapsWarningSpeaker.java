@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import nl.johninnl.navigation.alerts.PlaybackGrant;
+import nl.johninnl.navigation.alerts.ProviderSound;
 import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.WarningEvent;
 
@@ -29,6 +30,14 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private final MapsGuidanceCoordinator guidance;
     private final AudioManager audio;
     private final MapsWarningTone tone=new MapsWarningTone(main);
+    private static final java.util.concurrent.ExecutorService SOUNDS=java.util.concurrent.Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"maps-warning-sound");t.setDaemon(true);return t;});
+    /** Decode the provider's alert sound when its announcement arrives, before a grant needs it. */
+    static void prefetch(Context context,WarningEvent event) {
+        String name=ProviderSound.name(event);
+        if(context==null || name==null || ProviderSound.cached(ProviderSound.FLITSMEISTER,name)!=null)return;
+        Context app=context.getApplicationContext();
+        SOUNDS.execute(()->ProviderSound.load(app,ProviderSound.FLITSMEISTER,name));
+    }
     private TextToSpeech tts;
     private AudioFocusRequest focus;
     private volatile boolean initialized,closed;
@@ -102,6 +111,15 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private void begin(Attempt attempt) {
         if(active!=attempt)return;
         if(closed || attempt.cancelled || !isReady(attempt.payload.languageTag,attempt.grant.mode) || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+        // The provider's own alert sound is decoded once off the main thread, then reused.
+        String sound=ProviderSound.name(attempt.payload);
+        if(sound!=null && !attempt.soundResolved) {
+            attempt.soundResolved=true;
+            if(ProviderSound.cached(ProviderSound.FLITSMEISTER,sound)==null) {
+                SOUNDS.execute(()->{ProviderSound.load(app,ProviderSound.FLITSMEISTER,sound);main.post(()->begin(attempt));});return;
+            }
+        }
+        attempt.sound=sound==null?null:ProviderSound.cached(ProviderSound.FLITSMEISTER,sound);
         guidance.acquire(attempt.id,attempt.payload.priority,attempt.until,(quiet,reason)-> {
             if(active!=attempt)return;
             if(!quiet || closed || attempt.cancelled || !isReady(attempt.payload.languageTag,attempt.grant.mode) || SystemClock.elapsedRealtime()>=attempt.until) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
@@ -109,18 +127,38 @@ public final class MapsWarningSpeaker implements AutoCloseable {
             focus=new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT).setAudioAttributes(attempt.grant.mode==WarningAudioOwner.Mode.TONE?toneAttributes:attributes).setAcceptsDelayedFocusGain(false)
                     .setOnAudioFocusChangeListener(change->{if(change!=AudioManager.AUDIOFOCUS_GAIN && active==attempt)cancel(attempt.grant);},main).build();
             if(audio.requestAudioFocus(focus)!=AudioManager.AUDIOFOCUS_REQUEST_GRANTED) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+            ProviderSound.Pcm provider=attempt.sound;
             if(attempt.grant.mode==WarningAudioOwner.Mode.TONE) {
-                attempt.submitted=true;tone.play(attempt.until,toneAttributes,new MapsWarningTone.Events(){
+                // The provider's sound replaces the receiver chime when it is available.
+                attempt.submitted=true;tone.play(provider==null?null:provider.samples,provider==null?MapsWarningTone.RATE:provider.rate,provider==null?1:provider.channels,attempt.until,toneAttributes,new MapsWarningTone.Events(){
                     public void started(){if(active==attempt&&!attempt.started){attempt.started=true;attempt.listener.started(attempt.grant);}}
                     public void finished(PlaybackGrant.Outcome outcome,boolean quiescent){if(active!=attempt)return;if(quiescent)finish(attempt,outcome,true);else if(!attempt.uncertain){attempt.uncertain=true;attempt.listener.finished(attempt.grant,outcome,false);}}
                 });return;
             }
-            if(!selectVoice(attempt.payload.languageTag)) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
-            int result=tts.speak(attempt.payload.message,TextToSpeech.QUEUE_ADD,new Bundle(),attempt.id);
-            if(result!=TextToSpeech.SUCCESS) { finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return; }
-            attempt.submitted=true;
-            main.postDelayed(()->{if(active==attempt && !attempt.started)cancel(attempt.grant);},Math.max(1,attempt.until-SystemClock.elapsedRealtime()));
+            if(provider!=null) {
+                // Voice: the provider's sound first, then the spoken text, under one grant and focus.
+                attempt.submitted=true;attempt.preroll=true;
+                tone.play(provider.samples,provider.rate,provider.channels,attempt.until,toneAttributes,new MapsWarningTone.Events(){
+                    public void started(){if(active==attempt&&!attempt.started){attempt.started=true;attempt.listener.started(attempt.grant);}}
+                    public void finished(PlaybackGrant.Outcome outcome,boolean quiescent){
+                        if(active!=attempt)return;
+                        if(!quiescent){if(!attempt.uncertain){attempt.uncertain=true;attempt.listener.finished(attempt.grant,outcome,false);}return;}
+                        attempt.preroll=false;
+                        if(attempt.cancelled || closed){finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);return;}
+                        speakText(attempt);
+                    }
+                });return;
+            }
+            speakText(attempt);
         });
+    }
+    private void speakText(Attempt attempt) {
+        if(active!=attempt)return;
+        if(!selectVoice(attempt.payload.languageTag)) { finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+        int result=tts.speak(attempt.payload.message,TextToSpeech.QUEUE_ADD,new Bundle(),attempt.id);
+        if(result!=TextToSpeech.SUCCESS) { finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:PlaybackGrant.Outcome.NOT_STARTED,true);return; }
+        attempt.submitted=true;
+        main.postDelayed(()->{if(active==attempt && !attempt.started)cancel(attempt.grant);},Math.max(1,attempt.until-SystemClock.elapsedRealtime()));
     }
     private final UtteranceProgressListener progress=new UtteranceProgressListener() {
         @Override public void onStart(String id){main.post(()-> {
@@ -150,7 +188,7 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     }
     private void stop(Attempt attempt) {
         if(active!=attempt)return;
-        if(attempt.grant.mode==WarningAudioOwner.Mode.TONE){tone.cancel();return;}
+        if(attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.preroll){tone.cancel();return;}
         try { tts.stop(); }catch(RuntimeException ignored) { }
         // stop() success is an enqueue/engine API result; only the utterance callback proves quiescence.
         main.postDelayed(()-> {
@@ -175,7 +213,8 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     }
     private static final class Attempt {
         final WarningEvent payload;final PlaybackGrant grant;final long until;final Listener listener;final String id="morphe-warning-"+UUID.randomUUID();
-        boolean submitted,started,cancelled,uncertain,ambiguousHistory;
+        boolean submitted,started,cancelled,uncertain,ambiguousHistory,soundResolved,preroll;
+        ProviderSound.Pcm sound;
         Attempt(WarningEvent payload,PlaybackGrant grant,long until,Listener listener){this.payload=payload;this.grant=grant;this.until=until;this.listener=listener;}
     }
 }

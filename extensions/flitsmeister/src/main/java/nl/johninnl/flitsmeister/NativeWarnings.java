@@ -59,9 +59,20 @@ public final class NativeWarnings {
     // announcements distinct for this process/session without retaining expired models.
     private static long announcementCounter;
     private static final class Record {
-        Bundle fields; long revision=1,index,emittedAt; boolean listed;
+        Bundle fields; long revision=1,index,emittedAt; boolean listed,visible;
         java.lang.ref.WeakReference<Object> report;
     }
+    /** An accepted regular announcement waiting for FM to choose its alert sound (asynchronous BLE callback). */
+    private static final class AwaitingSound {
+        final Object report;final String phase;final Runnable emit;
+        AwaitingSound(Object report,String phase,Runnable emit){this.report=report;this.phase=phase;this.emit=emit;}
+    }
+    private static final List<AwaitingSound> awaitingSound=new ArrayList<>();
+    /** Upper bound for FM's own sound choice; FM Dot and sound-pack paths never report one. */
+    static final long SOUND_WAIT_MS=400;
+    private static boolean awaitSound=true;
+    private static String chosenSound;
+    private static android.os.Handler main;
     /** Listed state is renewed well inside its 30s display window while FM keeps the report alerted. */
     static final long STATE_RENEW_MS=10000,DISTANCE_RENEW_MS=3000;static final int DISTANCE_STEP_M=5;
     /** Patch-time original-DEX guards and the matching capture audit pin each native profile. */
@@ -202,7 +213,57 @@ public final class NativeWarnings {
         Object notification=optional(report,"getNotification");if(notification!=null)citsAliases.put(notification,fact);
     });}
     public static void regular(Object sound,Object report,boolean entering,boolean localMuteBypass,String text,Object completion) {
-        capture(()->announce(report,null,text,entering?"enter":"exit",localMuteBypass,"regular",NativeWarningText.context(app,sound)));
+        capture(()->{
+            if(!captureEnabled||report==null)return;
+            String phase=entering?"enter":"exit";Context context=NativeWarningText.context(app,sound);
+            Runnable emit=()->announce(report,null,text,phase,localMuteBypass,"regular",context);
+            AwaitingSound stale=takeAwaiting(report,phase);if(stale!=null)stale.emit.run();
+            if(!awaitSound||awaitingSound.size()>=MAX_WARNINGS){emit.run();return;}
+            AwaitingSound waiting=new AwaitingSound(report,phase,emit);awaitingSound.add(waiting);
+            if(main==null)main=new android.os.Handler(android.os.Looper.getMainLooper());
+            main.postDelayed(()->capture(()->{if(awaitingSound.remove(waiting))waiting.emit.run();}),SOUND_WAIT_MS);
+        });
+    }
+    /** FM's own per-type alert sound for this announcement; empty when its settings chose silence. */
+    public static void sound(Object report,boolean entering,String file){capture(()->{
+        AwaitingSound waiting=takeAwaiting(report,entering?"enter":"exit");if(waiting==null)return;
+        chosenSound=nl.johninnl.navigation.alerts.ProviderSound.validName(file)?file:null;
+        try{waiting.emit.run();}finally{chosenSound=null;}
+    });}
+    /** FM's regular path chose no alert sound (its per-type sound preference is off). */
+    public static void noSound(Object report,boolean entering){sound(report,entering,null);}
+    private static AwaitingSound takeAwaiting(Object report,String phase){
+        for(java.util.Iterator<AwaitingSound> it=awaitingSound.iterator();it.hasNext();){AwaitingSound value=it.next();
+            if(value.report==report&&value.phase.equals(phase)){it.remove();return value;}}
+        return null;
+    }
+    /**
+     * FM's own on-screen warning set. Its announcement rules (repeat window, spam filter) do not
+     * gate what it shows, so the pill follows this set while speech stays with the signal path.
+     */
+    public static void visible(Object candidate){capture(()->{
+        if(!captureEnabled||app==null)return;
+        Object report=candidateReport(candidate);if(report==null||isFamily(report,"AvgSpeedCheck")||isFamily(report,"TrafficJam"))return;
+        Bundle fields=describe(report);if("display_only".equals(fields.getString("category")))return;
+        String id=identity(report,fields);Record old=records.get(id);
+        if(old!=null&&!"CLEAR".equals(old.fields.getString("operation"))&&!"exit".equals(old.fields.getString("phase"))){
+            old.visible=true;old.report=new java.lang.ref.WeakReference<>(report);return;
+        }
+        NativeWarningText.Text text=NativeWarningText.resolve(app,report,"active",null);fields.putString("language_tag",text.language);
+        aheadDistance(fields,report,SystemClock.elapsedRealtime());
+        update(id,fields,text.value,text.origin,"active",false,false,"visible_state",false);
+        Record shown=records.get(id);if(shown!=null){shown.visible=true;shown.report=new java.lang.ref.WeakReference<>(report);}
+    });}
+    public static void hidden(Object candidate){capture(()->{
+        Object report=candidateReport(candidate);if(report==null)return;
+        String id=identity(report,describe(report));Record record=records.get(id);if(record==null)return;
+        record.visible=false;
+        if(!record.listed&&"visible_state".equals(record.fields.getString("capture_path")))clear(id);
+    });}
+    private static Object candidateReport(Object candidate){
+        if(candidate==null)return null;
+        try{Object report=candidate.getClass().getField("a").get(candidate);return report!=null&&isFamily(report,"BaseReport")?report:null;}
+        catch(ReflectiveOperationException|RuntimeException unavailable){return null;}
     }
     public static void early(Object sound,Object type,Object report,Object notification,String text,boolean localMuteBypass,Object completion) {
         capture(()->{
@@ -361,7 +422,7 @@ public final class NativeWarnings {
         long now=SystemClock.elapsedRealtime();List<?> entries=aheadEntries();
         for(Map.Entry<String,Record> item:new ArrayList<>(records.entrySet())){
             Record record=item.getValue();Bundle old=record.fields;
-            if(!record.listed||old==null||"CLEAR".equals(old.getString("operation"))||"exit".equals(old.getString("phase")))continue;
+            if(!(record.listed||record.visible)||old==null||"CLEAR".equals(old.getString("operation"))||"exit".equals(old.getString("phase")))continue;
             Object report=record.report==null?null:record.report.get();if(report==null)continue;
             Bundle fields=new Bundle(old);
             if(!"native_lookahead".equals(fields.getString("distance_origin"))&&fields.containsKey("distance_m"))continue;
@@ -372,7 +433,8 @@ public final class NativeWarnings {
             long age=now-record.emittedAt;
             if(!(moved||(distance!=null)!=had||distance!=null&&age>=DISTANCE_RENEW_MS||age>=STATE_RENEW_MS))continue;
             for(String key:new String[]{"protocol_version","provider_session","sequence","issued_elapsed_ms","announce_until_elapsed_ms"})fields.remove(key);
-            update(item.getKey(),fields,fields.getString("message",""),fields.getString("message_origin","native_resource"),fields.getString("phase","active"),false,false,"report_state",true);
+            String path="visible_state".equals(old.getString("capture_path"))?"visible_state":"report_state";
+            update(item.getKey(),fields,fields.getString("message",""),fields.getString("message_origin","native_resource"),fields.getString("phase","active"),false,false,path,record.listed);
         }
     });}
     private static void aheadDistance(Bundle fields,Object report,long now){
@@ -401,7 +463,7 @@ public final class NativeWarnings {
             return value instanceof List?(List<?>)value:null;
         }catch(ReflectiveOperationException|RuntimeException unavailable){return null;}
     }
-    public static void stopped(){capture(()->{for(String id:new ArrayList<>(records.keySet()))clear(id);captureEnabled=false;anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();});}
+    public static void stopped(){capture(()->{for(AwaitingSound waiting:new ArrayList<>(awaitingSound))waiting.emit.run();awaitingSound.clear();for(String id:new ArrayList<>(records.keySet()))clear(id);captureEnabled=false;anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();});}
     private static synchronized void capture(Runnable action){
         try{
             long now=SystemClock.elapsedRealtime();
@@ -422,6 +484,7 @@ public final class NativeWarnings {
         SourceFact fact=citsAliases.get(report);
         if(fact!=null&&!fact.selectedLanguage.equals("und")&&text.value.equals(NativeWarningText.free(report)))fields.putString("language_tag",fact.selectedLanguage);
         fields.putBoolean("native_announce_observed",true);
+        if(chosenSound!=null)fields.putString("native_sound",chosenSound);
         if(text.origin.equals("template"))fields.putString("template_id","fm_native_exit_v1");
         update(identity(report,fields),fields,text.value,text.origin,phase,NativeWarningText.useful(text.value),bypass,path,false);
     }
@@ -445,6 +508,10 @@ public final class NativeWarnings {
             fields.putString("language_tag",source.selectedLanguage);fields.putString("language_origin","native_free_text_where");
         }
         if(!fields.containsKey("relationship"))fields.putString("relationship","unknown");
+        // State refreshes of the same announcement keep FM's chosen sound; receivers speak the latest
+        // revision. A new announcement carries only its own choice.
+        if(!announce&&record.fields!=null&&!fields.containsKey("native_sound")&&record.fields.containsKey("native_sound"))
+            fields.putString("native_sound",record.fields.getString("native_sound"));
         if(record.fields!=null&&semanticChange(record.fields,fields))record.revision++;
         if(announce)record.index=++announcementCounter;
         long now=SystemClock.elapsedRealtime();
@@ -596,10 +663,12 @@ public final class NativeWarnings {
     private static String language(){if(app!=null){android.os.LocaleList locales=app.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
     private static String contextLanguage(Context context){if(context!=null){android.os.LocaleList locales=context.getResources().getConfiguration().getLocales();if(!locales.isEmpty())return locales.get(0).toLanguageTag();}return "und";}
     private static void resetCits(){convertingCits.remove();citsAliases.clear();citsFacts.clear();countrySamples.clear();countryObserved.clear();previousRoadLimit=null;}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();}
+    /** Tests opt in to FM's asynchronous sound choice; existing tests observe immediate announcements. */
+    static synchronized void awaitSoundForTest(boolean value){awaitSound=value;}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;captureEnabled=true;awaitSound=false;awaitingSound.clear();chosenSound=null;announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();EarlyWarningGeometry.clear();}
     static synchronized void setEndpointForTest(WarningEndpoint value){
         EarlyWarningGeometry.clear();
-        if(endpoint!=null&&endpoint!=value)endpoint.close();endpoint=value;app=null;testSink=null;captureEnabled=false;
+        if(endpoint!=null&&endpoint!=value)endpoint.close();endpoint=value;app=null;testSink=null;captureEnabled=false;awaitSound=true;awaitingSound.clear();chosenSound=null;
         announcementCounter=0;records.clear();anonymous.clear();suppressedProjections.clear();projectionIds.clear();notificationControlled.clear();notificationId=null;presentationId=null;citsProjection.remove();resetCits();
     }
 }

@@ -28,6 +28,41 @@ internal fun bindFlitsmeisterNativeWarnings15() {
     }
     bindFlitsmeisterNativeWarnings15(methods)
     bindFlitsmeisterIndicatorData15(indicatorData)
+    bindFlitsmeisterSoundAndVisibility15(
+        exact("Ldci;","invoke","Ljava/lang/Object;","Ljava/lang/Object;").method,
+        exact("Lwd6;","z","V","Lma1;").method,
+        exact("Lwd6;","A","V","Lma1;").method,
+    )
+}
+
+/**
+ * Observe FM15's chosen alert sound (the shared join after its per-type selection in the
+ * playAlarm callback) and its on-screen warning set (DefaultReportEventService show/hide).
+ * Neither hook changes a native decision, sound, BLE route or callback.
+ */
+internal fun bindFlitsmeisterSoundAndVisibility15(sound:MutableMethod,shown:MutableMethod,hidden:MutableMethod) {
+    fun reference(method:MutableMethod,index:Int)=(method.instructions[index] as? ReferenceInstruction)?.reference?.toString()
+    check(sound.implementation?.registerCount==14) { "Changed FM15 alert sound callback" }
+    val selected=sound.instructions.withIndex().filter{reference(sound,it.index)=="Ldci;->q:Ls39;"&&it.value.opcode==Opcode.IGET_OBJECT}
+    check(selected.size==1) { "Changed FM15 alert sound join" }
+    val joinAt=selected.single().index
+    val join=sound.instructions[joinAt] as com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+    // v2=report and v3=entering are loaded once at entry; every selection branch rejoins via v6=v4.
+    check(sound.instructions[5].opcode==Opcode.IGET_OBJECT&&(sound.instructions[5] as OneRegisterInstruction).registerA==2&&reference(sound,5)=="Ldci;->c:$REPORT")
+    check(sound.instructions[6].opcode==Opcode.IGET_BOOLEAN&&(sound.instructions[6] as OneRegisterInstruction).registerA==3&&reference(sound,6)=="Ldci;->d:Z")
+    val chosen=sound.instructions[10]
+    check(chosen.opcode==Opcode.MOVE_OBJECT&&(chosen as com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction).registerA==6&&chosen.registerB==4&&sound.instructions[11].opcode==Opcode.GOTO_16)
+    fun showHide(method:MutableMethod,registers:Int,marker:(MutableMethod)->Boolean) {
+        check(method.implementation?.registerCount==registers&&method.instructions[0].opcode==Opcode.IGET_OBJECT&&reference(method,0)=="Lma1;->a:$REPORT"&&marker(method)) {
+            "Changed FM15 warning presentation ${method.definingClass}->${method.name}"
+        }
+    }
+    showHide(shown,6){m->m.instructions.indices.any{reference(m,it)=="Lnl/flitsmeister/fmcore/data/model/reports/SignallingSpamFilterImpl;->canSignalAgain($REPORT)Z"}}
+    showHide(hidden,9){m->m.instructions.any{it.opcode==Opcode.CONST_STRING&&(it as ReferenceInstruction).reference.toString()=="[onRemoveWarning] "}}
+    sound.replaceInstruction(joinAt,"invoke-static {v2, v3, v6}, $WARNINGS->sound(Ljava/lang/Object;ZLjava/lang/String;)V")
+    sound.addInstruction(joinAt+1,"iget-object v${join.registerA}, v${join.registerB}, Ldci;->q:Ls39;")
+    shown.addInstruction(0,"invoke-static/range {p1 .. p1}, $WARNINGS->visible(Ljava/lang/Object;)V")
+    hidden.addInstruction(0,"invoke-static/range {p1 .. p1}, $WARNINGS->hidden(Ljava/lang/Object;)V")
 }
 
 /** Testable complete transformation; validate every root before changing any method. */
@@ -39,6 +74,7 @@ internal fun bindFlitsmeisterNativeWarnings15(methods:Map<String,MutableMethod>)
         return method
     }
     val regular=shape(pick("Lfci;","l","V",REPORT,"Z","Z","Ljava/lang/String;","Ls39;"),16,136)
+    val alert=shape(pick("Lfc0;","J","V",REPORT,"Z"),25,1505)
     val early=shape(pick("Lfci;","b","V",EARLY_TYPE,EARLY_REPORT,EARLY_NOTIFICATION,"Ljava/lang/String;","Z","Ls39;"),18,40)
     val voiceOnly=shape(pick("Lxl\$c;","invokeSuspend","Ljava/lang/Object;","Ljava/lang/Object;"),14,119)
     val cits=shape(pick("Lfc0;","x","V",REPORT),27,615)
@@ -58,6 +94,22 @@ internal fun bindFlitsmeisterNativeWarnings15(methods:Map<String,MutableMethod>)
         check(positions.size==1) { "Changed warning anchor $reference in ${method.definingClass}->${method.name}" }
         return positions.single().index
     }
+    // FM re-signals one fixed camera only after its repeat window (3 minutes); the owner wants at most one.
+    // Other report types and other cameras are unaffected: the window is keyed per report.
+    val repeatAt=anchor(alert,"Lye7;->g(ILaf7;)J",Opcode.INVOKE_STATIC)
+    val repeat=alert.instructions[repeatAt] as FiveRegisterInstruction
+    check(repeat.registerCount==2&&alert.instructions[repeatAt-1].opcode==Opcode.SGET_OBJECT
+        &&(alert.instructions[repeatAt-1] as ReferenceInstruction).reference.toString()=="Laf7;->q:Laf7;"
+        &&(alert.instructions[repeatAt-1] as OneRegisterInstruction).registerA==repeat.registerD) { "Changed FM15 camera repeat window" }
+    check(alert.instructions.subList(repeatAt-10,repeatAt).any{it.opcode==Opcode.INSTANCE_OF&&(it as ReferenceInstruction).reference.toString()=="Lnl/flitsmeister/fmcore/data/model/reports/SpeedCam;"}) { "Changed FM15 camera repeat owner" }
+    check(alert.instructions[repeatAt+1].opcode==Opcode.MOVE_RESULT_WIDE) { "Changed FM15 camera repeat result" }
+    val scratch=(alert.instructions[repeatAt+1] as OneRegisterInstruction).registerA
+    check(scratch<15&&scratch!=repeat.registerD) { "Changed FM15 camera repeat registers" }
+    // FM decided no sound for this warning: the deferred announcement need not wait for one.
+    val packAt=anchor(regular,"Lkdi;->d(Ljava/lang/String;${REPORT}ZLs39;)Z",Opcode.INVOKE_VIRTUAL)
+    val quietAt=packAt-5
+    check(regular.instructions[quietAt].opcode==Opcode.IF_EQZ&&regular.instructions[quietAt-1].opcode==Opcode.IF_NEZ
+        &&(regular.instructions[quietAt+1] as? ReferenceInstruction)?.reference?.toString()=="Lfci;->f()Lkdi;") { "Changed FM15 silent signal branch" }
     // This getter exists only after the resumed suppression and VOICE_ONLY tests.
     val voiceReference="Lnl/flitsmeister/fmcore/data/model/reports/Incident;->getVoiceOnlyText()Ljava/lang/String;"
     val voiceAt=anchor(voiceOnly,voiceReference,Opcode.INVOKE_VIRTUAL)
@@ -110,6 +162,9 @@ internal fun bindFlitsmeisterNativeWarnings15(methods:Map<String,MutableMethod>)
         check(candidates.size==1){"Changed native VRI wrapper publication in ${method.definingClass}->${method.name}"}
         Triple(method,candidates.single().index,candidates.single().value as FiveRegisterInstruction)
     }
+    alert.replaceInstruction(repeatAt,"const/4 v$scratch, 0x1")
+    alert.addInstruction(repeatAt+1,"invoke-static {v$scratch, v${repeat.registerD}}, Lye7;->g(ILaf7;)J")
+    regular.addInstruction(quietAt,"invoke-static {p1, p2}, $WARNINGS->noSound(Ljava/lang/Object;Z)V")
     // Entry capture precedes g(), BLE routing and every local audio preference.
     regular.addInstruction(0,"invoke-static/range {p0 .. p5}, $WARNINGS->regular(Ljava/lang/Object;Ljava/lang/Object;ZZLjava/lang/String;Ljava/lang/Object;)V")
     early.addInstruction(0,"invoke-static/range {p0 .. p6}, $WARNINGS->early(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/String;ZLjava/lang/Object;)V")

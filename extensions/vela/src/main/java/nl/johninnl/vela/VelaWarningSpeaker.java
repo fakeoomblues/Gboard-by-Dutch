@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import nl.johninnl.navigation.alerts.PlaybackGrant;
+import nl.johninnl.navigation.alerts.ProviderSound;
 import nl.johninnl.navigation.alerts.WarningAudioOwner;
 import nl.johninnl.navigation.alerts.WarningEvent;
 
@@ -46,6 +47,14 @@ public final class VelaWarningSpeaker {
     private static final ThreadLocal<Attempt> SCOPE = new ThreadLocal<>();
     private final Handler callbacks = new Handler(Looper.getMainLooper());
     private final ExecutorService tones;
+    private static final ExecutorService SOUNDS=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"VelaWarningSound");t.setDaemon(true);return t;});
+    /** Decode the provider's alert sound when its announcement arrives, before any grant needs it. */
+    public static void prefetch(Context context,WarningEvent event) {
+        String name=ProviderSound.name(event);
+        if(context==null || name==null || ProviderSound.cached(ProviderSound.FLITSMEISTER,name)!=null)return;
+        Context app=context.getApplicationContext();
+        SOUNDS.execute(()->ProviderSound.load(app,ProviderSound.FLITSMEISTER,name));
+    }
     public VelaWarningSpeaker(){this(Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"VelaWarningOutput");t.setDaemon(true);return t;}));}
     VelaWarningSpeaker(ExecutorService output){if(output==null)throw new IllegalArgumentException("Output executor");tones=output;}
     private Object guide;
@@ -216,6 +225,10 @@ public final class VelaWarningSpeaker {
             Attempt attempt = new Attempt(this, payload, grant, listener, generation,originalAnnounceUntil);
             used.put(grant.attemptId,Math.max(originalAnnounceUntil,now+30000));
             active = attempt;attempt.holding=true;
+            String sound=ProviderSound.name(payload);
+            attempt.sound=sound==null?null:ProviderSound.cached(ProviderSound.FLITSMEISTER,sound);
+            // Voice: the provider's own alert sound plays first on the tone path, then the speech.
+            attempt.preroll=grant.mode==WarningAudioOwner.Mode.VOICE && attempt.sound!=null;
             if(grant.mode!=WarningAudioOwner.Mode.TONE)UTTERANCES.put("vela-"+attempt.id,attempt);
             if(interruptNative) {
                 attempt.heldNative=true;regenerateRequested=true;
@@ -224,7 +237,17 @@ public final class VelaWarningSpeaker {
                     callbacks.post(()->awaitNative(attempt));return true;
                 } catch(ReflectiveOperationException|RuntimeException failure){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return false;}
             }
-            return grant.mode==WarningAudioOwner.Mode.TONE?submitTone(attempt):submitSystem(attempt);
+            return grant.mode==WarningAudioOwner.Mode.TONE || attempt.preroll?submitTone(attempt):submitSystem(attempt);
+        }
+    }
+    /** After the provider sound, the same attempt continues with the spoken text. */
+    private void speakAfterSound(Attempt attempt) {
+        synchronized(LOCK) {
+            if(active!=attempt)return;
+            PlaybackGrant.Outcome blocked=eligibility(attempt,false);
+            if(blocked!=null){finish(attempt,attempt.started?PlaybackGrant.Outcome.INTERRUPTED:blocked,true);return;}
+            if(systemReady(attempt.event.languageTag,true)||neuralReady(attempt.event.languageTag,true)){submitSystem(attempt);return;}
+            callbacks.postDelayed(()->speakAfterSound(attempt),20);
         }
     }
     private boolean submitSystem(Attempt attempt) {
@@ -243,7 +266,7 @@ public final class VelaWarningSpeaker {
             if(active!=attempt)return;
             PlaybackGrant.Outcome blocked=eligibility(attempt,false);
             if(blocked!=null){finish(attempt,blocked,true);return;}
-            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE) {
+            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.preroll) {
                 try {if(nativeIdle()){submitTone(attempt);return;}}catch(ReflectiveOperationException|RuntimeException failure){finish(attempt,PlaybackGrant.Outcome.FAILED,true);return;}
             } else if(systemReady(attempt.event.languageTag,true)||neuralReady(attempt.event.languageTag,true)){submitSystem(attempt);return;}
             callbacks.postDelayed(()->awaitNative(attempt),20);
@@ -254,7 +277,7 @@ public final class VelaWarningSpeaker {
             Attempt attempt = active;
             if (attempt == null || !same(attempt.grant, grant)) return;
             attempt.cancelled = true;
-            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.neural!=null) {
+            if(attempt.grant.mode==WarningAudioOwner.Mode.TONE || attempt.neural!=null || attempt.preroll) {
                 boolean quiet=stopTone(attempt);releaseRejected(attempt);
                 finish(attempt,quiet?PlaybackGrant.Outcome.CANCELLED:PlaybackGrant.Outcome.UNCERTAIN,quiet);return;
             }
@@ -648,14 +671,17 @@ public final class VelaWarningSpeaker {
         return track.write(pcm,0,pcm.length)==pcm.length && track.getState()==AudioTrack.STATE_INITIALIZED;
     }
     private static void runTone(Attempt attempt) {
-        AudioTrack track=null;PlaybackGrant.Outcome outcome=PlaybackGrant.Outcome.FAILED;
+        AudioTrack track=null;PlaybackGrant.Outcome outcome=PlaybackGrant.Outcome.FAILED;long frames=0;
         try {
             synchronized(LOCK){PlaybackGrant.Outcome blocked=rejection(attempt);if(blocked!=null){outcome=blocked;return;}}
-            short[] pcm=tonePcm();
+            ProviderSound.Pcm provider=attempt.sound;
+            short[] pcm=provider==null?tonePcm():provider.samples;
+            int rate=provider==null?22050:provider.rate,channels=provider==null?1:provider.channels;
+            frames=pcm.length/channels;
             track=new AudioTrack.Builder().setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
-                    .setAudioFormat(new AudioFormat.Builder().setSampleRate(22050).setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build()).setTransferMode(AudioTrack.MODE_STATIC)
+                    .setAudioFormat(new AudioFormat.Builder().setSampleRate(rate).setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                            .setChannelMask(channels==2?AudioFormat.CHANNEL_OUT_STEREO:AudioFormat.CHANNEL_OUT_MONO).build()).setTransferMode(AudioTrack.MODE_STATIC)
                     .setBufferSizeInBytes(pcm.length*2).build();
             synchronized(LOCK) {
                 PlaybackGrant.Outcome blocked=rejection(attempt);
@@ -665,7 +691,8 @@ public final class VelaWarningSpeaker {
                 blocked=rejection(attempt);if(blocked!=null){outcome=blocked;return;}
                 attempt.submitted=true;track.play();
             }
-            long timeout=SystemClock.elapsedRealtime()+1000,wallDeadline=System.nanoTime()+1000000000L;
+            long playMs=frames*1000L/Math.max(1,attempt.sound==null?22050:attempt.sound.rate)+1000;
+            long timeout=SystemClock.elapsedRealtime()+playMs,wallDeadline=System.nanoTime()+playMs*1000000L;
             while(SystemClock.elapsedRealtime()<timeout && System.nanoTime()<wallDeadline) {
                 synchronized(LOCK) {
                     PlaybackGrant.Outcome blocked=rejection(attempt);if(blocked!=null){outcome=blocked;return;}
@@ -673,7 +700,7 @@ public final class VelaWarningSpeaker {
                     if(!attempt.started && played>64 && track.getPlayState()==AudioTrack.PLAYSTATE_PLAYING) {
                         attempt.started=true;attempt.owner.callbacks.post(()->attempt.listener.started(attempt.grant));
                     }
-                    if(played>=pcm.length){outcome=PlaybackGrant.Outcome.COMPLETED;return;}
+                    if(played>=frames){outcome=PlaybackGrant.Outcome.COMPLETED;return;}
                 }
                 Thread.sleep(10);
             }
@@ -686,7 +713,12 @@ public final class VelaWarningSpeaker {
                 // A track constructed after a pending cancellation was never published or played.
                 if(track!=null && !published && !attempt.ownedReleased)try{track.release();attempt.ownedReleased=true;}catch(RuntimeException ignored){}
                 releaseRejected(attempt);
-                finish(attempt,quiet?outcome:PlaybackGrant.Outcome.UNCERTAIN,quiet);
+                if(attempt.preroll && quiet && !attempt.cancelled && attempt.owner.active==attempt) {
+                    // The sound is optional: continue to speech whether or not it played.
+                    attempt.preroll=false;attempt.captured=false;attempt.released=false;attempt.submitted=false;
+                    attempt.ownedTrack=null;attempt.ownedReleased=false;attempt.quiescent=false;
+                    attempt.owner.callbacks.post(()->attempt.owner.speakAfterSound(attempt));
+                } else finish(attempt,quiet?outcome:PlaybackGrant.Outcome.UNCERTAIN,quiet);
             }
         }
     }
@@ -748,6 +780,8 @@ public final class VelaWarningSpeaker {
         final String id="warning-"+UUID.randomUUID();
         TextToSpeech engine;
         AudioTrack ownedTrack;
+        ProviderSound.Pcm sound;
+        boolean preroll;
         NeuralJob neural;
         PlaybackGrant.Outcome outputRejected;
         boolean captured,dispatched,submitted,started,cancelled,nativeStopped,released,terminal,quiescent,ownedReleased,releaseFailed,holding,heldNative;
