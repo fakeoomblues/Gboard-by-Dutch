@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/00f73d8bc00d7bcf4ac3bf4f59f01fea0a088e7f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.62.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [00f73d8bc00d](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/00f73d8bc00d7bcf4ac3bf4f59f01fea0a088e7f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.62.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.61.0...v1.62.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Google Maps:** show speed and warnings as matching pills on the phone and the car ([00f73d8](https://gitlab.com/johninnld/nl-morphe-patches/commit/00f73d8bc00d7bcf4ac3bf4f59f01fea0a088e7f))
+* **Vela Maps:** show speed and warnings as matching pills on the phone and the car ([00f73d8](https://gitlab.com/johninnld/nl-morphe-patches/commit/00f73d8bc00d7bcf4ac3bf4f59f01fea0a088e7f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b74bf0a9f954d80fb006699f0f3bb719ad99a399/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.61.0.**
