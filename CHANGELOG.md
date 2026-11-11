@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d3565d2f00246e3e28a40c0ea06aca60440f6328/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.64.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [d3565d2f0024](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/d3565d2f00246e3e28a40c0ea06aca60440f6328). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.64.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.63.0...v1.64.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Google Maps:** load reports around you while Waze runs in the background ([d3565d2](https://gitlab.com/johninnld/nl-morphe-patches/commit/d3565d2f00246e3e28a40c0ea06aca60440f6328))
+* **Waze:** load reports around you while Waze runs in the background ([d3565d2](https://gitlab.com/johninnld/nl-morphe-patches/commit/d3565d2f00246e3e28a40c0ea06aca60440f6328))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/09cba97f94d990dae51eb54c1fb3a7ea70667d19/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.63.0.**
