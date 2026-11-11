@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cb6e0aeeaca8287449497c51a7da0bad3594fdcb/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.65.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cb6e0aeeaca8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cb6e0aeeaca8287449497c51a7da0bad3594fdcb). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.65.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.64.0...v1.65.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Gboard:** support Gboard 18.6.3 and add Rambler voice typing beside Parakeet ([cb6e0ae](https://gitlab.com/johninnld/nl-morphe-patches/commit/cb6e0aeeaca8287449497c51a7da0bad3594fdcb))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d3565d2f00246e3e28a40c0ea06aca60440f6328/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.64.0.**
