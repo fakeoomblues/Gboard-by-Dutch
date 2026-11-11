@@ -26,7 +26,7 @@ import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeAbiCatalo
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallEmitter
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallId
 
-private const val LATIN_IME_SERVICE_CLASS = "Lpsx;"
+private const val LATIN_IME_SERVICE_CLASS = "Lpbk;"
 private const val INPUT_METHOD_SERVICE_CLASS =
     "Landroid/inputmethodservice/InputMethodService;"
 private const val TARGET_METHOD_NAME = "onCreate"
@@ -37,9 +37,9 @@ private const val SUPER_ON_CREATE_DESCRIPTOR =
     "$INPUT_METHOD_SERVICE_CLASS->onCreate()V"
 private const val STOCK_REGISTER_COUNT = 12
 private const val STOCK_RECEIVER_REGISTER = 11
-private const val SAVED_RECEIVER_REGISTER = 10
+private const val SAVED_RECEIVER_REGISTER = 9
 private const val STOCK_THROW_COUNT = 3
-private const val STOCK_TRY_BLOCK_COUNT = 5
+private const val STOCK_TRY_BLOCK_COUNT = 6
 private const val STOCK_CATCHALL_HANDLER_COUNT = 3
 private val TARGET_CLASS_ACCESS_FLAGS = AccessFlags.PUBLIC.value
 private val TARGET_METHOD_ACCESS_FLAGS =
@@ -234,8 +234,8 @@ private fun MutableMethod.validateStockControlFlow() {
         "$TARGET_DESCRIPTOR must retain exactly $STOCK_THROW_COUNT catchall THROW instructions"
     }
     check(
-        throwIndices.count { it < returnIndex } == 2 &&
-            throwIndices.count { it > returnIndex } == 1,
+        throwIndices.count { it < returnIndex } == 1 &&
+            throwIndices.count { it > returnIndex } == 2,
     ) {
         "$TARGET_DESCRIPTOR catchall THROW ordering drifted around its normal return"
     }
@@ -386,9 +386,9 @@ private fun Instruction.definesRegister(register: Int): Boolean {
 private fun Instruction.normalizedOpcode(): String =
     opcode.name.uppercase().replace('-', '_').replace('/', '_')
 
-private const val RECEIVER_SAVE = "move-object v10, p0"
+private val RECEIVER_SAVE = "move-object v$SAVED_RECEIVER_REGISTER, p0"
 private val CAPTURE_BOOTSTRAP_DELEGATE =
-    RuntimeCallEmitter.invoke(CAPTURE_BOOTSTRAP_RUNTIME_CALL, "v10 .. v10")
+    RuntimeCallEmitter.invoke(CAPTURE_BOOTSTRAP_RUNTIME_CALL, "v$SAVED_RECEIVER_REGISTER .. v$SAVED_RECEIVER_REGISTER")
 
 private val DESTINATION_REGISTER_PREFIXES = listOf(
     "CONST",

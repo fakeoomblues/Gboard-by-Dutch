@@ -52,7 +52,7 @@ internal fun MutableMethod.applyAccessPointOrderCatalogDelegate1803() {
 
             move-object/from16 p3, v0
 
-            check-cast p3, Lxae;
+            check-cast p3, Lwim;
         """.trimIndent(),
     )
 }

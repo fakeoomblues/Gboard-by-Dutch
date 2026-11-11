@@ -17,7 +17,9 @@ import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -35,6 +37,8 @@ private const val ANDROID = "http://schemas.android.com/apk/res/android"
 // Gboard keeps its original class and method names in log metadata; these anchor the
 // obfuscated recognizer contract so the patch never guesses from shapes alone.
 private const val FACTORY_LOG = "[RD] Prioritizing the new S3 recognizer over the on-device recognizer. [news3]"
+// Logged only on the factory's Rambler (Jetson) branch; it proves which boolean selects that branch.
+private const val JETSON_FACTORY_LOG = "[Jetson] Neither S3 nor Lite model is available. Falling back to Voice IME recognizer."
 private const val CALLBACK_CLASS = "com/google/android/apps/inputmethod/libs/voiceime/VoiceInputManager\$RecognizerCallback"
 private const val TEMPLATE_CLASS = "com/google/android/apps/inputmethod/libs/agenticdictation/lite/JetsonLiteRecognizer"
 private const val RESULT_LOG = "Ignored a recognition event with no results."
@@ -90,6 +94,8 @@ private fun enumFields(enum: ClassDef): Map<String, FieldReference> {
 /** Recognizer contract resolved from one Gboard build. */
 private class Contract(
     val factory: Method,
+    /** The request's Rambler flag: Parakeet leaves those sessions to Google's own recognizers. */
+    val ramblerSessionField: FieldReference,
     val holderField: FieldReference,
     val contextField: FieldReference,
     val recognizer: String,
@@ -153,6 +159,7 @@ private fun resolveContract(): Contract {
     } ?: throw PatchException("Gboard recognizer factory no longer holds the Context owner")
     val registers = factory.implementation!!.registerCount
     if (registers - factory.params().size - 1 < 1) throw PatchException("Gboard recognizer factory has no free register")
+    val ramblerSessionField = ramblerSessionField(factory, registers)
 
     val recognizerDef = context.classDefBy(recognizer)
     if (!AccessFlags.INTERFACE.isSet(recognizerDef.accessFlags)) throw PatchException("$recognizer is not an interface")
@@ -241,9 +248,39 @@ private fun resolveContract(): Contract {
 
     val result = resolveResultBuilder(resultMethod.params()[0], callback)
     return Contract(
-        factory, holderField, contextField, recognizer, roles, inherited, typeField, callback,
+        factory, ramblerSessionField, holderField, contextField, recognizer, roles, inherited, typeField, callback,
         callbackMethods, levelMethod, resultMethod, errorMethod, errorFields, result,
     )
+}
+
+/**
+ * The factory opens with `if (request.<flag>) { ... Jetson branch ... }`: the first boolean it reads
+ * from the request feeds an `if-eqz` (only string constants in between), and [JETSON_FACTORY_LOG]
+ * is logged after that branch. That boolean is the request's Rambler flag.
+ */
+private fun ramblerSessionField(factory: Method, registers: Int): FieldReference {
+    val requestType = factory.params().single()
+    val requestRegister = registers - 1
+    val instructions = factory.instructionsOrEmpty()
+    val readIndex = instructions.indexOfFirst {
+        it.opcode == Opcode.IGET_BOOLEAN && (it as TwoRegisterInstruction).registerB == requestRegister &&
+            ((it as ReferenceInstruction).reference as FieldReference).definingClass == requestType
+    }
+    if (readIndex < 0) throw PatchException("Gboard recognizer factory no longer reads its Rambler session flag")
+    val read = instructions[readIndex] as TwoRegisterInstruction
+    val branchIndex = (readIndex + 1 until instructions.size).firstOrNull { instructions[it].opcode != Opcode.CONST_STRING }
+    val branch = branchIndex?.let(instructions::get)
+    val clobbered = instructions.subList(readIndex + 1, branchIndex ?: readIndex + 1)
+        .any { (it as OneRegisterInstruction).registerA == read.registerA }
+    val jetsonIndex = instructions.indexOfFirst {
+        ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == JETSON_FACTORY_LOG
+    }
+    if (branch?.opcode != Opcode.IF_EQZ || (branch as OneRegisterInstruction).registerA != read.registerA ||
+        clobbered || jetsonIndex <= branchIndex
+    ) {
+        throw PatchException("Gboard recognizer factory no longer branches on its Rambler session flag")
+    }
+    return (instructions[readIndex] as ReferenceInstruction).reference as FieldReference
 }
 
 context(context: BytecodePatchContext)
@@ -501,7 +538,11 @@ val parakeetVoiceTyping = bytecodePatch(
 
         val factory = mutableClassDefBy(contract.factory.definingClass).methods
             .single { it.name == contract.factory.name && it.params() == contract.factory.params() && it.returnType == contract.factory.returnType }
+        // Rambler sessions stay with Google's cloud recognizer, so the user's Rambler/Standard choice in
+        // Gboard's Voice settings picks between Rambler and Parakeet instead of Parakeet taking both.
         factory.addInstructionsWithLabels(0, """
+            iget-boolean v0, p1, ${contract.ramblerSessionField.smali()}
+            if-nez v0, :original
             iget-object v0, p0, ${contract.holderField.smali()}
             iget-object v0, v0, ${contract.contextField.smali()}
             invoke-static {v0}, $RECOGNIZER->create($CONTEXT)$RECOGNIZER

@@ -14,7 +14,7 @@ internal val gboard = Compatibility(
         "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
         "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83",
     ),
-    targets = listOf(AppTarget(version = "18.5.11.993608717-release-arm64-v8a", versionCode = 176050094, minSdk = 26)),
+    targets = listOf(AppTarget(version = "18.6.3.1002251336-release-arm64-v8a", versionCode = 176071766, minSdk = 32)),
 )
 
 internal val originalInput = patches.shared.originalInput(gboard)

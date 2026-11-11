@@ -118,6 +118,11 @@ internal enum class GboardFlagFamilyFeature(
         RuntimeCallId.KEYPRESS_HAPTICS_RUNTIME_APPLY_FLAG_VALUE,
         GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
     ),
+    RAMBLER_CLOUD(
+        1500,
+        RuntimeCallId.RAMBLER_CLOUD_RUNTIME_APPLY_FLAG_VALUE,
+        GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
+    ),
     ;
 
     val spec: GboardFlagFamilyFeatureSpec
@@ -286,13 +291,13 @@ private data class GboardFlagFamilyTransformationPlan(
                 flagNameScratch = FLAG_NAME_SCRATCH_REGISTER.takeIf { needsFlagName },
             )
 
-            if (GboardVersionBindings.targetVersion == "18.5.11") {
+            if (GboardVersionBindings.targetVersion == "18.6.3") {
                 val snapshots = instructions.filter { instruction ->
                     val load = instruction as? TwoRegisterInstruction
                     val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
                     instruction.opcode.name.normalized() == "IGET_OBJECT" &&
                         load?.registerA == 0 && load.registerB == receiverRegister &&
-                        field?.definingClass == "Lovo;" && field.name == "f" && field.type == "Lovx;"
+                        field?.definingClass == "Lodo;" && field.name == "f" && field.type == "Lody;"
                 }
                 check(snapshots.size == 1) { "18.5.4 flag snapshot carrier drift" }
             }
@@ -518,11 +523,11 @@ private fun com.android.tools.smali.dexlib2.iface.instruction.Instruction
         load.registerA == receiverRegister &&
         load.registerB == FLAG_NAME_SCRATCH_REGISTER &&
         field.definingClass == when (GboardVersionBindings.targetVersion) {
-            "18.0.3" -> "Lojk;"
-            "18.5.11" -> "Lovx;"
+            "18.0.3" -> "Lnrg;"
+            "18.6.3" -> "Lody;"
             else -> error("Unsupported Gboard flag stock contract for ${GboardVersionBindings.targetVersion}")
         } && field.name == when (GboardVersionBindings.targetVersion) {
-            "18.5.11" -> "a"
+            "18.6.3" -> "a"
             else -> "c"
         } &&
         field.type == "Ljava/lang/Object;"
@@ -659,6 +664,10 @@ private fun emitFlagFamilyRuntimeCall(call: RuntimeCallId, registers: String): S
         RuntimeCallId.QUICK_INSERT_RUNTIME_APPLY_FLAG_VALUE,
         registers,
     )
+    RuntimeCallId.RAMBLER_CLOUD_RUNTIME_APPLY_FLAG_VALUE -> RuntimeCallEmitter.invoke(
+        RuntimeCallId.RAMBLER_CLOUD_RUNTIME_APPLY_FLAG_VALUE,
+        registers,
+    )
     else -> error("Runtime call $call does not belong to the flag family")
 }
 
@@ -698,4 +707,5 @@ private val ALL_FLAG_FAMILY_RUNTIME_CALLS: Set<RuntimeCallId> = setOf(
     RuntimeCallId.KEY_SHAPE_SELECTION_RUNTIME_APPLY_FLAG_VALUE,
     RuntimeCallId.OCR_RUNTIME_APPLY_FLAG_VALUE,
     RuntimeCallId.QUICK_INSERT_RUNTIME_APPLY_FLAG_VALUE,
+    RuntimeCallId.RAMBLER_CLOUD_RUNTIME_APPLY_FLAG_VALUE,
 )

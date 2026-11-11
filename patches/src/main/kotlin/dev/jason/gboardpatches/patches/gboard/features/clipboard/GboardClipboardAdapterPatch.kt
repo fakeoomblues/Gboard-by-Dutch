@@ -269,7 +269,7 @@ internal fun applyClipboard1853ItemBindWrapper(
     target: MutableMethod,
 ) {
     target.requireExactClipboardTarget(CLIPBOARD_ADAPTER_CLASS, "p", "V", listOf(RECYCLER_VIEW_HOLDER_CLASS, "I"))
-    check(target.implementation?.registerCount == 15 && target.returnInstructionIndices().size == 5) {
+    check(target.implementation?.registerCount == 15 && target.returnInstructionIndices().size == 2) {
         "1853 Clipboard item-bind stock register/return drift"
     }
     val helper = "jasondevClipboardStockBind"
@@ -282,7 +282,7 @@ internal fun applyClipboard1853ItemBindWrapper(
         4, """
             ${RuntimeCallEmitter.invoke(ITEM_BIND_BEFORE_RUNTIME_CALL, "p0 .. p2")}
             :clipboard_try
-            invoke-direct {p0, p1, p2}, ${target.definingClass}->$helper(Lkr;I)V
+            invoke-direct {p0, p1, p2}, ${target.definingClass}->$helper(Lks;I)V
             :clipboard_end
             .catchall {:clipboard_try .. :clipboard_end} :clipboard_failed
             ${RuntimeCallEmitter.invoke(ITEM_BIND_RUNTIME_CALL, "p0 .. p2")}

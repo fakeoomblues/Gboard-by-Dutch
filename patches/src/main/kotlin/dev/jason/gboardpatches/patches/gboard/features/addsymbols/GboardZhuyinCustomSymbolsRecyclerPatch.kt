@@ -8,8 +8,8 @@ import dev.jason.gboardpatches.patches.gboard.shared.instructionIndices
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallEmitter
 import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallId
 
-private const val BASE_RECYCLER_ADAPTER_CLASS = "Ljt;"
-private const val EMOTICON_RECYCLER_ADAPTER_CLASS = "Ljuc;"
+private const val BASE_RECYCLER_ADAPTER_CLASS = "Lju;"
+private const val EMOTICON_RECYCLER_ADAPTER_CLASS = "Ljci;"
 
 internal val gboardZhuyinCustomSymbolsRecyclerPatch = bytecodePatch(
     description = "調整 add-symbols 的 custom recycler bind rendering。"
@@ -53,7 +53,7 @@ private fun patchBindViewHolder() = with(context) {
         classType = EMOTICON_RECYCLER_ADAPTER_CLASS,
         name = "p",
         returnType = "V",
-        parameterTypes = listOf("Lkr;", "I")
+        parameterTypes = listOf("Lks;", "I")
     )
     mutableMethod.addInstructions(0, BIND_VIEW_HOLDER_DELEGATE)
 }
@@ -74,7 +74,7 @@ private fun patchCreateViewHolder() = with(context) {
     val mutableMethod = findMutableMethodOrThrow(
         classType = EMOTICON_RECYCLER_ADAPTER_CLASS,
         name = "d",
-        returnType = "Lkr;",
+        returnType = "Lks;",
         parameterTypes = listOf("Landroid/view/ViewGroup;", "I")
     )
     mutableMethod.addInstructions(0, CREATE_VIEW_HOLDER_DELEGATE)

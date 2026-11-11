@@ -32,9 +32,9 @@ final class GboardClipboardRuntimeSupport {
     static final String TAG = "GboardClipboard";
     static final String LOG_PREFIX = "[gboard-clipboard]";
 
-    static final String CLIPBOARD_LOADER_CALLABLE_CLASS = "gas";
-    static final String CLIPBOARD_ADAPTER_CLASS = "gbs";
-    static final String CLIPBOARD_VIEW_HOLDER_CLASS = "gbq";
+    static final String CLIPBOARD_LOADER_CALLABLE_CLASS = "fnb";
+    static final String CLIPBOARD_ADAPTER_CLASS = "fob";
+    static final String CLIPBOARD_VIEW_HOLDER_CLASS = "fnz";
 
     static final long MINUTE_MS = 60_000L;
     static final long INFINITE_TTL_MS = -1L;
@@ -737,16 +737,16 @@ final class GboardClipboardRuntimeSupport {
         ReflectionHandles(ClassLoader classLoader) throws Throwable {
             Class<?> loaderCallableClass = resolveClass(classLoader,
                     CLIPBOARD_LOADER_CALLABLE_CLASS);
-            Class<?> loaderClass = resolveClass(classLoader, "gat");
-            Class<?> dataHandlerClass = resolveClass(classLoader, "gcc");
+            Class<?> loaderClass = resolveClass(classLoader, "fnc");
+            Class<?> dataHandlerClass = resolveClass(classLoader, "fok");
             Class<?> adapterClass = resolveClass(classLoader, CLIPBOARD_ADAPTER_CLASS);
             Class<?> clipItemViewHolderClass = resolveClass(classLoader,
                     CLIPBOARD_VIEW_HOLDER_CLASS);
-            Class<?> clipClass = resolveClass(classLoader, "gap");
-            Class<?> clipModelClass = resolveClass(classLoader, "gar");
-            Class<?> queryUtilsClass = resolveClass(classLoader, "gbw");
-            Class<?> preferencesClass = resolveClass(classLoader, "rgy");
-            Class<?> preferenceBaseClass = resolveClass(classLoader, "chu");
+            Class<?> clipClass = resolveClass(classLoader, "fmy");
+            Class<?> clipModelClass = resolveClass(classLoader, "fna");
+            Class<?> queryUtilsClass = resolveClass(classLoader, "fof");
+            Class<?> preferencesClass = resolveClass(classLoader, "qpn");
+            Class<?> preferenceBaseClass = resolveClass(classLoader, "cei");
 
             loaderCallableOwnerField = declaredField(loaderCallableClass, "a");
             loaderContextField = declaredField(loaderClass, "b");

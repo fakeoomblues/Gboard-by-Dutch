@@ -24,15 +24,15 @@ internal val gboardRambler1803OfficialSelectorPatch = bytecodePatch(
     execute {
         val cleanupClasses = mutableListOf<ClassDef>()
         classDefForEach { cleanupClasses.add(it) }
-        GboardMethodTarget("Lfwg;", "i", listOf("Z"), "V").resolve(this)
+        GboardMethodTarget("Lfio;", "k", listOf("Z"), "V").resolve(this)
             .preservePendingRamblerResetCleanup(cleanupClasses)
         val targets = listOf(
             GboardMethodTarget(VOICE, "aC", emptyList(), "I"),
             GboardMethodTarget(VOICE, "ac", emptyList(), "V"),
             GboardMethodTarget(VOICE, "f", listOf("Landroid/os/Bundle;"), "V"),
-            GboardMethodTarget(VOICE, "aE", listOf("Z", "Lrgy;", SELECTOR, SELECTOR), "V"),
-            GboardMethodTarget("Lnng;", "a", listOf("Landroid/content/Context;"), "Z"),
-            GboardMethodTarget("Lfta;", "hU", emptyList(), "V"),
+            GboardMethodTarget(VOICE, "aE", listOf("Z", "Lqpn;", SELECTOR, SELECTOR), "V"),
+            GboardMethodTarget("Lmut;", "a", listOf("Landroid/content/Context;"), "Z"),
+            GboardMethodTarget("Lffh;", "hV", emptyList(), "V"),
         )
         val methods = targets.map { it.resolve(this) }
         methods.forEachIndexed { i, method ->
@@ -51,8 +51,8 @@ internal val gboardRambler1803OfficialSelectorPatch = bytecodePatch(
                     "${method.definingClass}->$helper${targets[i].descriptor}", static, words,
                     method.returnType, i))
         }
-        GboardMethodTarget("Lkln;", "h", listOf("Ljava/lang/CharSequence;"), "V").resolve(this)
-        GboardMethodTarget("Lfxe;", "J", emptyList(), "V").resolve(this)
+        GboardMethodTarget("Ljtu;", "h", listOf("Ljava/lang/CharSequence;"), "V").resolve(this)
+        GboardMethodTarget("Lfjo;", "N", emptyList(), "V").resolve(this)
             .clearRamblerResetHeaderWithoutShowing()
     }
 }

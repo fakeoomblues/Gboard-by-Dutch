@@ -123,7 +123,7 @@ private fun Collection<GboardPointerOwnerFeatureSpec>.validatePointerOwnerSpecs(
 }
 
 private fun MutableMethod.requireSupportedPointerOwnerStock() {
-    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.5.11", "18.5.11")) {
+    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.6.3", "18.6.3")) {
         "Unsupported Gboard pointer-owner stock contract for ${GboardVersionBindings.targetVersion}"
     }
     requireExact1803PointerOwnerStockShape()
@@ -186,7 +186,7 @@ private enum class PointerLifecycleRole(val label: String) {
 private fun MutableMethod.requireSupportedPointerLifecycleStock(
     role: PointerLifecycleRole,
 ) {
-    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.5.11", "18.5.11")) {
+    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.6.3", "18.6.3")) {
         "Unsupported Gboard ${role.label} stock contract for ${GboardVersionBindings.targetVersion}"
     }
     requireExact1803PointerLifecycleShape(role)
@@ -202,8 +202,8 @@ private fun MutableMethod.requireExact1803PointerLifecycleShape(role: PointerLif
         PointerLifecycleRole.FINISH -> {
             val dispatches = instructions.mapNotNull { it.methodReference() }.count { reference ->
                 reference.definingClass == when (GboardVersionBindings.targetVersion) {
-                    "18.5.11" -> "Lqtt;"
-                    else -> "Lqgp;"
+                    "18.6.3" -> "Lqcl;"
+                    else -> "Lprt;"
                 } && reference.name == "f" &&
                     reference.parameterTypes == GboardVersionBindings.gestureDispatch.parameterTypes &&
                     reference.returnType == GboardVersionBindings.gestureDispatch.returnType
@@ -216,18 +216,18 @@ private fun MutableMethod.requireExact1803PointerLifecycleShape(role: PointerLif
             check(parameterTypes == listOf("J") && returnInstructionIndices().isNotEmpty()) {
                 "Pointer cancel shape drift in $definingClass->$name"
             }
-            if (GboardVersionBindings.targetVersion == "18.5.11") {
+            if (GboardVersionBindings.targetVersion == "18.6.3") {
                 val first = instructions.firstOrNull() as? TwoRegisterInstruction
                 check(implementation!!.registerCount == 4 && instructions.size == 8 &&
                     instructions[0].opcode == Opcode.IGET_OBJECT &&
                     first?.registerA == 0 && first.registerB == 1 &&
-                    instructions[0].isFieldReference("Lrex;->q:Lalv;") &&
+                    instructions[0].isFieldReference("Lqnm;->q:Lalv;") &&
                     instructions[1].opcode == Opcode.IF_EQZ &&
-                    instructions[2].isMethodReference("Lalv;->a(J)V") &&
-                    instructions[3].isFieldReference("Lrex;->r:Lrey;") &&
-                    instructions[4].isMethodReference("Lrey;->k()V") &&
+                    instructions[2].isMethodReference("Lalz;->a(J)V") &&
+                    instructions[3].isFieldReference("Lqnm;->r:Lrey;") &&
+                    instructions[4].isMethodReference("Lqnn;->k()V") &&
                     instructions[5].isLiteralWrite(2, 0) &&
-                    instructions[6].isFieldReference("Lrex;->O:Z") &&
+                    instructions[6].isFieldReference("Lqnm;->O:Z") &&
                     instructions[7].opcode == Opcode.RETURN_VOID) {
                     "18.5.4 cancel timestamp/delegate/reset sequence drift"
                 }
@@ -559,7 +559,7 @@ private fun GboardPointerOwnerTransformationContext.verifyCompleteTransformation
 }
 
 private fun MutableMethod.requireExactPatchedPointerOwnerFingerprint() {
-    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.5.11", "18.5.11")) {
+    check(GboardVersionBindings.targetVersion in setOf("18.0.3", "18.6.3", "18.6.3")) {
         "Unsupported patched pointer-owner contract for ${GboardVersionBindings.targetVersion}"
     }
     // Exact descriptors, semantic stock checks, selected call order, and
@@ -882,7 +882,7 @@ private val ENGLISH_HELPER_METHODS by lazy { setOf(
         "Z",
         AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
         when (GboardVersionBindings.targetVersion) {
-            "18.5.11" -> "9ef19d4d34512bd19e259d766bc6c82c358a55410564691f84a6602c37f4aecc"
+            "18.6.3" -> "9ef19d4d34512bd19e259d766bc6c82c358a55410564691f84a6602c37f4aecc"
             else -> "376f69ad84e0010204d729ce09f4092848775e875721797b3f6528723cc8b770"
         },
     ),
@@ -892,7 +892,7 @@ private val ENGLISH_HELPER_METHODS by lazy { setOf(
         "V",
         AccessFlags.PRIVATE.value or AccessFlags.FINAL.value,
         when (GboardVersionBindings.targetVersion) {
-            "18.5.11" -> "72efbe3504490610a371883613263f90d684fe901ea27b9bcf6d3a3fa9691e45"
+            "18.6.3" -> "72efbe3504490610a371883613263f90d684fe901ea27b9bcf6d3a3fa9691e45"
             else -> "4e12d6280912adf42d09797a759925f47bba89c612b5b3ae4d15b6b2895afd8d"
         },
     ),

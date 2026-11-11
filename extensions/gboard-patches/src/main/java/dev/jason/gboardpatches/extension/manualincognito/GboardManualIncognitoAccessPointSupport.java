@@ -22,11 +22,11 @@ final class GboardManualIncognitoAccessPointSupport {
     private static final int OFFICIAL_INCOGNITO_ICON_RESOURCE_ID = 0x7f0806c3;
     private static final float OFFICIAL_INCOGNITO_ICON_SCALE = 1.2f;
 
-    private static final String DESCRIPTOR_CLASS = "nex";
-    private static final String BUILDER_CLASS = "nes";
-    private static final String ORDER_HELPER_CLASS = "nhm";
-    private static final String IMMUTABLE_COLLECTION_CLASS = "xae";
-    private static final String CONTROLLER_CLASS = "nib";
+    private static final String DESCRIPTOR_CLASS = "mmm";
+    private static final String BUILDER_CLASS = "mmh";
+    private static final String ORDER_HELPER_CLASS = "mpb";
+    private static final String IMMUTABLE_COLLECTION_CLASS = "wim";
+    private static final String CONTROLLER_CLASS = "mpq";
 
     private static final Map<Object, WeakReference<Context>> CONTROLLERS =
             Collections.synchronizedMap(new WeakHashMap<>());
@@ -269,7 +269,7 @@ final class GboardManualIncognitoAccessPointSupport {
             Field builderLabelTextField = builderClass.getDeclaredField("d");
             Field builderContentDescriptionTextField = builderLabelTextField;
             Field controllerOrderHelperField = controllerClass.getDeclaredField("g");
-            Field orderMasterCatalogField = orderHelperClass.getDeclaredField("c");
+            Field orderMasterCatalogField = orderHelperClass.getDeclaredField("b");
             Method immutableCollectionCopyMethod = immutableCollectionClass.getDeclaredMethod(
                     "n", Collection.class);
             Method controllerRegisterMethod = controllerClass.getDeclaredMethod(

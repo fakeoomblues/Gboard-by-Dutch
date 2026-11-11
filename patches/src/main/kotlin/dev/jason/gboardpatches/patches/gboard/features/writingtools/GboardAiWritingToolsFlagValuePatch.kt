@@ -28,31 +28,31 @@ internal val gboardAiWritingToolsFlagValuePatch = gboardFlagFamilyFeaturePatch(
 )
 
 internal val autoFixRouteBuilder = GboardMethodTarget(
-    classType = "Lyut;",
+    classType = "Lydb;",
     name = "v",
     parameterTypes = emptyList(),
-    returnType = "Lwha;",
+    returnType = "Lvph;",
 )
 
 internal val autoFixAmbiguityGate = GboardMethodTarget(
     classType = "Lhhj;",
     name = "a",
-    parameterTypes = listOf("Lhhs;"),
-    returnType = "Lmjn;",
+    parameterTypes = listOf("Lgta;"),
+    returnType = "Llrj;",
 )
 
 internal val genAiVoiceEditInit = GboardMethodTarget(
-    classType = "Liqw;",
+    classType = "Lica;",
     name = "c",
     parameterTypes = listOf(
         "Lcom/google/android/apps/inputmethod/libs/nga/impl/input/NgaInputManager;",
-        "Lhxm;",
+        "Lhiw;",
     ),
     returnType = "V",
 )
 
 internal val smartEditInit = GboardMethodTarget(
-    classType = "Liqw;",
+    classType = "Lica;",
     name = "d",
     parameterTypes = emptyList(),
     returnType = "V",
@@ -138,14 +138,14 @@ internal fun MutableMethod.applyAutoFixRoute() {
         "18.0.3 Writing Tools v2 route builder register drift"
     }
 
-    val existing = instructions.count { it.isFieldReference("Laaim;->c:Laaim;") }
+    val existing = instructions.count { it.isFieldReference("Lzqk;->c:Laaim;") }
     if (existing != 0) {
         check(existing == 1) { "Duplicate INTENT_AUTO_FIX route entries" }
         return
     }
 
     val builderInitIndices = instructions.indices.filter {
-        instructions[it].isMethodReference("Lwgp;-><init>(I)V")
+        instructions[it].isMethodReference("Lvow;-><init>(I)V")
     }
     check(builderInitIndices.size == 1) {
         "Expected one exact Writing Tools v2 route-set builder initialization"
@@ -156,7 +156,7 @@ internal fun MutableMethod.applyAutoFixRoute() {
         "18.0.3 Writing Tools v2 route-set builder register drift"
     }
 
-    val freezeCalls = instructions.count { it.isMethodReference("Lwgv;->g()Lwha;") }
+    val freezeCalls = instructions.count { it.isMethodReference("Lvpc;->g()Lvph;") }
     check(freezeCalls == 1) {
         "Expected one exact Writing Tools v2 route-set freeze call"
     }
@@ -176,7 +176,7 @@ internal fun MutableMethod.applyAutoFixAcceptance() {
         "18.0.3 Writing Tools ambiguity register drift"
     }
 
-    val existing = instructions.count { it.isFieldReference("Laaim;->c:Laaim;") }
+    val existing = instructions.count { it.isFieldReference("Lzqk;->c:Laaim;") }
     if (existing != 0) {
         check(existing == 1) { "Duplicate INTENT_AUTO_FIX ambiguity delegates" }
         return
@@ -215,7 +215,7 @@ internal fun MutableMethod.applyGenAiInitClientTypeCompatibility() {
     }
 
     val predicateIndices = instructions.indices.filter {
-        instructions[it].isMethodReference("Luyh;->cH(Lkyu;)Z")
+        instructions[it].isMethodReference("Lugw;->cH(Lkhn;)Z")
     }
     check(predicateIndices.size == 1) {
         "Expected one exact 18.0.3 GenAI client-type predicate"
@@ -276,7 +276,7 @@ internal fun MutableMethod.applyGenAiClientRefreshRetry() {
     }
 
     val predicateIndices = instructions.indices.filter {
-        instructions[it].isMethodReference("Luyh;->cH(Lkyu;)Z")
+        instructions[it].isMethodReference("Lugw;->cH(Lkhn;)Z")
     }
     check(predicateIndices.size == 1) {
         "Expected one exact 18.0.3 refresh client-type predicate"
@@ -325,7 +325,7 @@ internal fun MutableMethod.applySmartEditInitClientTypeCompatibility() {
     }
 
     val predicateIndices = instructions.indices.filter {
-        instructions[it].isMethodReference("Luyh;->cG(Lkyu;)Z")
+        instructions[it].isMethodReference("Lugw;->cG(Lkhn;)Z")
     }
     check(predicateIndices.size == 1) {
         "Expected one exact 18.0.3 SmartEdit client-type predicate"

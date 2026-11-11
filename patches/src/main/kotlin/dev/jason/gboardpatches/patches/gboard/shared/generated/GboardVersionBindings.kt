@@ -5,149 +5,149 @@ import dev.jason.gboardpatches.patches.gboard.shared.GboardMethodTarget
 import dev.jason.gboardpatches.patches.gboard.shared.GboardTypeTarget
 
 internal object GboardVersionBindings {
-    const val targetVersion = "18.5.11"
+    const val targetVersion = "18.6.3"
     const val profileVersion = "1.7.0"
-    const val sourceSha256 = "ported-from-18.5.4"
+    const val sourceSha256 = "ported-from-18.5.11"
 
     val `apCatalogCopy` = GboardMethodTarget(
-        classType = "Lxae;",
+        classType = "Lwim;",
         name = "n",
         parameterTypes = listOf("Ljava/util/Collection;"),
-        returnType = "Lxae;",
+        returnType = "Lwim;",
     )
 
     val `apControllerOrderField` = GboardFieldTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "g",
-        type = "Lnhm;",
+        type = "Lmpb;",
     )
 
     val `apDescriptorAction` = GboardMethodTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "q",
         parameterTypes = listOf("Ljava/lang/Runnable;"),
         returnType = "V",
     )
 
     val `apDescriptorActions` = GboardFieldTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "e",
-        type = "Lwzd;",
+        type = "Lwhl;",
     )
 
     val `apDescriptorBuild` = GboardMethodTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "a",
         parameterTypes = emptyList(),
-        returnType = "Lnex;",
+        returnType = "Lmmm;",
     )
 
     val `apDescriptorFactory` = GboardMethodTarget(
-        classType = "Lnex;",
+        classType = "Lmmm;",
         name = "c",
         parameterTypes = emptyList(),
-        returnType = "Lnes;",
+        returnType = "Lmmh;",
     )
 
     val `apDescriptorIcon` = GboardMethodTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "i",
         parameterTypes = listOf("I"),
         returnType = "V",
     )
 
     val `apDescriptorLabel` = GboardFieldTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "d",
         type = "Ljava/lang/String;",
     )
 
     val `apDescriptorRegister` = GboardMethodTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "g",
-        parameterTypes = listOf("Lnex;", "Z"),
+        parameterTypes = listOf("Lmmm;", "Z"),
         returnType = "V",
     )
 
     val `apDescriptorToken` = GboardMethodTarget(
-        classType = "Lnes;",
+        classType = "Lmmh;",
         name = "l",
         parameterTypes = listOf("Ljava/lang/String;"),
         returnType = "V",
     )
 
     val `apMasterCatalogSet` = GboardFieldTarget(
-        classType = "Lnhm;",
-        name = "c",
-        type = "Lxae;",
+        classType = "Lmpb;",
+        name = "b",
+        type = "Lwim;",
     )
 
     val `calculatorHidden` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onWindowHidden",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `calculatorInputStart` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onStartInputView",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "V",
     )
 
     val `calculatorInputView` = GboardFieldTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "i",
         type = "Lcom/google/android/libraries/inputmethod/inputview/InputView;",
     )
 
     val `calculatorSelection` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onUpdateSelection",
         parameterTypes = listOf("I", "I", "I", "I", "I", "I"),
         returnType = "V",
     )
 
     val `clipboardAdapterContext` = GboardFieldTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "e",
         type = "Landroid/content/Context;",
     )
 
     val `clipboardAdapterItems` = GboardFieldTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "n",
         type = "Ljava/util/List;",
     )
 
     val `clipboardAdapterRecycler` = GboardFieldTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "j",
         type = "Landroid/support/v7/widget/RecyclerView;",
     )
 
     val `clipboardCleanupCursor` = GboardMethodTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "t",
         parameterTypes = listOf("Landroid/database/Cursor;"),
         returnType = "V",
     )
 
     val `clipboardClipId` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "d",
         type = "J",
     )
 
     val `clipboardClipModel` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "g",
-        type = "Lgar;",
+        type = "Lfna;",
     )
 
     val `clipboardClipTimestamp` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "e",
         type = "Lj${'$'}/time/Instant;",
     )
@@ -160,57 +160,57 @@ internal object GboardVersionBindings {
     )
 
     val `clipboardDelete` = GboardMethodTarget(
-        classType = "Lgbw;",
+        classType = "Lfof;",
         name = "h",
         parameterTypes = listOf("Landroid/content/Context;", "Ljava/util/List;"),
         returnType = "V",
     )
 
     val `clipboardGridManagerConstructor` = GboardMethodTarget(
-        classType = "Lgck;",
+        classType = "Lfos;",
         name = "<init>",
         parameterTypes = listOf("Lcom/google/android/apps/inputmethod/libs/clipboard/ClipboardKeyboard;", "I", "Landroid/support/v7/widget/RecyclerView;"),
         returnType = "V",
     )
 
     val `clipboardHolderText` = GboardFieldTarget(
-        classType = "Lgbq;",
+        classType = "Lfnz;",
         name = "t",
         type = "Landroid/widget/TextView;",
     )
 
     val `clipboardIsPinned` = GboardMethodTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "n",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `clipboardIsSensitive` = GboardMethodTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "m",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `clipboardIsSpecial` = GboardMethodTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "o",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `clipboardItemBind` = GboardMethodTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "p",
-        parameterTypes = listOf("Lkr;", "I"),
+        parameterTypes = listOf("Lks;", "I"),
         returnType = "V",
     )
 
     val `clipboardKeyboardAdapter` = GboardFieldTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/clipboard/ClipboardKeyboard;",
         name = "c",
-        type = "Lgbs;",
+        type = "Lfob;",
     )
 
     val `clipboardKeyboardContext` = GboardFieldTarget(
@@ -227,141 +227,141 @@ internal object GboardVersionBindings {
     )
 
     val `clipboardLoader` = GboardMethodTarget(
-        classType = "Lgas;",
+        classType = "Lfnb;",
         name = "call",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/Object;",
     )
 
     val `clipboardLoaderContext` = GboardFieldTarget(
-        classType = "Lgat;",
+        classType = "Lfnc;",
         name = "b",
         type = "Landroid/content/Context;",
     )
 
     val `clipboardLoaderOwner` = GboardFieldTarget(
-        classType = "Lgas;",
+        classType = "Lfnb;",
         name = "a",
-        type = "Lgat;",
+        type = "Lfnc;",
     )
 
     val `clipboardModelSensitive` = GboardFieldTarget(
-        classType = "Lgar;",
+        classType = "Lfna;",
         name = "h",
         type = "Z",
     )
 
     val `clipboardModelText` = GboardFieldTarget(
-        classType = "Lgar;",
+        classType = "Lfna;",
         name = "a",
         type = "Ljava/lang/String;",
     )
 
     val `clipboardModelType` = GboardFieldTarget(
-        classType = "Lgar;",
+        classType = "Lfna;",
         name = "c",
         type = "I",
     )
 
     val `clipboardNotifyRemoved` = GboardMethodTarget(
-        classType = "Ljt;",
+        classType = "Lju;",
         name = "n",
         parameterTypes = listOf("I"),
         returnType = "V",
     )
 
     val `clipboardPinnedCount` = GboardFieldTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "z",
         type = "I",
     )
 
     val `clipboardPinnedHeader` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "b",
-        type = "Lgap;",
+        type = "Lfmy;",
     )
 
     val `clipboardPreferences` = GboardMethodTarget(
-        classType = "Lrgy;",
+        classType = "Lqpn;",
         name = "I",
         parameterTypes = listOf("Landroid/content/Context;"),
-        returnType = "Lrgy;",
+        returnType = "Lqpn;",
     )
 
     val `clipboardPrimaryTimestamp` = GboardMethodTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "a",
         parameterTypes = listOf("Landroid/content/Context;"),
         returnType = "J",
     )
 
     val `clipboardPrune` = GboardMethodTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "g",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `clipboardPruneContext` = GboardFieldTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "c",
         type = "Landroid/content/Context;",
     )
 
     val `clipboardPruneCount` = GboardFieldTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "g",
         type = "Ljava/util/concurrent/atomic/AtomicInteger;",
     )
 
     val `clipboardPruneDisabled` = GboardFieldTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "f",
         type = "Z",
     )
 
     val `clipboardQuery` = GboardMethodTarget(
-        classType = "Lgbw;",
+        classType = "Lfof;",
         name = "j",
         parameterTypes = listOf("Landroid/content/Context;", "Ljava/lang/String;", "[Ljava/lang/String;", "Ljava/lang/String;"),
-        returnType = "Lwyw;",
+        returnType = "Lwhe;",
     )
 
     val `clipboardQueryType` = GboardMethodTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "s",
         parameterTypes = listOf("Landroid/net/Uri;", "I"),
         returnType = "Landroid/database/Cursor;",
     )
 
     val `clipboardReadTimestamp` = GboardMethodTarget(
-        classType = "Lchu;",
+        classType = "Lcei;",
         name = "m",
         parameterTypes = listOf("I", "J"),
         returnType = "J",
     )
 
     val `clipboardRecentCount` = GboardFieldTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "o",
         type = "I",
     )
 
     val `clipboardRecentHeader` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "a",
-        type = "Lgap;",
+        type = "Lfmy;",
     )
 
     val `clipboardRecyclerManager` = GboardFieldTarget(
         classType = "Landroid/support/v7/widget/RecyclerView;",
         name = "l",
-        type = "Lka;",
+        type = "Lkb;",
     )
 
     val `clipboardRefresh` = GboardMethodTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "R",
         parameterTypes = emptyList(),
         returnType = "V",
@@ -369,7 +369,7 @@ internal object GboardVersionBindings {
 
     val `clipboardSetSpan` = GboardMethodTarget(
         classType = "Landroid/support/v7/widget/StaggeredGridLayoutManager;",
-        name = "N",
+        name = "O",
         parameterTypes = listOf("I"),
         returnType = "V",
     )
@@ -381,77 +381,77 @@ internal object GboardVersionBindings {
     )
 
     val `clipboardSpecialHeader` = GboardFieldTarget(
-        classType = "Lgap;",
+        classType = "Lfmy;",
         name = "c",
-        type = "Lgap;",
+        type = "Lfmy;",
     )
 
     val `clipboardTrim` = GboardMethodTarget(
-        classType = "Lgbs;",
+        classType = "Lfob;",
         name = "F",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `clipboardUri` = GboardMethodTarget(
-        classType = "Lgbw;",
+        classType = "Lfof;",
         name = "d",
         parameterTypes = listOf("Landroid/content/Context;", "I", "J"),
         returnType = "Landroid/net/Uri;",
     )
 
     val `clipboardWriteTimestamp` = GboardMethodTarget(
-        classType = "Lchu;",
+        classType = "Lcei;",
         name = "s",
         parameterTypes = listOf("I", "J"),
         returnType = "V",
     )
 
     val `cursorResourcePreference` = GboardMethodTarget(
-        classType = "Lchu;",
+        classType = "Lcei;",
         name = "x",
         parameterTypes = listOf("I", "Z"),
         returnType = "Z",
     )
 
     val `cursorStringPreference` = GboardMethodTarget(
-        classType = "Lrgy;",
+        classType = "Lqpn;",
         name = "am",
         parameterTypes = listOf("Ljava/lang/String;", "Z", "Z"),
         returnType = "Z",
     )
 
     val `customSymbolsAdapterBind` = GboardMethodTarget(
-        classType = "Ljuc;",
+        classType = "Ljci;",
         name = "p",
-        parameterTypes = listOf("Lkr;", "I"),
+        parameterTypes = listOf("Lks;", "I"),
         returnType = "V",
     )
 
     val `customSymbolsAdapterConstructor` = GboardMethodTarget(
-        classType = "Ljuc;",
+        classType = "Ljci;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Ljuv;", "Ljava/util/function/Consumer;", "I", "I"),
+        parameterTypes = listOf("Landroid/content/Context;", "Ljdb;", "Ljava/util/function/Consumer;", "I", "I"),
         returnType = "V",
     )
 
     val `customSymbolsAdapterCreate` = GboardMethodTarget(
-        classType = "Ljuc;",
+        classType = "Ljci;",
         name = "d",
         parameterTypes = listOf("Landroid/view/ViewGroup;", "I"),
-        returnType = "Lkr;",
+        returnType = "Lks;",
     )
 
     val `customSymbolsAdapterViewType` = GboardMethodTarget(
-        classType = "Ljt;",
-        name = "gW",
+        classType = "Lju;",
+        name = "b",
         parameterTypes = listOf("I"),
         returnType = "I",
     )
 
     val `customSymbolsBodyReady` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonKeyboardM2;",
-        name = "eR",
+        name = "eQ",
         parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardViewDef;"),
         returnType = "V",
     )
@@ -478,33 +478,33 @@ internal object GboardVersionBindings {
     )
 
     val `customSymbolsCorpus` = GboardMethodTarget(
-        classType = "Lhjs;",
+        classType = "Lgva;",
         name = "a",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
-        returnType = "Lwyw;",
+        returnType = "Lwhe;",
     )
 
     val `customSymbolsCorpusItemExtension` = GboardFieldTarget(
-        classType = "Loss;",
+        classType = "Loat;",
         name = "g",
         type = "Ljava/lang/Class;",
     )
 
     val `customSymbolsCorpusItemKeyboard` = GboardFieldTarget(
-        classType = "Loss;",
+        classType = "Loat;",
         name = "c",
-        type = "Lqnm;",
+        type = "Lpwf;",
     )
 
     val `customSymbolsFooterClick` = GboardMethodTarget(
-        classType = "Lhjx;",
+        classType = "Lgve;",
         name = "accept",
         parameterTypes = listOf("Ljava/lang/Object;"),
         returnType = "V",
     )
 
     val `customSymbolsHeaderCallback` = GboardMethodTarget(
-        classType = "Lgza;",
+        classType = "Lgle;",
         name = "accept",
         parameterTypes = listOf("Ljava/lang/Object;"),
         returnType = "V",
@@ -513,7 +513,7 @@ internal object GboardVersionBindings {
     val `customSymbolsHeaderGuard` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/expression/header/ConstraintHeaderViewImpl;",
         name = "n",
-        parameterTypes = listOf("Lham;"),
+        parameterTypes = listOf("Lgmp;"),
         returnType = "V",
     )
 
@@ -537,90 +537,90 @@ internal object GboardVersionBindings {
     )
 
     val `customSymbolsHistorySink` = GboardMethodTarget(
-        classType = "Lhby;",
+        classType = "Lgoc;",
         name = "b",
         parameterTypes = listOf("Ljava/lang/String;"),
         returnType = "V",
     )
 
     val `customSymbolsIdentityFactory` = GboardMethodTarget(
-        classType = "Lqaz;",
+        classType = "Lpjp;",
         name = "ag",
         parameterTypes = listOf("Ljava/lang/Object;"),
-        returnType = "Lqch;",
+        returnType = "Lpkx;",
     )
 
     val `customSymbolsKeyboardReady` = GboardMethodTarget(
-        classType = "Lpnc;",
+        classType = "Lovs;",
         name = "a",
-        parameterTypes = listOf("Lpwe;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;", "Lqnm;"),
+        parameterTypes = listOf("Lpeq;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;", "Lpwf;"),
         returnType = "V",
     )
 
     val `customSymbolsM2Constructor` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonKeyboardM2;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Lpwf;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;", "Lcom/google/android/libraries/inputmethod/metadata/ImeDef;", "Lqnm;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lper;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;", "Lcom/google/android/libraries/inputmethod/metadata/ImeDef;", "Lpwf;"),
         returnType = "V",
     )
 
     val `customSymbolsM2HistoryField` = GboardFieldTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonKeyboardM2;",
         name = "b",
-        type = "Lhby;",
+        type = "Lgoc;",
     )
 
     val `customSymbolsMetrics` = GboardMethodTarget(
-        classType = "Lisn;",
+        classType = "Lidl;",
         name = "b",
-        parameterTypes = listOf("Lqnm;"),
-        returnType = "Lxrw;",
+        parameterTypes = listOf("Lpwf;"),
+        returnType = "Lxai;",
     )
 
     val `customSymbolsNavigation` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/expression/navbar/ScrollableNavigationView;",
         name = "a",
-        parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Lqnm;", "Z", "Ljava/util/function/Consumer;", "Landroid/os/Parcelable;", "Ljava/util/function/Supplier;", "Ljava/util/function/Supplier;"),
+        parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Lpwf;", "Z", "Ljava/util/function/Consumer;", "Landroid/os/Parcelable;", "Ljava/util/function/Supplier;", "Ljava/util/function/Supplier;"),
         returnType = "V",
     )
 
     val `customSymbolsProviderBefore` = GboardMethodTarget(
-        classType = "Lpwm;",
+        classType = "Lpey;",
         name = "b",
-        parameterTypes = listOf("Lqnm;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;"),
-        returnType = "Lpwe;",
+        parameterTypes = listOf("Lpwf;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;"),
+        returnType = "Lpeq;",
     )
 
     val `customSymbolsProviderCreated` = GboardMethodTarget(
-        classType = "Lpwm;",
+        classType = "Lpey;",
         name = "a",
-        parameterTypes = listOf("Lqnm;", "Lpwe;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;"),
+        parameterTypes = listOf("Lpwf;", "Lpeq;", "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;"),
         returnType = "V",
     )
 
     val `customSymbolsProviderValid` = GboardMethodTarget(
-        classType = "Lpwm;",
+        classType = "Lpey;",
         name = "c",
-        parameterTypes = listOf("Lqnm;"),
+        parameterTypes = listOf("Lpwf;"),
         returnType = "Z",
     )
 
     val `customSymbolsRecyclerAttach` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonRecyclerView;",
-        name = "aL",
-        parameterTypes = listOf("Ljuv;", "Ljava/util/function/Consumer;"),
+        name = "aK",
+        parameterTypes = listOf("Ljdb;", "Ljava/util/function/Consumer;"),
         returnType = "V",
     )
 
     val `customSymbolsSelectedIndex` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonKeyboardM2;",
         name = "k",
-        parameterTypes = listOf("Lwyw;"),
+        parameterTypes = listOf("Lwhe;"),
         returnType = "I",
     )
 
     val `customSymbolsViewTransform` = GboardMethodTarget(
-        classType = "Ltxp;",
+        classType = "Ltgb;",
         name = "j",
         parameterTypes = listOf("Landroid/graphics/Matrix;", "Landroid/view/View;", "Landroid/view/View;"),
         returnType = "Landroid/view/View;",
@@ -629,252 +629,252 @@ internal object GboardVersionBindings {
     val `customThemeFragmentPeerField` = GboardFieldTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/theme/listing/ThemeListingFragment;",
         name = "a",
-        type = "Lkst;",
+        type = "Lkbf;",
     )
 
     val `customThemeLauncherLaunch` = GboardMethodTarget(
-        classType = "Lsgz;",
-        name = "H",
+        classType = "Lquw;",
+        name = "E",
         parameterTypes = listOf("Landroid/content/Intent;", "I", "Landroid/os/Bundle;"),
         returnType = "V",
     )
 
     val `customThemePeerContextField` = GboardFieldTarget(
-        classType = "Lkst;",
+        classType = "Lkbf;",
         name = "b",
         type = "Landroid/content/Context;",
     )
 
     val `customThemePeerLauncherField` = GboardFieldTarget(
-        classType = "Lkst;",
-        name = "s",
-        type = "Lsgz;",
+        classType = "Lkbf;",
+        name = "t",
+        type = "Lquw;",
     )
 
     val `customThemePeerResultHandler` = GboardMethodTarget(
-        classType = "Lkst;",
-        name = "i",
+        classType = "Lkbf;",
+        name = "j",
         parameterTypes = listOf("Landroid/content/Intent;"),
         returnType = "V",
     )
 
     val `customThemePlusHandler` = GboardMethodTarget(
-        classType = "Lksz;",
+        classType = "Lkbl;",
         name = "f",
-        parameterTypes = listOf("Lkst;", "Lktc;", "I"),
+        parameterTypes = listOf("Lkbf;", "Lkbo;", "I"),
         returnType = "V",
     )
 
     val `customThemeResultHandler` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/theme/listing/ThemeListingFragment;",
-        name = "X",
+        name = "W",
         parameterTypes = listOf("I", "I", "Landroid/content/Intent;"),
         returnType = "V",
     )
 
     val `customThemeValidator` = GboardMethodTarget(
-        classType = "Lrzb;",
+        classType = "Lrhw;",
         name = "h",
         parameterTypes = listOf("Ljava/io/File;"),
         returnType = "Z",
     )
 
     val `editingAccessPointsApController` = GboardMethodTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Lnji;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lmqw;"),
         returnType = "V",
     )
 
     val `editingAccessPointsApOrderFactory` = GboardMethodTarget(
-        classType = "Lngm;",
+        classType = "Lmob;",
         name = "m",
-        parameterTypes = listOf("Landroid/content/Context;", "Lnub;", "Lojy;", "Lxae;", "Lxae;"),
-        returnType = "Lngm;",
+        parameterTypes = listOf("Landroid/content/Context;", "Lnbt;", "Lnru;", "Lwim;", "Lwim;"),
+        returnType = "Lmob;",
     )
 
     val `editingApOndestroy` = GboardMethodTarget(
-        classType = "Lpsx;",
-        name = "onDestroy",
+        classType = "Lpbk;",
+        name = "an",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `editingApOnfinishinput` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onFinishInput",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `editingApOnfinishinputview` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onFinishInputView",
         parameterTypes = listOf("Z"),
         returnType = "V",
     )
 
     val `editingApOnstartinput` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onStartInput",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "V",
     )
 
     val `editingApOnstartinputview` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onStartInputView",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "V",
     )
 
     val `editingApOnwindowhidden` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onWindowHidden",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `flagBoolGetter` = GboardMethodTarget(
-        classType = "Lovo;",
+        classType = "Lodo;",
         name = "g",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/Object;",
     )
 
     val `flagNameField` = GboardFieldTarget(
-        classType = "Lovo;",
+        classType = "Lodo;",
         name = "a",
         type = "Ljava/lang/String;",
     )
 
     val `frostedConfigure` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onConfigureWindow",
         parameterTypes = listOf("Landroid/view/Window;", "Z", "Z"),
         returnType = "V",
     )
 
     val `frostedHidden` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onWindowHidden",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `frostedNavApply` = GboardMethodTarget(
-        classType = "Lscf;",
-        name = "f",
-        parameterTypes = listOf("Landroid/view/Window;", "Lsce;"),
+        classType = "Lrlc;",
+        name = "g",
+        parameterTypes = listOf("Landroid/view/Window;", "Lrlb;"),
         returnType = "V",
     )
 
     val `frostedNavBody` = GboardFieldTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "c",
         type = "Lj${'$'}/util/OptionalInt;",
     )
 
     val `frostedNavColor` = GboardFieldTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "a",
         type = "I",
     )
 
     val `frostedNavDivider` = GboardFieldTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "b",
         type = "I",
     )
 
     val `frostedNavHeader` = GboardFieldTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "d",
         type = "Lj${'$'}/util/OptionalInt;",
     )
 
     val `frostedNavLight` = GboardFieldTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "e",
         type = "Z",
     )
 
     val `frostedNavParamsConstructor` = GboardMethodTarget(
-        classType = "Lsce;",
+        classType = "Lrlb;",
         name = "<init>",
         parameterTypes = listOf("I", "I", "Lj${'$'}/util/OptionalInt;", "Lj${'$'}/util/OptionalInt;", "Z"),
         returnType = "V",
     )
 
     val `frostedShown` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onWindowShown",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `gestureDispatch` = GboardMethodTarget(
-        classType = "Lqtq;",
+        classType = "Lqch;",
         name = "f",
-        parameterTypes = listOf("Lqts;", "Lqlk;", "Lqmg;", "Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;", "J", "Z", "Z", "I", "Z", "J", "I"),
+        parameterTypes = listOf("Lqck;", "Lpuc;", "Lpva;", "Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;", "J", "Z", "Z", "I", "Z", "J", "I"),
         returnType = "V",
     )
 
-    val `gestureDispatcherType` = GboardTypeTarget("Lqtq;")
+    val `gestureDispatcherType` = GboardTypeTarget("Lqch;")
 
     val `gestureStockDelegateField` = GboardFieldTarget(
-        classType = "Lqtq;",
+        classType = "Lqch;",
         name = "n",
-        type = "Lqto;",
+        type = "Lqcf;",
     )
 
     val `gestureStockDispatch` = GboardMethodTarget(
-        classType = "Lqto;",
-        name = "o",
-        parameterTypes = listOf("Lqts;", "Lqlk;", "Lqmg;", "Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;", "J", "Z", "Z", "I", "Z", "J", "I"),
+        classType = "Lqcf;",
+        name = "h",
+        parameterTypes = listOf("Lqck;", "Lpuc;", "Lpva;", "Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;", "J", "Z", "Z", "I", "Z", "J", "I"),
         returnType = "V",
     )
 
     val `incognitoDictationFlag` = GboardFieldTarget(
-        classType = "Leta;",
+        classType = "Leqh;",
         name = "v",
         type = "Z",
     )
 
     val `incognitoModeToggleApController` = GboardMethodTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Lnji;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lmqw;"),
         returnType = "V",
     )
 
     val `incognitoModeToggleApOrderFactory` = GboardMethodTarget(
-        classType = "Lngm;",
+        classType = "Lmob;",
         name = "m",
-        parameterTypes = listOf("Landroid/content/Context;", "Lnub;", "Lojy;", "Lxae;", "Lxae;"),
-        returnType = "Lngm;",
+        parameterTypes = listOf("Landroid/content/Context;", "Lnbt;", "Lnru;", "Lwim;", "Lwim;"),
+        returnType = "Lmob;",
     )
 
-    val `keyboardCompletionCallbackType` = GboardTypeTarget("Lpwg;")
+    val `keyboardCompletionCallbackType` = GboardTypeTarget("Lpes;")
 
-    val `keyboardDefinitionType` = GboardTypeTarget("Lqnm;")
+    val `keyboardDefinitionType` = GboardTypeTarget("Lpwf;")
 
     val `keyboardExtensionManager` = GboardMethodTarget(
-        classType = "Lotc;",
+        classType = "Lobd;",
         name = "c",
-        parameterTypes = listOf("Lqnm;"),
-        returnType = "Lpwh;",
+        parameterTypes = listOf("Lpwf;"),
+        returnType = "Lpet;",
     )
 
     val `keyboardProviderRequest` = GboardMethodTarget(
-        classType = "Ljtw;",
+        classType = "Ljcc;",
         name = "H",
-        parameterTypes = listOf("Landroid/content/Context;", "Lpwf;", "Lcom/google/android/libraries/inputmethod/metadata/ImeDef;", "Lqnm;", "Ljava/lang/String;", "Luuz;", "Lpwg;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lper;", "Lcom/google/android/libraries/inputmethod/metadata/ImeDef;", "Lpwf;", "Ljava/lang/String;", "Luio;", "Lpes;"),
         returnType = "V",
     )
 
     val `languageModelsBakedGetter` = GboardMethodTarget(
-        classType = "Lovo;",
+        classType = "Lodo;",
         name = "d",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/Object;",
@@ -883,7 +883,7 @@ internal object GboardVersionBindings {
     val `languageModelsDecoderAddEngine` = GboardMethodTarget(
         classType = "Lcom/google/android/keyboard/client/delight5/Decoder;",
         name = "addEngine",
-        parameterTypes = listOf("Lzaq;"),
+        parameterTypes = listOf("Lyiu;"),
         returnType = "V",
     )
 
@@ -897,146 +897,146 @@ internal object GboardVersionBindings {
     val `languageModelsDecoderLoad` = GboardMethodTarget(
         classType = "Lcom/google/android/keyboard/client/delight5/Decoder;",
         name = "loadLanguageModel",
-        parameterTypes = listOf("Lzim;"),
+        parameterTypes = listOf("Lyqo;"),
         returnType = "Z",
     )
 
     val `languageModelsDecoderRemoveEngine` = GboardMethodTarget(
         classType = "Lcom/google/android/keyboard/client/delight5/Decoder;",
         name = "removeEngine",
-        parameterTypes = listOf("Lzaq;"),
+        parameterTypes = listOf("Lyiu;"),
         returnType = "V",
     )
 
     val `languageModelsDecoderReset` = GboardMethodTarget(
         classType = "Lcom/google/android/keyboard/client/delight5/Decoder;",
         name = "createOrResetDecoder",
-        parameterTypes = listOf("Lzfk;"),
+        parameterTypes = listOf("Lynp;"),
         returnType = "Z",
     )
 
     val `languageModelsDecoderUnload` = GboardMethodTarget(
         classType = "Lcom/google/android/keyboard/client/delight5/Decoder;",
         name = "unloadLanguageModel",
-        parameterTypes = listOf("Lzim;"),
+        parameterTypes = listOf("Lyqo;"),
         returnType = "Z",
     )
 
     val `languageModelsDescriptor` = GboardFieldTarget(
-        classType = "Lzbe;",
+        classType = "Lyji;",
         name = "c",
-        type = "Lzbd;",
+        type = "Lyjh;",
     )
 
     val `languageModelsEngineModelFile` = GboardFieldTarget(
-        classType = "Lzio;",
+        classType = "Lyqq;",
         name = "c",
         type = "Ljava/lang/String;",
     )
 
     val `languageModelsEngineModelVersion` = GboardFieldTarget(
-        classType = "Lzio;",
+        classType = "Lyqq;",
         name = "d",
         type = "J",
     )
 
     val `languageModelsEngineModels` = GboardFieldTarget(
-        classType = "Lzaq;",
+        classType = "Lyiu;",
         name = "d",
-        type = "Laaxh;",
+        type = "Laaez;",
     )
 
     val `languageModelsEngineType` = GboardFieldTarget(
-        classType = "Lzaq;",
+        classType = "Lyiu;",
         name = "c",
         type = "I",
     )
 
     val `languageModelsHmmEnroll` = GboardMethodTarget(
-        classType = "Lhvi;",
+        classType = "Lhgq;",
         name = "d",
         parameterTypes = listOf("Ljava/lang/String;", "Lcom/google/android/apps/inputmethod/libs/hmm/DataManagerImpl;"),
         returnType = "Z",
     )
 
     val `languageModelsHmmPack` = GboardFieldTarget(
-        classType = "Lhvi;",
+        classType = "Lhgq;",
         name = "d",
         type = "Ljava/io/File;",
     )
 
     val `languageModelsHmmProvider` = GboardFieldTarget(
-        classType = "Lhvi;",
+        classType = "Lhgq;",
         name = "a",
-        type = "Lhtw;",
+        type = "Lhfc;",
     )
 
     val `languageModelsHmmVersion` = GboardFieldTarget(
-        classType = "Lhtw;",
+        classType = "Lhfc;",
         name = "b",
         type = "I",
     )
 
     val `languageModelsModelCountry` = GboardFieldTarget(
-        classType = "Lzil;",
+        classType = "Lyqn;",
         name = "j",
         type = "Ljava/lang/String;",
     )
 
     val `languageModelsModelFile` = GboardFieldTarget(
-        classType = "Lzil;",
+        classType = "Lyqn;",
         name = "f",
         type = "Ljava/lang/String;",
     )
 
     val `languageModelsModelLanguage` = GboardFieldTarget(
-        classType = "Lzil;",
+        classType = "Lyqn;",
         name = "i",
         type = "Ljava/lang/String;",
     )
 
     val `languageModelsModelType` = GboardFieldTarget(
-        classType = "Lzil;",
+        classType = "Lyqn;",
         name = "e",
         type = "I",
     )
 
     val `languageModelsModelVersion` = GboardFieldTarget(
-        classType = "Lzil;",
+        classType = "Lyqn;",
         name = "l",
         type = "J",
     )
 
     val `languageModelsNwpManagerFactory` = GboardMethodTarget(
-        classType = "Lghk;",
+        classType = "Lftm;",
         name = "a",
         parameterTypes = listOf("Landroid/content/Context;"),
-        returnType = "Lghk;",
+        returnType = "Lftm;",
     )
 
     val `languageModelsNwpOpen` = GboardMethodTarget(
-        classType = "Lghh;",
+        classType = "Lftj;",
         name = "j",
         parameterTypes = listOf("Ljava/util/Locale;", "Ljava/lang/String;"),
-        returnType = "Lgig;",
+        returnType = "Lfui;",
     )
 
     val `languageModelsPackMetadata` = GboardMethodTarget(
-        classType = "Lgig;",
+        classType = "Lfui;",
         name = "a",
         parameterTypes = emptyList(),
-        returnType = "Luqu;",
+        returnType = "Ltzi;",
     )
 
     val `languageModelsPackParent` = GboardMethodTarget(
-        classType = "Luqu;",
+        classType = "Ltzi;",
         name = "e",
         parameterTypes = emptyList(),
-        returnType = "Luqj;",
+        returnType = "Ltyx;",
     )
 
     val `languageModelsParentVersion` = GboardMethodTarget(
-        classType = "Luqj;",
+        classType = "Ltyx;",
         name = "a",
         parameterTypes = emptyList(),
         returnType = "I",
@@ -1044,89 +1044,89 @@ internal object GboardVersionBindings {
 
     val `latinGlobeFactory` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/latin5/LatinIme;",
-        name = "N",
+        name = "Q",
         parameterTypes = emptyList(),
-        returnType = "Lzcv;",
+        returnType = "Lykz;",
     )
 
     val `latinGlobeIntervalField` = GboardFieldTarget(
-        classType = "Lzcv;",
+        classType = "Lykz;",
         name = "h",
         type = "F",
     )
 
     val `longPressQuickActionsInputEvent` = GboardMethodTarget(
-        classType = "Lpsx;",
-        name = "aw",
-        parameterTypes = listOf("Losj;"),
+        classType = "Lpbk;",
+        name = "ay",
+        parameterTypes = listOf("Loak;"),
         returnType = "Z",
     )
 
     val `manualIncognitoClipboard` = GboardMethodTarget(
-        classType = "Lgcc;",
+        classType = "Lfok;",
         name = "onPrimaryClipChanged",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `manualIncognitoDictation` = GboardMethodTarget(
-        classType = "Lteg;",
+        classType = "Lsnd;",
         name = "b",
-        parameterTypes = listOf("Leta;", "Z", "Z"),
-        returnType = "Llih;",
+        parameterTypes = listOf("Leqh;", "Z", "Z"),
+        returnType = "Lkql;",
     )
 
     val `manualIncognitoHide` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onWindowHidden",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `manualIncognitoPredicate` = GboardMethodTarget(
-        classType = "Lewx;",
+        classType = "Lesj;",
         name = "I",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `manualIncognitoStart` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onStartInput",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "V",
     )
 
     val `manualIncognitoStartView` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onStartInputView",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "V",
     )
 
     val `manualIncognitoVoice` = GboardMethodTarget(
-        classType = "Lvpg;",
+        classType = "Luya;",
         name = "aQ",
         parameterTypes = listOf("Landroid/content/Context;", "Landroid/view/inputmethod/EditorInfo;", "Z"),
         returnType = "Z",
     )
 
     val `menuBodyProviderSelect` = GboardMethodTarget(
-        classType = "Lpxy;",
+        classType = "Lpgm;",
         name = "f",
         parameterTypes = listOf("I"),
         returnType = "V",
     )
 
     val `menuControllerBind` = GboardMethodTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "k",
-        parameterTypes = listOf("Lned;"),
+        parameterTypes = listOf("Lmlt;"),
         returnType = "V",
     )
 
     val `menuControllerOpen` = GboardMethodTarget(
-        classType = "Lnib;",
+        classType = "Lmpq;",
         name = "F",
         parameterTypes = emptyList(),
         returnType = "V",
@@ -1140,8 +1140,8 @@ internal object GboardVersionBindings {
     )
 
     val `menuDragSetup` = GboardMethodTarget(
-        classType = "Lnih;",
-        name = "y",
+        classType = "Lmpw;",
+        name = "z",
         parameterTypes = listOf("Ljava/lang/String;", "Z"),
         returnType = "V",
     )
@@ -1149,105 +1149,105 @@ internal object GboardVersionBindings {
     val `menuNativeView` = GboardMethodTarget(
         classType = "Lcom/google/android/libraries/inputmethod/keyboard/impl/Keyboard;",
         name = "F",
-        parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/metadata/KeyboardViewDef;", "Lpxh;"),
-        returnType = "Lpxi;",
+        parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/metadata/KeyboardViewDef;", "Lpfu;"),
+        returnType = "Lpfv;",
     )
 
     val `ocrConfigAvailability` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "g",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `ocrConfigLabel` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "b",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/String;",
     )
 
     val `ocrConfigLanguageHint` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "c",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/String;",
     )
 
     val `ocrConfigLoggingLibrary` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "d",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/String;",
     )
 
     val `ocrConfigModuleId` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "f",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/String;",
     )
 
     val `ocrConfigOptionalModule` = GboardMethodTarget(
-        classType = "Laauc;",
+        classType = "Laaby;",
         name = "e",
         parameterTypes = emptyList(),
         returnType = "Ljava/lang/String;",
     )
 
     val `ocrManagerRequest` = GboardMethodTarget(
-        classType = "Laatx;",
+        classType = "Laabt;",
         name = "a",
         parameterTypes = emptyList(),
-        returnType = "[Llrf;",
+        returnType = "[Lkzf;",
     )
 
     val `ocrOptionalRequest` = GboardMethodTarget(
-        classType = "Lzws;",
+        classType = "Lzej;",
         name = "a",
-        parameterTypes = listOf("Laatd;"),
-        returnType = "[Llrf;",
+        parameterTypes = listOf("Laabb;"),
+        returnType = "[Lkzf;",
     )
 
     val `ocrThinInit` = GboardMethodTarget(
-        classType = "Laatq;",
+        classType = "Laabn;",
         name = "a",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `pointerCancel` = GboardMethodTarget(
-        classType = "Lqts;",
+        classType = "Lqck;",
         name = "s",
         parameterTypes = listOf("J"),
         returnType = "V",
     )
 
     val `pointerFinish` = GboardMethodTarget(
-        classType = "Lqts;",
+        classType = "Lqck;",
         name = "r",
         parameterTypes = listOf("J", "I"),
         returnType = "V",
     )
 
     val `pointerOwner` = GboardMethodTarget(
-        classType = "Lqts;",
+        classType = "Lqck;",
         name = "B",
         parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyView;", "F", "F", "J", "I"),
         returnType = "V",
     )
 
-    val `pointerOwnerType` = GboardTypeTarget("Lqts;")
+    val `pointerOwnerType` = GboardTypeTarget("Lqck;")
 
     val `pointerPreReset` = GboardMethodTarget(
-        classType = "Lqts;",
+        classType = "Lqck;",
         name = "ac",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `pointerReset` = GboardMethodTarget(
-        classType = "Lqts;",
+        classType = "Lqck;",
         name = "C",
         parameterTypes = emptyList(),
         returnType = "V",
@@ -1255,27 +1255,27 @@ internal object GboardVersionBindings {
 
     val `ramblerSelectorCreate` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/latin/preference/VoiceSettingsFragment;",
-        name = "f",
+        name = "e",
         parameterTypes = listOf("Landroid/os/Bundle;"),
         returnType = "V",
     )
 
     val `ramblerSelectorDefault` = GboardMethodTarget(
-        classType = "Lfta;",
-        name = "hU",
+        classType = "Lffh;",
+        name = "hV",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `ramblerSelectorLayout` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/latin/preference/VoiceSettingsFragment;",
-        name = "aC",
+        name = "aA",
         parameterTypes = emptyList(),
         returnType = "I",
     )
 
     val `ramblerSelectorRead` = GboardMethodTarget(
-        classType = "Lnng;",
+        classType = "Lmut;",
         name = "a",
         parameterTypes = listOf("Landroid/content/Context;"),
         returnType = "Z",
@@ -1283,83 +1283,83 @@ internal object GboardVersionBindings {
 
     val `ramblerSelectorSetup` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/latin/preference/VoiceSettingsFragment;",
-        name = "ac",
+        name = "aa",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `ramblerSelectorWrite` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/latin/preference/VoiceSettingsFragment;",
-        name = "aE",
-        parameterTypes = listOf("Z", "Lrgy;", "Lcom/google/android/libraries/inputmethod/preferencewidgets/CustomSelectorWithWidgetPreference;", "Lcom/google/android/libraries/inputmethod/preferencewidgets/CustomSelectorWithWidgetPreference;"),
+        name = "aC",
+        parameterTypes = listOf("Z", "Lqpn;", "Lcom/google/android/libraries/inputmethod/preferencewidgets/CustomSelectorWithWidgetPreference;", "Lcom/google/android/libraries/inputmethod/preferencewidgets/CustomSelectorWithWidgetPreference;"),
         returnType = "V",
     )
 
     val `roundedKeyboardAdmission` = GboardMethodTarget(
-        classType = "Lrxr;",
+        classType = "Lrgl;",
         name = "b",
         parameterTypes = listOf("Landroid/content/Context;"),
         returnType = "Z",
     )
 
     val `roundedKeyboardRadiiConstructor` = GboardMethodTarget(
-        classType = "Lsay;",
+        classType = "Lrjv;",
         name = "<init>",
         parameterTypes = listOf("F", "F", "F", "F"),
         returnType = "V",
     )
 
-    val `roundedKeyboardRadiiType` = GboardTypeTarget("Lsay;")
+    val `roundedKeyboardRadiiType` = GboardTypeTarget("Lrjv;")
 
     val `roundedKeyboardRadiiValuesField` = GboardFieldTarget(
-        classType = "Lsay;",
+        classType = "Lrjv;",
         name = "a",
         type = "[F",
     )
 
     val `roundedKeyboardRadiiWrapperFirstParameterField` = GboardFieldTarget(
-        classType = "Lrzx;",
+        classType = "Lriu;",
         name = "b",
         type = "Ljava/lang/Float;",
     )
 
     val `roundedKeyboardRadiiWrapperParameterizedConstructor` = GboardMethodTarget(
-        classType = "Lrzx;",
+        classType = "Lriu;",
         name = "<init>",
-        parameterTypes = listOf("Lsay;", "F", "F"),
+        parameterTypes = listOf("Lrjv;", "F", "F"),
         returnType = "V",
     )
 
     val `roundedKeyboardRadiiWrapperRadiiField` = GboardFieldTarget(
-        classType = "Lrzx;",
+        classType = "Lriu;",
         name = "a",
-        type = "Lsay;",
+        type = "Lrjv;",
     )
 
     val `roundedKeyboardRadiiWrapperSecondParameterField` = GboardFieldTarget(
-        classType = "Lrzx;",
+        classType = "Lriu;",
         name = "c",
         type = "Ljava/lang/Float;",
     )
 
     val `roundedKeyboardRadiiWrapperSimpleConstructor` = GboardMethodTarget(
-        classType = "Lrzx;",
+        classType = "Lriu;",
         name = "<init>",
-        parameterTypes = listOf("Lsay;"),
+        parameterTypes = listOf("Lrjv;"),
         returnType = "V",
     )
 
-    val `roundedKeyboardRadiiWrapperType` = GboardTypeTarget("Lrzx;")
+    val `roundedKeyboardRadiiWrapperType` = GboardTypeTarget("Lriu;")
 
     val `roundedKeyboardStyleResolver` = GboardMethodTarget(
-        classType = "Lryg;",
+        classType = "Lrgz;",
         name = "b",
         parameterTypes = listOf("Ljava/lang/String;", "Ljava/util/List;"),
         returnType = "Ljava/util/List;",
     )
 
     val `settingsHomepageMode` = GboardFieldTarget(
-        classType = "Ldtp;",
+        classType = "Ldqo;",
         name = "a",
         type = "I",
     )
@@ -1372,14 +1372,14 @@ internal object GboardVersionBindings {
     )
 
     val `settingsHomepageSelector` = GboardMethodTarget(
-        classType = "Ldtp;",
+        classType = "Ldqo;",
         name = "a",
         parameterTypes = listOf("Landroid/content/Context;"),
         returnType = "Z",
     )
 
     val `signatureCheck` = GboardMethodTarget(
-        classType = "Lsqy;",
+        classType = "Lrzu;",
         name = "a",
         parameterTypes = listOf("Landroid/content/Context;", "Ljava/lang/String;"),
         returnType = "Z",
@@ -1397,83 +1397,83 @@ internal object GboardVersionBindings {
     val `softKeyViewType` = GboardTypeTarget("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyView;")
 
     val `splitAccessPointName` = GboardFieldTarget(
-        classType = "Ltqr;",
+        classType = "Lsze;",
         name = "d",
         type = "Ljava/lang/Object;",
     )
 
     val `splitDeviceEligibility` = GboardMethodTarget(
-        classType = "Lqdw;",
+        classType = "Lpmm;",
         name = "w",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `splitEligibility` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "au",
+        classType = "Lpks;",
+        name = "av",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `splitModeAttach` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "E",
-        parameterTypes = listOf("Lqba;", "Lpqb;", "Lpvf;", "Z"),
+        classType = "Lpks;",
+        name = "F",
+        parameterTypes = listOf("Lpjq;", "Loyq;", "Lpdr;", "Z"),
         returnType = "V",
     )
 
     val `splitModeCurrent` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "G",
+        classType = "Lpks;",
+        name = "H",
         parameterTypes = emptyList(),
         returnType = "I",
     )
 
     val `splitModeManual` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "W",
+        classType = "Lpks;",
+        name = "X",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `splitModeReload` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "Q",
+        classType = "Lpks;",
+        name = "R",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `splitModeRestore` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "O",
+        classType = "Lpks;",
+        name = "P",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `splitModeTransition` = GboardMethodTarget(
-        classType = "Lqcc;",
-        name = "ag",
+        classType = "Lpks;",
+        name = "ah",
         parameterTypes = listOf("I", "Z", "Z"),
         returnType = "Z",
     )
 
     val `splitOrder` = GboardMethodTarget(
-        classType = "Lnhm;",
+        classType = "Lmpb;",
         name = "c",
         parameterTypes = emptyList(),
-        returnType = "Lwyw;",
+        returnType = "Lwhe;",
     )
 
     val `splitState` = GboardMethodTarget(
-        classType = "Ltqr;",
+        classType = "Lsze;",
         name = "e",
         parameterTypes = listOf("I"),
         returnType = "V",
     )
 
     val `splitWidthEligibility` = GboardMethodTarget(
-        classType = "Lqdw;",
+        classType = "Lpmm;",
         name = "q",
         parameterTypes = listOf("Landroid/content/Context;", "I", "Z"),
         returnType = "Z",
@@ -1487,49 +1487,49 @@ internal object GboardVersionBindings {
     )
 
     val `symbolFooterCorpus` = GboardMethodTarget(
-        classType = "Lhjs;",
+        classType = "Lgva;",
         name = "a",
         parameterTypes = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
-        returnType = "Lwyw;",
+        returnType = "Lwhe;",
     )
 
     val `voiceEligibilityConstructor` = GboardMethodTarget(
-        classType = "Ltec;",
+        classType = "Lsmz;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Luho;", "Lvjr;", "Lsva;", "Luho;", "Luho;", "Ltoc;", "Luho;", "Ltoj;", "Ltjp;", "Llqg;", "Ltiw;", "Ltje;", "Lvpg;", "Ltkn;", "Lton;", "Ltqm;", "Lsuf;", "Lter;", "Ltdq;", "Luho;", "Lacwx;", "Ljava/util/Set;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lkye;", "Lusl;", "Laavc;", "Ltqb;", "Ltqb;", "Lswr;", "Ltqb;", "Laavc;", "Laavc;", "Lkye;", "Laavc;", "Laavc;", "Luya;", "Lsth;", "Lsxc;", "Laavc;", "Laavc;", "Lsno;", "Lsmm;", "Laavc;", "Lacdy;", "Ljava/util/Set;"),
         returnType = "V",
     )
 
     val `voiceFormatterConstructor` = GboardMethodTarget(
-        classType = "Lsxu;",
+        classType = "Lsgm;",
         name = "<init>",
-        parameterTypes = listOf("Ljava/util/Locale;", "Letg;", "Ltkg;", "I", "Z", "Lsxx;", "Ltqd;", "Lvpg;", "Ljava/util/concurrent/Executor;"),
+        parameterTypes = listOf("Ljava/util/Locale;", "Leqn;", "Lsta;", "I", "Z", "Lsgp;", "Lsyp;", "Luya;", "Ljava/util/concurrent/Executor;"),
         returnType = "V",
     )
 
     val `voiceMddConstructor` = GboardMethodTarget(
-        classType = "Lsva;",
+        classType = "Lsdy;",
         name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Lsvb;", "Lsuv;", "Lacwx;"),
+        parameterTypes = listOf("Landroid/content/Context;", "Lsvb;", "Lsdr;", "Lacdy;"),
         returnType = "V",
     )
 
     val `voiceNativeReadiness` = GboardMethodTarget(
-        classType = "Ltdn;",
+        classType = "Lsmi;",
         name = "a",
         parameterTypes = emptyList(),
         returnType = "Z",
     )
 
     val `webClipboardCreate` = GboardMethodTarget(
-        classType = "Lpsx;",
+        classType = "Lpbk;",
         name = "onCreate",
         parameterTypes = emptyList(),
         returnType = "V",
     )
 
     val `writingOfficialPreference` = GboardMethodTarget(
-        classType = "Lchu;",
+        classType = "Lcei;",
         name = "x",
         parameterTypes = listOf("I", "Z"),
         returnType = "Z",
@@ -1539,33 +1539,33 @@ internal object GboardVersionBindings {
         classType = "Lcom/google/android/libraries/inputmethod/popup/BasicPopupView;",
         name = "b",
         parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;", "Landroid/view/View;", "F", "F", "Lcom/google/android/libraries/inputmethod/metadata/ActionDef;", "[I", "Z"),
-        returnType = "Lqmg;",
+        returnType = "Lpva;",
     )
 
     val `zhuyinTogglePopupTarget` = GboardMethodTarget(
         classType = "Lcom/google/android/libraries/inputmethod/popup/BasicPopupView;",
         name = "b",
         parameterTypes = listOf("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;", "Landroid/view/View;", "F", "F", "Lcom/google/android/libraries/inputmethod/metadata/ActionDef;", "[I", "Z"),
-        returnType = "Lqmg;",
+        returnType = "Lpva;",
     )
 
     val `zhuyinTogglePreferenceFactory` = GboardMethodTarget(
-        classType = "Lrgy;",
+        classType = "Lqpn;",
         name = "I",
         parameterTypes = listOf("Landroid/content/Context;"),
-        returnType = "Lrgy;",
+        returnType = "Lqpn;",
     )
 
     val `zhuyinTogglePreferenceWrite` = GboardMethodTarget(
-        classType = "Lrgy;",
+        classType = "Lqpn;",
         name = "f",
         parameterTypes = listOf("Ljava/lang/String;", "Z"),
         returnType = "V",
     )
 
     val `zhuyinToggleReset` = GboardMethodTarget(
-        classType = "Lpsx;",
-        name = "at",
+        classType = "Lpbk;",
+        name = "au",
         parameterTypes = listOf("Z"),
         returnType = "V",
     )

@@ -311,15 +311,16 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Change package name | On | 18.5.11.993608717-release-arm64-v8a |
-| Clipboard Enhancements | On | 18.5.11.993608717-release-arm64-v8a |
-| Cursor trackpad mode | On | 18.5.11.993608717-release-arm64-v8a |
-| Custom branding | Off | 18.5.11.993608717-release-arm64-v8a |
-| Incognito Mode Toggle | On | 18.5.11.993608717-release-arm64-v8a |
-| Parakeet voice typing | On | 18.5.11.993608717-release-arm64-v8a |
-| Simple Calculator | On | 18.5.11.993608717-release-arm64-v8a |
-| Toolbar Editing Buttons | On | 18.5.11.993608717-release-arm64-v8a |
-| Web Clipboard | On | 18.5.11.993608717-release-arm64-v8a |
+| Change package name | On | 18.6.3.1002251336-release-arm64-v8a |
+| Clipboard Enhancements | On | 18.6.3.1002251336-release-arm64-v8a |
+| Cursor trackpad mode | On | 18.6.3.1002251336-release-arm64-v8a |
+| Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
+| Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler voice typing | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Simple Calculator | On | 18.6.3.1002251336-release-arm64-v8a |
+| Toolbar Editing Buttons | On | 18.6.3.1002251336-release-arm64-v8a |
+| Web Clipboard | On | 18.6.3.1002251336-release-arm64-v8a |
 
 ## Gearslip
 
@@ -943,4 +944,4 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow all Android Auto hosts | On | 7.2.1.43844 |
 
-[Releases](https://gitlab.com/johninnld/nl-morphe-patches/-/releases)
+[Releases](https://codeberg.org/JohninNL/nl-morphe-patches/releases)

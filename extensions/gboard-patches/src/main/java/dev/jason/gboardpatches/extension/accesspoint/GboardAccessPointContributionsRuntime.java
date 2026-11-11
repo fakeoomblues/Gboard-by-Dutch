@@ -86,9 +86,9 @@ public final class GboardAccessPointContributionsRuntime {
             return;
         }
         ClassLoader loader = controller.getClass().getClassLoader();
-        Class<?> controllerType = Class.forName("nib", false, loader);
-        Class<?> orderType = Class.forName("nhm", false, loader);
-        Class<?> catalogType = Class.forName("xae", false, loader);
+        Class<?> controllerType = Class.forName("mpq", false, loader);
+        Class<?> orderType = Class.forName("mpb", false, loader);
+        Class<?> catalogType = Class.forName("wim", false, loader);
         if (!controllerType.isInstance(controller)) {
             throw new IllegalArgumentException("Not the exact1853 AP controller");
         }
@@ -99,7 +99,7 @@ public final class GboardAccessPointContributionsRuntime {
         if (orderHelper == null) {
             return;
         }
-        Field masterCatalogField = orderType.getDeclaredField("c");
+        Field masterCatalogField = orderType.getDeclaredField("b");
         if (masterCatalogField.getType() != catalogType) throw new NoSuchFieldException("mwg.c:wpa");
         masterCatalogField.setAccessible(true);
         Object stockCatalog = masterCatalogField.get(orderHelper);

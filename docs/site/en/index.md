@@ -515,25 +515,26 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.5.11.993608717-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Gboard](apps/gboard.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">18.5.11.993608717-release-arm64-v8a</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>9 patches</summary>
+<summary>10 patches</summary>
 <ul>
-<li>Change package name <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Clipboard Enhancements <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Cursor trackpad mode <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Custom branding <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a · default off</span></li>
-<li>Incognito Mode Toggle <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Parakeet voice typing <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Simple Calculator <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Toolbar Editing Buttons <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
-<li>Web Clipboard <span class="dap-app-card__target">18.5.11.993608717-release-arm64-v8a</span></li>
+<li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Cursor trackpad mode <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
+<li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
+<li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Web Clipboard <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 </ul>
 </details>
 

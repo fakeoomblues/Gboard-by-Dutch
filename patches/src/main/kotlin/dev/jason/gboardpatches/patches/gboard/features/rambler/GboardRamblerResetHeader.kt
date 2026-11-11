@@ -17,18 +17,18 @@ import dev.jason.gboardpatches.patches.gboard.shared.gboardStructuralFingerprint
 import dev.jason.gboardpatches.patches.gboard.shared.generated.GboardVersionBindings
 
 internal fun MutableMethod.preservePendingRamblerResetCleanup(classes: List<ClassDef>) {
-    check(GboardVersionBindings.targetVersion == "18.5.11")
-    check(definingClass == "Lfwg;" && name == "i" && parameterTypes == listOf("Z") && returnType == "V")
+    check(GboardVersionBindings.targetVersion == "18.6.3")
+    check(definingClass == "Lfio;" && name == "i" && parameterTypes == listOf("Z") && returnType == "V")
     val byType = classes.associateBy { it.type }
     // Pin the callback constructor/ownership guard and both cancellation paths.
     // es.$cid is private, so the injected code must not read it across classes.
     val reviewed = listOf(
-        Triple("Lfwg;", "i(Z)V", "2fe7951077c3d00faf4bef22695e5fabc30aa7a69641a99170494ec370594f71"),
-        Triple("Lfvq;", "d()V", "a07dea355b07d3c30aa2467e2f9ba6dd0352ba4af303b15fbcb563d0925c2e6a"),
-        Triple("Lfvr;", "c(Lfvr;)V", "b4acc7601c5844d0e039c8d10cec8c142ad42b9087a88481c0f631599f05d1a1"),
-        Triple("Les;", "<init>(Lfwg;Lfvq;Landroid/view/ViewGroup;Landroid/view/View;I)V",
+        Triple("Lfio;", "i(Z)V", "2fe7951077c3d00faf4bef22695e5fabc30aa7a69641a99170494ec370594f71"),
+        Triple("Lfhy;", "d()V", "a07dea355b07d3c30aa2467e2f9ba6dd0352ba4af303b15fbcb563d0925c2e6a"),
+        Triple("Lfhz;", "c(Lfhz;)V", "b4acc7601c5844d0e039c8d10cec8c142ad42b9087a88481c0f631599f05d1a1"),
+        Triple("Let;", "<init>(Lfio;Lfhy;Landroid/view/ViewGroup;Landroid/view/View;I)V",
             "5c19aea02bc987e2408a94975116693bb73277f825be55823130a7ba8b520a29"),
-        Triple("Les;", "run()V", "efef0e8d3e9f9d5bed35a25fcb1adc3dd395bf20ff6825d343bd85a7af71c153"),
+        Triple("Let;", "run()V", "efef0e8d3e9f9d5bed35a25fcb1adc3dd395bf20ff6825d343bd85a7af71c153"),
     )
     reviewed.forEach { (owner, signature, expected) ->
         val method = checkNotNull(byType[owner]).methods.single {
@@ -39,9 +39,9 @@ internal fun MutableMethod.preservePendingRamblerResetCleanup(classes: List<Clas
         }
     }
     listOf(
-        Triple("Lfwg;", "f", "Lfvq;"), Triple("Lfvq;", "e", "Lfvr;"),
-        Triple("Lfvr;", "p", "Ljava/lang/Runnable;"),
-        Triple("Les;", "b", "Ljava/lang/Object;"), Triple("Les;", "c", "Ljava/lang/Object;"),
+        Triple("Lfio;", "f", "Lfhy;"), Triple("Lfhy;", "e", "Lfhz;"),
+        Triple("Lfhz;", "p", "Ljava/lang/Runnable;"),
+        Triple("Let;", "b", "Ljava/lang/Object;"), Triple("Let;", "c", "Ljava/lang/Object;"),
     ).forEach { (owner, fieldName, type) ->
         val field = checkNotNull(byType[owner]).fields.single { it.name == fieldName && it.type == type }
         check(field.accessFlags and (AccessFlags.PRIVATE.value or AccessFlags.STATIC.value) == 0) {
@@ -51,10 +51,10 @@ internal fun MutableMethod.preservePendingRamblerResetCleanup(classes: List<Clas
     val writers = classes.flatMap { owner -> owner.methods.flatMap { method ->
         method.implementation?.instructions?.toList().orEmpty().filter {
             it.opcode == Opcode.IPUT_OBJECT &&
-                (it as? ReferenceInstruction)?.reference?.toString() == "Lggw;->p:Ljava/lang/Runnable;"
+                (it as? ReferenceInstruction)?.reference?.toString() == "Lfsy;->p:Ljava/lang/Runnable;"
         }.map { "${owner.type}->${method.name}(${method.parameterTypes.joinToString("")})${method.returnType}" }
     } }.groupingBy { it }.eachCount()
-    check(writers == mapOf("Lghl;->i(Z)V" to 2, "Lggv;->d()V" to 1, "Lggw;->c(Lggw;)V" to 1)) {
+    check(writers == mapOf("Lftn;->i(Z)V" to 2, "Lfsx;->d()V" to 1, "Lfsy;->c(Lfsy;)V" to 1)) {
         "Unknown Rambler pending callback writer"
     }
     val instructions = checkNotNull(implementation).instructions.toList()
@@ -62,7 +62,7 @@ internal fun MutableMethod.preservePendingRamblerResetCleanup(classes: List<Clas
         val instruction = instructions[index]
         val registers = instruction as? TwoRegisterInstruction
         instruction.opcode == Opcode.IGET_OBJECT && registers?.registerA == 14 && registers.registerB == 4 &&
-            (instruction as? ReferenceInstruction)?.reference?.toString() == "Lghl;->f:Lggv;" &&
+            (instruction as? ReferenceInstruction)?.reference?.toString() == "Lftn;->f:Lggv;" &&
             instructions.getOrNull(index - 1)?.opcode == Opcode.MOVE_OBJECT
     }
     // Only the synchronous fallback. The native code rereads f after cleanup.
@@ -85,11 +85,11 @@ internal fun MutableMethod.preservePendingRamblerResetCleanup(classes: List<Clas
 }
 
 internal fun MutableMethod.clearRamblerResetHeaderWithoutShowing() {
-    check(definingClass == "Lfxe;" && name == "J" && parameterTypes.isEmpty() && returnType == "V")
+    check(definingClass == "Lfjo;" && name == "J" && parameterTypes.isEmpty() && returnType == "V")
     val instructions = checkNotNull(implementation).instructions.toList()
     val index = instructions.indices.single {
         (instructions[it] as? ReferenceInstruction)?.reference?.toString() ==
-            "Lkln;->e(Ljava/lang/CharSequence;Lqed;)V"
+            "Ljtu;->e(Ljava/lang/CharSequence;Lpmt;)V"
     }
     val call = instructions[index] as FiveRegisterInstruction
     val label = instructions.getOrNull(index - 2) as? ReferenceInstruction
@@ -97,7 +97,7 @@ internal fun MutableMethod.clearRamblerResetHeaderWithoutShowing() {
         (label?.reference as? StringReference)?.string == "" &&
         (label as? OneRegisterInstruction)?.registerA == call.registerD &&
         (instructions.getOrNull(index - 1) as? ReferenceInstruction)?.reference?.toString() ==
-            "Lqpi;->a:Lqpi;" &&
+            "Lpyb;->a:Lqpi;" &&
         (instructions.getOrNull(index - 1) as? OneRegisterInstruction)?.registerA == call.registerE) {
         "Unexpected Rambler reset header call"
     }

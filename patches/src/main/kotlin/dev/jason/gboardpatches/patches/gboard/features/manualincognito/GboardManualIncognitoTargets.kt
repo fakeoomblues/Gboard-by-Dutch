@@ -4,22 +4,22 @@ import dev.jason.gboardpatches.patches.gboard.shared.GboardMethodTarget
 
 internal object GboardManualIncognitoTargets {
     val onStartInput = method(
-        owner = "Lpsx;",
+        owner = "Lpbk;",
         name = "onStartInput",
         parameters = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returns = "V",
     )
     val onStartInputView = method(
-        owner = "Lpsx;",
+        owner = "Lpbk;",
         name = "onStartInputView",
         parameters = listOf("Landroid/view/inputmethod/EditorInfo;", "Z"),
         returns = "V",
     )
-    val onWindowHidden = method("Lpsx;", "onWindowHidden", emptyList(), "V")
-    val incognitoPredicate = method("Lewx;", "I", emptyList(), "Z")
-    val clipboardListener = method("Lgcc;", "onPrimaryClipChanged", emptyList(), "V")
+    val onWindowHidden = method("Lpbk;", "onWindowHidden", emptyList(), "V")
+    val incognitoPredicate = method("Lesj;", "I", emptyList(), "Z")
+    val clipboardListener = method("Lfok;", "onPrimaryClipChanged", emptyList(), "V")
     val voiceEligibility = method(
-        owner = "Lvpg;",
+        owner = "Luya;",
         name = "aQ",
         parameters = listOf(
             "Landroid/content/Context;",
@@ -29,10 +29,10 @@ internal object GboardManualIncognitoTargets {
         returns = "Z",
     )
     val dictationEligibility = method(
-        owner = "Lteg;",
+        owner = "Lsnd;",
         name = "b",
-        parameters = listOf("Leta;", "Z", "Z"),
-        returns = "Llih;",
+        parameters = listOf("Leqh;", "Z", "Z"),
+        returns = "Lkql;",
     )
     private fun method(
         owner: String,

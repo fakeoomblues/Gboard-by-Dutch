@@ -23,7 +23,7 @@ public final class GboardEditingAccessPointsContribution {
             prepare(context.getClassLoader());
             List<String> result = extend(stock,
                     action -> GboardEditingAccessPointsRuntime.enabled(context, action));
-            Class<?> catalog = Class.forName("xae", false, original.getClass().getClassLoader());
+            Class<?> catalog = Class.forName("wim", false, original.getClass().getClassLoader());
             Method copy = catalog.getDeclaredMethod("n", Collection.class);
             copy.setAccessible(true);
             return copy.invoke(null, result);
@@ -91,9 +91,9 @@ public final class GboardEditingAccessPointsContribution {
 
         Handles(ClassLoader loader) throws ReflectiveOperationException {
             this.loader = loader;
-            Class<?> descriptor = Class.forName("nex", false, loader);
-            Class<?> builder = Class.forName("nes", false, loader);
-            Class<?> controller = Class.forName("nib", false, loader);
+            Class<?> descriptor = Class.forName("mmm", false, loader);
+            Class<?> builder = Class.forName("mmh", false, loader);
+            Class<?> controller = Class.forName("mpq", false, loader);
             factory = method(descriptor, "c", builder, true);
             token = method(builder, "l", void.class, false, String.class);
             icon = method(builder, "i", void.class, false, int.class);

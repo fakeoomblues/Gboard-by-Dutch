@@ -13,10 +13,10 @@ import dev.jason.gboardpatches.patches.gboard.shared.runtimeabi.RuntimeCallId
 
 private const val EMOTICON_KEYBOARD_CLASS =
     "Lcom/google/android/apps/inputmethod/libs/search/emoticon/EmoticonKeyboardM2;"
-private const val EMOTICON_HEADER_CALLBACK_CLASS = "Lgza;"
+private const val EMOTICON_HEADER_CALLBACK_CLASS = "Lgle;"
 private const val HEADER_VIEW_CLASS =
     "Lcom/google/android/apps/inputmethod/libs/expression/header/ConstraintHeaderViewImpl;"
-private const val VIEW_UTIL_CLASS = "Ltxp;"
+private const val VIEW_UTIL_CLASS = "Ltgb;"
 
 internal val gboardZhuyinCustomSymbolsEmoticonStatePatch = bytecodePatch(
     description = "調整 add-symbols 的 emoticon host / state isolation / header 主線。"
@@ -44,10 +44,10 @@ private fun patchConstructor() = with(context) {
         returnType = "V",
         parameterTypes = listOf(
             "Landroid/content/Context;",
-            "Lpwf;",
+            "Lper;",
             "Lcom/google/android/libraries/inputmethod/metadata/KeyboardDef;",
             "Lcom/google/android/libraries/inputmethod/metadata/ImeDef;",
-            "Lqnm;"
+            "Lpwf;"
         )
     )
     val returnIndices = mutableMethod.instructionIndices("RETURN_VOID")
@@ -109,7 +109,7 @@ private fun patchSelectedIndex() = with(context) {
         classType = EMOTICON_KEYBOARD_CLASS,
         name = "k",
         returnType = "I",
-        parameterTypes = listOf("Lwyw;")
+        parameterTypes = listOf("Lwhe;")
     )
     mutableMethod.addInstructions(0, SELECTED_INDEX_DELEGATE)
 }
@@ -176,7 +176,7 @@ private fun patchHeaderStartEdgeGuard() = with(context) {
         classType = HEADER_VIEW_CLASS,
         name = "n",
         returnType = "V",
-        parameterTypes = listOf("Lham;")
+        parameterTypes = listOf("Lgmp;")
     )
     mutableMethod.addInstructions(0, HEADER_START_EDGE_GUARD_DELEGATE)
 }

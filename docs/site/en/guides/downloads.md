@@ -70,7 +70,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Deezer](../apps/deezer.md) | 9.0.26.3 / 9002603 | [APKM](#local-original-inputs) |
 | [Myspoti](../apps/myspoti.md) | 2.4.0 / 1142 | [APK](#local-original-inputs) |
 | [SoundCloud](../apps/soundcloud.md) | 2026.11.02-release / 379060 | [APKM](#local-original-inputs) |
-| [Gboard](../apps/gboard.md) | 18.5.11.993608717-release-arm64-v8a / 176050094 | [APK](#local-original-inputs) |
+| [Gboard](../apps/gboard.md) | 18.6.3.1002251336-release-arm64-v8a / 176071766 | [APK](#local-original-inputs) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |
 | [Weerplaza](../apps/weerplaza.md) | 3.13.1 / 734 | [APKS](https://buzzheavier.com/cr9f6qs8tfsh) |

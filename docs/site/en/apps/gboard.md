@@ -1,16 +1,17 @@
 # Gboard
 
-**App version:** 18.5.11.993608717-release-arm64-v8a · **Build:** 176050094 · **Original file:** APK
+**App version:** 18.6.3.1002251336-release-arm64-v8a · **Build:** 176071766 · **Original file:** APK
 
 [Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select Google's arm64-v8a APK for this exact build (Android 8.0+).
+Select Google's arm64-v8a APK for this exact build (Android 12L+).
 
 ## Patches
 
 | Patch | Default | What it does |
 | --- | --- | --- |
 | **Parakeet voice typing** | On | Adds **Parakeet voice typing** to Gboard settings → Voice typing. Once you download a model there and switch it on, the microphone key transcribes on the phone with NVIDIA Parakeet instead of Google's speech recognition. Each sentence is recognised in the language you speak it in, so Dutch and English work in the same dictation without switching. Until a model is ready, Gboard keeps using Google's voice typing. The patched Gboard gets the Parakeet launcher icon. |
+| **Rambler voice typing** | Off | Adds Google's **Rambler** to Gboard settings → Voice typing, as a choice next to Standard. With Rambler picked, the microphone key sends your speech to Google's servers, which return finished text and carry out spoken edits such as "delete the last sentence". Standard stays the default; with Parakeet voice typing applied, Standard keeps using Parakeet. |
 | **Change package name** | On | Installs the patched Gboard under its own package name (app.morphe.android.inputmethod.latin by default), so it sits beside the stock Gboard that most phones have built in. Your stock Gboard, its settings and its dictionary are not touched; choose the patched keyboard in Android's keyboard settings. |
 | **Custom branding** | Off | Changes the app name shown in the launcher, Android's keyboard list and app information, and the launcher icon (Parakeet by default, Gboard's original or five other designs), so the patched keyboard is easy to tell apart from the stock one. |
 | **Clipboard Enhancements** | On | Controls how long copied snippets stay available, how many are kept, how many preview lines a card shows, and whether cards show a countdown, creation time, order number and column count. |
@@ -20,7 +21,7 @@ Select Google's arm64-v8a APK for this exact build (Android 8.0+).
 | **Incognito Mode Toggle** | On | Adds an Incognito toggle to the Access Point toolbar and lets you choose whether the clipboard and voice typing stay available while Incognito is active. This controls Gboard's own incognito state; it is not a network-wide tracking blocker. |
 | **Simple Calculator** | On | Type an arithmetic expression in a text field and see a scrollable equation with its answer in Gboard's suggestion row, ready to insert. |
 
-Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle and Simple Calculator are ported from the GPLv3 [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) project and updated for Gboard 18.5.11.
+Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle and Simple Calculator are ported from the GPLv3 [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) project and updated for Gboard 18.6.3.
 
 ## Choosing a model
 
@@ -35,12 +36,22 @@ Both models understand 25 European languages, including Dutch, English, German, 
 
 Tap the microphone key and speak. Text appears while you talk and is settled when you pause. Dictation stops after five seconds of silence or when you tap the microphone key again. Gboard asks for microphone access the first time, as usual.
 
+## Rambler voice typing
+
+Rambler is Google's own voice typing with Gemini: instead of writing down every word, it turns what you say into finished text and follows spoken corrections. Google only switches it on for some Pixel phones; this patch offers it on other phones too.
+
+After applying the patch, open Gboard settings → Voice typing and choose **Rambler** or **Standard**. Standard is selected until you change it.
+
+- Rambler needs an internet connection and sends your speech to Google. Google limits how much you can dictate per day.
+- Parakeet only handles Standard voice typing. When Rambler cannot reach Google, Gboard falls back to its own standard Google recognizer, not to Parakeet.
+- Whether Google's servers accept Rambler from a phone outside its rollout is decided by Google. Other Gboard mods report that it works; it has not been confirmed on a phone with these patches yet.
+
 ## Before using
 
 - A 64-bit ARM phone is required. Keep about 1.4 GB free while downloading; the installed model takes about 650 MB.
 - The model uses roughly 700 MB of memory while you dictate and is unloaded after five idle minutes, so the first sentence after a break takes a moment longer.
 - With Change package name on, the patched Gboard is a separate app with its own settings: enable it under Android settings → Keyboard, then pick it. Without that patch it cannot be installed on phones that have Gboard built in. Features that depend on Google's own app signature may not work in the patched copy; Parakeet does not need them.
-- The nine Gboard patches were verified to build and apply against this 18.5.11 build. Patch application is not the same as a full device test of every feature.
+- The ten Gboard patches were verified to build and apply against this 18.6.3 build. Patch application is not the same as a full device test of every feature.
 - Checked on an Android 14 emulator: the settings entry, the download, and Dutch, English and mixed Dutch-English dictation into a text field, plus silence and background noise without stray text. Dictation on a phone has not been confirmed yet.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md)

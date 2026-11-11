@@ -14,8 +14,8 @@ import org.w3c.dom.Element
 
 private const val ABOUT_XML = "res/xml/setting_about.xml"
 private val ABOUT_VERSION_TITLE_REFS = mapOf(
-    "@string/APKTOOL_RENAMED_0x7f140b30" to "@string/APKTOOL_RENAMED_0x7f140b3a",
-    "@string/string_0x7f140b30" to "@string/string_0x7f140b3a",
+    "@string/APKTOOL_RENAMED_0x7f140b16" to "@string/APKTOOL_RENAMED_0x7f140b20",
+    "@string/string_0x7f140b16" to "@string/string_0x7f140b20",
 )
 private const val ABOUT_PREFERENCE_CLASS =
     "com.google.android.libraries.inputmethod.settings.widget.ExtendedPreference"

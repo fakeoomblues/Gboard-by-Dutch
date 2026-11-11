@@ -36,33 +36,33 @@ internal val gboardAccessPointsMenu1853Patch = bytecodePatch(
     compatibleWith(COMPATIBILITY_GBOARD)
     dependsOn(gboardPatchesExtensionCarrierPatch)
     execute {
-        val bind = GboardMethodTarget("Lnib;", "k", listOf("Llst;"), "V").resolve(this)
-        val open = GboardMethodTarget("Lnib;", "F", emptyList(), "V").resolve(this)
-        val native = GboardMethodTarget(KEYBOARD, "F", listOf(VIEW_DEF, "Lpxh;"), "Lpxi;").resolve(this)
-        val drag = GboardMethodTarget("Lnih;", "y", listOf("Ljava/lang/String;", "Z"), "V").resolve(this)
+        val bind = GboardMethodTarget("Lmpq;", "k", listOf("Llar;"), "V").resolve(this)
+        val open = GboardMethodTarget("Lmpq;", "F", emptyList(), "V").resolve(this)
+        val native = GboardMethodTarget(KEYBOARD, "F", listOf(VIEW_DEF, "Lpfu;"), "Lpfv;").resolve(this)
+        val drag = GboardMethodTarget("Lmpw;", "z", listOf("Ljava/lang/String;", "Z"), "V").resolve(this)
         val inflate = GboardMethodTarget(POPUP, "onFinishInflate", emptyList(), "V").resolve(this)
         val publicFinal = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value
         check(bind.accessFlags == publicFinal && open.accessFlags == publicFinal && drag.accessFlags == publicFinal)
         check(native.accessFlags == PRIVATE_FINAL)
         check(inflate.accessFlags == (AccessFlags.PROTECTED.value or AccessFlags.FINAL.value))
 
-        requireMenuPanelCleanup(mutableClass("Laarm;"), mutableClass("Lnei;"))
+        requireMenuPanelCleanup(mutableClass("Laarm;"), mutableClass("Lmly;"))
         listOf(
-            GboardMethodTarget("Lpxy;", "f", listOf("I"), "V"),
+            GboardMethodTarget("Lpgm;", "f", listOf("I"), "V"),
             GboardMethodTarget(ICON, "<init>", listOf("Landroid/content/Context;"), "V"),
-            GboardMethodTarget(VIEW_DEF, "<init>", listOf("I", "Lqnq;", "Z", "I", "Z", "Z", "Lqnp;",
+            GboardMethodTarget(VIEW_DEF, "<init>", listOf("I", "Lpwj;", "Z", "I", "Z", "Z", "Lpwi;",
                 "Lcom/google/android/libraries/inputmethod/metadata/KeyMappingDef;", MOTION), "V"),
         ).forEach { it.resolve(this) }
         listOf(
-            GboardFieldTarget("Lnib;", "e", "Lpxy;"),
-            GboardFieldTarget("Lnib;", "p", "Z"), GboardFieldTarget("Lnib;", "r", "Z"),
-            GboardFieldTarget("Lnib;", "k", "Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;"),
-            GboardFieldTarget("Lnib;", "l", "Laarm;"), GboardFieldTarget("Lpxy;", "k", "I"),
-            GboardFieldTarget("Lngv;", "d", "Z"), GboardFieldTarget("Lqnq;", "b", "Lqnq;"),
+            GboardFieldTarget("Lmpq;", "e", "Lpgm;"),
+            GboardFieldTarget("Lmpq;", "p", "Z"), GboardFieldTarget("Lmpq;", "r", "Z"),
+            GboardFieldTarget("Lmpq;", "k", "Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;"),
+            GboardFieldTarget("Lmpq;", "l", "Laarm;"), GboardFieldTarget("Lpgm;", "k", "I"),
+            GboardFieldTarget("Lmok;", "d", "Z"), GboardFieldTarget("Lpwj;", "b", "Lpwj;"),
             GboardFieldTarget(POPUP, "a", "F"), GboardFieldTarget(POPUP, "d", VIEW),
-            GboardFieldTarget(POPUP, "e", "Lnha;"),
+            GboardFieldTarget(POPUP, "e", "Lmop;"),
         ).forEach { it.resolve(this) }
-        val types = listOf("I", "Lqnq;", "Z", "I", "Z", "Z", "Lqnp;",
+        val types = listOf("I", "Lpwj;", "Z", "I", "Z", "Z", "Lpwi;",
             "Lcom/google/android/libraries/inputmethod/metadata/KeyMappingDef;", MOTION)
         types.forEachIndexed { i, type ->
             val field = GboardFieldTarget(VIEW_DEF, ('a' + i).toString(), type).resolve(this)
@@ -70,9 +70,9 @@ internal val gboardAccessPointsMenu1853Patch = bytecodePatch(
         }
         requireMenu1853Shape(bind, open, native, drag, inflate)
 
-        mutableClass("Lnib;").addHelperMethodIfMissing("morpheRefreshMenuBody", emptyList(), "V",
+        mutableClass("Lmpq;").addHelperMethodIfMissing("morpheRefreshMenuBody", emptyList(), "V",
             PRIVATE_FINAL, 5, menuRefreshBody())
-        mutableClass("Lpxy;").addHelperMethodIfMissing("morpheMenuBodyId", emptyList(), "I",
+        mutableClass("Lpgm;").addHelperMethodIfMissing("morpheMenuBodyId", emptyList(), "I",
             publicFinal, 2, """
                 iget v0, p0, Lqje;->k:I
                 return v0
@@ -102,11 +102,11 @@ internal fun requireMenuPanelCleanup(panelInterface: MutableClass, declaringInte
     check(panelInterface.type == "Laarm;" && panelInterface.accessFlags == interfaceFlags) {
         "Expected exact1853 public abstract menu panel interface mte"
     }
-    check("Lnei;" in panelInterface.interfaces) { "mte must inherit the exact mtc cleanup contract" }
-    check(declaringInterface.type == "Lnei;" && declaringInterface.accessFlags == interfaceFlags) {
+    check("Lmly;" in panelInterface.interfaces) { "mte must inherit the exact mtc cleanup contract" }
+    check(declaringInterface.type == "Lmly;" && declaringInterface.accessFlags == interfaceFlags) {
         "Expected exact1853 public abstract cleanup declaring interface mtc"
     }
-    val cleanup = GboardMethodTarget("Lnei;", "l", emptyList(), "V").resolve(declaringInterface)
+    val cleanup = GboardMethodTarget("Lmly;", "k", emptyList(), "V").resolve(declaringInterface)
     check(cleanup.accessFlags == (AccessFlags.PUBLIC.value or AccessFlags.ABSTRACT.value)) {
         "mtc.l must remain public abstract instance ()V"
     }
@@ -120,17 +120,17 @@ internal fun requireMenu1853Shape(bind: MutableMethod, open: MutableMethod, nati
     check(native.implementation!!.registerCount == 10)
     check(drag.implementation!!.registerCount == 19)
     check(inflate.implementation!!.registerCount == 3)
-    check(bind.implementation!!.instructions.count { it.isMethodReference("Lqje;->f(I)V") } == 1)
+    check(bind.implementation!!.instructions.count { it.isMethodReference("Lprs;->f(I)V") } == 1)
     check(bind.implementation!!.instructions.count { (it as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f0b070d } == 1)
-    check(open.implementation!!.instructions.any { it.isFieldReference("Lnth;->p:Z") })
-    check(open.implementation!!.instructions.any { it.isFieldReference("Lnth;->r:Z") })
-    check(drag.implementation!!.instructions.count { it.isFieldReference("Lnsb;->d:Z") } == 1)
+    check(open.implementation!!.instructions.any { it.isFieldReference("Lnba;->p:Z") })
+    check(open.implementation!!.instructions.any { it.isFieldReference("Lnba;->r:Z") })
+    check(drag.implementation!!.instructions.count { it.isFieldReference("Lmzs;->d:Z") } == 1)
     check(drag.implementation!!.instructions.count { it.isFieldReference("$POPUP->a:F") } == 1)
-    check(inflate.implementation!!.instructions.count { it.isMethodReference("Lnha;-><init>($VIEW)V") } == 1)
+    check(inflate.implementation!!.instructions.count { it.isMethodReference("Lmop;-><init>($VIEW)V") } == 1)
     listOf(bind, open, native, drag, inflate).forEach { method ->
         check(method.implementation!!.instructions.none {
             it.isMethodReference(RuntimeAbiCatalog.abi(RuntimeCallId.ACCESS_POINTS_MENU_RUNTIME_SELECT_BODY).reference) ||
-                it.isMethodReference("Lnib;->morpheRefreshMenuBody()V")
+                it.isMethodReference("Lmpq;->morpheRefreshMenuBody()V")
         }) { "Refusing partially/repeatedly transformed1853 menu group" }
     }
 }
@@ -155,7 +155,7 @@ internal fun MutableMethod.applyMenu1853Drag() {
         ${RuntimeCallEmitter.invoke(RuntimeCallId.ACCESS_POINTS_MENU_RUNTIME_DRAG_SCALE, "v1, v15")}
         move-result v15
     """)
-    val mode = implementation!!.instructions.indexOfFirst { it.isFieldReference("Lnsb;->d:Z") }
+    val mode = implementation!!.instructions.indexOfFirst { it.isFieldReference("Lmzs;->d:Z") }
     val modeRead = implementation!!.instructions[mode] as TwoRegisterInstruction
     check(modeRead.registerA == 10 && modeRead.registerB == 0)
     addInstructions(mode + 1, """
