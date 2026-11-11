@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b74bf0a9f954d80fb006699f0f3bb719ad99a399/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.61.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [b74bf0a9f954](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/b74bf0a9f954d80fb006699f0f3bb719ad99a399). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.61.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.60.0...v1.61.0) (2026-11-11)
+
+### ✨ New Features
+
+* **Google Maps:** show Maps' own car screen on every Android Auto host ([b74bf0a](https://gitlab.com/johninnld/nl-morphe-patches/commit/b74bf0a9f954d80fb006699f0f3bb719ad99a399))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e58379e89a67f044f61a9808d767945f56c0d38a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.60.0.**
