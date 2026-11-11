@@ -113,6 +113,8 @@ GITGUD=<GitGud API key>
 CODEBERG=<Codeberg API key>
 ```
 
+Only `GITLAB`, `GITGUD` and `CODEBERG` (optionally with `_TOKEN`) are credentials here. A `PUBLISH_BLOCKLIST` entry belonging to other local projects is skipped without reading its value; any other label makes the file invalid.
+
 SSH identities must be actual private key files, not files containing `APIKEY=...`. Use the verified paths recorded in private configuration. Legacy working identities may be named `~/gitlab`, `~/gitgud` and `~/codeberg`; preferred dot-file paths are used only when they contain valid matching private keys. Normal jobs do not rename or overwrite credential inputs.
 
 Credential tests use an isolated fixture HOME/environment and temporary files. Diagnostics must never print credential values, including assertion actual/expected values.

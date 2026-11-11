@@ -39,6 +39,13 @@ test("missing, unknown and malformed entries never expose their values in errors
     const {file}=fixture(t,text);assert.throws(()=>helper().loadApiKeys(file),error=>!error.message.includes("sensitive-value")&&/API key/.test(error.message));
   }
 });
+test("another project's PUBLISH_BLOCKLIST entry is skipped without reading its value",t=>{
+  for(const text of [labelled+"PUBLISH_BLOCKLIST=First Name, other name\n", '{"GITGUD":"gitgud-fixture","GITLAB":"gitlab-fixture","PUBLISH_BLOCKLIST":"a, b","CODEBERG":"codeberg-fixture"}']){
+    const {file}=fixture(t,text),keys=helper().loadApiKeys(file);assertFixtureKeys(keys);assert.equal(Object.hasOwn(keys,"PUBLISH_BLOCKLIST_TOKEN"),false);
+  }
+  const {file}=fixture(t,labelled+"PUBLISH_BLOCKLIST_EXTRA=sensitive-value\n");
+  assert.throws(()=>helper().loadApiKeys(file),error=>/Invalid API key label/.test(error.message)&&!error.message.includes("sensitive-value"));
+});
 test("SSH private/public key files cannot be loaded as API credentials",t=>{
   for(const text of ["-----BEGIN OPENSSH PRIVATE KEY-----\nsecret-body\n-----END OPENSSH PRIVATE KEY-----", "-----BEGIN RSA PRIVATE KEY-----\nsecret-body\n-----END RSA PRIVATE KEY-----", "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIfixture user@machine"]){
     const {file}=fixture(t,text);assert.throws(()=>helper().loadApiKeys(file),/API key/);assert.throws(()=>helper().loadTokenFile(file),/API token/);

@@ -1,6 +1,8 @@
 "use strict";
 const fs=require("node:fs");
 const LABELS=["GITLAB","GITGUD","CODEBERG"];
+// Shared ~/.ci entries owned by other local projects (DriveDeck/Gearslip release notes). Skipped unread.
+const FOREIGN_LABELS=["PUBLISH_BLOCKLIST"];
 
 function read(file,kind){
   try{return fs.readFileSync(file,"utf8").trim();}
@@ -46,6 +48,7 @@ function loadApiKeys(file){
   });
   const result={};
   for(const [label,value] of entries){
+    if(FOREIGN_LABELS.includes(label.toUpperCase()))continue;
     if(!/^(?:GITLAB|GITGUD|CODEBERG)(?:_TOKEN)?$/i.test(label))throw new Error("Invalid API key label");
     const key=label.toUpperCase().replace(/_TOKEN$/,"")+"_TOKEN";
     if(Object.hasOwn(result,key))throw new Error("Duplicate API key label");
