@@ -169,9 +169,66 @@ test("partial mirror failure retains both target outcomes and fences its generat
   await assert.rejects(runFlow(options(f,{watchOnce:true})),/one mirror failed/);
   const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json")));assert.equal(state.branches.main.observed,generated);assert.ok(state.branches.main.failures[generated]);
   const receipt=JSON.parse(fs.readFileSync(state.branches.main.failed.receipt));assert.equal(receipt.mirrors.targets.length,2);assert.equal(fs.existsSync(receipt.workspace),false);assert.equal(receipt.workspaceRemoved,true);
+  assert.equal(state.branches.main.pendingMirror.head,generated);
   assert.equal((await runFlow(options(f,{watchOnce:true}))).runs.length,0);
 });
 
+function publishGenerated(f,store){
+  f.dependencies.publish=async context=>{
+    fs.writeFileSync(path.join(context.workspace,"generated.txt"),"canonical release metadata "+Date.now());f.git(["add","."],context.workspace);f.git(["commit","-m","chore: Release v1.0.1"],context.workspace);
+    store.generated=f.git(["rev-parse","HEAD"],context.workspace);f.git(["fetch",context.workspace,"+refs/heads/main:refs/heads/main"],f.remote);return {version:"1.0.1",branch:"main"};
+  };
+}
+test("a published release with a failed mirror retries only the mirror after backoff and then completes",async t=>{
+  const f=fixture(t);await runFlow(options(f,{watchOnce:true}));const source=f.advance("main","fix: mirrored release"),store={};publishGenerated(f,store);
+  f.dependencies.mirrors=async context=>{context.mirrorResults={targets:{codeberg:{status:"rejected",error:"codeberg GET /user: network failure (UND_ERR_SOCKET)"}}};throw new Error("mirror network failure");};
+  let clock=Date.parse("2026-11-12T20:00:00Z");const now=()=>clock;
+  await assert.rejects(runFlow(options(f,{watchOnce:true,now})),/mirror network failure/);
+  let state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json")));const pending=state.branches.main.pendingMirror;
+  assert.equal(pending.head,store.generated);assert.equal(pending.sourceHead,source);assert.equal(pending.version,"1.0.1");assert.equal(pending.attempts,0);
+  assert.deepEqual(pending.publication,{version:"1.0.1",branch:"main"});assert.equal(Date.parse(pending.nextAttempt),clock+2*60000);
+  assert.equal((await runFlow(options(f,{watchOnce:true,now}))).runs.length,0,"Not due before its backoff");
+  clock+=2*60000;f.calls.length=0;let staged;
+  f.dependencies.mirrors=async context=>{staged=JSON.parse(fs.readFileSync(path.join(context.workspace,"build/release-safety/gitlab-result.json")));f.calls.push(["mirrors",context.branch]);return {complete:true,targets:{codeberg:{status:"fulfilled"}}};};
+  const result=await runFlow(options(f,{watchOnce:true,now}));
+  assert.equal(result.runs.length,1);assert.equal(result.runs[0].status,"mirrored");assert.equal(result.runs[0].head,store.generated);assert.equal(result.runs[0].mirrorRetry.attempt,1);
+  assert.deepEqual(f.calls,[["identity","main"],["mirrors","main"]],"Mirror retry never re-verifies, rebuilds or republishes");
+  assert.deepEqual(staged,{version:"1.0.1",branch:"main"});assert.equal(fs.existsSync(result.runs[0].workspace),false);
+  state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json")));
+  assert.equal(state.branches.main.pendingMirror,undefined);assert.equal(state.branches.main.failures?.[source],undefined);assert.equal(state.branches.main.failures?.[store.generated],undefined);
+  assert.equal(state.branches.main.failed,undefined);assert.equal(state.branches.main.succeeded,source);assert.equal(state.branches.main.mirrored.version,"1.0.1");
+  clock+=24*3600000;assert.equal((await runFlow(options(f,{watchOnce:true,now}))).runs.length,0,"Nothing left to retry");
+});
+test("failed mirror retries keep backing off without an attempt limit and are not raised",async t=>{
+  const f=fixture(t);await runFlow(options(f,{watchOnce:true}));f.advance("main","fix: release");const store={};publishGenerated(f,store);
+  let attempts=0;f.dependencies.mirrors=async()=>{attempts++;throw new Error("codeberg POST /repos/x/releases: network failure (ECONNRESET)");};
+  let clock=Date.parse("2026-11-12T20:00:00Z");const now=()=>clock;
+  await assert.rejects(runFlow(options(f,{watchOnce:true,now})));
+  const delays=[2,4,8,16,32,60,60,60];
+  for(let index=0;index<delays.length;index++){
+    const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.pendingMirror;
+    clock=Date.parse(state.nextAttempt);
+    const result=await runFlow(options(f,{watchOnce:true,now}));
+    assert.equal(result.runs.length,1);assert.equal(result.runs[0].status,"failed");assert.equal(result.runs[0].cleanupRequired,false);
+    const next=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main.pendingMirror;
+    assert.equal(next.attempts,index+1);assert.equal(Date.parse(next.nextAttempt)-clock,delays[index+1>=delays.length?delays.length-1:index+1]*60000);
+    assert.match(next.lastError,/network failure \(ECONNRESET\)/);
+  }
+  assert.equal(attempts,delays.length+1);
+});
+test("a newer head supersedes a pending mirror and releases normally",async t=>{
+  const f=fixture(t);await runFlow(options(f,{watchOnce:true}));f.advance("main","fix: first");const store={};publishGenerated(f,store);
+  f.dependencies.mirrors=async()=>{throw new Error("mirror network failure");};
+  let clock=Date.parse("2026-11-12T20:00:00Z");const now=()=>clock;
+  await assert.rejects(runFlow(options(f,{watchOnce:true,now})));
+  f.dependencies.mirrors=async ctx=>{f.calls.push(["mirrors",ctx.branch]);return {complete:true,targets:{}};};f.dependencies.publish=async ctx=>{f.calls.push(["publish",ctx.branch,ctx.publish]);return {version:"1.0.2",branch:"main"};};
+  const newer=f.advance("main","fix: second");f.calls.length=0;clock+=60000;
+  const result=await runFlow(options(f,{watchOnce:true,now}));
+  assert.equal(result.runs.length,1);assert.equal(result.runs[0].head,newer);assert.equal(result.runs[0].status,"published");
+  assert.ok(f.calls.some(call=>call[0]==="verify"),"The newer head runs the complete release");
+  const state=JSON.parse(fs.readFileSync(path.join(f.stateDir,"state.json"))).branches.main;
+  assert.equal(state.pendingMirror,undefined);assert.equal(state.supersededMirror.head,store.generated);assert.equal(state.supersededMirror.version,"1.0.1");
+});
 test("failed jobs archive compact safety JSON and mirror outcomes before cleanup",async t=>{
   const f=fixture(t);f.dependencies.verify=async context=>{
     const safety=path.join(context.workspace,"build/release-safety");fs.mkdirSync(safety,{recursive:true});fs.writeFileSync(path.join(safety,"partial.json"),JSON.stringify({passed:false,stage:"controlled"}));

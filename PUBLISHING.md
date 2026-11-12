@@ -181,7 +181,7 @@ Branch commands preview by default. Preview never invokes tagged recovery, mirro
 
 Every terminal job, successful or failed, executes cleanup. It first retains a compact receipt, redacted bounded log tails and bounded release-safety JSON, then removes its owned checkout, generated output, installed job dependencies, temporary files and per-run repository. These are disposable build outputs, not the primary checkout or credential/input store.
 
-Release success requires GitLab discovery/signature verification, the Codeberg mirror confirmation and main Pages verification where applicable. Independent downstream results are all accounted for even when one fails. Partial publication records retain per-destination outcomes. Existing canonical signed bytes are reused during idempotent recovery; a different signed rebuild cannot silently replace the canonical artifact.
+Release success requires GitLab discovery/signature verification, the Codeberg mirror confirmation and main Pages verification where applicable. Each mirror request that fails on the network names its method, path and cause (for example `network failure (UND_ERR_SOCKET)`). Transient failures (network errors, 408/425/429 and 5xx) re-run the idempotent Codeberg publication up to three times in the run, 20 s and 60 s apart. When a published release still fails only its mirror, the watcher records a pending mirror for the release commit and later ticks retry the mirror alone, without rebuilding or republishing and without an attempt limit, after 2, 4, 8, 16 and 32 minutes and then hourly. A successful retry clears the release's failure fences. A newer `main` head supersedes the pending mirror, because only the release at `main`'s head can be mirrored. Independent downstream results are all accounted for even when one fails. Partial publication records retain per-destination outcomes. Existing canonical signed bytes are reused during idempotent recovery; a different signed rebuild cannot silently replace the canonical artifact.
 
 Owned process groups must be stopped before deletion. If quiescence or cleanup cannot be proved, mark `cleanupRequired`, preserve the original failure and block later work until the pending cleanup is resolved. A still-active Pages job is cleaned only after it becomes terminal; later watcher ticks retry that cleanup even without a new source head.
 
@@ -189,7 +189,7 @@ Receipts/state remain for audit and retry. Per-stage logs are capped at 2 MiB an
 
 Do not edit generated versions or delete failure state to hide an error. Diagnose the failed stage, refresh the relevant credential/tool if required, then use supported recovery/retry and verify all public results.
 
-Retry sequence for a failed `main` head:
+A mirror-only failure needs no manual retry; the watcher keeps retrying it. Retry sequence for a failed `main` head:
 
 1. Read the run's private `verification.log` or stage log and receipt under `runs/<id>/`. Fix a product or test failure with a new commit; a retry is only for a cause outside the commit.
 2. If the receipt has `cleanupRequired`, wait for a watcher tick to resolve it. Explicit runs refuse while any cleanup is pending; only watch ticks sweep.

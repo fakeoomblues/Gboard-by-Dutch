@@ -261,3 +261,32 @@ test("inactive, revoked, foreign-user and read-api-only metadata are rejected",a
     assert.equal((await api().preflight(options(f,{request}))).targets.gitgud.status,"rejected");
   }
 });
+test("network failures name the request and its cause and are marked transient",async()=>{
+  const {createRequest,createDownload,transient}=api();
+  const failing=async()=>{const error=new TypeError("fetch failed");error.cause=Object.assign(new Error("other side closed"),{code:"UND_ERR_SOCKET"});throw error;};
+  const request=createRequest({env:{CODEBERG_TOKEN:"codeberg-fixture"},fetcher:failing});
+  await assert.rejects(request("codeberg","/repos/JohninNL/nl-morphe-patches/releases/1/assets?name=patches-1.2.3.mpp",{method:"POST",body:{}}),error=>{
+    assert.equal(error.message,"codeberg POST /repos/JohninNL/nl-morphe-patches/releases/1/assets: network failure (UND_ERR_SOCKET)");assert.equal(transient(error),true);assert.ok(!error.message.includes("codeberg-fixture"));return true;});
+  const download=createDownload({env:{CODEBERG_TOKEN:"codeberg-fixture"},fetcher:failing});
+  await assert.rejects(download("codeberg","https://codeberg.org/JohninNL/nl-morphe-patches/releases/download/v1.2.3/patches-1.2.3.mpp",22),/codeberg download \/JohninNL\/nl-morphe-patches\/releases\/download\/v1\.2\.3\/patches-1\.2\.3\.mpp: network failure \(UND_ERR_SOCKET\)/);
+  const busy=createRequest({env:{CODEBERG_TOKEN:"codeberg-fixture"},fetcher:async()=>new Response("",{status:503})});
+  await assert.rejects(busy("codeberg","/user"),error=>error.status===503&&transient(error));
+  const denied=createRequest({env:{CODEBERG_TOKEN:"codeberg-fixture"},fetcher:async()=>new Response("",{status:403})});
+  await assert.rejects(denied("codeberg","/user"),error=>error.status===403&&!transient(error));
+});
+test("a transient target failure is retried with backoff and the idempotent publication completes",async t=>{
+  const f=fixture(t);let failures=2;const pauses=[];
+  const request=async(name,endpoint,options)=>{if(name==="codeberg"&&endpoint.includes("/assets?name=")&&options?.method==="POST"&&failures-->0){const error=new Error("codeberg POST "+endpoint+": network failure (UND_ERR_SOCKET)");error.transient=true;throw error;}return f.request(name,endpoint,options);};
+  const result=await api().mirrorReleases(options(f,{request,retry:{attempts:3,delays:[20000,60000],pause:async milliseconds=>{pauses.push(milliseconds);}}}));
+  assert.equal(result.complete,true);assert.deepEqual(pauses,[20000,60000]);
+  assert.equal(f.targets.codeberg.releases.length,1,"Retries reuse the same Codeberg release");assert.equal(f.targets.codeberg.assets.length,1);
+});
+test("transient failures stop after the in-run attempts; permanent failures are not retried",async t=>{
+  const f=fixture(t);let calls=0;
+  const flaky=async(name,endpoint,options)=>{if(name==="codeberg"&&endpoint==="/user"){calls++;const error=new Error("codeberg GET /user: network failure (ECONNRESET)");error.transient=true;throw error;}return f.request(name,endpoint,options);};
+  const result=await api().mirrorReleases(options(f,{request:flaky,retry:{attempts:3,pause:async()=>{}}}));
+  assert.equal(result.complete,false);assert.equal(calls,3);assert.match(result.targets.codeberg.error,/network failure \(ECONNRESET\)/);
+  const g=fixture(t);let denied=0;
+  const permanent=async(name,endpoint,options)=>{if(name==="codeberg"&&endpoint==="/user"){denied++;const error=new Error("codeberg GET /user: HTTP 401");error.status=401;throw error;}return g.request(name,endpoint,options);};
+  assert.equal((await api().mirrorReleases(options(g,{request:permanent,retry:{attempts:3,pause:async()=>{}}}))).complete,false);assert.equal(denied,1);
+});

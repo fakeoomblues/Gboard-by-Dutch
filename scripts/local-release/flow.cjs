@@ -383,7 +383,7 @@ function pruneEvidence({stateDir,now=Date.now(),maxAgeDays=30,maxBytes=512*1024*
     try{privatePath(directory,true);privatePath(file);receipt=JSON.parse(fs.readFileSync(file,"utf8"));}catch{continue;}
     const finished=Date.parse(receipt.finished);
     if(receipt.format!==1||receipt.owner!==owner.id||receipt.id!==entry.name||!Number.isFinite(finished)||finished>now||
-        !["failed","published","no-release","preview"].includes(receipt.status)||receipt.cleanupRequired!==false||
+        !["failed","published","no-release","preview","mirrored"].includes(receipt.status)||receipt.cleanupRequired!==false||
         !Array.isArray(receipt.processGroups)||receipt.processGroups.some(group=>!group.quiescent))continue;
     const declared=[...(Array.isArray(receipt.logFiles)?receipt.logFiles:[]).filter(name=>typeof name==="string"&&/^[a-z][a-z0-9-]*\.log$/.test(name)),
       ...(Array.isArray(receipt.diagnosticArchive?.files)?receipt.diagnosticArchive.files:[]).map(value=>typeof value?.path==="string"?"safety/"+value.path:""),
@@ -499,7 +499,9 @@ function resolvePagesCleanup(state,stateDir,owner) {
     failure.pagesCleanupRequired=false;failure.cleanupRequired=false;
   }
 }
-async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=false,head,dependencies={}}) {
+/** Mirror-only retries back off 2, 4, 8, 16, 32 minutes, then hourly, without an attempt limit. */
+function mirrorBackoff(attempts){return Math.min(60,2*2**Math.max(0,attempts))*60000;}
+async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=false,head,dependencies={},now=()=>Date.now()}) {
   if((watchOnce&&branch)||(!watchOnce&&!Object.hasOwn(templates,branch)))throw new Error("Select --branch main|dev or --watch-once");
   if(head&&!SHA.test(head))throw new Error("Requested head must be a full commit SHA");
   const env=environment(config),redact=redactor(env),deps={...defaults,...dependencies};
@@ -537,14 +539,25 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
     }
     const runs=[];
     for(const name of branches) {
-      const sourceHead=head||heads[name];
-      if(sourceHead!==heads[name])throw new Error("Requested stale head differs from current remote head");
       const prior=state.branches[name]||{};
+      // A published release whose mirror failed keeps a pending mirror. Watch ticks
+      // retry only that mirror, with backoff and no attempt limit, while the release
+      // commit is still the branch head; a newer head supersedes it.
+      let pending=watchOnce&&!head?prior.pendingMirror:null;
+      if(pending&&pending.head!==heads[name]){
+        prior.supersededMirror={head:pending.head,version:pending.version,attempts:pending.attempts||0,at:new Date(now()).toISOString()};
+        delete prior.pendingMirror;pending=null;writeJson(stateFile,state);
+      }
+      const mirrorOnly=Boolean(pending&&now()>=Date.parse(pending.nextAttempt));
+      const sourceHead=mirrorOnly?pending.head:head||heads[name];
+      if(sourceHead!==heads[name])throw new Error("Requested stale head differs from current remote head");
       const failed=prior.failures?.[sourceHead]||(prior.failed?.head===sourceHead?prior.failed:null);
-      if(watchOnce&&sourceHead===prior.observed&&!(retryFailed&&failed))continue;
-      if(failed&&!retryFailed) {
-        if(watchOnce)continue;
-        throw new Error("This head failed previously; inspect retained diagnostics and use --retry-failed explicitly");
+      if(!mirrorOnly){
+        if(watchOnce&&sourceHead===prior.observed&&!(retryFailed&&failed))continue;
+        if(failed&&!retryFailed) {
+          if(watchOnce)continue;
+          throw new Error("This head failed previously; inspect retained diagnostics and use --retry-failed explicitly");
+        }
       }
       const id=crypto.randomUUID(),runDir=path.join(stateDir,"runs",id),receiptFile=path.join(runDir,"receipt.json");fs.mkdirSync(runDir,{mode:0o700});
       const context={id,branch:name,head:sourceHead,publish:watchOnce||publish,env,runDir,redact,config};
@@ -554,10 +567,23 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
       context.workspace=path.join(stateDir,"workspaces",id,"checkout");
       try {
         context.workspace=checkout({cache,stateDir,owner,branch:name,head:sourceHead,id,env});receipt.workspace=context.workspace;
+        if(mirrorOnly)receipt.mirrorRetry={release:pending.receipt,version:pending.version,attempt:(pending.attempts||0)+1};
         writeJson(receiptFile,receipt);
         await deps.verifyIdentity(context);
         // The default token loader may have introduced a new secret after initial config loading.
         context.redact=redactor(env);
+        release:{
+        if(mirrorOnly){
+          // The release is already published: mirror its canonical bytes from the saved receipt only.
+          const safety=path.join(context.workspace,"build/release-safety");fs.mkdirSync(safety,{recursive:true});
+          writeJson(path.join(safety,"gitlab-result.json"),pending.publication);
+          let result;
+          try{result=await deps.mirrors(context);}
+          catch(error){receipt.poststeps={mirrors:{status:"rejected",error:context.redact(error.message||String(error))}};throw error;}
+          if(result==null){receipt.poststeps={mirrors:{status:"rejected",error:"mirrors produced no verified result"}};throw new Error("mirrors produced no verified result");}
+          receipt.mirrors=JSON.parse(context.redact(JSON.stringify(result)));receipt.poststeps={mirrors:{status:"fulfilled",result:receipt.mirrors}};
+          receipt.status="mirrored";break release;
+        }
         await deps.mirrorPreflight(context);await deps.bootstrap(context);await deps.verify(context);
         requireCurrent(config,name,sourceHead,env);
         const outcome=await deps.publish(context);
@@ -594,6 +620,7 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
           if(finalHead!==sourceHead&&remoteHead(config,name,env)===finalHead)state.branches[name].observed=finalHead;
         }
         receipt.status=!context.publish?"preview":outcome.published===false?"no-release":"published";
+        }
       } catch(error) {
         failure=redactor(env)(error.message||"Local release failed");
         if(error.cleanupRequired)context.cleanupBlocked=true;
@@ -620,11 +647,28 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
         receipt.cleanupErrors=cleanupErrors;
         if(cleanupErrors.length)failure=[failure,...cleanupErrors].filter(Boolean).join("; ");
         receipt.finished=new Date().toISOString();
-        if(failure){
+        const branchState=state.branches[name],stamp=new Date(now()).toISOString();
+        if(mirrorOnly&&!failure){
+          // The mirror landed: the release is complete, so its fences are lifted.
+          const done=branchState.pendingMirror;delete branchState.pendingMirror;
+          for(const key of [done.sourceHead,done.head]){if(branchState.failures)delete branchState.failures[key];if(branchState.failed?.head===key)delete branchState.failed;}
+          branchState.succeeded=done.sourceHead;branchState.mirrored={head:done.head,version:done.version,attempts:(done.attempts||0)+1,at:stamp};
+        }else if(mirrorOnly){
+          receipt.status="failed";receipt.failure=failure;
+          const attempts=(branchState.pendingMirror.attempts||0)+1;
+          branchState.pendingMirror={...branchState.pendingMirror,attempts,lastAttempt:stamp,lastError:failure.slice(0,300),lastReceipt:receiptFile,nextAttempt:new Date(now()+mirrorBackoff(attempts)).toISOString()};
+          if(receipt.cleanupRequired){
+            branchState.failed={head:sourceHead,workspace:context.workspace,receipt:receiptFile,cleanupRequired:true,pagesCleanupRequired:receipt.pagesCleanupRequired,workspaceCleanupRequired:receipt.workspaceCleanupRequired};
+            branchState.failures={...branchState.failures,[sourceHead]:branchState.failed};
+          }
+        }else if(failure){
           receipt.status="failed";receipt.failure=failure;
           state.branches[name].failed={head:sourceHead,workspace:context.workspace,receipt:receiptFile,cleanupRequired:receipt.cleanupRequired,pagesCleanupRequired:receipt.pagesCleanupRequired,workspaceCleanupRequired:receipt.workspaceCleanupRequired};
           state.branches[name].failures={...state.branches[name].failures,[sourceHead]:state.branches[name].failed};
           if(receipt.generatedHead)state.branches[name].failures[receipt.generatedHead]={...state.branches[name].failed,head:receipt.generatedHead};
+          // Published but not mirrored: later watch ticks retry the mirror alone.
+          if(context.publish&&receipt.publication?.version&&receipt.poststeps?.mirrors?.status==="rejected"&&receipt.generatedHead)
+            state.branches[name].pendingMirror={head:receipt.generatedHead,sourceHead,version:receipt.publication.version,publication:receipt.publication,receipt:receiptFile,attempts:0,since:stamp,nextAttempt:new Date(now()+mirrorBackoff(0)).toISOString()};
         }else if(context.publish){
           state.branches[name].succeeded=sourceHead;
           if(state.branches[name].failed?.head===sourceHead)delete state.branches[name].failed;
@@ -641,7 +685,8 @@ async function runFlow({config,branch,publish=false,watchOnce=false,retryFailed=
         }
         writeJson(receiptFile,receipt);writeJson(stateFile,state);
       }
-      if(failure)throw new Error(failure);
+      // A failed mirror-only retry is expected to recur; it is recorded and retried, not raised.
+      if(failure&&!(mirrorOnly&&!receipt.cleanupRequired))throw new Error(failure);
       runs.push({...receipt,receipt:receiptFile});
     }
     return {status:"complete",runs};

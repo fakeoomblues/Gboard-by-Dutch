@@ -21,6 +21,27 @@ function enabledTargets(){return ENABLED_TARGETS;}
 const CANONICAL={base:"https://gitlab.com",repository:"johninnld/nl-morphe-patches",owner:"johninnld",token:"GITLAB_TOKEN",sshKey:"GITLAB_SSH_KEY",ssh:"git@gitlab.com:johninnld/nl-morphe-patches.git"};
 const CODEBERG_RELEASE_LIMIT=5;
 const SHA=/^[a-f0-9]{40}$/;
+// A destination's network can drop or reset a request for reasons outside the
+// release (slow or flapping uplink, proxy resets, 5xx). Name the request and its
+// network cause instead of undici's bare "fetch failed", and mark it transient.
+const TRANSIENT_STATUS=new Set([408,425,429,500,502,503,504]);
+const TRANSIENT_TEXT=/fetch failed|network failure|ECONNRESET|ECONNREFUSED|ECONNABORTED|ETIMEDOUT|EPIPE|EAI_AGAIN|ENOTFOUND|EHOSTUNREACH|ENETUNREACH|UND_ERR_|socket hang up|other side closed|aborted due to timeout|Connection (?:reset|closed|refused|timed out)|Could not resolve host|early EOF|remote end hung up|unexpected disconnect|kex_exchange_identification|Operation timed out/i;
+function networkError(label,error){
+  let cause=error,code="";
+  for(let depth=0;cause&&depth<4&&!code;depth++){
+    code=typeof cause.code==="string"?cause.code:cause.name&&!["Error","TypeError"].includes(cause.name)?cause.name:"";cause=cause.cause;
+  }
+  const wrapped=new Error(`${label}: network failure (${/^[A-Za-z0-9_]+$/.test(code)?code:"unknown"})`);wrapped.transient=true;return wrapped;
+}
+function transient(error){return error?.transient===true||TRANSIENT_STATUS.has(error?.status)||TRANSIENT_TEXT.test(String(error?.message||"")+" "+String(error?.stderr||""));}
+const sleep=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
+/** Every target step is idempotent, so a transient failure re-runs the whole target. */
+async function retryTransient(task,{attempts=3,delays=[20000,60000],pause=sleep}={}){
+  for(let attempt=1;;attempt++){
+    try{return await task();}
+    catch(error){if(attempt>=attempts||!transient(error))throw error;await pause(delays[Math.min(attempt-1,delays.length-1)]);}
+  }
+}
 function target(name){const value=TARGETS[name];if(!value)throw new Error("Unknown release mirror");return value;}
 function tokenFor(name,env){const value=env[target(name).token];if(!value||!/^[A-Za-z0-9._-]+$/.test(value))throw new Error(target(name).token+" is required");return value;}
 function createRequest({env=process.env,fetcher=fetch}={}) {
@@ -31,10 +52,12 @@ function createRequest({env=process.env,fetcher=fetch}={}) {
     if(Buffer.isBuffer(body))headers["Content-Type"]="application/octet-stream";
     else if(body&&!(body instanceof FormData)){headers["Content-Type"]="application/json";body=JSON.stringify(body);}
     const size=Buffer.isBuffer(body)?body.length:body instanceof FormData?[...body.values()].reduce((total,value)=>total+(value?.size||0),0):0;
-    const response=await fetcher(destination.base+destination.api+endpoint,{method,headers,body,redirect:"error",signal:AbortSignal.timeout(transferTimeout(size))});
+    let response;
+    try{response=await fetcher(destination.base+destination.api+endpoint,{method,headers,body,redirect:"error",signal:AbortSignal.timeout(transferTimeout(size))});}
+    catch(error){throw networkError(`${name} ${method} ${endpoint.split("?")[0]}`,error);}
     if(response.status===404&&method==="GET")return null;
     if(!response.ok){
-      const error=new Error(`${name} ${method} ${endpoint}: HTTP ${response.status}`);error.status=response.status;
+      const error=new Error(`${name} ${method} ${endpoint}: HTTP ${response.status}`);error.status=response.status;error.transient=TRANSIENT_STATUS.has(response.status);
       // Keep only the known machine-readable code; response bodies can contain sensitive details.
       try{const detail=await response.json();if(detail?.error==="insufficient_granular_scope")error.errorCode="insufficient_granular_scope";}catch{}
       throw error;
@@ -81,7 +104,7 @@ function remoteRefs(name,context,patterns){
   }
   return refs;
 }
-function sourceContext({cwd=process.cwd(),env=process.env,git=defaultGit,request,download,canonicalDownload=downloadCanonical}={}){
+function sourceContext({cwd=process.cwd(),env=process.env,git=defaultGit,request,download,canonicalDownload=downloadCanonical,retry}={}){
   const options={cwd,env},branch=git(["branch","--show-current"],options);
   if(branch!=="main")throw new Error("Only main can publish release mirrors");
   const head=git(["rev-parse","HEAD"],options);if(!SHA.test(head))throw new Error("Invalid canonical source head");
@@ -89,7 +112,7 @@ function sourceContext({cwd=process.cwd(),env=process.env,git=defaultGit,request
   for(const role of ["AUTHOR","COMMITTER"])if(!git(["var",`GIT_${role}_IDENT`],options).startsWith("johninnl <349981574+johninnl@users.noreply.github.com> "))throw new Error("Mirror Git identity must be johninnl");
   const fields=git(["log","--all","HEAD","--format=%H%x00%an%x00%ae%x00%cn%x00%ce%x00%B%x00"],options).split("\0");
   for(let i=0;i+5<fields.length;i+=6)if(fields[i+1]!=="johninnl"||fields[i+2]!=="349981574+johninnl@users.noreply.github.com"||fields[i+3]!=="johninnl"||fields[i+4]!=="349981574+johninnl@users.noreply.github.com"||/^\s*co-authored-by\s*:/im.test(fields[i+5]))throw new Error("Mirror source history must contain only johninnl metadata");
-  const context={cwd,env,git,branch,head,canonicalDownload,request:request||createRequest({env}),download:download||createDownload({env})};
+  const context={cwd,env,git,branch,head,canonicalDownload,retry,request:request||createRequest({env}),download:download||createDownload({env})};
   if(remoteRefs("gitlab",context,[`refs/heads/${branch}`])[`refs/heads/${branch}`]!==head)throw new Error("Canonical GitLab branch moved or differs from this checkout");
   return context;
 }
@@ -100,9 +123,10 @@ function createDownload({env=process.env,fetcher=fetch}={}){
     for(let redirects=0;redirects<6;redirects++){
       const options={redirect:"manual",signal:AbortSignal.timeout(transferTimeout(size))};
       if(sendToken)options.headers=name==="codeberg"?{Authorization:`token ${tokenFor(name,env)}`}:{"PRIVATE-TOKEN":tokenFor(name,env)};
-      const response=await fetcher(url.href,options);
+      let response;
+      try{response=await fetcher(url.href,options);}catch(error){throw networkError(`${name} download ${url.pathname}`,error);}
       if(response.status>=300&&response.status<400){const location=response.headers.get("location");if(!location)throw new Error("Mirror download redirect is missing its location");const next=new URL(location,url);if(next.protocol!=="https:")throw new Error("Insecure mirror download redirect");if(next.origin!==destination.base)sendToken=false;url=next;continue;}
-      if(!response.ok)throw new Error(`Mirror download returned HTTP ${response.status}`);
+      if(!response.ok){const error=new Error(`Mirror download returned HTTP ${response.status}`);error.status=response.status;error.transient=TRANSIENT_STATUS.has(response.status);throw error;}
       const bytes=Buffer.from(await response.arrayBuffer());if(bytes.length!==size||!bytes.length)throw new Error("Mirror download size mismatch");return bytes;
     }
     throw new Error("Too many mirror download redirects");
@@ -143,7 +167,7 @@ async function checkTarget(name,context){
   return {refs};
 }
 async function settledTargets(context,task){
-  const names=enabledTargets(),settled=await Promise.allSettled(names.map(name=>task(name)));
+  const names=enabledTargets(),settled=await Promise.allSettled(names.map(name=>retryTransient(()=>task(name),context.retry)));
   const targets={};settled.forEach((row,index)=>{targets[names[index]]=row.status==="fulfilled"?{status:"fulfilled",...row.value}:{status:"rejected",error:redact(row.reason?.message||"Mirror failed",context.env)};});
   return {format:1,branch:context.branch,head:context.head,complete:settled.every(row=>row.status==="fulfilled"),targets};
 }
@@ -278,5 +302,5 @@ async function main(argv=process.argv.slice(2),options={}){
   if(!result.complete)throw new Error("Release mirror "+(argv.length?"preflight":"publication")+" failed; inspect per-target results");
   return result;
 }
-module.exports={TARGETS,createRequest,createDownload,gitRemote,gitEnvironment,preflight,mirrorReleases,main};
+module.exports={TARGETS,createRequest,createDownload,gitRemote,gitEnvironment,preflight,mirrorReleases,main,transient,retryTransient};
 if(require.main===module)main().catch(error=>{console.error(redact(error.message,process.env));process.exitCode=1;});
