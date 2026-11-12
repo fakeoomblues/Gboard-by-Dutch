@@ -43,6 +43,9 @@ public final class ParakeetSettingsActivity extends Activity {
     private Button cancel;
     private Button delete;
     private Button microphone;
+    private Switch dictionary;
+    private TextView dictionaryStatus;
+    private Button dictionaryDownload;
     private boolean binding;
 
     private final Runnable refresher = new Runnable() {
@@ -136,6 +139,8 @@ public final class ParakeetSettingsActivity extends Activity {
         actions.addView(delete);
         column.addView(actions);
 
+        if (ParakeetDictionary.available()) addDictionarySection(column);
+
         column.addView(text(t(
                 "The download comes from Hugging Face and the sherpa-onnx release on GitHub, and is checked against "
                         + "fixed checksums. Wi-Fi recommended. It keeps going when you leave this screen.",
@@ -146,6 +151,13 @@ public final class ParakeetSettingsActivity extends Activity {
                         + "Runs on sherpa-onnx and ONNX Runtime (Apache 2.0 and MIT).",
                 "Parakeet Ultra van Moondream en Parakeet TDT v3 van NVIDIA, licentie CC BY 4.0. "
                         + "Draait op sherpa-onnx en ONNX Runtime (Apache 2.0 en MIT)."), 12, false));
+        if (ParakeetDictionary.available()) {
+            column.addView(text(t(
+                    "Spelling data: NVIDIA's Parakeet tokenizer (CC BY 4.0) and Hermit Dave's FrequencyWords lists "
+                            + "from OpenSubtitles (CC BY-SA 4.0).",
+                    "Spellinggegevens: de Parakeet-tokenizer van NVIDIA (CC BY 4.0) en de FrequencyWords-lijsten van "
+                            + "Hermit Dave uit OpenSubtitles (CC BY-SA 4.0)."), 12, false));
+        }
 
         ScrollView scroll = new ScrollView(this);
         scroll.addView(column);
@@ -161,6 +173,63 @@ public final class ParakeetSettingsActivity extends Activity {
         });
         setContentView(scroll);
         refresh();
+    }
+
+    private void addDictionarySection(LinearLayout column) {
+        column.addView(heading(t("Voice dictionary", "Spraakwoordenboek")));
+        column.addView(text(t(
+                "Parakeet spells the names and words from the Voice dictionary (Gboard settings → Voice typing → "
+                        + "Voice dictionary), including contact names added there. It favours them while listening, "
+                        + "and corrects a word that sounds like one of them only when a second listen agrees. "
+                        + "Names that are also ordinary words, such as Visser, are left as heard.",
+                "Parakeet schrijft de namen en woorden uit het Spraakwoordenboek (Gboard-instellingen → Spraakinvoer "
+                        + "→ Spraakwoordenboek) goed, ook de contactnamen die daar staan. Het geeft ze voorrang "
+                        + "tijdens het luisteren en verbetert een woord dat op een ervan lijkt alleen als een tweede keer "
+                        + "luisteren dat bevestigt. Namen die ook een gewoon woord zijn, zoals Visser, blijven zoals ze "
+                        + "gehoord zijn."), 15, false));
+        dictionary = new Switch(this);
+        dictionary.setText(t("Use the Voice dictionary", "Spraakwoordenboek gebruiken"));
+        dictionary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+        dictionary.setPadding(0, dp(12), 0, dp(4));
+        dictionary.setOnCheckedChangeListener((CompoundButton button, boolean on) -> {
+            if (binding) return;
+            ParakeetDictionary.setEnabled(this, on);
+            ParakeetEngine.release();
+            refresh();
+        });
+        column.addView(dictionary);
+        dictionaryStatus = text("", 14, false);
+        column.addView(dictionaryStatus);
+        dictionaryDownload = button(t("Download spelling data", "Spellinggegevens downloaden"));
+        dictionaryDownload.setOnClickListener(v -> ParakeetDownloader.startDictionary(this));
+        column.addView(dictionaryDownload);
+    }
+
+    private void refreshDictionary(ParakeetDownloader.Status job, boolean running) {
+        if (dictionary == null) return;
+        boolean on = ParakeetDictionary.enabled(this);
+        boolean data = ParakeetDictionary.dataInstalled(this);
+        binding = true;
+        dictionary.setChecked(on);
+        binding = false;
+        dictionaryDownload.setVisibility(on && !data && !running ? View.VISIBLE : View.GONE);
+        String message;
+        if (!on) {
+            message = t("Off: Parakeet writes what it hears.", "Uit: Parakeet schrijft op wat het hoort.");
+        } else if (running && ParakeetDownloader.DICTIONARY_JOB.equals(job.modelId)) {
+            message = t("Downloading spelling data…", "Spellinggegevens downloaden…");
+        } else if (!data) {
+            String failed = job.phase == ParakeetDownloader.FAILED && ParakeetDownloader.DICTIONARY_JOB.equals(job.modelId)
+                    ? t("Download failed: ", "Downloaden mislukt: ") + job.error + ". " : "";
+            message = failed + t("Needs about ", "Heeft ongeveer ") + Math.max(1, (ParakeetDictionary.missingDataBytes(this) + (1 << 19)) >> 20)
+                    + t(" MB of spelling data from Hugging Face and GitHub.", " MB aan spellinggegevens van Hugging Face en GitHub nodig.");
+        } else {
+            int count = ParakeetDictionary.lastWordCount(this);
+            message = count < 0
+                    ? t("Ready. The list is read the next time you dictate.", "Klaar. De lijst wordt gelezen als je weer dicteert.")
+                    : t("Ready. Last read: ", "Klaar. Laatst gelezen: ") + count + t(" names and words.", " namen en woorden.");
+        }
+        dictionaryStatus.setText(message);
     }
 
     @Override
@@ -238,6 +307,7 @@ public final class ParakeetSettingsActivity extends Activity {
                     + t(". Until then Gboard uses Google's voice typing.", ". Tot die tijd gebruikt Gboard de spraakinvoer van Google.");
         }
         status.setText(message);
+        refreshDictionary(job, running);
     }
 
     private String t(String en, String nl) {

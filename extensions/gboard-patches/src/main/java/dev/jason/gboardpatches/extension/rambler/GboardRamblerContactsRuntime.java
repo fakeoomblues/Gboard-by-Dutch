@@ -46,6 +46,21 @@ public final class GboardRamblerContactsRuntime {
     private GboardRamblerContactsRuntime() {
     }
 
+    /**
+     * Called by Parakeet when a voice session starts, so contact names reach the list without
+     * ever using Rambler; returns immediately. Does nothing unless Rambler contact names is patched.
+     */
+    public static void onVoiceTypingStart(Context context) {
+        if (wired()) {
+            onRamblerStart(context);
+        }
+    }
+
+    /** True once the patch has supplied Gboard's import call; the placeholder says false. */
+    static boolean wired() {
+        return false;
+    }
+
     /** Called when Gboard's Rambler extension starts; returns immediately. */
     public static void onRamblerStart(Context context) {
         if (context == null || !RUNNING.compareAndSet(false, true)) {

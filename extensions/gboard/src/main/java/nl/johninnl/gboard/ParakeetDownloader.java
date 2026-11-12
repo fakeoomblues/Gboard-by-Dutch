@@ -60,14 +60,26 @@ public final class ParakeetDownloader {
         return new Status(phase, modelId, done, total, error);
     }
 
+    /** Job id of a download of the voice correction list's spelling data only. */
+    public static final String DICTIONARY_JOB = "dictionary-data";
+
     /** Starts downloading the runtime and [model]; a running download of any model is kept. */
     public static void start(Context context, ParakeetCatalog.Model model) {
+        begin(context, model);
+    }
+
+    /** Downloads only the spelling data the voice correction list needs (about 2.3 MB). */
+    public static void startDictionary(Context context) {
+        begin(context, null);
+    }
+
+    private static void begin(Context context, ParakeetCatalog.Model model) {
         final Context app = context.getApplicationContext() != null ? context.getApplicationContext() : context;
         synchronized (LOCK) {
             if (worker != null && worker.isAlive()) return;
             cancel = false;
             phase = RUNNING;
-            modelId = model.id;
+            modelId = model == null ? DICTIONARY_JOB : model.id;
             done = 0;
             total = 0;
             error = null;
@@ -95,6 +107,10 @@ public final class ParakeetDownloader {
     }
 
     private static void install(Context context, ParakeetCatalog.Model model) throws IOException {
+        if (model == null) {
+            installDictionary(context, true);
+            return;
+        }
         if (!ParakeetStore.supportsArm64()) throw new IOException("This device has no 64-bit ARM support");
         File cache = ParakeetStore.cacheDir(context);
         File modelDir = ParakeetStore.modelDir(context, model);
@@ -146,6 +162,31 @@ public final class ParakeetDownloader {
             File target = new File(modelDir, file.name);
             if (ParakeetStore.verified(target, file.size, file.sha256)) continue;
             File partial = partial(context, model, file);
+            fetch(file, partial);
+            move(partial, target);
+            ParakeetStore.markVerified(target, file.sha256);
+        }
+        if (ParakeetDictionary.available() && ParakeetDictionary.enabled(context)) installDictionary(context, false);
+    }
+
+    /** Fetches the voice correction list's spelling data; [alone] when it is the whole job. */
+    private static void installDictionary(Context context, boolean alone) throws IOException {
+        File cache = ParakeetStore.cacheDir(context);
+        File dir = ParakeetDictionary.dataDir(context);
+        mkdirs(cache);
+        mkdirs(dir);
+        if (alone) {
+            total = ParakeetDictionary.missingDataBytes(context);
+            if (ParakeetStore.root(context).getUsableSpace() < total + SPACE_MARGIN) {
+                throw new IOException("Not enough free storage: " + ((total + SPACE_MARGIN) >> 20) + " MB needed");
+            }
+        } else {
+            total += ParakeetDictionary.missingDataBytes(context);
+        }
+        for (ParakeetCatalog.Asset file : ParakeetCatalog.DICTIONARY_FILES) {
+            File target = new File(dir, file.name);
+            if (ParakeetStore.verified(target, file.size, file.sha256)) continue;
+            File partial = new File(cache, "dictionary-" + ParakeetCatalog.DICTIONARY_DATA_VERSION + "-" + file.name + ".part");
             fetch(file, partial);
             move(partial, target);
             ParakeetStore.markVerified(target, file.sha256);

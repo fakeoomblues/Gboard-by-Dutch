@@ -152,6 +152,7 @@ public final class ParakeetRecognizer {
                 throw new IllegalStateException("microphone busy");
             }
             decoder.execute(() -> ParakeetEngine.warm(context));
+            ParakeetDictionary.onSessionStart(context);
             // Like Gboard's own engines: open the keyboard's dictation session, then listen.
             cbReady(cb);
             cbListening(cb);
@@ -256,7 +257,7 @@ public final class ParakeetRecognizer {
         execute(() -> {
             try {
                 if (cancelled) return;
-                String text = ParakeetEngine.transcribe(context, audio, audio.length);
+                String text = ParakeetEngine.transcribeFinal(context, audio, audio.length);
                 String partial = lastPartial;
                 lastPartial = null;
                 if (text.isEmpty()) text = partial == null ? "" : partial;

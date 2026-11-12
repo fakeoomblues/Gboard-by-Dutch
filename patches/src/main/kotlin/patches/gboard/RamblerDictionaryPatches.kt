@@ -25,9 +25,9 @@ import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodRefere
 import dev.jason.gboardpatches.patches.gboard.shared.GboardFlagFamilyFeature
 import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatch
 
-private const val CORRECTION_LIST_FRAGMENT =
+internal const val CORRECTION_LIST_FRAGMENT =
     "Lcom/google/android/apps/inputmethod/latin/preference/VoiceCorrectionListFragment;"
-private const val MODULE_MANAGER = "Lcom/google/android/libraries/inputmethod/module/ModuleManager;"
+internal const val MODULE_MANAGER = "Lcom/google/android/libraries/inputmethod/module/ModuleManager;"
 private const val CONTACTS_RUNTIME = "Ldev/jason/gboardpatches/extension/rambler/GboardRamblerContactsRuntime;"
 private const val CONTEXT_TYPE = "Landroid/content/Context;"
 private const val CLASS_TYPE = "Ljava/lang/Class;"
@@ -109,7 +109,7 @@ internal fun correctionListImport(instructions: List<Instruction>): CorrectionLi
 }
 
 context(context: BytecodePatchContext)
-private fun resolveCorrectionListImport(): CorrectionListImport {
+internal fun resolveCorrectionListImport(): CorrectionListImport {
     // The import action lives in a small listener class that reads the fragment's word splitter
     // and adds words through the stats store; find it by those references, not by its name.
     val matches = mutableListOf<List<Instruction>>()
@@ -164,8 +164,10 @@ internal fun correctionListRead(store: ClassDef, site: CorrectionListImport): Me
     return ImmutableMethodReference(store.type, read.name, read.parameterTypes, read.returnType)
 }
 
-private fun MethodReference.smali() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
-private fun FieldReference.smali() = "$definingClass->$name:$type"
+internal fun MethodReference.listSmali() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
+internal fun FieldReference.listSmali() = "$definingClass->$name:$type"
+private fun MethodReference.smali() = listSmali()
+private fun FieldReference.smali() = listSmali()
 
 @Suppress("unused")
 val ramblerContactNames = bytecodePatch(
@@ -214,6 +216,20 @@ val ramblerContactNames = bytecodePatch(
                 return v0
                 :unavailable
                 const/4 v0, 0x0
+                return v0
+            """)
+        })
+
+        // Tell the runtime its import call is real, so Parakeet sessions may add names too.
+        val wired = runtime.methods.singleOrNull {
+            it.name == "wired" && AccessFlags.STATIC.isSet(it.accessFlags) && it.parameterTypes.isEmpty() && it.returnType == "Z"
+        } ?: throw PatchException("Rambler contacts runtime flag missing")
+        runtime.methods.remove(wired)
+        runtime.methods.add(ImmutableMethod(
+            runtime.type, wired.name, emptyList(), "Z", wired.accessFlags, null, null, MutableMethodImplementation(1),
+        ).toMutable().apply {
+            addInstructions(0, """
+                const/4 v0, 0x1
                 return v0
             """)
         })

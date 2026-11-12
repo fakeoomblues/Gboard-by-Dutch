@@ -122,4 +122,36 @@ public final class ParakeetCatalog {
     /** Silero VAD v5 as published by the sherpa-onnx maintainer; tells speech from silence and noise. */
     public static final Asset VAD_MODEL = hf("csukuangfj/vad", "fba88cd2e921609e7675c3aaf51e0b9b295da4bc",
             "silero_vad_v5.onnx", 2_313_101L, "6b99cbfd39246b6706f98ec13c7c50c6b299181f2474fa05cbc8046acc274396");
+
+    /** Version of the spelling data folder; change it together with the files below. */
+    public static final String DICTIONARY_DATA_VERSION = "1";
+
+    /**
+     * NVIDIA's tokenizer for Parakeet TDT v3, which Ultra keeps unchanged (its vocabulary matches our
+     * tokens.txt piece for piece). Used to spell voice-correction-list entries in Parakeet's pieces.
+     */
+    public static final Asset TOKENIZER = hf("nvidia/parakeet-tdt-0.6b-v3", "541d1f99c6b0c3cd0b11a95167540bb8edefd82b",
+            "tokenizer.json", 1_159_960L, "bd321b096832a3f270bd3b2a88823957920f1a5c5ada71114a26ea729d0cbe91");
+
+    private static Asset frequencyWords(String language, long size, String sha256) {
+        String name = language + "_50k.txt";
+        return new Asset(name, "https://raw.githubusercontent.com/hermitdave/FrequencyWords/"
+                + "525f9b560de45753a5ea01069454e72e9aa541c6/content/2018/" + language + "/" + name, size, sha256);
+    }
+
+    /** The 50,000 most frequent Dutch and English subtitle words, so ordinary words are never corrected. */
+    public static final Asset COMMON_DUTCH = frequencyWords("nl", 650_762L,
+            "099bd0c27b514d54284360ad9ce2b4ef7b6903b22e848b67ab10f6aa2adb4baa");
+    public static final Asset COMMON_ENGLISH = frequencyWords("en", 622_749L,
+            "5351ff405b1126ef555791dd4d9798a48e3e9a501a9fc481a9da957752cfb458");
+
+    /** Everything the voice correction list needs besides the speech model. */
+    public static final List<Asset> DICTIONARY_FILES =
+            Collections.unmodifiableList(Arrays.asList(TOKENIZER, COMMON_DUTCH, COMMON_ENGLISH));
+
+    public static long dictionaryBytes() {
+        long total = 0;
+        for (Asset file : DICTIONARY_FILES) total += file.size;
+        return total;
+    }
 }

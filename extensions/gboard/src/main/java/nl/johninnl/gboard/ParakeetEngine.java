@@ -28,42 +28,81 @@ final class ParakeetEngine {
     private static final long IDLE_RELEASE_MS = 5 * 60_000L;
 
     private static final Object LOCK = new Object();
+    /** Beam width for decoding with the voice correction list; wider beams did not find more words. */
+    private static final int ACTIVE_PATHS = 4;
+
     private static OfflineRecognizer recognizer;
     private static String loadedModel;
+    /** The list the recognizer was loaded for; null when it decodes greedily without one. */
+    private static ParakeetDictionary.Prepared loadedDictionary;
     private static volatile boolean libraryLoaded;
     private static Handler releaser;
     private static final Runnable RELEASE = ParakeetEngine::release;
 
     private ParakeetEngine() {}
 
-    /** Decodes one utterance of 16 kHz mono samples; loads the selected model when needed. */
+    /** Decodes a live partial of 16 kHz mono samples, without the voice correction list. */
     static String transcribe(Context context, float[] samples, int count) {
         synchronized (LOCK) {
             cancelRelease();
             try {
-                OfflineRecognizer active = load(context);
-                OfflineStream stream = active.createStream();
-                try {
-                    float[] audio = count == samples.length ? samples : java.util.Arrays.copyOf(samples, count);
-                    stream.acceptWaveform(audio, SAMPLE_RATE);
-                    active.decode(stream);
-                    String text = active.getResult(stream).getText();
-                    return text == null ? "" : text.trim();
-                } finally {
-                    stream.release();
-                }
+                return decode(load(context, false), audio(samples, count), "");
             } finally {
                 scheduleRelease();
             }
         }
     }
 
-    /** Loads the model ahead of the first utterance so speaking does not wait for it. */
+    /**
+     * Decodes a finished utterance. With the voice correction list this boosts its entries,
+     * looks for sound-alike misspellings and keeps a correction only when a second decode with
+     * just that entry boosted writes it too.
+     */
+    static String transcribeFinal(Context context, float[] samples, int count) {
+        synchronized (LOCK) {
+            cancelRelease();
+            try {
+                final OfflineRecognizer active = load(context, false);
+                final float[] audio = audio(samples, count);
+                ParakeetDictionary.Prepared list = loadedDictionary;
+                if (list == null || list.dictionary.isEmpty()) return decode(active, audio, "");
+                long start = System.nanoTime();
+                DictionaryDecoder.Result result = DictionaryDecoder.transcribe(
+                        hotwords -> decode(active, audio, hotwords), list.dictionary);
+                Log.i(TAG, "Final decode with the voice correction list: " + result.proposed.size() + " sound-alike, "
+                        + result.accepted.size() + " confirmed, " + (System.nanoTime() - start) / 1_000_000 + " ms");
+                return result.text;
+            } finally {
+                scheduleRelease();
+            }
+        }
+    }
+
+    private static float[] audio(float[] samples, int count) {
+        return count == samples.length ? samples : java.util.Arrays.copyOf(samples, count);
+    }
+
+    private static String decode(OfflineRecognizer active, float[] audio, String hotwords) {
+        OfflineStream stream = hotwords.isEmpty() ? active.createStream() : active.createStream(hotwords);
+        try {
+            stream.acceptWaveform(audio, SAMPLE_RATE);
+            active.decode(stream);
+            String text = active.getResult(stream).getText();
+            return text == null ? "" : text.trim();
+        } finally {
+            stream.release();
+        }
+    }
+
+    /**
+     * Loads the model ahead of the first utterance so speaking does not wait for it, and reloads it
+     * when the voice correction list changed since the last session.
+     */
     static void warm(Context context) {
         synchronized (LOCK) {
             cancelRelease();
             try {
-                load(context);
+                load(context, true);
             } catch (RuntimeException | UnsatisfiedLinkError e) {
                 Log.w(TAG, "Preloading Parakeet failed", e);
             } finally {
@@ -72,10 +111,19 @@ final class ParakeetEngine {
         }
     }
 
-    private static OfflineRecognizer load(Context context) {
+    /**
+     * The loaded recognizer for the selected model. Only {@code refresh} (at session start) reads
+     * the voice correction list again and reloads for a changed list, so a session never pauses.
+     */
+    private static OfflineRecognizer load(Context context, boolean refresh) {
         ParakeetCatalog.Model model = ParakeetStore.selectedModel(context);
-        if (recognizer != null && model.id.equals(loadedModel)) return recognizer;
-        releaseLocked();
+        ParakeetDictionary.Prepared list = refresh || recognizer == null ? ParakeetDictionary.prepare(context) : loadedDictionary;
+        if (list != null && list.dictionary.isEmpty()) list = null;
+        if (recognizer != null && model.id.equals(loadedModel) && sameVocab(list, loadedDictionary)) {
+            loadedDictionary = list;
+            return recognizer;
+        }
+        releaseRecognizer();
         ensureLibrary(context);
         File dir = ParakeetStore.modelDir(context, model);
         OfflineTransducerModelConfig transducer = OfflineTransducerModelConfig.builder()
@@ -83,23 +131,31 @@ final class ParakeetEngine {
                 .setDecoder(new File(dir, ParakeetCatalog.DECODER).getPath())
                 .setJoiner(new File(dir, ParakeetCatalog.JOINER).getPath())
                 .build();
-        OfflineModelConfig modelConfig = OfflineModelConfig.builder()
+        OfflineModelConfig.Builder modelConfig = OfflineModelConfig.builder()
                 .setTransducer(transducer)
                 .setTokens(new File(dir, ParakeetCatalog.TOKENS).getPath())
                 .setModelType("nemo_transducer")
-                .setNumThreads(threads())
-                .setDebug(false)
-                .build();
-        OfflineRecognizerConfig config = OfflineRecognizerConfig.builder()
+                .setNumThreads(threads());
+        // sherpa-onnx builds its decoder once per recognizer, so a list means beam search for
+        // every decode; partials still decode without hotwords.
+        if (list != null) modelConfig.setModelingUnit("bpe").setBpeVocab(list.vocab.getPath());
+        OfflineRecognizerConfig.Builder config = OfflineRecognizerConfig.builder()
                 .setFeatureConfig(FeatureConfig.builder().setSampleRate(SAMPLE_RATE).setFeatureDim(80).build())
-                .setOfflineModelConfig(modelConfig)
-                .setDecodingMethod("greedy_search")
-                .build();
+                .setOfflineModelConfig(modelConfig.setDebug(false).build())
+                .setDecodingMethod(list == null ? "greedy_search" : "modified_beam_search");
+        if (list != null) config.setMaxActivePaths(ACTIVE_PATHS).setHotwordsScore(CorrectionDictionary.BOOST);
         long start = System.nanoTime();
-        recognizer = new OfflineRecognizer(config);
+        recognizer = new OfflineRecognizer(config.build());
         loadedModel = model.id;
-        Log.i(TAG, "Loaded " + model.id + " in " + (System.nanoTime() - start) / 1_000_000 + " ms");
+        loadedDictionary = list;
+        Log.i(TAG, "Loaded " + model.id + (list == null ? "" : " with the voice correction list") + " in "
+                + (System.nanoTime() - start) / 1_000_000 + " ms");
         return recognizer;
+    }
+
+    private static boolean sameVocab(ParakeetDictionary.Prepared a, ParakeetDictionary.Prepared b) {
+        if (a == null || b == null) return a == b;
+        return a.vocab.equals(b.vocab);
     }
 
     /** Loads the verified runtime once, instead of sherpa-onnx's own library search. */
@@ -140,10 +196,16 @@ final class ParakeetEngine {
     }
 
     private static void releaseLocked() {
+        releaseRecognizer();
+        ParakeetDictionary.release();
+    }
+
+    private static void releaseRecognizer() {
         if (recognizer != null) {
             recognizer.release();
             recognizer = null;
             loadedModel = null;
+            loadedDictionary = null;
         }
     }
 

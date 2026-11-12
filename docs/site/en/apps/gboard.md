@@ -18,6 +18,7 @@ Select Google's arm64-v8a APK for this exact build (Android 12L+).
 | **Rambler cursor-aware editing** | On | Rambler also sees the text after the cursor, so spoken edits reach the whole text and dictating in the middle of a text fits in. With text selected, only the selection is sent, so a spoken edit such as "make this more formal" applies to it, and the result is selected again for the next edit. Requires Rambler voice typing. |
 | **Rambler app context** | On | Rambler also receives the name of the app you dictate in and the text field's hint, so it can match the tone of a chat, an e-mail or a search, and custom instructions can depend on the app. This tells Google which app you are typing in. Requires Rambler voice typing. |
 | **Rambler stop after silence (experimental)** | Off | Adds **Stop after silence** to Gboard settings → Voice typing → Rambler. Pick 3, 5, 8 or 10 seconds and Rambler stops by itself once you have said nothing new for that long, keeping the text as when you tap ✓. Off until you pick a time. Requires Rambler voice typing. |
+| **Parakeet personal dictionary** | On | Lets Parakeet spell the names and words in the **Voice dictionary**'s voice correction list, including contact names added there. Parakeet favours them while listening and corrects a sound-alike spelling only when a second listen agrees. Needs a 2 MB spelling download under Parakeet voice typing. Requires Parakeet voice typing and Rambler personal dictionary. |
 | **Change package name** | On | Installs the patched Gboard under its own package name (app.morphe.android.inputmethod.latin by default), so it sits beside the stock Gboard that most phones have built in. Your stock Gboard, its settings and its dictionary are not touched; choose the patched keyboard in Android's keyboard settings. |
 | **Custom branding** | Off | Changes the app name shown in the launcher, Android's keyboard list and app information, and the launcher icon (Parakeet by default, Gboard's original or five other designs), so the patched keyboard is easy to tell apart from the stock one. |
 | **Clipboard Enhancements** | On | Controls how long copied snippets stay available, how many are kept, how many preview lines a card shows, and whether cards show a countdown, creation time, order number and column count. |
@@ -60,7 +61,16 @@ With **Rambler personal dictionary** applied, Gboard settings → Voice typing s
 - Select words to delete them, or use **Clear all corrected words** on the Voice dictionary screen to empty the list. Gboard asks for confirmation first.
 - **Contact names** asks Gboard for access to your contacts. With **Rambler contact names** applied, your contacts' names are then added to the list the next time Rambler starts, and new contacts are added later. Names you delete stay deleted. Contacts without a name, e-mail-only entries and phone numbers are skipped.
 - Gboard's own personal dictionary under Settings → Dictionary stays for typing only, as Gboard says on that screen.
-- For now only Rambler uses the list; Parakeet does not read it yet.
+
+### Parakeet with the voice correction list
+
+With **Parakeet personal dictionary** applied, Parakeet uses the same Voice dictionary, on the phone. It is on under Gboard settings → Voice typing → Parakeet voice typing → **Use the Voice dictionary**; tap **Download spelling data** there if the model was downloaded before (about 2 MB: NVIDIA's Parakeet tokenizer and lists of the 50,000 most frequent Dutch and English words). Your words never leave the phone.
+
+- While you dictate, Parakeet favours the list's names and words, so "Codenberg" becomes Codeberg and "Koolsingel" becomes Coolsingel.
+- When a finished sentence still contains a word that sounds like an entry, Parakeet listens to the same audio again with only that entry in mind. The correction is kept only when that second listen writes the entry too; otherwise the sentence stays as first heard.
+- Names that are also very common words, such as Vos, Bakker or Visser, are not boosted: the audio cannot tell the name from the word. Ordinary words are never replaced.
+- The list is read when a dictation starts. A changed list reloads the model once at the start of the next dictation. With a list, every decode uses beam search, which took about 15% longer on a desktop test; without a list nothing changes.
+- With **Rambler contact names** applied, contact names are also added when a Parakeet dictation starts, so Rambler does not have to be used first.
 
 ### Custom instructions
 
@@ -102,7 +112,7 @@ Rambler normally keeps listening until you tap ✓ or ✕, with a five-minute li
 - A 64-bit ARM phone is required. Keep about 1.4 GB free while downloading; the installed model takes about 650 MB.
 - The model uses roughly 700 MB of memory while you dictate and is unloaded after five idle minutes, so the first sentence after a break takes a moment longer.
 - With Change package name on, the patched Gboard is a separate app with its own settings: enable it under Android settings → Keyboard, then pick it. Without that patch it cannot be installed on phones that have Gboard built in. Features that depend on Google's own app signature may not work in the patched copy; Parakeet does not need them.
-- The sixteen Gboard patches were verified to build and apply against this 18.6.3 build. Patch application is not the same as a full device test of every feature.
+- The seventeen Gboard patches were verified to build and apply against this 18.6.3 build. Patch application is not the same as a full device test of every feature.
 - Checked on an Android 14 emulator: the settings entry, the download, and Dutch, English and mixed Dutch-English dictation into a text field, plus silence and background noise without stray text. Dictation on a phone has not been confirmed yet.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md)
