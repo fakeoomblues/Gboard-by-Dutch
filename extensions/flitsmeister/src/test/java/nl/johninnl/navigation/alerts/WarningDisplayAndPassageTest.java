@@ -22,7 +22,9 @@ public class WarningDisplayAndPassageTest {
             {"animals","INCIDENT","ANIMAL_ON_ROAD","road_danger"},{"border_nl","BORDER_CROSSING","","border_crossing"},
             {"speed_limit_130","MAXIMUM_SPEED","","maximum_speed"},{"traffic_camera","SPEED_CAM","TRAFFIC_CAMERA","traffic_camera"},
             {"matrix","CITS_LANE_CLOSED","","closure"},{"level_crossing","EARLY_WARNING","RAILWAY_CROSSING","road_feature"},
-            {"traffic_light","CITS_SPEED_ADVICE","","speed_advice"}};
+            {"traffic_light","CITS_SPEED_ADVICE","","speed_advice"},
+            {"speed_trap","POLICE","POLICE_HIDING","police_control"},{"speed_trap","POLICE","POLICE_VISIBLE","police_control"},
+            {"speed_trap","REPORT","CONTROL","police_control"}};
         for(String[] row:cases){Bundle b=WarningCodec.encode(state(row[0],1,1));b.putString("native_type",row[1]);b.putString("native_subtype",row[2]);b.putString("category",row[3]);
             if(row[0].equals("border_nl"))b.putString("country_code","NL");
             if(row[0].equals("speed_limit_130"))b.putInt("road_speed_limit_kmh",130);

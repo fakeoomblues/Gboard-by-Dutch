@@ -28,11 +28,12 @@ public final class NavigationProtocol {
         if (n.zoneStatus.equals("active")) {
             i.putExtra("zone_source", n.source).putExtra("zone_segment_id", n.segment)
                     .putExtra("zone_session", n.zoneSession).putExtra("zone_remaining_m", n.remaining)
-                    .putExtra("zone_progress_percent", n.progress).putExtra("zone_progress_estimated", n.progressEstimated)
+                    .putExtra("zone_progress_estimated", n.progressEstimated)
                     .putExtra("zone_observation_start_elapsed_ms", n.observationStart)
                     .putExtra("zone_observed_distance_m", n.observedMeters).putExtra("zone_average_partial", true)
                     .putExtra("zone_average_method", "observed_distance_over_elapsed_time");
             if (!Double.isNaN(n.averageKmh)) i.putExtra("zone_average_speed_kmh", n.averageKmh);
+            if (!Double.isNaN(n.progress)) i.putExtra("zone_progress_percent", n.progress);
         }
         return i;
  }

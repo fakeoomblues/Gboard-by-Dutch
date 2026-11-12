@@ -274,6 +274,7 @@ public final class TelemetryRuntime {
     public static String zoneText() {
         TelemetryStore.View v=view();if(!v.zoneActive)return "";
         String average=v.averageKmh==null?"Average pending":String.format(Locale.getDefault(),"Observed average %.0f km/h",v.averageKmh);
+        if(v.progressPercent==null)return average+"\n"+String.format(Locale.getDefault(),"%d m remaining",v.remainingMeters);
         return average+"\n"+(v.progressEstimated?"Estimated ":"")+String.format(Locale.getDefault(),"%.0f%% · %d m remaining",v.progressPercent,v.remainingMeters);
     }
     public static String warningText() { return warning; }

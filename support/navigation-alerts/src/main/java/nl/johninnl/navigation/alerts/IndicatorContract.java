@@ -44,7 +44,9 @@ public final class IndicatorContract {
         if(type.equals("AVG_SPEED_CHECK")||type.equals("AVERAGE_SPEED_CAMERA")||type.equals("AVERAGE_SPEED_WARNING")
                 ||type.equals("CAMERA")&&Boolean.TRUE.equals(fields.get("native_segment_correlated"))&&"AVERAGE_SPEED_CAMERA".equals(fields.get("native_segment_type")))return Kind.AVERAGE_SPEED;
         if(type.equals("POLICEHOTSPOT")||type.equals("POLICE_HOTSPOT"))return Kind.SPEED_TRAP_HOTSPOT;
-        if(type.equals("SPEED_TRAP")||sub.equals("POLICE_TYPE_MOBILE_CAMERA"))return Kind.SPEED_TRAP;
+        // Owner decision (11 Nov 2026): every police control, FM "controle" or Waze visible/hidden police, uses the
+        // speed-trap artwork so both providers look the same; FM hotspots above keep their own icon.
+        if(type.equals("SPEED_TRAP")||sub.equals("POLICE_TYPE_MOBILE_CAMERA")||type.equals("POLICE")||category.equals("police_control"))return Kind.SPEED_TRAP;
         if(sub.equals("TRAFFIC_CAMERA"))return Kind.TRAFFIC_CAMERA;
         if(type.equals("SPEED_CAM")||type.equals("CAMERA"))return Kind.SPEED_CAMERA;
         if(sub.equals("WRONG_WAY_DRIVER"))return Kind.WRONG_WAY;

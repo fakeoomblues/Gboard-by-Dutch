@@ -146,6 +146,24 @@ public final class NativeWarnings {
         update("fm/average-speed-exceeded",fields,text,resource==0?"template":"native_resource","notice",true,false,"native_average_speed_warning",false);
     });}
     public static void averageSpeedCleared(){capture(()->clear("fm/average-speed-exceeded"));}
+    /**
+     * FM's own average-speed report as the producer tracks it along the report's joined segment geometry:
+     * ahead of its start (distance to the start) or inside (remaining distance). FM itself does not always
+     * signal the report on the warning path; the identity matches FM's own report warning when it does.
+     */
+    public static void averageSpeedZone(String reportId,boolean inside,int metres){capture(()->{
+        if(!captureEnabled||app==null||reportId==null||reportId.isEmpty())return;
+        Bundle fields=new Bundle();fields.putString("native_family","AvgSpeedCheck");fields.putString("native_type","AVG_SPEED_CHECK");
+        fields.putString("category","speed_control");fields.putInt("priority",1);fields.putString("native_zone_source","producer_report_geometry");
+        fields.putLong("display_max_age_ms",10000);
+        if(metres>=0){fields.putInt("distance_m",metres);fields.putLong("distance_observed_elapsed_ms",SystemClock.elapsedRealtime());fields.putBoolean("distance_estimated",false);
+            fields.putString("native_distance_kind",inside?"remaining_in_segment":"to_segment");}
+        int resource=app.getResources().getIdentifier("common_trajectcontrole","string",app.getPackageName());boolean dutch=language().toLowerCase(Locale.ROOT).startsWith("nl");
+        String text=resource==0?(dutch?"Trajectcontrole":"Average speed check"):app.getString(resource);fields.putString("language_tag",language());
+        if(resource==0)fields.putString("template_id","fm_average_speed_zone_v1");
+        update("AvgSpeedCheck:"+reportId,fields,text,resource==0?"template":"native_resource",inside?"enter":"approach",false,false,"producer_zone_state",false);
+    });}
+    public static void averageSpeedZoneCleared(String reportId){capture(()->{if(reportId!=null&&!reportId.isEmpty())clear("AvgSpeedCheck:"+reportId);});}
     /** Native GPS country detection only: constructor defaults and manual selection are not crossings. */
     public static void countryBegin(Object detector,Location fix){capture(()->{
         countrySamples.remove(detector);if(!captureEnabled||detector==null||fix==null)return;

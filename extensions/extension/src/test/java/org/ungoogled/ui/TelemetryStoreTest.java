@@ -56,6 +56,13 @@ public class TelemetryStoreTest {
   s.select(FM);assertNull(s.view(5000).averageKmh);s.select(WAZE);assertNull(s.view(95001).averageKmh);
   s.accept(packet(WAZE,"w2",1,96000),WAZE,96000);assertNull(s.view(96000).averageKmh);
  }
+ @Test public void zoneContinuedAcrossSegmentsStaysActiveWithoutAProgressBar() {
+  TelemetryStore s=new TelemetryStore();s.select(WAZE);Map<String,Object> p=packet(WAZE,"w1",1,5000);
+  p.put("zone_status","active");p.put("zone_session",1L);p.put("zone_segment_id","b");p.put("zone_remaining_m",1500);p.put("zone_progress_estimated",true);
+  p.put("zone_observation_start_elapsed_ms",1000L);p.put("zone_observed_distance_m",100);p.put("zone_average_partial",true);p.put("zone_average_speed_kmh",90d);
+  s.accept(p,WAZE,5000);
+  assertTrue(s.view(5000).zoneActive);assertEquals(90,s.view(5000).averageKmh,0);assertNull(s.view(5000).progressPercent);
+ }
  @Test public void malformedNumericsAndFalseCompleteAveragesStayUnavailable() {
   TelemetryStore s=new TelemetryStore();s.select(WAZE);Map<String,Object> p=packet(WAZE,"w1",1,1000);p.put("current_speed_kmh",Double.NaN);p.put("road_speed_limit_kmh",-1d);
   p.put("zone_status","active");p.put("zone_average_speed_kmh",120d);p.put("zone_average_partial",false);

@@ -36,7 +36,7 @@ public final class CompactSpeedView extends View {
         carPills=false;carSpeed=false;carSpeedKmh=null;carEvents=java.util.Collections.emptyList();
         data=snapshot;limit=maximum;this.imperial=imperial;this.dark=dark;this.warning=warning;
         String average=!data.zoneActive?"":data.averageKmh==null?"Observed partial average pending":"Observed partial average "+Math.round(imperial?data.averageKmh/1.609344:data.averageKmh)+(imperial?" mph":" km/h");
-        String progress=data.zoneActive?", "+(data.progressEstimated?"approximately ":"")+Math.round(data.progressPercent==null?0:data.progressPercent)+" percent, "+ExternalTelemetry.distance(data.remainingMeters,imperial)+" remaining":"";
+        String progress=!data.zoneActive?"":data.progressPercent==null?", "+ExternalTelemetry.distance(data.remainingMeters,imperial)+" remaining":", "+(data.progressEstimated?"approximately ":"")+Math.round(data.progressPercent)+" percent, "+ExternalTelemetry.distance(data.remainingMeters,imperial)+" remaining";
         setContentDescription(average+progress+(average.isEmpty()||warning.isEmpty()?"":", ")+warning);
         requestLayout();invalidate();
     }
@@ -114,10 +114,13 @@ public final class CompactSpeedView extends View {
             fill.setStyle(Paint.Style.FILL);fill.setColor(dark?0xff697486:0xffb6bec7);y+=dp(5);
             canvas.drawRoundRect(new RectF(x,y,x+width,y+dp(3)),dp(2),dp(2),fill);
             fill.setColor(avgOver?error:0xff287cf6);
-            float progress=data.progressPercent==null?0:Math.max(0,Math.min(1,data.progressPercent.floatValue()/100));
-            canvas.drawRoundRect(new RectF(x,y,x+width*progress,y+dp(3)),dp(2),dp(2),fill);
+            // Unknown section progress (a control continued across segments) draws no fill and no percent.
+            if(data.progressPercent!=null){
+                float progress=Math.max(0,Math.min(1,data.progressPercent.floatValue()/100));
+                canvas.drawRoundRect(new RectF(x,y,x+width*progress,y+dp(3)),dp(2),dp(2),fill);
+            }
             y+=sp(11)+dp(7);ink.setTextSize(sp(11));ink.setColor(normal);
-            canvas.drawText((data.progressEstimated?"≈":"")+Math.round(data.progressPercent==null?0:data.progressPercent)+"%",x,y,ink);
+            if(data.progressPercent!=null)canvas.drawText((data.progressEstimated?"≈":"")+Math.round(data.progressPercent)+"%",x,y,ink);
             ink.setTextAlign(Paint.Align.RIGHT);canvas.drawText(ExternalTelemetry.distance(data.remainingMeters,imperial),x+width,y,ink);ink.setTextAlign(Paint.Align.LEFT);
         }
         if(warningLayout!=null) {

@@ -168,7 +168,7 @@ public final class WarningScheduler {
         String key=PlaybackGrant.key(authority);
         if(handled.containsKey(key) || active!=null && active.pending.key.equals(key))return;
         Pending old=queue.get(key);
-        if(old!=null){if(payload.revision>=old.payload.revision)old.payload=payload;old.replay|=replay;return;}
+        if(old!=null){if(payload.revision>=old.payload.revision)old.payload=UniformAlerts.localize(payload);old.replay|=replay;return;}
         Pending value=new Pending(authority,payload,replay);
         observe(authority,PlaybackGrant.Outcome.RECEIVED);
         if(payload.category.equals("display_only")){terminal(value,PlaybackGrant.Outcome.REJECTED);return;}
@@ -184,11 +184,12 @@ public final class WarningScheduler {
         queue.put(key,value);observe(authority,PlaybackGrant.Outcome.QUEUED);
     }
     private void revise(WarningEvent event) {
-        for(Pending p:queue.values())if(sameWarning(p.authority,event) && event.revision>=p.payload.revision)p.payload=event;
+        for(Pending p:queue.values())if(sameWarning(p.authority,event) && event.revision>=p.payload.revision)p.payload=UniformAlerts.localize(event);
         if(active!=null && !active.started && (!active.cancelled||active.retry) && sameWarning(active.pending.authority,event) && event.revision>active.pending.payload.revision) {
             // Retain the submitted immutable revision when only state/geometry changed.
             // Cancelling identical audio can consume retries or interrupt a late real start.
-            if(!active.accepted || !sameSpeech(active.pending.payload,event)){active.pending.payload=event;cancel(active,true);}
+            WarningEvent spoken=UniformAlerts.localize(event);
+            if(!active.accepted || !sameSpeech(active.pending.payload,spoken)){active.pending.payload=spoken;cancel(active,true);}
         }
     }
     private static boolean sameSpeech(WarningEvent a,WarningEvent b){
@@ -301,7 +302,7 @@ public final class WarningScheduler {
             if(error!=null){unknownReplies.add(nonce);p.retryAt=time.now()+250;setStatus("DELIVERY_INTERRUPTED");return;}
             if("GRANTED".equals(reply.status) && reply.grant!=null && reply.candidate!=null){
                 boolean superseded=p.payload.revision>reply.candidate.payload.revision;
-                queue.remove(p.key);if(!superseded)p.payload=reply.candidate.payload;Active attempt=new Active(p,reply.grant,source,permission,version);active=attempt;
+                queue.remove(p.key);if(!superseded)p.payload=UniformAlerts.localize(reply.candidate.payload);Active attempt=new Active(p,reply.grant,source,permission,version);active=attempt;
                 if(superseded){attempt.retry=true;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                 if(version!=generation || source!=transport || lease==null || !lease.token.equals(permission.token) || lease.epoch!=permission.epoch
                         || !policy.active() || !Boolean.TRUE.equals(p.payload.fields().get("is_preview"))&&!policy.enabled(p.payload) || speaker.effective(policy.mode())!=reply.grant.mode || time.now()>=p.authority.announceUntil){finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
@@ -317,7 +318,7 @@ public final class WarningScheduler {
                 else if(active==attempt)setStatus(attempt.started?"STARTED":"QUEUED");
             }else if(version==generation && source==transport){
                 if("REVISION_CHANGED".equals(reply.status) && reply.candidate!=null){
-                    if(reply.candidate.payload.revision>=p.payload.revision)p.payload=reply.candidate.payload;
+                    if(reply.candidate.payload.revision>=p.payload.revision)p.payload=UniformAlerts.localize(reply.candidate.payload);
                     if(reply.grant!=null&&reply.grant.granted&&!reply.grant.started){queue.remove(p.key);Active attempt=new Active(p,reply.grant,source,permission,version);active=attempt;attempt.retry=true;finish(attempt,PlaybackGrant.Outcome.NOT_STARTED,true);return;}
                     unsubmitted.remove(nonce);unknownReplies.remove(nonce);p.nonce=null;p.requested=null;
                 }
@@ -399,7 +400,7 @@ public final class WarningScheduler {
     private void endPreview(String outcome){if(previewResult!=null)previewResult.complete(outcome);previewResult=null;previewRequested=false;}
     private static final class Pending {
         final WarningEvent authority;WarningEvent payload,requested;final String key;boolean replay;int attempts;String nonce;long retryAt;
-        Pending(WarningEvent authority,WarningEvent payload,boolean replay){this.authority=authority;this.payload=payload;this.replay=replay;key=PlaybackGrant.key(authority);}
+        Pending(WarningEvent authority,WarningEvent payload,boolean replay){this.authority=authority;this.payload=UniformAlerts.localize(payload);this.replay=replay;key=PlaybackGrant.key(authority);}
     }
     private static final class Active {
         final Pending pending;final PlaybackGrant grant;final WarningConnection.Lease lease;final long generation;

@@ -19,7 +19,9 @@ public class WarningSchedulerRecoveryTest {
     final Queue<Acknowledgement> heldAcknowledgements = new ArrayDeque<>();
     boolean holdAcknowledgements;
 
+    @org.junit.After public void uniformOn(){UniformAlerts.enabled=true;}
     @Before public void setup() {
+        UniformAlerts.enabled=false; // provider-text protocol checks
         fixture = new WarningSchedulerTest();
         fixture.source = fixture.new Source();
         transport = new RecordingSource(fixture.source);

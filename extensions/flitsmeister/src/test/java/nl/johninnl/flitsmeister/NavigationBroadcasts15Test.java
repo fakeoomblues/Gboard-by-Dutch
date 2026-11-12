@@ -50,7 +50,7 @@ public class NavigationBroadcasts15Test extends NavigationBroadcastsTest {
   task.v1=fix(20); task.v1.setLongitude(5.005);
   NavigationBroadcasts.zone15(task);
   assertEquals("active",last().getStringExtra("zone_status"));
-  assertEquals("zone-a:2",last().getStringExtra("zone_segment_id"));
+  assertEquals("zone-a",last().getStringExtra("zone_segment_id"));
   assertTrue(last().getBooleanExtra("zone_average_partial",false));
   Class.forName("hff").getField("b").set(null,null);
   NavigationBroadcasts.zone15(task);
@@ -64,7 +64,7 @@ public class NavigationBroadcasts15Test extends NavigationBroadcastsTest {
   Location current=fix(20); current.setLongitude(5.006);
   NavigationBroadcasts.zone15(selected(new ReportB(),current));
   selected(new Report(),old); NavigationBroadcasts.zone15(task);
-  assertEquals("zone-b:2",last().getStringExtra("zone_segment_id"));
+  assertEquals("zone-b",last().getStringExtra("zone_segment_id"));
   long observed=last().getLongExtra("zone_updated_elapsed_ms",-1);
   shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(6));
   NavigationBroadcasts.zone15(task);

@@ -52,6 +52,7 @@ public final class WarningEndpoint implements Closeable {
     private final int sourceUid;
     private final String session=UUID.randomUUID().toString();
     private final WarningJournal journal=new WarningJournal(session);
+    private final UniformAlerts.Announcer uniform=new UniformAlerts.Announcer();
     private final ThreadPoolExecutor actor=worker("warning-source",QUEUE_SIZE);
     private final ScheduledExecutorService timer=Executors.newSingleThreadScheduledExecutor(r->thread(r,"warning-maintenance"));
     private final Map<String,Registration> registrations=new LinkedHashMap<>();
@@ -150,6 +151,12 @@ public final class WarningEndpoint implements Closeable {
             if("ANNOUNCE".equals(fields.getString("operation")) && !fields.containsKey("announce_until_elapsed_ms"))
                 fields.putLong("announce_until_elapsed_ms",issued+(fields.getInt("priority",2)==0 || "moving_emergency".equals(fields.getString("relevance"))?5000:10000));
             WarningEvent event=WarningCodec.decode(fields,clock.getAsLong());
+            // A provider announcement moments after our own uniform one, or another report of the same
+            // incident type, is shown but not spoken again.
+            if(event.operation==WarningEvent.Operation.ANNOUNCE && !"uniform_alert".equals(fields.getString("announcement_origin"))
+                    && uniform.suppress(event,issued)){
+                fields.putString("operation","UPSERT");fields.remove("announce_until_elapsed_ms");event=WarningCodec.decode(fields,clock.getAsLong());
+            }
             WarningJournal.Append result=journal.append(event,clock.getAsLong());
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)head=event.sequence;
             if(result==WarningJournal.Append.ACCEPTED)WarningDiagnostics.event(event,"SOURCE_APPEND",clock.getAsLong());
@@ -157,6 +164,11 @@ public final class WarningEndpoint implements Closeable {
             if(result==WarningJournal.Append.ACCEPTED || result==WarningJournal.Append.OVERFLOW)
                 for(Registration registration:new ArrayList<>(registrations.values()))deliver(registration);
             refresh();
+            if(result==WarningJournal.Append.ACCEPTED){
+                uniform.announced(event,clock.getAsLong());
+                if(event.operation==WarningEvent.Operation.CLEAR)uniform.cleared(event.warningId);
+                else{Bundle announcement=uniform.decide(event,clock.getAsLong());if(announcement!=null)append(announcement,clock.getAsLong());}
+            }
         }catch(IllegalArgumentException error) {
             String reason=error.getMessage();
             failCapture(reason!=null&&reason.matches("[A-Za-z0-9_]{1,48}")?"INVALID_NATIVE_EVENT:"+reason:"INVALID_NATIVE_EVENT");

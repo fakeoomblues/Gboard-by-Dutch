@@ -14,12 +14,15 @@ public final class NavigationState {
     private long roadAt = -1, zoneAt = -1, startAt, session;
     private double limitKmh = Double.NaN;
     private int rawLimit = -1, firstLeft, minimumLeft, left, percent;
+    /** A control is split into consecutive segments; a segment starting right where the last ended continues it. */
+    public static final long CHAIN_GAP_MS = 10_000; public static final int CHAIN_END_M = 300;
+    private int chainObserved, links, lastLeft = -1; private long lastActiveAt = -1;
 
     public void reset(boolean enabled) {
         speedStatus = enabled ? "unknown" : "disabled"; speedAt = -1; currentKmh = Double.NaN;
         roadStatus = zoneStatus = enabled ? "unknown" : "disabled";
         roadAt = zoneAt = -1; limitKmh = Double.NaN; rawLimit = -1;
-        source = segment = "";
+        source = segment = ""; chainObserved = links = 0; lastLeft = -1; lastActiveAt = -1;
     }
 
     public void current(double kmh, long at) {
@@ -62,15 +65,32 @@ public final class NavigationState {
         boolean resetDistance = zoneStatus.equals("active") && remaining > left + Math.max(100, firstLeft / 5);
         boolean resetProgress = zoneStatus.equals("active") && progress >= 0 && percent >= 0 && progress + 5 < percent;
         if (!zoneStatus.equals("active") || identityChanged || resetDistance || resetProgress) {
-            session++; startAt = at; firstLeft = minimumLeft = remaining; source = feed; segment = id;
+            boolean recent = identityChanged && !id.isEmpty() && !segment.isEmpty() && feed.equals(source)
+                    && lastActiveAt >= 0 && at - lastActiveAt <= CHAIN_GAP_MS && lastLeft >= 0;
+            // A new segment measured to the same end (remaining did not jump up) is the same control.
+            boolean sameEnd = recent && remaining <= lastLeft + 100;
+            boolean continues = recent && lastLeft <= CHAIN_END_M;
+            if (sameEnd) {
+                source = feed; segment = id; estimated = progress < 0 || feed.equals("flitsmeister");
+                zoneStatus = "active"; zoneAt = at; left = remaining; lastLeft = remaining; lastActiveAt = at;
+                minimumLeft = Math.min(minimumLeft, remaining); percent = progress;
+                return;
+            } else if (continues) {
+                // The previous segment was driven to its end: keep the session, its start and that distance.
+                chainObserved += firstLeft; links++;
+            } else {
+                session++; startAt = at; chainObserved = 0; links = 0;
+            }
+            firstLeft = minimumLeft = remaining; source = feed; segment = id;
         }
         estimated = progress < 0 || feed.equals("flitsmeister");
-        zoneStatus = "active"; zoneAt = at; left = remaining;
+        zoneStatus = "active"; zoneAt = at; left = remaining; lastLeft = remaining; lastActiveAt = at;
         minimumLeft = Math.min(minimumLeft, remaining); percent = progress;
     }
 
     public void clear(String feed, long at) {
         if (at < zoneAt || (zoneStatus.equals("active") && !source.equals(feed))) return;
+        if (zoneStatus.equals("active")) lastActiveAt = at;
         zoneStatus = "inactive"; zoneAt = at; source = feed;
     }
 
@@ -83,10 +103,11 @@ public final class NavigationState {
     public Snapshot snapshot(long now) {
         expire(now);
         boolean active = zoneStatus.equals("active");
-        int observed = active ? firstLeft - minimumLeft : -1;
+        int observed = active ? chainObserved + firstLeft - minimumLeft : -1;
         long elapsed = zoneAt - startAt;
         double avg = active && observed >= 30 && elapsed >= 3000 ? observed * 3600.0 / elapsed : Double.NaN;
-        double progress = !active ? Double.NaN : percent >= 0 ? percent :
+        // A continued control's total length is unknown: withhold the bar rather than restart it per segment.
+        double progress = !active ? Double.NaN : percent >= 0 ? percent : links > 0 ? Double.NaN :
                 Math.max(0, Math.min(100, 100.0 * (firstLeft - left) / firstLeft));
         return new Snapshot(roadStatus, zoneStatus, roadAt, zoneAt,
                 roadStatus.equals("valid") ? limitKmh : Double.NaN,

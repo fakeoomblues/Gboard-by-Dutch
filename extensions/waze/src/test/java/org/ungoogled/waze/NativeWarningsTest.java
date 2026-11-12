@@ -276,6 +276,30 @@ public class NativeWarningsTest {
         assertEquals(3,announcements());assertEquals("enter",last().getString("phase"));
     }
 
+    private static java.util.Map<String,Bundle> zoneSegment(String key,String phase,int left){
+        Bundle b=new Bundle();b.putString("native_type","AVERAGE_SPEED_CAMERA");b.putString("native_segment_phase",phase);
+        b.putString("native_segment_key",key);b.putString("warning_id","waze/segment/"+key);b.putInt("distance_m",left);
+        java.util.Map<String,Bundle> map=new java.util.LinkedHashMap<>();map.put("waze/segment/"+key,b);return map;
+    }
+    @Test public void consecutiveAverageSpeedSegmentsStayOneWarning(){
+        assertEquals("waze/segment/a",NativeWarnings.chainZoneSegments(zoneSegment("a","WITHIN",900),1000).keySet().iterator().next());
+        NativeWarnings.chainZoneSegments(zoneSegment("a","WITHIN",80),20_000);
+        java.util.Map<String,Bundle> next=NativeWarnings.chainZoneSegments(zoneSegment("b","WITHIN",1500),21_000);
+        assertEquals("waze/segment/a",next.keySet().iterator().next());
+        assertEquals("waze/segment/b",next.values().iterator().next().getString("native_zone_chain_segment_id"));
+        assertEquals("waze/segment/a",NativeWarnings.chainZoneSegments(zoneSegment("b","WITHIN",1400),22_000).keySet().iterator().next());
+        NativeWarnings.chainZoneSegments(zoneSegment("b","WITHIN",100),40_000);
+        // A control met 20 s later is a different control.
+        assertEquals("waze/segment/c",NativeWarnings.chainZoneSegments(zoneSegment("c","WITHIN",800),60_000).keySet().iterator().next());
+        // Approaching segments are never chained.
+        // A direct hand-over (within 2 s) continues even when the last known distance was not near the end.
+        assertEquals("waze/segment/c",NativeWarnings.chainZoneSegments(zoneSegment("d","WITHIN",800),61_000).keySet().iterator().next());
+        // A segment 5 s later that measures a longer stretch than was left is a different control.
+        assertEquals("waze/segment/f",NativeWarnings.chainZoneSegments(zoneSegment("f","WITHIN",2000),66_000).keySet().iterator().next());
+        // One measured to the same end (remaining did not jump up) is the same control.
+        assertEquals("waze/segment/f",NativeWarnings.chainZoneSegments(zoneSegment("g","WITHIN",1900),69_000).keySet().iterator().next());
+        assertEquals("waze/segment/e",NativeWarnings.chainZoneSegments(zoneSegment("e","APPROACHING",300),62_000).keySet().iterator().next());
+    }
     @Test public void segmentCorrelationAddsStateWithoutDuplicatingTheNativeWarning(){
         Descriptor d=new Descriptor("42","PERMANENT_HAZARD",0);repository(d);
         Segment segment=new Segment("SPEED_BUMP");segment.links=Collections.singletonList(new Link(42,"uuid-42","PERMANENT_HAZARD"));

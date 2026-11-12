@@ -38,9 +38,51 @@ public class NavigationStateTest {
         assertEquals(10, s.snapshot(5000).progress, 0.001);
         assertTrue(s.snapshot(5000).progressEstimated);
         long first = s.snapshot(5000).zoneSession;
-        s.insights("B", 700, 6000);
+        s.insights("B", 1700, 6000); // a longer stretch than was left: another control
         assertTrue(s.snapshot(6000).zoneSession > first);
         assertTrue(Double.isNaN(s.snapshot(6000).averageKmh));
+    }
+
+    @Test public void consecutiveSegmentsOfOneControlKeepOneSessionAndAverage() {
+        NavigationState s = new NavigationState();
+        s.insights("A", 1000, 0); s.insights("A", 100, 25_000);
+        long session = s.snapshot(25_000).zoneSession;
+        s.insights("B", 2000, 27_500); // next segment starts where A ended
+        NavigationState.Snapshot n = s.snapshot(27_500);
+        assertEquals(session, n.zoneSession);
+        assertEquals(1000, n.observedMeters);
+        assertEquals(1000 * 3600.0 / 27_500, n.averageKmh, 0.001);
+        assertTrue(Double.isNaN(n.progress)); // total length unknown: no restarted bar
+        s.insights("B", 1000, 52_500);
+        assertEquals(2000 * 3600.0 / 52_500, s.snapshot(52_500).averageKmh, 0.001);
+    }
+
+    @Test public void segmentAfterClearAndShortGapContinuesButLongGapOrMidSegmentSwitchDoesNot() {
+        NavigationState s = new NavigationState();
+        s.insights("A", 500, 0); s.insights("A", 50, 15_000); s.clear("insights", 16_000);
+        long session = s.snapshot(15_000).zoneSession;
+        s.insights("B", 800, 20_000);
+        assertEquals(session, s.snapshot(20_000).zoneSession);
+        s.clear("insights", 21_000);
+        s.insights("C", 800, 40_000); // 19 s later: a different control
+        assertTrue(s.snapshot(40_000).zoneSession > session);
+        NavigationState mid = new NavigationState();
+        mid.insights("A", 1000, 0); mid.insights("A", 900, 4000);
+        long first = mid.snapshot(4000).zoneSession;
+        mid.insights("B", 2500, 5000); // left A 900 m before its end, B measures a longer stretch
+        assertTrue(mid.snapshot(5000).zoneSession > first);
+    }
+
+    @Test public void segmentMeasuredToTheSameEndKeepsSessionLengthAndProgress() {
+        NavigationState s = new NavigationState();
+        s.insights("whole", 15_000, 0); s.insights("whole", 8_000, 60_000); s.insights("whole", 656, 110_000);
+        NavigationState.Snapshot before = s.snapshot(110_000);
+        s.insights("last", 596, 111_000); // Waze's last segment, counted to the same end
+        NavigationState.Snapshot after = s.snapshot(111_000);
+        assertEquals(before.zoneSession, after.zoneSession);
+        assertEquals(15_000 - 596, after.observedMeters);
+        assertEquals(100.0 * (15_000 - 596) / 15_000, after.progress, 0.001);
+        assertEquals("last", after.segment);
     }
 
     @Test public void foreignClearCannotTerminateSelectedFeed() {

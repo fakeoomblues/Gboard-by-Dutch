@@ -263,6 +263,30 @@ public final class NativeWarnings {
         }
         zoneSoundAt=SystemClock.elapsedRealtime();put(fields,true,zoneSoundAt,"native_zone");zones.put(controller,new ZoneDecision(id,phase));if(phase.equals("exit"))retireZone(id,controller);
     }
+    /** Waze reports one average-speed control as consecutive road segments; keep them one warning. */
+    // A direct hand-over (within 2 s) needs no distance; within 10 s the last segment must have ended.
+    static final long ZONE_CHAIN_GAP_MS=10_000,ZONE_CHAIN_HANDOVER_MS=2_000;static final int ZONE_CHAIN_END_M=300;
+    private static String zoneChainId,zoneChainKey;private static long zoneChainAt=-1;private static int zoneChainLeft=-1;
+    static Map<String,Bundle> chainZoneSegments(Map<String,Bundle> parsed,long observed){
+        boolean previousPresent=false;
+        for(Bundle fields:parsed.values())if(zoneChainKey!=null&&zoneChainKey.equals(fields.getString("native_segment_key")))previousPresent=true;
+        Map<String,Bundle> result=new LinkedHashMap<>();
+        for(Map.Entry<String,Bundle> entry:parsed.entrySet()){
+            Bundle fields=entry.getValue();String id=entry.getKey();
+            if("AVERAGE_SPEED_CAMERA".equals(fields.getString("native_type"))&&"WITHIN".equals(fields.getString("native_segment_phase"))){
+                String key=fields.getString("native_segment_key","");int left=fields.getInt("distance_m",-1);
+                boolean continues=zoneChainId!=null&&!key.equals(zoneChainKey)&&!previousPresent&&zoneChainAt>=0
+                        &&(observed-zoneChainAt<=ZONE_CHAIN_HANDOVER_MS||observed-zoneChainAt<=ZONE_CHAIN_GAP_MS&&zoneChainLeft>=0&&(zoneChainLeft<=ZONE_CHAIN_END_M||left>=0&&left<=zoneChainLeft+100))&&!result.containsKey(zoneChainId);
+                if(key.equals(zoneChainKey)&&zoneChainId!=null&&!result.containsKey(zoneChainId))id=zoneChainId;
+                else if(continues){id=zoneChainId;zoneChainKey=key;previousPresent=true;}
+                else{zoneChainId=id;zoneChainKey=key;}
+                if(!id.equals(fields.getString("warning_id"))){fields.putString("native_zone_chain_segment_id",fields.getString("warning_id"));fields.putString("warning_id",id);}
+                zoneChainAt=observed;zoneChainLeft=left;
+            }
+            if(result.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_SEGMENT");
+        }
+        return result;
+    }
     public static void segments(Object update){capture(()->{
         Object values=WazeWarningModels.call(update,"getInfoList");if(!(values instanceof Collection)||((Collection<?>)values).size()>MAX_WARNINGS)throw new IllegalArgumentException("SEGMENT_BOUND");
         Map<String,Bundle> parsed=new LinkedHashMap<>(),correlated=new LinkedHashMap<>();Set<String> seen=new HashSet<>();long observed=SystemClock.elapsedRealtime();boolean routeContext=false;
@@ -281,6 +305,7 @@ public final class NativeWarnings {
                 correlated.put(linked,nativeFields);
             }else{String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_SEGMENT");}
         }
+        parsed=chainZoneSegments(parsed,observed);
         // Validate the complete native update before emitting even a linked state change.
         for(Map.Entry<String,Record> entry:new ArrayList<>(records.entrySet())){
             Bundle previous=entry.getValue().fields;
@@ -316,7 +341,7 @@ public final class NativeWarnings {
     });}
     static void overflow(){capture(()->{throw new IllegalStateException("SOURCE_CAPTURE_BOUND");});}
     static synchronized void stopped(){
-        for(String id:new ArrayList<>(records.keySet()))clear(id);nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();retiredZoneRequests.clear();if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";
+        for(String id:new ArrayList<>(records.keySet()))clear(id);nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";
         alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;
     }
     private static void put(Bundle source,boolean announce,long observed,String path){
@@ -342,5 +367,5 @@ public final class NativeWarnings {
     }
     private static void clear(String id){Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;Bundle b=new Bundle();b.putString("warning_id",id);b.putString("operation","CLEAR");b.putLong("revision",record.revision);b.putLong("announcement_index",record.index);long now=SystemClock.elapsedRealtime();b.putLong("observed_elapsed_ms",now);b.putLong("state_until_elapsed_ms",now+30000);record.fields=b;emit(b);}
     private static void emit(Bundle fields){nl.johninnl.navigation.alerts.IndicatorContract.annotate(fields);if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();notifications.clear();zones.clear();retiredZoneRequests.clear();carSurfaces.clear();testRetire=null;if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();carSurfaces.clear();testRetire=null;if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
 }

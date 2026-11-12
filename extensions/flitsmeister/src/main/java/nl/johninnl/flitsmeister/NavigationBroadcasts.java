@@ -146,7 +146,7 @@ public final class NavigationBroadcasts {
             if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
             if(at<candidateAt) return;
             candidateAt=at; candidate=selected;
-            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); } else observe(selected,fix,at);
+            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1); } else observe(selected,fix,at);
             dirty=true; publish(false);
         });
     }
@@ -157,22 +157,30 @@ public final class NavigationBroadcasts {
             // Native task selects the approach candidate; project only to distinguish entry from exit.
             if(ZoneGeometry.beforeStart(c.path,fix.getLatitude(),fix.getLongitude())) {
                 Location start=new Location("report"); start.setLatitude(c.path[0][0]);start.setLongitude(c.path[0][1]);
-                ALERTS.approach(c.id,(int)Math.round(fix.distanceTo(start)),true,at);
-            } else ALERTS.approach("",-1,false,at);
-        } else { STATE.zone(c.id,p.remaining,p.percent,at); ALERTS.approach("",-1,false,at); }
+                int distance=(int)Math.round(fix.distanceTo(start));
+                ALERTS.approach(c.id,distance,true,at); zoneWarning(c.id,false,distance);
+            } else { ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1); }
+        } else { STATE.zone(c.id,p.remaining,p.percent,at); ALERTS.approach("",-1,false,at); zoneWarning(c.id,true,p.remaining); }
+    }
+    private static String zoneWarningId;
+    /** The tracked average-speed report on the warning channel too, so receivers can announce it. */
+    private static void zoneWarning(String id,boolean inside,int metres) {
+        if(zoneWarningId!=null&&!zoneWarningId.equals(id)){NativeWarnings.averageSpeedZoneCleared(zoneWarningId);zoneWarningId=null;}
+        if(id==null||id.isEmpty())return;
+        zoneWarningId=id;NativeWarnings.averageSpeedZone(id,inside,metres);
     }
     private static Candidate readCandidate(Object report,Location fix) throws ReflectiveOperationException {
         String id=String.valueOf(call(report,"getId"));
         Object segments=call(report,"getSegments");
         if (segments instanceof List && !((List<?>)segments).isEmpty()) {
-            for (Object segment:(List<?>)segments) {
-                double[][] points=points(call(segment,"getGpsPath"));
-                if (ZoneGeometry.project(points,fix.getLatitude(),fix.getLongitude()).inside)
-                    return new Candidate(id+":"+call(segment,"getIndex"),points);
+            // One average-speed control is one report split into consecutive segments. Measure the
+            // whole control so the average, remaining distance and progress do not restart per segment.
+            java.util.TreeMap<Integer,double[][]> ordered=new java.util.TreeMap<>();
+            for(Object segment:(List<?>)segments) {
+                int index=((Number)call(segment,"getIndex")).intValue();
+                if(ordered.put(index,points(call(segment,"getGpsPath")))!=null)throw new ReflectiveOperationException("Duplicate zone segment index");
             }
-            // Retain the native report's pre-entry candidate even before a segment is active.
-            Object first=((List<?>)segments).get(0);
-            return new Candidate(id+":"+call(first,"getIndex"),points(call(first,"getGpsPath")));
+            return new Candidate(id,ZoneGeometry.join(new java.util.ArrayList<>(ordered.values())));
         }
         return new Candidate(id,points(call(report,"getGpsPath")));
     }

@@ -75,11 +75,20 @@ public class NavigationBroadcastsTest {
  }
  public static class ReportB extends Report { @Override public String getId(){return "zone-b";} }
  public static class Task { public Report d=new Report(); }
+ @Test public void trackedAverageSpeedReportAlsoReachesTheWarningChannel() {
+  java.util.List<android.os.Bundle> warnings=new java.util.ArrayList<>();NativeWarnings.resetForTest(app,warnings::add);
+  Task task=new Task(); Location first=fix(20); first.setLongitude(5.005);
+  NavigationBroadcasts.zone(task,first); shadowOf(Looper.getMainLooper()).idle();
+  android.os.Bundle zone=null;for(android.os.Bundle b:warnings)if("AvgSpeedCheck:zone-a".equals(b.getString("warning_id")))zone=b;
+  assertNotNull(zone);assertEquals("AVG_SPEED_CHECK",zone.getString("native_type"));assertEquals("enter",zone.getString("phase"));
+  assertEquals("UPSERT",zone.getString("operation"));assertEquals("remaining_in_segment",zone.getString("native_distance_kind"));
+  assertTrue(zone.getInt("distance_m",-1)>0);
+ }
  @Test public void zoneProgressAndAverageUseSameObservedDistanceContractAsWaze() {
   Task task=new Task(); Location first=fix(20); first.setLongitude(5.005);
   NavigationBroadcasts.zone(task,first);
   assertEquals("active",last().getStringExtra("zone_status"));
-  assertEquals("zone-a:2",last().getStringExtra("zone_segment_id"));
+  assertEquals("zone-a",last().getStringExtra("zone_segment_id"));
   assertTrue(last().getBooleanExtra("zone_progress_estimated",false));
   assertTrue(last().getBooleanExtra("zone_average_partial",false));
   assertFalse(last().hasExtra("zone_average_speed_kmh"));
@@ -120,7 +129,7 @@ public class NavigationBroadcastsTest {
   NavigationBroadcasts.zone(oldTask,oldFix);
   shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
   Location next=fix(20); next.setLongitude(5.007); NavigationBroadcasts.location(next);
-  assertEquals("zone-b:2",last().getStringExtra("zone_segment_id"));
+  assertEquals("zone-b",last().getStringExtra("zone_segment_id"));
  }
 
  @Test public void nativeCandidateApproachPrecedesPartialAverageAndExpires() {

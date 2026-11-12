@@ -7,6 +7,20 @@ final class ZoneGeometry {
         final boolean inside; final int remaining, percent;
         Result(boolean inside,int remaining,int percent) { this.inside=inside;this.remaining=remaining;this.percent=percent; }
     }
+    /** Consecutive segment paths as one directed path; a shared end/start point is kept once. */
+    static double[][] join(java.util.List<double[][]> paths) {
+        java.util.List<double[]> out=new java.util.ArrayList<>();
+        for(double[][] path:paths) {
+            if(path==null)continue;
+            for(double[] point:path) {
+                if(point==null || point.length<2)continue;
+                double[] last=out.isEmpty()?null:out.get(out.size()-1);
+                if(last!=null && last[0]==point[0] && last[1]==point[1])continue;
+                out.add(new double[]{point[0],point[1]});
+            }
+        }
+        return out.toArray(new double[0][]);
+    }
     static boolean beforeStart(double[][] path,double latitude,double longitude) {
         if(path==null || path.length<2)return false;
         double cos=Math.cos(Math.toRadians(latitude));

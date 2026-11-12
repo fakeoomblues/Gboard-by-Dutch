@@ -18,6 +18,9 @@ import org.robolectric.shadows.ShadowProcess;
 
 @RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE)
 public class WarningConnectionTest {
+    // Provider-text protocol checks; UniformAlertsTest covers the uniform behaviour.
+    @org.junit.Before public void uniformOff(){UniformAlerts.enabled=false;}
+    @org.junit.After public void uniformOn(){UniformAlerts.enabled=true;}
     WarningEndpoint source;WarningConnection client;
     @After public void close(){if(client!=null)client.close();if(source!=null)source.close();}
     @Test public void retiredSessionCallbacksCannotInvalidateReplacementWithSameStartupTicket() throws Exception {

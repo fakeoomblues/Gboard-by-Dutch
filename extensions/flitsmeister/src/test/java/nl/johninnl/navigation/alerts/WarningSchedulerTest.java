@@ -15,7 +15,9 @@ public class WarningSchedulerTest {
     final Time time=new Time();final Policy policy=new Policy();final Speaker speaker=new Speaker();
     final List<PlaybackGrant.Outcome> observed=new ArrayList<>();
     Source source;WarningScheduler scheduler;long sequence;
-    @Before public void setup(){source=new Source();scheduler=new WarningScheduler(time,policy,speaker,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent event,PlaybackGrant.Outcome value){observed.add(value);}});scheduler.connected(source,snapshot(Collections.emptyList()));}
+    // Provider-text protocol checks; UniformAlertsTest covers the uniform wording on top of this protocol.
+    @org.junit.After public void uniformOn(){UniformAlerts.enabled=true;}
+    @Before public void setup(){UniformAlerts.enabled=false;source=new Source();scheduler=new WarningScheduler(time,policy,speaker,new WarningScheduler.Observer(){public void changed(String status){}public void outcome(WarningEvent event,PlaybackGrant.Outcome value){observed.add(value);}});scheduler.connected(source,snapshot(Collections.emptyList()));}
     /** Real engines are never ready for an empty language; only a voice prepared before any event makes idle status READY. */
     class LanguageSpeaker extends Speaker {final String idle;final List<String> prepared=new ArrayList<>();LanguageSpeaker(String idle){this.idle=idle;}
         @Override public void prepare(String language){super.prepare(language);prepared.add(language);}

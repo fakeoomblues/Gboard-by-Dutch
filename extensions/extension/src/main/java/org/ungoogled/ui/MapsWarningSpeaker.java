@@ -33,7 +33,8 @@ public final class MapsWarningSpeaker implements AutoCloseable {
     private static final java.util.concurrent.ExecutorService SOUNDS=java.util.concurrent.Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"maps-warning-sound");t.setDaemon(true);return t;});
     /** Decode the provider's alert sound when its announcement arrives, before a grant needs it. */
     static void prefetch(Context context,WarningEvent event) {
-        String name=ProviderSound.name(event);
+        // Prefetch the uniform alert sound the scheduler will actually hand to this speaker.
+        String name=ProviderSound.name(nl.johninnl.navigation.alerts.UniformAlerts.localize(event));
         if(context==null || name==null || ProviderSound.cached(ProviderSound.FLITSMEISTER,name)!=null)return;
         Context app=context.getApplicationContext();
         SOUNDS.execute(()->ProviderSound.load(app,ProviderSound.FLITSMEISTER,name));

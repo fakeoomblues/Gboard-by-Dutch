@@ -93,7 +93,8 @@ public final class TelemetryStore {
             progress=scalar(p,"zone_progress_percent",0,100);
             averagePartial=Boolean.TRUE.equals(p.get("zone_average_partial"));
             progressEstimated=!Boolean.FALSE.equals(p.get("zone_progress_estimated"));
-            active="active".equals(p.get("zone_status"))&&zoneAt<=sent&&zoneSession>0&&remaining>=0&&progress!=null;
+            // A control continued across segments has no known total length: active, with its bar withheld.
+            active="active".equals(p.get("zone_status"))&&zoneAt<=sent&&zoneSession>0&&remaining>=0;
             long start=number(p,"zone_observation_start_elapsed_ms",-1), observed=number(p,"zone_observed_distance_m",-1);
             Double avg=scalar(p,"zone_average_speed_kmh",0,500);
             String method=text(p,"zone_average_method",128);
