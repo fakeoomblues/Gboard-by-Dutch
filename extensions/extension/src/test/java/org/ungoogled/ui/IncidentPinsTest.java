@@ -123,7 +123,8 @@ public class IncidentPinsTest {
     }
 
     @Test public void withoutThePatchNothingIsPosted() {
-        assertNull(IncidentPins.uaPost(new Object(), null, 52.1, 5.1, "JAM"));
+        assertNull(IncidentPins.uaEvent(null, 52.1, 5.1, "JAM"));
+        IncidentPins.uaSend(new Object(), new Object());   // no-op without the patch
         assertFalse(IncidentPins.ours(new Object()));
         assertFalse(IncidentPins.drawing());
     }

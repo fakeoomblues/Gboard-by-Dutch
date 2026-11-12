@@ -279,16 +279,18 @@ private fun BytecodePatchContext.incidentCallouts() {
             ).toMutable().apply { addInstructions(0, smali) },
         )
     }
-    // uaPost(bus, icon, lat, lng, type): new event(position, no icon URL, icon, no text, type), posted.
+    // uaEvent(icon, lat, lng, type): new event(position, no icon URL, icon, no text, type), not posted yet.
+    // The bus calls the handler synchronously, and the handler asks ours(event) and hands the callout over
+    // while the post runs (acc30). IncidentPins records the event between uaEvent and uaSend.
     // Locals v0 (event), v1..v5 (its arguments in constructor order), v6..v10 (LatLng scratch).
     val arguments = a.concreteParameters.mapIndexed { i, t ->
         val r = "v${i + 1}"
         when (t) {
             a.point -> "move-object $r, v10"
-            DRAWABLE -> "move-object/from16 $r, p1"
+            DRAWABLE -> "move-object/from16 $r, p0"
             a.type -> """
                 const-class $r, ${a.type}
-                move-object/from16 v6, p6
+                move-object/from16 v6, p5
                 invoke-static { $r, v6 }, Ljava/lang/Enum;->valueOf(Ljava/lang/Class;$STRING)Ljava/lang/Enum;
                 move-result-object $r
                 check-cast $r, ${a.type}
@@ -297,10 +299,10 @@ private fun BytecodePatchContext.incidentCallouts() {
         }
     }.joinToString("\n")
     replace(
-        "uaPost", listOf(OBJECT, DRAWABLE, "D", "D", STRING), OBJECT, 18,
+        "uaEvent", listOf(DRAWABLE, "D", "D", STRING), OBJECT, 17,
         """
-            move-wide/from16 v6, p2
-            move-wide/from16 v8, p4
+            move-wide/from16 v6, p1
+            move-wide/from16 v8, p3
             new-instance v10, ${a.latLng}
             invoke-direct { v10, v6, v7, v8, v9 }, ${a.latLng}-><init>(DD)V
             invoke-static { v10 }, ${a.point}->${a.pointOf}(${a.latLng})${a.point}
@@ -308,10 +310,17 @@ private fun BytecodePatchContext.incidentCallouts() {
             $arguments
             new-instance v0, ${a.concrete}
             invoke-direct/range { v0 .. v5 }, ${a.concrete}-><init>(${a.concreteParameters.joinToString("")})V
-            move-object/from16 v6, p0
-            check-cast v6, ${a.bus}
-            invoke-virtual { v6, v0 }, ${a.bus}->${a.post}(${a.busEvent})V
             return-object v0
+        """,
+    )
+    // uaSend(bus, event): the event posted on Maps' bus, as Maps' own report flow posts it.
+    replace(
+        "uaSend", listOf(OBJECT, OBJECT), "V", 2,
+        """
+            check-cast p0, ${a.bus}
+            check-cast p1, ${a.busEvent}
+            invoke-virtual { p0, p1 }, ${a.bus}->${a.post}(${a.busEvent})V
+            return-void
         """,
     )
     // uaDrop(owner, callout): destroyed as the owner's clear-all does, and out of its list.

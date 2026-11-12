@@ -234,7 +234,8 @@ Bytecode:
    - **Why at entry (acc28):** the first build read `p0` and `p1` at the end. `R` (25 registers, `p0` = v23) reuses `p0`'s register for a boolean (`move/from16 v23, v3`). ART rejected the class (`VerifyError ... copy-reference v1<-v23 type=BooleanConstant`), and Maps crashed when guidance started the owner (`bmth.f`). `p1` (v24) is never written, so the legend-flag block's `ours(p1)` is valid.
    - **High registers:** `iget-object` cannot address v23, so the owner is read through `move-object/from16 v0, p0` first.
 3. **Owner hooks:** at the end of `O.f`, `IncidentPins.start(owner, bus)`; at the start of `O.a`, `IncidentPins.cleared(owner)`; at the start of `O.g`, `IncidentPins.stop(owner)`.
-4. **`IncidentPins.uaPost(bus, drawable, lat, lng, type)`** is rewritten to `bus.d(new C(P.E(new L(lat, lng)), null, drawable, null, Enum.valueOf(K, type)))`, returning the event. There is no icon URL and no text.
+4. **`IncidentPins.uaEvent(drawable, lat, lng, type)`** is rewritten to return `new C(P.E(new L(lat, lng)), null, drawable, null, Enum.valueOf(K, type))` without posting it. There is no icon URL and no text. **`IncidentPins.uaSend(bus, event)`** is rewritten to `bus.d(event)`.
+   - **Why two steps (acc30):** the first build built and posted in one call (`uaPost`) and recorded the event after it returned. The bus runs the handler synchronously during the post, so `ours(event)` was false. Maps drew Google's legend sprite (`bE` was true), `added` took the callout for Google's own report, and nothing tracked it. The callout stayed behind after passage, and the unacknowledged post was repeated every 5 s. The event is now recorded between `uaEvent` and `uaSend`.
 5. **`IncidentPins.uaDrop(owner, callout)`** is rewritten to `callout.c()` followed by `owner.m.remove(callout)`.
 
 ### Extension

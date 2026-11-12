@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * The patch reports each owner's start (subscribed, with its bus), clear (Maps removed all its callouts,
  * on navigation changes) and stop, hands back every callout drawn for one of our events (added), and
- * rewrites uaPost/uaDrop. For our events only, it makes Maps use the event's bitmap even where a server
+ * rewrites uaEvent/uaSend/uaDrop. For our events only, it makes Maps use the event's bitmap even where a server
  * flag would pick Google's built-in sprite for the incident type (legend()).
  *
  * The pins are the pills' own selection (WarningPins), shown only while navigating with a WARNINGS_V1
@@ -226,8 +226,12 @@ public final class IncidentPins {
             for (WarningPins.Pin pin : actions.posts) {
                 Drawable icon = icon(context, pin.icon);
                 if (icon == null) continue;
-                Object event = uaPost(bus, icon, pin.lat, pin.lng, type(pin.icon));
-                if (event != null) synchronized (ours) { ours.put(event, pin); oursAt.put(event, now); }
+                // Recorded before it is posted: the bus runs the handler during the post, and the handler
+                // asks ours(event) and hands the callout over right then (acc30).
+                Object event = uaEvent(icon, pin.lat, pin.lng, type(pin.icon));
+                if (event == null) continue;
+                synchronized (ours) { ours.put(event, pin); oursAt.put(event, now); }
+                uaSend(bus, event);
             }
         } catch (Throwable error) {
             if (!loggedFailure) { loggedFailure = true; android.util.Log.w("UA", "incident callouts unavailable", error); }
@@ -327,10 +331,13 @@ public final class IncidentPins {
     }
 
     /**
-     * Rewritten by the patch: posts an incident report callout event on [bus] showing [icon] at
-     * [lat],[lng] with Google's incident [type], without text; returns the event. Null without the patch.
+     * Rewritten by the patch: a new incident report callout event showing [icon] at [lat],[lng] with
+     * Google's incident [type], without text, not posted yet. Null without the patch.
      */
-    static Object uaPost(Object bus, Drawable icon, double lat, double lng, String type) { return null; }
+    static Object uaEvent(Drawable icon, double lat, double lng, String type) { return null; }
+
+    /** Rewritten by the patch: posts [event] on Maps' [bus]; Maps' handler runs during the call. */
+    static void uaSend(Object bus, Object event) {}
 
     /** Rewritten by the patch: removes [callout] from [owner]'s callouts. */
     static void uaDrop(Object owner, Object callout) {}
