@@ -127,4 +127,19 @@ public class IncidentPinsTest {
         assertFalse(IncidentPins.ours(new Object()));
         assertFalse(IncidentPins.drawing());
     }
+    /** acc28: the hand-over cannot read the handler's event register at its end, so entry records it once. */
+    @Test public void theHandOverUsesTheEventRecordedAtTheHandlersEntryOnce() {
+        IncidentPins.handed(new Object());   // nothing recorded: no-op
+        assertFalse(IncidentPins.handOverPending());
+        IncidentPins.handling(new Object());
+        IncidentPins.handlingOwner(PHONE);
+        assertTrue(IncidentPins.handOverPending());
+        IncidentPins.handed(new Object());   // Google's own report: not ours, nothing to keep
+        assertFalse("consumed by the hand-over", IncidentPins.handOverPending());
+        IncidentPins.handling(new Object()); // an early exit leaves it; the next entry replaces it
+        IncidentPins.handling(new Object());
+        IncidentPins.handlingOwner(CAR);
+        IncidentPins.handed(null);
+        assertFalse(IncidentPins.handOverPending());
+    }
 }

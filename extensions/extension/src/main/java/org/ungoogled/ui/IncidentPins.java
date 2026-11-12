@@ -255,7 +255,25 @@ public final class IncidentPins {
         synchronized (ours) { return ours.containsKey(event); }
     }
 
-    /** From the incident handler, once [owner] drew [callout] for [event]. On the UI thread. */
+    /** The event and owner of the incident handler now running (it runs on the UI thread, one at a time). */
+    private static Object handlingEvent, handlingOwner;
+
+    /** From the incident handler's entry, while its event parameter still holds the event. */
+    public static void handling(Object event) { handlingEvent = event; handlingOwner = null; }
+
+    /** From the incident handler's entry, after {@link #handling}: the owner it draws on. */
+    public static void handlingOwner(Object owner) { handlingOwner = owner; }
+
+    /** From just before the handler returns, once it drew [callout] for the event recorded at its entry. */
+    public static void handed(Object callout) {
+        Object event = handlingEvent, owner = handlingOwner;
+        handlingEvent = null; handlingOwner = null;
+        if (event != null && callout != null && owner != null) added(event, callout, owner);
+    }
+
+    static boolean handOverPending() { return handlingEvent != null || handlingOwner != null; }
+
+    /** Once [owner] drew [callout] for [event]. On the UI thread. */
     public static void added(Object event, Object callout, Object owner) {
         WarningPins.Pin pin;
         synchronized (ours) { pin = ours.get(event); }

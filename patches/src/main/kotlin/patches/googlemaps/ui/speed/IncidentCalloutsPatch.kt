@@ -221,22 +221,31 @@ private fun BytecodePatchContext.incidentCallouts() {
         """,
     )
 
-    // 2. After the callout is added and shown: hand it over with its event and owner. Inserted in front of
-    //    the final return, which the early exits jump to directly, so only a drawn callout gets here.
+    // 2. After the callout is added and shown: hand it over. Inserted in front of the final return, which
+    //    the early exits jump to directly, so only a drawn callout gets here. By then the handler has reused
+    //    p1's register for a boolean (acc28: ART rejected `move-object v1, p1` there), so the event and the
+    //    owner are recorded at the method's entry, while p0 and p1 still hold them, and the end passes only
+    //    the callout.
     code = handle.implementation!!.instructions.toList()
     val addIndex = code.indices.single { i ->
         code[i].opcode == Opcode.INVOKE_INTERFACE && (code[i].ref() as? MethodReference)?.let { it.definingClass == LIST && it.name == "add" } == true
     }
     val callout = (code[addIndex + 1] as Instruction35c).registerC
-    val (event, owner) = (0..15).filter { it != callout }.take(2)
+    if (callout > 15) throw PatchException("${a.handler}'s callout register is out of range")
     if (code[addIndex + 2].opcode != Opcode.RETURN_VOID) throw PatchException("${a.handler} changed after the callout")
+    val handleCode = handle.implementation!!
+    if (handleCode.registerCount - 2 < 1) throw PatchException("${a.handler} has no local for the hand-over")
     handle.addInstructions(
         addIndex + 2,
+        "invoke-static { v$callout }, $INCIDENT_PINS->handed($OBJECT)V",
+    )
+    handle.addInstructions(
+        0,
         """
-            move-object/from16 v$event, p1
-            move-object/from16 v$owner, p0
-            iget-object v$owner, v$owner, ${a.host.definingClass}->${a.host.name}:${a.host.type}
-            invoke-static { v$event, v$callout, v$owner }, $INCIDENT_PINS->added($OBJECT$OBJECT$OBJECT)V
+            invoke-static/range { p1 .. p1 }, $INCIDENT_PINS->handling($OBJECT)V
+            move-object/from16 v0, p0
+            iget-object v0, v0, ${a.host.definingClass}->${a.host.name}:${a.host.type}
+            invoke-static { v0 }, $INCIDENT_PINS->handlingOwner($OBJECT)V
         """,
     )
 
