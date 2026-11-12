@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2675fca03f0f098031542f544757cca480abaf1e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.71.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [2675fca03f0f](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/2675fca03f0f098031542f544757cca480abaf1e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.71.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.71.0...v1.71.1) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** make Parakeet's speech runtime read-only before loading it ([2675fca](https://gitlab.com/johninnld/nl-morphe-patches/commit/2675fca03f0f098031542f544757cca480abaf1e))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0ef414c3e2ef3b888ec8e7d741de60c27fc68c87/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.71.0.**
