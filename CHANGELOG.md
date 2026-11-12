@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/abd65ef3f1afcf95ed87a25add40215e91cdee3e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.71.3.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [abd65ef3f1af](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/abd65ef3f1afcf95ed87a25add40215e91cdee3e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.71.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.71.2...v1.71.3) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **release:** retry the Codeberg mirror until it lands ([abd65ef](https://gitlab.com/johninnld/nl-morphe-patches/commit/abd65ef3f1afcf95ed87a25add40215e91cdee3e))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5e2ec204b50695f319f7a438d35b6a3d2d470c04/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.71.2.**
