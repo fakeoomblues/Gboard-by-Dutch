@@ -80,9 +80,11 @@ public final class CarUi {
             }
             rows.add(toggle(screen, parent, label("Spoken road warnings", "Gesproken wegwaarschuwingen"),
                     label("Respects Vela's voice and mute settings", "Volgt Vela's stem- en dempinstellingen"),
-                    TelemetryRuntime.spokenEnabled(), true));
+                    TelemetryRuntime.spokenEnabled(), TelemetryRuntime::setSpokenEnabled));
             rows.add(toggle(screen, parent, label("Show zone and warning details", "Traject- en waarschuwingsdetails tonen"),
-                    label("Partial observed average; progress may be estimated", "Gedeeltelijk waargenomen gemiddelde; voortgang kan geschat zijn"), TelemetryRuntime.carEnabled(), false));
+                    label("Partial observed average; progress may be estimated", "Gedeeltelijk waargenomen gemiddelde; voortgang kan geschat zijn"), TelemetryRuntime.carEnabled(), TelemetryRuntime::setCarEnabled));
+            rows.add(toggle(screen, parent, label("Show alerts on the map", "Waarschuwingen op de kaart tonen"),
+                    label("Icons at the reported positions", "Pictogrammen op de gemelde plekken"), TelemetryRuntime.markersEnabled(), TelemetryRuntime::setMarkersEnabled));
             Object list = construct("ji1");
             ((List<Object>)field(list, "a")).addAll(rows);
             Object template = construct("qv1");
@@ -99,7 +101,7 @@ public final class CarUi {
     }
 
     private static Object toggle(Object screen, Object parent, String title, String detail, boolean checked,
-                                 boolean spoken) throws ReflectiveOperationException {
+                                 java.util.function.Consumer<Boolean> setter) throws ReflectiveOperationException {
         Object builder = construct("mq3");
         type("mq3").getMethod("c", String.class).invoke(builder, title);
         type("mq3").getMethod("a", CharSequence.class).invoke(builder, detail);
@@ -107,7 +109,7 @@ public final class CarUi {
         Object callback = Proxy.newProxyInstance(function.getClassLoader(), new Class<?>[]{function}, (proxy, method, args) -> {
             if (method.getName().equals("invoke")) {
                 boolean enabled = Boolean.TRUE.equals(args[0]);
-                if (spoken) TelemetryRuntime.setSpokenEnabled(enabled); else TelemetryRuntime.setCarEnabled(enabled);
+                setter.accept(enabled);
                 invalidate(screen);
                 return type("er4").getField("a").get(null);
             }
@@ -158,6 +160,7 @@ public final class CarUi {
                 .append(':').append(nl.johninnl.navigation.alerts.IndicatorContract.valueText(event,NativeUi.imperial()))
                 .append(':').append(event.triggerMeters).append(':').append(nl.johninnl.navigation.alerts.CarWarningPills.fresh(event.triggerObservedAt,now));
         }
+        presentation.append("|markers:").append(TelemetryRuntime.markersEnabled()).append(':').append(AlertMarkers.signature(TelemetryRuntime.markers(now)));
         String key=presentation.toString();
         if(key.equals(lastWarningFrameKey))return;
         lastWarningFrameKey=key;
@@ -177,11 +180,19 @@ public final class CarUi {
      * frame's native speed display runs first ({@link #compact}); when it did, the speed pill is the
      * stack's bottom row, so warnings and speed share one scale and one right edge.
      */
-    public static void warningFrame(Object renderer, Canvas canvas) {
+    public static void warningFrame(Object renderer, Canvas canvas) { warningFrame(renderer,canvas,null,1f,1f); }
+
+    /**
+     * The patched native snapshot callback: {@code snapshot} is the MapSnapshot this frame drew and
+     * {@code scaleX}/{@code scaleY} the factors it used to scale that bitmap onto the car surface.
+     * Alert markers go beneath the pills, inside the same visible rectangle.
+     */
+    public static void warningFrame(Object renderer, Canvas canvas, Object snapshot, float scaleX, float scaleY) {
         RENDERERS.put(renderer,Boolean.TRUE);
         SpeedFrame speed=SPEED.remove(renderer);
         TelemetryRuntime.carFrame(renderer);
         if (!TelemetryRuntime.carEnabled()) return;
+        markers(renderer,canvas,snapshot,scaleX,scaleY);
         TelemetryStore.View view=TelemetryRuntime.view();
         java.util.List<nl.johninnl.navigation.alerts.WarningEvent> all=TelemetryRuntime.carWarnings(),events=new java.util.ArrayList<>();
         for(nl.johninnl.navigation.alerts.WarningEvent event:all)
@@ -206,6 +217,39 @@ public final class CarUi {
                 view.progressPercent,view.remainingMeters,view.progressEstimated,events,face,geometry,untyped,
                 speed!=null,speed==null?null:speed.kmh);
         } catch (ReflectiveOperationException|RuntimeException error) { failure(error); }
+    }
+    static final float MARKER_DP=28;
+    /** Draws a marker icon into its slot; the shared 256px warning artwork in the product. */
+    interface MarkerPainter { void draw(Canvas canvas,AlertMarkers.Placement placement); }
+    static MarkerPainter markerPainter=(canvas,placement)->
+        nl.johninnl.navigation.alerts.WarningIcons.draw(TelemetryRuntime.app(),canvas,placement.marker.event,placement.slot);
+    /** Icons at native alert positions, projected through the very snapshot this frame drew. */
+    private static void markers(Object renderer,Canvas canvas,Object snapshot,float scaleX,float scaleY) {
+        if(snapshot==null||!TelemetryRuntime.markersEnabled())return;
+        try {
+            Rect visible=overlayViewport(renderer,canvas.getWidth(),canvas.getHeight());
+            java.util.List<AlertMarkers.Placement> placed=markerPlacements(renderer,canvas.getWidth(),canvas.getHeight(),visible,snapshot,scaleX,scaleY);
+            if(placed.isEmpty())return;
+            int saved=canvas.save();
+            try {
+                canvas.clipRect(visible);
+                for(AlertMarkers.Placement placement:placed)markerPainter.draw(canvas,placement);
+            } finally { canvas.restoreToCount(saved); }
+        } catch(ReflectiveOperationException|RuntimeException error) { failure(error); }
+    }
+    static java.util.List<AlertMarkers.Placement> markerPlacements(Object renderer,int width,int height,Rect visible,
+            Object snapshot,float scaleX,float scaleY) throws ReflectiveOperationException {
+        java.util.List<AlertMarkers.Marker> markers=TelemetryRuntime.markers(android.os.SystemClock.elapsedRealtime());
+        // Without a bitmap the native frame filled the surface instead of drawing the map.
+        if(markers.isEmpty()||visible.isEmpty()||invoke(snapshot,"getBitmap")==null)return java.util.Collections.emptyList();
+        Float hostDensity=DENSITIES.get(renderer);float density=hostDensity==null?1f:hostDensity;
+        float size=Math.max(16f,Math.min(MARKER_DP*density,Math.min(width,height)/5f));
+        Class<?> latLng=Class.forName("org.maplibre.android.geometry.LatLng",false,snapshot.getClass().getClassLoader());
+        java.lang.reflect.Constructor<?> point=latLng.getConstructor(double.class,double.class);
+        Method pixel=snapshot.getClass().getMethod("pixelForLatLng",latLng);
+        return AlertMarkers.place(markers,
+            (latitude,longitude)->(android.graphics.PointF)pixel.invoke(snapshot,point.newInstance(latitude,longitude)),
+            scaleX,scaleY,visible,size);
     }
     /** Current host occlusion wins; the map-action column remains reserved while auto-hidden. */
     static Rect overlayViewport(Rect visible,Rect stable,int width,int height) {

@@ -1,0 +1,97 @@
+package nl.johninnl.vela;
+
+import static org.junit.Assert.*;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.os.Bundle;
+import java.util.*;
+import nl.johninnl.navigation.alerts.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+/** Contract v1 Geometry rules for display-only map markers. */
+@RunWith(RobolectricTestRunner.class) @Config(sdk=32,manifest=Config.NONE)
+public class AlertMarkersTest {
+    static final String SESSION=UUID.randomUUID().toString();
+    static final long T=100_000;
+
+    /** A point warning observed at {@code at}; its position observed at {@code positionAt}. */
+    static WarningEvent point(String id,long at,Double latitude,Double longitude,Long positionAt,boolean fixed,String relevance,Map<String,Object> extra){
+        Bundle b=new Bundle();b.putInt("protocol_version",1);b.putString("provider_session",SESSION);b.putLong("sequence",1);
+        b.putString("operation","UPSERT");b.putString("warning_id",id);b.putLong("revision",1);b.putLong("announcement_index",0);
+        b.putString("phase","approach");b.putString("native_type","SPEED_CAM");b.putString("native_subtype","");b.putString("category","speed_camera");
+        b.putInt("priority",1);b.putString("message","Speed camera");b.putString("language_tag","en-US");b.putString("message_origin","native_text");
+        b.putString("relevance",relevance);b.putString("relationship","unknown");b.putLong("observed_elapsed_ms",at);b.putLong("issued_elapsed_ms",at);
+        b.putLong("state_until_elapsed_ms",at+30000);
+        if(latitude!=null){b.putDouble("latitude",latitude);b.putDouble("longitude",longitude);b.putLong("position_observed_elapsed_ms",positionAt);b.putBoolean("position_estimated",false);}
+        if(fixed)b.putBoolean("native_point_target",true);
+        for(Map.Entry<String,Object> e:extra.entrySet()){Object v=e.getValue();if(v instanceof String)b.putString(e.getKey(),(String)v);else if(v instanceof Boolean)b.putBoolean(e.getKey(),(Boolean)v);else if(v instanceof Integer)b.putInt(e.getKey(),(Integer)v);else if(v instanceof Long)b.putLong(e.getKey(),(Long)v);}
+        return WarningCodec.decode(b,at);
+    }
+    static WarningEvent point(String id,boolean fixed){return point(id,T,52.1,5.1,T,fixed,"point_ahead",Collections.emptyMap());}
+    static List<AlertMarkers.Marker> select(long now,WarningEvent... events){return AlertMarkers.select(Arrays.asList(events),now,e->WarningPassage.Relevance.RELEVANT);}
+
+    @Test public void fixedNativePointsPersistUntilStateEndsButOtherPointsNeedAFreshPosition(){
+        WarningEvent fixed=point("fm/cam",true),waze=point("waze/cam",false);
+        assertEquals(2,select(T+5000,fixed,waze).size());
+        List<AlertMarkers.Marker> later=select(T+5001,fixed,waze);
+        assertEquals("A non-fixed point is withheld once its position is older than 5 s",1,later.size());
+        assertEquals("fm/cam",later.get(0).warningId);
+        assertEquals("Still shown late in the state window",1,select(T+29_999,fixed).size());
+        assertTrue("Gone at state_until",select(T+30_000,fixed).isEmpty());
+    }
+
+    @Test public void onlyANativeCoordinatePairIsATarget(){
+        assertTrue("No coordinates",select(T,point("none",T,null,null,null,true,"point_ahead",Collections.emptyMap())).isEmpty());
+        assertTrue("A default (0,0) is never drawn",select(T,point("zero",T,0d,0d,T,true,"point_ahead",Collections.emptyMap())).isEmpty());
+        AlertMarkers.Marker marker=select(T,point("real",T,51.485487,5.416153,T,true,"point_ahead",Collections.emptyMap())).get(0);
+        assertEquals(51.485487,marker.latitude,0);assertEquals(5.416153,marker.longitude,0);
+        assertEquals("Shared icon vocabulary","speed_camera",marker.icon);assertEquals("johninnl-warning-speed_camera",marker.image());
+    }
+
+    @Test public void passedOffRouteZoneAndNonspatialWarningsHaveNoMarker(){
+        WarningEvent cam=point("cam",true);
+        for(WarningPassage.Relevance gone:new WarningPassage.Relevance[]{WarningPassage.Relevance.PASSED,WarningPassage.Relevance.OFF_ROUTE})
+            assertTrue(gone.name(),AlertMarkers.select(Collections.singletonList(cam),T,e->gone).isEmpty());
+        assertEquals("Unverified context keeps the pill selection's decision",1,
+            AlertMarkers.select(Collections.singletonList(cam),T,e->WarningPassage.Relevance.CONTEXT_UNVERIFIED).size());
+        Map<String,Object> inside=new HashMap<>();inside.put("native_zone_state","InZone");
+        assertTrue("An entry point is not the end of a segment being traversed",select(T,point("zone",T,52.1,5.1,T,true,"point_ahead",inside)).isEmpty());
+        assertTrue(select(T,point("notice",T,52.1,5.1,T,true,"notice",Collections.emptyMap())).isEmpty());
+        assertTrue(select(T,point("zone2",T,52.1,5.1,T,true,"zone",Collections.emptyMap())).isEmpty());
+    }
+
+    @Test public void respondersNeverKeepAStalePositionEvenWhenMarkedFixed(){
+        WarningEvent responder=point("early/AMBULANCE",T,52.1,5.1,T-1000,true,"moving_emergency",Collections.emptyMap());
+        assertEquals(1,select(T+4000,responder).size());
+        assertTrue(select(T+4001,responder).isEmpty());
+    }
+
+    @Test public void selectionIsReadOnly(){
+        WarningEvent cam=point("cam",false);Map<String,Object> before=new HashMap<>(cam.fields());
+        select(T+1000,cam);select(T+9000,cam);
+        assertEquals(before,cam.fields());assertEquals(T,(long)cam.positionObservedAt);assertEquals(T+30000,cam.stateUntil);
+    }
+
+    @Test public void placementScalesSnapshotPixelsAndWithholdsOffscreenPoints()throws Exception{
+        List<AlertMarkers.Marker> markers=select(T,point("a",T,10d,20d,T,true,"point_ahead",Collections.emptyMap()),
+            point("b",T,11d,21d,T,true,"point_ahead",Collections.emptyMap()),point("c",T,12d,22d,T,true,"point_ahead",Collections.emptyMap()));
+        Map<Double,PointF> raw=new HashMap<>();raw.put(10d,new PointF(50,40));raw.put(11d,new PointF(300,40));raw.put(12d,null);
+        List<AlertMarkers.Placement> placed=AlertMarkers.place(markers,(lat,lon)->raw.get(lat),2f,1.5f,new Rect(0,0,400,300),20);
+        assertEquals("Outside the visible rect or unprojectable",1,placed.size());
+        assertEquals("a",placed.get(0).marker.warningId);
+        assertEquals(100,placed.get(0).slot.centerX(),0.001);assertEquals(60,placed.get(0).slot.centerY(),0.001);
+        assertEquals(20,placed.get(0).slot.width(),0.001);
+        assertTrue(AlertMarkers.place(markers,(lat,lon)->raw.get(lat),2f,1.5f,new Rect(),20).isEmpty());
+        assertTrue(AlertMarkers.place(markers,(lat,lon)->raw.get(lat),Float.NaN,1f,new Rect(0,0,400,300),20).isEmpty());
+    }
+
+    @Test public void signatureTracksIdentityIconAndPositionOnly(){
+        WarningEvent a=point("a",true);
+        assertEquals(AlertMarkers.signature(select(T,a)),AlertMarkers.signature(select(T+1000,a)));
+        assertNotEquals(AlertMarkers.signature(select(T,a)),AlertMarkers.signature(select(T,point("a",T,52.2,5.1,T,true,"point_ahead",Collections.emptyMap()))));
+        assertEquals("",AlertMarkers.signature(Collections.emptyList()));
+    }
+}

@@ -11,9 +11,12 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 
 internal const val VELA_CAR_FRAME = "Lxv;->a(Lorg/maplibre/android/snapshotter/MapSnapshot;)V"
-internal const val VELA_CAR_WARNING_HOOK = "Lnl/johninnl/vela/CarUi;->warningFrame(Ljava/lang/Object;Landroid/graphics/Canvas;)V"
+internal const val VELA_CAR_WARNING_HOOK = "Lnl/johninnl/vela/CarUi;->warningFrame(Ljava/lang/Object;Landroid/graphics/Canvas;Ljava/lang/Object;FF)V"
+internal const val VELA_CAR_PUCK = "Lcw;->e(Landroid/graphics/Canvas;Lorg/maplibre/android/snapshotter/MapSnapshot;FFD)V"
 private const val FRAME_HASH = "005a5364b0b0636cef02de4ccdafc8db413745b565e90b800fbb4c0abe9fd3d8"
 
 /** The real MapSnapshot callback owns this Canvas; no replacement surface or navigation state. */
@@ -51,8 +54,19 @@ internal fun bindVelaCarWarningFrame(method:MutableMethod) {
     check(method.getInstruction(286).opcode==Opcode.INVOKE_VIRTUAL
         &&(join as ReferenceInstruction).reference.toString()=="Lcw;->u()Landroid/graphics/Rect;"
         &&join.registerCount==1&&join.registerC==native.registerC)
+    // The native puck call is the frame's last snapshot draw. Just before it, R8 lays out
+    // v3=MapSnapshot (p1), v4/v5=the bitmap-to-surface scale factors and v2=Canvas; nothing writes
+    // v3..v5 again before index 286 (pinned by FRAME_HASH, data flow checked in the unit test).
+    val puck=method.instructions.withIndex().single { (it.value as? ReferenceInstruction)?.reference?.toString()==VELA_CAR_PUCK }.index
+    val range=method.getInstruction<RegisterRangeInstruction>(puck)
+    check(method.getInstruction(puck).opcode==Opcode.INVOKE_VIRTUAL_RANGE&&range.startRegister==1&&range.registerCount==7&&puck in 5 until 285)
+    listOf(Triple(Opcode.MOVE_OBJECT,3,2),Triple(Opcode.MOVE,4,5),Triple(Opcode.MOVE,5,6),Triple(Opcode.MOVE_WIDE,6,7),Triple(Opcode.MOVE_OBJECT,2,11))
+        .forEachIndexed { offset,(opcode,target,origin) ->
+            val move=method.getInstruction<TwoRegisterInstruction>(puck-5+offset)
+            check(method.getInstruction(puck-5+offset).opcode==opcode&&move.registerA==target&&move.registerB==origin) { "Changed Vela car snapshot registers" }
+        }
     // Both navigation and SpeedDisplay false branches target this location. Replacement keeps
     // those incoming labels on the warning hook; plain insertion would skip it on both paths.
-    method.replaceInstruction(286,"invoke-static {v1, v2}, $VELA_CAR_WARNING_HOOK")
+    method.replaceInstruction(286,"invoke-static {v1, v2, v3, v4, v5}, $VELA_CAR_WARNING_HOOK")
     method.addInstructions(287,"invoke-virtual {v1}, Lcw;->u()Landroid/graphics/Rect;")
 }

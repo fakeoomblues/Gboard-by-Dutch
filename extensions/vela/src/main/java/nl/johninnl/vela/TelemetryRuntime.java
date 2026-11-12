@@ -168,6 +168,14 @@ public final class TelemetryRuntime {
     public static boolean spokenEnabled() { return prefs!=null&&prefs.getBoolean("morphe_telemetry_spoken",prefs.getBoolean("speed_cam_warn",false)); }
     public static void setSpokenEnabled(boolean value) { if(prefs!=null){prefs.edit().putBoolean("morphe_telemetry_spoken",value).apply();if(warningPreferences!=null&&warningPreferences.reviewed())warningPreferences.mode(value?WarningAudioOwner.Mode.VOICE:WarningAudioOwner.Mode.SILENT);} }
     public static void setCarEnabled(boolean value) { if(prefs!=null)prefs.edit().putBoolean("morphe_telemetry_car",value).apply(); }
+    /** Provider alert icons at their native positions, on the phone map and (with car details) on Android Auto. */
+    public static boolean markersEnabled() { return prefs==null||prefs.getBoolean("morphe_alert_markers",true); }
+    public static void setMarkersEnabled(boolean value) { if(prefs!=null)prefs.edit().putBoolean("morphe_alert_markers",value).apply(); }
+    /** The pill selection reduced to contract-qualified native points. Display-only: nothing is renewed. */
+    static java.util.List<AlertMarkers.Marker> markers(long now){
+        if(app==null||!WarningProviders.supported(selected())||!markersEnabled())return java.util.Collections.emptyList();
+        return AlertMarkers.select(carWarnings(),now,event->warningRelevance(event,now));
+    }
     public static boolean suppressNativeFlock() { return store.suppressNativeFlock(SystemClock.elapsedRealtime()); }
     public static Float speedMps(Float fallback) {
         if(selected().isEmpty()){phoneUnknown=false;return fallback;}
@@ -433,6 +441,7 @@ public final class TelemetryRuntime {
         String key=statusText()+":"+selected()+":"+v.currentKmh+":"+v.limitKmh+":"+v.zoneId+":"+v.zoneSession+":"+v.averageKmh+":"+v.progressPercent+":"+v.remainingMeters+":"+v.external+":"+suppressNativeFlock()+":"+carEnabled()+":"+spokenEnabled()+":"+warning+":"+freshNativeSpeed()+":"+(freshNativeSpeed()&&own!=null?own.getSpeed():null)+":"+phoneNativeLimit;
         if(force||!key.equals(lastKey)){lastKey=key;changed.run();CarUi.changed();}
         CarUi.warningChanged();
+        MapMarkers.refresh();
     }
     private static boolean dutch() { return app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl"); }
     private static String warningLabel(RoadWarningEngine.Warning w) {
@@ -471,6 +480,7 @@ public final class TelemetryRuntime {
     public static String warningAudioStatus(){if(warningPreferences==null||!warningPreferences.reviewed())return dutch()?"Waarschuwingskeuzes controleren":"Review warning categories and output";WarningAudioOwner.Mode requested=warningPreferences.mode();return WarningStatus.output(requested,nativeSpeaker.effectiveMode(requested),"Vela",dutch())+" · "+WarningStatus.label(scheduler==null?"OFF":scheduler.status(),dutch());}
     static void resetForTest() {
         carObservers.clear();visibleCarSessions.clear();
+        MapMarkers.resetForTest();
         if(startup!=null){startup.close();startup=null;}
         if(semantic!=null){semantic.close();semantic=null;}nativeWarnings.clear();nativeSpeaker.bind(null);
         if(scheduler!=null){scheduler.disconnected();scheduler=null;}warningPreferences=null;changingSource=false;eventAudioManaged=false;
