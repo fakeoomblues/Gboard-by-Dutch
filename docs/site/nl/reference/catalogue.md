@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.71.1**
+**Patchbundel: 1.71.2**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -582,10 +582,10 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 26.9.0 |
-| Hide Premium banner | Aan | 26.9.0 |
-| Hide ads | Aan | 26.9.0 |
-| Skip consent screens | Aan | 26.9.0 |
+| Disable tracking | Aan | 26.10.0 |
+| Hide Premium banner | Aan | 26.10.0 |
+| Hide ads | Aan | 26.10.0 |
+| Skip consent screens | Aan | 26.10.0 |
 
 ## Omroep Brabant
 

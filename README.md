@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.71.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.71.1)** · 67 apps · 344 patches
+**Patch bundle [v1.71.2](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.71.2)** · 67 apps · 344 patches
 
 ### Weather
 
@@ -79,7 +79,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Nieuwsblad](docs/site/en/apps/nieuwsblad.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [NOS Teletekst](docs/site/en/apps/nos-teletekst.md) | Tracking | 2.8.10 | APKS | 2 |
 | [NRC](docs/site/en/apps/nrc.md) | Ads · Tracking · Prompts · Articles · Newspaper tab | 5.12.25 | APK | 6 |
-| [NU.nl](docs/site/en/apps/nunl.md) | Ads · Tracking · Prompts | 26.9.0 | APKS | 4 |
+| [NU.nl](docs/site/en/apps/nunl.md) | Ads · Tracking · Prompts | 26.10.0 | XAPK | 4 |
 | [Omroep Brabant](docs/site/en/apps/omroep-brabant.md) | Ads · Tracking · Prompts | 11.1.0 | APKS | 3 |
 | [Omroep West](docs/site/en/apps/omroep-west.md) | Ads · Tracking · Prompts | 20.1 | APKS | 3 |
 | [Parool](docs/site/en/apps/parool.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 6 |

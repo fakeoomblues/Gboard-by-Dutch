@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.71.1**
+**Patch bundle: 1.71.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -582,10 +582,10 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 26.9.0 |
-| Hide Premium banner | On | 26.9.0 |
-| Hide ads | On | 26.9.0 |
-| Skip consent screens | On | 26.9.0 |
+| Disable tracking | On | 26.10.0 |
+| Hide Premium banner | On | 26.10.0 |
+| Hide ads | On | 26.10.0 |
+| Skip consent screens | On | 26.10.0 |
 
 ## Omroep Brabant
 
