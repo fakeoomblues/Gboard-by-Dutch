@@ -11,9 +11,9 @@ Select Google's arm64-v8a APK for this exact build (Android 12L+).
 | Patch | Default | What it does |
 | --- | --- | --- |
 | **Parakeet voice typing** | On | Adds **Parakeet voice typing** to Gboard settings → Voice typing. Once you download a model there and switch it on, the microphone key transcribes on the phone with NVIDIA Parakeet instead of Google's speech recognition. Each sentence is recognised in the language you speak it in, so Dutch and English work in the same dictation without switching. Until a model is ready, Gboard keeps using Google's voice typing. The patched Gboard gets the Parakeet launcher icon. |
-| **Rambler voice typing** | Off | Adds Google's **Rambler** to Gboard settings → Voice typing, as a choice next to Parakeet (Gboard's Standard voice typing). With Rambler picked, the microphone key sends your speech to Google's servers, which return finished text and carry out spoken edits such as "delete the last sentence". Parakeet stays the default. |
-| **Rambler personal dictionary** | Off | Adds Rambler's **Voice correction list** to Gboard settings → Voice typing → Rambler: names and words you add, import or export, which Rambler receives with every dictation so it spells them right. Requires Rambler voice typing. |
-| **Rambler contact names** | Off | Fills the voice correction list with your contacts' names. Names you delete are not added again; new contacts are added the next time Rambler starts. Requires Rambler personal dictionary and contacts access. |
+| **Rambler voice typing** | On | Adds Google's **Rambler** to Gboard settings → Voice typing, as a choice next to Parakeet (Gboard's Standard voice typing). With Rambler picked, the microphone key sends your speech to Google's servers, which return finished text and carry out spoken edits such as "delete the last sentence". Parakeet stays the default. |
+| **Rambler personal dictionary** | On | Adds Rambler's **Voice correction list** to Gboard settings → Voice typing → Rambler: names and words you add, import or export, which Rambler receives with every dictation so it spells them right. Requires Rambler voice typing. |
+| **Rambler contact names** | On | Fills the voice correction list with your contacts' names. Names you delete are not added again; new contacts are added the next time Rambler starts. Requires Rambler personal dictionary and contacts access. |
 | **Change package name** | On | Installs the patched Gboard under its own package name (app.morphe.android.inputmethod.latin by default), so it sits beside the stock Gboard that most phones have built in. Your stock Gboard, its settings and its dictionary are not touched; choose the patched keyboard in Android's keyboard settings. |
 | **Custom branding** | Off | Changes the app name shown in the launcher, Android's keyboard list and app information, and the launcher icon (Parakeet by default, Gboard's original or five other designs), so the patched keyboard is easy to tell apart from the stock one. |
 | **Clipboard Enhancements** | On | Controls how long copied snippets stay available, how many are kept, how many preview lines a card shows, and whether cards show a countdown, creation time, order number and column count. |
@@ -46,7 +46,7 @@ After applying the patch, open Gboard settings → Voice typing and choose **Ram
 
 - Rambler needs an internet connection and sends your speech to Google. Google limits how much you can dictate per day.
 - Parakeet only handles the Parakeet choice. When Rambler cannot reach Google, Gboard falls back to its own standard Google recognizer, not to Parakeet.
-- Whether Google's servers accept Rambler from a phone outside its rollout is decided by Google. Other Gboard mods report that it works; it has not been confirmed on a phone with these patches yet.
+- Whether Google's servers accept Rambler from a phone outside its rollout is decided by Google. On a OnePlus phone with these patches it works, including Dutch and spoken corrections.
 
 ### Rambler's personal dictionary
 

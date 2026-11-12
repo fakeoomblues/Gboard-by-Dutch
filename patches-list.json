@@ -8836,7 +8836,7 @@
     {
       "name": "Rambler contact names",
       "description": "Adds your contacts' names to Rambler's voice correction list, so Rambler spells them right. Names you delete from the list are not added again; new contacts are added the next time Rambler starts. Needs Gboard's contacts access, which Gboard asks for when you switch on Contact names. Requires Rambler personal dictionary.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -8871,7 +8871,7 @@
     {
       "name": "Rambler personal dictionary",
       "description": "Adds Rambler's voice correction list to Gboard settings → Voice typing → Rambler: a list of names and words you add, import or export, which Rambler receives with every dictation so it spells them right. Requires Rambler voice typing.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -8906,7 +8906,7 @@
     {
       "name": "Rambler voice typing",
       "description": "Adds Google's Rambler to Gboard settings → Voice typing, as a choice next to Standard voice typing, which Parakeet voice typing renames to Parakeet. Rambler sends your speech to Google's servers, which turn it into finished text and carry out spoken edits. Standard (Parakeet) stays the default.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {

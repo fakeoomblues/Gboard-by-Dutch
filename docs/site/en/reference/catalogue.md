@@ -317,9 +317,9 @@ Check the supported app versions and default setting for each patch. The app pag
 | Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler contact names | Off | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler personal dictionary | Off | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler voice typing | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler contact names | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | On | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | On | 18.6.3.1002251336-release-arm64-v8a |
 | Web Clipboard | On | 18.6.3.1002251336-release-arm64-v8a |

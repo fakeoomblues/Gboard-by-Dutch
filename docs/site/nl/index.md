@@ -531,9 +531,9 @@ hide:
 <li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
 <li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
-<li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
-<li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
+<li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Web Clipboard <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>

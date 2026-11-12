@@ -106,7 +106,6 @@ val ramblerVoiceTyping = bytecodePatch(
     description = "Adds Google's Rambler to Gboard settings → Voice typing, as a choice next to Standard voice typing, " +
         "which Parakeet voice typing renames to Parakeet. Rambler sends your speech to Google's servers, which turn it " +
         "into finished text and carry out spoken edits. Standard (Parakeet) stays the default.",
-    default = false,
 ) {
     compatibleWith(gboard)
     dependsOn(originalInput, ramblerFlags, ramblerStandardDefault)

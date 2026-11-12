@@ -317,9 +317,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Custom branding | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler contact names | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler personal dictionary | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler voice typing | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler contact names | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Web Clipboard | Aan | 18.6.3.1002251336-release-arm64-v8a |

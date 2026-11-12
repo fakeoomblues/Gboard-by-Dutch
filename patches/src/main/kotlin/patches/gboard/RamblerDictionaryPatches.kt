@@ -45,7 +45,6 @@ val ramblerPersonalDictionary = bytecodePatch(
     description = "Adds Rambler's voice correction list to Gboard settings → Voice typing → Rambler: a list of names and " +
         "words you add, import or export, which Rambler receives with every dictation so it spells them right. " +
         "Requires Rambler voice typing.",
-    default = false,
 ) {
     compatibleWith(gboard)
     dependsOn(originalInput, ramblerVoiceTyping, ramblerDictionaryFlags)
@@ -174,7 +173,6 @@ val ramblerContactNames = bytecodePatch(
     description = "Adds your contacts' names to Rambler's voice correction list, so Rambler spells them right. Names " +
         "you delete from the list are not added again; new contacts are added the next time Rambler starts. Needs " +
         "Gboard's contacts access, which Gboard asks for when you switch on Contact names. Requires Rambler personal dictionary.",
-    default = false,
 ) {
     compatibleWith(gboard)
     dependsOn(originalInput, ramblerPersonalDictionary)
