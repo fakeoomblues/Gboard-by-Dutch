@@ -318,11 +318,10 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler Dutch send command (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler app context (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler automatic retry (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler app context | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler contact names | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler cursor-aware editing (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler custom instructions (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler cursor-aware editing | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler custom instructions | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |

@@ -26,11 +26,15 @@ class RamblerExperimentPatchesTest {
         .newDocumentBuilder().parse(xml.byteInputStream())
 
     @Test
-    fun addsThePersistentFieldFirstInTheFirstCategory() {
+    fun addsThePersistentFieldInItsOwnCardAtTheTop() {
         val document = parse(screen)
         addCustomInstructionPreference(document)
-        val category = document.getElementsByTagName("androidx.preference.PreferenceCategory").item(0) as Element
-        val first = (0 until category.childNodes.length).map(category.childNodes::item).filterIsInstance<Element>().first()
+        val categories = document.getElementsByTagName("androidx.preference.PreferenceCategory")
+        assertEquals(3, categories.length)
+        val category = categories.item(0) as Element
+        val children = (0 until category.childNodes.length).map(category.childNodes::item).filterIsInstance<Element>()
+        assertEquals(1, children.size)
+        val first = children.single()
         assertEquals("EditTextPreference", first.tagName)
         assertEquals(CUSTOM_INSTRUCTION_KEY, first.getAttributeNS(android, "key"))
         assertEquals("true", first.getAttributeNS(android, "persistent"))

@@ -8,8 +8,9 @@ import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatc
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
-// Rambler features Gboard 18.6.3 ships switched off behind server flags. Each one is its own
-// experimental patch: nothing here has been confirmed on a phone yet.
+// Rambler features Gboard 18.6.3 ships switched off behind server flags, each its own patch.
+// Custom instructions, cursor-aware editing and app context are confirmed on a phone; the patches
+// marked experimental are not yet.
 
 private const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
 private const val RAMBLER_SETTINGS = "res/xml/setting_rambler_voice_typing.xml"
@@ -21,12 +22,12 @@ private val customInstructionTexts = mapOf(
     "values" to listOf(
         "Custom instructions",
         "Style rules Rambler applies to everything you dictate, such as spelling, punctuation or tone",
-        "For example: Write Dutch with Dutch quotation marks. Use je, not u.",
+        "Added to Rambler's own instructions. For example: Write every number in digits.",
     ),
     "values-nl" to listOf(
         "Eigen instructies",
         "Stijlregels die Rambler toepast op alles wat je dicteert, zoals spelling, interpunctie of toon",
-        "Bijvoorbeeld: Schrijf Nederlands met Nederlandse aanhalingstekens. Gebruik je, niet u.",
+        "Komt bij de eigen instructies van Rambler. Bijvoorbeeld: Schrijf elk getal in cijfers.",
     ),
 )
 private val customInstructionStringNames = listOf(
@@ -36,7 +37,7 @@ private val customInstructionStringNames = listOf(
 )
 
 /**
- * Adds a text field for Gboard's own custom-instruction preference as the first entry of the
+ * Adds a text field for Gboard's own custom-instruction preference, in its own card at the top of the
  * Rambler voice typing screen. Gboard stores and reads the value itself; the field only writes it.
  */
 internal fun addCustomInstructionPreference(screen: Document) {
@@ -46,9 +47,12 @@ internal fun addCustomInstructionPreference(screen: Document) {
     if (elements.any { it.getAttributeNS(ANDROID_NS, "key") == CUSTOM_INSTRUCTION_KEY }) {
         throw PatchException("Rambler custom instructions are already in the settings screen")
     }
-    val category = (0 until root.childNodes.length).map(root.childNodes::item).filterIsInstance<Element>()
+    val first = (0 until root.childNodes.length).map(root.childNodes::item).filterIsInstance<Element>()
         .firstOrNull { it.tagName.endsWith("PreferenceCategory") }
         ?: throw PatchException("Rambler voice typing settings have no preference category")
+    // Its own card at the top, whichever other patch moves or empties the existing ones.
+    val category = screen.createElement(first.tagName)
+    root.insertBefore(category, first)
     val field = screen.createElement("EditTextPreference").apply {
         setAttributeNS(ANDROID_NS, "android:key", CUSTOM_INSTRUCTION_KEY)
         setAttributeNS(ANDROID_NS, "android:persistent", "true")
@@ -86,11 +90,11 @@ private val customInstructionSettings = resourcePatch(
 
 @Suppress("unused")
 val ramblerCustomInstructions = bytecodePatch(
-    name = "Rambler custom instructions (experimental)",
-    description = "Adds Custom instructions to Gboard settings → Voice typing → Rambler. Rambler receives that text " +
-        "with every dictation and follows it for style only: spelling, punctuation, language conventions, " +
-        "vocabulary and tone. Requires Rambler voice typing.",
-    default = false,
+    name = "Rambler custom instructions",
+    description = "Adds Custom instructions to Gboard settings → Voice typing → Rambler. Your text is added to " +
+        "Rambler's own instructions, not a replacement for them: Rambler receives it with every dictation and " +
+        "follows it for style only, such as spelling, punctuation, vocabulary and tone. For example: \"Write every " +
+        "number in digits.\" Requires Rambler voice typing.",
 ) {
     compatibleWith(gboard)
     dependsOn(
@@ -104,11 +108,11 @@ val ramblerCustomInstructions = bytecodePatch(
 
 @Suppress("unused")
 val ramblerCursorEditing = bytecodePatch(
-    name = "Rambler cursor-aware editing (experimental)",
-    description = "Rambler also sees the text after the cursor, so dictating in the middle of a text fits in. " +
-        "With text selected, only the selection is sent, so a spoken edit such as \"make this more formal\" " +
-        "applies to it, and the result is selected again for the next edit. Requires Rambler voice typing.",
-    default = false,
+    name = "Rambler cursor-aware editing",
+    description = "Rambler also sees the text after the cursor, so spoken edits reach the whole text and dictating " +
+        "in the middle of a text fits in. With text selected, only the selection is sent, so a spoken edit such as " +
+        "\"make this more formal\" applies to it, and the result is selected again for the next edit. " +
+        "Requires Rambler voice typing.",
 ) {
     compatibleWith(gboard)
     dependsOn(
@@ -122,11 +126,10 @@ val ramblerCursorEditing = bytecodePatch(
 
 @Suppress("unused")
 val ramblerAppContext = bytecodePatch(
-    name = "Rambler app context (experimental)",
+    name = "Rambler app context",
     description = "Rambler also receives the name of the app you dictate in and the text field's hint, so it can " +
-        "match the tone of a chat, an e-mail or a search. This tells Google which app you are typing in. " +
-        "Requires Rambler voice typing.",
-    default = false,
+        "match the tone of a chat, an e-mail or a search, and custom instructions can depend on the app. This " +
+        "tells Google which app you are typing in. Requires Rambler voice typing.",
 ) {
     compatibleWith(gboard)
     dependsOn(
@@ -141,9 +144,9 @@ val ramblerAppContext = bytecodePatch(
 @Suppress("unused")
 val ramblerDutchSendCommand = bytecodePatch(
     name = "Rambler Dutch send command (experimental)",
-    description = "Saying only \"verstuur\", \"versturen\", \"verzend\" or \"verzenden\" with Rambler presses the " +
-        "app's Send button, as \"send\" already does in English. It only works in fields with a Send action. " +
-        "Requires Rambler voice typing.",
+    description = "A Rambler dictation of only \"verstuur\", \"versturen\", \"verzend\" or \"verzenden\" presses " +
+        "the app's Send button, as \"send\" already does in English. Works in fields whose Enter key shows a send " +
+        "arrow. Requires Rambler voice typing.",
     default = false,
 ) {
     compatibleWith(gboard)

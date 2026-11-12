@@ -515,7 +515,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler dutch send command (experimental) rambler app context (experimental) rambler automatic retry (experimental) rambler contact names rambler cursor-aware editing (experimental) rambler custom instructions (experimental) rambler personal dictionary rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler dutch send command (experimental) rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Gboard](apps/gboard.md)
@@ -523,7 +523,7 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>17 patches</summary>
+<summary>16 patches</summary>
 <ul>
 <li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
@@ -532,11 +532,10 @@ hide:
 <li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler Dutch send command (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
-<li>Rambler app context (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
-<li>Rambler automatic retry (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
+<li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler cursor-aware editing (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
-<li>Rambler custom instructions (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
+<li>Rambler cursor-aware editing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler custom instructions <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
