@@ -17,6 +17,10 @@ toolbar (`enable_jetson_in_toolbar`), emoji skin-tone replacement, PCM caching f
 
 ## Candidates worth opening
 
+Status after phone tests (2026-11-12): custom instructions, cursor-aware editing and app context shipped and work.
+The Dutch send command and automatic retry were removed: Gboard's own send command never fired, even in English in a
+field with a Send action, and automatic retry hid the Retry button and lost the dictation.
+
 1. **Custom instructions** (now the experimental patch "Rambler custom instructions") — `agentic_dictation_enable_custom_instruction` (off). When on, Gboard reads the string pref
    `pref_key_rambler_custom_instruction` and sends it as `<user_instruction>` inside the request's
    `user_preferences` bundle, wrapped in Google's own guard prompt (dictation style only: spelling, language

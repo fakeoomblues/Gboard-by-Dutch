@@ -9,8 +9,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 // Rambler features Gboard 18.6.3 ships switched off behind server flags, each its own patch.
-// Custom instructions, cursor-aware editing and app context are confirmed on a phone; the patches
-// marked experimental are not yet.
+// All three are confirmed on a phone.
 
 private const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
 private const val RAMBLER_SETTINGS = "res/xml/setting_rambler_voice_typing.xml"
@@ -137,24 +136,6 @@ val ramblerAppContext = bytecodePatch(
         gboardFlagFamilyFeaturePatch(
             description = "Send the app's name and field hint to Rambler.",
             feature = GboardFlagFamilyFeature.RAMBLER_APP_CONTEXT,
-        ),
-    )
-}
-
-@Suppress("unused")
-val ramblerDutchSendCommand = bytecodePatch(
-    name = "Rambler Dutch send command (experimental)",
-    description = "A Rambler dictation of only \"verstuur\", \"versturen\", \"verzend\" or \"verzenden\" presses " +
-        "the app's Send button, as \"send\" already does in English. Works in fields whose Enter key shows a send " +
-        "arrow. Requires Rambler voice typing.",
-    default = false,
-) {
-    compatibleWith(gboard)
-    dependsOn(
-        originalInput, ramblerVoiceTyping,
-        gboardFlagFamilyFeaturePatch(
-            description = "Accept Dutch words for Rambler's send command.",
-            feature = GboardFlagFamilyFeature.RAMBLER_SEND_COMMAND,
         ),
     )
 }
