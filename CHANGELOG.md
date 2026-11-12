@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dd6b9704d2b0f054712773a3b740f24a453c7d70/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.68.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [dd6b9704d2b0](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/dd6b9704d2b0f054712773a3b740f24a453c7d70). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.68.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.67.2...v1.68.0) (2026-11-12)
+
+### ✨ New Features
+
+* **Gboard:** add five experimental Rambler patches ([dd6b970](https://gitlab.com/johninnld/nl-morphe-patches/commit/dd6b9704d2b0f054712773a3b740f24a453c7d70))
+* **Gboard:** turn on Rambler voice typing, its personal dictionary and contact names by default ([b2c0d1a](https://gitlab.com/johninnld/nl-morphe-patches/commit/b2c0d1a704c45106a900c382c3b8571d9cfe6ade))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5c8760cc4fc77222000eda1c1fb27d1be87b1ee7/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.67.2.**
