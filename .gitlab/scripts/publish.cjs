@@ -19,10 +19,12 @@ async function publish(_config, context, request = api, readBundle = download) {
   const project = `/projects/${encodeURIComponent(REPOSITORY)}`;
   const packagePath = `${project}/packages/generic/morphe-patches/${version}/${filename}`;
   const options = {token: context.env.GITLAB_TOKEN};
-  let stored = await request(packagePath, {...options, binary: true});
+  // Bundle-sized transfers get a size-based timeout instead of the 60 s API default.
+  const transfer = {...options, binary: true, expectedBytes: bytes.length};
+  let stored = await request(packagePath, transfer);
   if (!stored) {
     await request(packagePath, {...options, method: "PUT", body: bytes});
-    stored = await request(packagePath, {...options, binary: true});
+    stored = await request(packagePath, transfer);
   }
   if (!stored || verifyBundle(stored, key) !== hash) throw new Error("Published GitLab package differs from the signed build");
   const packageUrl = `${BASE}/api/v4${packagePath}`;

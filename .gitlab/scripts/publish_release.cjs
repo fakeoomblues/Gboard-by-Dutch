@@ -6,6 +6,8 @@ const {execFileSync} = require("node:child_process");
 const {api, REPOSITORY} = require("./api.cjs");
 const {gitAuth} = require("./release.cjs");
 const {verifyBundle} = require("./bundle.cjs");
+const {promote} = require("./promote_main.cjs");
+const {RELEASE_COMMIT} = require("./release_owned.cjs");
 const HTTPS_URL=`https://gitlab.com/${REPOSITORY}.git`,SSH_URL=`git@gitlab.com:${REPOSITORY}.git`;
 function localSshAuth(env) {
   const value=env.GITLAB_SSH_KEY;
@@ -28,7 +30,7 @@ async function recoverTaggedRelease(branch, {cwd = process.cwd(), env = process.
   if (!tags.includes(tag)) return null;
   // Resume the exact signed upload if the tag was pushed before publication finished.
   const filename = `patches-${manifest.version}.mpp`;
-  const stored = await request(`/projects/${encodeURIComponent(REPOSITORY)}/packages/generic/morphe-patches/${manifest.version}/${filename}`, {binary: true, token: env.GITLAB_TOKEN});
+  const stored = await request(`/projects/${encodeURIComponent(REPOSITORY)}/packages/generic/morphe-patches/${manifest.version}/${filename}`, {binary: true, token: env.GITLAB_TOKEN, expectedBytes: 64 * 1024 * 1024});
   if (stored) {
     verifyBundle(stored, fs.readFileSync(path.join(cwd, "morphe-signing.pub"), "utf8").trim());
     fs.mkdirSync(path.join(cwd, "patches/build/libs"), {recursive: true});
@@ -45,8 +47,33 @@ function verifyCurrentHead(branch, readRemote, {cwd = process.cwd(), env = proce
   if (!/^[a-f0-9]{40}$/.test(remote)) throw new Error("Cannot verify the current GitLab source head");
   if (local !== remote) throw new Error("Stale release checkout: start a recovery pipeline at the current GitLab release tag or branch head");
 }
+/**
+ * A release whose tag was pushed but whose branch move never happened (the run stopped between
+ * publishing and promotion): its release commit sits directly on top of the current branch head.
+ */
+function findPendingRelease({cwd = process.cwd(), env = process.env, exec = execFileSync, repositoryUrl = HTTPS_URL} = {}) {
+  const git = args => exec("git", args, {cwd, env, encoding: "utf8"}).trim();
+  const head = git(["rev-parse", "HEAD"]);
+  const direct = {}, peeled = {};
+  for (const line of git(["ls-remote", "--tags", repositoryUrl]).split("\n").filter(Boolean)) {
+    const [sha, ref] = line.split(/\s+/);
+    if (ref.endsWith("^{}")) peeled[ref.slice(0, -3)] = sha; else direct[ref] = sha;
+  }
+  const pending = [];
+  for (const ref of Object.keys(direct).filter(ref => /^refs\/tags\/v\d+\.\d+\.\d+$/.test(ref))) {
+    const commit = peeled[ref] || direct[ref];
+    if (commit === head) continue;
+    try { git(["cat-file", "-e", `${commit}^{commit}`]); } catch { git(["fetch", "--no-tags", "--quiet", repositoryUrl, ref]); }
+    let parent;
+    try { parent = git(["rev-parse", `${commit}^1`]); } catch { continue; }
+    if (parent !== head || !RELEASE_COMMIT.test(git(["log", "-1", "--format=%s", commit]))) continue;
+    pending.push({tag: ref.slice("refs/tags/".length), commit});
+  }
+  if (pending.length > 1) throw new Error(`More than one pending release on top of the branch: ${pending.map(item => item.tag).join(", ")}`);
+  return pending[0] || null;
+}
 async function main(argv = process.argv.slice(2), {cwd = process.cwd(), env = process.env, exec = execFileSync,
-  release, recover = recoverTaggedRelease, verifyHead, authenticate = gitAuth} = {}) {
+  release, recover = recoverTaggedRelease, verifyHead, authenticate = gitAuth, pending = findPendingRelease, promoteBranch = promote} = {}) {
   for (const option of argv) if (!["--local", "--dry-run"].includes(option)) throw new Error(`Unknown option: ${option}`);
   const local = argv.includes("--local"), preview = argv.includes("--dry-run");
   const baseEnv={...env,GITLAB_REPOSITORY:REPOSITORY,GITHUB_REPOSITORY:REPOSITORY,GITLAB_DESTINATION:"gitlab"},ssh=local&&!!env.GITLAB_SSH_KEY;
@@ -57,20 +84,33 @@ async function main(argv = process.argv.slice(2), {cwd = process.cwd(), env = pr
   const options = {...require("../gitlab-com.release.config.cjs"), ...(local ? {ci: false} : {}), ...(preview ? {dryRun: true} : {}), ...(ssh?{repositoryUrl:SSH_URL}:{})};
   const checkHead = verifyHead || (() => verifyCurrentHead(branch, undefined, {cwd, env: releaseEnv, exec,repositoryUrl:options.repositoryUrl}));
   if (!preview) await checkHead(branch);
-  const runRelease = release || (await import("semantic-release")).default;
-  const result = await runRelease(options, {cwd, env: releaseEnv});
+  const repositoryUrl = options.repositoryUrl || HTTPS_URL;
+  const waiting = preview ? null : pending({cwd, env: releaseEnv, exec, repositoryUrl});
   let outcome;
-  if (preview) outcome = {preview: true, published: false, branch, ...(result ? {version: result.nextRelease.version} : {})};
-  else if (result) outcome = {version: result.nextRelease.version, branch};
-  else {
-    await checkHead(branch);
+  if (waiting) {
+    // Finish the interrupted release: publish (idempotently) at its tag, then move the branch.
+    const tagRef = `refs/tags/${waiting.tag}`;
+    try { exec("git", ["rev-parse", "--verify", "--quiet", tagRef], {cwd, env: releaseEnv, encoding: "utf8"}); }
+    catch { exec("git", ["fetch", "--no-tags", "--quiet", repositoryUrl, `${tagRef}:${tagRef}`], {cwd, env: releaseEnv}); }
+    exec("git", ["checkout", "--quiet", "--detach", waiting.commit], {cwd, env: releaseEnv});
     outcome = await recover(branch, {cwd, env: releaseEnv, exec});
-    if (!outcome) outcome = {published: false};
+    if (!outcome) throw new Error(`Pending release ${waiting.tag} could not be recovered`);
+    promoteBranch({repositoryUrl, branch, release: waiting.commit, cwd, env: releaseEnv, run: exec});
+  } else {
+    const runRelease = release || (await import("semantic-release")).default;
+    const result = await runRelease(options, {cwd, env: releaseEnv});
+    if (preview) outcome = {preview: true, published: false, branch, ...(result ? {version: result.nextRelease.version} : {})};
+    else if (result) outcome = {version: result.nextRelease.version, branch};
+    else {
+      await checkHead(branch);
+      outcome = await recover(branch, {cwd, env: releaseEnv, exec});
+      if (!outcome) outcome = {published: false};
+    }
   }
   const directory = path.join(cwd, "build/release-safety");
   fs.mkdirSync(directory, {recursive: true});
   fs.writeFileSync(path.join(directory, "gitlab-result.json"), JSON.stringify(outcome));
   return outcome;
 }
-module.exports = {main, recoverTaggedRelease, verifyCurrentHead};
+module.exports = {main, recoverTaggedRelease, verifyCurrentHead, findPendingRelease};
 if (require.main === module) main().catch(error => {console.error(error.message); process.exitCode = 1;});

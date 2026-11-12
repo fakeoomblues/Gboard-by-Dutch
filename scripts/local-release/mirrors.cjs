@@ -1,4 +1,6 @@
 "use strict";
+/** 60 s plus one second per 64 KiB, so bundle uploads survive a slow uplink (~64 KB/s). */
+const transferTimeout=bytes=>60000+Math.ceil(Math.max(0,bytes||0)/65536)*1000;
 const fs=require("node:fs");
 const path=require("node:path");
 const os=require("node:os");
@@ -28,7 +30,8 @@ function createRequest({env=process.env,fetcher=fetch}={}) {
     const headers=name==="codeberg"?{Authorization:`token ${token}`,Accept:"application/json"}:{"PRIVATE-TOKEN":token,Accept:"application/json"};
     if(Buffer.isBuffer(body))headers["Content-Type"]="application/octet-stream";
     else if(body&&!(body instanceof FormData)){headers["Content-Type"]="application/json";body=JSON.stringify(body);}
-    const response=await fetcher(destination.base+destination.api+endpoint,{method,headers,body,redirect:"error",signal:AbortSignal.timeout(60000)});
+    const size=Buffer.isBuffer(body)?body.length:body instanceof FormData?[...body.values()].reduce((total,value)=>total+(value?.size||0),0):0;
+    const response=await fetcher(destination.base+destination.api+endpoint,{method,headers,body,redirect:"error",signal:AbortSignal.timeout(transferTimeout(size))});
     if(response.status===404&&method==="GET")return null;
     if(!response.ok){
       const error=new Error(`${name} ${method} ${endpoint}: HTTP ${response.status}`);error.status=response.status;
@@ -95,7 +98,7 @@ function createDownload({env=process.env,fetcher=fetch}={}){
     const destination=target(name);let url=new URL(address),sendToken=authenticated;
     if(url.origin!==destination.base)throw new Error("Unexpected mirror download host");
     for(let redirects=0;redirects<6;redirects++){
-      const options={redirect:"manual",signal:AbortSignal.timeout(60000)};
+      const options={redirect:"manual",signal:AbortSignal.timeout(transferTimeout(size))};
       if(sendToken)options.headers=name==="codeberg"?{Authorization:`token ${tokenFor(name,env)}`}:{"PRIVATE-TOKEN":tokenFor(name,env)};
       const response=await fetcher(url.href,options);
       if(response.status>=300&&response.status<400){const location=response.headers.get("location");if(!location)throw new Error("Mirror download redirect is missing its location");const next=new URL(location,url);if(next.protocol!=="https:")throw new Error("Insecure mirror download redirect");if(next.origin!==destination.base)sendToken=false;url=next;continue;}

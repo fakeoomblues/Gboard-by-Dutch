@@ -8,6 +8,10 @@ config.plugins = config.plugins.map(entry => {
   if (name === "./.github/scripts/verify_identity.cjs") return "./.gitlab/scripts/identity.cjs";
   if (name === "./.github/scripts/public_changelog.cjs") return "./.gitlab/scripts/changelog.cjs";
   if (name === "./.github/scripts/public_github.cjs") return "./.gitlab/scripts/publish.cjs";
+  // Commit the regenerated metadata without pushing the branch; only the tag goes out first.
+  if (name === "./.github/scripts/public_git.cjs") return ["./.gitlab/scripts/release_commit.cjs", entry[1]];
   return entry;
 });
+// Last: move main to the release commit once its bundle is downloadable.
+config.plugins.push("./.gitlab/scripts/promote_main.cjs");
 module.exports = config;

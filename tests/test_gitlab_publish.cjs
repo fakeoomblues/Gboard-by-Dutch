@@ -23,7 +23,13 @@ test("GitLab chooses versions with existing source guards and never loads anothe
   assert.deepEqual(config.branches,["main"]);
   const plugins=config.plugins.map(p=>Array.isArray(p)?p[0]:p);
   assert.ok(plugins.includes("./.github/scripts/verify_release_notes.cjs"));
-  assert.equal(plugins[plugins.indexOf("./.github/scripts/public_git.cjs")-1],"./.gitlab/scripts/identity.cjs");
+  assert.equal(plugins[plugins.indexOf("./.gitlab/scripts/release_commit.cjs")-1],"./.gitlab/scripts/identity.cjs");
+  assert.ok(!plugins.includes("./.github/scripts/public_git.cjs"));
+  assert.equal(plugins.at(-1),"./.gitlab/scripts/promote_main.cjs");
+  assert.ok(plugins.indexOf("./.gitlab/scripts/publish.cjs")<plugins.indexOf("./.gitlab/scripts/promote_main.cjs"));
+  const releaseCommit=config.plugins.find(p=>Array.isArray(p)&&p[0]==="./.gitlab/scripts/release_commit.cjs")[1];
+  const sourceCommit=JSON.parse(fs.readFileSync(path.join(__dirname,"../.releaserc"),"utf8")).plugins.find(p=>Array.isArray(p)&&p[0]==="./.github/scripts/public_git.cjs")[1];
+  assert.deepEqual(releaseCommit,sourceCommit);
   assert.ok(plugins.includes("./.gitlab/scripts/publish.cjs"));
   assert.ok(plugins.includes("./.gitlab/scripts/changelog.cjs"));
   assert.ok(!plugins.some(p=>p.includes(".forgejo/")||p.includes("public_github")));
@@ -173,7 +179,7 @@ test("local releases check the remote before running the unchanged signed releas
   for(const branch of ["main"]){
     const {cwd,receipt}=publisherFixture(t,branch);const calls=[];
     const version="1.2.4";
-    const result=await main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+    const result=await main(["--local"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},
       verifyHead:checked=>{assert.equal(checked,branch);calls.push("head");},
       release:async(options,context)=>{
         calls.push("release");assert.equal(options.ci,false);assert.notEqual(options.dryRun,true);
@@ -186,7 +192,7 @@ test("local releases check the remote before running the unchanged signed releas
 });
 test("hosted publication retains semantic-release CI defaults", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);
-  await main([],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{},release:async options=>{
+  await main([],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{},release:async options=>{
     assert.equal(options.ci,undefined);return {nextRelease:{version:"1.2.4"}};
   },recover:async()=>assert.fail("Unexpected recovery")});
 });
@@ -194,7 +200,7 @@ test("dry-run records selected and unselected previews without invoking tagged r
   const {main}=require("../.gitlab/scripts/publish_release.cjs");
   for(const selected of [true,false]){
     const {cwd,receipt}=publisherFixture(t,"main");
-    const result=await main(["--local","--dry-run"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+    const result=await main(["--local","--dry-run"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},
       verifyHead:()=>assert.fail("Preview must not enter publication guards or recovery"),
       release:async(options)=>{
         assert.equal(options.ci,false);assert.equal(options.dryRun,true);
@@ -206,7 +212,7 @@ test("dry-run records selected and unselected previews without invoking tagged r
 });
 test("dry-run is respected without local mode", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd,receipt}=publisherFixture(t);
-  await main(["--dry-run"],{cwd,env:{GITLAB_TOKEN:"fixture"},release:async options=>{
+  await main(["--dry-run"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},release:async options=>{
     assert.equal(options.dryRun,true);assert.equal(options.ci,undefined);return false;
   },recover:async()=>assert.fail("Dry-run recovery would publish"),verifyHead:()=>assert.fail("Unexpected publication")});
   assert.deepEqual(receipt(),{preview:true,published:false,branch:"main"});
@@ -220,7 +226,7 @@ test("feature branches and unknown options are refused before release or recover
 });
 test("stale release checkouts fail before semantic-release or tagged recovery", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);
-  await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},
+  await assert.rejects(main(["--local"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},
     verifyHead:()=>{throw new Error("Stale release checkout");},
     release:async()=>assert.fail("Stale source must not publish"),recover:async()=>assert.fail("Stale source must not recover")}),/Stale release checkout/);
   assert.equal(fs.existsSync(path.join(cwd,"build/release-safety/gitlab-result.json")),false);
@@ -229,7 +235,7 @@ test("local no-release runs recheck the head before preserving tagged recovery",
   const {main}=require("../.gitlab/scripts/publish_release.cjs");
   for(const recovered of [true,false]){
     const {cwd,receipt}=publisherFixture(t);const calls=[];
-    const result=await main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>calls.push("head"),
+    const result=await main(["--local"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>calls.push("head"),
       release:async()=>{calls.push("release");return false;},
       recover:async branch=>{calls.push("recover");assert.equal(branch,"main");return recovered?{version:"1.2.3",branch}:null;}});
     assert.deepEqual(calls,["head","release","head","recover"]);
@@ -238,7 +244,7 @@ test("local no-release runs recheck the head before preserving tagged recovery",
 });
 test("a remote advance during no-release analysis blocks recovery publication", async t => {
   const {main}=require("../.gitlab/scripts/publish_release.cjs");const {cwd}=publisherFixture(t);let checks=0;
-  await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{
+  await assert.rejects(main(["--local"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"fixture"},verifyHead:()=>{
     if(++checks===2)throw new Error("Stale release checkout");
   },release:async()=>false,recover:async()=>assert.fail("The remote advanced before recovery")}),/Stale release checkout/);
   assert.equal(checks,2);
@@ -258,11 +264,11 @@ test("the default local head guard compares the selected checkout to its exact G
     return execFileSync(file,args,options);
   };
   const release=async()=>{calls.push("release");return {nextRelease:{version:"1.2.4"}};};
-  await main(["--local"],{cwd,env,exec,release});assert.deepEqual(calls,["remote","release"]);
+  await main(["--local"],{pending:()=>null,cwd,env,exec,release});assert.deepEqual(calls,["remote","release"]);
   remote="b".repeat(40);calls.length=0;
-  await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Stale release checkout/);assert.deepEqual(calls,["remote"]);
+  await assert.rejects(main(["--local"],{pending:()=>null,cwd,env,exec,release}),/Stale release checkout/);assert.deepEqual(calls,["remote"]);
   remote="";
-  await assert.rejects(main(["--local"],{cwd,env,exec,release}),/Cannot verify the current GitLab source head/);
+  await assert.rejects(main(["--local"],{pending:()=>null,cwd,env,exec,release}),/Cannot verify the current GitLab source head/);
 });
 test("local SSH publication safely quotes its key and checks the same SSH remote",async t=>{
   const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t,"main"),head="a".repeat(40);
@@ -280,27 +286,97 @@ test("local SSH publication safely quotes its key and checks the same SSH remote
     sshEnv(options.env);if(args[0]==="rev-parse")return head;
     assert.deepEqual(args,["ls-remote",sshUrl,"refs/heads/main"]);seen.push("head");return `${head}\trefs/heads/main\n`;
   };
-  await main(["--local"],{cwd,env,exec,authenticate:()=>assert.fail("SSH refs must not require HTTPS Git authentication"),release:async(options,context)=>{
+  await main(["--local"],{pending:()=>null,cwd,env,exec,authenticate:()=>assert.fail("SSH refs must not require HTTPS Git authentication"),release:async(options,context)=>{
     assert.equal(options.repositoryUrl,sshUrl);assert.equal(options.ci,false);sshEnv(context.env);seen.push("release");return {nextRelease:{version:"1.2.4"}};
   }});
   assert.deepEqual(seen,["head","release"]);
 });
 test("local SSH previews retain the API token without performing a remote head lookup",async t=>{
   const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);
-  await main(["--local","--dry-run"],{cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>assert.fail("A preview must not publish"),release:async(options,context)=>{
+  await main(["--local","--dry-run"],{pending:()=>null,cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>assert.fail("A preview must not publish"),release:async(options,context)=>{
     assert.equal(options.repositoryUrl,"git@gitlab.com:johninnld/nl-morphe-patches.git");assert.equal(options.dryRun,true);
     assert.ok(context.env.GITLAB_TOKEN==="api-fixture","Preview API authentication must remain available");assert.equal(context.env.GIT_SSH_VARIANT,"ssh");return false;
   },recover:()=>assert.fail("A preview must never recover")});
 });
 test("hosted runs keep HTTPS Git authentication even when a local key path is present",async t=>{
   const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);let authenticated=false;
-  await main([],{cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>{},authenticate:env=>{authenticated=true;return env;},release:async(options,context)=>{
+  await main([],{pending:()=>null,cwd,env:{GITLAB_SSH_KEY:"/private/key",GITLAB_TOKEN:"api-fixture"},verifyHead:()=>{},authenticate:env=>{authenticated=true;return env;},release:async(options,context)=>{
     assert.equal(options.repositoryUrl,"https://gitlab.com/johninnld/nl-morphe-patches.git");assert.equal(options.ci,undefined);assert.equal(context.env.GIT_SSH_COMMAND,undefined);return {nextRelease:{version:"1.2.4"}};
   }});assert.equal(authenticated,true);
 });
 test("invalid local SSH key paths fail before any publication or remote check",async t=>{
   const {main}=require("../.gitlab/scripts/publish_release.cjs"),{cwd}=publisherFixture(t);
   for(const key of ["relative-key","/private/key\0invalid"]){
-    await assert.rejects(main(["--local"],{cwd,env:{GITLAB_TOKEN:"api-fixture",GITLAB_SSH_KEY:key},verifyHead:()=>assert.fail("Invalid SSH path must not reach the remote"),release:()=>assert.fail("Invalid SSH path must not publish")}),/SSH key path/);
+    await assert.rejects(main(["--local"],{pending:()=>null,cwd,env:{GITLAB_TOKEN:"api-fixture",GITLAB_SSH_KEY:key},verifyHead:()=>assert.fail("Invalid SSH path must not reach the remote"),release:()=>assert.fail("Invalid SSH path must not publish")}),/SSH key path/);
   }
+});
+
+function holdFixture(t) {
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),"gitlab-release-hold-"));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const remote=path.join(root,"remote.git"),cwd=path.join(root,"work");
+  const env={...process.env,GIT_AUTHOR_NAME:"johninnl",GIT_AUTHOR_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_COMMITTER_NAME:"johninnl",GIT_COMMITTER_EMAIL:"349981574+johninnl@users.noreply.github.com",GIT_CONFIG_NOSYSTEM:"1"};
+  const git=(dir,...args)=>execFileSync("git",args,{cwd:dir,env,encoding:"utf8",stdio:["pipe","pipe","pipe"]}).trim();
+  execFileSync("git",["init","--bare","-b","main",remote],{env,stdio:"pipe"});
+  fs.mkdirSync(cwd);git(cwd,"init","-b","main");git(cwd,"config","commit.gpgsign","false");
+  const commit=(message,files)=>{for(const [name,text] of Object.entries(files)){fs.mkdirSync(path.dirname(path.join(cwd,name)),{recursive:true});fs.writeFileSync(path.join(cwd,name),text);}git(cwd,"add","-A");git(cwd,"commit","-q","-m",message);return git(cwd,"rev-parse","HEAD");};
+  return {cwd,remote,env,git,commit};
+}
+test("the release commit keeps the metadata local and only promotion moves main", async t => {
+  const {cwd,remote,env,git,commit}=holdFixture(t);
+  const source=commit("feat(Gboard): source change",{"patches-list.json":"{}\n","src.kt":"a\n"});
+  git(cwd,"push","-q",remote,"HEAD:refs/heads/main");
+  fs.writeFileSync(path.join(cwd,"patches-list.json"),"{\"version\":\"1.2.3\"}\n");
+  fs.writeFileSync(path.join(cwd,"scratch.txt"),"not a release asset\n");
+  const {prepare}=require("../.gitlab/scripts/release_commit.cjs");const logs=[];
+  await prepare({assets:["patches-list.json","README.md"],message:"chore: Release v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"},
+    {cwd,env,branch:{name:"main"},lastRelease:{},nextRelease:{version:"1.2.3",gitTag:"v1.2.3",notes:"Notes."},logger:{log:(...a)=>logs.push(a)}});
+  const release=git(cwd,"rev-parse","HEAD");
+  assert.equal(git(cwd,"log","-1","--format=%s"),"chore: Release v1.2.3 [skip ci]");
+  assert.deepEqual(git(cwd,"diff-tree","--no-commit-id","--name-only","-r","HEAD").split("\n"),["patches-list.json"]);
+  assert.equal(git(remote,"rev-parse","main"),source,"preparing must not push the branch");
+  await assert.rejects(prepare({assets:["patches-*.json"],message:"m"},{cwd,env,branch:{name:"main"},lastRelease:{},nextRelease:{notes:""},logger:{log(){}}}),/plain file paths/);
+  const {promote}=require("../.gitlab/scripts/promote_main.cjs");
+  assert.deepEqual(promote({repositoryUrl:remote,branch:"main",release,cwd,env}),{promoted:true,head:release});
+  assert.equal(git(remote,"rev-parse","main"),release);
+  assert.deepEqual(promote({repositoryUrl:remote,branch:"main",release,cwd,env}),{promoted:false,head:release});
+  const next=commit("chore: Release v1.2.4 [skip ci]",{"patches-list.json":"{\"version\":\"1.2.4\"}\n"});
+  git(cwd,"push","-q",remote,`${source}:refs/heads/main`,"--force");
+  assert.throws(()=>promote({repositoryUrl:remote,branch:"main",release:next,cwd,env}),/moved during the release/);
+});
+test("a release tagged but never promoted is found and finished instead of released again", async t => {
+  const {cwd,remote,env,git,commit}=holdFixture(t);
+  const source=commit("feat(Gboard): source change",{"src.kt":"a\n"});git(cwd,"push","-q",remote,"HEAD:refs/heads/main");
+  const release=commit("chore: Release v1.2.3 [skip ci]",{"patches-list.json":"{}\n"});git(cwd,"tag","v1.2.3");
+  git(cwd,"push","-q",remote,"refs/tags/v1.2.3");
+  const other=commit("feat(Gboard): not a release",{"src.kt":"b\n"});git(cwd,"tag","v9.9.9");git(cwd,"push","-q",remote,"refs/tags/v9.9.9");
+  git(cwd,"checkout","-q","--detach",source);
+  const {findPendingRelease,main}=require("../.gitlab/scripts/publish_release.cjs");
+  assert.deepEqual(findPendingRelease({cwd,env,repositoryUrl:remote}),{tag:"v1.2.3",commit:release});
+  git(cwd,"checkout","-q","--detach",release);assert.equal(findPendingRelease({cwd,env,repositoryUrl:remote}),null);
+  assert.ok(other);
+  git(cwd,"checkout","-q","-B","main",source);
+  const calls=[];
+  const outcome=await main(["--local"],{cwd,env:{...env,GITLAB_TOKEN:"fixture"},verifyHead:()=>calls.push("head"),
+    pending:()=>findPendingRelease({cwd,env,repositoryUrl:remote}),
+    release:async()=>assert.fail("A pending release must not be released again"),
+    recover:async branch=>{calls.push("recover");assert.equal(git(cwd,"rev-parse","HEAD"),release);assert.match(git(cwd,"tag","--points-at","HEAD"),/v1\.2\.3/);return {version:"1.2.3",branch};},
+    promoteBranch:options=>{calls.push("promote");assert.equal(options.release,release);assert.equal(options.branch,"main");}});
+  assert.deepEqual(calls,["head","recover","promote"]);
+  assert.deepEqual(outcome,{version:"1.2.3",branch:"main"});
+});
+test("source commits may not carry release-owned metadata ahead of their release", t => {
+  const {releaseOwnedFiles,releaseOwnedChanges,verifyUnpublishedCommits}=require("../.gitlab/scripts/release_owned.cjs");
+  const owned=releaseOwnedFiles();
+  for(const file of ["patches-bundle.json","patches-list.json","README.md","CHANGELOG.md","docs/site/en/reference/catalogue.md"])assert.ok(owned.includes(file),file);
+  const {cwd,env,git,commit}=holdFixture(t);
+  const base=commit("chore: Release v1.0.0 [skip ci]",{"patches-list.json":"{}\n"});
+  commit("feat(Gboard): editorial docs only",{"docs/site/en/apps/gboard.md":"x\n"});
+  assert.deepEqual(verifyUnpublishedCommits({cwd,env,base,owned}),{checked:true});
+  const bad=commit("feat(Gboard): also regenerated the list",{"patches-list.json":"{\"a\":1}\n","src.kt":"a\n"});
+  commit("chore: Release v1.1.0 [skip ci]",{"patches-list.json":"{\"b\":1}\n"});
+  assert.deepEqual(releaseOwnedChanges(`${base}..HEAD`,{cwd,env,owned}).map(c=>[c.hash,c.files]),[[bad,["patches-list.json"]]]);
+  assert.throws(()=>verifyUnpublishedCommits({cwd,env,base,owned}),/must not change release-owned files/);
+  assert.equal(verifyUnpublishedCommits({cwd,env,base:"f".repeat(40),owned}).checked,false);
+  assert.equal(verifyUnpublishedCommits({cwd,env,base:"",owned}).checked,false);
+  assert.ok(git(cwd,"rev-parse","HEAD"));
 });

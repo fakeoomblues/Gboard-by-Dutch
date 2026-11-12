@@ -34,7 +34,11 @@ That command previews verification; normal publication still requires the establ
 | --- | --- |
 | `main` | Stable releases |
 
-`.releaserc` and `.gitlab/gitlab-com.release.config.cjs` own version selection, release notes, generated catalogues and release files. Do not bump generated versions manually. Required approval for unapproved app changes happens before promotion to `main`; the watcher automatically publishes approved updates afterward.
+`.releaserc` and `.gitlab/gitlab-com.release.config.cjs` own version selection, release notes, generated catalogues and release files. Do not bump generated versions manually.
+
+Morphe reads the bundle metadata (`patches-bundle.json`, `patches-list.json`) from `main`, so `main` only receives it together with a downloadable bundle. Source commits may reach `main` at any time but never change the release-owned files: the release commit's assets in `.releaserc` (`CHANGELOG.md`, `gradle.properties`, `patches-bundle.json`, `patches-list.json`, `README.md`, the site index and catalogue pages). The release regenerates them. `node .gitlab/scripts/identity.cjs`, run before every push, refuses unpublished source commits that change them.
+
+A GitLab release runs in this order: the release commit is created locally (`.gitlab/scripts/release_commit.cjs`), semantic-release pushes only its tag, the bundle is built, signed and uploaded and the GitLab release is created, and only then `.gitlab/scripts/promote_main.cjs` fast-forwards `main` to the release commit (never forced; it stops if `main` moved). If a run stops between the tag and the promotion, the next run finds the release commit on top of `main` (`findPendingRelease`), finishes publishing it at its tag and promotes `main`, instead of selecting a new version. Bundle transfers get 60 s plus one second per 64 KiB, so a slow uplink does not abort an upload. Required approval for unapproved app changes happens before promotion to `main`; the watcher automatically publishes approved updates afterward.
 
 Both local automation and optional cloud CI use `scripts/local-release/verify.cjs`. It retains identity/history and release-policy tests, Python regressions, patch build/tests and all applicable extension unit tests through Gradle's aggregate `testDebugUnitTest` task, Medium bundle/tests and strict bilingual documentation/link checks. Tests and builds use isolated flow-owned checkouts. `LOCAL_RELEASE_PYTHON` selects the documentation Python environment; `LOCAL_RELEASE_GRADLE_OFFLINE=true` restricts Gradle to cached dependencies.
 
