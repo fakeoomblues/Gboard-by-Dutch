@@ -21,7 +21,8 @@ public class GboardRamblerDictionaryRuntimeTest {
                 "enable_rambler_voice_correction_list_import_export",
                 "show_rambler_dict_settings",
                 "show_clear_all_corrected_words_settings",
-                "enable_user_contact_biasing")) {
+                "enable_user_contact_biasing",
+                "enable_user_feature_cache")) {
             assertEquals(flag, Boolean.TRUE, GboardRamblerDictionaryRuntime.applyFlagValue(flag, Boolean.FALSE));
         }
     }

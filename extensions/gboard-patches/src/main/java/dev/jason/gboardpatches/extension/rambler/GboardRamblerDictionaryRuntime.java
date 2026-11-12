@@ -19,6 +19,11 @@ public final class GboardRamblerDictionaryRuntime {
     public static final String SHOW_CLEAR_ALL_FLAG = "show_clear_all_corrected_words_settings";
     /** Sends the list's words with each Rambler request. */
     public static final String SEND_WORDS_FLAG = "enable_user_contact_biasing";
+    /**
+     * Loads Gboard's user feature cache, the module that stores the list (as MUSE_STATS). Without
+     * it the list stays empty and every import is dropped.
+     */
+    public static final String FEATURE_CACHE_FLAG = "enable_user_feature_cache";
 
     private GboardRamblerDictionaryRuntime() {
     }
@@ -34,6 +39,7 @@ public final class GboardRamblerDictionaryRuntime {
             case SHOW_DICTIONARY_SETTINGS_FLAG:
             case SHOW_CLEAR_ALL_FLAG:
             case SEND_WORDS_FLAG:
+            case FEATURE_CACHE_FLAG:
                 return Boolean.TRUE;
             default:
                 return originalResult;
