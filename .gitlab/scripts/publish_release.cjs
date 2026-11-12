@@ -7,7 +7,7 @@ const {api, REPOSITORY} = require("./api.cjs");
 const {gitAuth} = require("./release.cjs");
 const {verifyBundle} = require("./bundle.cjs");
 const {promote} = require("./promote_main.cjs");
-const {RELEASE_COMMIT} = require("./release_owned.cjs");
+const {RELEASE_COMMIT, releaseOwnedFiles} = require("./release_owned.cjs");
 const HTTPS_URL=`https://gitlab.com/${REPOSITORY}.git`,SSH_URL=`git@gitlab.com:${REPOSITORY}.git`;
 function localSshAuth(env) {
   const value=env.GITLAB_SSH_KEY;
@@ -92,6 +92,11 @@ async function main(argv = process.argv.slice(2), {cwd = process.cwd(), env = pr
     const tagRef = `refs/tags/${waiting.tag}`;
     try { exec("git", ["rev-parse", "--verify", "--quiet", tagRef], {cwd, env: releaseEnv, encoding: "utf8"}); }
     catch { exec("git", ["fetch", "--no-tags", "--quiet", repositoryUrl, `${tagRef}:${tagRef}`], {cwd, env: releaseEnv}); }
+    // Verification regenerated the release-owned files in this workspace; the release commit
+    // carries its own copies, so drop those regenerations (and nothing else) before switching.
+    const regenerated = exec("git", ["diff", "--name-only", "--", ...releaseOwnedFiles(cwd)], {cwd, env: releaseEnv, encoding: "utf8"})
+      .split("\n").filter(Boolean);
+    if (regenerated.length) exec("git", ["checkout", "--quiet", "--", ...regenerated], {cwd, env: releaseEnv});
     exec("git", ["checkout", "--quiet", "--detach", waiting.commit], {cwd, env: releaseEnv});
     outcome = await recover(branch, {cwd, env: releaseEnv, exec});
     if (!outcome) throw new Error(`Pending release ${waiting.tag} could not be recovered`);

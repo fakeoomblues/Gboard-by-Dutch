@@ -347,7 +347,7 @@ test("the release commit keeps the metadata local and only promotion moves main"
 });
 test("a release tagged but never promoted is found and finished instead of released again", async t => {
   const {cwd,remote,env,git,commit}=holdFixture(t);
-  const source=commit("feat(Gboard): source change",{"src.kt":"a\n"});git(cwd,"push","-q",remote,"HEAD:refs/heads/main");
+  const source=commit("feat(Gboard): source change",{"src.kt":"a\n",".releaserc":fs.readFileSync(path.join(__dirname,"../.releaserc"),"utf8"),"patches-list.json":"{\"old\":true}\n"});git(cwd,"push","-q",remote,"HEAD:refs/heads/main");
   const release=commit("chore: Release v1.2.3 [skip ci]",{"patches-list.json":"{}\n"});git(cwd,"tag","v1.2.3");
   git(cwd,"push","-q",remote,"refs/tags/v1.2.3");
   const other=commit("feat(Gboard): not a release",{"src.kt":"b\n"});git(cwd,"tag","v9.9.9");git(cwd,"push","-q",remote,"refs/tags/v9.9.9");
@@ -357,6 +357,8 @@ test("a release tagged but never promoted is found and finished instead of relea
   git(cwd,"checkout","-q","--detach",release);assert.equal(findPendingRelease({cwd,env,repositoryUrl:remote}),null);
   assert.ok(other);
   git(cwd,"checkout","-q","-B","main",source);
+  // Verification regenerates release-owned files in the release workspace before publication.
+  fs.writeFileSync(path.join(cwd,"patches-list.json"),"{\"regenerated\":true}\n");
   const calls=[];
   const outcome=await main(["--local"],{cwd,env:{...env,GITLAB_TOKEN:"fixture"},verifyHead:()=>calls.push("head"),
     pending:()=>findPendingRelease({cwd,env,repositoryUrl:remote}),
