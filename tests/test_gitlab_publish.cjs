@@ -327,6 +327,8 @@ test("the release commit keeps the metadata local and only promotion moves main"
   git(cwd,"push","-q",remote,"HEAD:refs/heads/main");
   fs.writeFileSync(path.join(cwd,"patches-list.json"),"{\"version\":\"1.2.3\"}\n");
   fs.writeFileSync(path.join(cwd,"scratch.txt"),"not a release asset\n");
+  // A real release workspace holds far more untracked build output than a 1 MB pipe buffer.
+  fs.mkdirSync(path.join(cwd,"build"));for(let i=0;i<20000;i++)fs.writeFileSync(path.join(cwd,"build",`output-${"x".repeat(40)}-${i}.class`),"");
   const {prepare}=require("../.gitlab/scripts/release_commit.cjs");const logs=[];
   await prepare({assets:["patches-list.json","README.md"],message:"chore: Release v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"},
     {cwd,env,branch:{name:"main"},lastRelease:{},nextRelease:{version:"1.2.3",gitTag:"v1.2.3",notes:"Notes."},logger:{log:(...a)=>logs.push(a)}});

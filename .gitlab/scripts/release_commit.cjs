@@ -15,8 +15,9 @@ exports.prepare = async (config, context, {load = name => import(name), run = ex
   if (!assets.length || assets.some(asset => typeof asset !== "string" || /[*?[\]{}!]/.test(asset))) {
     throw new Error("Release commit assets must be plain file paths");
   }
-  const git = (args, input) => run("git", args, {cwd, env, encoding: "utf8", ...(input === undefined ? {} : {input})});
-  const modified = new Set(git(["ls-files", "-m", "-o"]).split("\n").filter(Boolean));
+  const git = (args, input) => run("git", args, {cwd, env, encoding: "utf8", maxBuffer: 16 * 1024 * 1024, ...(input === undefined ? {} : {input})});
+  // Only ask about the release assets: a release workspace holds thousands of untracked build files.
+  const modified = new Set(git(["ls-files", "-m", "-o", "--", ...assets]).split("\n").filter(Boolean));
   const files = assets.filter(asset => modified.has(asset));
   if (!files.length) throw new Error("The release produced no metadata changes to commit");
   git(["add", "--force", "--ignore-errors", "--", ...files]);
