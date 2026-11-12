@@ -1,4 +1,26 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f695c71ea789cea27d8f2c413fa21d5313320ac9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.69.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [f695c71ea789](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/f695c71ea789cea27d8f2c413fa21d5313320ac9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.69.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.68.0...v1.69.0) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** remove Rambler automatic retry, which dropped a failed dictation without showing Retry ([0329451](https://gitlab.com/johninnld/nl-morphe-patches/commit/03294511855b5de64975a43b4f46e1baffe2f8c5))
+
+### ✨ New Features
+
+* **Gboard:** custom instructions add to Rambler's own instructions and are on by default, with cursor-aware editing and app context ([f695c71](https://gitlab.com/johninnld/nl-morphe-patches/commit/f695c71ea789cea27d8f2c413fa21d5313320ac9))
+* **Gboard:** move the voice correction list and contact names to their own Voice dictionary screen ([2f8b761](https://gitlab.com/johninnld/nl-morphe-patches/commit/2f8b76154e3459404a6eb7d0accc86df9e988036))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dd6b9704d2b0f054712773a3b740f24a453c7d70/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.68.0.**
