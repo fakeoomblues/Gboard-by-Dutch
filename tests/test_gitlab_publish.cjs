@@ -382,3 +382,14 @@ test("source commits may not carry release-owned metadata ahead of their release
   assert.equal(verifyUnpublishedCommits({cwd,env,base:"",owned}).checked,false);
   assert.ok(git(cwd,"rev-parse","HEAD"));
 });
+
+test("bundle downloads wait out rate limits and server errors but not other failures", async () => {
+  const {download}=require("../.gitlab/scripts/bundle.cjs");const {bytes}=signedFixture();
+  const pauses=[];const pause=async ms=>{pauses.push(ms);};
+  let calls=0;
+  const flaky=async()=>(++calls<3?{ok:false,status:calls===1?429:503,headers:{get:name=>name==="retry-after"&&calls===1?"45":null}}:{ok:true,arrayBuffer:async()=>bytes});
+  assert.deepEqual(await download("https://gitlab.com/asset",bytes.length,flaky,{pause}),bytes);
+  assert.deepEqual(pauses,[45000,60000]);
+  calls=0;await assert.rejects(download("https://gitlab.com/asset",bytes.length,async()=>{calls++;return {ok:false,status:404,headers:{get:()=>null}};},{pause}),/HTTP 404/);assert.equal(calls,1);
+  calls=0;await assert.rejects(download("https://gitlab.com/asset",bytes.length,async()=>{calls++;return {ok:false,status:429,headers:{get:()=>"1"}};},{pause,attempts:3}),/HTTP 429/);assert.equal(calls,3);
+});
