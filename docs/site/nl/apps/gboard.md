@@ -17,6 +17,7 @@ Selecteer de arm64-v8a-APK van Google voor precies deze build (Android 12L+).
 | **Rambler custom instructions** | Aan | Voegt **Eigen instructies** toe aan Gboard-instellingen → Spraakinvoer → Rambler. Je tekst komt bij de eigen instructies van Rambler en vervangt ze niet: Rambler krijgt hem bij elk dictaat mee en volgt hem alleen voor de stijl, zoals spelling, interpunctie, woordkeus en toon. Werkt alleen samen met Rambler voice typing. |
 | **Rambler cursor-aware editing** | Aan | Rambler ziet ook de tekst na de cursor, zodat gesproken bewerkingen de hele tekst bereiken en dicteren midden in een tekst aansluit. Met geselecteerde tekst gaat alleen de selectie mee, zodat een gesproken bewerking zoals "maak dit formeler" daarop werkt; het resultaat wordt daarna weer geselecteerd voor de volgende bewerking. Werkt alleen samen met Rambler voice typing. |
 | **Rambler app context** | Aan | Rambler krijgt ook de naam van de app waarin je dicteert en de hinttekst van het veld, zodat de toon past bij een chat, e-mail of zoekopdracht en eigen instructies van de app kunnen afhangen. Google weet dan in welke app je typt. Werkt alleen samen met Rambler voice typing. |
+| **Rambler stop after silence (experimental)** | Uit | Voegt **Stoppen na stilte** toe aan Gboard-instellingen → Spraakinvoer → Rambler. Kies 3, 5, 8 of 10 seconden en Rambler stopt vanzelf zodra je zo lang niets nieuws hebt gezegd, en houdt de tekst, net als wanneer je op ✓ tikt. Uit tot je een tijd kiest. Werkt alleen samen met Rambler voice typing. |
 | **Change package name** | Aan | Installeert de gepatchte Gboard onder een eigen pakketnaam (standaard app.morphe.android.inputmethod.latin), zodat hij naast de standaard-Gboard staat die op de meeste telefoons is ingebouwd. Je standaard-Gboard, de instellingen en het woordenboek blijven onaangeroerd; kies het gepatchte toetsenbord in de toetsenbordinstellingen van Android. |
 | **Custom branding** | Uit | Verandert de appnaam in de launcher, de toetsenbordlijst van Android en de app-informatie, en het app-icoon (standaard Parakeet, het originele Gboard-icoon of vijf andere ontwerpen), zodat je het gepatchte toetsenbord makkelijk onderscheidt van de standaardversie. |
 | **Clipboard Enhancements** | Aan | Bepaalt hoe lang gekopieerde fragmenten bewaard blijven, hoeveel er worden bewaard, hoeveel voorbeeldregels een kaart toont en of kaarten een aftelling, aanmaaktijd, volgnummer en kolomaantal tonen. |
@@ -88,12 +89,20 @@ Met **Rambler app context** vertelt elk dictaat Rambler ook in welke app je bent
 - Regels per app werken: bijvoorbeeld "Alleen in WhatsApp: eindig elk bericht met 👍." of "Schrijf in Gmail volledige zinnen met een aanhef."
 - Google weet dan in welke app je typt. Rambler krijgt je spraak en de tekst rond de cursor al; zet deze patch uit als je de app-naam niet ook wilt delen.
 
+### Stoppen na stilte (experimenteel)
+
+Normaal blijft Rambler luisteren tot je op ✓ of ✕ tikt, met een limiet van vijf minuten per dictaat, zodat je even kunt nadenken. Met **Rambler stop after silence (experimental)** toont Gboard-instellingen → Spraakinvoer → Rambler het onderdeel **Stoppen na stilte**.
+
+- Kies 3, 5, 8 of 10 seconden. Rambler stopt dan zodra er zo lang geen nieuwe spraak is binnengekomen en houdt de tekst, net als wanneer je op ✓ tikt. **Uit** houdt het gedrag van Google.
+- Het gebruikt de eigen spraaktime-out van Gboard, dezelfde die standaard spraakinvoer na een pauze stopt. Achtergrondgeluid dat Rambler als spraak hoort, houdt hem aan het luisteren.
+- Experimenteel: nog niet op een telefoon bevestigd.
+
 ## Voor gebruik
 
 - Een telefoon met 64-bit ARM is nodig. Houd tijdens het downloaden ongeveer 1,4 GB vrij; het geïnstalleerde model neemt ongeveer 650 MB in beslag.
 - Tijdens het dicteren gebruikt het model ongeveer 700 MB geheugen. Na vijf minuten zonder gebruik wordt het weer vrijgegeven, dus de eerste zin na een pauze duurt even iets langer.
 - Met Change package name aan is de gepatchte Gboard een aparte app met eigen instellingen: zet hem aan via Android-instellingen → Toetsenbord en kies hem daarna. Zonder die patch kan hij niet worden geïnstalleerd op telefoons waarop Gboard is ingebouwd. Functies die afhangen van de eigen app-handtekening van Google werken in de gepatchte versie mogelijk niet; Parakeet heeft ze niet nodig.
-- De vijftien Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
+- De zestien Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
 - Gecontroleerd op een Android 14-emulator: de instelling, de download en Nederlands, Engels en gemengd Nederlands-Engels dicteren in een tekstveld, plus stilte en achtergrondgeluid zonder losse tekst. Dicteren op een telefoon is nog niet bevestigd.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md)

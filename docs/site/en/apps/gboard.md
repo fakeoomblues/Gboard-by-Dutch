@@ -17,6 +17,7 @@ Select Google's arm64-v8a APK for this exact build (Android 12L+).
 | **Rambler custom instructions** | On | Adds **Custom instructions** to Gboard settings → Voice typing → Rambler. Your text is added to Rambler's own instructions, not a replacement for them: Rambler receives it with every dictation and follows it for style only, such as spelling, punctuation, vocabulary and tone. Requires Rambler voice typing. |
 | **Rambler cursor-aware editing** | On | Rambler also sees the text after the cursor, so spoken edits reach the whole text and dictating in the middle of a text fits in. With text selected, only the selection is sent, so a spoken edit such as "make this more formal" applies to it, and the result is selected again for the next edit. Requires Rambler voice typing. |
 | **Rambler app context** | On | Rambler also receives the name of the app you dictate in and the text field's hint, so it can match the tone of a chat, an e-mail or a search, and custom instructions can depend on the app. This tells Google which app you are typing in. Requires Rambler voice typing. |
+| **Rambler stop after silence (experimental)** | Off | Adds **Stop after silence** to Gboard settings → Voice typing → Rambler. Pick 3, 5, 8 or 10 seconds and Rambler stops by itself once you have said nothing new for that long, keeping the text as when you tap ✓. Off until you pick a time. Requires Rambler voice typing. |
 | **Change package name** | On | Installs the patched Gboard under its own package name (app.morphe.android.inputmethod.latin by default), so it sits beside the stock Gboard that most phones have built in. Your stock Gboard, its settings and its dictionary are not touched; choose the patched keyboard in Android's keyboard settings. |
 | **Custom branding** | Off | Changes the app name shown in the launcher, Android's keyboard list and app information, and the launcher icon (Parakeet by default, Gboard's original or five other designs), so the patched keyboard is easy to tell apart from the stock one. |
 | **Clipboard Enhancements** | On | Controls how long copied snippets stay available, how many are kept, how many preview lines a card shows, and whether cards show a countdown, creation time, order number and column count. |
@@ -88,12 +89,20 @@ With **Rambler app context** applied, each dictation also tells Rambler which ap
 - Rules per app work: for example "Only in WhatsApp: end every message with 👍." or "In Gmail, write complete sentences with a greeting."
 - Google learns which app you are typing in. Rambler already receives your speech and the text around the cursor; switch this patch off if you do not want to share the app name as well.
 
+### Stop after silence (experimental)
+
+Rambler normally keeps listening until you tap ✓ or ✕, with a five-minute limit per dictation, so you can pause to think. With **Rambler stop after silence (experimental)** applied, Gboard settings → Voice typing → Rambler shows **Stop after silence**.
+
+- Choose 3, 5, 8 or 10 seconds. Rambler then stops once it has received no new speech for that long and keeps the text, just like tapping ✓. **Off** keeps Google's behaviour.
+- It uses Gboard's own voice timeout, the one that stops standard voice typing after a pause. Background noise that Rambler hears as speech keeps it listening.
+- Experimental: not yet confirmed on a phone.
+
 ## Before using
 
 - A 64-bit ARM phone is required. Keep about 1.4 GB free while downloading; the installed model takes about 650 MB.
 - The model uses roughly 700 MB of memory while you dictate and is unloaded after five idle minutes, so the first sentence after a break takes a moment longer.
 - With Change package name on, the patched Gboard is a separate app with its own settings: enable it under Android settings → Keyboard, then pick it. Without that patch it cannot be installed on phones that have Gboard built in. Features that depend on Google's own app signature may not work in the patched copy; Parakeet does not need them.
-- The fifteen Gboard patches were verified to build and apply against this 18.6.3 build. Patch application is not the same as a full device test of every feature.
+- The sixteen Gboard patches were verified to build and apply against this 18.6.3 build. Patch application is not the same as a full device test of every feature.
 - Checked on an Android 14 emulator: the settings entry, the download, and Dutch, English and mixed Dutch-English dictation into a text field, plus silence and background noise without stray text. Dictation on a phone has not been confirmed yet.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md)
