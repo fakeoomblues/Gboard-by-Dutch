@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8c36b41428011513bed191385be556fbf5979abc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.70.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [8c36b4142801](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/8c36b41428011513bed191385be556fbf5979abc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.70.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.69.0...v1.70.0) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** remove the Rambler Dutch send command, because Gboard's own send command never fires ([76c7240](https://gitlab.com/johninnld/nl-morphe-patches/commit/76c724041d27e8818f1fbe00cf61d5fa627ee3c7))
+* **release:** list only the release files when creating the release commit ([8c36b41](https://gitlab.com/johninnld/nl-morphe-patches/commit/8c36b41428011513bed191385be556fbf5979abc))
+* **release:** move main to a release only once its bundle is downloadable ([d65b4be](https://gitlab.com/johninnld/nl-morphe-patches/commit/d65b4bedd05f5b618ef5062d4e0e7a2b49a37b48))
+
+### ✨ New Features
+
+* **Gboard:** add an experimental Stop after silence setting for Rambler ([e8fcaf6](https://gitlab.com/johninnld/nl-morphe-patches/commit/e8fcaf65128c06bd96b04f0ffa5f87efa47b0f61))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f695c71ea789cea27d8f2c413fa21d5313320ac9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.69.0.**

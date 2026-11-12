@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.69.0**
+**Patchbundel: 1.70.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -317,12 +317,12 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Custom branding | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler Dutch send command (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler app context | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler contact names | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler cursor-aware editing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler custom instructions | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler stop after silence (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |

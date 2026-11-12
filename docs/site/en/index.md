@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.69.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.70.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -515,7 +515,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler dutch send command (experimental) rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence (experimental) rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Gboard](apps/gboard.md)
@@ -531,12 +531,12 @@ hide:
 <li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
 <li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler Dutch send command (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
 <li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler cursor-aware editing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler custom instructions <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler stop after silence (experimental) <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
 <li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>

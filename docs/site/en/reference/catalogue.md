@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.69.0**
+**Patch bundle: 1.70.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -317,12 +317,12 @@ Check the supported app versions and default setting for each patch. The app pag
 | Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler Dutch send command (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler app context | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler contact names | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler cursor-aware editing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler custom instructions | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler stop after silence (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | On | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | On | 18.6.3.1002251336-release-arm64-v8a |
