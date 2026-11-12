@@ -429,10 +429,24 @@ public final class WazeAlerts {
 
     // ---- the map -----------------------------------------------------------------------
 
-    /** For SavedOnMap: the alerts of the kinds chosen, as Maps' personal places, one list a kind. */
+    /**
+     * For SavedOnMap: the alerts as Maps' personal places. A provider that sends WARNINGS_V1 pins exactly
+     * the warnings its pills show (WarningPins), each in a list of its own named by its stable key;
+     * otherwise (older provider patches, Waze's own bridge) the reports of the kinds chosen, one list a kind.
+     * Feature id stays 0:0: Maps then leaves the id out of the label (no made-up Google place behind a pin).
+     */
     static List<Object> mapItems() {
         List<Object> out = new ArrayList<>();
         if (!MAP) return out;
+        if (ExternalTelemetry.modern() && ExternalTelemetry.warningPinMode()) {
+            String from = "From " + ExternalTelemetry.provider();
+            for (WarningPins.Pin p : ExternalTelemetry.warningPins()) {
+                Object list = SavedOnMap.listInfo("ungoogled:warning:" + p.key, "CUSTOM", p.title, p.emoji());
+                Object item = SavedOnMap.item(0, 0, p.lat, p.lng, p.title, from, 0, list, false);
+                if (item != null) out.add(item);
+            }
+            return out;
+        }
         Map<Integer, Object> lists = new HashMap<>();
         for (Alert a : activeAlerts()) {
             if ((KINDS & (1 << a.kind)) == 0) continue;

@@ -60,7 +60,7 @@ Choosing the app's own data or ending the receiving session disconnects startup 
 2. Open **Navigation data source** and choose **De-Waze · navigation data** or **Flitsmeister · navigation data**.
 3. Enable **Compact speed and average-speed control** if you want the speed, limit and active-zone details together.
 4. For De-Waze and legacy alerts, open **Road alert types** and select the categories you want; only police reports start selected there. Native Flitsmeister warning audio has its own category/output choices, described [below](#native-flitsmeister-warning-audio).
-5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Only reports with known positions become map pins.
+5. Configure **Road alerts on the map** and **Chime for a road alert ahead** separately. Map pins follow the warning pills, at the provider's own position; older sources pin reports with a known position.
 6. Check **Source now** for the provider status. Tap it to request an available snapshot. Automatic startup uses the separate provider API; a snapshot request never makes an old observation fresh.
 
 **Off · Google Maps** restores Maps' own data. The alternative **Waze · Share alerts with Maps** uses the older Waze alert bridge: Waze needs **Share Waze Alerts with external applications**, must be signed in and must remain running. That mode does not provide the extended speed/limit/zone feed. Select the navigation-data option for this guide.

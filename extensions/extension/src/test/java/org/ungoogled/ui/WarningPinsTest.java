@@ -1,0 +1,126 @@
+package org.ungoogled.ui;
+
+import static org.junit.Assert.*;
+
+import android.os.Bundle;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import nl.johninnl.navigation.alerts.IndicatorContract;
+import nl.johninnl.navigation.alerts.WarningCodec;
+import nl.johninnl.navigation.alerts.WarningEvent;
+import nl.johninnl.navigation.alerts.WarningView;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
+@RunWith(RobolectricTestRunner.class) @Config(sdk = 33, manifest = Config.NONE)
+public class WarningPinsTest {
+    static final String SESSION = "12345678-1234-1234-1234-123456789abc";
+    static final long T = 100_000;
+
+    /** A provider warning observed at [at]; [position] null for none; [fixed] native_point_target. */
+    static Bundle warning(String id, long sequence, long at, double[] position, Long positionAt, boolean fixed, boolean estimated) {
+        Bundle b = new Bundle();
+        b.putInt("protocol_version", 1); b.putString("provider_session", SESSION); b.putString("warning_id", id);
+        b.putLong("sequence", sequence); b.putLong("revision", sequence); b.putLong("announcement_index", 0);
+        b.putString("operation", "UPSERT"); b.putString("phase", "approach"); b.putInt("priority", 1);
+        b.putString("native_type", "SPEED_CAM"); b.putString("category", "speed_camera"); b.putString("relevance", "point_ahead");
+        b.putString("relationship", "unknown"); b.putString("message", "Speed camera"); b.putString("language_tag", "en");
+        b.putString("message_origin", "native_text");
+        b.putLong("observed_elapsed_ms", at); b.putLong("issued_elapsed_ms", at); b.putLong("state_until_elapsed_ms", at + 30_000);
+        if (position != null) {
+            b.putDouble("latitude", position[0]); b.putDouble("longitude", position[1]);
+            b.putLong("position_observed_elapsed_ms", positionAt); b.putBoolean("position_estimated", estimated);
+        }
+        if (fixed) b.putBoolean("native_point_target", true);
+        return b;
+    }
+
+    static WarningEvent event(Bundle b) { return WarningCodec.decode(b, b.getLong("issued_elapsed_ms")); }
+
+    static final double[] HERE = {51.485487, 5.416153};
+
+    @Test public void fixedNativePointPersistsUntilStateExpires() {
+        WarningEvent fixed = event(warning("cam", 1, T, HERE, T, true, false));
+        assertEquals(1, WarningPins.select(List.of(fixed), T + 20_000, false).size());
+        assertEquals(1, WarningPins.select(List.of(fixed), T + 29_999, false).size());
+        assertTrue("state_until ends the pin", WarningPins.select(List.of(fixed), T + 30_000, false).isEmpty());
+    }
+
+    @Test public void otherPointsNeedAFreshPositionObservation() {
+        WarningEvent waze = event(warning("police", 1, T, HERE, T - 1000, false, false));
+        assertEquals(1, WarningPins.select(List.of(waze), T + 4000, false).size());
+        assertTrue("older than 5 s: no pin, though the warning is still valid", WarningPins.select(List.of(waze), T + 4001, false).isEmpty());
+        assertTrue(waze.stateValid(T + 4001));
+    }
+
+    @Test public void onlyANativeCoordinatePairBecomesAPin() {
+        assertTrue("no position", WarningPins.select(List.of(event(warning("a", 1, T, null, null, true, false))), T, false).isEmpty());
+        assertTrue("0,0 is a default, not a place", WarningPins.select(List.of(event(warning("b", 1, T, new double[]{0, 0}, T, true, false))), T, false).isEmpty());
+        assertTrue("estimated position", WarningPins.select(List.of(event(warning("c", 1, T, HERE, T, true, true))), T, false).isEmpty());
+        WarningPins.Pin pin = WarningPins.select(List.of(event(warning("d", 1, T, HERE, T, true, false))), T, false).get(0);
+        assertEquals(HERE[0], pin.lat, 0); assertEquals(HERE[1], pin.lng, 0);
+    }
+
+    @Test public void pinsFollowThePillSelectionThroughClear() {
+        WarningView view = new WarningView();
+        view.events(List.of(event(warning("cam", 1, T, HERE, T, true, false))));
+        assertEquals(1, WarningPins.select(view.carEvents(T + 10, e -> true), T + 10, false).size());
+        Bundle clear = new Bundle();
+        clear.putInt("protocol_version", 1); clear.putString("provider_session", SESSION); clear.putString("warning_id", "cam");
+        clear.putLong("sequence", 2); clear.putLong("revision", 2); clear.putLong("announcement_index", 0);
+        clear.putString("operation", "CLEAR"); clear.putLong("observed_elapsed_ms", T + 20); clear.putLong("issued_elapsed_ms", T + 20);
+        view.events(List.of(WarningCodec.decode(clear, T + 20)));
+        assertTrue(WarningPins.select(view.carEvents(T + 30, e -> true), T + 30, false).isEmpty());
+        // A warning the pill filter withholds (category off, passed, off route) gets no pin either.
+        view.events(List.of(event(warning("cam2", 3, T + 40, HERE, T + 40, true, false))));
+        assertTrue(WarningPins.select(view.carEvents(T + 50, e -> false), T + 50, false).isEmpty());
+    }
+
+    @Test public void keyIsStablePerWarningAndCarriesNoIdentityText() {
+        WarningEvent first = event(warning("road-123", 1, T, HERE, T, true, false));
+        WarningEvent later = event(warning("road-123", 7, T + 5000, new double[]{51.5, 5.5}, T + 5000, true, false));
+        WarningEvent other = event(warning("road-124", 2, T, HERE, T, true, false));
+        assertEquals(WarningPins.key(first), WarningPins.key(later));
+        assertNotEquals(WarningPins.key(first), WarningPins.key(other));
+        assertTrue(WarningPins.key(first).matches("w[0-9a-f]{16}"));
+        assertFalse(WarningPins.key(first).contains("123"));
+        WarningPins.Pin pin = WarningPins.select(List.of(first), T, false).get(0);
+        assertFalse("never the position in text", pin.toString().contains("51.48"));
+    }
+
+    @Test public void unchangedSelectionCompareEqualSoMapsIsNotAskedToRedraw() {
+        WarningEvent cam = event(warning("cam", 1, T, HERE, T, true, false));
+        List<WarningPins.Pin> a = WarningPins.select(List.of(cam), T + 100, false), b = WarningPins.select(List.of(cam), T + 900, false);
+        assertEquals(a, b);
+        WarningEvent moved = event(warning("cam", 2, T + 1000, new double[]{51.4855, 5.416153}, T + 1000, true, false));
+        assertNotEquals(a, WarningPins.select(List.of(moved), T + 1100, false));
+        assertNotEquals(a, Collections.emptyList());
+    }
+
+    @Test public void everyIconOfTheVocabularyHasItsOwnEmojiAndName() {
+        Set<String> emoji = new HashSet<>();
+        for (IndicatorContract.Kind kind : IndicatorContract.Kind.values()) {
+            assertTrue(kind.icon, emoji.add(WarningPins.emoji(kind.icon)));
+            assertFalse(WarningPins.title(kind.icon, false).isEmpty());
+            assertFalse(WarningPins.title(kind.icon, true).isEmpty());
+        }
+        assertEquals(WarningPins.emoji("incident"), WarningPins.emoji("something_new"));
+        WarningPins.Pin pin = WarningPins.select(List.of(event(warning("cam", 1, T, HERE, T, true, false))), T, true).get(0);
+        assertEquals("speed_camera", pin.icon); assertEquals("📷", pin.emoji()); assertEquals("Flitspaal", pin.title);
+    }
+
+    @Test public void throttleRunsTheFirstRedrawAtOnceAndBoundsTheRest() {
+        WarningPins.Throttle throttle = new WarningPins.Throttle(1000);
+        assertEquals(0, throttle.delay(5000));
+        throttle.ran(5000);
+        assertEquals(1000, throttle.delay(5000));
+        assertEquals(600, throttle.delay(5400));
+        assertEquals(0, throttle.delay(6000));
+        assertEquals(0, throttle.delay(9000));
+        assertEquals("a clock before the last redraw never stalls it", 0, throttle.delay(4000));
+    }
+}

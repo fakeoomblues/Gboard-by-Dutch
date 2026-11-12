@@ -448,14 +448,14 @@ public final class CustomizationActivity extends Activity {
             updateLocation.run();body.addView(location);live(updateLocation);
             body.addView(rowBase("Automatic provider startup", "De-Waze and Flitsmeister start silently and recover while this map is in use. Repatch both apps, complete provider setup and grant location access once. The older Waze bridge still needs Waze opened manually."));
             buildNativeWarningControls(nativeControls);body.addView(nativeControls);
-            LinearLayout kindsRow = rowBase("Map-pin and legacy alert types", WazeAlerts.kindsSummary(this));
+            LinearLayout kindsRow = rowBase("Legacy map-pin and alert types", WazeAlerts.kindsSummary(this));
             TextView kindsSub = (TextView) ((LinearLayout) kindsRow.getChildAt(0)).getChildAt(1);
             kindsRow.setOnClickListener(v -> chooseMany("Road alert types", WazeAlerts.KIND_LABELS, WazeAlerts.kinds(this), mask -> {
                 WazeAlerts.setKinds(this, mask); kindsSub.setText(WazeAlerts.kindsSummary(this));
             }));
             body.addView(kindsRow);
             Switch pins=new Switch(this);pins.setChecked(WazeAlerts.onMap(this));
-            body.addView(toggleRow("Road alerts on the map", "Only reports with a known position become map pins",pins));
+            body.addView(toggleRow("Road alerts on the map", "Pins follow the warning pills, at the provider's own position; older sources pin reports with a known position",pins));
             pins.setOnCheckedChangeListener((b,on)->WazeAlerts.setOnMap(this,on));
             Switch chime=new Switch(this);chime.setChecked(WazeAlerts.chime(this));
             body.addView(toggleRow("Chime for a road alert ahead", "Uses a reported approach distance, or an estimated position and heading check",chime));

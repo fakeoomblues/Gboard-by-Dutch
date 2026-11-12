@@ -60,7 +60,7 @@ Kiezen voor eigen gegevens of het beëindigen van de ontvangende sessie verbreek
 2. Open **Navigation data source** en kies **De-Waze · navigation data** of **Flitsmeister · navigation data**.
 3. Zet **Compact speed and average-speed control** aan als je snelheid, limiet en actieve trajectgegevens samen wilt zien.
 4. Open voor De-Waze en oudere meldingen **Road alert types** en kies de gewenste categorieën; daar zijn aanvankelijk alleen politiemeldingen geselecteerd. Native Flitsmeister-waarschuwingsaudio heeft een eigen categorie-/audiokeuze, [hieronder beschreven](#native-waarschuwingsaudio-van-flitsmeister).
-5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Alleen meldingen met bekende posities krijgen kaartspelden.
+5. Stel **Road alerts on the map** en **Chime for a road alert ahead** apart in. Kaartspelden volgen de waarschuwingspillen, op de eigen positie van de bron; oudere bronnen zetten meldingen met een bekende positie op de kaart.
 6. Controleer de bronstatus bij **Source now**. Tik erop om een beschikbare momentopname op te vragen. Automatisch starten gebruikt de aparte bron-API; een momentopname maakt oude waarnemingen nooit vers.
 
 **Off · Google Maps** herstelt de eigen gegevens van Maps. Het alternatief **Waze · Share alerts with Maps** gebruikt de oudere Waze-meldingenkoppeling: Waze moet **Share Waze Alerts with external applications** bevatten, aangemeld zijn en blijven draaien. Die modus levert niet de uitgebreide snelheid-, limiet- en trajectgegevens. Kies voor deze handleiding de optie voor navigatiegegevens.

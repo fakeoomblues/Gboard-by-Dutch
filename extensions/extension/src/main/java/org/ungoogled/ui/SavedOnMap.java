@@ -3,8 +3,8 @@ package org.ungoogled.ui;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,6 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * The places kept on the phone, on Maps' own map (issue #36). Signed in, Maps draws the account's
@@ -24,43 +25,48 @@ import java.util.Set;
  * The speed cameras', Flock cameras' and Waze alerts' pins go the same way, in microG Maps too
  * (issue #55) -- where the account's own places are Maps' to draw, so Local saved's copies of them
  * are not added there.
+ *
+ * Every live generator is kept (the phone's map and, where Maps makes one, the car's), and each is
+ * drawn again on a change. Drawing again rebuilds the labels of every visible tile, so redraws are
+ * coalesced and held to one a second (WarningPins.MIN_REDRAW_MS).
  */
 public final class SavedOnMap {
     private SavedOnMap() {}
 
     private static final int NONE = 0, HOME = 1, WORK = 2, LABEL = 3;
 
-    private static WeakReference<Object> generator = new WeakReference<>(null);
-    /** Our places in the generator's list now: taken out before the next ones go in. */
-    private static final Set<Object> ours = Collections.newSetFromMap(new IdentityHashMap<>());
+    /** The generators turned on now, weakly: generators are compared by identity (they keep equals). */
+    private static final Set<Object> generators = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final WarningPins.Throttle throttle = new WarningPins.Throttle(WarningPins.MIN_REDRAW_MS);
+    private static boolean pending;
+    /**
+     * Our places in each generator's list now: taken out before the next ones go in. Kept per generator,
+     * so another map's earlier pins are still recognised as ours and never pile up.
+     */
+    private static final Map<Object, Set<Object>> ours = new WeakHashMap<>();
     private static final Handler main = new Handler(Looper.getMainLooper());
 
     /** From the start of the generator's place setter: [places] (the account's) with the phone's added. */
     public static Object withLocal(Object labels, Object places) {
         try {
-            generator = new WeakReference<>(labels);
-            List<Object> mine = Shapes.localSavedPatched() ? localPlaces() : new ArrayList<>();
+            synchronized (generators) {
+                generators.add(labels);
+            }
+            List<Object> added = new ArrayList<>();
+            if (Shapes.localSavedPatched()) added.addAll(localPlaces());
+            if (Shapes.speedCamerasPatched()) added.addAll(SpeedCameras.mapItems());
+            if (Shapes.wazeAlertsPatched()) added.addAll(WazeAlerts.mapItems());
             List<Object> out = new ArrayList<>();
             synchronized (ours) {
-                if (places instanceof Iterable) for (Object o : (Iterable<?>) places) if (!ours.contains(o)) out.add(o);
-                ours.clear();
-                ours.addAll(mine);
-            }
-            out.addAll(mine);
-            if (Shapes.speedCamerasPatched()) {
-                List<Object> cameras = SpeedCameras.mapItems();
-                synchronized (ours) {
-                    ours.addAll(cameras);
+                Set<Object> previous = ours.get(labels);
+                if (places instanceof Iterable) {
+                    for (Object o : (Iterable<?>) places) if (previous == null || !previous.contains(o)) out.add(o);
                 }
-                out.addAll(cameras);
+                Set<Object> current = Collections.newSetFromMap(new IdentityHashMap<>());
+                current.addAll(added);
+                ours.put(labels, current);
             }
-            if (Shapes.wazeAlertsPatched()) {
-                List<Object> waze = WazeAlerts.mapItems();
-                synchronized (ours) {
-                    ours.addAll(waze);
-                }
-                out.addAll(waze);
-            }
+            out.addAll(added);
             return immutable(out);
         } catch (Throwable t) {
             android.util.Log.w("UA", "saved places on the map", t);
@@ -70,22 +76,44 @@ public final class SavedOnMap {
 
     /** From the generator turning on or off, with the map: on, it draws the phone's places too. */
     public static void shown(Object labels, boolean on) {
-        if (!on) return;
-        generator = new WeakReference<>(labels);
+        synchronized (generators) {
+            if (!on) {
+                generators.remove(labels);
+                return;
+            }
+            generators.add(labels);
+        }
         refresh();
     }
 
-    /** Draws the phone's places again: after any change to Local saved. */
+    /**
+     * Draws our places again on every generator: after any change to Local saved or to the pins. Calls
+     * while one is waiting fold into it; the first after a quiet second runs at once.
+     */
     static void refresh() {
-        Object labels = generator.get();
-        if (labels == null) return;
-        main.post(() -> {
+        long delay;
+        synchronized (generators) {
+            if (pending || generators.isEmpty()) return;
+            pending = true;
+            delay = throttle.delay(SystemClock.elapsedRealtime());
+        }
+        main.postDelayed(SavedOnMap::redrawAll, delay);
+    }
+
+    private static void redrawAll() {
+        List<Object> live;
+        synchronized (generators) {
+            pending = false;
+            throttle.ran(SystemClock.elapsedRealtime());
+            live = new ArrayList<>(generators);
+        }
+        for (Object labels : live) {
             try {
                 redraw(labels);
             } catch (Throwable t) {
                 android.util.Log.w("UA", "saved places on the map", t);
             }
-        });
+        }
     }
 
     /** Rewritten by the patch: the generator draws its place list again (through withLocal). */
