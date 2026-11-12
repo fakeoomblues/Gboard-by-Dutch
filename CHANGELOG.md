@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.67.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [0cfcaf4f6f3d](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.67.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.66.0...v1.67.0) (2026-11-12)
+
+### ✨ New Features
+
+* **Flitsmeister:** speak every alert the same way in Maps and Vela, and count an average-speed control as one zone ([0cfcaf4](https://gitlab.com/johninnld/nl-morphe-patches/commit/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f))
+* **Google Maps:** speak every alert the same way in Maps and Vela, and count an average-speed control as one zone ([0cfcaf4](https://gitlab.com/johninnld/nl-morphe-patches/commit/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f))
+* **Vela Maps:** speak every alert the same way in Maps and Vela, and count an average-speed control as one zone ([0cfcaf4](https://gitlab.com/johninnld/nl-morphe-patches/commit/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f))
+* **Waze:** speak every alert the same way in Maps and Vela, and count an average-speed control as one zone ([0cfcaf4](https://gitlab.com/johninnld/nl-morphe-patches/commit/0cfcaf4f6f3dc74cd93798a94d1b56f033e2929f))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9462c60b2408967d6bc13b42bbf9f69b31770b9c/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.66.0.**
