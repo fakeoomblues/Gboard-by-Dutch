@@ -113,6 +113,16 @@ public class WarningPinsTest {
         assertEquals("speed_camera", pin.icon); assertEquals("📷", pin.emoji()); assertEquals("Flitspaal", pin.title);
     }
 
+    @Test public void twoWarningsSwappingInThePillsGiveTheSamePins() {
+        WarningEvent near = event(warning("cam", 1, T, HERE, T, true, false));
+        WarningEvent other = event(warning("trap", 1, T, HERE, T, true, false));
+        List<WarningPins.Pin> one = WarningPins.byKey(WarningPins.select(List.of(near, other), T, false));
+        List<WarningPins.Pin> two = WarningPins.byKey(WarningPins.select(List.of(other, near), T, false));
+        assertEquals("the map redraws only when the set changes", one, two);
+        assertTrue(one.get(0).key.compareTo(one.get(1).key) < 0);
+        assertEquals(Collections.emptyList(), WarningPins.byKey(Collections.emptyList()));
+    }
+
     @Test public void throttleRunsTheFirstRedrawAtOnceAndBoundsTheRest() {
         WarningPins.Throttle throttle = new WarningPins.Throttle(1000);
         assertEquals(0, throttle.delay(5000));

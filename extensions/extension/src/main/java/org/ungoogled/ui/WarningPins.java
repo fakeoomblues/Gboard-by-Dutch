@@ -12,7 +12,8 @@ import nl.johninnl.navigation.alerts.WarningEvent;
 import nl.johninnl.navigation.alerts.WarningGeometry;
 
 /**
- * Map pins for the provider warnings the pills show (WARNINGS_V1), drawn as Maps' own personal places.
+ * Map pins for the provider warnings the pills show (WARNINGS_V1), drawn as Maps' own personal places and,
+ * during navigation, as Google's own incident callouts (IncidentPins).
  *
  * The pins take the pills' own selection -- the same warning identity, CLEAR, expiry, category choice and
  * passed/off-route filtering -- and add only the geometry rules of navigation-indicators-v1: a pin needs
@@ -67,6 +68,17 @@ final class WarningPins {
             String icon = IndicatorContract.icon(event);
             out.add(new Pin(key(event), icon, event.latitude, event.longitude, title(icon, dutch)));
         }
+        return Collections.unmodifiableList(out);
+    }
+
+    /**
+     * [pins] in key order: a set for the map. The pills' order follows distance and can swap two equally
+     * near warnings several times a second; the map's pins must not be drawn again for that.
+     */
+    static List<Pin> byKey(List<Pin> pins) {
+        if (pins.size() < 2) return pins;
+        List<Pin> out = new ArrayList<>(pins);
+        out.sort((a, b) -> a.key.compareTo(b.key));
         return Collections.unmodifiableList(out);
     }
 

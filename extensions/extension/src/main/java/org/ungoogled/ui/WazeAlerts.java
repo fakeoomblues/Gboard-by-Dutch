@@ -439,6 +439,8 @@ public final class WazeAlerts {
         List<Object> out = new ArrayList<>();
         if (!MAP) return out;
         if (ExternalTelemetry.modern() && ExternalTelemetry.warningPinMode()) {
+            // Drawn as Google's incident callouts now (navigation): not twice.
+            if (IncidentPins.drawing()) return out;
             String from = "From " + ExternalTelemetry.provider();
             for (WarningPins.Pin p : ExternalTelemetry.warningPins()) {
                 Object list = SavedOnMap.listInfo("ungoogled:warning:" + p.key, "CUSTOM", p.title, p.emoji());
