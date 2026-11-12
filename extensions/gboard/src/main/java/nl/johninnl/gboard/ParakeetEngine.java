@@ -163,7 +163,9 @@ final class ParakeetEngine {
         synchronized (ParakeetEngine.class) {
             if (libraryLoaded) return;
             LibraryLoader.setAutoLoadEnabled(false);
-            System.load(ParakeetStore.runtimeLibrary(context).getPath());
+            File library = ParakeetStore.runtimeLibrary(context);
+            if (!ParakeetStore.sealLibrary(library)) Log.w(TAG, "Could not make the speech runtime read-only");
+            System.load(library.getPath());
             libraryLoaded = true;
         }
     }

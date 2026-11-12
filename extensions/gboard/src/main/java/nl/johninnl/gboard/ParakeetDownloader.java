@@ -148,6 +148,7 @@ public final class ParakeetDownloader {
                 throw new IOException("Runtime library checksum mismatch");
             }
             move(staged, library);
+            ParakeetStore.sealLibrary(library);
             ParakeetStore.markVerified(library, ParakeetCatalog.RUNTIME_LIBRARY_SHA256);
             archive.delete();
         }

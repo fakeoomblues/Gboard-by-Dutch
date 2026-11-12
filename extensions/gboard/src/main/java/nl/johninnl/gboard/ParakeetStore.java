@@ -147,6 +147,17 @@ public final class ParakeetStore {
         dir.delete();
     }
 
+    /**
+     * Makes the downloaded runtime library read-only. Android 17 refuses to load a native library
+     * the app can still write (THROW_ERROR_FOR_WRITABLE_DCL for apps targeting API 37, switched on
+     * by an ART update), which would leave Gboard on its own recognizer. True when it is read-only.
+     */
+    static boolean sealLibrary(File library) {
+        if (!library.canWrite()) return true;
+        library.setWritable(false, false);
+        return !library.canWrite();
+    }
+
     static boolean verified(File file, long size, String sha256) {
         if (!file.isFile() || file.length() != size) return false;
         File marker = new File(file.getPath() + MARKER);
