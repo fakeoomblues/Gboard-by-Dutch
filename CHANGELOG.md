@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/bd0401cb1402971e24d2fba50849dd7e93f75f3b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.70.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [bd0401cb1402](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/bd0401cb1402971e24d2fba50849dd7e93f75f3b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.70.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.70.0...v1.70.1) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **release:** let an interrupted release finish in a verified workspace ([bd0401c](https://gitlab.com/johninnld/nl-morphe-patches/commit/bd0401cb1402971e24d2fba50849dd7e93f75f3b))
+* **release:** retry bundle downloads that GitLab rate-limits ([1150e80](https://gitlab.com/johninnld/nl-morphe-patches/commit/1150e807a0ef4071fea63d599bc882905f38dd5b))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8c36b41428011513bed191385be556fbf5979abc/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.70.0.**
