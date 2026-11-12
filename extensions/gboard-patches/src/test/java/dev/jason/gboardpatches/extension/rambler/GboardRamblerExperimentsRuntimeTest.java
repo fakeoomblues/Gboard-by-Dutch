@@ -20,8 +20,6 @@ public class GboardRamblerExperimentsRuntimeTest {
         }
         assertEquals(Boolean.TRUE, GboardRamblerExperimentsRuntime.applyAppContextFlag(
                 "agentic_dictation_enable_app_info_context", Boolean.FALSE));
-        assertEquals(Boolean.TRUE, GboardRamblerExperimentsRuntime.applyAutoRetryFlag(
-                "agentic_dictation_enable_auto_parallel_retry", Boolean.FALSE));
 
         Object stock = Boolean.FALSE;
         assertSame(stock, GboardRamblerExperimentsRuntime.applyCustomInstructionFlag(
@@ -30,8 +28,6 @@ public class GboardRamblerExperimentsRuntimeTest {
                 "agentic_dictation_enable_custom_instruction", stock));
         assertSame(stock, GboardRamblerExperimentsRuntime.applyCursorEditingFlag(
                 "agentic_dictation_enable_auto_parallel_retry", stock));
-        assertSame(stock, GboardRamblerExperimentsRuntime.applyAutoRetryFlag(
-                "agentic_dictation_enable_proactive_parallel_asr", stock));
         Object text = "false";
         assertSame(text, GboardRamblerExperimentsRuntime.applyAppContextFlag(
                 "agentic_dictation_enable_app_info_context", text));

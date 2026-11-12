@@ -19,8 +19,6 @@ public final class GboardRamblerExperimentsRuntime {
     public static final String APP_CONTEXT_FLAG = "agentic_dictation_enable_app_info_context";
     /** Whole-utterance pattern that fires the field's Send action. */
     public static final String SEND_COMMAND_FLAG = "send_command_regex";
-    /** Retries a failed Rambler request on its own, beside Google's on-device recognizer. */
-    public static final String AUTO_RETRY_FLAG = "agentic_dictation_enable_auto_parallel_retry";
 
     /**
      * Gboard's own English pattern ({@code (?i)^[^a-z0-9]*sen[dt][^a-z0-9]*$}) plus the Dutch
@@ -56,11 +54,6 @@ public final class GboardRamblerExperimentsRuntime {
         return SEND_COMMAND_FLAG.equals(flagName) && originalResult instanceof String
                 ? SEND_COMMAND_PATTERN
                 : originalResult;
-    }
-
-    /** Flag-family hook for Rambler automatic retry. */
-    public static Object applyAutoRetryFlag(String flagName, Object originalResult) {
-        return AUTO_RETRY_FLAG.equals(flagName) ? enabled(originalResult) : originalResult;
     }
 
     private static Object enabled(Object originalResult) {

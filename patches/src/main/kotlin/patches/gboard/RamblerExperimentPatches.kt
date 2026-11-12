@@ -155,20 +155,3 @@ val ramblerDutchSendCommand = bytecodePatch(
         ),
     )
 }
-
-@Suppress("unused")
-val ramblerAutomaticRetry = bytecodePatch(
-    name = "Rambler automatic retry (experimental)",
-    description = "When a Rambler request fails, Gboard retries the recording on its own, together with Google's " +
-        "on-device recognizer, instead of waiting for you to tap Retry. Requires Rambler voice typing.",
-    default = false,
-) {
-    compatibleWith(gboard)
-    dependsOn(
-        originalInput, ramblerVoiceTyping,
-        gboardFlagFamilyFeaturePatch(
-            description = "Retry failed Rambler requests automatically.",
-            feature = GboardFlagFamilyFeature.RAMBLER_AUTO_RETRY,
-        ),
-    )
-}
