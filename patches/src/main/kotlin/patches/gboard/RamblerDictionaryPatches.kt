@@ -42,12 +42,12 @@ private val ramblerDictionaryFlags = gboardFlagFamilyFeaturePatch(
 @Suppress("unused")
 val ramblerPersonalDictionary = bytecodePatch(
     name = "Rambler personal dictionary",
-    description = "Adds Rambler's voice correction list to Gboard settings → Voice typing → Rambler: a list of names and " +
-        "words you add, import or export, which Rambler receives with every dictation so it spells them right. " +
+    description = "Adds Voice dictionary to Gboard settings → Voice typing, with Gboard's voice correction list: names " +
+        "and words you add, import or export, which Rambler receives with every dictation so it spells them right. " +
         "Requires Rambler voice typing.",
 ) {
     compatibleWith(gboard)
-    dependsOn(originalInput, ramblerVoiceTyping, ramblerDictionaryFlags)
+    dependsOn(originalInput, ramblerVoiceTyping, ramblerDictionaryFlags, voiceDictionarySettings)
 }
 
 /** How Gboard's own "Import words" action adds words to the voice correction list. */
