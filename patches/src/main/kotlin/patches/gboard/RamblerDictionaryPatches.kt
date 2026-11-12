@@ -9,6 +9,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMuta
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
@@ -20,6 +21,7 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 import dev.jason.gboardpatches.patches.gboard.shared.GboardFlagFamilyFeature
 import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatch
 
@@ -148,6 +150,21 @@ private fun verifyMuseStats(kind: FieldReference) {
     }
 }
 
+/**
+ * The store's `read(kind, Stats.class)`, which the list's settings screen uses to load the words. It
+ * returns null until Gboard has registered the store, exactly when an update would be dropped.
+ */
+internal fun correctionListRead(store: ClassDef, site: CorrectionListImport): MethodReference {
+    val kindType = site.statsKind.type
+    val reads = store.methods.filter {
+        it.returnType != "V" && !it.returnType.startsWith("[") &&
+            it.parameterTypes.map(CharSequence::toString) == listOf(kindType, CLASS_TYPE)
+    }
+    val read = reads.singleOrNull()
+        ?: throw PatchException("Expected one voice correction list read on ${store.type}, found ${reads.size}")
+    return ImmutableMethodReference(store.type, read.name, read.parameterTypes, read.returnType)
+}
+
 private fun MethodReference.smali() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
 private fun FieldReference.smali() = "$definingClass->$name:$type"
 
@@ -164,17 +181,19 @@ val ramblerContactNames = bytecodePatch(
 
     execute {
         val site = resolveCorrectionListImport()
+        val read = correctionListRead(classDefBy(site.statsStore), site)
 
-        // Give the runtime's placeholder Gboard's own import call.
+        // Give the runtime's placeholder Gboard's own import call, made only once the list's store
+        // can be read; before that Gboard drops the words without a trace.
         val runtime = mutableClassDefBy(CONTACTS_RUNTIME)
         val placeholder = runtime.methods.singleOrNull {
             it.name == "addToVoiceCorrectionList" && AccessFlags.STATIC.isSet(it.accessFlags) &&
-                it.parameterTypes.map(CharSequence::toString) == listOf(CONTEXT_TYPE, WORD_SET)
+                it.parameterTypes.map(CharSequence::toString) == listOf(CONTEXT_TYPE, WORD_SET) && it.returnType == "Z"
         } ?: throw PatchException("Rambler contacts runtime placeholder missing")
         runtime.methods.remove(placeholder)
         runtime.methods.add(ImmutableMethod(
             runtime.type, placeholder.name, placeholder.parameterTypes.map { ImmutableMethodParameter(it.toString(), null, null) },
-            "V", placeholder.accessFlags, null, null, MutableMethodImplementation(7),
+            "Z", placeholder.accessFlags, null, null, MutableMethodImplementation(7),
         ).toMutable().apply {
             addInstructionsWithLabels(0, """
                 invoke-static {p0}, $MODULE_MANAGER->getInstance($CONTEXT_TYPE)$MODULE_MANAGER
@@ -182,16 +201,22 @@ val ramblerContactNames = bytecodePatch(
                 const-class v1, ${site.statsStore}
                 invoke-virtual {v0, v1}, ${site.moduleLookup.smali()}
                 move-result-object v0
-                if-eqz v0, :done
+                if-eqz v0, :unavailable
                 check-cast v0, ${site.statsStore}
                 sget-object v1, ${site.statsKind.smali()}
                 const-class v2, ${site.statsClass}
+                invoke-interface {v0, v1, v2}, ${read.smali()}
+                move-result-object v3
+                if-eqz v3, :unavailable
                 new-instance v3, ${site.addWords.definingClass}
                 const/4 v4, 0x0
                 invoke-direct {v3, p1, v4}, ${site.addWords.smali()}
                 invoke-interface {v0, v1, v2, v3}, ${site.update.smali()}
-                :done
-                return-void
+                const/4 v0, 0x1
+                return v0
+                :unavailable
+                const/4 v0, 0x0
+                return v0
             """)
         })
 

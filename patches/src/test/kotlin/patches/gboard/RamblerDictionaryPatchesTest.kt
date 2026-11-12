@@ -10,6 +10,10 @@ import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstructio
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableTypeReference
+import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.immutable.ImmutableClassDef
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -66,5 +70,37 @@ class RamblerDictionaryPatchesTest {
     @Test
     fun rejectsTwoUpdates() {
         assertThrows(PatchException::class.java) { correctionListImport(stock() + stock()) }
+    }
+
+    private fun storeMethod(name: String, params: List<String>, returns: String) = ImmutableMethod(
+        "Lryi;", name, params.map { ImmutableMethodParameter(it, null, null) }, returns,
+        AccessFlags.PUBLIC.value or AccessFlags.ABSTRACT.value, null, null, null,
+    )
+
+    private fun store(vararg methods: ImmutableMethod) = ImmutableClassDef(
+        "Lryi;", AccessFlags.INTERFACE.value, null, null, null, null, null, methods.toList(),
+    )
+
+    /** UserFeatureCache's interface in Gboard 18.6.3: c reads, n/t update, p serializes. */
+    private val stockStore = arrayOf(
+        storeMethod("c", listOf("Lrxt;", "Ljava/lang/Class;"), "Laafn;"),
+        storeMethod("n", listOf("Lrxt;", "Ljava/lang/Class;", "Lvzs;"), "V"),
+        storeMethod("t", listOf("Lrxt;", "Ljava/lang/Class;", "Lvzs;"), "V"),
+        storeMethod("p", listOf("Lrxt;"), "[B"),
+        storeMethod("d", emptyList(), "Laafn;"),
+    )
+
+    @Test
+    fun findsTheReadTheListScreenUses() {
+        val read = correctionListRead(store(*stockStore), correctionListImport(stock()))
+        assertEquals("Lryi;->c(Lrxt;Ljava/lang/Class;)Laafn;", "${read.definingClass}->${read.name}(${read.parameterTypes.joinToString("")})${read.returnType}")
+    }
+
+    @Test
+    fun rejectsAStoreWithoutOneRead() {
+        val site = correctionListImport(stock())
+        assertThrows(PatchException::class.java) { correctionListRead(store(*stockStore.drop(1).toTypedArray()), site) }
+        val second = storeMethod("e", listOf("Lrxt;", "Ljava/lang/Class;"), "Ljava/lang/Object;")
+        assertThrows(PatchException::class.java) { correctionListRead(store(*stockStore, second), site) }
     }
 }

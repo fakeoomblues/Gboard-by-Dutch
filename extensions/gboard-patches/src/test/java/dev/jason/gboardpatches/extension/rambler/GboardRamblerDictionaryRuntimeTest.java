@@ -1,12 +1,15 @@
 package dev.jason.gboardpatches.extension.rambler;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
@@ -52,5 +55,22 @@ public class GboardRamblerDictionaryRuntimeTest {
                 Arrays.asList("Bo", "Cas", "Daan"), new HashSet<>(), 1).size());
         assertEquals(0, GboardRamblerContactsRuntime.selectNewNames(
                 Arrays.asList("Bo", "Cas"), new HashSet<>(), 0).size());
+    }
+
+    @Test
+    public void keepsTryingUntilTheListIsReady() throws InterruptedException {
+        AtomicInteger tries = new AtomicInteger();
+        assertTrue(GboardRamblerContactsRuntime.addWhenReady(() -> tries.incrementAndGet() == 3, 5, 0));
+        assertEquals(3, tries.get());
+    }
+
+    @Test
+    public void reportsAListThatNeverBecomesReady() throws InterruptedException {
+        AtomicInteger tries = new AtomicInteger();
+        assertFalse(GboardRamblerContactsRuntime.addWhenReady(() -> {
+            tries.incrementAndGet();
+            return false;
+        }, 4, 0));
+        assertEquals(4, tries.get());
     }
 }
