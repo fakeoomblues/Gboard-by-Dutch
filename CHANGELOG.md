@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/5c8760cc4fc77222000eda1c1fb27d1be87b1ee7/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.67.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [5c8760cc4fc7](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/5c8760cc4fc77222000eda1c1fb27d1be87b1ee7). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.67.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.67.1...v1.67.2) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** load the feature cache that stores Rambler's voice correction list ([5c8760c](https://gitlab.com/johninnld/nl-morphe-patches/commit/5c8760cc4fc77222000eda1c1fb27d1be87b1ee7))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/715754fa768b1e1e0406dff8c84a834085d33288/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.67.1.**
