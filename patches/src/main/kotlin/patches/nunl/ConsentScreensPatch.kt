@@ -6,7 +6,7 @@ import app.morphe.patcher.patch.bytecodePatch
 @Suppress("unused")
 val skipConsentScreens = bytecodePatch(
     name = "Skip consent screens",
-    description = "Skips automatic privacy and notification/account offers as a guest while keeping topic selection, manual settings and consent choices.",
+    description = "Skips automatic privacy prompts and onboarding offers such as notifications, an account or NUjij as a guest while keeping topic selection, manual settings and consent choices.",
 ) {
     dependsOn(originalInput)
     compatibleWith(nunl)

@@ -1,4 +1,4 @@
-"""Independently verify NU.nl 26.9.0 decoded patch effects. No flags checks original."""
+"""Independently verify NU.nl 26.10.0 decoded patch effects. No flags checks original."""
 import argparse
 import base64
 import hashlib
@@ -77,18 +77,18 @@ TRACK_EMPTY = [(APP+'network/modifiers/UDSTokenHeaderModifier','getValue()Ljava/
 FLAGS_TRUE=['firebase_analytics_collection_deactivated','firebase_performance_collection_deactivated']
 FLAGS_FALSE=['firebase_analytics_collection_enabled','google_analytics_automatic_screen_reporting_enabled','google_analytics_adid_collection_enabled','google_analytics_sgtm_upload_enabled','google_analytics_default_allow_analytics_storage','google_analytics_default_allow_ad_storage','google_analytics_default_allow_ad_user_data','google_analytics_default_allow_ad_personalization_signals','firebase_crashlytics_collection_enabled','firebase_sessions_enabled','firebase_performance_collection_enabled','firebase_performance_logcat_enabled','delivery_metrics_exported_to_big_query_enabled']
 # Digests populated from original independently decoded APK before production edits.
-RETAINED = {'be/dpgmedia/privacy/privacygatesdk/ui/WebViewFactory$initChromeWebViewClient$1->onCreateWindow(Landroid/webkit/WebView;ZZLandroid/os/Message;)Z': '31f4bb7ecda3b2f5073ff73e18a1e03e7080a828704968380039294f785dbc96',
+RETAINED = {'be/dpgmedia/privacy/privacygatesdk/ui/WebViewFactory$initChromeWebViewClient$1->onCreateWindow(Landroid/webkit/WebView;ZZLandroid/os/Message;)Z': 'c1cb7ee7507527445792161759ef4856962280888fdd842f8c3a888f66c605a2',
  'com/mondriaan/dpns/client/android/DPNSDeliveryStatisticsIntentService->onHandleIntent(Landroid/content/Intent;)V': '027e0d228fe54f52f6a449ce2a6343306732b46b6b46ff4a9e3e1209a7960887',
  'nl/nu/android/bff/data/mappers/BlockMapper->createCarouselLinkBlock(Lnl/nu/performance/api/client/objects/CarouselLinkBlock;)Lnl/nu/android/bff/domain/models/BlockData$Container$LinkContainer;': '28cf56d9e3e99e87d538370081988f2f4e6ace435bfd170db2ec2e16638cda36',
  'nl/nu/android/bff/data/mappers/BlockMapper->createPairedLinkBlock(Lnl/nu/performance/api/client/objects/PairedLinkBlock;)Lnl/nu/android/bff/domain/models/BlockData$Container$LinkContainer;': '8d7d5dc280549c09060c28a80bb9fd574965ed6aff0b88f27479a7e22e5b98a1',
  'nl/nu/android/bff/data/mappers/BlockMapper->map(Lnl/nu/performance/api/client/interfaces/Block;Ljava/lang/String;)Lnl/nu/android/bff/domain/models/BlockData;': '1cb9a4bd96ecebbc97d0fd189b9ae72029fbb94f64169429d08cf51a783364a1',
- 'nl/nu/android/bff/data/mappers/TargetMapper->mapConsentTarget(Lnl/nu/performance/api/client/objects/ConsentTarget;Lnl/nu/android/bff/domain/models/actions/Action;Lnl/nu/android/bff/domain/models/actions/Action;)Lnl/nu/android/bff/domain/models/actions/NavigationAction$BFFNavigationAction$OpenConsent;': 'c2a920019e9463016276dea51018ad018a076afb39f979df254b47a6c948628a',
+ 'nl/nu/android/bff/data/mappers/TargetMapper->mapConsentTarget(Lnl/nu/performance/api/client/objects/ConsentTarget;Lnl/nu/android/bff/domain/models/actions/Action;Lnl/nu/android/bff/domain/models/actions/Action;)Lnl/nu/android/bff/domain/models/actions/NavigationAction$BFFNavigationAction$OpenConsent;': 'adfe1b0f77d8e008de0de448f4c8c70109f4bc537e48beea7db1ed15beb76d25',
  'nl/nu/android/bff/data/video/PlayerConfigFactoryImpl->createDefaultHorizontalBuilder(Ljava/lang/String;Ljava/lang/String;)Lcom/jwplayer/pub/api/configuration/PlayerConfig$Builder;': '3a2adb5ebb744f1597648b731e60e1336f576d383f328ea0dfffd6a11f6eb2e9',
  'nl/nu/android/bff/data/video/PlayerConfigFactoryImpl->createDefaultVerticalBuilder(Ljava/lang/String;Ljava/lang/String;Z)Lcom/jwplayer/pub/api/configuration/PlayerConfig$Builder;': 'd91870c1588b193940208ccacb60928435bb77058757aacbf44c839b4e853e0e',
- 'nl/nu/android/bff/domain/use_cases/consent/ResurfaceConsentUseCase->invoke(Landroid/app/Activity;)V': 'fa64854ead9d8503ebfeb28ddd1f03b330d402e7d4163b10575b25c7232c6d5e',
+ 'nl/nu/android/bff/domain/use_cases/consent/ResurfaceConsentUseCase->invoke(Landroid/app/Activity;Ljava/lang/String;)V': 'd96ecd7691bb781c5eb52eb4e31e14a5a2e77ec7bdf1605071b4d7c5c12400e7',
  'nl/nu/android/bff/domain/use_cases/remote/ProcessWebViewEventUseCase->invoke(Lnl/nu/android/bff/domain/models/ScreenEvent$BlockEvent$OnWebViewEvent;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;': 'd9dbdaeb53a572c58c8f1d3796842d001969d99fc045d4440d167e0f77833d2f',
- 'nl/nu/android/bff/presentation/content/ContentFragment->resurfaceContent()V': 'c99774aec08349f0160cf0eda352c10a7e13999b5d26d65fa1fef8e7ce4938ba',
- 'nl/nu/android/bff/presentation/content/EventProcessor->processCompletableEvent(Lnl/nu/android/bff/presentation/models/UIEvent$Completable;)V': '3bae77781731590d7696fcb9a2a202f424f7a41af25432a2f051a30cd76c8780',
+ 'nl/nu/android/bff/presentation/content/ContentFragment->resurfaceContent(Ljava/lang/String;)V': '35b0747f5beb77270786b13dc4bd2c43d0b7cb8f3df8cd025a1ee156533473e9',
+ 'nl/nu/android/bff/presentation/content/EventProcessor->processCompletableEvent(Lnl/nu/android/bff/presentation/models/UIEvent$Completable;)V': '693bb5a321c572db2e2c5835f84bd3f39f04aa270615f6a0d70247b699e8aee6',
  'nl/nu/android/bff/presentation/views/webview/F1WebBlockResponseHandler->handleMessage(Ljava/lang/String;Landroid/webkit/WebView;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V': 'f7d7bd14ef0d198e10b94e48ee8f439f3f629ba9eee592d3e315d10fafb9c3d5',
  'nl/nu/android/bff/presentation/views/webview/F1WebBlockResponseHandler->handleReady(Lnl/nu/android/bff/presentation/views/webview/F1WebBlockMessage;Landroid/webkit/WebView;)V': 'f86495b7af9624073ed91054cc72fbe537b80406de8ddb5d3f555da42ee74664',
  'nl/nu/android/bff/presentation/views/webview/InlineWebView-><init>(Landroid/content/Context;)V': 'd59f025fd09e51495eae767b256b4529d0aef9dc8ad1bd32fef54aabe15663a1',
@@ -96,7 +96,7 @@ RETAINED = {'be/dpgmedia/privacy/privacygatesdk/ui/WebViewFactory$initChromeWebV
  'nl/nu/android/bff/presentation/views/webview/InlineWebView-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V': '8d5eb670279d71cf1664a0f3cdd9fc88beae9d7be8db3bfe6fc86532f58bec05',
  'nl/nu/android/bff/presentation/views/webview/InlineWebView-><init>(Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V': '2b36099be831d4c2bcda17d1ec88fcde9ee1333b1c7629da4751d99311bf1b45',
  'nl/nu/android/bff/presentation/views/webview/InlineWebView->bind(Lnl/nu/performance/api/client/objects/WebAppBlock;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V': '6a802db29e79209d6bf5a09cc297b1ae8bdf1a6f3171e9551871110c822fce6f',
- 'nl/nu/android/consent/privacygate/PrivacyGateService->resurfacePrivacyGate(Landroid/app/Activity;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;': '3f9a48e0b3e3c0ac76f16263e2482f257001ab1803d8aadffbda9c0d1699206f',
+ 'nl/nu/android/consent/privacygate/PrivacyGateService->resurfacePrivacyGate(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;': '65ea4f90dcf31c1d474543c34cc547ef8f219c11cbbea4a9415eb9e7136d6561',
  'nl/nu/android/network/modifiers/HeaderModifierInterceptor->intercept(Lokhttp3/Interceptor$Chain;)Lokhttp3/Response;': '0c31993a71963739dec6c73b7ff620c419331c0d06d9f98b8ebe9703605fead5',
  'nl/nu/android/push/tracking/TrackingEventBroadcastReceiver->onReceive(Landroid/content/Context;Landroid/content/Intent;)V': '32b45303083c3c63f7b9492d93a31dc90f03a0d214b8580b55a20593eeb916dc',
  'nl/nu/android/tracking/engine/TrackingEngineImpl->track(Lnl/nu/performance/api/client/interfaces/TrackingEvent;)V': '84f7d9873f722c2dc56a09af3b3cd7bfc38d291232b1399d3b97f9e20968fe11'}
@@ -370,8 +370,8 @@ def verify_models(root, ads, premium, tracking, check):
 
 PRIVACY_CLIENT = APP+'morphe/PrivacyWebViewClient'
 PRIVACY_FACTORY = 'be/dpgmedia/privacy/privacygatesdk/ui/WebViewFactory'
-PRIVACY_FACTORY_SIG = 'createWebView(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)Landroid/webkit/WebView;'
-PRIVACY_FACTORY_HASH = '1754902f300564707c1715456aa316401fc952164950a83a1e7b3806a3cb9d0e'
+PRIVACY_FACTORY_SIG = 'createWebView(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lbe/dpgmedia/privacy/privacygatesdk/ui/WebViewFlow;Lkotlin/jvm/functions/Function1;)Landroid/webkit/WebView;'
+PRIVACY_FACTORY_HASH = '083ce092f85aca12c19a6a9528474a1b4aa3629e0e14fd619b24bac4400df4ab'
 
 def verify_privacy_navigation(root, check):
     modern='shouldOverrideUrlLoading(Landroid/webkit/WebView;Landroid/webkit/WebResourceRequest;)Z'
@@ -464,16 +464,14 @@ def verify_functional_onboarding(root, tracking, check):
     if not tracking or not has(root,BFF_ENGINE,helper):return
     def event(type_,data):return {'__type':OBJ+'BFFEvent','eventType':type_,'data':data}
     def encode(value):return base64.b64encode(json.dumps(value,separators=(',',':')).encode()).decode()
-    allowed=[event('wncCardShownEvent',encode(card)) for card in ['breakingNews','promoteLogin','followTopics']]
+    # Every card's acknowledgement passes; NU stops re-serving a card only once it is recorded.
+    allowed=[event('wncCardShownEvent',encode(card)) for card in ['breakingNews','promoteLogin','followTopics','promoteNujij','unknownCard']]
     denied=[None,event(None,encode('breakingNews')),event('profileEventOccurredEvent',encode('breakingNews')),
             event('analyticsEvent',encode('promoteLogin')),event('wncCardShownEvent ',encode('followTopics')),
-            event('wncCardShownEvent',encode('unknownCard')),event('wncCardShownEvent','not-base64!'),
-            event('wncCardShownEvent',None),event('wncCardShownEvent',''),
-            event('wncCardShownEvent',encode({'card':'breakingNews'})),
-            event('wncCardShownEvent',base64.b64encode(b' "breakingNews" ').decode()),
-            event('wncCardShownEvent',encode('breakingNews').rstrip('='))]
-    for value in allowed:check(bool(execute(root,BFF_ENGINE,helper,[value])),'Admit evidenced onboarding acknowledgement '+value['data'])
-    for value in denied:check(not execute(root,BFF_ENGINE,helper,[value]),'Deny analytics/unknown/malformed/noncanonical event '+repr(value))
+            event('WNCCARDSHOWNEVENT',encode('followTopics')),
+            event('wncCardShownEvent',None),event('wncCardShownEvent','')]
+    for value in allowed:check(bool(execute(root,BFF_ENGINE,helper,[value])),'Admit onboarding card acknowledgement '+value['data'])
+    for value in denied:check(not execute(root,BFF_ENGINE,helper,[value]),'Deny analytics, other mutations and empty acknowledgements '+repr(value))
 
 
 def verify(root, selected):

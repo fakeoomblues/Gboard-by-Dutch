@@ -17,14 +17,11 @@ internal const val OBJECTS = "Lnl/nu/performance/api/client/objects/"
 internal const val TRANSFORMER = "${APP}bff/domain/data_integrity/ScreenTransformerImpl;"
 internal const val ANDROID = "http://schemas.android.com/apk/res/android"
 internal val nunl = Compatibility(
-    name = "NU.nl", packageName = "nl.sanomamedia.android.nu", apkFileType = ApkFileType.APKS,
+    name = "NU.nl", packageName = "nl.sanomamedia.android.nu", apkFileType = ApkFileType.XAPK,
     signatures = setOf("80d91716e88298892a4d34076ae3562ac9e2212e08048d09dbfeca2c26a6ed92", "a78f41c09876d3cccbd87b5ef0d537ce7e2577f45e2749aff8fc5f8d21f8e986"),
-    targets = listOf(AppTarget(version = "26.9.0", versionCode = 210156, minSdk = 29)),
+    targets = listOf(AppTarget(version = "26.10.0", versionCode = 210163, minSdk = 32)),
 )
-// Public publisher variants share the inspected DEX and version code.
-internal val originalInput = patches.shared.originalInput(
-    nunl, additionalMinSdksByVersion = mapOf("26.9.0" to setOf(32)),
-)
+internal val originalInput = patches.shared.originalInput(nunl)
 
 internal fun exact(cls: String, name: String, result: String = "V", vararg params: String) =
     Fingerprint(definingClass = cls, name = name, returnType = result, parameters = params.toList())

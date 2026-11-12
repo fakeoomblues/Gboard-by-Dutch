@@ -1,10 +1,10 @@
 # NU.nl
 
-**App version:** 26.9.0 · **Build:** 210156 · **Original file:** APKS
+**App version:** 26.10.0 · **Build:** 210163 · **Original file:** XAPK
 
-[Download original app](https://buzzheavier.com/bdaekl17vud0){ .md-button .md-button--primary }
+[Use your original XAPK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select the exact original file in Morphe Manager. Use the complete archive for a split app.
+Select the complete publisher-signed XAPK archive for this exact build (Android 12L+), including its device files.
 
 ## Patches
 
@@ -13,7 +13,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide Premium banner** | On | Hides the registration/Premium notice. NU+ article availability stays the same. |
 | **Hide ads** | On | Removes banners, video ads, sponsored items and NUshop promotions. |
-| **Skip consent screens** | On | Skips automatic advertising-consent screens; manual privacy choices remain available. |
+| **Skip consent screens** | On | Skips automatic advertising-consent screens and the welcome offers for notifications, an account and NUjij; topic selection and manual privacy choices remain available. |
 
 ## Advertising and tracking services
 

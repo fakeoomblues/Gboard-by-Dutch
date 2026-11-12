@@ -82,15 +82,28 @@ internal fun skipOptionalOnboarding() {
     flow.classDef.fields.add(MutableField(ImmutableField(COROUTINE, "morpheWelcomeScreenId", "Ljava/lang/String;", AccessFlags.PRIVATE.value, null, emptySet(), emptySet())))
     modal.classDef.fields.add(MutableField(ImmutableField(MODAL, "morpheDismissedWelcomeId", "Ljava/lang/String;", AccessFlags.PRIVATE.value, null, emptySet(), emptySet())))
     dismiss.classDef.fields.add(MutableField(ImmutableField(DISMISS, "morpheWelcomeSourceId", "Ljava/lang/String;", AccessFlags.PUBLIC.value, null, emptySet(), emptySet())))
+    // Every server onboarding card is an optional offer except topic selection
+    // and the forced-update notice. The 44-character prefix is the base64 of
+    // {"type":"OnboardingScreen","id":" and does not depend on the card name, so
+    // new promotions (such as the NUjij card) are skipped without a new release.
     presenter.classDef.methods.add(helper(PRESENTER, "morpheOptionalWelcomeId", "Z", listOf("Ljava/lang/String;"), 2, """
-        const-string v0, "eyJ0eXBlIjoiT25ib2FyZGluZ1NjcmVlbiIsImlkIjoiYnJlYWtpbmctbmV3cy1tb2RhbCJ9"
+        if-eqz p0, :deny
+        const-string v0, "eyJ0eXBlIjoiT25ib2FyZGluZ1NjcmVlbiIsImlkIjoi"
+        invoke-virtual {p0, v0}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
+        move-result v1
+        if-eqz v1, :deny
+        const-string v0, "eyJ0eXBlIjoiT25ib2FyZGluZ1NjcmVlbiIsImlkIjoib25ib2FyZGluZy1mb2xsb3ctdG9waWNzIn0="
         invoke-virtual {v0, p0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
         move-result v1
-        if-nez v1, :allow
-        const-string v0, "eyJ0eXBlIjoiT25ib2FyZGluZ1NjcmVlbiIsImlkIjoicHJvbW90ZS1sb2dpbi1tb2RhbCJ9"
+        if-nez v1, :deny
+        const-string v0, "eyJ0eXBlIjoiT25ib2FyZGluZ1NjcmVlbiIsImlkIjoiZGVwcmVjYXRlZEFwcCJ9"
         invoke-virtual {v0, p0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
         move-result v1
-        :allow
+        if-nez v1, :deny
+        const/4 v1, 0x1
+        return v1
+        :deny
+        const/4 v1, 0x0
         return v1
     """))
     flow.classDef.methods.add(helper(COROUTINE, "morpheRememberWelcome", "V", listOf(COROUTINE, ENTITY), 4, """

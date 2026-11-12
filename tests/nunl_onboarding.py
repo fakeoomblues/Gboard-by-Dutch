@@ -17,6 +17,8 @@ CONT='Lkotlin/coroutines/Continuation;'
 UNIT='Unit';SUSP=object()
 SID=lambda name:base64.b64encode(('{"type":"OnboardingScreen","id":"'+name+'"}').encode()).decode()
 PUSH=SID('breaking-news-modal');LOGIN=SID('promote-login-modal');TOPIC=SID('onboarding-follow-topics')
+# Card names the server may add later; the policy must not depend on them.
+NUJIJ=SID('promote-nujij-modal');DEPRECATED=SID('deprecatedApp')
 RUN='invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;'
 CAPTURE='morpheRememberWelcome(L'+CORO+';L'+ENTITY+';)V'
 FINISH='morpheFinishWelcome('+CONT+'Ljava/lang/Object;Ljava/lang/Object;)V'
@@ -68,7 +70,7 @@ PINNED=[('nl/nu/android/bff/presentation/modal_sheet/ModalSheetViewModel',
   '5f8d8a9c5b05f6ad88643d16158559613753d97ebdb31c1124d738283aa56c8b'),
  ('nl/nu/android/bff/domain/ScreenInteractor',
   'processAction(Lnl/nu/android/bff/domain/models/actions/Action;)V',
-  '964f082ca3964aeb101ab6a1e02f115095db574cc134488f50e212d0e3a1614a'),
+  '8489b84410f2583d2e51ad6de178a6737b3acb7627854f464c9cd47964ba8ed2'),
  ('nl/nu/android/bff/domain/ScreenInteractor',
   'onNextScreenAvailable(Lnl/nu/android/bff/domain/models/screen/ScreenLoadingType;)V',
   '461c159f62a5e90356de20ce15f56c5a8f4db7992db330584ecfe0308efaf8c8'),
@@ -109,8 +111,8 @@ PINNED.extend([('nl/nu/android/bff/presentation/content/ScreenPresenterImpl',
   'screenIdsToScreenIdentifiers(Ljava/util/List;)Ljava/util/List;',
   '069c7db256ddfe3bbd4047a865c21ae6aa79babe604e608e06f0176a6f5966ce'),
  ('nl/nu/android/bff/data/mappers/ScreenMapper',
-  'map(Lnl/nu/performance/api/client/objects/Screen;)Lnl/nu/android/bff/domain/models/screen/ScreenEntity;',
-  '20e0b03581c6802a26fe495db29b9b6c00c76c1515614876ab5fa59fcf2b0831'),
+  'map(Lnl/nu/performance/api/client/objects/Screen;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  'fdc8dc6c1e728a2c74ed2ae50d9204ece42679e3daac4644f696ed6419f67835'),
  ('nl/nu/android/bff/presentation/runtime_permission/RuntimePermissionProcessor',
   'request(Lnl/nu/android/bff/domain/models/RuntimePermission;Lkotlin/jvm/functions/Function1;)V',
   '0c9be8419d4b34a2275f79176f02be17a064ca526f17713f48d27c6a9da6870b'),
@@ -216,6 +218,7 @@ class Machine:
                     elif 'SpillingKt;->nullOutSpilledVariable(' in ref:result=None
                     elif 'Intrinsics;->checkNotNull' in ref:assert vals[0] is not None
                     elif 'String;->equals(' in ref:result=vals[0]==vals[1]
+                    elif 'String;->startsWith(' in ref:result=vals[0].startswith(vals[1])
                     elif 'Boolean;->valueOf(' in ref:result=bool(vals[0])
                     elif owner.endswith('PipUserRepository$$ExternalSyntheticBackport0') and target=='m(II)I':assert 0<=vals[0]<vals[1]
                     elif owner==BASE+'domain/models/BlockData' and target.startswith('getClickAction('):result=self.run(DEFAULT,target,vals)
@@ -297,7 +300,7 @@ def fixture(ids=(PUSH,LOGIN,TOPIC),current=None):
     return vm,presenter
 
 def coroutine(vm,presenter,id_):
-    ack={PUSH:'breakingNews',LOGIN:'promoteLogin',TOPIC:'followTopics'}.get(id_)
+    ack={PUSH:'breakingNews',LOGIN:'promoteLogin',TOPIC:'followTopics',NUJIJ:'promoteNujij'}.get(id_)
     action={'__type':'L'+DISMISS+';','successAction':None,'failureAction':None,'trackingEvents':[]}
     data={'screen':{'id':id_,'blocks':[{'__type':'L'+DEFAULT+';','clickAction':action}],'trackers':{'show':[ack] if ack else []}}}
     use={'bannerInvalidationUseCase':{},'dataStore':data,'bottomBarUseCase':{},'processTrackingEventsUseCase':{}}
@@ -313,6 +316,10 @@ def assert_optional_skipped(root):
     m,vm,_=fresh(root)
     assert ids(vm)==[TOPIC],('Fresh flow must reach interactive topics',vm['remainingScreenLoadingTypes'])
     assert m.acks==['breakingNews','promoteLogin'],'Retain actual acknowledgement processing before dismissal'
+    # A newly published promotional card is skipped and still acknowledged.
+    m=Machine(root);vm,presenter=fixture((PUSH,NUJIJ,LOGIN,TOPIC))
+    for id_ in [PUSH,NUJIJ,LOGIN]:m.drive(coroutine(vm,presenter,id_));m.flush()
+    assert ids(vm)==[TOPIC] and m.acks==['breakingNews','promoteNujij','promoteLogin'],('Skip new promotional card',ids(vm),m.acks)
 
 
 def stripped(root):
@@ -344,9 +351,9 @@ def verify(root:Path,enabled:bool):
         m.flush();assert ids(vm)==[LOGIN,TOPIC] and vm['stateHandle']['KEY_REMAINING_SCREENS'] is vm['remainingScreenLoadingTypes']
     # Both optional screens may be the last remaining card; original next intent
     # closes normally, with no invented replacement or infinite onboarding loop.
-    for sequence in [(LOGIN,TOPIC),(TOPIC,),('unknown',TOPIC),(PUSH,),(LOGIN,)]:
+    for sequence in [(LOGIN,TOPIC),(TOPIC,),('unknown',TOPIC),(PUSH,),(LOGIN,),(NUJIJ,TOPIC),(NUJIJ,),(DEPRECATED,TOPIC),(DEPRECATED,)]:
         m=Machine(root);vm,p=fixture(sequence);c=coroutine(vm,p,sequence[0]);m.drive(c);m.flush()
-        if sequence[0] in {PUSH,LOGIN}:
+        if sequence[0] in {PUSH,LOGIN,NUJIJ}:
             if len(sequence)>1:assert ids(vm)==list(sequence[1:])
             else:assert m.closed==[vm['stateHandle']['PARAM_RECREATE_INTENT']]
         else:assert ids(vm)==list(sequence) and not m.closed and 'dismiss' not in m.trace
@@ -445,7 +452,7 @@ def verify_kinds(root):
                         assert target in contract[2] and (kind=='static')==bool(contract[2][target]&8),(owner,target,kind)
                         # New platform calls are the established Java1 collection/
                         # String methods, available before NU's Android32 floor.
-                        assert (owner,target) in {('java/lang/String','equals(Ljava/lang/Object;)Z'),('java/util/Collections','emptyList()Ljava/util/List;'),('java/util/List','iterator()Ljava/util/Iterator;'),('java/util/List','isEmpty()Z'),('java/util/List','get(I)Ljava/lang/Object;'),('java/util/Iterator','hasNext()Z'),('java/util/Iterator','next()Ljava/lang/Object;')},('New API needs minimum-SDK audit',owner,target)
+                        assert (owner,target) in {('java/lang/String','equals(Ljava/lang/Object;)Z'),('java/lang/String','startsWith(Ljava/lang/String;)Z'),('java/util/Collections','emptyList()Ljava/util/List;'),('java/util/List','iterator()Ljava/util/Iterator;'),('java/util/List','isEmpty()Z'),('java/util/List','get(I)Ljava/lang/Object;'),('java/util/Iterator','hasNext()Z'),('java/util/Iterator','next()Ljava/lang/Object;')},('New API needs minimum-SDK audit',owner,target)
                 for op,owner,field in re.findall(r'\b(iget-object|iput-object)\s+[^\n]*?, (L[^;]+;)->(\S+)',body):
                     text=source(root,owner[1:-1]);matches=re.findall(r'^\.field ([^\n]*?) '+re.escape(field)+r'(?: = [^\n]*)?$',text,re.M)
                     assert len(matches)==1,(owner,field)

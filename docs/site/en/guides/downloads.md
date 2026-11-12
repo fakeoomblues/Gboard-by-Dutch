@@ -39,7 +39,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [NPO Start](../apps/npo-start.md) | 1.48.2-2405 / 240497937 | [APKS](https://buzzheavier.com/ys1rjymo12zp) |
 | [NPO Start Android TV](../apps/npo-start-android-tv.md) | 1.48.2-2405 / 245497937 | [APKS](https://buzzheavier.com/c7sdu1cfelij) |
 | [NRC](../apps/nrc.md) | 5.12.25 / 627 | [APK](https://buzzheavier.com/4kvfijnjpukd) |
-| [NU.nl](../apps/nunl.md) | 26.9.0 / 210156 | [APKS](https://buzzheavier.com/bdaekl17vud0) |
+| [NU.nl](../apps/nunl.md) | 26.10.0 / 210163 | [XAPK](#local-original-inputs) |
 | [Nieuwsblad](../apps/nieuwsblad.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/gunldnthepyn) |
 | [Omroep Brabant](../apps/omroep-brabant.md) | 11.1.0 / 7331764 | [APKS](https://buzzheavier.com/hkxqb9c6hj02) |
 | [Omroep West](../apps/omroep-west.md) | 20.1 / 10596 | [APKS](https://buzzheavier.com/c79v6uimo26s) |

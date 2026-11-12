@@ -137,9 +137,10 @@ val disableTracking = bytecodePatch(
     }
 }
 
-/** The first-party acknowledgement persists which onboarding cards were shown.
- * Only these three measured canonical payloads pass; analytics and unknown
- * BFF mutations stop before the original dispatcher collects or sends them. */
+/** The first-party acknowledgement persists which onboarding cards were shown;
+ * without it NU keeps serving the same card on every front page. Every card's
+ * wncCardShownEvent passes, so newly published cards are not re-served; analytics
+ * and other BFF mutations stop before the original dispatcher collects or sends them. */
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 private fun preserveOnboardingAcknowledgements() {
     val engine = "${APP}tracking/engine/TrackingEngineImpl;"
@@ -157,23 +158,14 @@ private fun preserveOnboardingAcknowledgements() {
         if-eqz v0, :deny
         invoke-virtual {p0}, $event->getData()Ljava/lang/String;
         move-result-object v0
-        const-string v1, "ImJyZWFraW5nTmV3cyI="
-        invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+        if-eqz v0, :deny
+        invoke-virtual {v0}, Ljava/lang/String;->length()I
         move-result v1
-        if-nez v1, :allow
-        const-string v1, "InByb21vdGVMb2dpbiI="
-        invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-        move-result v1
-        if-nez v1, :allow
-        const-string v1, "ImZvbGxvd1RvcGljcyI="
-        invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-        move-result v1
-        if-nez v1, :allow
+        if-eqz v1, :deny
+        const/4 v0, 0x1
+        return v0
         :deny
         const/4 v0, 0x0
-        return v0
-        :allow
-        const/4 v0, 0x1
         return v0
     """))
     entry.method.addInstructionsWithLabels(0,"""

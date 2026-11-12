@@ -144,8 +144,8 @@ internal fun installPrivacyWebClient() {
     exact(CLIENT,"<init>").method // Extension must have merged before the factory is changed.
     val factory = exact("Lbe/dpgmedia/privacy/privacygatesdk/ui/WebViewFactory;","createWebView","Landroid/webkit/WebView;",
         "Landroid/content/Context;","Ljava/lang/String;","Ljava/lang/String;","Z","Ljava/lang/String;","Ljava/lang/Boolean;",
-        "Ljava/lang/String;","Ljava/lang/String;","Lkotlin/jvm/functions/Function0;","Lkotlin/jvm/functions/Function0;",
-        "Lkotlin/jvm/functions/Function2;","Lkotlin/jvm/functions/Function0;").method
+        "Ljava/lang/String;","Ljava/lang/String;","Ljava/lang/String;","Lbe/dpgmedia/privacy/privacygatesdk/ui/WebViewFlow;",
+        "Lkotlin/jvm/functions/Function1;").method
     val anchors = factory.instructions.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
         ref?.definingClass == "Landroid/webkit/WebView;" && ref.name == "setWebChromeClient"

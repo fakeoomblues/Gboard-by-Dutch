@@ -19,7 +19,7 @@ Choose an app to see its patches, defaults and supported original file.
 | [Nieuwsblad](../nieuwsblad.md) | 22.0.0 | 2012316104 |
 | [NOS Teletekst](../nos-teletekst.md) | 2.8.10 | 62 |
 | [NRC](../nrc.md) | 5.12.25 | 627 |
-| [NU.nl](../nunl.md) | 26.9.0 | 210156 |
+| [NU.nl](../nunl.md) | 26.10.0 | 210163 |
 | [Omroep Brabant](../omroep-brabant.md) | 11.1.0 | 7331764 |
 | [Omroep West](../omroep-west.md) | 20.1 | 10596 |
 | [Parool](../parool.md) | 7.53.1 | 23136515 |
