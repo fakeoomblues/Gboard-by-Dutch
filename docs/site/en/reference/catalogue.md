@@ -317,7 +317,12 @@ Check the supported app versions and default setting for each patch. The app pag
 | Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler Dutch send command (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler app context (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler automatic retry (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler contact names | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler cursor-aware editing (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler custom instructions (experimental) | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | On | 18.6.3.1002251336-release-arm64-v8a |

@@ -14,6 +14,11 @@ Selecteer de arm64-v8a-APK van Google voor precies deze build (Android 12L+).
 | **Rambler voice typing** | Aan | Voegt Rambler van Google toe aan Gboard-instellingen → Spraakinvoer, als keuze naast Parakeet (de standaard-spraakinvoer van Gboard). Kies je **Rambler**, dan stuurt de microfoontoets je spraak naar de servers van Google. Die maken er afgewerkte tekst van en voeren gesproken bewerkingen uit, zoals "verwijder de laatste zin". Parakeet blijft de standaardkeuze. |
 | **Rambler personal dictionary** | Aan | Voegt de **lijst met spraakcorrecties** van Rambler toe aan Gboard-instellingen → Spraakinvoer → Rambler: namen en woorden die je toevoegt, importeert of exporteert. Rambler krijgt ze bij elk dictaat mee en schrijft ze daardoor goed. Werkt alleen samen met Rambler voice typing. |
 | **Rambler contact names** | Aan | Vult de lijst met spraakcorrecties met de namen uit je contacten. Namen die je verwijdert, komen niet terug; nieuwe contacten komen erbij zodra Rambler weer start. Werkt alleen samen met Rambler personal dictionary en toegang tot je contacten. |
+| **Rambler custom instructions (experimental)** | Uit | Voegt **Eigen instructies** toe aan Gboard-instellingen → Spraakinvoer → Rambler. Rambler krijgt die tekst bij elk dictaat mee en volgt hem alleen voor de stijl: spelling, interpunctie, taalgebruik, woordkeus en toon. Werkt alleen samen met Rambler voice typing. |
+| **Rambler cursor-aware editing (experimental)** | Uit | Rambler ziet ook de tekst na de cursor, zodat dicteren midden in een tekst aansluit. Met geselecteerde tekst gaat alleen de selectie mee, zodat een gesproken bewerking zoals "maak dit formeler" daarop werkt; het resultaat wordt daarna weer geselecteerd voor de volgende bewerking. Werkt alleen samen met Rambler voice typing. |
+| **Rambler app context (experimental)** | Uit | Rambler krijgt ook de naam van de app waarin je dicteert en de hinttekst van het veld, zodat de toon past bij een chat, e-mail of zoekopdracht. Google weet dan in welke app je typt. Werkt alleen samen met Rambler voice typing. |
+| **Rambler Dutch send command (experimental)** | Uit | Zeg je met Rambler alleen "verstuur", "versturen", "verzend" of "verzenden", dan drukt Gboard op de verzendknop van de app, zoals "send" in het Engels al doet. Alleen in velden met een verzendactie. Werkt alleen samen met Rambler voice typing. |
+| **Rambler automatic retry (experimental)** | Uit | Mislukt een Rambler-verzoek, dan probeert Gboard de opname zelf opnieuw, samen met de herkenning van Google op de telefoon, in plaats van te wachten tot je op Opnieuw tikt. Werkt alleen samen met Rambler voice typing. |
 | **Change package name** | Aan | Installeert de gepatchte Gboard onder een eigen pakketnaam (standaard app.morphe.android.inputmethod.latin), zodat hij naast de standaard-Gboard staat die op de meeste telefoons is ingebouwd. Je standaard-Gboard, de instellingen en het woordenboek blijven onaangeroerd; kies het gepatchte toetsenbord in de toetsenbordinstellingen van Android. |
 | **Custom branding** | Uit | Verandert de appnaam in de launcher, de toetsenbordlijst van Android en de app-informatie, en het app-icoon (standaard Parakeet, het originele Gboard-icoon of vijf andere ontwerpen), zodat je het gepatchte toetsenbord makkelijk onderscheidt van de standaardversie. |
 | **Clipboard Enhancements** | Aan | Bepaalt hoe lang gekopieerde fragmenten bewaard blijven, hoeveel er worden bewaard, hoeveel voorbeeldregels een kaart toont en of kaarten een aftelling, aanmaaktijd, volgnummer en kolomaantal tonen. |
@@ -57,12 +62,20 @@ Met **Rambler personal dictionary** toont Gboard-instellingen → Spraakinvoer �
 - **Contactnamen** vraagt Gboard om toegang tot je contacten. Met **Rambler contact names** komen de namen uit je contacten daarna in de lijst zodra Rambler start, en nieuwe contacten later ook. Namen die je verwijdert, blijven weg. Contacten zonder naam, alleen een e-mailadres of een telefoonnummer worden overgeslagen.
 - Het eigen persoonlijke woordenboek van Gboard onder Instellingen → Woordenboek blijft alleen voor typen, zoals Gboard op dat scherm meldt.
 
+### Experimentele Rambler-patches
+
+De vijf patches met (experimental) zetten Rambler-functies aan die al in Gboard 18.6.3 zitten, maar die Google uit laat staan. Ze bouwen en worden toegepast, maar zijn nog niet op een telefoon geprobeerd. Daarom staan ze standaard uit.
+
+- **Eigen instructies** zijn stijlregels, geen opdrachten: bijvoorbeeld "Schrijf Nederlands met Nederlandse aanhalingstekens. Gebruik je, niet u." Gboard verpakt ze in de eigen regels van Google, die ze beperken tot hoe gedicteerde tekst wordt geschreven.
+- Het **Nederlandse verzendcommando** reageert alleen als dat woord het enige is wat je zegt. Of Rambler een los "verstuur" teruggeeft als tekst die Gboard herkent, is nog niet bevestigd.
+- **App-context** en **cursorbewust bewerken** sturen Google meer van wat er op je scherm staat: de naam van de app, of de tekst na de cursor.
+
 ## Voor gebruik
 
 - Een telefoon met 64-bit ARM is nodig. Houd tijdens het downloaden ongeveer 1,4 GB vrij; het geïnstalleerde model neemt ongeveer 650 MB in beslag.
 - Tijdens het dicteren gebruikt het model ongeveer 700 MB geheugen. Na vijf minuten zonder gebruik wordt het weer vrijgegeven, dus de eerste zin na een pauze duurt even iets langer.
 - Met Change package name aan is de gepatchte Gboard een aparte app met eigen instellingen: zet hem aan via Android-instellingen → Toetsenbord en kies hem daarna. Zonder die patch kan hij niet worden geïnstalleerd op telefoons waarop Gboard is ingebouwd. Functies die afhangen van de eigen app-handtekening van Google werken in de gepatchte versie mogelijk niet; Parakeet heeft ze niet nodig.
-- De twaalf Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
+- De zeventien Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
 - Gecontroleerd op een Android 14-emulator: de instelling, de download en Nederlands, Engels en gemengd Nederlands-Engels dicteren in een tekstveld, plus stilte en achtergrondgeluid zonder losse tekst. Dicteren op een telefoon is nog niet bevestigd.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md)

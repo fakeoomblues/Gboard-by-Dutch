@@ -17,7 +17,7 @@ toolbar (`enable_jetson_in_toolbar`), emoji skin-tone replacement, PCM caching f
 
 ## Candidates worth opening
 
-1. **Custom instructions** — `agentic_dictation_enable_custom_instruction` (off). When on, Gboard reads the string pref
+1. **Custom instructions** (now the experimental patch "Rambler custom instructions") — `agentic_dictation_enable_custom_instruction` (off). When on, Gboard reads the string pref
    `pref_key_rambler_custom_instruction` and sends it as `<user_instruction>` inside the request's
    `user_preferences` bundle, wrapped in Google's own guard prompt (dictation style only: spelling, language
    conventions, vocabulary, formatting, punctuation, casing, tone; lowest priority; anti-jailbreak). **No settings
@@ -71,9 +71,10 @@ Data path:
   is off on our builds** even with the feature cache loaded. The v1 conversion also loads asset `postags-en.smfb`,
   which is absent from every split; Java only logs the miss, but the native processor may learn less (or nothing)
   without it.
-- Enabling it requires a byte/proto flag override (our flag-family hook covers `odi` boolean/long/string values, not
-  `oec` proto flags) returning a serialized string list containing `MuseStatsProcessor`. Unproven: the native
-  processor may need parameters the server normally supplies.
+- Enabling it needs an override of that proto flag. Proto flags are `byte[]` flags read through the same getter our
+  flag-family hook patches, so the hook can return a serialized list containing `MuseStatsProcessor`. Sessions also
+  depend on `enable_training_cache_metrics_processors`. Design and gate chain:
+  [correction learning proof of concept](2026-11-12-rambler-correction-learning-poc.md).
 - Not the same as `enhanced-voice-dictation-corrections` / `LearningController` / `PastCorrectionsSupplierImpl`
   (`enable_biasing_for_past_corrections`, default on): those feed on-device smart dictation (SODA speech
   enhancement), not Rambler.
