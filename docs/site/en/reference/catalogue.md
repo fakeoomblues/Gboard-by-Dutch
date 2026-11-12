@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.67.0**
+**Patch bundle: 1.67.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
