@@ -80,6 +80,53 @@ public class WarningPinsTest {
         assertTrue(WarningPins.select(view.carEvents(T + 50, e -> false), T + 50, false).isEmpty());
     }
 
+    static final double[] START = {52.3017, 4.9630}, END = {52.1213, 5.0228};
+
+    /** An average-speed control with its provider's own fixed start ([inside] false) or end point. */
+    static Bundle zone(String id, long sequence, long at, double[] position, String zonePoint, boolean inside) {
+        Bundle b = warning(id, sequence, at, position, at, true, false);
+        b.putString("native_type", "AVG_SPEED_CHECK"); b.putString("category", "speed_control"); b.putString("relevance", "zone");
+        b.putString("message", "Trajectcontrole"); b.putString("phase", inside ? "enter" : "approach");
+        if (zonePoint != null) b.putString("zone_point", zonePoint);
+        b.putInt("distance_m", inside ? 14000 : 800); b.putLong("distance_observed_elapsed_ms", at); b.putBoolean("distance_estimated", false);
+        b.putString("native_distance_kind", inside ? "remaining_in_segment" : "to_segment");
+        return b;
+    }
+
+    @Test public void averageSpeedControlIsPinnedAtItsStartBeforeEntryAndAtItsEndInside() {
+        WarningPins.Pin start = WarningPins.select(List.of(event(zone("AvgSpeedCheck:a2", 1, T, START, "start", false))), T, true).get(0);
+        assertEquals("average_speed", start.icon); assertEquals("Trajectcontrole", start.title);
+        assertEquals(START[0], start.lat, 0); assertEquals(START[1], start.lng, 0);
+        assertEquals("SPEED_CAMERA_ZONE", IncidentPins.type(start.icon));
+        WarningPins.Pin end = WarningPins.select(List.of(event(zone("AvgSpeedCheck:a2", 2, T + 60_000, END, "end", true))), T + 60_000, true).get(0);
+        assertEquals(END[0], end.lat, 0); assertEquals(END[1], end.lng, 0);
+        assertEquals("one warning, one pin that moves from start to end", start.key, end.key);
+        assertFalse("a moved pin is drawn again", IncidentPins.same(end, start));
+        assertEquals("a fixed native point, kept until the state ends", 1,
+            WarningPins.select(List.of(event(zone("AvgSpeedCheck:a2", 2, T, END, "end", true))), T + 29_999, false).size());
+    }
+
+    @Test public void zoneCoordinatesOutsideTheirOwnPhaseOrUnmarkedGetNoPin() {
+        assertTrue("an entry point while inside", WarningPins.select(List.of(event(zone("z", 1, T, START, "start", true))), T, false).isEmpty());
+        assertTrue("an end point before entry", WarningPins.select(List.of(event(zone("z", 1, T, END, "end", false))), T, false).isEmpty());
+        assertTrue("no zone_point", WarningPins.select(List.of(event(zone("z", 1, T, START, null, false))), T, false).isEmpty());
+        Bundle exit = zone("z", 1, T, END, "end", true); exit.putString("phase", "exit");
+        assertTrue("exit", WarningPins.select(List.of(event(exit)), T, false).isEmpty());
+        assertTrue("no coordinates", WarningPins.select(List.of(event(zone("z", 1, T, null, "start", false))), T, false).isEmpty());
+    }
+
+    @Test public void zonePinLeavesWithTheZonesClear() {
+        WarningView view = new WarningView();
+        view.events(List.of(event(zone("AvgSpeedCheck:a2", 1, T, END, "end", true))));
+        assertEquals(1, WarningPins.select(view.carEvents(T + 10, e -> true), T + 10, false).size());
+        Bundle clear = new Bundle();
+        clear.putInt("protocol_version", 1); clear.putString("provider_session", SESSION); clear.putString("warning_id", "AvgSpeedCheck:a2");
+        clear.putLong("sequence", 2); clear.putLong("revision", 2); clear.putLong("announcement_index", 0);
+        clear.putString("operation", "CLEAR"); clear.putLong("observed_elapsed_ms", T + 20); clear.putLong("issued_elapsed_ms", T + 20);
+        view.events(List.of(WarningCodec.decode(clear, T + 20)));
+        assertTrue(WarningPins.select(view.carEvents(T + 30, e -> true), T + 30, false).isEmpty());
+    }
+
     @Test public void keyIsStablePerWarningAndCarriesNoIdentityText() {
         WarningEvent first = event(warning("road-123", 1, T, HERE, T, true, false));
         WarningEvent later = event(warning("road-123", 7, T + 5000, new double[]{51.5, 5.5}, T + 5000, true, false));

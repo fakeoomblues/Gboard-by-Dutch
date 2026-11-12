@@ -19,6 +19,23 @@ public final class WarningGeometry {
                 &&("WITHIN".equals(fields.get("native_segment_phase"))||"InZone".equals(fields.get("native_zone_state"))||"LeftZone".equals(fields.get("native_zone_state")));
     }
     public static boolean pointDisplay(WarningEvent event){return event.relevance.equals("point_ahead")&&!remainingSegment(event);}
+    /**
+     * An average-speed control's own fixed road point (contract v1, Geometry, 12 November 2026): its native
+     * start ({@code zone_point=start}) before entry, its native end ({@code zone_point=end}) while inside.
+     * Only a map marker may use it: it carries no extent, never yields a receiver distance (the zone is not
+     * {@code point_ahead}) and never retires the zone by passage. Returns "start", "end" or null.
+     */
+    public static String zonePoint(WarningEvent event){
+        if(event==null||!"zone".equals(event.relevance)||event.phase==WarningEvent.Phase.EXIT
+                ||event.latitude==null||event.longitude==null||event.positionEstimated)return null;
+        java.util.Map<String,Object> fields=event.fields();
+        if(!Boolean.TRUE.equals(fields.get("native_point_target")))return null;
+        Object point=fields.get("zone_point");boolean inside=remainingSegment(event);
+        // Flitsmeister marks its own zone announcement "enter" while still approaching; the start stays.
+        if("start".equals(point)&&!inside&&(event.phase==WarningEvent.Phase.APPROACH||event.phase==WarningEvent.Phase.ENTER))return "start";
+        if("end".equals(point)&&inside)return "end";
+        return null;
+    }
     public static WarningGeometry fromNative(WarningEvent event,long now){
         if(!event.stateValid(now))return null;
         java.util.Map<String,Object> fields=event.fields();

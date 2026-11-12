@@ -84,6 +84,51 @@ public class NavigationBroadcastsTest {
   assertEquals("UPSERT",zone.getString("operation"));assertEquals("remaining_in_segment",zone.getString("native_distance_kind"));
   assertTrue(zone.getInt("distance_m",-1)>0);
  }
+ /** One control in two segments, listed out of order: segment 1 starts it, segment 2 ends it. */
+ public static class IndexedSegment extends Segment {
+  final int index; final java.util.List<Point> path;
+  IndexedSegment(int index,Point... path){this.index=index;this.path=java.util.Arrays.asList(path);}
+  @Override public int getIndex(){return index;}
+  @Override public java.util.List<Point> getGpsPath(){return path;}
+ }
+ public static class TwoSegmentReport extends Report {
+  @Override public String getId(){return "a2-north";}
+  @Override public java.util.List<Segment> getSegments(){return java.util.Arrays.asList(
+   new IndexedSegment(2,new Point(52,5.01),new Point(52,5.02)),new IndexedSegment(1,new Point(52,5),new Point(52,5.01)));}
+ }
+ static android.os.Bundle lastFor(java.util.List<android.os.Bundle> warnings,String id){
+  android.os.Bundle found=null;for(android.os.Bundle b:warnings)if(id.equals(b.getString("warning_id")))found=b;return found;
+ }
+ @Test public void averageSpeedControlMarksItsOwnStartBeforeEntryAndItsOwnEndInside() {
+  java.util.List<android.os.Bundle> warnings=new java.util.ArrayList<>();NativeWarnings.resetForTest(app,warnings::add);
+  Task task=new Task(); task.d=new TwoSegmentReport();
+  Location approaching=fix(20); approaching.setLongitude(4.995);
+  NavigationBroadcasts.zone(task,approaching); shadowOf(Looper.getMainLooper()).idle();
+  android.os.Bundle start=lastFor(warnings,"AvgSpeedCheck:a2-north");
+  assertNotNull(start);assertEquals("approach",start.getString("phase"));assertEquals("zone",start.getString("relevance"));
+  assertEquals("start",start.getString("zone_point"));assertEquals("to_segment",start.getString("native_distance_kind"));
+  assertEquals(52,start.getDouble("latitude"),0);assertEquals(5,start.getDouble("longitude"),0);
+  assertTrue(start.getBoolean("native_point_target"));assertFalse(start.getBoolean("position_estimated",true));
+  assertEquals("native_report_geometry",start.getString("position_clock_origin"));
+  assertEquals(start.getLong("distance_observed_elapsed_ms"),start.getLong("position_observed_elapsed_ms"));
+
+  shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+  Location inside=fix(20); inside.setLongitude(5.015);
+  NavigationBroadcasts.zone(task,inside); shadowOf(Looper.getMainLooper()).idle();
+  android.os.Bundle end=lastFor(warnings,"AvgSpeedCheck:a2-north");
+  assertEquals("enter",end.getString("phase"));assertEquals("end",end.getString("zone_point"));
+  assertEquals("remaining_in_segment",end.getString("native_distance_kind"));
+  assertEquals("The joined control keeps one point pair: the last point of its last segment",5.02,end.getDouble("longitude"),0);
+  assertEquals(52,end.getDouble("latitude"),0);assertTrue(end.getBoolean("native_point_target"));
+  for(android.os.Bundle b:warnings)if("AvgSpeedCheck:a2-north".equals(b.getString("warning_id"))&&b.containsKey("longitude")){
+   double lon=b.getDouble("longitude");assertTrue("Only the control's own start or end, never a point along it",lon==5||lon==5.02);}
+  assertFalse("No polyline is shipped",end.containsKey("gps_path"));
+
+  shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+  Location past=fix(20); past.setLongitude(5.03);
+  NavigationBroadcasts.zone(task,past); shadowOf(Looper.getMainLooper()).idle();
+  assertEquals("Leaving the control clears it, and its marker with it","CLEAR",lastFor(warnings,"AvgSpeedCheck:a2-north").getString("operation"));
+ }
  @Test public void zoneProgressAndAverageUseSameObservedDistanceContractAsWaze() {
   Task task=new Task(); Location first=fix(20); first.setLongitude(5.005);
   NavigationBroadcasts.zone(task,first);

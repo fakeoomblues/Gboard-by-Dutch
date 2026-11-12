@@ -42,18 +42,21 @@ final class AlertMarkers {
     /**
      * Only a native coordinate pair is a target. A fixed native point keeps its marker until the
      * event state ends; any other point (Waze reports, responders) needs a position observed within
-     * the last 5 s. In-zone and nonspatial warnings have no point to draw.
+     * the last 5 s. Nonspatial warnings have no point to draw. An average-speed control is drawn only
+     * at the fixed native point its provider marks: its start before entry, its end inside (contract
+     * revision 12 November 2026); never an entry point while the zone is being traversed.
      */
     static boolean eligible(WarningEvent event,long now,WarningPassage.Relevance relevance){
         if(event==null||!event.stateValid(now)||event.latitude==null||event.longitude==null)return false;
         if(relevance==WarningPassage.Relevance.PASSED||relevance==WarningPassage.Relevance.OFF_ROUTE)return false;
         boolean point=event.relevance.equals("point_ahead"),moving=event.relevance.equals("moving_emergency");
-        if(!point&&!moving||WarningGeometry.remainingSegment(event))return false;
+        boolean zone=WarningGeometry.zonePoint(event)!=null;
+        if(!zone&&(!point&&!moving||WarningGeometry.remainingSegment(event)))return false;
         double latitude=event.latitude,longitude=event.longitude;
         if(!Double.isFinite(latitude)||!Double.isFinite(longitude)||Math.abs(latitude)>90||Math.abs(longitude)>180
                 ||latitude==0&&longitude==0)return false;
         // A moving target cannot keep a stale position by being redrawn.
-        if(point&&Boolean.TRUE.equals(event.fields().get("native_point_target")))return true;
+        if((point||zone)&&Boolean.TRUE.equals(event.fields().get("native_point_target")))return true;
         return WarningGeometry.fresh(event.positionObservedAt,now);
     }
 

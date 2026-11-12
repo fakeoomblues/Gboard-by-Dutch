@@ -19,7 +19,9 @@ import nl.johninnl.navigation.alerts.WarningGeometry;
  * passed/off-route filtering -- and add only the geometry rules of navigation-indicators-v1: a pin needs
  * the provider's own coordinate pair (never 0,0, never a receiver estimate); a fixed native point
  * ({@code native_point_target}) may stay until the warning's state expires, any other point (Waze, a
- * responder) only while its position observation is at most 5 s old. No direction and no zone extent.
+ * responder) only while its position observation is at most 5 s old. No direction and no zone extent: an
+ * average-speed control is pinned only at its own native start (before entry) or end (inside), as the
+ * provider marks it ({@code zone_point}, contract revision 12 November 2026).
  *
  * Display only: nothing here renews speech, an observation clock or warning state, and nothing is logged.
  */
@@ -90,7 +92,10 @@ final class WarningPins {
         if (lat == 0 && lng == 0) return false;
         // Only the provider's own pair: an estimated position is not a native point.
         if (event.positionEstimated) return false;
-        if (Boolean.TRUE.equals(event.fields().get("native_point_target"))) return true;
+        boolean fixed = Boolean.TRUE.equals(event.fields().get("native_point_target"));
+        // A zone's fixed point is its start while approaching and its end inside, never anything else.
+        if (fixed && "zone".equals(event.relevance)) return WarningGeometry.zonePoint(event) != null;
+        if (fixed) return true;
         return WarningGeometry.fresh(event.positionObservedAt, now);
     }
 

@@ -63,6 +63,30 @@ public class AlertMarkersTest {
         assertTrue(select(T,point("zone2",T,52.1,5.1,T,true,"zone",Collections.emptyMap())).isEmpty());
     }
 
+    /** An average-speed control with its provider's own fixed point: start before entry, end inside. */
+    static WarningEvent zone(String point,boolean inside,double latitude,double longitude){
+        Map<String,Object> extra=new HashMap<>();extra.put("native_type","AVG_SPEED_CHECK");extra.put("category","speed_control");
+        extra.put("phase",inside?"enter":"approach");if(point!=null)extra.put("zone_point",point);
+        extra.put("distance_m",inside?14000:800);extra.put("distance_observed_elapsed_ms",T);extra.put("distance_estimated",false);
+        extra.put("native_distance_kind",inside?"remaining_in_segment":"to_segment");
+        return point("AvgSpeedCheck:a2",T,latitude,longitude,T,true,"zone",extra);
+    }
+
+    @Test public void averageSpeedControlIsMarkedAtItsStartBeforeEntryAndAtItsEndInside(){
+        AlertMarkers.Marker start=select(T,zone("start",false,52.3017,4.9630)).get(0);
+        assertEquals("average_speed",start.icon);assertEquals("johninnl-warning-average_speed",start.image());
+        assertEquals(52.3017,start.latitude,0);assertEquals(4.9630,start.longitude,0);
+        AlertMarkers.Marker end=select(T,zone("end",true,52.1213,5.0228)).get(0);
+        assertEquals(52.1213,end.latitude,0);assertEquals(5.0228,end.longitude,0);
+        assertNotEquals("the marker moves from start to end",AlertMarkers.signature(Collections.singletonList(start)),AlertMarkers.signature(Collections.singletonList(end)));
+        assertEquals("a fixed native point, kept until the state ends",1,select(T+29_999,zone("end",true,52.1213,5.0228)).size());
+        assertTrue(select(T+30_000,zone("end",true,52.1213,5.0228)).isEmpty());
+        assertTrue("an entry point while inside",select(T,zone("start",true,52.3017,4.9630)).isEmpty());
+        assertTrue("an end point before entry",select(T,zone("end",false,52.1213,5.0228)).isEmpty());
+        assertTrue("unmarked zone coordinates",select(T,zone(null,false,52.3017,4.9630)).isEmpty());
+        assertTrue("never a default (0,0)",select(T,zone("start",false,0,0)).isEmpty());
+    }
+
     @Test public void respondersNeverKeepAStalePositionEvenWhenMarkedFixed(){
         WarningEvent responder=point("early/AMBULANCE",T,52.1,5.1,T-1000,true,"moving_emergency",Collections.emptyMap());
         assertEquals(1,select(T+4000,responder).size());
