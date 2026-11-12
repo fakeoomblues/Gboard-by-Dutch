@@ -15,6 +15,10 @@ Labels: **Observed** means read in repository or decompiled code. **Inferred** f
 - **Settings text.** "Legacy map-pin and alert types", and the **Road alerts on the map** subtitle now says pins follow the pills.
 - No patch (bytecode) change, no new GMM binding, no shared `support/navigation-alerts` change, no new logging. Coordinates stay in memory: `Pin.toString` prints only key and icon.
 
+## Follow-up: pins during a route
+
+Maps hides the personal place generator whenever a route is drawn, so pins never appeared in route preview or navigation ([diagnosis and fix](2026-11-12-maps-pins-generator.md)). The controller's visibility toggle (`bubg.m` in 26.44.06) now asks `SavedOnMap.visible` first. While pins can be drawn, the generator stays shown, and `withLocal` gives it only the warning pins. This is a bytecode change. The **No patch (bytecode) change** item below describes the first commit only. Statically verified only. The pins during navigation, on the phone and in the car, still need runtime proof.
+
 ## Observed in GMM 26.44.06 (static)
 
 - The personal-place label builder (`apur.b`, abstract `apug` implementer) chooses the icon from list data. A CUSTOM list's `emoji` string gives an EMOJI label. A `PHOTO_PIN` takes a list photo string through `FIFE_MONOGRAM_CIRCLE_CROP` into the label proto (a remote Google image URL). No local bitmap or resource path exists for these labels, so the 19 PNG assets cannot be drawn through this path. Emoji is the closest native option.
@@ -32,7 +36,7 @@ Labels: **Observed** means read in repository or decompiled code. **Inferred** f
 
 Phone, on an emulator GPS-only drive with genuine provider data (no injected alerts):
 
-1. With **Road alerts on the map** on and a WARNINGS_V1 provider (FM15 or De-Waze), a pin with the matching emoji appears at the warning's map position when its pill appears.
+1. With **Road alerts on the map** on, in route preview and during navigation and a WARNINGS_V1 provider (FM15 or De-Waze), a pin with the matching emoji appears at the warning's map position when its pill appears.
 2. The pin disappears with the pill on passage, `CLEAR`, or expiry. A Waze/responder pin also disappears when its position is no longer fresh (more than 5 s).
 3. A fixed FM camera pin stays while its pill does, without flicker from repeated unchanged updates.
 4. Turning **Road alerts on the map** off removes the pins.

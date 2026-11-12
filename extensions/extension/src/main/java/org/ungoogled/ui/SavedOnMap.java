@@ -29,6 +29,10 @@ import java.util.WeakHashMap;
  * Every live generator is kept (the phone's map and, where Maps makes one, the car's), and each is
  * drawn again on a change. Drawing again rebuilds the labels of every visible tile, so redraws are
  * coalesced and held to one a second (WarningPins.MIN_REDRAW_MS).
+ *
+ * Maps hides the generator whenever a route is on the map, in preview and in navigation, on the phone
+ * and in the car. While warning pins can be drawn, visible() keeps it shown and withLocal() hands it
+ * only the pins: Maps' own places and Local saved stay off the route map, as Maps intends.
  */
 public final class SavedOnMap {
     private SavedOnMap() {}
@@ -45,32 +49,87 @@ public final class SavedOnMap {
      */
     private static final Map<Object, Set<Object>> ours = new WeakHashMap<>();
     private static final Handler main = new Handler(Looper.getMainLooper());
+    /** The generators Maps wants hidden now (a route is on the map), weakly, by identity. */
+    private static final Set<Object> hiddenByMaps = Collections.newSetFromMap(new WeakHashMap<>());
 
-    /** From the start of the generator's place setter: [places] (the account's) with the phone's added. */
+    /**
+     * From the start of the generator's place setter: [places] (the account's) with the phone's added --
+     * only the warning pins while Maps wants the generator hidden.
+     */
     public static Object withLocal(Object labels, Object places) {
         try {
             synchronized (generators) {
                 generators.add(labels);
             }
+            boolean routeOnly = hiddenByMaps(labels);
             List<Object> added = new ArrayList<>();
-            if (Shapes.localSavedPatched()) added.addAll(localPlaces());
+            if (!routeOnly && Shapes.localSavedPatched()) added.addAll(localPlaces());
             if (Shapes.speedCamerasPatched()) added.addAll(SpeedCameras.mapItems());
             if (Shapes.wazeAlertsPatched()) added.addAll(WazeAlerts.mapItems());
-            List<Object> out = new ArrayList<>();
+            List<Object> out;
             synchronized (ours) {
-                Set<Object> previous = ours.get(labels);
-                if (places instanceof Iterable) {
-                    for (Object o : (Iterable<?>) places) if (previous == null || !previous.contains(o)) out.add(o);
-                }
+                out = compose(places, ours.get(labels), added, routeOnly);
                 Set<Object> current = Collections.newSetFromMap(new IdentityHashMap<>());
                 current.addAll(added);
                 ours.put(labels, current);
             }
-            out.addAll(added);
             return immutable(out);
         } catch (Throwable t) {
             android.util.Log.w("UA", "saved places on the map", t);
             return places;
+        }
+    }
+
+    /**
+     * The list a generator draws: Maps' [places] less our [previous] ones, then [added]; with [routeOnly]
+     * (Maps wants it hidden for a route) Maps' places are left out and only [added] is drawn.
+     */
+    static List<Object> compose(Object places, Set<Object> previous, List<Object> added, boolean routeOnly) {
+        List<Object> out = new ArrayList<>();
+        if (!routeOnly && places instanceof Iterable) {
+            for (Object o : (Iterable<?>) places) if (previous == null || !previous.contains(o)) out.add(o);
+        }
+        out.addAll(added);
+        return out;
+    }
+
+    /**
+     * From the start of the controller's visibility toggle, with its [labels] generator (null while the
+     * controller is not created): Maps [wanted] it shown or hidden -- hidden whenever a route is drawn.
+     * The answer is what the toggle does: shown still, while warning pins can be drawn.
+     */
+    public static boolean visible(Object labels, boolean wanted) {
+        if (labels == null) return wanted;
+        try {
+            boolean changed;
+            synchronized (hiddenByMaps) {
+                changed = wanted ? hiddenByMaps.remove(labels) : hiddenByMaps.add(labels);
+            }
+            boolean shown = keepShown(wanted, pinsPossible());
+            // Maps' places go or come back with the route: the next draw, coalesced as always.
+            if (changed && shown) refresh();
+            return shown;
+        } catch (Throwable t) {
+            android.util.Log.w("UA", "saved places on the map", t);
+            return wanted;
+        }
+    }
+
+    /** What the visibility toggle does when Maps [wanted] it, while [pins] can be drawn. */
+    static boolean keepShown(boolean wanted, boolean pins) {
+        return wanted || pins;
+    }
+
+    /** Whether a warning pin can be drawn now: a pin patch included and its map pins turned on. */
+    static boolean pinsPossible() {
+        // Short-circuit: the pin classes' settings are read only where their patch is included.
+        return (Shapes.speedCamerasPatched() && (SpeedCameras.MAP || SpeedCameras.FLOCK_MAP))
+            || (Shapes.wazeAlertsPatched() && WazeAlerts.MAP);
+    }
+
+    static boolean hiddenByMaps(Object labels) {
+        synchronized (hiddenByMaps) {
+            return hiddenByMaps.contains(labels);
         }
     }
 
@@ -79,6 +138,10 @@ public final class SavedOnMap {
         synchronized (generators) {
             if (!on) {
                 generators.remove(labels);
+                // Off for real (destroyed, or hidden with no pins to draw): it comes back with everything.
+                synchronized (hiddenByMaps) {
+                    hiddenByMaps.remove(labels);
+                }
                 return;
             }
             generators.add(labels);
