@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0ef414c3e2ef3b888ec8e7d741de60c27fc68c87/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.71.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [0ef414c3e2ef](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/0ef414c3e2ef3b888ec8e7d741de60c27fc68c87). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.71.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.70.1...v1.71.0) (2026-11-12)
+
+### ✨ New Features
+
+* **Gboard:** let Parakeet spell the words in the Voice dictionary ([0ef414c](https://gitlab.com/johninnld/nl-morphe-patches/commit/0ef414c3e2ef3b888ec8e7d741de60c27fc68c87))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/bd0401cb1402971e24d2fba50849dd7e93f75f3b/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.70.1.**

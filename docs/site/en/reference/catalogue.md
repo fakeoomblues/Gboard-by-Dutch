@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.70.1**
+**Patch bundle: 1.71.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -316,6 +316,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Cursor trackpad mode | On | 18.6.3.1002251336-release-arm64-v8a |
 | Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
+| Parakeet personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler app context | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler contact names | On | 18.6.3.1002251336-release-arm64-v8a |

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.70.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.71.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -515,7 +515,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence (experimental) rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence (experimental) rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Gboard](apps/gboard.md)
@@ -523,13 +523,14 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>16 patches</summary>
+<summary>17 patches</summary>
 <ul>
 <li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Cursor trackpad mode <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
 <li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Parakeet personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
