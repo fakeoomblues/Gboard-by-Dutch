@@ -227,6 +227,11 @@ public class WarningDisplayAndPassageTest {
         assertNull("An entry point is not shown while the zone is traversed",WarningGeometry.zonePoint(zonePoint("start","enter","remaining_in_segment")));
         assertNull("An end point is not shown before entry",WarningGeometry.zonePoint(zonePoint("end","approach","to_segment")));
         assertNull("Exit has no point",WarningGeometry.zonePoint(zonePoint("end","exit","remaining_in_segment")));
+        // acc31: Flitsmeister's own report for the control carries the kept end point and a distance of its own
+        // without a kind; it must not alternate with the tracked update.
+        Bundle own=WarningCodec.encode(zonePoint("end","enter",null));own.putInt("distance_m",900);own.putLong("distance_observed_elapsed_ms",1000);own.putBoolean("distance_estimated",false);
+        assertEquals("end",WarningGeometry.zonePoint(WarningCodec.decode(own,1000)));
+        assertNull("An end point without a kind is not shown while approaching",WarningGeometry.zonePoint(zonePoint("end","approach",null)));
         assertNull("Unmarked zone coordinates are not a zone point",WarningGeometry.zonePoint(zonePoint(null,"approach","to_segment")));
         Bundle notFixed=WarningCodec.encode(zonePoint("start","approach","to_segment"));notFixed.putBoolean("native_point_target",false);
         assertNull(WarningGeometry.zonePoint(WarningCodec.decode(notFixed,1000)));

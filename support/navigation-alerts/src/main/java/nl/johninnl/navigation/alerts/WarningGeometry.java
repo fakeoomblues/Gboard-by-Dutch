@@ -33,7 +33,12 @@ public final class WarningGeometry {
         Object point=fields.get("zone_point");boolean inside=remainingSegment(event);
         // Flitsmeister marks its own zone announcement "enter" while still approaching; the start stays.
         if("start".equals(point)&&!inside&&(event.phase==WarningEvent.Phase.APPROACH||event.phase==WarningEvent.Phase.ENTER))return "start";
-        if("end".equals(point)&&inside)return "end";
+        // The producer marks "end" only once it measured the car inside. Flitsmeister's own report for the
+        // control keeps that point but has a distance of its own without a kind (acc31: the pin blinked
+        // twice a second between the two). Only an explicit measurement to the segment, or an approach,
+        // contradicts the end.
+        if("end".equals(point)&&(inside||event.phase==WarningEvent.Phase.ENTER
+                &&!fields.containsKey("native_distance_kind")))return "end";
         return null;
     }
     public static WarningGeometry fromNative(WarningEvent event,long now){
