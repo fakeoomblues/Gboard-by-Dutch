@@ -26,6 +26,10 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Home Assistant](../apps/homeassistant.md) | 2026.10.1-full / 24906 | [APKS](#local-original-inputs) |
 | [Reolink](../apps/reolink.md) | 4.64.3.20261023 / 796 | [APKM](#local-original-inputs) |
 | [Tuya Smart Life](../apps/tuya.md) | 7.12.6 / 872 | [APKS](#local-original-inputs) |
+| [PdfCraft](../apps/pdfcraft.md) | 0.0.7-beta / 7012 | [APK](#local-original-inputs) |
+| [LightCraft](../apps/lightcraft.md) | 0.0.6-beta / 6012 | [APK](#local-original-inputs) |
+| [WordCraft](../apps/wordcraft.md) | 0.0.1-beta / 1012 | [APK](#local-original-inputs) |
+| [GridCraft](../apps/gridcraft.md) | 0.0.1-beta / 1012 | [APK](#local-original-inputs) |
 | [ED](../apps/ed.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/pi3usslla0jt) |
 | [GVA](../apps/gva.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/1thesia58zm2) |
 | [FTM](../apps/ftm.md) | 2.6.8 / 58 | [APKS](https://buzzheavier.com/2cv2n5bgc3tn) |

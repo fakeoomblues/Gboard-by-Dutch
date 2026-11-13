@@ -200,6 +200,10 @@ nav:
           - apps/homeassistant.md
           - apps/tuya.md
           - apps/reolink.md
+          - apps/pdfcraft.md
+          - apps/lightcraft.md
+          - apps/wordcraft.md
+          - apps/gridcraft.md
           - apps/monet.md
           - apps/marktplaats.md
           - apps/zoom.md
