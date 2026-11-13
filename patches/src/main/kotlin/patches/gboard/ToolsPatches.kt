@@ -5,6 +5,7 @@ import patches.gboard.features.ocr.gboardOcrFeatureMarkerPatch
 import patches.gboard.features.ocr.gboardOcrFlagValuePatch
 import patches.gboard.features.ocr.gboardOcrRuntimePatch
 import patches.gboard.features.writingtools.gboardAiWritingTools1853PreferenceObserverPatch
+import patches.gboard.features.writingtools.gboardAiWritingTools1863AutoFixAcceptancePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
@@ -56,5 +57,6 @@ val gboardAiWritingToolsPatch = resourcePatch(
         gboardAiWritingToolsFeatureMarkerPatch,
         gboardAiWritingToolsFlagValuePatch,
         gboardAiWritingTools1853PreferenceObserverPatch,
+        gboardAiWritingTools1863AutoFixAcceptancePatch,
     )
 }
