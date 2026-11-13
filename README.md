@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.78.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.78.0)** · 70 apps · 357 patches
+**Patch bundle [v1.79.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.79.0)** · 70 apps · 357 patches
 
 ### Weather
 
@@ -75,7 +75,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [HBVL](docs/site/en/apps/hbvl.md) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
 | [HLN](docs/site/en/apps/hln.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Humo](docs/site/en/apps/humo.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
-| [Medium](docs/site/en/apps/medium.md) | Tracking · Prompts · Articles | 4.5.1784911033 | APKS | 3 |
+| [Medium](docs/site/en/apps/medium.md) | Tracking · Prompts · Articles | 4.5.1784911033, 4.5.1784911134 | APKS | 3 |
 | [Nieuwsblad](docs/site/en/apps/nieuwsblad.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [NOS Teletekst](docs/site/en/apps/nos-teletekst.md) | Tracking | 2.8.10 | APKS | 2 |
 | [NRC](docs/site/en/apps/nrc.md) | Ads · Tracking · Prompts · Articles · Newspaper tab | 5.12.25 | APK | 6 |

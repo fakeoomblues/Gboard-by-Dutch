@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">70 apps</span> · Patch bundle: 1.78.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">70 apps</span> · Patch bundle: 1.79.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -795,18 +795,18 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="medium com.medium.reader 4.5.1784911033 disable optional tracking hide native promotions read full articles natively" markdown>
+<article class="dap-app-card" data-category="news" data-search="medium com.medium.reader 4.5.1784911134 4.5.1784911033 disable optional tracking hide native promotions read full articles natively" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [Medium](apps/medium.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">4.5.1784911033</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">4.5.1784911134, 4.5.1784911033</span></p>
 <p class="dap-app-card__package">com.medium.reader</p>
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable optional tracking <span class="dap-app-card__target">4.5.1784911033</span></li>
-<li>Hide native promotions <span class="dap-app-card__target">4.5.1784911033</span></li>
+<li>Disable optional tracking <span class="dap-app-card__target">4.5.1784911134</span></li>
+<li>Hide native promotions <span class="dap-app-card__target">4.5.1784911134</span></li>
 <li>Read full articles natively <span class="dap-app-card__target">4.5.1784911033</span></li>
 </ul>
 </details>

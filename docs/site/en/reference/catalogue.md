@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.78.0**
+**Patch bundle: 1.79.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -503,8 +503,8 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable optional tracking | On | 4.5.1784911033 |
-| Hide native promotions | On | 4.5.1784911033 |
+| Disable optional tracking | On | 4.5.1784911134 |
+| Hide native promotions | On | 4.5.1784911134 |
 | Read full articles natively | On | 4.5.1784911033 |
 
 ## Monet Android TV

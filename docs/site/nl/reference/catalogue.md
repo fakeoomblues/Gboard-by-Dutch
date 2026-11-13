@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.78.0**
+**Patchbundel: 1.79.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -503,8 +503,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable optional tracking | Aan | 4.5.1784911033 |
-| Hide native promotions | Aan | 4.5.1784911033 |
+| Disable optional tracking | Aan | 4.5.1784911134 |
+| Hide native promotions | Aan | 4.5.1784911134 |
 | Read full articles natively | Aan | 4.5.1784911033 |
 
 ## Monet Android TV

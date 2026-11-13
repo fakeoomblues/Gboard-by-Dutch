@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.78.0",
+  "version": "1.79.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -2631,15 +2631,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "4.5.1784911033",
+              "version": "4.5.1784911134",
               "versionCodes": {
-                "ARM64_V8A": 1784911033,
-                "ARMEABI_V7A": 1784911033,
-                "X86_64": 1784911033,
-                "X86": 1784911033
+                "ARM64_V8A": 1784911134,
+                "ARMEABI_V7A": 1784911134,
+                "X86_64": 1784911134,
+                "X86": 1784911134
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]
@@ -7930,15 +7930,15 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "4.5.1784911033",
+              "version": "4.5.1784911134",
               "versionCodes": {
-                "ARM64_V8A": 1784911033,
-                "ARMEABI_V7A": 1784911033,
-                "X86_64": 1784911033,
-                "X86": 1784911033
+                "ARM64_V8A": 1784911134,
+                "ARMEABI_V7A": 1784911134,
+                "X86_64": 1784911134,
+                "X86": 1784911134
               },
               "isExperimental": false,
-              "minSdk": 32,
+              "minSdk": 29,
               "description": null
             }
           ]

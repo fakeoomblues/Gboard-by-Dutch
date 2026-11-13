@@ -1,4 +1,26 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2281d4d27cbf9623e17d862aafa6cfcd4d4d941f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.79.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [2281d4d27cbf](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/2281d4d27cbf9623e17d862aafa6cfcd4d4d941f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.79.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.78.0...v1.79.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **AliExpress:** match the 8.180.1 rendered-item and promotion bindings ([f623574](https://gitlab.com/johninnld/nl-morphe-patches/commit/f623574ef7e70890208545f48b9b777d27010845))
+* **Deezer:** keep the sign-in when a car host cold-starts Deezer ([2281d4d](https://gitlab.com/johninnld/nl-morphe-patches/commit/2281d4d27cbf9623e17d862aafa6cfcd4d4d941f))
+
+### ✨ New Features
+
+* **Medium:** lift the tracking and promotion patches to 4.5.1784911134 ([c0d3f34](https://gitlab.com/johninnld/nl-morphe-patches/commit/c0d3f341b0bedc90641bbf669d13099a415fc754))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cc862ccdf9ccaab6f529c0a506906a0afdd680bb/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.78.0.**
