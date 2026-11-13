@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.72.0**
+**Patch bundle: 1.73.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -311,11 +311,16 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Add Gboard Signature Bypass | On | 18.6.3.1002251336-release-arm64-v8a |
 | Change package name | On | 18.6.3.1002251336-release-arm64-v8a |
 | Clipboard Enhancements | On | 18.6.3.1002251336-release-arm64-v8a |
 | Cursor trackpad mode | On | 18.6.3.1002251336-release-arm64-v8a |
+| Custom Theme | On | 18.6.3.1002251336-release-arm64-v8a |
 | Custom branding | Off | 18.6.3.1002251336-release-arm64-v8a |
+| Frosted Glass | On | 18.6.3.1002251336-release-arm64-v8a |
+| G Logo on Spacebar | On | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | On | 18.6.3.1002251336-release-arm64-v8a |
+| Key Shape Selection | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler app context | On | 18.6.3.1002251336-release-arm64-v8a |
@@ -325,6 +330,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Rambler personal dictionary | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler stop after silence | On | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | On | 18.6.3.1002251336-release-arm64-v8a |
+| Rounded Keyboard Panel | On | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | On | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | On | 18.6.3.1002251336-release-arm64-v8a |
 | Web Clipboard | On | 18.6.3.1002251336-release-arm64-v8a |

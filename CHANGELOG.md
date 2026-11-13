@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c09e36e734995b1154c7797576e439d833d8b61f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.73.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [c09e36e73499](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/c09e36e734995b1154c7797576e439d833d8b61f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.73.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.72.0...v1.73.0) (2026-11-13)
+
+### ✨ New Features
+
+* **Gboard:** add the theming patches and move the ported set into patches.gboard ([3c5837e](https://gitlab.com/johninnld/nl-morphe-patches/commit/3c5837e53929376724bbe5a82f7f95819f52f008))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9e1f996c374d04095ba7937248e21e1a8e96e1f5/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.72.0.**

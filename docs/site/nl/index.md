@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patchbundel: 1.72.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patchbundel: 1.73.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -515,7 +515,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a change package name clipboard enhancements cursor trackpad mode custom branding incognito mode toggle parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a add gboard signature bypass change package name clipboard enhancements cursor trackpad mode custom theme custom branding frosted glass g logo on spacebar incognito mode toggle key shape selection parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing rounded keyboard panel simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Overige</p>
 
 ### [Gboard](apps/gboard.md)
@@ -523,13 +523,18 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>17 patches</summary>
+<summary>23 patches</summary>
 <ul>
+<li>Add Gboard Signature Bypass <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Cursor trackpad mode <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Custom Theme <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
+<li>Frosted Glass <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>G Logo on Spacebar <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Key Shape Selection <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
@@ -539,6 +544,7 @@ hide:
 <li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler stop after silence <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rounded Keyboard Panel <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Web Clipboard <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.72.0**
+**Patchbundel: 1.73.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -311,11 +311,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Add Gboard Signature Bypass | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Change package name | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Clipboard Enhancements | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Cursor trackpad mode | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Custom Theme | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Custom branding | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Frosted Glass | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| G Logo on Spacebar | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Key Shape Selection | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler app context | Aan | 18.6.3.1002251336-release-arm64-v8a |
@@ -325,6 +330,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler stop after silence | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| Rounded Keyboard Panel | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Web Clipboard | Aan | 18.6.3.1002251336-release-arm64-v8a |
