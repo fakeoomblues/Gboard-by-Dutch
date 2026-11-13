@@ -427,7 +427,9 @@ public final class ExternalTelemetry {
             long now=SystemClock.elapsedRealtime();
             boolean dutch=app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
             // By key: the pills may swap two equally near warnings; the map must not redraw for that.
-            List<WarningPins.Pin> pins=WazeAlerts.MAP?WarningPins.byKey(WarningPins.select(pillEvents(now),now,dutch)):java.util.Collections.emptyList();
+            List<WarningEvent> mapEvents=new ArrayList<>(pillEvents(now));
+            mapEvents.addAll(nativeWarnings.mapFeatures(now,event->warningPreferences==null||warningPreferences.enabled(event)));
+            List<WarningPins.Pin> pins=WazeAlerts.MAP?WarningPins.byKey(WarningPins.select(mapEvents,now,dutch)):java.util.Collections.emptyList();
             warningPins=pins;next=pins;
         }else{
             warningPins=java.util.Collections.emptyList();
@@ -437,7 +439,7 @@ public final class ExternalTelemetry {
         }
         warningPinMode=pinMode;
         // During navigation the same pins are Google's own incident callouts (IncidentPins).
-        IncidentPins.update(navigating,pinMode,warningPins);
+        IncidentPins.update(navigating,pinMode,WarningPins.incidentPins(warningPins));
         if(!next.equals(pinState)){pinState=next;SavedOnMap.refresh();}
     }
     private static TelemetryStore.View filteredView(TelemetryStore.View original){

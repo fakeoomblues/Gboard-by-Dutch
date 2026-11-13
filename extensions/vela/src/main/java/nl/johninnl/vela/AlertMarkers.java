@@ -48,7 +48,8 @@ final class AlertMarkers {
      */
     static boolean eligible(WarningEvent event,long now,WarningPassage.Relevance relevance){
         if(event==null||!event.stateValid(now)||event.latitude==null||event.longitude==null)return false;
-        if(relevance==WarningPassage.Relevance.PASSED||relevance==WarningPassage.Relevance.OFF_ROUTE)return false;
+        if(!WarningGeometry.nativeMapFeature(event)
+                &&(relevance==WarningPassage.Relevance.PASSED||relevance==WarningPassage.Relevance.OFF_ROUTE))return false;
         boolean point=event.relevance.equals("point_ahead"),moving=event.relevance.equals("moving_emergency");
         boolean zone=WarningGeometry.zonePoint(event)!=null;
         if(!zone&&(!point&&!moving||WarningGeometry.remainingSegment(event)))return false;

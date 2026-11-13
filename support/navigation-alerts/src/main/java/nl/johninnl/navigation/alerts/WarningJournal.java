@@ -44,14 +44,17 @@ public final class WarningJournal {
     private final Map<String, WarningRecord> latest = new LinkedHashMap<>();
     // At most one accepted payload revision per retained ANNOUNCE authority (<=128).
     private final Map<Long, WarningEvent> announcementPayloads = new HashMap<>();
-    private long head, lastNow = -1, lastIssued = -1;
+    private long head, lastNow = -1, lastIssued = -1, resyncFloor;
     private boolean overflow;
 
     /** Metadata must outlive an expired/replaced payload while old authorities remain. */
     private static final class WarningRecord {
         WarningEvent payload;
         long revision, sequence, cancelledThrough;
+        boolean disposableMap;
+        WarningRecord(WarningEvent event) { disposableMap = mapOnly(event); }
         void update(WarningEvent event) {
+            disposableMap &= mapOnly(event) || event.operation == WarningEvent.Operation.CLEAR && event.announcementIndex == 0;
             payload = event; revision = event.revision; sequence = event.sequence;
             if (event.operation == WarningEvent.Operation.CLEAR) cancelledThrough = event.sequence;
         }
@@ -82,11 +85,13 @@ public final class WarningJournal {
         if (event.operation == WarningEvent.Operation.ANNOUNCE) {
             for (WarningEvent existing : history) if (sameAnnouncement(existing, event)) return Append.CONFLICT;
         }
-        if (previous == null && latest.size() == MAX_WARNINGS) {
-            head = event.sequence; lastIssued = event.issuedAt; overflow = true; return Append.OVERFLOW;
+        if (previous == null && latest.size() == MAX_WARNINGS && !evictMap(event.warningId, event.sequence)) {
+            head = event.sequence; lastIssued = event.issuedAt;
+            if (mapOnly(event)) { resyncFloor = head; return Append.ACCEPTED; }
+            overflow = true; return Append.OVERFLOW;
         }
         // Even an unretained CLEAR must revoke source-side playback authority.
-        if (previous == null) { previous = new WarningRecord(); latest.put(event.warningId, previous); }
+        if (previous == null) { previous = new WarningRecord(event); latest.put(event.warningId, previous); }
         previous.update(event);
         for (WarningEvent authority : history) {
             if (authority.operation != WarningEvent.Operation.ANNOUNCE || !authority.warningId.equals(event.warningId)) continue;
@@ -98,7 +103,14 @@ public final class WarningJournal {
         }
         head = event.sequence; lastIssued = event.issuedAt;
         if (history.size() == MAX_EVENTS) coalesceSupersededUpsert();
-        if (history.size() == MAX_EVENTS) { overflow = true; return Append.OVERFLOW; }
+        if (history.size() == MAX_EVENTS && !evictMap(event.warningId, event.sequence)) {
+            if (previous.disposableMap) {
+                // Best-effort map state cannot interrupt native warning/speech capture.
+                discardMap(event.warningId, event.sequence);
+                return Append.ACCEPTED;
+            }
+            overflow = true; return Append.OVERFLOW;
+        }
         history.add(event);
         return Append.ACCEPTED;
     }
@@ -113,7 +125,7 @@ public final class WarningJournal {
         if (!changedSession && afterSequence > head) throw new IllegalArgumentException("CURSOR");
         long cursor = changedSession ? 0 : afterSequence;
         long position = cursor;
-        boolean resync = changedSession;
+        boolean resync = changedSession || cursor < resyncFloor;
         List<WarningEvent> records = new ArrayList<>();
         List<Announcement> announcements = new ArrayList<>();
         for (WarningEvent event : history) {
@@ -163,6 +175,28 @@ public final class WarningJournal {
         return first.operation == WarningEvent.Operation.ANNOUNCE && second.operation == WarningEvent.Operation.ANNOUNCE
                 && first.warningId.equals(second.warningId) && first.phase == second.phase
                 && first.announcementIndex == second.announcementIndex;
+    }
+
+    private static boolean mapOnly(WarningEvent event) {
+        return event.operation != WarningEvent.Operation.ANNOUNCE && event.announcementIndex == 0
+                && WarningGeometry.nativeMapFeature(event);
+    }
+
+    private boolean evictMap(String exceptId, long sequence) {
+        for (Map.Entry<String, WarningRecord> entry : latest.entrySet()) {
+            if (entry.getValue().disposableMap && !entry.getKey().equals(exceptId)) {
+                discardMap(entry.getKey(), sequence);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void discardMap(String id, long sequence) {
+        latest.remove(id);
+        history.removeIf(event -> event.warningId.equals(id));
+        // Even a consumer at the immediately preceding head must discard the old map pin.
+        resyncFloor = Math.max(resyncFloor, sequence);
     }
 
     private void coalesceSupersededUpsert() {

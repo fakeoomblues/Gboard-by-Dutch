@@ -174,7 +174,9 @@ public final class TelemetryRuntime {
     /** The pill selection reduced to contract-qualified native points. Display-only: nothing is renewed. */
     static java.util.List<AlertMarkers.Marker> markers(long now){
         if(app==null||!WarningProviders.supported(selected())||!markersEnabled())return java.util.Collections.emptyList();
-        return AlertMarkers.select(carWarnings(),now,event->warningRelevance(event,now));
+        java.util.List<nl.johninnl.navigation.alerts.WarningEvent> mapEvents=new java.util.ArrayList<>(carWarnings());
+        mapEvents.addAll(nativeWarnings.mapFeatures(now,event->warningPreferences==null||warningPreferences.enabled(event)));
+        return AlertMarkers.select(mapEvents,now,event->warningRelevance(event,now));
     }
     public static boolean suppressNativeFlock() { return store.suppressNativeFlock(SystemClock.elapsedRealtime()); }
     public static Float speedMps(Float fallback) {

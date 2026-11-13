@@ -38,6 +38,55 @@ public class NativeWarningsTest {
     private Bundle last(){return events.get(events.size()-1);}
     private long announcements(){return events.stream().filter(e->"ANNOUNCE".equals(e.getString("operation"))).count();}
     private void repository(Descriptor...values){NativeWarnings.repository(new Repository(Arrays.asList(values)));}
+    @Test public void nativeRangePointsSwitchAtNativeEntryWithoutChangingWarningAuthority(){
+        long[] range={1,7,11,5000000,52000000,5100000,52100000,3};
+        Segment s=new Segment("AVERAGE_SPEED_CAMERA","7-11");SegmentUpdate update=new SegmentUpdate(Collections.singletonList(s));
+        NativeWarnings.segments(update,range);Bundle approach=last();String id=approach.getString("warning_id");
+        assertEquals("start",nl.johninnl.navigation.alerts.WarningGeometry.zonePoint(decoded(approach)));
+        assertEquals(Double.valueOf(52),decoded(approach).latitude);assertEquals("native_route_line",approach.getString("position_clock_origin"));
+        assertEquals(50,approach.getInt("distance_m"));assertEquals("APPROACHING",approach.getString("native_segment_phase"));
+        s.phase="WITHIN";NativeWarnings.segments(update,range);Bundle inside=last();
+        assertEquals(id,inside.getString("warning_id"));assertEquals("end",nl.johninnl.navigation.alerts.WarningGeometry.zonePoint(decoded(inside)));
+        assertEquals(Double.valueOf(52.1),decoded(inside).latitude);assertEquals(50,inside.getInt("distance_m"));
+        assertEquals("remaining_in_segment",inside.getString("native_distance_kind"));assertEquals(0,announcements());
+        NativeWarnings.segments(update,new long[]{2});
+        assertFalse(last().containsKey("latitude"));assertNull(nl.johninnl.navigation.alerts.WarningGeometry.zonePoint(decoded(last())));
+        assertEquals(id,last().getString("warning_id"));assertEquals(0,announcements());
+    }
+    @Test public void nativeRangeCorrelationRestoresOriginalDescriptorWhenTheSegmentDisappears(){
+        Descriptor d=new Descriptor("42","CAMERA",0);repository(d);
+        Segment s=new Segment("AVERAGE_SPEED_CAMERA","7-11");s.links=Collections.singletonList(new Link(42,"uuid-42","CAMERA"));
+        NativeWarnings.segments(new SegmentUpdate(Collections.singletonList(s)),new long[]{1,7,11,5100000,52100000,5200000,52200000,3});
+        assertTrue(last().getBoolean("native_segment_correlated"));assertEquals(Double.valueOf(52.1),decoded(last()).latitude);
+        assertEquals("start",nl.johninnl.navigation.alerts.WarningGeometry.zonePoint(decoded(last())));
+        NativeWarnings.segments(new SegmentUpdate(Collections.emptyList()),new long[]{2});
+        assertFalse(last().getBoolean("native_segment_correlated"));assertFalse(last().containsKey("zone_point"));
+        assertEquals(Double.valueOf(52),decoded(last()).latitude);assertEquals("point_ahead",last().getString("relevance"));
+        assertEquals("native_repository",last().getString("position_clock_origin"));assertEquals(0,announcements());
+    }
+    @Test public void nativeTilePointsAreSilentAndClearOnRemoval(){
+        NativeWarnings.tilePoints(new long[]{7,11,72,5000000,52000000});
+        Bundle point=last();assertEquals("UPSERT",point.getString("operation"));
+        assertEquals("display_only",point.getString("category"));assertEquals("DUMMY",point.getString("native_subtype"));
+        assertEquals("native_tile",point.getString("position_clock_origin"));
+        assertTrue(point.getBoolean("native_point_target"));assertFalse(point.getBoolean("position_estimated"));
+        assertEquals(Double.valueOf(52),decoded(point).latitude);assertEquals(0,announcements());
+        nl.johninnl.navigation.alerts.WarningView view=new nl.johninnl.navigation.alerts.WarningView();
+        view.events(Collections.singletonList(decoded(point)));
+        assertTrue(view.carEvents(SystemClock.elapsedRealtime(),e->true).isEmpty());
+        assertEquals(1,view.mapFeatures(SystemClock.elapsedRealtime(),e->true).size());
+        assertTrue(view.mapFeatures(SystemClock.elapsedRealtime(),e->false).isEmpty());
+        NativeWarnings.tilePoints(new long[0]);
+        assertEquals("CLEAR",last().getString("operation"));assertEquals(point.getString("warning_id"),last().getString("warning_id"));
+        assertEquals(0,announcements());
+    }
+    @Test public void nativeTileReloadRetainsIdentityAndAdvancesRevision(){
+        long[] point={7,-1,69,5000000,52000000};NativeWarnings.tilePoints(point);
+        String id=last().getString("warning_id");long revision=last().getLong("revision");
+        NativeWarnings.tilePoints(new long[0]);NativeWarnings.tilePoints(point);
+        assertEquals(id,last().getString("warning_id"));assertTrue(last().getLong("revision")>revision);
+        assertEquals(0,announcements());
+    }
     private WarningEvent decoded(Bundle source){
         return decoded(source,1);
     }
@@ -247,6 +296,29 @@ public class NativeWarningsTest {
         NativeWarnings.zoneSelected(controller);NativeWarnings.zonePresented(controller);NativeWarnings.sound(new Id("uuid-zone",""));assertEquals(1,announcements());
     }
 
+    @Test public void snapshotSampledBeforeNativeStopCannotRepublishAfterRestart() {
+        long[] points={1,2,72,5000000,52000000};
+        long old=NativeWarnings.tileEpoch();NativeWarnings.tilePoints(points,old);
+        NativeWarnings.engineStopped();int cleared=events.size();
+        assertEquals("CLEAR",last().getString("operation"));
+        NativeWarnings.tilePoints(points,old);assertEquals(cleared,events.size());
+        NativeWarnings.tilePoints(points,NativeWarnings.tileEpoch());
+        assertEquals("UPSERT",last().getString("operation"));assertEquals(cleared+1,events.size());
+        assertEquals(0,announcements());
+    }
+
+    @Test public void stopRetainsDisplayOnlyTileClassificationOnClear() {
+        NativeWarnings.tilePoints(new long[]{1,2,72,5000000,52000000});
+        assertEquals("UPSERT",last().getString("operation"));
+        NativeWarnings.stopped();
+        Bundle clear=last();assertEquals("CLEAR",clear.getString("operation"));
+        assertEquals("display_only",clear.getString("category"));
+        assertEquals("waze.insights.native_tile",clear.getString("native_namespace"));
+        assertTrue(nl.johninnl.navigation.alerts.WarningGeometry.nativeMapFeature(decoded(clear)));
+        assertFalse(clear.containsKey("latitude"));assertFalse(clear.containsKey("position_estimated"));
+        assertEquals(0,announcements());
+    }
+
     @Test public void freshNativeRepeatDoesNotFreshenCachedMeasurementClocks(){
         Descriptor d=new Descriptor("measurement-age","CAMERA",0);repository(d);long observed=last().getLong("distance_observed_elapsed_ms");
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(31));NativeWarnings.sound(d.id);Bundle announcement=last();
@@ -404,10 +476,10 @@ public class NativeWarningsTest {
         public long getId(){return id;}public String getUuid(){return uuid;}public String getAlerterType(){return type;}
         public int getSubtype(){return 0;}public boolean getFamiliar(){return false;}
     }
-    public static final class SegmentId {final String type;SegmentId(String type){this.type=type;}public String getSegmentType(){return type;}public int getSegmentTypeValue(){return 0;}public String getSegmentId(){return "segment";}}
+    public static final class SegmentId {final String type,id;SegmentId(String type){this(type,"segment");}SegmentId(String type,String id){this.type=type;this.id=id;}public String getSegmentType(){return type;}public int getSegmentTypeValue(){return 0;}public String getSegmentId(){return id;}}
     public static final class Segment {
-        final SegmentId id;List<Link> links=Collections.emptyList();Segment(String type){id=new SegmentId(type);}
-        public SegmentId getId(){return id;}public String getPositionRelativeToSegment(){return "APPROACHING";}
+        final SegmentId id;String phase="APPROACHING";List<Link> links=Collections.emptyList();Segment(String type){id=new SegmentId(type);}Segment(String type,String nativeId){id=new SegmentId(type,nativeId);}
+        public SegmentId getId(){return id;}public String getPositionRelativeToSegment(){return phase;}
         public int getRemainingDistanceMeters(){return 50;}public boolean hasRemainingDurationSeconds(){return false;}
         public boolean hasPriority(){return false;}public List<Link> getSourceAlertInfosList(){return links;}
     }

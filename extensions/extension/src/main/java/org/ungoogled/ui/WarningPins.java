@@ -41,9 +41,14 @@ final class WarningPins {
         final String icon;
         final double lat, lng;
         final String title;
+        final boolean mapFeature;
 
         Pin(String key, String icon, double lat, double lng, String title) {
+            this(key, icon, lat, lng, title, false);
+        }
+        Pin(String key, String icon, double lat, double lng, String title, boolean mapFeature) {
             this.key = key; this.icon = icon; this.lat = lat; this.lng = lng; this.title = title;
+            this.mapFeature = mapFeature;
         }
 
         String emoji() { return WarningPins.emoji(icon); }
@@ -52,10 +57,10 @@ final class WarningPins {
             if (!(o instanceof Pin)) return false;
             Pin p = (Pin) o;
             return key.equals(p.key) && icon.equals(p.icon) && Double.compare(lat, p.lat) == 0
-                    && Double.compare(lng, p.lng) == 0 && title.equals(p.title);
+                    && Double.compare(lng, p.lng) == 0 && title.equals(p.title) && mapFeature == p.mapFeature;
         }
 
-        @Override public int hashCode() { return Objects.hash(key, icon, lat, lng, title); }
+        @Override public int hashCode() { return Objects.hash(key, icon, lat, lng, title, mapFeature); }
 
         /** Never the position: this may end up in a log line. */
         @Override public String toString() { return "Pin{" + key + "," + icon + "}"; }
@@ -68,9 +73,23 @@ final class WarningPins {
         for (WarningEvent event : events) {
             if (!placeable(event, now)) continue;
             String icon = IndicatorContract.icon(event);
-            out.add(new Pin(key(event), icon, event.latitude, event.longitude, title(icon, dutch)));
+            out.add(new Pin(key(event), icon, event.latitude, event.longitude, title(icon, dutch),
+                    WarningGeometry.nativeMapFeature(event)));
         }
         return Collections.unmodifiableList(out);
+    }
+
+    /** Static map features use the place layer, not the road-report callout layer. */
+    static List<Pin> incidentPins(List<Pin> pins) {
+        List<Pin> result = new ArrayList<>();
+        for (Pin pin : pins) if (!pin.mapFeature) result.add(pin);
+        return Collections.unmodifiableList(result);
+    }
+    static List<Pin> mapPlaces(List<Pin> pins, boolean incidentsDrawing) {
+        if (!incidentsDrawing) return pins;
+        List<Pin> result = new ArrayList<>();
+        for (Pin pin : pins) if (pin.mapFeature) result.add(pin);
+        return Collections.unmodifiableList(result);
     }
 
     /**

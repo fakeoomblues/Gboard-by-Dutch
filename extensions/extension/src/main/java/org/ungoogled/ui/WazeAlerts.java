@@ -439,10 +439,10 @@ public final class WazeAlerts {
         List<Object> out = new ArrayList<>();
         if (!MAP) return out;
         if (ExternalTelemetry.modern() && ExternalTelemetry.warningPinMode()) {
-            // Drawn as Google's incident callouts now (navigation): not twice.
-            if (IncidentPins.drawing()) return out;
+            // Native tile cameras are fixed map places. Actual warnings use incident callouts
+            // during guidance; never duplicate those in the place layer.
             String from = "From " + ExternalTelemetry.provider();
-            for (WarningPins.Pin p : ExternalTelemetry.warningPins()) {
+            for (WarningPins.Pin p : WarningPins.mapPlaces(ExternalTelemetry.warningPins(),IncidentPins.drawing())) {
                 Object list = SavedOnMap.listInfo("ungoogled:warning:" + p.key, "CUSTOM", p.title, p.emoji());
                 Object item = SavedOnMap.item(0, 0, p.lat, p.lng, p.title, from, 0, list, false);
                 if (item != null) out.add(item);

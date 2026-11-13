@@ -32,6 +32,26 @@ public class AlertMarkersTest {
     }
     static WarningEvent point(String id,boolean fixed){return point(id,T,52.1,5.1,T,fixed,"point_ahead",Collections.emptyMap());}
     static List<AlertMarkers.Marker> select(long now,WarningEvent... events){return AlertMarkers.select(Arrays.asList(events),now,e->WarningPassage.Relevance.RELEVANT);}
+    @Test public void nativeTileMapFeatureIsNotRetiredByWarningRouteOrPassageDecisions(){
+        Map<String,Object> extra=new HashMap<>();extra.put("category","display_only");extra.put("native_type","CAMERA");
+        extra.put("native_namespace","waze.insights.native_tile");extra.put("native_tile_kind",72);extra.put("position_clock_origin","native_tile");
+        WarningEvent camera=point("waze/tile/7/11/72",T,52.1,5.1,T,true,"point_ahead",extra);
+        for(WarningPassage.Relevance relevance:new WarningPassage.Relevance[]{WarningPassage.Relevance.PASSED,WarningPassage.Relevance.OFF_ROUTE})
+            assertEquals(1,AlertMarkers.select(Collections.singletonList(camera),T,e->relevance).size());
+        assertTrue(AlertMarkers.select(Collections.singletonList(camera),T+30000,e->WarningPassage.Relevance.RELEVANT).isEmpty());
+        extra.put("native_namespace","other");
+        WarningEvent ordinary=point("ordinary",T,52.1,5.1,T,true,"point_ahead",extra);
+        assertTrue(AlertMarkers.select(Collections.singletonList(ordinary),T,e->WarningPassage.Relevance.OFF_ROUTE).isEmpty());
+    }
+
+    @Test public void nativeRangeUsesItsCorrelatedApproachWithoutForgingTheAlertsPhase(){
+        Map<String,Object> extra=new HashMap<>();extra.put("native_type","CAMERA");extra.put("phase","notice");
+        extra.put("zone_point","start");extra.put("position_clock_origin","native_route_line");
+        extra.put("native_segment_correlated",true);extra.put("native_segment_type","AVERAGE_SPEED_CAMERA");extra.put("native_segment_phase","APPROACHING");
+        WarningEvent e=point("waze/alert",T,52.1,5.1,T,true,"zone",extra);
+        assertEquals(1,select(T,e).size());assertEquals(WarningEvent.Phase.NOTICE,e.phase);
+        extra.put("native_zone_state","InZone");assertTrue(select(T,point("waze/alert",T,52.1,5.1,T,true,"zone",extra)).isEmpty());
+    }
 
     @Test public void fixedNativePointsPersistUntilStateEndsButOtherPointsNeedAFreshPosition(){
         WarningEvent fixed=point("fm/cam",true),waze=point("waze/cam",false);

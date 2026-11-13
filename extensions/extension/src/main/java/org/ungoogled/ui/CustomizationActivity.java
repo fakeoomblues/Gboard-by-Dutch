@@ -455,7 +455,7 @@ public final class CustomizationActivity extends Activity {
             }));
             body.addView(kindsRow);
             Switch pins=new Switch(this);pins.setChecked(WazeAlerts.onMap(this));
-            body.addView(toggleRow("Road alerts on the map", "Pins follow the warning pills, at the provider's own position; older sources pin reports with a known position",pins));
+            body.addView(toggleRow("Road alerts on the map", "Camera locations and road alerts at the positions supplied by the selected provider",pins));
             pins.setOnCheckedChangeListener((b,on)->WazeAlerts.setOnMap(this,on));
             Switch chime=new Switch(this);chime.setChecked(WazeAlerts.chime(this));
             body.addView(toggleRow("Chime for a road alert ahead", "Uses a reported approach distance, or an estimated position and heading check",chime));

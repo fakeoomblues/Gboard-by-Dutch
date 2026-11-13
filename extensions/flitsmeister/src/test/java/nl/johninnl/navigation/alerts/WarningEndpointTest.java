@@ -83,6 +83,38 @@ public class WarningEndpointTest {
         List<WarningEvent> events=WarningCodec.decodeBatch(pushed.getBundle("batch"),clock.get());assertEquals("Actual native text",events.get(0).message);
         assertEquals(1,events.get(0).sequence);assertEquals(100000,events.get(0).issuedAt);
     }
+    @Test public void cameraCapacityAndChurnNeverFenceNativeDelivery() throws Exception {
+        Bundle registration=confirmed(new Callback());
+        Bundle request=new Bundle();request.putString("registration_token",registration.getString("registration_token"));
+        for(int i=0;i<32;i++)emitAndCheckHealthy(camera("camera-"+i,"UPSERT"),request);
+        for(int i=0;i<96;i++) {
+            Bundle nativeEvent=event();nativeEvent.putString("warning_id","native-"+i);
+            nativeEvent.putString("announcement_origin","uniform_alert");
+            emitAndCheckHealthy(nativeEvent,request);
+        }
+        emitAndCheckHealthy(camera("camera-0","CLEAR"),request);
+        Bundle incoming=event();incoming.putString("warning_id","native-new");incoming.putString("announcement_origin","uniform_alert");
+        emitAndCheckHealthy(incoming,request);
+        for(int i=0;i<150;i++) {
+            emitAndCheckHealthy(camera("churn-"+i,"UPSERT"),request);
+            emitAndCheckHealthy(camera("churn-"+i,"CLEAR"),request);
+        }
+        Bundle clear=new Bundle();clear.putString("operation","CLEAR");clear.putString("warning_id","native-0");
+        clear.putLong("revision",2);clear.putLong("announcement_index",1);clear.putLong("observed_elapsed_ms",clock.get());
+        emitAndCheckHealthy(clear,request);
+    }
+    private void emitAndCheckHealthy(Bundle event,Bundle request)throws Exception {
+        assertTrue(source.emit(event));
+        assertTrue("Display-only capacity must not fail native capture",call(WarningWire.PING,request).getBoolean("capture_complete"));
+    }
+    private Bundle camera(String id,String operation) {
+        Bundle b=event();b.putString("warning_id",id);b.putString("operation",operation);b.putLong("announcement_index",0);
+        b.putString("native_type","CAMERA");b.putString("category","display_only");
+        b.putString("native_namespace","waze.insights.native_tile");b.putInt("native_tile_kind",72);
+        b.putString("position_clock_origin","native_tile");b.putBoolean("native_point_target",true);
+        return b;
+    }
+
     @Test public void idleHealthPingPreservesAConfirmedRegistration() throws Exception {
         Bundle r=confirmed(new Callback());Bundle q=new Bundle();q.putString("registration_token",r.getString("registration_token"));
         clock.set(140000);assertEquals("OK",call(WarningWire.PING,q).getString("status"));

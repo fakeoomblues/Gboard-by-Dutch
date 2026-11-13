@@ -42,6 +42,40 @@ public class WarningPinsTest {
     static WarningEvent event(Bundle b) { return WarningCodec.decode(b, b.getLong("issued_elapsed_ms")); }
 
     static final double[] HERE = {51.485487, 5.416153};
+    @Test public void nativeTileFeatureHasAMapPinWithoutBecomingAWarningPill() {
+        Bundle b=warning("waze/tile/7/11/72",1,T,HERE,T,true,false);
+        b.putString("native_type","CAMERA");b.putString("category","display_only");
+        b.putString("native_namespace","waze.insights.native_tile");b.putInt("native_tile_kind",72);
+        b.putString("position_clock_origin","native_tile");
+        WarningView view=new WarningView();view.events(List.of(event(b)));
+        assertTrue(view.carEvents(T,e->true).isEmpty());
+        List<WarningEvent> features=view.mapFeatures(T,e->true);
+        assertEquals(1,WarningPins.select(features,T,false).size());
+        List<WarningPins.Pin> pins=WarningPins.select(features,T,false);
+        assertTrue(pins.get(0).mapFeature);
+        assertEquals(1,WarningPins.mapPlaces(pins,true).size());
+        assertTrue(WarningPins.incidentPins(pins).isEmpty());
+        assertTrue(view.mapFeatures(T,e->false).isEmpty());
+        assertTrue(view.mapFeatures(T+30000,e->true).isEmpty());
+    }
+    @Test public void staticMapFeaturesAndRoadWarningsUseDifferentGuidanceLayers() {
+        WarningPins.Pin warning=new WarningPins.Pin("warning","speed_camera",52,5,"Camera");
+        WarningPins.Pin feature=new WarningPins.Pin("feature","speed_camera",52.1,5.1,"Camera",true);
+        List<WarningPins.Pin> mixed=List.of(warning,feature);
+        assertEquals(List.of(warning),WarningPins.incidentPins(mixed));
+        assertEquals(List.of(feature),WarningPins.mapPlaces(mixed,true));
+        assertEquals(mixed,WarningPins.mapPlaces(mixed,false));
+    }
+
+    @Test public void nativeRangeUsesTheCorrelatedSegmentPhaseWithoutChangingTheAlertsPhase() {
+        Bundle b=warning("waze/alert",1,T,HERE,T,true,false);
+        b.putString("native_type","CAMERA");b.putString("phase","notice");b.putString("relevance","zone");
+        b.putString("zone_point","start");b.putString("position_clock_origin","native_route_line");
+        b.putBoolean("native_segment_correlated",true);b.putString("native_segment_type","AVERAGE_SPEED_CAMERA");
+        b.putString("native_segment_phase","APPROACHING");
+        assertEquals(1,WarningPins.select(List.of(event(b)),T,false).size());assertEquals("notice",b.getString("phase"));
+        b.putString("native_zone_state","InZone");assertTrue(WarningPins.select(List.of(event(b)),T,false).isEmpty());
+    }
 
     @Test public void fixedNativePointPersistsUntilStateExpires() {
         WarningEvent fixed = event(warning("cam", 1, T, HERE, T, true, false));
