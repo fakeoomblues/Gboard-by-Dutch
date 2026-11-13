@@ -43,8 +43,6 @@ public final class GboardAiWritingToolsRuntime {
             "nga_lab_modeless_smartedit_regex_version";
     static final String ALL_LANGUAGES_ALLOWLIST_VALUE = "*";
     static final String MODELESS_SMART_EDIT_REGEX_VERSION = "v3";
-    static final String SERVER_WRITING_CONFIGURATION =
-            "202504090000_writing_tools_config";
 
     private static final String TAG = "GboardPatches";
     private static final String LOG_PREFIX = "[gboard-writing-tools-18.0.3] ";
@@ -111,11 +109,9 @@ public final class GboardAiWritingToolsRuntime {
         }
 
         BackendDecision backend = backendDecision(settings.backendType);
-        if (originalResult instanceof String
-                && Long.valueOf(1L).equals(backend.backendType)
-                && isServerModelConfiguration(flagName)) {
-            return SERVER_WRITING_CONFIGURATION;
-        }
+        // 18.6.3 registers its own server writing config (ojm: writing_helper_model_version
+        // defaults to 202406101250_prod_sd_config), so the stock value is the current one and
+        // must not be replaced with another build's name.
         if (FLAG_BACKEND_TYPE.equals(flagName)) {
             return originalResult instanceof Long && backend.backendType != null ? backend.backendType : originalResult;
         }
