@@ -32,7 +32,7 @@ public final class GboardFloatingWebSearchRuntime {
             }
             if (!GboardCustomTabsProviderResolver.hasBrowsableActivity(
                     context, settings.getStartPageUrl())) {
-                showToast(context, "沒有可用的瀏覽器", "No available browser");
+                showToast(context, "No available browser");
                 return;
             }
             if (!GboardFloatingWebSearchLauncher.open(context, settings)) {
@@ -53,18 +53,15 @@ public final class GboardFloatingWebSearchRuntime {
     }
 
     static void showUnavailable(Context context) {
-        showToast(context, "目前無法開啟懸浮網頁搜尋",
-                "Unable to open Floating Web Search");
+        showToast(context, "Unable to open Floating Web Search");
     }
 
-    private static void showToast(Context context, String chinese, String english) {
+    private static void showToast(Context context, String message) {
         try {
             if (context == null) {
                 return;
             }
-            String language = java.util.Locale.getDefault().getLanguage();
-            Toast.makeText(context, "zh".equalsIgnoreCase(language) ? chinese : english,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         } catch (Throwable ignored) {
             // User feedback cannot affect the Gboard click path.
         }

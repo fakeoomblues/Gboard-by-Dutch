@@ -15,8 +15,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
-import dev.jason.gboardpatches.patches.gboard.shared.GboardFlagFamilyFeature
-import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatch
+import patches.gboard.shared.GboardFlagFamilyFeature
+import patches.gboard.shared.gboardFlagFamilyFeaturePatch
 
 // Gboard logs its original class and method names; these anchor the obfuscated extension.
 private const val AGENTIC_EXTENSION_CLASS =

@@ -78,7 +78,11 @@ val gboardCustomBrandingPatch = resourcePatch(
     val customName by stringOption(
         key = "customName", title = "App name",
         description = "Name shown in the launcher, Android's keyboard list and app information. Leave empty to keep Gboard.",
-    ) { value -> value == null || (value.length <= 40 && value == value.trim() && value.none { it.code < 32 }) }
+    ) { value ->
+        // Surrounding whitespace is trimmed rather than rejected: an invisible trailing
+        // space in the Manager's text field must not fail the whole patch run.
+        value == null || (value.trim().length <= 40 && value.trim().none { it.code < 32 })
+    }
     val appIcon by stringOption(
         key = "appIcon", title = "App icon", default = DEFAULT_ICON,
         description = "Launcher icon applied when patching.",
@@ -88,7 +92,7 @@ val gboardCustomBrandingPatch = resourcePatch(
     execute {
         val icon = appIcon!!
         if (icon != DEFAULT_ICON) setIcon(icon)
-        val name = customName?.takeUnless(String::isBlank) ?: return@execute
+        val name = customName?.trim()?.takeUnless(String::isBlank) ?: return@execute
         document("AndroidManifest.xml").use { manifest ->
             val application = manifest.getElementsByTagName("application").item(0) as? Element
                 ?: throw PatchException("Gboard application element is missing")

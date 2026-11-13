@@ -1386,7 +1386,7 @@ public final class ClipboardSyncWebPortal {
 
     private static final String INDEX_HTML = """
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1631,12 +1631,12 @@ public final class ClipboardSyncWebPortal {
           <div class="title">Desktop → Phone</div>
           <div class="metric" id="desktopCount">0</div>
         </div>
-        <textarea id="desktopText" placeholder="在這裡 Ctrl+V 貼上 Windows / macOS / Linux 剪貼簿，會直接送到手機。"></textarea>
+        <textarea id="desktopText" placeholder="Press Ctrl+V here to paste the Windows / macOS / Linux clipboard; it goes straight to the phone."></textarea>
         <div class="actions">
           <button id="sendButton">Send to phone</button>
           <button class="secondary" id="pasteButton">Paste from browser</button>
         </div>
-        <p class="hint">HTTP 模式下瀏覽器可能不允許自動讀剪貼簿；手動 Ctrl+V 永遠可用。</p>
+        <p class="hint">In HTTP mode the browser may block automatic clipboard reads; manual Ctrl+V always works.</p>
       </article>
 
       <article class="card">
@@ -1644,7 +1644,7 @@ public final class ClipboardSyncWebPortal {
           <div class="title">Phone → Web</div>
           <div class="metric" id="phoneCount">0</div>
         </div>
-        <div id="phoneText" class="clip-view">等待手機剪貼簿...</div>
+        <div id="phoneText" class="clip-view">Waiting for the phone clipboard...</div>
         <div class="actions">
           <button id="copyButton">Copy on desktop</button>
         </div>
@@ -1655,13 +1655,13 @@ public final class ClipboardSyncWebPortal {
           <div class="title">Live Link</div>
           <div class="metric">LAN</div>
         </div>
-        <p class="hint">保持這個分頁開啟。手機複製文字後會透過 Server-Sent Events 即時顯示在這裡。</p>
+        <p class="hint">Keep this tab open. Text copied on the phone appears here live over Server-Sent Events.</p>
         <p class="hint" id="lastUpdated">No clipboard received yet.</p>
       </article>
     </section>
 
     <section class="dock">
-      <span>頁面開著就可用，不需要安裝桌面 APP</span>
+      <span>Works while this page is open; no desktop app needed</span>
       <small id="endpoint"></small>
     </section>
   </main>
@@ -1695,7 +1695,7 @@ public final class ClipboardSyncWebPortal {
       }
       lastPhoneText = nextText;
       lastPhoneUpdatedAtMs = nextUpdatedAtMs;
-      phoneText.textContent = lastPhoneText || "空剪貼簿";
+      phoneText.textContent = lastPhoneText || "Clipboard is empty";
       phoneCount.textContent = String(lastPhoneText.length);
       lastUpdated.textContent = nextUpdatedAtMs > 0
         ? "Updated " + new Date(nextUpdatedAtMs).toLocaleTimeString()

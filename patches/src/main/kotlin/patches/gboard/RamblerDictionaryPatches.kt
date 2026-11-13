@@ -22,8 +22,8 @@ import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
-import dev.jason.gboardpatches.patches.gboard.shared.GboardFlagFamilyFeature
-import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatch
+import patches.gboard.shared.GboardFlagFamilyFeature
+import patches.gboard.shared.gboardFlagFamilyFeaturePatch
 
 internal const val CORRECTION_LIST_FRAGMENT =
     "Lcom/google/android/apps/inputmethod/latin/preference/VoiceCorrectionListFragment;"

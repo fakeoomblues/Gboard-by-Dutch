@@ -8,7 +8,6 @@ import java.util.Locale;
 
 public final class GboardSettingsText {
     private static final String LANGUAGE_ENGLISH = "en";
-    private static final String LANGUAGE_TRADITIONAL_CHINESE = "zh-Hant";
 
     private GboardSettingsText() {
     }
@@ -84,10 +83,7 @@ public final class GboardSettingsText {
         if (args == null || args.length == 0) {
             return template;
         }
-        Locale formatLocale = LANGUAGE_TRADITIONAL_CHINESE.equals(languageTag)
-                ? Locale.TRADITIONAL_CHINESE
-                : Locale.US;
-        return String.format(formatLocale, template, args);
+        return String.format(Locale.US, template, args);
     }
 
     private static String resolveLanguageTag(Context context) {
@@ -102,9 +98,7 @@ public final class GboardSettingsText {
                 // Static feature initialization can request stable text without a usable context.
             }
         }
-        return isTraditionalChinese(locale)
-                ? LANGUAGE_TRADITIONAL_CHINESE
-                : LANGUAGE_ENGLISH;
+        return LANGUAGE_ENGLISH;
     }
 
     private static Locale extractLocale(Context context) {
@@ -134,31 +128,9 @@ public final class GboardSettingsText {
     }
 
     private static String normalizeLanguageTag(String languageTag) {
-        if (LANGUAGE_TRADITIONAL_CHINESE.equals(languageTag)) {
-            return LANGUAGE_TRADITIONAL_CHINESE;
-        }
-        if (languageTag != null && !languageTag.isBlank()) {
-            Locale locale = Locale.forLanguageTag(languageTag);
-            if (isTraditionalChinese(locale)) {
-                return LANGUAGE_TRADITIONAL_CHINESE;
-            }
-        }
         return LANGUAGE_ENGLISH;
     }
 
-    private static boolean isTraditionalChinese(Locale locale) {
-        if (locale == null || !"zh".equalsIgnoreCase(locale.getLanguage())) {
-            return false;
-        }
-        String script = locale.getScript();
-        if ("Hant".equalsIgnoreCase(script)) {
-            return true;
-        }
-        String country = locale.getCountry();
-        return "TW".equalsIgnoreCase(country)
-                || "HK".equalsIgnoreCase(country)
-                || "MO".equalsIgnoreCase(country);
-    }
 
     private static Context requireContext(Context context) {
         if (context == null) {

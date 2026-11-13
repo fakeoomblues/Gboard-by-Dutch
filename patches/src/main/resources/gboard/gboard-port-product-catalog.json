@@ -265,10 +265,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accesspointcount/GboardAccessPointCountFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accesspointcount/GboardAccessPointCountFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/accesspointcount/GboardAccessPointCountFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/accesspointcount/GboardAccessPointCountFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -296,11 +296,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/accesspointsmenu/GboardAccessPointsMenuPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -351,8 +351,8 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/signaturebypass/GboardSignatureBypassBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/signaturebypass/GboardSignatureBypassBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -378,13 +378,13 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/advancedvoice/GboardAdvancedVoiceFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/advancedvoice/GboardAdvancedVoiceFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/advancedvoice/GboardAdvancedVoicePatchSupport.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/advancedvoice/GboardAdvancedVoiceZhTwPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/rambler/GboardRamblerOfficialSelectorPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/advancedvoice/GboardAdvancedVoiceFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/advancedvoice/GboardAdvancedVoiceFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/advancedvoice/GboardAdvancedVoicePatchSupport.kt",
+        "patches/src/main/kotlin/patches/gboard/features/advancedvoice/GboardAdvancedVoiceZhTwPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/rambler/GboardRamblerOfficialSelectorPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -443,12 +443,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/writingtools/GboardAiWritingToolsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/writingtools/GboardAiWritingToolsFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/writingtools/GboardAiWritingToolsPatchConstants.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/writingtools/GboardAiWritingToolsPreferenceObserverPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/writingtools/GboardAiWritingToolsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/writingtools/GboardAiWritingToolsFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/writingtools/GboardAiWritingToolsPatchConstants.kt",
+        "patches/src/main/kotlin/patches/gboard/features/writingtools/GboardAiWritingToolsPreferenceObserverPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -485,9 +485,9 @@
       "target_family_ids": [],
       "migration_scope": "version-neutral-extension",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/backuprestore/GboardBackupRestoreFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/backuprestore/GboardBackupRestoreManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/backuprestore/GboardBackupRestoreFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/backuprestore/GboardBackupRestoreManifestPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -510,10 +510,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/emojisize/GboardEmojiSizeFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/emojisize/GboardEmojiSizeFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/emojisize/GboardEmojiSizeFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/emojisize/GboardEmojiSizeFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -541,10 +541,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboardcontentlimit/GboardClipboardContentLimitFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboardcontentlimit/GboardClipboardContentLimitFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/clipboardcontentlimit/GboardClipboardContentLimitFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboardcontentlimit/GboardClipboardContentLimitFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -571,14 +571,14 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardAdapterPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardColumnCountPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardLoaderPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardPatchOptions.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardPatchValidation.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/clipboard/GboardClipboardPrunePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardAdapterPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardColumnCountPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardLoaderPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardPatchOptions.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardPatchValidation.kt",
+        "patches/src/main/kotlin/patches/gboard/features/clipboard/GboardClipboardPrunePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -657,10 +657,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/closeproactivesuggestions/GboardCloseProactiveSuggestionsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/closeproactivesuggestions/GboardCloseProactiveSuggestionsFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/closeproactivesuggestions/GboardCloseProactiveSuggestionsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/closeproactivesuggestions/GboardCloseProactiveSuggestionsFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -689,17 +689,17 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardAddSymbolsBytecodeUtils.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardCustomSymbolsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsCorpusPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsEmoticonStatePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsEntryPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsExtensionPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsHistoryPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsRecyclerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsRoutingPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardAddSymbolsBytecodeUtils.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardCustomSymbolsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsCorpusPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsEmoticonStatePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsEntryPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsExtensionPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsHistoryPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsRecyclerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/addsymbols/GboardZhuyinCustomSymbolsRoutingPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -793,11 +793,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/customtheme/GboardCustomThemeAssetsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/customtheme/GboardCustomThemeFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/customtheme/GboardCustomThemeManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/customtheme/GboardCustomThemeOfficialImportPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/features/customtheme/GboardCustomThemeAssetsPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/customtheme/GboardCustomThemeFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/customtheme/GboardCustomThemeManifestPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/customtheme/GboardCustomThemeOfficialImportPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
         "patches/src/main/resources/custom-theme-assets/catalog.json"
       ],
       "contributions": [
@@ -832,8 +832,8 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/developeroptions/GboardDeveloperOptionsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/developeroptions/GboardDeveloperOptionsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -856,12 +856,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsLifecyclePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
+        "patches/src/main/kotlin/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsLifecyclePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/editingaccesspoints/GboardEditingAccessPointsTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
       ],
       "contributions": [
         {
@@ -908,9 +908,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/symbolfooter/GboardSymbolFooterOrderBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/symbolfooter/GboardSymbolFooterOrderFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/symbolfooter/GboardSymbolFooterOrderBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/symbolfooter/GboardSymbolFooterOrderFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -937,10 +937,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accessibilitylayout/GboardAccessibilityLayoutFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/accessibilitylayout/GboardAccessibilityLayoutFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/accessibilitylayout/GboardAccessibilityLayoutFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/accessibilitylayout/GboardAccessibilityLayoutFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -968,11 +968,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/cursortrackpad/GboardCursorTrackpadFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/cursortrackpad/GboardCursorTrackpadFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/cursortrackpad/GboardCursorTrackpadPreferencePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/cursortrackpad/GboardCursorTrackpadFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/cursortrackpad/GboardCursorTrackpadFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/cursortrackpad/GboardCursorTrackpadPreferencePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1014,11 +1014,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardDeviceIntelligenceFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardDeviceIntelligenceFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1046,12 +1046,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/ocr/GboardOcrFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/ocr/GboardOcrFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/ocr/GboardOcrPatchTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/ocr/GboardOcrRuntimePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/ocr/GboardOcrFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/ocr/GboardOcrFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/ocr/GboardOcrPatchTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/features/ocr/GboardOcrRuntimePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1105,12 +1105,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/splitkeyboard/GboardSplitKeyboardAccessPointPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/splitkeyboard/GboardSplitKeyboardEligibilityPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/splitkeyboard/GboardSplitKeyboardFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/splitkeyboard/GboardSplitKeyboardModePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/splitkeyboard/GboardSplitKeyboardTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/splitkeyboard/GboardSplitKeyboardAccessPointPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/splitkeyboard/GboardSplitKeyboardEligibilityPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/splitkeyboard/GboardSplitKeyboardFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/splitkeyboard/GboardSplitKeyboardModePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/splitkeyboard/GboardSplitKeyboardTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1154,12 +1154,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/englishqwerty/GboardEnglishQwertyPointerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/englishqwerty/GboardEnglishQwertySoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/englishqwerty/GboardEnglishUppercaseToggleFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/englishqwerty/GboardEnglishQwertyPointerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/englishqwerty/GboardEnglishQwertySoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/englishqwerty/GboardEnglishUppercaseToggleFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1208,11 +1208,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/websearch/GboardFloatingWebSearchFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/websearch/GboardFloatingWebSearchManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
+        "patches/src/main/kotlin/patches/gboard/features/websearch/GboardFloatingWebSearchFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/websearch/GboardFloatingWebSearchManifestPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
       ],
       "contributions": [
         {
@@ -1237,9 +1237,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/frostedglass/GboardFrostedGlassFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/frostedglass/GboardFrostedGlassLifecyclePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/frostedglass/GboardFrostedGlassFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/frostedglass/GboardFrostedGlassLifecyclePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1279,10 +1279,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/spacebarlogo/GboardSpacebarLogoFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/spacebarlogo/GboardSpacebarLogoSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/spacebarlogo/GboardSpacebarLogoFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/spacebarlogo/GboardSpacebarLogoSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1323,11 +1323,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardGrammarCheckerFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardGrammarCheckerFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1354,13 +1354,13 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/manualincognito/GboardManualIncognitoFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/manualincognito/GboardManualIncognitoLifecyclePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/manualincognito/GboardManualIncognitoPolicyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/manualincognito/GboardManualIncognitoTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
+        "patches/src/main/kotlin/patches/gboard/features/manualincognito/GboardManualIncognitoFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/manualincognito/GboardManualIncognitoLifecyclePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/manualincognito/GboardManualIncognitoPolicyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/manualincognito/GboardManualIncognitoTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/accesspoint/GboardAccessPointContributionsTargets.kt"
       ],
       "contributions": [
         {
@@ -1404,11 +1404,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardInlineSuggestionsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardInlineSuggestionsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1436,11 +1436,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/featureflags/GboardKeyShapeSelectionFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagMarkerPatchUtils.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardFeatureFlagsBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/featureflags/GboardKeyShapeSelectionFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1467,10 +1467,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/keypresshaptics/GboardKeypressHapticsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/keypresshaptics/GboardKeypressHapticsFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/keypresshaptics/GboardKeypressHapticsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/keypresshaptics/GboardKeypressHapticsFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1495,10 +1495,10 @@
       "target_family_ids": [],
       "migration_scope": "version-neutral-extension",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/lanftp/GboardLanFtpFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/lanftp/GboardLanFtpManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/packagerename/GboardPackageRenameResourcePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/features/lanftp/GboardLanFtpFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/lanftp/GboardLanFtpManifestPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/packagerename/GboardPackageRenameResourcePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
         "patches/src/main/resources/lan-ftp-res/drawable/ic_lan_ftp_tile.xml"
       ],
       "contributions": [
@@ -1522,13 +1522,13 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/languagemodels/GboardLanguageModelFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/languagemodels/GboardLanguageModelFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/languagemodels/GboardLanguageModelNativePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/languagemodels/GboardLanguageModelResourcesPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/languagemodels/GboardLanguageModelTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/languagemodels/GboardLanguageModelFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/languagemodels/GboardLanguageModelFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/languagemodels/GboardLanguageModelNativePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/languagemodels/GboardLanguageModelResourcesPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/languagemodels/GboardLanguageModelTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1618,9 +1618,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/latinglobe/GboardLatinGlobeKeyIgnoreIntervalBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/latinglobe/GboardLatinGlobeKeyIgnoreIntervalFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/latinglobe/GboardLatinGlobeKeyIgnoreIntervalBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/latinglobe/GboardLatinGlobeKeyIgnoreIntervalFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1650,15 +1650,15 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsGesturePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsInputEventPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsPointerOwnerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardGestureFamilyComposer.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsGesturePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsInputEventPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsPointerOwnerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/longpressquickactions/GboardLongPressQuickActionsSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardGestureFamilyComposer.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1729,8 +1729,8 @@
       "target_family_ids": [],
       "migration_scope": "generic",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/packagerename/GboardPackageRenameResourcePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/packagerename/GboardPackageRenameResourcePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1753,10 +1753,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/quickinsert/GboardQuickInsertFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/quickinsert/GboardQuickInsertFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/quickinsert/GboardQuickInsertFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/quickinsert/GboardQuickInsertFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -1783,9 +1783,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/roundedkeyboard/GboardRoundedKeyboardBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/roundedkeyboard/GboardRoundedKeyboardFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/roundedkeyboard/GboardRoundedKeyboardBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/roundedkeyboard/GboardRoundedKeyboardFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1832,9 +1832,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/settingshomepage/GboardSettingsHomepageBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/settingshomepage/GboardSettingsHomepageFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/settingshomepage/GboardSettingsHomepageBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/settingshomepage/GboardSettingsHomepageFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1862,11 +1862,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/calculator/GboardCalculatorExtensionPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/calculator/GboardCalculatorFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/calculator/GboardCalculatorLifecyclePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/calculator/GboardCalculatorTargets.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/calculator/GboardCalculatorExtensionPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/calculator/GboardCalculatorFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/calculator/GboardCalculatorLifecyclePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/calculator/GboardCalculatorTargets.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1897,9 +1897,9 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/swipedismiss/GboardSwipeDismissBytecodePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/swipedismiss/GboardSwipeDismissFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt"
+        "patches/src/main/kotlin/patches/gboard/features/swipedismiss/GboardSwipeDismissBytecodePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/swipedismiss/GboardSwipeDismissFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt"
       ],
       "contributions": [
         {
@@ -1928,15 +1928,15 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/toprowswipe/GboardTopRowSwipeFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/toprowswipe/GboardTopRowSwipeGesturePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/toprowswipe/GboardTopRowSwipePatchOptions.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/toprowswipe/GboardTopRowSwipePointerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/toprowswipe/GboardTopRowSwipeSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardGestureFamilyComposer.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/toprowswipe/GboardTopRowSwipeFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/toprowswipe/GboardTopRowSwipeGesturePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/toprowswipe/GboardTopRowSwipePatchOptions.kt",
+        "patches/src/main/kotlin/patches/gboard/features/toprowswipe/GboardTopRowSwipePointerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/toprowswipe/GboardTopRowSwipeSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardGestureFamilyComposer.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -2012,10 +2012,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/bluetoothmicrophone/GboardBluetoothMicrophoneFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/bluetoothmicrophone/GboardBluetoothMicrophoneFlagValuePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardFlagFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/bluetoothmicrophone/GboardBluetoothMicrophoneFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/bluetoothmicrophone/GboardBluetoothMicrophoneFlagValuePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardFlagFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -2042,11 +2042,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardAssetsPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardCapturePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/webclipboard/GboardWebClipboardManifestPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/features/webclipboard/GboardWebClipboardAssetsPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/webclipboard/GboardWebClipboardCapturePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/webclipboard/GboardWebClipboardFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/webclipboard/GboardWebClipboardManifestPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
         "patches/src/main/resources/web-clipboard-assets/assets/geist-cyrillic-ext-wght-normal-DjL33-gN.woff2",
         "patches/src/main/resources/web-clipboard-assets/assets/geist-cyrillic-wght-normal-BEAKL7Jp.woff2",
         "patches/src/main/resources/web-clipboard-assets/assets/geist-latin-ext-wght-normal-DC-KSUi6.woff2",
@@ -2085,10 +2085,10 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyinbottomrow/GboardZhuyinBottomRowWeightFeatureMarkerPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyinbottomrow/GboardZhuyinBottomRowWeightSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/zhuyinbottomrow/GboardZhuyinBottomRowWeightFeatureMarkerPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/zhuyinbottomrow/GboardZhuyinBottomRowWeightSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {
@@ -2117,12 +2117,12 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleGesturePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleRuntimePatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardGestureFamilyComposer.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleGesturePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleRuntimePatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/zhuyintraditionalsimplifiedtoggle/GboardZhuyinTraditionalSimplifiedToggleSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardGestureFamilyComposer.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "depends_on_feature_ids": [
         "zhuyin_slide_input"
@@ -2197,11 +2197,11 @@
       ],
       "migration_scope": "version-sensitive",
       "consumer_files": [
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyinslide/GboardZhuyinSlidePointerAnchorPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/features/zhuyinslide/GboardZhuyinSlideSoftKeyPatch.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/registry/GboardPatchRegistry.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
-        "patches/src/main/kotlin/dev/jason/gboardpatches/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
+        "patches/src/main/kotlin/patches/gboard/features/zhuyinslide/GboardZhuyinSlidePointerAnchorPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/features/zhuyinslide/GboardZhuyinSlideSoftKeyPatch.kt",
+        "patches/src/main/kotlin/patches/gboard/registry/GboardPortRegistry.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardPointerOwnerTransformation.kt",
+        "patches/src/main/kotlin/patches/gboard/shared/GboardSoftKeyFamilyComposer.kt"
       ],
       "contributions": [
         {

@@ -3,8 +3,8 @@ package patches.gboard
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
-import dev.jason.gboardpatches.patches.gboard.shared.GboardFlagFamilyFeature
-import dev.jason.gboardpatches.patches.gboard.shared.gboardFlagFamilyFeaturePatch
+import patches.gboard.shared.GboardFlagFamilyFeature
+import patches.gboard.shared.gboardFlagFamilyFeaturePatch
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 

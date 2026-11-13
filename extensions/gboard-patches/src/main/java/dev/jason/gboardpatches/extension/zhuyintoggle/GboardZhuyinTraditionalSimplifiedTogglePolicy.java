@@ -15,7 +15,8 @@ public final class GboardZhuyinTraditionalSimplifiedTogglePolicy {
         return shouldHandleKey(keyId) && ACTION_SLIDE_UP.equals(actionName);
     }
 
+    /** Key-cap label for the toggle; ASCII so the patch is not tied to a Chinese UI. */
     public static String nextLabel(boolean simplifiedEnabled) {
-        return simplifiedEnabled ? "繁" : "簡";
+        return simplifiedEnabled ? "T" : "S";
     }
 }

@@ -42,20 +42,6 @@ public final class GboardAddSymbolsRuntime {
 
     private static final String CUSTOM_CATEGORY_RECENTS = "RECENTS";
     private static final String[] CUSTOM_EMOTICON_CATEGORY_KEYS = buildCustomCategoryKeys();
-    private static final String[] CUSTOM_EMOTICON_CATEGORY_LABELS_ZH = {
-            "最近",
-            "熱門",
-            "常用",
-            "排版",
-            "人物",
-            "動物",
-            "星號",
-            "箭頭",
-            "圖形",
-            "數學",
-            "語言",
-            "貨幣"
-    };
     private static final String[] CUSTOM_EMOTICON_CATEGORY_LABELS_EN = {
             "Recents",
             "Popular",
@@ -1404,7 +1390,7 @@ public final class GboardAddSymbolsRuntime {
     private static String resolveCustomEmoticonCategoryLabel(String categoryKey, Locale locale) {
         try {
             String[] labels = shouldUseChineseCategoryLabels(locale)
-                    ? CUSTOM_EMOTICON_CATEGORY_LABELS_ZH
+                    ? CUSTOM_EMOTICON_CATEGORY_LABELS_EN
                     : CUSTOM_EMOTICON_CATEGORY_LABELS_EN;
             if (CUSTOM_CATEGORY_RECENTS.equals(categoryKey)) {
                 return labels[0];
