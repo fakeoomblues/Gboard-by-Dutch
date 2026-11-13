@@ -37,7 +37,13 @@ function verifyNotes(context) {
     for (const name of declared) {
       if (!allNames.has(name)) throw new Error(`Unknown Release-Apps name ${name}`);
       const bullet = notes.split("\n").some(line => line.startsWith(`* **${name}:**`) && line.includes(`/commit/${hash}`));
-      if (!bullet) throw new Error(`Missing Release-Apps scope ${name} for shared commit ${hash}`);
+      if (!bullet) {
+        // Commit types the notes never render (chore, build, ci) cannot produce a bullet.
+        // Accept the declaration only when the commit's own files map to that app, so an
+        // unscoped or misattributed shared change still fails.
+        const mapped = namesFor(files).map(normalizeAppName);
+        if (!mapped.includes(name)) throw new Error(`Missing Release-Apps scope ${name} for shared commit ${hash}`);
+      }
     }
     authorizedShared.set(hash, new Set(declared));
   }
