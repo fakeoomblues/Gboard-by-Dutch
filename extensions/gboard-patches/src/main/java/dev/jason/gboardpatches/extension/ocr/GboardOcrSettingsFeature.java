@@ -124,7 +124,7 @@ public final class GboardOcrSettingsFeature
 
             List<GboardPatchesSettingsContract.Row> engineRows =
                     new ArrayList<GboardPatchesSettingsContract.Row>();
-            for (GboardOcrEngine engine : GboardOcrEngine.values()) {
+            for (GboardOcrEngine engine : GboardOcrEngine.supported()) {
                 ModuleState moduleState = moduleState(engine);
                 String status = statusFor(engine, moduleState, downloadingEngine);
                 String trailingText = engine == currentEngine ? statusCurrent : null;
@@ -221,7 +221,7 @@ public final class GboardOcrSettingsFeature
     }
 
     private void ensureAvailabilityChecks(GboardPatchesSettingsContract.FeatureHost host) {
-        for (GboardOcrEngine engine : GboardOcrEngine.values()) {
+        for (GboardOcrEngine engine : GboardOcrEngine.supported()) {
             synchronized (moduleStates) {
                 if (moduleStates.containsKey(engine)) {
                     continue;

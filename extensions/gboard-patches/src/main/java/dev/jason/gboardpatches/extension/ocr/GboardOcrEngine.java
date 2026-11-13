@@ -130,6 +130,11 @@ public enum GboardOcrEngine {
         return this != LATIN;
     }
 
+    /** Engines the settings UI offers. Only Latin is shipped with this patch. */
+    public static GboardOcrEngine[] supported() {
+        return new GboardOcrEngine[]{LATIN};
+    }
+
     public static GboardOcrEngine fromValue(String value) {
         return Arrays.stream(values())
                 .filter(engine -> engine.settingsValue.equals(value))
