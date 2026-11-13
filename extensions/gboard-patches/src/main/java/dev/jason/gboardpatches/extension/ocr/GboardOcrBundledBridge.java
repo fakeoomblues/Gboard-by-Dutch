@@ -98,8 +98,23 @@ public final class GboardOcrBundledBridge {
                 return "";
             }
             Object task = process.invoke(recognizer, imageHolder);
+            // lxp.e() completes to Gboard's zxo text object; its a() blocks each carry b() text.
             Object text = Class.forName("lxp", false, cl).getMethod("e").invoke(task);
-            return text == null ? "" : text.toString();
+            if (text == null) {
+                return "";
+            }
+            StringBuilder joined = new StringBuilder();
+            for (Object block : (java.util.List<?>) text.getClass().getMethod("a").invoke(text)) {
+                Object blockText = block.getClass().getMethod("b").invoke(block);
+                if (blockText == null || blockText.toString().isEmpty()) {
+                    continue;
+                }
+                if (joined.length() > 0) {
+                    joined.append('\n');
+                }
+                joined.append(blockText);
+            }
+            return joined.toString();
         } catch (Throwable failure) {
             Log.w(TAG, "Bundled OCR image recognition failed", failure);
             return "";
