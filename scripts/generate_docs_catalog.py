@@ -15,6 +15,8 @@ APP_PAGES = {
     'com.klevico.monet': ('monet', 'other'),
     'com.overdevs.at4k': ('at4k', 'other'),
     'com.alibaba.aliexpresshd': ('aliexpress', 'other'),
+    'io.homeassistant.companion.android': ('homeassistant', 'other'),
+    'com.tuya.smart': ('tuya', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'com.king.candycrushsodasaga': ('candy-crush-soda-saga', 'entertainment'),
     'com.vectorunit.purple.googleplay': ('beach-buggy-racing', 'entertainment'),
