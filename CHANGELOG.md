@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b7385eb108b8b2cbc27888a91c9fe3ca9b7c7f12/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.76.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [b7385eb108b8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/b7385eb108b8b2cbc27888a91c9fe3ca9b7c7f12). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.76.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.75.0...v1.76.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** copy the recognised text instead of its object ([b7385eb](https://gitlab.com/johninnld/nl-morphe-patches/commit/b7385eb108b8b2cbc27888a91c9fe3ca9b7c7f12))
+* **Gboard:** load the OCR engine from a read-only library file ([46a5ba2](https://gitlab.com/johninnld/nl-morphe-patches/commit/46a5ba262fe542a0c1ffa1f6d41434a07de17eb4))
+* **Gboard:** stop asking Play Services about the OCR engine ([2f156e1](https://gitlab.com/johninnld/nl-morphe-patches/commit/2f156e12040466ff38170eb198695a550f11424f))
+
+### ✨ New Features
+
+* **Gboard:** recognise text from an image you pick ([a4a721a](https://gitlab.com/johninnld/nl-morphe-patches/commit/a4a721a5a1778d9119293f709706fd2053dacbee))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e14fc6636f6140a8dfd4e01b38c974188f9617c9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.75.0.**
