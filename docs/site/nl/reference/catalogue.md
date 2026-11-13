@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.77.0**
+**Patchbundel: 1.78.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -433,6 +433,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
 
+## Home Assistant
+
+[Wat veranderen de patches?](../apps/homeassistant.md)
+
+`io.homeassistant.companion.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow any Android Auto host | Aan | 2026.10.1-full |
+
 ## Humo
 
 [Wat veranderen de patches?](../apps/humo.md)
@@ -766,6 +776,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 9.23.2 |
 | Read full articles | Aan | 9.23.2 |
 | Skip consent screens | Aan | 9.23.2 |
+
+## Tuya Smart Life
+
+[Wat veranderen de patches?](../apps/tuya.md)
+
+`com.tuya.smart`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow any Android Auto host | Aan | 7.12.6 |
 
 ## TVgids.nl
 

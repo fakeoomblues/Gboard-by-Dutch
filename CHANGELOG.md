@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cc862ccdf9ccaab6f529c0a506906a0afdd680bb/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.78.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cc862ccdf9cc](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cc862ccdf9ccaab6f529c0a506906a0afdd680bb). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.78.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.77.0...v1.78.0) (2026-11-13)
+
+### ✨ New Features
+
+* **Home Assistant:** allow any Android Auto host on Home Assistant and Tuya Smart Life ([cc862cc](https://gitlab.com/johninnld/nl-morphe-patches/commit/cc862ccdf9ccaab6f529c0a506906a0afdd680bb))
+* **Tuya Smart Life:** allow any Android Auto host on Home Assistant and Tuya Smart Life ([cc862cc](https://gitlab.com/johninnld/nl-morphe-patches/commit/cc862ccdf9ccaab6f529c0a506906a0afdd680bb))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c833d9f8e57e22c24efbdf3f04df9d518c9e058a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.77.0.**

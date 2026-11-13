@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">68 apps</span> · Patchbundel: 1.77.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">70 apps</span> · Patchbundel: 1.78.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -693,6 +693,24 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="other" data-search="home assistant io.homeassistant.companion.android 2026.10.1-full allow any android auto host" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Home Assistant](apps/homeassistant.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">2026.10.1-full</span></p>
+<p class="dap-app-card__package">io.homeassistant.companion.android</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">2026.10.1-full</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/homeassistant.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="news" data-search="humo be.humo.tvgids 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
@@ -1232,6 +1250,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/tubantia.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="tuya smart life com.tuya.smart 7.12.6 allow any android auto host" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Tuya Smart Life](apps/tuya.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.12.6</span></p>
+<p class="dap-app-card__package">com.tuya.smart</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">7.12.6</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/tuya.md){ .dap-app-card__link }
 
 </article>
 

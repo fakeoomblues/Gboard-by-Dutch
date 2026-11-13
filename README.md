@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.77.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.77.0)** · 68 apps · 355 patches
+**Patch bundle [v1.78.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.78.0)** · 70 apps · 357 patches
 
 ### Weather
 
@@ -138,9 +138,11 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 25 |
+| [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
+| [Tuya Smart Life](docs/site/en/apps/tuya.md) | See guide | 7.12.6 | APKS | 1 |
 | [Zoom Workplace](docs/site/en/apps/zoom.md) | See guide | 7.2.1.43844 | APKS | 1 |
 
 [Patch defaults and supported versions](docs/site/nl/reference/catalogue.md) · [English](docs/site/en/reference/catalogue.md)

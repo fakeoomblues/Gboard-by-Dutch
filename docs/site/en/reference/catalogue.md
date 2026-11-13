@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.77.0**
+**Patch bundle: 1.78.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -433,6 +433,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
 
+## Home Assistant
+
+[What do the patches change?](../apps/homeassistant.md)
+
+`io.homeassistant.companion.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow any Android Auto host | On | 2026.10.1-full |
+
 ## Humo
 
 [What do the patches change?](../apps/humo.md)
@@ -766,6 +776,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 9.23.2 |
 | Read full articles | On | 9.23.2 |
 | Skip consent screens | On | 9.23.2 |
+
+## Tuya Smart Life
+
+[What do the patches change?](../apps/tuya.md)
+
+`com.tuya.smart`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow any Android Auto host | On | 7.12.6 |
 
 ## TVgids.nl
 
