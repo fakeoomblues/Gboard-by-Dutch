@@ -1493,10 +1493,10 @@
         <translation locale="en">Only en-US supports the complete feature set.\n\nEnglish en-AU, en-CA, en-GB, en-IE, en-IN, en-SG, en-US\nGerman de-AT, de-BE, de-CH, de-DE\nFrench fr-BE, fr-CA, fr-CH, fr-FR\nItalian it-CH, it-IT\nJapanese ja-JP\nSpanish es-ES, es-US</translation>
     </string>
     <string name="gboard_patches_advanced_voice_github_star_title">
-        <translation locale="en">Support this project on GitHub 😊</translation>
+        <translation locale="en">Support this project on GitLab 😊</translation>
     </string>
     <string name="gboard_patches_advanced_voice_github_star_summary">
-        <translation locale="en">This feature took a significant amount of time to build. If it helps you, please give the project a Star on GitHub.</translation>
+        <translation locale="en">This feature took a significant amount of time to build. If it helps you, please give the project a Star on GitLab.</translation>
     </string>
     <string name="gboard_patches_advanced_voice_speech_services_present_title">
         <translation locale="en">Speech Recognition &amp; Synthesis (Installed)</translation>
