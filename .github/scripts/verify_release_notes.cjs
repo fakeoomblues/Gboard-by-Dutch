@@ -42,8 +42,13 @@ function verifyNotes(context) {
       if (inferred) declared = [inferred];
     }
     if (!namesFor(files).length && !declared.length) throw new Error(`Shared-only commit ${hash} needs its own Release-Apps trailer`);
+    const subject = (git("show", "-s", "--format=%s", hash) || "").trim();
+    // Types the notes never render (build, chore, ci, docs, …) cannot produce a bullet, so an
+    // explicit scope is all they can give. The app-impact checks below still apply.
+    const hidden = /^(build|chore|ci|docs|style|refactor|test)(\(|!?:)/i.test(subject);
     for (const name of declared) {
       if (!allNames.has(name)) throw new Error(`Unknown Release-Apps name ${name}`);
+      if (hidden) continue;
       const bullet = notes.split("\n").some(line => line.startsWith(`* **${name}:**`) && line.includes(`/commit/${hash}`));
       if (!bullet) {
         // Commit types the notes never render (chore, build, ci) cannot produce a bullet.
