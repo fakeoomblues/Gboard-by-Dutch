@@ -4,7 +4,7 @@
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer de arm64-v8a-APK van Google voor precies deze build (Android 12L+).
+Selecteer de armeabi-v7a-APK (build 176071765) of arm64-v8a-APK (build 176071766) van Google voor precies deze release; de versionName van elke build eindigt op zijn eigen ABI. Android 8.0+ volstaat: zowel de minAPI26- als de minAPI32-variant van elke build werkt.
 
 ## Patches
 
