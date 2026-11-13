@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.79.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.79.0)** · 70 apps · 357 patches
+**Patch bundle [v1.80.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.80.0)** · 71 apps · 361 patches
 
 ### Weather
 
@@ -142,6 +142,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
+| [Reolink](docs/site/en/apps/reolink.md) | See guide | 4.64.3.20261023 | APKM | 4 |
 | [Tuya Smart Life](docs/site/en/apps/tuya.md) | See guide | 7.12.6 | APKS | 1 |
 | [Zoom Workplace](docs/site/en/apps/zoom.md) | See guide | 7.2.1.43844 | APKS | 1 |
 

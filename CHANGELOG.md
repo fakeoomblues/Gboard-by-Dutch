@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/07ef47beb9612da6318419e79dabe7946324ea39/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.80.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [07ef47beb961](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/07ef47beb9612da6318419e79dabe7946324ea39). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.80.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.79.0...v1.80.0) (2026-11-13)
+
+### ✨ New Features
+
+* **Reolink:** run Reolink as a parked app with its phone layout on car screens ([046aa7b](https://gitlab.com/johninnld/nl-morphe-patches/commit/046aa7b5b09def0f1ea9b50a2c51dcbc87e8a156))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/2281d4d27cbf9623e17d862aafa6cfcd4d4d941f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.79.0.**

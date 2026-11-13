@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.79.0**
+**Patch bundle: 1.80.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -695,6 +695,19 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide weather warnings overlay | On | 8.4.1 |
 | Skip consent screens | On | 8.4.1 |
 | Skip subscription screens | On | 8.4.1 |
+
+## Reolink
+
+[What do the patches change?](../apps/reolink.md)
+
+`com.mcu.reolink`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Change package name | On | 4.64.3.20261023 |
+| Custom branding | On | 4.64.3.20261023 |
+| Custom layout for Android Auto | On | 4.64.3.20261023 |
+| Parked app for Android Auto | On | 4.64.3.20261023 |
 
 ## Rollerbank
 

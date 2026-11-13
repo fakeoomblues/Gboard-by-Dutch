@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.79.0**
+**Patchbundel: 1.80.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -695,6 +695,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide weather warnings overlay | Aan | 8.4.1 |
 | Skip consent screens | Aan | 8.4.1 |
 | Skip subscription screens | Aan | 8.4.1 |
+
+## Reolink
+
+[Wat veranderen de patches?](../apps/reolink.md)
+
+`com.mcu.reolink`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Change package name | Aan | 4.64.3.20261023 |
+| Custom branding | Aan | 4.64.3.20261023 |
+| Custom layout for Android Auto | Aan | 4.64.3.20261023 |
+| Parked app for Android Auto | Aan | 4.64.3.20261023 |
 
 ## Rollerbank
 
