@@ -24,6 +24,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [EasyPark NL](../apps/easypark-nl.md) | 26.42.4 / 82642040 | [APKS](#local-original-inputs) |
 | [Zoom Workplace](../apps/zoom.md) | 7.2.1.43844 / 6702010 | [APKS](#local-original-inputs) |
 | [Home Assistant](../apps/homeassistant.md) | 2026.10.1-full / 24906 | [APKS](#local-original-inputs) |
+| [Reolink](../apps/reolink.md) | 4.64.3.20261023 / 796 | [APKM](#local-original-inputs) |
 | [Tuya Smart Life](../apps/tuya.md) | 7.12.6 / 872 | [APKS](#local-original-inputs) |
 | [ED](../apps/ed.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/pi3usslla0jt) |
 | [GVA](../apps/gva.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/1thesia58zm2) |

@@ -17,6 +17,7 @@ APP_PAGES = {
     'com.alibaba.aliexpresshd': ('aliexpress', 'other'),
     'io.homeassistant.companion.android': ('homeassistant', 'other'),
     'com.tuya.smart': ('tuya', 'other'),
+    'com.mcu.reolink': ('reolink', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'com.king.candycrushsodasaga': ('candy-crush-soda-saga', 'entertainment'),
     'com.vectorunit.purple.googleplay': ('beach-buggy-racing', 'entertainment'),
