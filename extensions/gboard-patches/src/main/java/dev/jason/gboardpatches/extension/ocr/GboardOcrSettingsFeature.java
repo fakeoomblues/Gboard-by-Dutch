@@ -1,8 +1,15 @@
 package dev.jason.gboardpatches.extension.ocr;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +28,10 @@ public final class GboardOcrSettingsFeature
 
     private static volatile GboardOcrEngine pendingEngine;
     private static volatile GboardOcrEngine failedEngine;
+
+    /** Images larger than this cannot be a screenshot of text, and are not worth decoding. */
+    private static final int MAX_IMAGE_BYTES = 32 * 1024 * 1024;
+    private static final String[] IMAGE_TYPES = {"image/*"};
 
     private enum ModuleState {
         CHECKING,
@@ -47,6 +58,12 @@ public final class GboardOcrSettingsFeature
     private final String statusDownloading;
     private final String statusDownloadFailed;
     private final String statusCurrent;
+    private final String imageTitle;
+    private final String imageSummary;
+    private final String imageUnreadable;
+    private final String imageEmpty;
+    private final String imageCopied;
+    private final String imageSection;
     private final String[] engineLabels;
 
     public GboardOcrSettingsFeature(Context context) {
@@ -81,6 +98,13 @@ public final class GboardOcrSettingsFeature
                 context, R.string.gboard_patches_ocr_status_download_failed);
         statusCurrent = GboardSettingsText.get(
                 context, R.string.gboard_patches_ocr_status_current);
+        imageTitle = GboardSettingsText.get(context, R.string.gboard_patches_ocr_image_title);
+        imageSummary = GboardSettingsText.get(context, R.string.gboard_patches_ocr_image_summary);
+        imageUnreadable = GboardSettingsText.get(
+                context, R.string.gboard_patches_ocr_image_unreadable);
+        imageEmpty = GboardSettingsText.get(context, R.string.gboard_patches_ocr_image_empty);
+        imageCopied = GboardSettingsText.get(context, R.string.gboard_patches_ocr_image_copied);
+        imageSection = GboardSettingsText.get(context, R.string.gboard_patches_ocr_image_section);
         engineLabels = new String[]{
                 GboardSettingsText.get(context, R.string.gboard_patches_ocr_engine_latin_label),
                 GboardSettingsText.get(context, R.string.gboard_patches_ocr_engine_chinese_label),
@@ -139,21 +163,96 @@ public final class GboardOcrSettingsFeature
                         false));
             }
 
+            List<GboardPatchesSettingsContract.Section> sections =
+                    new ArrayList<GboardPatchesSettingsContract.Section>();
+            sections.add(new GboardPatchesSettingsContract.Section(
+                    imageSection,
+                    Collections.singletonList(new GboardPatchesSettingsContract.CommandRow(
+                            imageTitle,
+                            imageSummary,
+                            true,
+                            () -> pickImage(host)))));
+            sections.add(new GboardPatchesSettingsContract.Section(engineTitle, engineRows));
+
             return new GboardPatchesSettingsContract.Screen(
                     entryTitle,
                     headerBadge,
                     entryTitle,
                     headerSummary,
                     Collections.emptyList(),
-                    Collections.singletonList(new GboardPatchesSettingsContract.Section(
-                            engineTitle,
-                            engineRows)),
+                    sections,
                     GboardPatchesSettingsContract.RefreshPolicy.none(),
                     GboardPatchesSettingsContract.PanelStyle.FLAT);
         } catch (Throwable failure) {
             logFailure("Failed to render OCR settings screen", failure);
             return buildErrorScreen();
         }
+    }
+
+    /**
+     * Gboard's Scan Text only reads the camera, so this opens the document picker and runs the
+     * same bundled engine on the chosen image. The result goes to the clipboard, because the
+     * settings window cannot type into the field the keyboard will later sit above.
+     */
+    private void pickImage(GboardPatchesSettingsContract.FeatureHost host) {
+        GboardPatchesSettingsContract.openBinaryDocument(host, IMAGE_TYPES, MAX_IMAGE_BYTES,
+                document -> recognise(host.getContext(), document));
+    }
+
+    private void recognise(Context context, GboardPatchesSettingsContract.BinaryDocument document) {
+        Bitmap bitmap = null;
+        try {
+            byte[] data = document.getData();
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        } catch (Throwable failure) {
+            logFailure("Failed to decode the selected OCR image", failure);
+        }
+        if (bitmap == null) {
+            toastOnMain(context, imageUnreadable);
+            return;
+        }
+        String text;
+        try {
+            text = GboardOcrBundledBridge.recognizeText(bitmap);
+        } catch (Throwable failure) {
+            logFailure("Bundled OCR failed on the selected image", failure);
+            text = "";
+        } finally {
+            bitmap.recycle();
+        }
+        if (text == null || text.trim().isEmpty()) {
+            toastOnMain(context, imageEmpty);
+            return;
+        }
+        final String recognised = text;
+        toastOnMain(context, GboardSettingsText.format(context,
+                R.string.gboard_patches_ocr_image_copied, recognised.length()));
+        runOnMain(() -> {
+            try {
+                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(
+                        Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    clipboard.setPrimaryClip(
+                            ClipData.newPlainText("OCR", recognised));
+                }
+            } catch (Throwable failure) {
+                logFailure("Failed to copy the recognised text", failure);
+            }
+        });
+    }
+
+    private static void toastOnMain(Context context, String message) {
+        runOnMain(() -> {
+            try {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            } catch (Throwable ignored) {
+                // A toast is only feedback; recognition result stands.
+            }
+        });
+    }
+
+    private static void runOnMain(Runnable action) {
+        new Handler(Looper.getMainLooper()).post(action);
     }
 
     private String statusFor(GboardOcrEngine engine, ModuleState moduleState,

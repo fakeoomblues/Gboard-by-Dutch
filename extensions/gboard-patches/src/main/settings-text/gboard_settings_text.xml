@@ -1583,10 +1583,28 @@
         <translation locale="en">OCR / Scan Text</translation>
     </string>
     <string name="gboard_patches_ocr_summary">
-        <translation locale="en">Control the backend engine used for text recognition.</translation>
+        <translation locale="en">Recognise text from an image, and choose the backend engine.</translation>
     </string>
     <string name="gboard_patches_ocr_header_summary">
-        <translation locale="en">Official models must be downloaded through Google Play services.</translation>
+        <translation locale="en">The engine ships inside the patch, so nothing is downloaded. Latin text only.</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_section">
+        <translation locale="en">Text from an image</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_title">
+        <translation locale="en">Choose an image</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_summary">
+        <translation locale="en">Runs the bundled engine on a screenshot or photo and copies the text to the clipboard. Latin text only.</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_unreadable">
+        <translation locale="en">That file could not be read as an image.</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_empty">
+        <translation locale="en">No Latin text was found in that image.</translation>
+    </string>
+    <string name="gboard_patches_ocr_image_copied">
+        <translation locale="en">Copied %1$d characters to the clipboard.</translation>
     </string>
     <string name="gboard_patches_ocr_error_title">
         <translation locale="en">OCR settings unavailable</translation>
