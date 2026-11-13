@@ -44,6 +44,8 @@ private object RegistrationRetentionFingerprint : Fingerprint(
 )
 
 private object ParsedFloorsFingerprint : Fingerprint(
+    // 8.180.1 reuses this constructor shape in three classes; pin the ANC floor container.
+    definingClass = "Llt/c;",
     strings = listOf("headerList", "bodyList", "footerList"),
     name = "<init>",
     parameters = List(4) { "Ljava/util/List;" },
@@ -51,14 +53,14 @@ private object ParsedFloorsFingerprint : Fingerprint(
 )
 
 private object ComponentDataFingerprint : Fingerprint(
-    definingClass = "Lcr/c;",
+    definingClass = "Llt/d;",
     name = "getData",
     parameters = emptyList(),
     returnType = "Lcom/taobao/android/ultron/common/model/IDMComponent;",
 )
 
 private object ComponentNameFingerprint : Fingerprint(
-    definingClass = "Lcr/c;", name = "getFloorName",
+    definingClass = "Llt/d;", name = "getFloorName",
     parameters = emptyList(), returnType = "Ljava/lang/String;",
 )
 
@@ -70,37 +72,36 @@ private object CoinEntryFactoryFingerprint : Fingerprint(
 )
 
 private object AccountHeaderModelFingerprint : Fingerprint(
-    definingClass = "Lcom/aliexpress/module/myae/anc/b;", name = "<init>",
+    definingClass = "Lcom/aliexpress/module/myae/anc/a;", name = "<init>",
     parameters = listOf("Lcom/taobao/android/ultron/common/model/IDMComponent;"), returnType = "V",
 )
 
 private class AccountHeaderLayoutGetter(name: String) : Fingerprint(
-    definingClass = "Lcom/aliexpress/module/myae/anc/b;", name = name,
+    definingClass = "Lcom/aliexpress/module/myae/anc/a;", name = name,
     parameters = emptyList(), returnType = "Ljava/lang/String;",
 )
 
 private object AccountHeaderContrastFingerprint : Fingerprint(
-    definingClass = "Lcom/aliexpress/module/myae/anc/g0;", name = "d",
+    definingClass = "Lcom/aliexpress/module/myae/anc/e0;", name = "s",
     parameters = listOf("Z"), returnType = "V",
 )
 
-private object PriceModelFingerprint : Fingerprint(
-    definingClass = "Li20/a;", name = "<init>",
-    parameters = listOf("Lcom/aliexpress/android/moduleaidetail/viewmodel/AIProductDetailViewModel;",
-        "Lcom/aliexpress/android/galaxy/datamodel/imp/GalaxyComponent;",
-        "Lcom/aliexpress/android/moduleaidetail/types/RenderDataType;"),
+private object PriceRootSetterFingerprint : Fingerprint(
+    definingClass = "Lcom/aliexpress/android/moduleaidetail/ui/c0;",
+    name = "setDataRoot",
+    parameters = listOf("Lcom/alibaba/fastjson/JSONObject;"),
     returnType = "V",
 )
 
 private object PriceRenderFingerprint : Fingerprint(
     definingClass = "Lcom/aliexpress/android/moduleaidetail/ui/price/AIPriceProvider\$AIPriceHolder;",
-    name = "T", parameters = listOf("Lcom/alibaba/fastjson/JSONObject;"), returnType = "V",
+    name = "Y", parameters = listOf("Lcom/alibaba/fastjson/JSONObject;"), returnType = "V",
 )
 
 private object RecommendationFloorFactoryFingerprint : Fingerprint(
     strings = listOf("floorKey", "tItemType", "ahe_"),
-    parameters = listOf("Ljava/lang/String;", "Lcom/alibaba/fastjson/JSONObject;", "Lyu/a;"),
-    returnType = "Lsu/a;",
+    parameters = listOf("Lcom/alibaba/fastjson/JSONObject;", "Ljava/lang/String;"),
+    returnType = "Lwx/a;",
 )
 
 private object CampaignTabConfigFingerprint : Fingerprint(
@@ -218,7 +219,7 @@ val removePromotionsAndGamesPatch = bytecodePatch(
             }
         }
         mutableClassDefBy(EXTENSION).replaceStub("useNativeAccountHeader", 2, """
-            check-cast p0, Lcom/aliexpress/module/myae/anc/b;
+            check-cast p0, Lcom/aliexpress/module/myae/anc/a;
             const-string v0, "native"
             iput-object v0, p0, ${descriptor(headerLayoutFields[0])}
             const-string v0, "myae_native_header"
@@ -233,21 +234,10 @@ val removePromotionsAndGamesPatch = bytecodePatch(
                 const/4 p1, 0x0
             """.trimIndent(), ExternalLabel("original", getInstruction(0)))
         }
-        // Initial/cached price fields and later SKU updates both use the same optional banner object.
-        PriceModelFingerprint.matchSingle().method.apply {
-            val fields = instructions.mapNotNull { instruction ->
-                if (instruction.opcode == Opcode.IPUT_OBJECT) {
-                    (instruction as? ReferenceInstruction)?.reference as? FieldReference
-                } else null
-            }.single { it.definingClass == definingClass && it.type == "Lcom/alibaba/fastjson/JSONObject;" }
-            findInstructionIndicesReversedOrThrow(opcode(Opcode.RETURN_VOID)).forEach { index ->
-                addInstructionsAtControlFlowLabel(index, """
-                    move-object/from16 v0, p0
-                    iget-object v0, v0, ${descriptor(fields)}
-                    invoke-static { v0 }, $EXTENSION->sanitizePriceBannerIfEnabled(Ljava/util/Map;)V
-                """.trimIndent())
-            }
-        }
+        // Initial/cached price fields and later SKU updates all pass the same optional banner
+        // object through the shared data-root setter; sanitize it there.
+        PriceRootSetterFingerprint.matchSingle().method.addInstruction(0,
+            "invoke-static/range { p1 .. p1 }, $EXTENSION->sanitizePriceBannerIfEnabled(Ljava/util/Map;)V")
         PriceRenderFingerprint.matchSingle().method.addInstruction(0,
             "invoke-static/range { p1 .. p1 }, $EXTENSION->sanitizePriceBannerIfEnabled(Ljava/util/Map;)V")
         RecommendationFloorFactoryFingerprint.matchSingle().method.apply {
@@ -264,8 +254,10 @@ val removePromotionsAndGamesPatch = bytecodePatch(
             )
         }
         // Both the base implementation and the optimized country decorator assign this field.
+        // The decorator's override now stores through the inherited setter, so only methods
+        // that still write the field directly reveal it; they must agree on one field.
         val campaignConfigMethods = CampaignTabConfigFingerprint.matchAll(2..2).map { it.method }
-        val hiddenFields = campaignConfigMethods.map { method ->
+        val hiddenFields = campaignConfigMethods.mapNotNull { method ->
             val marker = method.instructions.indexOfFirst { instruction ->
                 ((instruction as? ReferenceInstruction)?.reference as? StringReference)?.string == "isHiddenChoiceTab"
             }
@@ -274,8 +266,8 @@ val removePromotionsAndGamesPatch = bytecodePatch(
                     (instruction as? ReferenceInstruction)?.reference as? FieldReference
                 } else null
             }.firstOrNull { it.type == "Ljava/lang/Boolean;" }
-                ?: throw PatchException("AliExpress campaign visibility field changed")
         }
+        if (hiddenFields.isEmpty()) throw PatchException("AliExpress campaign visibility field changed")
         val hiddenField = hiddenFields.first()
         if (hiddenFields.map(::descriptor).distinct().size != 1) {
             throw PatchException("AliExpress campaign decorators disagree on their visibility field")

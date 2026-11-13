@@ -20,10 +20,12 @@ import patches.aliexpress.replaceStub
 
 private const val RENDERED_ITEMS = "Lnl/johninnl/aliexpress/RenderedItems;"
 private const val MODEL = "Lcom/aliexpress/anc/core/container/pojo/IAncItemModel;"
-private const val LEGACY_MODEL = "Ll9/a;"
+// 8.180.1 renamed the search view models: l9.a -> w9.a, su.a -> wx.a and the
+// product parser moved from floor/product/e.H0 to floor/product/d.P0.
+private const val LEGACY_MODEL = "Lw9/a;"
 private const val PRODUCT_BEAN = "Lcom/alibaba/aliexpress/android/search/core/ahe/srp/AHEListBean;"
-private const val MODERN_RAW = "Lsu/a;"
-private const val MODERN_PRODUCT = "Lcom/aliexpress/android/aesearch/common/floor/product/e;"
+private const val MODERN_RAW = "Lwx/a;"
+private const val MODERN_PRODUCT = "Lcom/aliexpress/android/aesearch/common/floor/product/d;"
 private const val JSON_OBJECT = "Lcom/alibaba/fastjson/JSONObject;"
 private const val COMPONENT = "Lcom/taobao/android/ultron/common/model/IDMComponent;"
 
@@ -51,10 +53,10 @@ private object ProductPaidGetter : Fingerprint(
     definingClass = PRODUCT_BEAN, name = "getP4pObj", parameters = emptyList(), returnType = JSON_OBJECT,
 )
 private object ModernRawSetter : Fingerprint(
-    definingClass = MODERN_RAW, name = "D", parameters = listOf(JSON_OBJECT), returnType = "V",
+    definingClass = MODERN_RAW, name = "C", parameters = listOf(JSON_OBJECT), returnType = "V",
 )
 private object ModernProductParser : Fingerprint(
-    definingClass = MODERN_PRODUCT, name = "H0", parameters = listOf(JSON_OBJECT), returnType = "V",
+    definingClass = MODERN_PRODUCT, name = "P0", parameters = listOf(JSON_OBJECT), returnType = "V",
     strings = listOf("p4p"),
 )
 private object ModernViewTypeGetter : Fingerprint(
@@ -63,7 +65,7 @@ private object ModernViewTypeGetter : Fingerprint(
 )
 private object AppBarSubmission : Fingerprint(
     definingClass = "Lcom/aliexpress/anc/core/container/solution/AncAppBarLayout;", name = "setData",
-    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Lcom/aliexpress/anc/adapter/base/a;"),
+    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Ldt/a;"),
     returnType = "V",
 )
 
@@ -230,6 +232,6 @@ internal fun BytecodePatchContext.installRenderedItemFiltering() {
         move-result-object p2
         invoke-static/range { p3 .. p3 }, $RENDERED_ITEMS->filterOneIfEnabled(Ljava/lang/Object;)Ljava/lang/Object;
         move-result-object p3
-        check-cast p3, Lcom/aliexpress/anc/adapter/base/a;
+        check-cast p3, Ldt/a;
     """.trimIndent())
 }
