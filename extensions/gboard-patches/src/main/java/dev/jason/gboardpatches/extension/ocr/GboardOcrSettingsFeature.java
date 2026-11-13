@@ -220,37 +220,15 @@ public final class GboardOcrSettingsFeature
         });
     }
 
+    /**
+     * The recognition engine ships inside the APK, so there is no Play Services module to look
+     * for and nothing to download. Every supported engine is ready as soon as the patch is
+     * installed; asking GMS here is what produced the "not available / download failed" rows.
+     */
     private void ensureAvailabilityChecks(GboardPatchesSettingsContract.FeatureHost host) {
         for (GboardOcrEngine engine : GboardOcrEngine.supported()) {
             synchronized (moduleStates) {
-                if (moduleStates.containsKey(engine)) {
-                    continue;
-                }
-                moduleStates.put(engine, ModuleState.CHECKING);
-            }
-            try {
-                moduleAvailabilityChecker.check(host.getContext(), engine,
-                        new GboardOcrModuleInstaller.AvailabilityCallback() {
-                            @Override
-                            public void onResult(boolean installed) {
-                                setModuleState(engine, installed
-                                        ? ModuleState.INSTALLED
-                                        : ModuleState.NOT_INSTALLED);
-                                refreshSafely(host);
-                            }
-
-                            @Override
-                            public void onFailure(Throwable failure) {
-                                setModuleState(engine, ModuleState.CHECK_FAILED);
-                                logFailure("Failed to inspect OCR module for "
-                                        + engine.getSettingsValue(), failure);
-                                refreshSafely(host);
-                            }
-                        });
-            } catch (Throwable failure) {
-                setModuleState(engine, ModuleState.CHECK_FAILED);
-                logFailure("Failed to request OCR module availability for "
-                        + engine.getSettingsValue(), failure);
+                moduleStates.put(engine, ModuleState.INSTALLED);
             }
         }
     }
