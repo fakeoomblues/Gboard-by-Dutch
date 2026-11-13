@@ -3,6 +3,8 @@ package patches.gboard
 import app.morphe.patcher.patch.resourcePatch
 import patches.gboard.features.ocr.gboardOcrFeatureMarkerPatch
 import patches.gboard.features.ocr.gboardOcrFlagValuePatch
+import patches.gboard.features.ocr.gboardOcrModelAssetsPatch
+import patches.gboard.features.ocr.gboardOcrBundledRecognizerPatch
 import patches.gboard.features.ocr.gboardOcrRuntimePatch
 import patches.gboard.features.writingtools.gboardAiWritingTools1863AutoFixAcceptancePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
@@ -31,6 +33,8 @@ val gboardOcrScanTextPatch = resourcePatch(
         gboardOcrFeatureMarkerPatch,
         gboardOcrFlagValuePatch,
         gboardOcrRuntimePatch,
+        gboardOcrBundledRecognizerPatch,
+        gboardOcrModelAssetsPatch,
     )
 }
 
