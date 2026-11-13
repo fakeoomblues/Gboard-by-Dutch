@@ -238,15 +238,20 @@ public final class GboardOcrBundledBridge {
             Class<?> textClass = Class.forName("zxo", false, gboard);
             Class<?> blockClass = Class.forName("aaba", false, gboard);
             Class<?> lineClass = Class.forName("aaay", false, gboard);
+            // Elements are plain aaaz nodes; Gboard's jih walks a line's children at that type.
+            Class<?> elementClass = Class.forName("aaaz", false, gboard);
 
             Constructor<?> textConstructor = textClass.getDeclaredConstructor(List.class);
             Constructor<?> blockConstructor = blockClass.getDeclaredConstructor(
                     String.class, Rect.class, List.class, String.class, List.class);
             Constructor<?> lineConstructor = lineClass.getDeclaredConstructor(
                     String.class, Rect.class, List.class, String.class, List.class, Float.TYPE);
+            Constructor<?> elementConstructor = elementClass.getDeclaredConstructor(
+                    String.class, Rect.class, List.class, String.class);
             textConstructor.setAccessible(true);
             blockConstructor.setAccessible(true);
             lineConstructor.setAccessible(true);
+            elementConstructor.setAccessible(true);
 
             List<Object> blockObjects = new ArrayList<Object>();
             for (Object rawBlock : blocks) {
@@ -259,12 +264,21 @@ public final class GboardOcrBundledBridge {
                 List<Object> children = childrenOf(rawBlock);
                 for (Object rawLine : children) {
                     Rect lineBounds = boundsOf(rawLine);
+                    List<Object> elementObjects = new ArrayList<Object>();
+                    for (Object rawElement : childrenOf(rawLine)) {
+                        Rect elementBounds = boundsOf(rawElement);
+                        elementObjects.add(elementConstructor.newInstance(
+                                textOf(rawElement),
+                                elementBounds,
+                                cornersOf(elementBounds),
+                                language));
+                    }
                     lineObjects.add(lineConstructor.newInstance(
                             textOf(rawLine),
                             lineBounds,
                             cornersOf(lineBounds),
                             language,
-                            Collections.emptyList(),
+                            elementObjects,
                             confidenceOf(rawLine)));
                 }
                 blockObjects.add(blockConstructor.newInstance(

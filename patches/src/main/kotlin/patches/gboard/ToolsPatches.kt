@@ -22,8 +22,8 @@ import patches.gboard.shared.gboardPatchesSettingsPatch
 @Suppress("unused")
 val gboardOcrScanTextPatch = resourcePatch(
     name = "Enable OCR / Scan Text",
-    description = "Enables Gboard's Scan Text camera entry point, with Latin, Chinese, " +
-        "Japanese, Korean and Devanagari recognition.",
+    description = "Enables Gboard's Scan Text camera entry point and runs it with an OCR " +
+        "engine bundled in the patch, so it works without Play Services. Latin text only.",
     default = true,
 ) {
     compatibleWith(gboard)
