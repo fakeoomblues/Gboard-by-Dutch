@@ -7,7 +7,7 @@ Gearslip heeft een eigen muziekbrowser en spelerpaneel. Een geschikte muziekapp 
 | Muziekapp | Benodigde patches | Wat kun je verwachten? |
 | --- | --- | --- |
 | [YouTube Music / YT Music Morphe](../apps/youtube-music.md) | **Android Auto** uit Morphe Patches en **Gearslip music browser support** uit Dutch App Patches, samen op de originele YouTube Music-APK | Persoonlijke Home en Library via het bestaande aangemelde account. Er is één Gearslip-patch om te kiezen; de bibliotheekkoppeling zit daarin. |
-| [Myspoti](../apps/myspoti.md) | **Gearslip personal library** uit Dutch App Patches, op de originele APK van de uitgever | De bestaande Home, Library en Downloads, zoeken en muziek kiezen. Meld je eerst aan op de telefoon. |
+| [Myspoti](../apps/myspoti.md) | **Allow any Android Auto host** uit Dutch App Patches, op de originele APK van de uitgever | De bestaande Home, Library en Downloads, zoeken en muziek kiezen. Meld je eerst aan op de telefoon. |
 | SoundCloud | De bestaande Gearslip-speler; voor het paneel is geen SoundCloud-patch uit dit project nodig | Albumhoezen en afspeelknoppen zijn gecontroleerd in de officiële Gearslip-telefoonpreview. Bladerbare inhoud en extra knoppen hangen van de app af. |
 | Een andere muziekapp | Probeer eerst de bestaande auto-/mediabrowser | Ondersteuning hangt af van wat de app beschikbaar stelt. Een werkende melding of telefoonspeler bewijst geen toegang tot de persoonlijke bibliotheek in Gearslip. |
 
@@ -47,7 +47,7 @@ Afspeelknoppen, shuffle, herhalen, likes en beschikbare inhoud hangen van de muz
 | Speler ontbreekt in de appkiezer | Laat hem aangevinkt bij **Car → Apps** en open het autoscherm opnieuw. Controleer of de muziekapp een geschikte auto-/mediabrowser heeft. |
 | Muziekapp heeft een tweede instellingenicoon | Werk gepatchte Gearslip bij met **Keep music player entries** aan. |
 | YouTube Music speelt, maar Home of Library is leeg | Controleer of beide vereiste patches samen zijn toegepast, de originele APK is gebruikt en de telefoonapp is aangemeld. Toegang voor de host alleen vult geen persoonlijke bibliotheek. |
-| Myspoti laat geen inhoud zien | Pas **Gearslip personal library** toe, meld je aan en controleer de vertrouwde hostpakketnaam. Houd rekening met de ondersteunde versies. |
+| Myspoti laat geen inhoud zien | Pas **Allow any Android Auto host** toe, meld je aan en houd rekening met de ondersteunde versies. |
 | Geen paneel naast de kaart | Start muziek in de Gearslip-speler, ga terug naar de kaart en gebruik de dockknop in de now-playing-balk. |
 
 **SoundCloud in Waze** en **YT Music Morphe in Waze** zijn aparte patches voor de ingebouwde Waze-speler. Ze zijn niet nodig voor het Gearslip-paneel en tonen andere inhoud dan de bovenstaande persoonlijke bibliotheekkoppelingen.

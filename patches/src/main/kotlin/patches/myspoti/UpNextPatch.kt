@@ -26,7 +26,7 @@ private const val ANDROID = "http://schemas.android.com/apk/res/android"
 private const val QUERY_ALL_PACKAGES = "android.permission.QUERY_ALL_PACKAGES"
 
 /** Marks the inserted admission code, so a second application is detected. */
-private const val HOST_MARKER = "morphe:myspoti:android-auto-hosts"
+internal const val UP_NEXT_HOST_MARKER = "morphe:myspoti:android-auto-hosts"
 
 private val hostPackage = Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+")
 
@@ -36,9 +36,21 @@ private val queueTarget = Compatibility(
     targets = listOf(
         AppTarget(version = "2.3.0", versionCode = 1121, minSdk = 29),
         AppTarget(version = "2.4.0", versionCode = 1142, minSdk = 29),
+        AppTarget(version = "2.4.1", versionCode = 1175, minSdk = 29),
     ),
 )
-private val queueOriginalInput = patches.shared.originalInput(queueTarget)
+
+/** Orpheon is the rebranded Myspoti: same code and media session, its own package and signer. */
+private val orpheonTarget = Compatibility(
+    name = "Orpheon", packageName = "app.orpheon.beta", apkFileType = ApkFileType.APK,
+    signatures = setOf("d439d2f456201f46b19a251a38fb51010bbf8126a4c1567e43b2b61312be4d6b"),
+    targets = listOf(AppTarget(version = "1.0.0-beta.1", versionCode = 1173, minSdk = 29)),
+)
+
+/** Versions that publish the current and upcoming queue through the framework media session. */
+private val nativeQueueVersions = setOf("2.4.0", "2.4.1", "1.0.0-beta.1")
+
+private val queueOriginalInput = patches.shared.originalInput(queueTarget, variants = listOf(orpheonTarget))
 
 private fun hosts(value: String?): List<String> {
     if (value.isNullOrBlank()) return emptyList()
@@ -51,12 +63,13 @@ private fun hosts(value: String?): List<String> {
 @Suppress("unused")
 val upNext = bytecodePatch(
     name = "Android Auto Up next",
-    description = "Myspoti 2.4.0 publishes its current and upcoming playlist/radio queue with metadata and " +
-        "queue selection itself; on 2.3.0 this patch exports that queue. It also lets every Android Auto " +
-        "host, or only the host packages you list, browse the library and control that queue.",
+    description = "Myspoti 2.4.x and Orpheon publish their current and upcoming playlist/radio queue with " +
+        "metadata and queue selection themselves; on Myspoti 2.3.0 this patch exports that queue. " +
+        "It also lets every Android Auto host, or only the host packages you list, browse the library " +
+        "and control that queue.",
     default = false,
 ) {
-    compatibleWith(queueTarget)
+    compatibleWith(queueTarget, orpheonTarget)
     val allowedHostPackages by stringOption(
         key = "allowedHostPackages", default = "", title = "Allowed host packages",
         description = "Leave empty to allow every Android Auto host, including third-party systems. " +
@@ -104,12 +117,12 @@ val upNext = bytecodePatch(
         val discovered = BrowserDiscovery.permissionPredicate(service)
         val predicate = service.methods.single { it.toString() == discovered.toString() }
         check(predicate.instructions.none {
-            ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == HOST_MARKER
-        }) { "Myspoti Android Auto host support is already applied" }
+            ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == UP_NEXT_HOST_MARKER
+        }) { "Myspoti Android Auto Up next is already applied" }
         val admitted = (listOf(packageMetadata.packageName) + configuredHosts)
             .distinct()
         val admission = buildString {
-            append("const-string v0, \"$HOST_MARKER\"\n")
+            append("const-string v0, \"$UP_NEXT_HOST_MARKER\"\n")
             if (configuredHosts.isEmpty()) {
                 append("const/4 v0, 0x1\nreturn v0")
             } else {
@@ -126,7 +139,7 @@ val upNext = bytecodePatch(
         }
         predicate.addInstructions(0, admission)
 
-        if (packageMetadata.versionName == "2.4.0") {
+        if (packageMetadata.versionName in nativeQueueVersions) {
             // The app publishes the same queue itself. Fail closed if that native support disappears,
             // rather than reporting Up next while nothing exports it.
             check(service.methods.any { method ->
@@ -134,7 +147,7 @@ val upNext = bytecodePatch(
                     ((it as? ReferenceInstruction)?.reference as? MethodReference)?.toString() ==
                         "Landroid/media/session/MediaSession;->setQueue(Ljava/util/List;)V"
                 } == true
-            }) { "Myspoti 2.4.0 native Android Auto queue changed" }
+            }) { "Myspoti ${packageMetadata.versionName} native Android Auto queue changed" }
         } else {
             fun exact(owner: String, name: String, result: String = "V", vararg args: String) =
                 Fingerprint(definingClass = owner, name = name, returnType = result, parameters = args.toList())

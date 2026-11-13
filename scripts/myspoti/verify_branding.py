@@ -42,7 +42,7 @@ def verify_case(args, case):
     if name is not None:
         command += ["-O", f"customName={name}"]
     if combined:
-        command += ["-e", "Gearslip personal library"]
+        command += ["-e", "Allow any Android Auto host"]
     run(command, directory / "patch.log")
     decoded = directory / "decoded"
     run(["apktool", "d", "-f", "-s", apk, "-o", decoded], directory / "decode.log")

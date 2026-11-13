@@ -1,10 +1,10 @@
 # Myspoti
 
-**Appversie:** 2.4.0 · **Build:** 1142 · **Origineel bestand:** APK
+**Appversie:** 2.4.1 · **Build:** 1175 · **Origineel bestand:** APK
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer de door de uitgever ondertekende Myspoti-APK. **Custom branding** en **Gearslip personal library** zijn compatibel met elke versie waarvan de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. **Android Auto Up next** accepteert 2.3.0 / 1121 en 2.4.0 / 1142. De versie hierboven is het referentiebestand. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti).
+Selecteer de door de uitgever ondertekende Myspoti-APK. **Allow any Android Auto host** en **Custom branding** zijn compatibel met elke versie waarvan de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. **Android Auto Up next** accepteert 2.3.0 / 1121, 2.4.0 / 1142 en 2.4.1 / 1175. De versie hierboven is het referentiebestand. Myspoti wordt ontwikkeld door [kota-zo/myspoti](https://github.com/kota-zo/myspoti). Orpheon, de hernoemde Myspoti, heeft een eigen [apppagina](orpheon.md) met dezelfde patches.
 
 [Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
 
@@ -12,9 +12,9 @@ Selecteer de door de uitgever ondertekende Myspoti-APK. **Custom branding** en *
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
+| **Allow any Android Auto host** | Aan | Laat elke Android Auto-compatibele host verbinden met de bibliotheek en het afspelen van Myspoti, zoals Google Android Auto, DriveDeck, Gearslip, MyCar, Flywheel, BetterAuto, AndroidAuto en AARE, ongeacht pakketnaam of ondertekeningssleutel. |
+| **Android Auto Up next** | Uit | Op 2.4.0 en nieuwer exporteert Myspoti de echte huidige en komende wachtrij van afspeellijsten/radio met metadata en selectie al zelf; deze patch kan het browsen beperken tot de hostpakketten die je opgeeft, en op 2.3.0 exporteert de patch de wachtrij ook. |
 | **Custom branding** | Uit | Stelt een eigen appnaam in en kiest een van zes meegeleverde launchericonen in Spotify-stijl, of behoudt het originele icoon. |
-| **Gearslip personal library** | Aan | Laat de ingestelde Gearslip-host de bestaande Home, bibliotheek en downloads van Myspoti bekijken, zoeken en muziek kiezen om af te spelen. |
-| **Android Auto Up next** | Uit | Op 2.4.0 exporteert Myspoti de echte huidige en komende wachtrij van afspeellijsten/radio met metadata en selectie al zelf; deze patch maakt die beschikbaar voor elk Android Auto-systeem, of alleen voor de hostpakketten die je opgeeft. Op 2.3.0 exporteert de patch de wachtrij ook. |
 
 ## Advertentie- en trackingdiensten
 
@@ -22,9 +22,9 @@ Deze compatibiliteitspatches veranderen de toegang tot de muziekbrowser en de be
 
 ## Voor gebruik
 
-Myspoti 2.4.0 publiceert zijn eigen wachtrij naar de mediasessie, dus **Android Auto Up next** dupliceert die niet: de patch haalt de oorspronkelijke beperking voor autohosts weg. Laat **Allowed host packages** leeg om elk Android Auto-systeem toe te laten, inclusief externe hosts zoals DriveDeck en Gearslip. Voer om de toegang te beperken een of meer Android-apppakketten in, gescheiden door komma's, bijvoorbeeld `app.johninnl.drivedeck`; elke andere app mag niet bladeren. Voeg `com.google.android.projection.gearhead` toe wanneer ook Google's Android Auto toegestaan moet blijven. Patch opnieuw om deze keuze te wijzigen.
+**Allow any Android Auto host** staat standaard aan en haalt de oorspronkelijke beperking voor autohosts weg: elke Android Auto-compatibele host, inclusief externe systemen zoals DriveDeck en Gearslip, kan de bibliotheek bekijken, zoeken en muziek kiezen om af te spelen. Myspoti's eigen controle dat de UID van een aanroeper ook echt het opgegeven pakket bezit, blijft actief; een vervalste pakketclaim wordt nog steeds afgewezen.
 
-**Gearslip personal library** blijft een aparte lijst met vertrouwde hosts en behoudt Myspoti's UID-controle. Standaard zijn dat de Gearslip- en DriveDeck-pakketten, inclusief hun `.dev`-versies. Als beide patches aan staan, wordt de Gearslip-lijst eerst toegelaten en geldt de Android Auto-keuze voor elke andere aanroeper. Voeg alleen een ander hostpakket toe voor een versie die je bewust gebruikt.
+Myspoti 2.4.1 publiceert zijn eigen wachtrij naar de mediasessie, dus **Android Auto Up next** dupliceert die niet. Schakel deze alleen in om het browsen te beperken tot een expliciete lijst hostpakketten, of op 2.3.0 om de wachtrij te exporteren. Voer een of meer Android-apppakketten in, gescheiden door komma's, bijvoorbeeld `app.johninnl.drivedeck`; elke andere app mag niet bladeren, en `com.google.android.projection.gearhead` moet in de lijst staan wanneer ook Google's Android Auto toegestaan moet blijven. Staat de patch aan met zo'n lijst, dan beslist die lijst het browsen voor elke host. Patch opnieuw om deze keuze te wijzigen.
 
 Schakel op 2.3.0 / 1121 **Android Auto Up next** in om maximaal 50 echte wachtrij-items inclusief het huidige item te publiceren en komende items via Myspoti's bestaande wachtrijhandler te kiezen. De gebruiker heeft bevestigd dat de ontbrekende Up next-weergave op de telefoon is opgelost na installatie van de ondertekende APK als update, met behoud van appgegevens en de bestaande Spotify-naam en het icoon.
 

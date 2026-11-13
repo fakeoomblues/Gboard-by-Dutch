@@ -7,7 +7,7 @@ Gearslip has its own music browser and player panel. A compatible music app can 
 | Music app | What to apply | What to expect |
 | --- | --- | --- |
 | [YouTube Music / YT Music Morphe](../apps/youtube-music.md) | **Android Auto** from Morphe Patches, plus **Gearslip music browser support** from Dutch App Patches, together on the original YouTube Music APK | Personal Home and Library through the existing signed-in account. There is one Gearslip patch to select; its library support is included. |
-| [Myspoti](../apps/myspoti.md) | **Gearslip personal library** from Dutch App Patches, on the original publisher-signed APK | The app's existing Home, Library and Downloads, search and music selection. Sign in on the phone first. |
+| [Myspoti](../apps/myspoti.md) | **Allow any Android Auto host** from Dutch App Patches, on the original publisher-signed APK | The app's existing Home, Library and Downloads, search and music selection. Sign in on the phone first. |
 | SoundCloud | Gearslip's existing player; no SoundCloud patch from this project is required for the panel | Artwork and playback controls were checked in the official Gearslip phone preview. Browse content and extra controls depend on the app. |
 | Another music app | Try its existing car/media browser first | Compatibility depends on what the app exposes. A working notification or phone player does not establish a browseable personal library in Gearslip. |
 
@@ -47,7 +47,7 @@ Playback controls, shuffle, repeat, likes and catalogue contents depend on the m
 | Player is absent from the drawer | Keep it ticked in **Car → Apps**, then reopen the car screen. Check that the music app has a compatible car/media browser. |
 | Music app has a second Settings icon | Update patched Gearslip with **Keep music player entries** enabled. |
 | YouTube Music plays but Home or Library is empty | Check that both required patches were applied together, that you used the original APK and that the phone app is signed in. Host admission alone does not populate a personal library. |
-| Myspoti cannot be browsed | Apply **Gearslip personal library**, sign in and verify the trusted-host package. Keep the app's supported-version limits in mind. |
+| Myspoti cannot be browsed | Apply **Allow any Android Auto host**, sign in and keep the app's supported-version limits in mind. |
 | No panel beside the map | Start playback in Gearslip's player, return to the map and use the dock button in the now-playing pill. |
 
 **SoundCloud in Waze** and **YT Music Morphe in Waze** are separate patches for Waze's built-in audio player. They are not required for Gearslip's panel, and their browse contents differ from the personal-library integrations above.

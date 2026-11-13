@@ -1,7 +1,6 @@
 package patches.myspoti
 
 import com.android.tools.smali.dexlib2.AccessFlags
-import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -44,9 +43,9 @@ internal object BrowserDiscovery {
 
     /**
      * The `boolean(String)` library check called by the browser root and by the children/search
-     * caller. Prefer the audited body, so a Gearslip wrapper added earlier is not the target.
-     * Fall back to the shared callee: another host patch may have replaced that body, but the
-     * call graph is unchanged.
+     * caller. Prefer the audited body, so admission code another patch prepended is not the
+     * target. Fall back to the shared callee: another host patch may have replaced that body,
+     * but the call graph is unchanged.
      */
     private fun predicate(methods: List<Method>, root: Method, caller: Method): Method {
         val audited = methods.filter { it.isBrowsePredicate() }
@@ -92,11 +91,6 @@ internal object BrowserDiscovery {
             }) {
             "Unsupported Myspoti browser: children and search no longer share the UID-checked caller"
         }
-        check(browsePredicate.implementation!!.instructions.none { instruction ->
-            instruction.opcode == Opcode.INVOKE_STATIC &&
-                ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass ==
-                "Lpatches/myspoti/GearslipSupport;"
-        }) { "Myspoti Gearslip browser support is already applied" }
         return browsePredicate
     }
 }

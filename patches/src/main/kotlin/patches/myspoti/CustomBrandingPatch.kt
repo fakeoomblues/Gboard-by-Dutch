@@ -24,13 +24,19 @@ private const val BRANDING_ICON = "morphe_myspoti_launcher"
 @Suppress("unused")
 val customBrandingPatch = resourcePatch(
     name = "Custom branding",
-    description = "Changes Myspoti's launcher icon and app name. Choose from six bundled icons or keep the original.",
+    description = "Changes the Myspoti or Orpheon launcher icon and app name. Choose from six bundled icons or keep the original.",
     default = false,
 ) {
-    compatibleWith(Compatibility(
-        name = "Myspoti", packageName = "app.myspoti.stable", apkFileType = ApkFileType.APK,
-        targets = listOf(AppTarget(version = null)),
-    ))
+    compatibleWith(
+        Compatibility(
+            name = "Myspoti", packageName = "app.myspoti.stable", apkFileType = ApkFileType.APK,
+            targets = listOf(AppTarget(version = null)),
+        ),
+        Compatibility(
+            name = "Orpheon", packageName = "app.orpheon.beta", apkFileType = ApkFileType.APK,
+            targets = listOf(AppTarget(version = null)),
+        ),
+    )
 
     val customName by stringOption(
         key = "customName", title = "App name",

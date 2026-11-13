@@ -34,6 +34,7 @@ APP_PAGES = {
     'com.google.android.youtube': ('youtube', 'entertainment'),
     'app.morphe.android.youtube': ('youtube', 'entertainment'),
     'app.myspoti.stable': ('myspoti', 'entertainment'),
+    'app.orpheon.beta': ('orpheon', 'entertainment'),
     'com.soundcloud.android': ('soundcloud', 'entertainment'),
     'com.google.android.inputmethod.latin': ('gboard', 'other'),
     'app.vela': ('vela', 'mobility'),
