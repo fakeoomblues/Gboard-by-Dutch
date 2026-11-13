@@ -1,4 +1,28 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e14fc6636f6140a8dfd4e01b38c974188f9617c9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.75.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e14fc6636f61](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e14fc6636f6140a8dfd4e01b38c974188f9617c9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.75.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.74.1...v1.75.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** offer only the Latin OCR engine in the settings menu ([be574ab](https://gitlab.com/johninnld/nl-morphe-patches/commit/be574abb9fd7f593213895d4a3899e9f505d7473))
+* **release:** do not demand a note bullet from a commit type the notes hide ([e14fc66](https://gitlab.com/johninnld/nl-morphe-patches/commit/e14fc6636f6140a8dfd4e01b38c974188f9617c9))
+* **release:** read an app scope from the subject when a shared commit has no trailer ([0420964](https://gitlab.com/johninnld/nl-morphe-patches/commit/0420964d7b92cf35937021300823002caaa84265))
+
+### ✨ New Features
+
+* **Gboard:** run OCR from a bundled engine instead of the Play Services module ([2178794](https://gitlab.com/johninnld/nl-morphe-patches/commit/2178794b37b5cbc1cd7f30d180e818673cf58433))
+* **Gboard:** ship the OCR word level and say the engine is Latin only ([c91830f](https://gitlab.com/johninnld/nl-morphe-patches/commit/c91830f1ecb31d706717ff12b41f0ff740467386))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8d2c2054c9080b0598ce6932c15b050b58fb819c/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.74.1.**
