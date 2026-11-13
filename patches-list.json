@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.71.3",
+  "version": "1.72.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -9044,9 +9044,9 @@
       "options": []
     },
     {
-      "name": "Rambler stop after silence (experimental)",
-      "description": "Adds Stop after silence to Gboard settings → Voice typing → Rambler. Pick 3, 5, 8 or 10 seconds and Rambler stops by itself once you have said nothing new for that long, keeping the text as when you tap ✓. Off until you pick a time. Requires Rambler voice typing.",
-      "default": false,
+      "name": "Rambler stop after silence",
+      "description": "Rambler stops by itself after 3 seconds without speech and keeps the text, as when you tap ✓. Change the time (3, 5, 8 or 10 seconds) or switch it off under Gboard settings → Voice typing → Rambler → Stop after silence. Requires Rambler voice typing.",
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {

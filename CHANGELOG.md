@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9e1f996c374d04095ba7937248e21e1a8e96e1f5/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.72.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9e1f996c374d](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9e1f996c374d04095ba7937248e21e1a8e96e1f5). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.72.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.71.3...v1.72.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** make Rambler stop after silence read its setting and listen for speech ([63b5347](https://gitlab.com/johninnld/nl-morphe-patches/commit/63b5347e0d7beb9436e8c1833ff2f5cdf7e04f3f))
+
+### ✨ New Features
+
+* **Gboard:** Rambler stops after 3 seconds of silence by default ([9e1f996](https://gitlab.com/johninnld/nl-morphe-patches/commit/9e1f996c374d04095ba7937248e21e1a8e96e1f5))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/abd65ef3f1afcf95ed87a25add40215e91cdee3e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.71.3.**

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.71.3**
+**Patchbundel: 1.72.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -323,7 +323,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Rambler cursor-aware editing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler custom instructions | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler stop after silence (experimental) | Uit | 18.6.3.1002251336-release-arm64-v8a |
+| Rambler stop after silence | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
 | Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |
