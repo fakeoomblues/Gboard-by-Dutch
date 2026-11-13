@@ -9,7 +9,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags
 
 internal object GboardOcrPatchTargets {
-    val taskCompletionListener = GboardMethodTarget("Llxk;", "l", listOf("Lwpa;"), "V")
+    val taskCompletionListener = GboardMethodTarget("Llxk;", "l", listOf("Llxd;"), "V")
 
     internal fun requireTaskCompletionRegistration(owner: MutableClass): MutableMethod {
         val method = taskCompletionListener.resolve(owner)
@@ -37,14 +37,12 @@ internal object GboardOcrPatchTargets {
             GboardMethodTarget("Leka;", "c", listOf("Landroid/os/Parcel;", "Landroid/os/Parcelable;"), "V"),
             GboardMethodTarget("Laabj;", "<init>", listOf("Ljava/lang/String;", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "I", "Ljava/lang/String;", "Z"), "V"),
             GboardMethodTarget("Laabn;", "b", emptyList(), "V"),
-            GboardMethodTarget("Lzfd;", "<init>", listOf("[Lkzf;"), "V"),
             GboardMethodTarget("Llgl;", "<init>", listOf("Landroid/content/Context;"), "V"),
-            GboardMethodTarget("Llgl;", "a", listOf("[Lvei;"), "Llxk;"),
-            GboardMethodTarget("Llgl;", "b", listOf("Labru;"), "V"),
-            GboardMethodTarget("Llgl;", "c", listOf("Lsag;"), "Llxk;"),
-            GboardMethodTarget("Lsag;", "<init>", listOf("Ljava/util/List;", "Labru;"), "V"),
-            GboardMethodTarget("Labru;", "a", listOf("Llga;"), "V"),
-            GboardMethodTarget("Lwpa;", "a", listOf("Llxk;"), "V"),
+            GboardMethodTarget("Llgl;", "a", listOf("[Llau;"), "Llxk;"),
+            GboardMethodTarget("Llgl;", "b", listOf("Llfv;"), "V"),
+            GboardMethodTarget("Llgl;", "c", listOf("Lquw;"), "Llxk;"),
+            GboardMethodTarget("Lquw;", "<init>", listOf("Ljava/util/List;", "Llfv;"), "V"),
+            GboardMethodTarget("Llfv;", "a", listOf("Llga;"), "V"),
             GboardMethodTarget("Llxk;", "g", emptyList(), "Z"),
             GboardMethodTarget("Llxk;", "e", emptyList(), "Ljava/lang/Object;"),
             GboardMethodTarget("Llxk;", "d", emptyList(), "Ljava/lang/Exception;"),
@@ -63,7 +61,6 @@ internal object GboardOcrPatchTargets {
         check(context.mutableClass("Laabe;").superclass == "Lejy;")
         check(context.mutableClass("Laabd;").superclass == "Lejy;")
         check("Laabb;" in context.mutableClass("Laaby;").interfaces)
-        check("Lvei;" in context.mutableClass("Lzfd;").interfaces)
     }
     val configLabel = method("b", "Ljava/lang/String;")
     val languageHint = method("c", "Ljava/lang/String;")
@@ -73,7 +70,7 @@ internal object GboardOcrPatchTargets {
     val moduleAvailability = method("g", "Z")
 
     val optionalModuleBuilder = GboardMethodTarget(
-        classType = "Lzej;",
+        classType = "Lzer;",
         name = "a",
         parameterTypes = listOf("Laabb;"),
         returnType = "[Lkzf;",
