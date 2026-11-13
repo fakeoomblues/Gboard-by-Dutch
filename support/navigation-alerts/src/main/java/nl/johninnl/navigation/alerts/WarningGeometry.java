@@ -4,6 +4,15 @@ import android.location.Location;
 
 /** Display geometry only. Native event identity, observation and speech authority remain untouched. */
 public final class WarningGeometry {
+    /** A source-owned fixed map feature has no warning eligibility, route or passage decision. */
+    public static boolean nativeMapFeature(WarningEvent event){
+        if(event==null||!"display_only".equals(event.category)||event.positionEstimated||!"CAMERA".equals(event.nativeType))return false;
+        java.util.Map<String,Object> fields=event.fields();Object kind=fields.get("native_tile_kind");
+        return "waze.insights.native_tile".equals(fields.get("native_namespace"))
+            &&"native_tile".equals(fields.get("position_clock_origin"))
+            &&Boolean.TRUE.equals(fields.get("native_point_target"))
+            &&kind instanceof Integer&&(Integer)kind>=69&&(Integer)kind<=80;
+    }
     public final int distanceMeters;
     public final long observedAt;
     public final boolean estimated;
@@ -19,6 +28,33 @@ public final class WarningGeometry {
                 &&("WITHIN".equals(fields.get("native_segment_phase"))||"InZone".equals(fields.get("native_zone_state"))||"LeftZone".equals(fields.get("native_zone_state")));
     }
     public static boolean pointDisplay(WarningEvent event){return event.relevance.equals("point_ahead")&&!remainingSegment(event);}
+    /**
+     * An average-speed control's own fixed road point (contract v1, Geometry, 12 November 2026): its native
+     * start ({@code zone_point=start}) before entry, its native end ({@code zone_point=end}) while inside.
+     * Only a map marker may use it: it carries no extent, never yields a receiver distance (the zone is not
+     * {@code point_ahead}) and never retires the zone by passage. Returns "start", "end" or null.
+     */
+    public static String zonePoint(WarningEvent event){
+        if(event==null||!"zone".equals(event.relevance)||event.phase==WarningEvent.Phase.EXIT
+                ||event.latitude==null||event.longitude==null||event.positionEstimated)return null;
+        java.util.Map<String,Object> fields=event.fields();
+        if(!Boolean.TRUE.equals(fields.get("native_point_target")))return null;
+        Object point=fields.get("zone_point");boolean inside=remainingSegment(event);
+        // Flitsmeister marks its own zone announcement "enter" while still approaching; the start stays.
+        boolean segmentApproach="native_route_line".equals(fields.get("position_clock_origin"))
+            &&Boolean.TRUE.equals(fields.get("native_segment_correlated"))
+            &&"AVERAGE_SPEED_CAMERA".equals(fields.get("native_segment_type"))
+            &&"APPROACHING".equals(fields.get("native_segment_phase"))
+            &&(fields.get("native_zone_state")==null||"BeforeZone".equals(fields.get("native_zone_state")));
+        if("start".equals(point)&&!inside&&(event.phase==WarningEvent.Phase.APPROACH||event.phase==WarningEvent.Phase.ENTER||segmentApproach))return "start";
+        // The producer marks "end" only once it measured the car inside. Flitsmeister's own report for the
+        // control keeps that point but has a distance of its own without a kind (acc31: the pin blinked
+        // twice a second between the two). Only an explicit measurement to the segment, or an approach,
+        // contradicts the end.
+        if("end".equals(point)&&(inside||event.phase==WarningEvent.Phase.ENTER
+                &&!fields.containsKey("native_distance_kind")))return "end";
+        return null;
+    }
     public static WarningGeometry fromNative(WarningEvent event,long now){
         if(!event.stateValid(now))return null;
         java.util.Map<String,Object> fields=event.fields();

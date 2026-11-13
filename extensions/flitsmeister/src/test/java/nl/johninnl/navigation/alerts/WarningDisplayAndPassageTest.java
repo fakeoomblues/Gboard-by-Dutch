@@ -210,4 +210,42 @@ public class WarningDisplayAndPassageTest {
         b.putString("native_zone_state","BeforeZone");assertEquals(0,WarningGeometry.fromNative(WarningCodec.decode(b,1000),1100).distanceMeters);
     }
 
+    /** An average-speed control with its provider's own fixed start or end point (contract revision 12 November 2026). */
+    private WarningEvent zonePoint(String point,String phase,String distanceKind){
+        Bundle b=WarningCodec.encode(state("AvgSpeedCheck:a2",1,1));b.putString("native_type","AVG_SPEED_CHECK");b.putString("category","speed_control");
+        b.putString("relevance","zone");b.putString("phase",phase);b.putDouble("latitude",.001);b.putDouble("longitude",0);
+        b.putLong("position_observed_elapsed_ms",1000);b.putBoolean("position_estimated",false);b.putBoolean("native_point_target",true);
+        if(point!=null)b.putString("zone_point",point);
+        if(distanceKind!=null){b.putInt("distance_m",800);b.putLong("distance_observed_elapsed_ms",1000);b.putBoolean("distance_estimated",false);b.putString("native_distance_kind",distanceKind);}
+        return WarningCodec.decode(b,1000);
+    }
+    @Test public void aZonePointIsTheControlsStartBeforeEntryAndItsEndInsideAndNothingElse(){
+        assertEquals("start",WarningGeometry.zonePoint(zonePoint("start","approach","to_segment")));
+        assertEquals("end",WarningGeometry.zonePoint(zonePoint("end","enter","remaining_in_segment")));
+        assertEquals("Flitsmeister's own entry announcement while still approaching keeps the start",
+            "start",WarningGeometry.zonePoint(zonePoint("start","enter","to_segment")));
+        assertNull("An entry point is not shown while the zone is traversed",WarningGeometry.zonePoint(zonePoint("start","enter","remaining_in_segment")));
+        assertNull("An end point is not shown before entry",WarningGeometry.zonePoint(zonePoint("end","approach","to_segment")));
+        assertNull("Exit has no point",WarningGeometry.zonePoint(zonePoint("end","exit","remaining_in_segment")));
+        // acc31: Flitsmeister's own report for the control carries the kept end point and a distance of its own
+        // without a kind; it must not alternate with the tracked update.
+        Bundle own=WarningCodec.encode(zonePoint("end","enter",null));own.putInt("distance_m",900);own.putLong("distance_observed_elapsed_ms",1000);own.putBoolean("distance_estimated",false);
+        assertEquals("end",WarningGeometry.zonePoint(WarningCodec.decode(own,1000)));
+        assertNull("An end point without a kind is not shown while approaching",WarningGeometry.zonePoint(zonePoint("end","approach",null)));
+        assertNull("Unmarked zone coordinates are not a zone point",WarningGeometry.zonePoint(zonePoint(null,"approach","to_segment")));
+        Bundle notFixed=WarningCodec.encode(zonePoint("start","approach","to_segment"));notFixed.putBoolean("native_point_target",false);
+        assertNull(WarningGeometry.zonePoint(WarningCodec.decode(notFixed,1000)));
+        Bundle estimated=WarningCodec.encode(zonePoint("start","approach","to_segment"));estimated.putBoolean("position_estimated",true);
+        assertNull(WarningGeometry.zonePoint(WarningCodec.decode(estimated,1000)));
+        assertNull("A camera point is not a zone point",WarningGeometry.zonePoint(point(true)));
+    }
+    @Test public void aZonePointNeverYieldsAReceiverDistanceOrPassage(){
+        WarningEvent start=zonePoint("start","approach","to_segment");
+        assertFalse(WarningGeometry.pointDisplay(start));
+        assertNull("Stale native distance: no receiver estimate to the start point",WarningGeometry.display(start,geometryFix(7000),7000,500d,true));
+        assertNull(WarningGeometry.display(start,geometryFix(7000),7000,null,false));
+        Location beyond=geometryFix(1000);beyond.setLatitude(.002);beyond.setSpeed(20);
+        assertFalse("Passing the start point does not retire the zone",WarningPassage.passed(start,beyond,1100));
+        assertFalse(WarningPassage.passedOnRoute(start,beyond,1100,-100d));
+    }
 }

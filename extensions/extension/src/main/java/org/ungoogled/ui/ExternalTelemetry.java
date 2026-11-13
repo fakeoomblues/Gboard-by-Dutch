@@ -135,14 +135,18 @@ public final class ExternalTelemetry {
         return true;
     }
     private static Pills pills(){return pills(false);}
-    private static Pills pills(boolean speed){
-        TelemetryStore.View info=view();
-        long now=SystemClock.elapsedRealtime();
-        List<WarningEvent> nativeEvents=nativeWarnings.carEvents(now,event->{
+    /** The provider warnings the pills show now; the map pins (WarningPins) take exactly this selection. */
+    private static List<WarningEvent> pillEvents(long now){
+        return nativeWarnings.carEvents(now,event->{
             if(warningPreferences!=null&&!warningPreferences.enabled(event))return false;
             if(!nl.johninnl.navigation.alerts.WarningGeometry.pointDisplay(event))return true;
             return POINT_PILLS.visible(event.warningId,MapsGuidanceCoordinator.relevance(event,fix,now,navigating),MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating)!=null,now);
         });
+    }
+    private static Pills pills(boolean speed){
+        TelemetryStore.View info=view();
+        long now=SystemClock.elapsedRealtime();
+        List<WarningEvent> nativeEvents=pillEvents(now);
         List<WarningEvent> events=new ArrayList<>();for(WarningEvent event:nativeEvents)if(!info.zoneActive||!nl.johninnl.navigation.alerts.CarWarningPills.zoneEvent(event))events.add(event);
         java.util.Map<String,nl.johninnl.navigation.alerts.WarningGeometry> geometry=new java.util.HashMap<>();
         for(WarningEvent event:events)geometry.put(event.warningId,MapsGuidanceCoordinator.displayGeometry(event,fix,now,navigating));
@@ -250,7 +254,14 @@ public final class ExternalTelemetry {
         if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){View found=namedCarView(group.getChildAt(i),name);if(found!=null)return found;}}
         return null;
     }
-    private static String pinSignature="";
+    /** What the map pins were last drawn from: the WARNINGS_V1 pin list, or the telemetry reports' signature. */
+    private static Object pinState="";
+    /** Read by Maps' label thread (WazeAlerts.mapItems); written on the main thread in update(). */
+    private static volatile boolean warningPinMode;
+    private static volatile List<WarningPins.Pin> warningPins=java.util.Collections.emptyList();
+    /** The selected provider sends WARNINGS_V1: its pins follow the pills, not the telemetry report list. */
+    static boolean warningPinMode(){return warningPinMode;}
+    static List<WarningPins.Pin> warningPins(){return warningPins;}
 
     private static SharedPreferences prefs(Context c){return c.getSharedPreferences(Shapes.PREFS,Context.MODE_PRIVATE);}
     static String source(Context c){return prefs(c).getString(KEY_SOURCE,prefs(c).getBoolean(WazeAlerts.KEY_ON,false)?LEGACY:"");}
@@ -405,10 +416,31 @@ public final class ExternalTelemetry {
             Chime.alert();if(app!=null)Toast.makeText(app,warningLabel(ahead.kind)+" "+(ahead.estimated?"≈":"")+distance(ahead.distanceMeters,PowerSaving.miles())+" ahead",Toast.LENGTH_LONG).show();
         }
         if(navigating||carActive()||foreground.get()!=null)SpeedAlerts.onTelemetry();
-        StringBuilder signature=new StringBuilder(source).append(':').append(publisherSession).append(':').append(suppressNativeFlock());
-        for(TelemetryStore.RoadAlert a:v.alerts)signature.append('|').append(a.id).append(':').append(a.kind).append(':').append(a.latitude).append(':').append(a.longitude).append(':').append(a.title);
-        String pins=signature.toString();if(!pins.equals(pinSignature)){pinSignature=pins;SavedOnMap.refresh();}
+        updatePins(v);
         render();
+    }
+    /** Maps draws its pins again only when what they show changed; SavedOnMap bounds the rate. */
+    private static void updatePins(TelemetryStore.View v){
+        boolean pinMode=semantic!=null&&semantic.advertisesEvents(source);
+        Object next;
+        if(pinMode){
+            long now=SystemClock.elapsedRealtime();
+            boolean dutch=app!=null&&app.getResources().getConfiguration().getLocales().get(0).getLanguage().equals("nl");
+            // By key: the pills may swap two equally near warnings; the map must not redraw for that.
+            List<WarningEvent> mapEvents=new ArrayList<>(pillEvents(now));
+            mapEvents.addAll(nativeWarnings.mapFeatures(now,event->warningPreferences==null||warningPreferences.enabled(event)));
+            List<WarningPins.Pin> pins=WazeAlerts.MAP?WarningPins.byKey(WarningPins.select(mapEvents,now,dutch)):java.util.Collections.emptyList();
+            warningPins=pins;next=pins;
+        }else{
+            warningPins=java.util.Collections.emptyList();
+            StringBuilder signature=new StringBuilder(source).append(':').append(publisherSession).append(':').append(suppressNativeFlock());
+            for(TelemetryStore.RoadAlert a:v.alerts)signature.append('|').append(a.id).append(':').append(a.kind).append(':').append(a.latitude).append(':').append(a.longitude).append(':').append(a.title);
+            next=signature.toString();
+        }
+        warningPinMode=pinMode;
+        // During navigation the same pins are Google's own incident callouts (IncidentPins).
+        IncidentPins.update(navigating,pinMode,WarningPins.incidentPins(warningPins));
+        if(!next.equals(pinState)){pinState=next;SavedOnMap.refresh();}
     }
     private static TelemetryStore.View filteredView(TelemetryStore.View original){
         return original.withAlerts(alert->(WazeAlerts.KINDS&(1<<kind(alert.kind)))!=0,(WazeAlerts.KINDS&(1<<WazeAlerts.ZONE))!=0);

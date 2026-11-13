@@ -29,6 +29,58 @@ public class WarningJournalTest {
         return WarningCodec.decode(b, observed);
     }
 
+    private WarningEvent camera(long sequence, String id, String operation) {
+        Bundle b = WarningCodec.encode(event(sequence,id,sequence,0,operation,NOW,"Camera"));
+        b.putString("native_type","CAMERA"); b.putString("category","display_only");
+        b.putString("native_namespace","waze.insights.native_tile"); b.putInt("native_tile_kind",72);
+        b.putString("position_clock_origin","native_tile"); b.putBoolean("native_point_target",true);
+        if(!operation.equals("CLEAR")) {
+            b.putDouble("latitude",52); b.putDouble("longitude",5);
+            b.putLong("position_observed_elapsed_ms",NOW); b.putBoolean("position_estimated",false);
+        }
+        return WarningCodec.decode(b,NOW);
+    }
+
+    @Test public void nativeWarningDisplacesCameraTombstoneWithoutLosingSpeechOrCancellation() {
+        WarningJournal journal = new WarningJournal(SESSION);
+        long sequence=0;
+        for(int i=0;i<32;i++) assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(++sequence,"camera-"+i,"UPSERT"),NOW));
+        for(int i=0;i<96;i++) assertEquals(WarningJournal.Append.ACCEPTED,journal.append(event(++sequence,"native-"+i,1,1,"ANNOUNCE",NOW,"Native"),NOW));
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(++sequence,"camera-0","CLEAR"),NOW));
+        long cursor=sequence;
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(event(++sequence,"new-native",1,1,"ANNOUNCE",NOW,"New native"),NOW));
+        WarningJournal.Resume result=journal.resume(SESSION,cursor,NOW);
+        assertTrue(result.resyncRequired); assertFalse(result.overflow);
+        assertNotNull(journal.announcement("native-0",WarningEvent.Phase.NOTICE,1,NOW));
+        assertNotNull(journal.announcement("new-native",WarningEvent.Phase.NOTICE,1,NOW));
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(event(++sequence,"native-0",2,1,"CLEAR",NOW,""),NOW));
+        assertNull(journal.announcement("native-0",WarningEvent.Phase.NOTICE,1,NOW));
+        assertNotNull(journal.announcement("native-1",WarningEvent.Phase.NOTICE,1,NOW));
+    }
+
+    @Test public void cameraChurnCannotOverflowOrEvictNativeAuthority() {
+        WarningJournal journal=new WarningJournal(SESSION);
+        long sequence=1;
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(event(sequence,"native",1,1,"ANNOUNCE",NOW,"Native"),NOW));
+        for(int i=0;i<400;i++) {
+            assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(++sequence,"camera-"+i,"UPSERT"),NOW));
+            assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(++sequence,"camera-"+i,"CLEAR"),NOW));
+        }
+        WarningJournal.Resume result=journal.resume(SESSION,sequence-1,NOW);
+        assertFalse(result.overflow); assertTrue(result.events.size()<=128); assertEquals(1,result.currentState.size());
+        assertNotNull(journal.announcement("native",WarningEvent.Phase.NOTICE,1,NOW));
+    }
+
+    @Test public void fullNativeJournalDropsOnlyNewDisplayFeatures() {
+        WarningJournal journal=new WarningJournal(SESSION);
+        for(int i=1;i<=128;i++) journal.append(event(i,"native-"+i,1,1,"ANNOUNCE",NOW,"Native"),NOW);
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(129,"camera","UPSERT"),NOW));
+        assertEquals(WarningJournal.Append.ACCEPTED,journal.append(camera(130,"camera","CLEAR"),NOW));
+        assertFalse(journal.resume(SESSION,128,NOW).overflow);
+        assertEquals(128,journal.resume(SESSION,130,NOW).currentState.size());
+        assertNotNull(journal.announcement("native-1",WarningEvent.Phase.NOTICE,1,NOW));
+    }
+
     @Test public void transportIdentityConflictsAndNativeRepeatsRemainDistinct() {
         WarningJournal journal = new WarningJournal(SESSION);
         WarningEvent first = event(1,"a",1,1,"ANNOUNCE",NOW,"Obstacle");

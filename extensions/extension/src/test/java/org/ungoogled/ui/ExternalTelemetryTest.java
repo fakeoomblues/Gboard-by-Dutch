@@ -81,7 +81,7 @@ public class ExternalTelemetryTest {
         assertTrue((Boolean)on.invoke(layer));assertFalse(ExternalTelemetry.suppressNativeFlock());
         deliver(TelemetryStoreTest.packet(TelemetryStore.WAZE,"w",1,SystemClock.elapsedRealtime()));
         assertTrue(ExternalTelemetry.suppressNativeFlock());assertFalse((Boolean)on.invoke(layer));
-        Field signature=ExternalTelemetry.class.getDeclaredField("pinSignature");signature.setAccessible(true);String paused=(String)signature.get(null);
+        Field signature=ExternalTelemetry.class.getDeclaredField("pinState");signature.setAccessible(true);Object paused=signature.get(null);
         ShadowSystemClock.advanceBy(Duration.ofSeconds(11));java.lang.reflect.Method update=ExternalTelemetry.class.getDeclaredMethod("update");update.setAccessible(true);update.invoke(null);
         assertFalse(ExternalTelemetry.suppressNativeFlock());assertTrue((Boolean)on.invoke(layer));assertNotEquals(paused,signature.get(null));
         assertTrue(app.getSharedPreferences(Shapes.PREFS,0).getBoolean(SpeedCameras.KEY_FLOCK,false));assertTrue(app.getSharedPreferences(Shapes.PREFS,0).getBoolean(SpeedCameras.KEY_FLOCK_MAP,false));assertTrue(app.getSharedPreferences(Shapes.PREFS,0).getBoolean(SpeedCameras.KEY_FLOCK_ALERT,false));

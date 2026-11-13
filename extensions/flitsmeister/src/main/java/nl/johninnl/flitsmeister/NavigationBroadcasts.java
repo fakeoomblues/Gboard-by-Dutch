@@ -146,7 +146,7 @@ public final class NavigationBroadcasts {
             if (!active || token!=generation || at<=0 || at>received || received-at>NavigationState.SPEED_TTL_MS) return;
             if(at<candidateAt) return;
             candidateAt=at; candidate=selected;
-            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1); } else observe(selected,fix,at);
+            if (selected==null) { STATE.clear("flitsmeister",at); ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1,null); } else observe(selected,fix,at);
             dirty=true; publish(false);
         });
     }
@@ -158,16 +158,24 @@ public final class NavigationBroadcasts {
             if(ZoneGeometry.beforeStart(c.path,fix.getLatitude(),fix.getLongitude())) {
                 Location start=new Location("report"); start.setLatitude(c.path[0][0]);start.setLongitude(c.path[0][1]);
                 int distance=(int)Math.round(fix.distanceTo(start));
-                ALERTS.approach(c.id,distance,true,at); zoneWarning(c.id,false,distance);
-            } else { ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1); }
-        } else { STATE.zone(c.id,p.remaining,p.percent,at); ALERTS.approach("",-1,false,at); zoneWarning(c.id,true,p.remaining); }
+                // The control's own start point: the first point of its joined report geometry.
+                ALERTS.approach(c.id,distance,true,at); zoneWarning(c.id,false,distance,c.path[0]);
+            } else { ALERTS.approach("",-1,false,at); zoneWarning(null,false,-1,null); }
+        } else {
+            // Inside, the control's own end point: the last point of the same joined geometry.
+            STATE.zone(c.id,p.remaining,p.percent,at); ALERTS.approach("",-1,false,at); zoneWarning(c.id,true,p.remaining,c.path[c.path.length-1]);
+        }
     }
     private static String zoneWarningId;
-    /** The tracked average-speed report on the warning channel too, so receivers can announce it. */
-    private static void zoneWarning(String id,boolean inside,int metres) {
+    /**
+     * The tracked average-speed report on the warning channel too, so receivers can announce it and mark
+     * its start (approaching) or end (inside) on the map. Never the path itself.
+     */
+    private static void zoneWarning(String id,boolean inside,int metres,double[] point) {
         if(zoneWarningId!=null&&!zoneWarningId.equals(id)){NativeWarnings.averageSpeedZoneCleared(zoneWarningId);zoneWarningId=null;}
         if(id==null||id.isEmpty())return;
-        zoneWarningId=id;NativeWarnings.averageSpeedZone(id,inside,metres);
+        boolean located=point!=null&&point.length>=2;
+        zoneWarningId=id;NativeWarnings.averageSpeedZone(id,inside,metres,located?point[0]:Double.NaN,located?point[1]:Double.NaN);
     }
     private static Candidate readCandidate(Object report,Location fix) throws ReflectiveOperationException {
         String id=String.valueOf(call(report,"getId"));

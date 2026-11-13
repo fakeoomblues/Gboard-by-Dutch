@@ -151,19 +151,55 @@ public final class NativeWarnings {
      * ahead of its start (distance to the start) or inside (remaining distance). FM itself does not always
      * signal the report on the warning path; the identity matches FM's own report warning when it does.
      */
-    public static void averageSpeedZone(String reportId,boolean inside,int metres){capture(()->{
+    public static void averageSpeedZone(String reportId,boolean inside,int metres){averageSpeedZone(reportId,inside,metres,Double.NaN,Double.NaN);}
+    /**
+     * As above, with the control's own road point from the same joined report geometry: its first point
+     * while approaching, its last point while inside (contract v1, Geometry, 12 November 2026).
+     */
+    public static void averageSpeedZone(String reportId,boolean inside,int metres,double latitude,double longitude){capture(()->{
         if(!captureEnabled||app==null||reportId==null||reportId.isEmpty())return;
         Bundle fields=new Bundle();fields.putString("native_family","AvgSpeedCheck");fields.putString("native_type","AVG_SPEED_CHECK");
         fields.putString("category","speed_control");fields.putInt("priority",1);fields.putString("native_zone_source","producer_report_geometry");
         fields.putLong("display_max_age_ms",10000);
-        if(metres>=0){fields.putInt("distance_m",metres);fields.putLong("distance_observed_elapsed_ms",SystemClock.elapsedRealtime());fields.putBoolean("distance_estimated",false);
+        long now=SystemClock.elapsedRealtime();
+        if(metres>=0){fields.putInt("distance_m",metres);fields.putLong("distance_observed_elapsed_ms",now);fields.putBoolean("distance_estimated",false);
             fields.putString("native_distance_kind",inside?"remaining_in_segment":"to_segment");}
+        zonePoint(fields,inside,latitude,longitude,now);
         int resource=app.getResources().getIdentifier("common_trajectcontrole","string",app.getPackageName());boolean dutch=language().toLowerCase(Locale.ROOT).startsWith("nl");
         String text=resource==0?(dutch?"Trajectcontrole":"Average speed check"):app.getString(resource);fields.putString("language_tag",language());
         if(resource==0)fields.putString("template_id","fm_average_speed_zone_v1");
         update("AvgSpeedCheck:"+reportId,fields,text,resource==0?"template":"native_resource",inside?"enter":"approach",false,false,"producer_zone_state",false);
     });}
     public static void averageSpeedZoneCleared(String reportId){capture(()->{if(reportId!=null&&!reportId.isEmpty())clear("AvgSpeedCheck:"+reportId);});}
+    /**
+     * FM's own fixed road point of the control, read from its report geometry at [at]: a display point,
+     * never an extent. A missing, partial or default (0,0) point ships nothing.
+     */
+    static void zonePoint(Bundle fields,boolean inside,double latitude,double longitude,long at){
+        if(at<0||!Double.isFinite(latitude)||!Double.isFinite(longitude)||Math.abs(latitude)>90||Math.abs(longitude)>180
+                ||latitude==0&&longitude==0)return;
+        fields.putDouble("latitude",latitude);fields.putDouble("longitude",longitude);fields.putLong("position_observed_elapsed_ms",at);
+        fields.putBoolean("position_estimated",false);fields.putString("position_clock_origin","native_report_geometry");
+        fields.putBoolean("native_point_target",true);fields.putString("zone_point",inside?"end":"start");
+    }
+    private static final String[] ZONE_POSITION={"latitude","longitude","position_observed_elapsed_ms","position_estimated","position_clock_origin","native_point_target","zone_point"};
+    private static final String[] ZONE_DISTANCE={"distance_m","distance_observed_elapsed_ms","distance_estimated","native_distance_kind"};
+    /**
+     * FM's own announcement for a tracked control carries no report geometry of its own. It keeps the
+     * producer's last zone point and distance with their original clocks, so the marker does not blink.
+     */
+    private static void keepZoneGeometry(Bundle previous,Bundle next){
+        if(!next.containsKey("latitude")&&!next.containsKey("longitude"))
+            for(String key:ZONE_POSITION)copy(previous,next,key);
+        if(!next.containsKey("distance_m"))for(String key:ZONE_DISTANCE)copy(previous,next,key);
+    }
+    @SuppressWarnings("deprecation")
+    private static void copy(Bundle from,Bundle to,String key){
+        Object value=from.get(key);
+        if(value instanceof Double)to.putDouble(key,(Double)value);else if(value instanceof Long)to.putLong(key,(Long)value);
+        else if(value instanceof Integer)to.putInt(key,(Integer)value);else if(value instanceof Boolean)to.putBoolean(key,(Boolean)value);
+        else if(value instanceof String)to.putString(key,(String)value);
+    }
     /** Native GPS country detection only: constructor defaults and manual selection are not crossings. */
     public static void countryBegin(Object detector,Location fix){capture(()->{
         countrySamples.remove(detector);if(!captureEnabled||detector==null||fix==null)return;
@@ -520,6 +556,8 @@ public final class NativeWarnings {
     private static void update(String id,Bundle fields,String text,String origin,String phase,boolean announce,boolean bypass,String path,boolean listed) {
         Record record=records.get(id);
         if(record==null){if(records.size()>=MAX_WARNINGS){overflow();return;}record=new Record();records.put(id,record);}
+        if(record.fields!=null&&record.fields.containsKey("zone_point")&&!fields.containsKey("zone_point")&&!"exit".equals(phase)
+                &&!"producer_zone_state".equals(path)&&"AvgSpeedCheck".equals(fields.getString("native_family")))keepZoneGeometry(record.fields,fields);
         fields.putString("message",text);fields.putString("message_origin",origin);if(!fields.containsKey("language_tag"))fields.putString("language_tag",language());fields.putString("phase",phase);
         SourceFact source=citsFacts.get(id);
         if(source!=null&&!source.selectedLanguage.equals("und")&&NativeWarningText.hash(text).equals(source.selectedTextHash)){
@@ -633,7 +671,7 @@ public final class NativeWarnings {
     private static boolean semanticChange(Bundle old,Bundle next){
         // FM's per-fix look-ahead distance is display geometry; it never re-versions the warning.
         boolean lookahead="native_lookahead".equals(old.getString("distance_origin"))||"native_lookahead".equals(next.getString("distance_origin"));
-        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_is_traffic_light","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","native_early_distance_m","native_early_max_distance_m","native_early_heading_degrees","distance_m","distance_observed_elapsed_ms","range_m","range_observed_elapsed_ms","relative_bearing_degrees","relationship","relationship_observed_elapsed_ms","road_speed_limit_kmh","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated"})
+        for(String key:new String[]{"native_type","native_subtype","native_family","native_text_key","native_advice_kmh","native_is_traffic_light","native_source_event","native_source_motion","native_instruction","native_instruction_language_tag","native_announced_text","lane_index","number_of_lanes_closed","native_early_distance_m","native_early_max_distance_m","native_early_heading_degrees","distance_m","distance_observed_elapsed_ms","range_m","range_observed_elapsed_ms","relative_bearing_degrees","relationship","relationship_observed_elapsed_ms","road_speed_limit_kmh","category","priority","phase","message","message_origin","language_tag","latitude","longitude","position_observed_elapsed_ms","position_estimated","zone_point"})
             if(!(lookahead&&key.startsWith("distance_"))&&!java.util.Objects.equals(old.get(key),next.get(key)))return true;
         return false;
     }

@@ -19,6 +19,28 @@ import patches.waze.CatalogCompatibility.COMPATIBILITY_WAZE
 private const val NAVIGATION_BROADCASTS = "Lorg/ungoogled/waze/NavigationBroadcasts;"
 private val startupResources = patches.shared.navigationStartupResources("org.ungoogled.waze", warningRecovery = true)
 
+/** Clear copied camera values after the engine has actually marked itself shut down. */
+internal fun bindWazeCameraShutdown(method: MutableMethod) {
+    val body = method.instructions
+    val field = "Lcom/waze/NativeManager;->isNativeLayerShutdown:Z"
+    val hook = "Lorg/ungoogled/waze/NativeWarnings;->engineStopped()V"
+    check(method.definingClass == "Lcom/waze/NativeManager;" && method.name == "onNativeLayerShutDown" &&
+        method.parameterTypes.map(CharSequence::toString) == listOf("Z") && method.returnType == "V" &&
+        body.none { (it as? ReferenceInstruction)?.reference.toString() == hook }) { "Changed Waze native shutdown ABI" }
+    val writes = body.indices.filter { body[it].opcode == Opcode.IPUT_BOOLEAN &&
+        (body[it] as? ReferenceInstruction)?.reference.toString() == field }
+    check(writes.size == 1 && writes.single() > 0) { "Changed Waze native shutdown flag" }
+    val index = writes.single()
+    val value = body[index - 1]
+    check(value.opcode == Opcode.CONST_4 &&
+        (value as com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction).narrowLiteral == 1 &&
+        (value as OneRegisterInstruction).registerA ==
+            (body[index] as com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction).registerA) {
+        "Waze native shutdown does not set its completed flag"
+    }
+    method.addInstruction(index + 1, "invoke-static {}, $hook")
+}
+
 /** Keep-alive belongs only to teardown; the shared AAOS flag also controls native login. */
 internal fun preserveBroadcastsAfterCarSession(method: MutableMethod) {
     val body = method.instructions
@@ -87,7 +109,7 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
     description = "Broadcasts current speed, road limits, road alerts and approaching/active average-speed zones locally, including in the background. Includes a silent startup and health API for patched Maps/Vela; no overlay required.",
 ) {
     compatibleWith(COMPATIBILITY_WAZE)
-    dependsOn(wazeStayAwakePatch, startupResources, wazeConfigOverridesPatch)
+    dependsOn(wazeStayAwakePatch, startupResources, wazeConfigOverridesPatch, wazeNativeTileResources)
     val receiverPackage by stringOption(
         key = "receiverPackage", default = "", title = "Receiver package",
         description = "Optional target app package. Blank broadcasts to running compatible local receivers.",
@@ -97,7 +119,10 @@ val wazeNavigationBroadcastPatch = bytecodePatch(
         Fingerprint(definingClass = "Lcom/waze/ls;", name = "d", parameters = listOf("Lg/d/e;"), returnType = "Ljava/lang/Object;").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "isAppStarted", parameters = emptyList(), returnType = "Z").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "getInitializedStatus", parameters = emptyList(), returnType = "Z").method
+        Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "isShutdown", parameters = emptyList(), returnType = "Z").method
         Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "shutDown", parameters = emptyList(), returnType = "V").method
+        bindWazeCameraShutdown(Fingerprint(definingClass = "Lcom/waze/NativeManager;", name = "onNativeLayerShutDown",
+            parameters = listOf("Z"), returnType = "V").method)
         patches.shared.bindNavigationProviderLifecycle()
         check(mutableClassDefBy("Lg/d/k;").fields.any { it.name == "a" && it.type == "Lg/d/k;" })
         bindWazeNativeWarnings()

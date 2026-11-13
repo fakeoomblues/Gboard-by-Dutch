@@ -879,6 +879,10 @@ private const val IMMUTABLE_LIST = "Lcom/google/common/collect/ImmutableList;"
  * Its place setter now goes through SavedOnMap.withLocal, which adds the places kept on the phone,
  * built as Maps builds its own (the personal place factory and builder, the saved list description);
  * the generator turning on with the map, and every change to Local saved, draw them again.
+ *
+ * Maps hides the generator whenever a route is on the map (phone and car). Its controller's visibility
+ * toggle asks SavedOnMap.visible first, which keeps it shown while warning pins can be drawn; withLocal
+ * then hands it only the pins, so the route map stays as clean as Maps leaves it.
  */
 private fun BytecodePatchContext.savedOnMap(featureType: String, positionType: String) {
     fun Instruction.ref() = (this as? ReferenceInstruction)?.reference
@@ -903,11 +907,103 @@ private fun BytecodePatchContext.savedOnMap(featureType: String, positionType: S
     generator.accessFlags = generator.accessFlags or AccessFlags.PUBLIC.value
     val setter = generator.methods.singleOrNull { it.returnType == "V" && params(it) == listOf(IMMUTABLE_LIST) }
         ?: throw PatchException("$generatorType has no single place setter")
-    val placesField = setter.implementation!!.instructions.firstNotNullOfOrNull { insn ->
-        (insn.ref() as? FieldReference)?.takeIf { insn.opcode == Opcode.IPUT_OBJECT && it.definingClass == generatorType && it.type == IMMUTABLE_LIST }
-    } ?: throw PatchException("$generatorType's place setter keeps no list")
     val switch = generator.methods.singleOrNull { it.returnType == "Z" && params(it) == listOf("Z") }
         ?: throw PatchException("$generatorType has no single on/off switch")
+    fun instance(f: com.android.tools.smali.dexlib2.iface.Field) = !AccessFlags.STATIC.isSet(f.accessFlags)
+    fun public(flags: Int) = flags and (AccessFlags.PRIVATE.value or AccessFlags.PROTECTED.value).inv() or AccessFlags.PUBLIC.value
+
+    // Its owner (26.44: apuk), the generator's one constructor parameter: it turns the generator on and
+    // off, and keeps the account's own places, untouched, in its one list field (apuk.g).
+    val ownerType = generator.methods.filter { it.name == "<init>" }.singleOrNull()?.let { params(it) }?.singleOrNull()
+        ?.takeIf { it.startsWith("L") } ?: throw PatchException("$generatorType's constructor no longer takes its owner alone")
+    val ownerHolder = generator.fields.filter { instance(it) && it.type == ownerType }.singleOrNull()
+        ?: throw PatchException("$generatorType keeps no single $ownerType")
+    val owner = mutableClassDefBy(ownerType)
+    owner.accessFlags = public(owner.accessFlags)
+    val ownerGenerator = owner.fields.filter { instance(it) && it.type == generatorType }.singleOrNull()
+        ?: throw PatchException("$ownerType keeps no single $generatorType")
+    val accountPlaces = owner.fields.filter { instance(it) && it.type == IMMUTABLE_LIST }.singleOrNull()
+        ?: throw PatchException("$ownerType keeps no single place list")
+    ownerGenerator.accessFlags = public(ownerGenerator.accessFlags)
+    accountPlaces.accessFlags = public(accountPlaces.accessFlags)
+    // Its on and off: the owner's ()V methods that call the generator's switch with a literal 1 or 0.
+    fun switchesTo(m: com.android.tools.smali.dexlib2.iface.Method): Set<Long> {
+        val code = m.implementation?.instructions?.toList() ?: return emptySet()
+        val out = mutableSetOf<Long>()
+        for (i in code.indices) {
+            val call = code[i].ref() as? MethodReference ?: continue
+            if (code[i].opcode != Opcode.INVOKE_VIRTUAL || call.definingClass != generatorType || call.name != switch.name) continue
+            val register = (code[i] as Instruction35c).registerD
+            val source = (i - 1 downTo 0).map { code[it] }.firstOrNull {
+                it.opcode.setsRegister() && (it as? OneRegisterInstruction)?.registerA == register
+            }
+            (source as? WideLiteralInstruction)?.let { out += it.wideLiteral }
+        }
+        return out
+    }
+    fun ownerSwitch(on: Long) = owner.methods.filter { it.returnType == "V" && it.parameterTypes.isEmpty() && switchesTo(it) == setOf(on) }
+        .singleOrNull() ?: throw PatchException("$ownerType has no single method turning $generatorType ${if (on == 1L) "on" else "off"}")
+    val enable = ownerSwitch(1)
+    val disable = ownerSwitch(0)
+
+    // The controller (26.44: bubg, phone and car): its (Z)V shows or hides the owner while created --
+    // Maps hides it whenever a route is drawn (DirectionsMapManagerImpl), and with it the pins.
+    class Controller(val type: String, val method: String, val created: FieldReference, val holder: FieldReference)
+    val controllers = mutableListOf<Controller>()
+    classDefForEach { c ->
+        for (m in c.methods) {
+            if (AccessFlags.STATIC.isSet(m.accessFlags) || m.returnType != "V" || params(m) != listOf("Z")) continue
+            val code = m.implementation?.instructions?.toList() ?: continue
+            val calls = code.mapNotNull { (it.ref() as? MethodReference)?.takeIf { r -> r.definingClass == ownerType } }.map { it.name }.toSet()
+            if (calls != setOf(enable.name, disable.name)) continue
+            if (code.none { it.opcode == Opcode.CHECK_CAST && (it.ref() as TypeReference).type == ownerType }) continue
+            val created = code.mapNotNull { insn ->
+                (insn.ref() as? FieldReference)?.takeIf { insn.opcode == Opcode.IGET_BOOLEAN && it.definingClass == c.type }
+            }.distinct().singleOrNull() ?: continue
+            val holder = code.mapNotNull { insn ->
+                (insn.ref() as? FieldReference)?.takeIf { insn.opcode == Opcode.IGET_OBJECT && it.definingClass == c.type }
+            }.distinct().singleOrNull() ?: continue
+            controllers += Controller(c.type, m.name, created, holder)
+        }
+    }
+    val controller = controllers.singleOrNull()
+        ?: throw PatchException("expected one $ownerType visibility toggle, found ${controllers.map { "${it.type}->${it.method}" }}")
+    val controllerClass = mutableClassDefBy(controller.type)
+    val toggle = controllerClass.methods.single { it.name == controller.method && params(it) == listOf("Z") && it.returnType == "V" }
+    // At entry every local is free (the method has not run yet); p1 is rewritten with SavedOnMap's answer.
+    val toggleCode = toggle.implementation!!
+    if (toggleCode.registerCount - 2 < 1 || toggleCode.registerCount > 16) throw PatchException("${controller.type}->${controller.method} has no room for the hook")
+    // uaGenerator: the owner's generator while the controller is created and holds one, else null.
+    controllerClass.methods.add(
+        ImmutableMethod(controller.type, "uaGenerator", emptyList(), "Ljava/lang/Object;", AccessFlags.PUBLIC.value, null, null, MutableMethodImplementation(3))
+            .toMutable().apply {
+                addInstructions(
+                    0,
+                    """
+                        iget-boolean v0, p0, ${controller.created.definingClass}->${controller.created.name}:${controller.created.type}
+                        if-eqz v0, :none
+                        iget-object v0, p0, ${controller.holder.definingClass}->${controller.holder.name}:${controller.holder.type}
+                        instance-of v1, v0, $ownerType
+                        if-eqz v1, :none
+                        check-cast v0, $ownerType
+                        iget-object v0, v0, $ownerType->${ownerGenerator.name}:$generatorType
+                        return-object v0
+                        :none
+                        const/4 v0, 0x0
+                        return-object v0
+                    """,
+                )
+            },
+    )
+    toggle.addInstructions(
+        0,
+        """
+            invoke-virtual { p0 }, ${controller.type}->uaGenerator()Ljava/lang/Object;
+            move-result-object v0
+            invoke-static { v0, p1 }, $SAVED_ON_MAP->visible(Ljava/lang/Object;Z)Z
+            move-result p1
+        """,
+    )
     // Its "places changed" flag: Maps' own update sets it just before the setter, or the labels already
     // drawn on each tile stay as they were.
     val changed = mutableSetOf<String>()
@@ -992,7 +1088,9 @@ private fun BytecodePatchContext.savedOnMap(featureType: String, positionType: S
         throw PatchException("${info.kind} is not the saved list kind")
     }
 
-    // The generator: its setter adds the phone's places, its switch draws them, uaRefresh redraws.
+    // The generator: its setter adds the phone's places, its switch draws them, uaRefresh redraws --
+    // from the owner's own account list, never from the generator's last list: during a route that
+    // list holds only the pins, and it must not stand in for the account's places once the route clears.
     setter.addInstructions(
         0,
         """
@@ -1010,7 +1108,8 @@ private fun BytecodePatchContext.savedOnMap(featureType: String, positionType: S
                     """
                         const/4 v1, 0x1
                         invoke-virtual { p0, v1 }, $generatorType->$changedFlag(Z)V
-                        iget-object v0, p0, $generatorType->${placesField.name}:$IMMUTABLE_LIST
+                        iget-object v0, p0, $generatorType->${ownerHolder.name}:$ownerType
+                        iget-object v0, v0, $ownerType->${accountPlaces.name}:$IMMUTABLE_LIST
                         invoke-virtual { p0, v0 }, $generatorType->${setter.name}($IMMUTABLE_LIST)V
                         return-void
                     """,

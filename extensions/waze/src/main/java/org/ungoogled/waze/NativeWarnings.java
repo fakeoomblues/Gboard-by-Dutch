@@ -25,6 +25,8 @@ import nl.johninnl.navigation.startup.StartupProtocol;
 public final class NativeWarnings {
     private NativeWarnings(){}
     private static final int MAX_WARNINGS=128;
+    private static final java.util.Set<String> tileIds=new java.util.HashSet<>();
+    private static long tileRevision,tilePublishedAt=-10000,tileEpoch;
     private static final Map<String,Record> records=new LinkedHashMap<>();
     // Current native repository models outlive the bounded display-state cache. A later
     // genuine sound decision can therefore keep its identity without replaying stale speech.
@@ -90,6 +92,7 @@ public final class NativeWarnings {
     }
     public static synchronized WarningEndpoint init(Context context){
         app=context.getApplicationContext();
+        NativeTileCameras.start(app);
         if(endpoint==null)endpoint=new WarningEndpoint(app,uid->{
             String[] packages=app.getPackageManager().getPackagesForUid(uid);String configured=NavigationBroadcasts.receiverPackage();
             if(!StartupProtocol.allowed(packages,configured))return null;
@@ -219,7 +222,7 @@ public final class NativeWarnings {
         if(observed==null)throw new IllegalStateException("UNOBSERVED_NATIVE_MODEL");
         if(fields.containsKey("distance_m"))fields.putLong("distance_observed_elapsed_ms",observed);
         if(fields.containsKey("trigger_m"))fields.putLong("trigger_observed_elapsed_ms",observed);
-        if(fields.containsKey("latitude")){fields.putLong("position_observed_elapsed_ms",observed);fields.putString("position_clock_origin","native_repository");}
+        if(fields.containsKey("latitude")&&!NativeZoneRanges.owns(fields)){fields.putLong("position_observed_elapsed_ms",observed);fields.putString("position_clock_origin","native_repository");}
         if(fields.getBoolean("native_validation_present"))fields.putLong("native_validation_observed_elapsed_ms",observed);
         if(fields.containsKey("native_zone_percent"))fields.putLong("native_zone_observed_elapsed_ms",observed);
         return fields;
@@ -231,7 +234,24 @@ public final class NativeWarnings {
                 ||!java.util.Objects.equals(fields.get("native_type"),previous.fields.get("native_type")))return fields;
         Bundle supplement=new Bundle(previous.fields);
         for(String key:new ArrayList<>(supplement.keySet()))if(!key.startsWith("native_segment_")||fields.containsKey(key))supplement.remove(key);
-        fields.putAll(supplement);return fields;
+        fields.putAll(supplement);
+        NativeZoneRanges.apply(fields,NativeZoneRanges.decode(NativeTileCameras.zoneSnapshot()),SystemClock.elapsedRealtime());
+        return fields;
+    }
+    private static void restoreNativePoint(Bundle fields){
+        if(!NativeZoneRanges.owns(fields))return;
+        NativeZoneRanges.remove(fields);
+        Object model=nativeModels.get(fields.getString("warning_id"));
+        if(model==null)return;
+        Bundle original=WazeWarningModels.descriptor(app,model);
+        java.util.Set<String> geometry=new HashSet<>(java.util.Arrays.asList("latitude","longitude","relevance","position_estimated"));
+        for(String key:geometry)fields.remove(key);
+        for(String key:new ArrayList<>(original.keySet()))if(!geometry.contains(key))original.remove(key);
+        fields.putAll(original);
+        if(fields.containsKey("latitude")){
+            fields.putString("position_clock_origin","native_repository");
+            fields.putLong("position_observed_elapsed_ms",nativeObservedAt.getOrDefault(fields.getString("warning_id"),0L));
+        }
     }
     private static String zonePhase(Object controller){
         try{Field state=controller.getClass().getDeclaredField("b");state.setAccessible(true);Object value=state.get(controller);int ordinal=((Enum<?>)value).ordinal();return ordinal==1?"enter":ordinal==2?"exit":"approach";}
@@ -287,7 +307,9 @@ public final class NativeWarnings {
         }
         return result;
     }
-    public static void segments(Object update){capture(()->{
+    public static void segments(Object update){segments(update,NativeTileCameras.zoneSnapshot());}
+    static void segments(Object update,long[] nativeRanges){capture(()->{
+        Map<String,NativeZoneRanges.Range> rangePoints=NativeZoneRanges.decode(nativeRanges);
         Object values=WazeWarningModels.call(update,"getInfoList");if(!(values instanceof Collection)||((Collection<?>)values).size()>MAX_WARNINGS)throw new IllegalArgumentException("SEGMENT_BOUND");
         Map<String,Bundle> parsed=new LinkedHashMap<>(),correlated=new LinkedHashMap<>();Set<String> seen=new HashSet<>();long observed=SystemClock.elapsedRealtime();boolean routeContext=false;
         for(Object info:(Collection<?>)values){
@@ -305,12 +327,17 @@ public final class NativeWarnings {
                 correlated.put(linked,nativeFields);
             }else{String id=fields.getString("warning_id");if(parsed.put(id,fields)!=null)throw new IllegalArgumentException("DUPLICATE_SEGMENT");}
         }
+        for(Bundle fields:parsed.values())NativeZoneRanges.apply(fields,rangePoints,observed);
+        for(Bundle fields:correlated.values()){
+            restoreNativePoint(fields);NativeZoneRanges.apply(fields,rangePoints,observed);
+        }
         parsed=chainZoneSegments(parsed,observed);
         // Validate the complete native update before emitting even a linked state change.
         for(Map.Entry<String,Record> entry:new ArrayList<>(records.entrySet())){
             Bundle previous=entry.getValue().fields;
             if(previous==null||"CLEAR".equals(previous.getString("operation"))||!previous.getBoolean("native_segment_correlated")||correlated.containsKey(entry.getKey()))continue;
             Bundle fields=new Bundle(previous);
+            restoreNativePoint(fields);
             for(String key:new ArrayList<>(fields.keySet()))if(key.startsWith("native_segment_"))fields.remove(key);
             put(fields,false,previous.getLong("observed_elapsed_ms"),"native_segment_removed_state");
         }
@@ -340,14 +367,68 @@ public final class NativeWarnings {
         for(Map.Entry<String,Record> value:new ArrayList<>(records.entrySet()))if(feature.equals(value.getValue().fields.getString("native_osm_feature"))&&!present.contains(value.getValue().fields.getString("native_osm_legacy_id")))clear(value.getKey());
     });}
     static void overflow(){capture(()->{throw new IllegalStateException("SOURCE_CAPTURE_BOUND");});}
+    /** Called only after Waze records its genuine native shutdown. */
+    public static synchronized void engineStopped(){
+        NativeTileCameras.clear();
+        stopped();
+    }
+    static synchronized long tileEpoch(){return tileEpoch;}
     static synchronized void stopped(){
-        for(String id:new ArrayList<>(records.keySet()))clear(id);nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";
+        ++tileEpoch;
+        for(String id:new ArrayList<>(records.keySet()))clear(id);
+        tileIds.clear();tilePublishedAt=-10000;
+        nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";
         alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;
+    }
+    /** Native tile points are display-only; they never manufacture a native warning/sound decision. */
+    static void tilePoints(long[] points){tilePoints(points,tileEpoch());}
+    static void tilePoints(long[] points,long sampledEpoch){capture(()->{
+        if(sampledEpoch!=tileEpoch)return; // A snapshot sampled before stop cannot republish a cleared pin.
+        if(points==null||points.length%5!=0||points.length>32*5)throw new IllegalArgumentException("TILE_SNAPSHOT_BOUND");
+        long now=SystemClock.elapsedRealtime();java.util.Set<String> next=new java.util.HashSet<>();
+        for(int i=0;i<points.length;i+=5){
+            long kind=points[i+2],lon=points[i+3],lat=points[i+4];
+            if(kind<69||kind>80||lon < -180000000||lon>180000000||lat < -90000000||lat>90000000||lon==0&&lat==0)
+                throw new IllegalArgumentException("TILE_POINT_ABI");
+            next.add(tileId(points,i));
+        }
+        boolean changed=!next.equals(tileIds);
+        if(!changed)for(int i=0;i<points.length;i+=5){
+            Record previous=records.get(tileId(points,i));
+            if(previous==null||previous.fields.getDouble("longitude")!=points[i+3]/1e6||previous.fields.getDouble("latitude")!=points[i+4]/1e6){changed=true;break;}
+        }
+        for(String id:new ArrayList<>(tileIds))if(!next.contains(id)){clear(id);records.remove(id);tileIds.remove(id);}
+        if(!changed&&now-tilePublishedAt<10000)return;
+        for(int i=0;i<points.length;i+=5){
+            long kind=points[i+2],lon=points[i+3],lat=points[i+4];
+            String id=tileId(points,i);if(!records.containsKey(id)&&records.size()>=MAX_WARNINGS)continue;
+            Bundle fields=WazeWarningModels.base("waze.insights.native_tile","CAMERA","Camera",WazeWarningModels.language(app));
+            fields.putString("warning_id",id);fields.putString("category","display_only");
+            fields.putString("message_origin","template");fields.putString("template_id","waze_native_tile_map_v1");
+            fields.putInt("native_tile_kind",(int)kind);fields.putString("native_subtype",tileSubtype((int)kind));
+            fields.putString("native_subtype_namespace","waze.insights.CameraKind");
+            fields.putString("relevance","point_ahead");fields.putDouble("longitude",lon/1e6);fields.putDouble("latitude",lat/1e6);
+            fields.putBoolean("position_estimated",false);fields.putBoolean("native_point_target",true);
+            fields.putLong("position_observed_elapsed_ms",now);fields.putString("position_clock_origin","native_tile");
+            fields.putString("dedup_status","native_tile_identity");
+            Record record=records.get(id);if(record==null){record=new Record();records.put(id,record);}
+            record.revision=++tileRevision;tileIds.add(id);put(fields,false,now,"native_tile");
+        }
+        tilePublishedAt=now;
+    });}
+    private static String tileId(long[] points,int i){return "waze/tile/"+Long.toUnsignedString(points[i])+"/"+Long.toUnsignedString(points[i+1])+"/"+points[i+2];}
+    private static String tileSubtype(int kind){
+        String[] names={"SPEED","RED_LIGHT","RED_LIGHT_AND_SPEED","DUMMY","SEATBELT","MOBILE_PHONE","STOP","NOISE","DISTANCE","HOV_LANE","BUS_LANE","CARPOOL_LANE"};
+        return names[kind-69];
     }
     private static void put(Bundle source,boolean announce,long observed,String path){
         String id=source.getString("warning_id");long now=SystemClock.elapsedRealtime();if(observed<0||observed>now||now-observed>=30000)return;
         if(announce&&source.getString("message","").trim().isEmpty())throw new IllegalArgumentException("MISSING_NATIVE_TEXT");
-        Record record=records.get(id);if(record==null){if(records.size()>=MAX_WARNINGS)throw new IllegalArgumentException("WARNING_BOUND");record=new Record();records.put(id,record);}
+        Record record=records.get(id);if(record==null){
+            if(records.size()>=MAX_WARNINGS&&!id.startsWith("waze/tile/")&&!tileIds.isEmpty()){
+                String evicted=tileIds.iterator().next();clear(evicted);records.remove(evicted);tileIds.remove(evicted);
+            }
+            if(records.size()>=MAX_WARNINGS)throw new IllegalArgumentException("WARNING_BOUND");record=new Record();records.put(id,record);}
         Bundle fields=new Bundle(source);
         if(record.fields!=null&&!sameContent(record.fields,fields))record.revision++;
         if(announce)record.index=++announcementCounter;
@@ -365,7 +446,14 @@ public final class NativeWarnings {
         for(String key:new String[]{"native_type","native_subtype","native_trait","category","priority","phase","message","language_tag","native_valid","native_silent_activation","native_car_title","native_car_body",
                 "native_segment_correlated","native_segment_type","native_segment_phase","native_segment_key"})if(!java.util.Objects.equals(a.get(key),b.get(key)))return false;return true;
     }
-    private static void clear(String id){Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;Bundle b=new Bundle();b.putString("warning_id",id);b.putString("operation","CLEAR");b.putLong("revision",record.revision);b.putLong("announcement_index",record.index);long now=SystemClock.elapsedRealtime();b.putLong("observed_elapsed_ms",now);b.putLong("state_until_elapsed_ms",now+30000);record.fields=b;emit(b);}
+    private static void clear(String id){Record record=records.get(id);if(record==null||"CLEAR".equals(record.fields.getString("operation")))return;Bundle b=new Bundle();
+        if(tileIds.contains(id))for(String key:new String[]{"category","native_type","native_namespace","native_tile_kind","position_clock_origin","native_point_target"}){
+            Object value=record.fields.get(key);
+            if(value instanceof String)b.putString(key,(String)value);
+            else if(value instanceof Integer)b.putInt(key,(Integer)value);
+            else if(value instanceof Boolean)b.putBoolean(key,(Boolean)value);
+        }
+        b.putString("warning_id",id);b.putString("operation","CLEAR");b.putLong("revision",record.revision);b.putLong("announcement_index",record.index);long now=SystemClock.elapsedRealtime();b.putLong("observed_elapsed_ms",now);b.putLong("state_until_elapsed_ms",now+30000);record.fields=b;emit(b);}
     private static void emit(Bundle fields){nl.johninnl.navigation.alerts.IndicatorContract.annotate(fields);if(testSink!=null)testSink.accept(new Bundle(fields));else if(endpoint!=null)endpoint.emit(fields);}
-    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){app=context;testSink=sink;records.clear();nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();carSurfaces.clear();testRetire=null;if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
+    static synchronized void resetForTest(Context context,Consumer<Bundle> sink){tileIds.clear();tileRevision=0;tilePublishedAt=-10000;app=context;testSink=sink;records.clear();nativeModels.clear();nativeObservedAt.clear();nativeLinks.clear();segments.clear();zoneChainId=zoneChainKey=null;zoneChainAt=-1;zoneChainLeft=-1;notifications.clear();zones.clear();retiredZoneRequests.clear();carSurfaces.clear();testRetire=null;if(retirementMain!=null)retirementMain.removeCallbacksAndMessages(null);presentation.remove();announcementCounter=0;repositoryObserved=false;controllersResolved=false;controllerFailure="waiting_for_engine";alertersAt=zonesAt=segmentsAt=routeContextAt=notificationsAt=osmAt=soundAt=zoneSoundAt=-1;}
 }

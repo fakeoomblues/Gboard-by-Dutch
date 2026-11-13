@@ -152,6 +152,35 @@ public class NativeWarningsTest {
         NativeWarnings.averageSpeedWarning();assertEquals("AVERAGE_SPEED_WARNING",last().getString("native_type"));assertTrue(last().getBoolean("native_zone_alarm"));assertFalse(last().containsKey("average_speed_kmh"));String zone=last().getString("warning_id");assertNotEquals(road,zone);
         NativeWarnings.maximumSpeedCleared();assertEquals("CLEAR",last().getString("operation"));assertEquals(road,last().getString("warning_id"));NativeWarnings.averageSpeedCleared();assertEquals(zone,last().getString("warning_id"));
     }
+    public static class AvgSpeedCheck extends BaseReport {
+        @Override public String getId(){return "a2-north";}
+        @Override public String getReportType(){return "AVG_SPEED_CHECK";}
+    }
+    @Test public void averageSpeedControlShipsItsStartThenItsEndAsAFixedNativePoint(){
+        NativeWarnings.averageSpeedZone("a2-north",false,800,52.30,4.95);Bundle start=last();
+        assertEquals("AvgSpeedCheck:a2-north",start.getString("warning_id"));assertEquals("approach",start.getString("phase"));assertEquals("zone",start.getString("relevance"));
+        assertEquals("start",start.getString("zone_point"));assertEquals(52.30,start.getDouble("latitude"),0);assertEquals(4.95,start.getDouble("longitude"),0);
+        assertTrue(start.getBoolean("native_point_target"));assertFalse(start.getBoolean("position_estimated",true));assertEquals("native_report_geometry",start.getString("position_clock_origin"));
+        NativeWarnings.averageSpeedZone("a2-north",true,14000,52.18,5.02);Bundle end=last();
+        assertEquals("enter",end.getString("phase"));assertEquals("end",end.getString("zone_point"));assertEquals(52.18,end.getDouble("latitude"),0);
+        assertEquals("remaining_in_segment",end.getString("native_distance_kind"));assertTrue(end.getLong("revision")>start.getLong("revision"));
+        // Flitsmeister's own announcement of the same control carries no geometry: it keeps the producer's end and its clocks.
+        NativeWarnings.regular(null,new AvgSpeedCheck(),true,false,"Trajectcontrole",null);Bundle own=last();
+        assertEquals("AvgSpeedCheck:a2-north",own.getString("warning_id"));assertEquals("ANNOUNCE",own.getString("operation"));
+        assertEquals("end",own.getString("zone_point"));assertEquals(52.18,own.getDouble("latitude"),0);
+        assertEquals(end.getLong("position_observed_elapsed_ms"),own.getLong("position_observed_elapsed_ms"));
+        assertEquals(14000,own.getInt("distance_m"));assertEquals(end.getLong("distance_observed_elapsed_ms"),own.getLong("distance_observed_elapsed_ms"));
+        // Its exit has no point to show.
+        NativeWarnings.regular(null,new AvgSpeedCheck(),false,false,"Einde trajectcontrole",null);
+        assertEquals("exit",last().getString("phase"));assertFalse(last().containsKey("zone_point"));assertFalse(last().containsKey("latitude"));
+        NativeWarnings.averageSpeedZoneCleared("a2-north");assertEquals("CLEAR",last().getString("operation"));
+    }
+    @Test public void missingPartialOrDefaultZonePointShipsNoCoordinates(){
+        double[][] invalid={{Double.NaN,5},{52,Double.POSITIVE_INFINITY},{0,0},{91,5},{52,181}};
+        for(double[] point:invalid){NativeWarnings.averageSpeedZone("z",false,500,point[0],point[1]);
+            assertFalse(last().containsKey("latitude"));assertFalse(last().containsKey("zone_point"));assertFalse(last().containsKey("native_point_target"));}
+        NativeWarnings.averageSpeedZone("z",true,500);assertFalse(last().containsKey("latitude"));assertEquals(500,last().getInt("distance_m"));
+    }
     @Test public void unavailableControllerFixDoesNotInventSpeedMetadataOrBreakNativeDecision(){
         NativeWarnings.maximumSpeedFromController(null);assertEquals("MAXIMUM_SPEED",last().getString("native_type"));assertFalse(last().containsKey("current_speed_kmh"));
         NativeWarnings.maximumSpeedFromController(new Object());assertEquals("ANNOUNCE",last().getString("operation"));assertFalse(last().containsKey("current_speed_kmh"));

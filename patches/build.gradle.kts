@@ -18,6 +18,12 @@ tasks.named<org.gradle.api.tasks.javadoc.Javadoc>("javadoc") {
 kotlin.sourceSets.main { kotlin.exclude("patches/spotify/**") }
 tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
     exclude("extensions/spotify.mpe")
+    dependsOn(":extensions:waze:stripReleaseDebugSymbols")
+    from(project(":extensions:waze").layout.buildDirectory.dir(
+        "intermediates/stripped_native_libs/release/stripReleaseDebugSymbols/out/lib")) {
+        into("waze/native")
+        include("arm64-v8a/libwaze_tile_cameras.so", "arm64-v8a/libshadowhook.so", "arm64-v8a/libshadowhook_nothing.so")
+    }
 }
 
 val mapsKeySource = providers.environmentVariable("SHARED_MAPS_API_KEY")

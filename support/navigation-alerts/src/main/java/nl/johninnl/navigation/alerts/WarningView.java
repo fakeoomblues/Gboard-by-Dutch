@@ -46,6 +46,15 @@ public final class WarningView {
         return java.util.Collections.unmodifiableList(new java.util.ArrayList<>(result.subList(0,Math.min(3,result.size()))));
     }
     public static String carMessage(WarningEvent event){return message(event,true);}
+    /** Fixed map features remain separate from the three warning pills and never become speech. */
+    public synchronized List<WarningEvent> mapFeatures(long now,java.util.function.Predicate<WarningEvent> enabled){
+        values.entrySet().removeIf(entry->!entry.getValue().stateValid(now));
+        List<WarningEvent> result=new java.util.ArrayList<>();
+        for(WarningEvent event:values.values())if(!Boolean.TRUE.equals(event.fields().get("is_preview"))
+                &&WarningGeometry.nativeMapFeature(event)&&enabled.test(event))result.add(event);
+        result.sort(java.util.Comparator.comparing(e->e.warningId));
+        return java.util.Collections.unmodifiableList(result);
+    }
     private String messages(long now,java.util.function.Predicate<WarningEvent> enabled,boolean car){
         values.entrySet().removeIf(entry->!entry.getValue().stateValid(now));
         java.util.List<WarningEvent> current=new java.util.ArrayList<>();

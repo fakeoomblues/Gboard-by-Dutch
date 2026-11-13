@@ -138,6 +138,7 @@ public final class NativeUi {
                     }
                 }
                 toggle(text("car","Show details on Android Auto"),TelemetryRuntime.carEnabled(),toggleAction("car",TelemetryRuntime::setCarEnabled),null,composer);
+                toggle(text("markers","Show alerts on the map"),TelemetryRuntime.markersEnabled(),toggleAction("markers",TelemetryRuntime::setMarkersEnabled),text("markers_hint","Icons at the positions the provider reports, while the alert is shown"),composer);
                 row(text("open","Open selected provider"),false,action("open",()->{
                     Context app=TelemetryRuntime.app();Intent launch=app.getPackageManager().getLaunchIntentForPackage(TelemetryRuntime.selected());
                     if(launch!=null)app.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
