@@ -1,4 +1,23 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8d2c2054c9080b0598ce6932c15b050b58fb819c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.74.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [8d2c2054c908](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/8d2c2054c9080b0598ce6932c15b050b58fb819c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.74.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.74.0...v1.74.1) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** make the OCR module delegates return the declared array type ([66be5cd](https://gitlab.com/johninnld/nl-morphe-patches/commit/66be5cdbac36248845fa0a010dfd75e6004562b3))
+* **Gboard:** resolve the OCR module spec class by its constructor, not its name ([8d2c205](https://gitlab.com/johninnld/nl-morphe-patches/commit/8d2c2054c9080b0598ce6932c15b050b58fb819c))
+* **Gboard:** stop the AI Writing Tools observer breaking the keyboard ([98a6edd](https://gitlab.com/johninnld/nl-morphe-patches/commit/98a6eddcd165b32995b3a8441cf2d2babc40fdb6))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/626a493ab45b469e0e7d173d6bf0ed60deaa8243/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.74.0.**
