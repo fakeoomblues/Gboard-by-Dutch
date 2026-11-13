@@ -24,7 +24,7 @@ val deezerRemoveAdvertising = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput)
+    dependsOn(originalInput, deezerKeepSessionOnColdStart)
 
     execute {
         exact(ADS_CONFIG, "getConfig", "Ljava/util/HashMap;").method.addInstructions(0, EMPTY_MAP)

@@ -28,7 +28,7 @@ val deezerEnableFullStreaming = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput)
+    dependsOn(originalInput, deezerKeepSessionOnColdStart)
 
     execute {
         // Only PREVIEW (0x20) and DEVICE_LIMITATION (0x40) stay denied. MOD,

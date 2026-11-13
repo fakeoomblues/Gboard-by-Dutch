@@ -24,7 +24,7 @@ val deezerRemovePaywalls = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput)
+    dependsOn(originalInput, deezerKeepSessionOnColdStart)
 
     execute {
         // Startup block page: every non-dialog activity re-runs the startup

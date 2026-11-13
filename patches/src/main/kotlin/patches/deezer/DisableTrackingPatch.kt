@@ -93,7 +93,7 @@ val deezerDisableTracking = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput, trackingResources)
+    dependsOn(originalInput, trackingResources, deezerKeepSessionOnColdStart)
 
     execute {
         // Adjust is never configured, so its lifecycle provider and event calls are inert.

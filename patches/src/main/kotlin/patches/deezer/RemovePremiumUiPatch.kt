@@ -24,7 +24,7 @@ val deezerRemovePremiumUi = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput)
+    dependsOn(originalInput, deezerKeepSessionOnColdStart)
 
     execute {
         // Build the tab list without PREMIUM. The old menu.removeItem(5) call sits

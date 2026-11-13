@@ -38,7 +38,7 @@ val deezerCustomAndroidAutoHosts = bytecodePatch(
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(originalInput, androidAutoHostVisibility)
+    dependsOn(originalInput, androidAutoHostVisibility, deezerKeepSessionOnColdStart)
 
     execute {
         val method = mutableClassDefBy(CAR_SERVICE).methods.singleOrNull { candidate ->
