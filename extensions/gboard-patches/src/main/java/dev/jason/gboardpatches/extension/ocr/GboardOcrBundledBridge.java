@@ -77,16 +77,11 @@ public final class GboardOcrBundledBridge {
     }
 
     /**
-     * Test-only entry point: runs the whole OCR path on an image file and logs what came back, so
-     * the pipeline load, the recogniser and the transcription can be exercised without a camera.
+     * Recognises text in a bitmap and returns the plain text, newest line first order preserved.
+     * Used by the settings page's image picker, which cannot go through Gboard's camera UI.
      */
-    public static void selfTest(String path) {
+    public static String recognizeText(Bitmap bitmap) {
         try {
-            Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(path);
-            if (bitmap == null) {
-                Log.w(TAG, "OCR self test: cannot decode " + path);
-                return;
-            }
             ClassLoader cl = GboardOcrBundledBridge.class.getClassLoader();
             Object imageHolder = Class.forName("aaat", false, cl)
                     .getDeclaredConstructor(Bitmap.class).newInstance(bitmap);
@@ -100,26 +95,14 @@ public final class GboardOcrBundledBridge {
                 }
             }
             if (process == null) {
-                Log.w(TAG, "OCR self test: recogniser has no process method");
-                return;
+                return "";
             }
             Object task = process.invoke(recognizer, imageHolder);
-            Log.i(TAG, "OCR self test: task=" + task);
             Object text = Class.forName("lxp", false, cl).getMethod("e").invoke(task);
-            Log.i(TAG, "OCR self test: result=" + text);
-            if (text != null) {
-                java.util.List<?> blocks = (java.util.List<?>) text.getClass().getMethod("a").invoke(text);
-                Log.i(TAG, "OCR self test: blocks=" + blocks.size());
-                for (Object block : blocks) {
-                    Log.i(TAG, "OCR self test: block='" + block.getClass().getMethod("b").invoke(block) + "'");
-                    java.util.List<?> lines = (java.util.List<?>) block.getClass().getMethod("a").invoke(block);
-                    for (Object line : lines) {
-                        Log.i(TAG, "OCR self test:   line='" + line.getClass().getMethod("b").invoke(line) + "'");
-                    }
-                }
-            }
+            return text == null ? "" : text.toString();
         } catch (Throwable failure) {
-            Log.w(TAG, "OCR self test failed", failure);
+            Log.w(TAG, "Bundled OCR image recognition failed", failure);
+            return "";
         }
     }
 
@@ -371,19 +354,38 @@ public final class GboardOcrBundledBridge {
         }
     }
 
-    /** Copies the pipeline out of assets once and loads it, so ML Kit finds it already there. */
+    /**
+     * Copies the pipeline out of assets once and loads it, so ML Kit finds it already there.
+     *
+     * The extracted file must be read-only: since {@code targetSdk 37} the linker rejects a
+     * library passed to {@code System.load()} that the app can still write, with
+     * {@code UnsatisfiedLinkError: Attempt to load writable file}. Debug images do not enforce
+     * that, which is why this only failed on a real device.
+     */
     private static void loadPipeline(Context context) throws Exception {
         String abi = android.os.Build.SUPPORTED_ABIS.length > 0
                 ? android.os.Build.SUPPORTED_ABIS[0] : "arm64-v8a";
-        File target = new File(context.getFilesDir(), "mlkit-ocr/" + abi + "/"
-                + "libmlkit_google_ocr_pipeline.so");
+        String asset = "mlkit-ocr/" + abi + "/libmlkit_google_ocr_pipeline.so";
+        File target = new File(context.getFilesDir(), asset);
+        long shippedLength;
+        try (InputStream probe = context.getAssets().open(asset)) {
+            shippedLength = probe.available();
+        } catch (Throwable failure) {
+            shippedLength = -1;
+        }
+        if (target.isFile() && shippedLength > 0 && target.length() != shippedLength) {
+            // A different build ships different bytes; the file is read-only, so drop it first.
+            makeWritable(target);
+            if (!target.delete()) {
+                throw new IllegalStateException("Cannot replace " + target);
+            }
+        }
         if (!target.isFile() || target.length() == 0) {
             File parent = target.getParentFile();
             if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
                 throw new IllegalStateException("Cannot create " + parent);
             }
-            try (InputStream input = context.getAssets()
-                    .open("mlkit-ocr/" + abi + "/libmlkit_google_ocr_pipeline.so");
+            try (InputStream input = context.getAssets().open(asset);
                  FileOutputStream output = new FileOutputStream(target)) {
                 byte[] buffer = new byte[64 * 1024];
                 int read;
@@ -395,7 +397,27 @@ public final class GboardOcrBundledBridge {
                 output.getFD().sync();
             }
         }
+        makeReadOnly(target);
         System.load(target.getAbsolutePath());
+    }
+
+    private static void makeReadOnly(File file) {
+        if (!file.setReadOnly()) {
+            Log.w(TAG, "Could not mark " + file + " read-only");
+        }
+        try {
+            android.system.Os.chmod(file.getAbsolutePath(), 0444);
+        } catch (Throwable ignored) {
+            // setReadOnly() already cleared the write bits on every release so far.
+        }
+    }
+
+    private static void makeWritable(File file) {
+        try {
+            android.system.Os.chmod(file.getAbsolutePath(), 0644);
+        } catch (Throwable ignored) {
+            // Best effort: deletion works through the writable parent directory anyway.
+        }
     }
 
     /** Builds the pipeline engine once, with the shipped models and Latin configuration. */
