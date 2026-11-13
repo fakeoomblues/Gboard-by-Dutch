@@ -56,6 +56,8 @@ private val silenceStringNames = listOf(
     "morphe_rambler_silence_8", "morphe_rambler_silence_10",
 )
 private val silenceValues = listOf("0", "3", "5", "8", "10")
+/** Seconds of silence after which Rambler stops when the user never picked a time. */
+internal const val SILENCE_DEFAULT = "3"
 
 /** Adds the Stop after silence choice in its own card, just above Help & feedback. */
 internal fun addSilenceStopPreference(screen: Document) {
@@ -71,7 +73,7 @@ internal fun addSilenceStopPreference(screen: Document) {
     category.appendChild(screen.createElement("ListPreference").apply {
         setAttributeNS(ANDROID_NS, "android:key", SILENCE_KEY)
         setAttributeNS(ANDROID_NS, "android:persistent", "true")
-        setAttributeNS(ANDROID_NS, "android:defaultValue", silenceValues.first())
+        setAttributeNS(ANDROID_NS, "android:defaultValue", SILENCE_DEFAULT)
         setAttributeNS(ANDROID_NS, "android:title", "@string/${silenceStringNames[0]}")
         setAttributeNS(ANDROID_NS, "android:dialogTitle", "@string/${silenceStringNames[0]}")
         setAttributeNS(ANDROID_NS, "android:summary", "@string/${silenceStringNames[1]}")
@@ -224,7 +226,8 @@ private val silenceStopTimer = bytecodePatch(
         addHelper(START_HELPER, listOf(callback.type), 7, listOf(
             "iget-object v0, p0, ${wiring.manager.smali()}",
             "iget-boolean v1, v0, ${wiring.ramblerSession.smali()}",
-            "const-string v3, \"0\"",
+            // Android stores a list's default only once its screen is shown: unset means the default.
+            "const-string v3, \"$SILENCE_DEFAULT\"",
             "iget-object v2, v0, ${wiring.manager.type}->${contextField.name}:Landroid/content/Context;",
             "if-eqz v2, :read",
             "invoke-static {v2}, ${wiring.preferences.type}->${defaultPreferences.name}(Landroid/content/Context;)${wiring.preferences.type}",
@@ -276,11 +279,10 @@ private val silenceStopTimer = bytecodePatch(
 
 @Suppress("unused")
 val ramblerSilenceStop = bytecodePatch(
-    name = "Rambler stop after silence (experimental)",
-    description = "Adds Stop after silence to Gboard settings → Voice typing → Rambler. Pick 3, 5, 8 or 10 seconds and " +
-        "Rambler stops by itself once you have said nothing new for that long, keeping the text as when you tap ✓. " +
-        "Off until you pick a time. Requires Rambler voice typing.",
-    default = false,
+    name = "Rambler stop after silence",
+    description = "Rambler stops by itself after 3 seconds without speech and keeps the text, as when you tap ✓. " +
+        "Change the time (3, 5, 8 or 10 seconds) or switch it off under Gboard settings → Voice typing → Rambler → " +
+        "Stop after silence. Requires Rambler voice typing.",
 ) {
     compatibleWith(gboard)
     dependsOn(originalInput, ramblerVoiceTyping, silenceStopSettings, silenceStopTimer)

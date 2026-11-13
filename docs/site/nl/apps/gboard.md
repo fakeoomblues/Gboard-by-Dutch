@@ -17,7 +17,7 @@ Selecteer de arm64-v8a-APK van Google voor precies deze build (Android 12L+).
 | **Rambler custom instructions** | Aan | Voegt **Eigen instructies** toe aan Gboard-instellingen → Spraakinvoer → Rambler. Je tekst komt bij de eigen instructies van Rambler en vervangt ze niet: Rambler krijgt hem bij elk dictaat mee en volgt hem alleen voor de stijl, zoals spelling, interpunctie, woordkeus en toon. Werkt alleen samen met Rambler voice typing. |
 | **Rambler cursor-aware editing** | Aan | Rambler ziet ook de tekst na de cursor, zodat gesproken bewerkingen de hele tekst bereiken en dicteren midden in een tekst aansluit. Met geselecteerde tekst gaat alleen de selectie mee, zodat een gesproken bewerking zoals "maak dit formeler" daarop werkt; het resultaat wordt daarna weer geselecteerd voor de volgende bewerking. Werkt alleen samen met Rambler voice typing. |
 | **Rambler app context** | Aan | Rambler krijgt ook de naam van de app waarin je dicteert en de hinttekst van het veld, zodat de toon past bij een chat, e-mail of zoekopdracht en eigen instructies van de app kunnen afhangen. Google weet dan in welke app je typt. Werkt alleen samen met Rambler voice typing. |
-| **Rambler stop after silence (experimental)** | Uit | Voegt **Stoppen na stilte** toe aan Gboard-instellingen → Spraakinvoer → Rambler. Kies 3, 5, 8 of 10 seconden en Rambler stopt vanzelf zodra je zo lang niets nieuws hebt gezegd, en houdt de tekst, net als wanneer je op ✓ tikt. Uit tot je een tijd kiest. Werkt alleen samen met Rambler voice typing. |
+| **Rambler stop after silence** | Aan | Rambler stopt vanzelf na 3 seconden zonder spraak en houdt de tekst, net als wanneer je op ✓ tikt. Pas de tijd aan (3, 5, 8 of 10 seconden) of zet het uit onder Gboard-instellingen → Spraakinvoer → Rambler → **Stoppen na stilte**. Werkt alleen samen met Rambler voice typing. |
 | **Parakeet personal dictionary** | Aan | Laat Parakeet de namen en woorden uit de lijst met spraakcorrecties van het **Spraakwoordenboek** goed schrijven, ook de contactnamen die daar staan. Parakeet geeft ze voorrang tijdens het luisteren en verbetert een woord dat erop lijkt alleen als een tweede keer luisteren dat bevestigt. Vraagt een download van 2 MB aan spellinggegevens onder Parakeet-spraakinvoer. Werkt alleen samen met Parakeet voice typing en Rambler personal dictionary. |
 | **Change package name** | Aan | Installeert de gepatchte Gboard onder een eigen pakketnaam (standaard app.morphe.android.inputmethod.latin), zodat hij naast de standaard-Gboard staat die op de meeste telefoons is ingebouwd. Je standaard-Gboard, de instellingen en het woordenboek blijven onaangeroerd; kies het gepatchte toetsenbord in de toetsenbordinstellingen van Android. |
 | **Custom branding** | Uit | Verandert de appnaam in de launcher, de toetsenbordlijst van Android en de app-informatie, en het app-icoon (standaard Parakeet, het originele Gboard-icoon of vijf andere ontwerpen), zodat je het gepatchte toetsenbord makkelijk onderscheidt van de standaardversie. |
@@ -99,13 +99,13 @@ Met **Rambler app context** vertelt elk dictaat Rambler ook in welke app je bent
 - Regels per app werken: bijvoorbeeld "Alleen in WhatsApp: eindig elk bericht met 👍." of "Schrijf in Gmail volledige zinnen met een aanhef."
 - Google weet dan in welke app je typt. Rambler krijgt je spraak en de tekst rond de cursor al; zet deze patch uit als je de app-naam niet ook wilt delen.
 
-### Stoppen na stilte (experimenteel)
+### Stoppen na stilte
 
-Normaal blijft Rambler luisteren tot je op ✓ of ✕ tikt, met een limiet van vijf minuten per dictaat, zodat je even kunt nadenken. Met **Rambler stop after silence (experimental)** toont Gboard-instellingen → Spraakinvoer → Rambler het onderdeel **Stoppen na stilte**.
+Rambler van Google blijft luisteren tot je op ✓ of ✕ tikt, met een limiet van vijf minuten per dictaat. Met **Rambler stop after silence** stopt hij vanzelf zodra je niet meer praat, net als Parakeet, en houdt hij de tekst, alsof je op ✓ tikt.
 
-- Kies 3, 5, 8 of 10 seconden. Rambler stopt dan zodra er zo lang geen nieuwe spraak is binnengekomen en houdt de tekst, net als wanneer je op ✓ tikt. **Uit** houdt het gedrag van Google.
-- Het gebruikt de eigen spraaktime-out van Gboard, dezelfde die standaard spraakinvoer na een pauze stopt. Alleen nieuwe tekst start het aftellen opnieuw: terwijl je stil bent, blijft de server van Rambler updates zonder nieuwe tekst sturen (hij hoort achtergrondgeluid), en die houden hem niet meer aan het luisteren.
-- Experimenteel: nog niet op een telefoon bevestigd.
+- Standaard is dat na 3 seconden. Pas het aan onder Gboard-instellingen → Spraakinvoer → Rambler → **Stoppen na stilte**: 3, 5, 8 of 10 seconden, of **Uit** voor het gedrag van Google.
+- Spraak wordt herkend aan het eigen spraakniveau van Gboard, gemeten ten opzichte van het achtergrondgeluid om je heen. Constant geluid houdt Rambler niet aan het luisteren; een plotseling hard geluid kan het even rekken.
+- Elke sessie wordt in logcat vastgelegd onder `MorpheRamblerSilence` (de gekozen tijd, hoeveel spraak er was en waarom hij stopte), nooit met wat je zei.
 
 ## Voor gebruik
 

@@ -17,7 +17,7 @@ Select Google's arm64-v8a APK for this exact build (Android 12L+).
 | **Rambler custom instructions** | On | Adds **Custom instructions** to Gboard settings → Voice typing → Rambler. Your text is added to Rambler's own instructions, not a replacement for them: Rambler receives it with every dictation and follows it for style only, such as spelling, punctuation, vocabulary and tone. Requires Rambler voice typing. |
 | **Rambler cursor-aware editing** | On | Rambler also sees the text after the cursor, so spoken edits reach the whole text and dictating in the middle of a text fits in. With text selected, only the selection is sent, so a spoken edit such as "make this more formal" applies to it, and the result is selected again for the next edit. Requires Rambler voice typing. |
 | **Rambler app context** | On | Rambler also receives the name of the app you dictate in and the text field's hint, so it can match the tone of a chat, an e-mail or a search, and custom instructions can depend on the app. This tells Google which app you are typing in. Requires Rambler voice typing. |
-| **Rambler stop after silence (experimental)** | Off | Adds **Stop after silence** to Gboard settings → Voice typing → Rambler. Pick 3, 5, 8 or 10 seconds and Rambler stops by itself once you have said nothing new for that long, keeping the text as when you tap ✓. Off until you pick a time. Requires Rambler voice typing. |
+| **Rambler stop after silence** | On | Rambler stops by itself after 3 seconds without speech and keeps the text, as when you tap ✓. Change the time (3, 5, 8 or 10 seconds) or switch it off under Gboard settings → Voice typing → Rambler → **Stop after silence**. Requires Rambler voice typing. |
 | **Parakeet personal dictionary** | On | Lets Parakeet spell the names and words in the **Voice dictionary**'s voice correction list, including contact names added there. Parakeet favours them while listening and corrects a sound-alike spelling only when a second listen agrees. Needs a 2 MB spelling download under Parakeet voice typing. Requires Parakeet voice typing and Rambler personal dictionary. |
 | **Change package name** | On | Installs the patched Gboard under its own package name (app.morphe.android.inputmethod.latin by default), so it sits beside the stock Gboard that most phones have built in. Your stock Gboard, its settings and its dictionary are not touched; choose the patched keyboard in Android's keyboard settings. |
 | **Custom branding** | Off | Changes the app name shown in the launcher, Android's keyboard list and app information, and the launcher icon (Parakeet by default, Gboard's original or five other designs), so the patched keyboard is easy to tell apart from the stock one. |
@@ -99,13 +99,13 @@ With **Rambler app context** applied, each dictation also tells Rambler which ap
 - Rules per app work: for example "Only in WhatsApp: end every message with 👍." or "In Gmail, write complete sentences with a greeting."
 - Google learns which app you are typing in. Rambler already receives your speech and the text around the cursor; switch this patch off if you do not want to share the app name as well.
 
-### Stop after silence (experimental)
+### Stop after silence
 
-Rambler normally keeps listening until you tap ✓ or ✕, with a five-minute limit per dictation, so you can pause to think. With **Rambler stop after silence (experimental)** applied, Gboard settings → Voice typing → Rambler shows **Stop after silence**.
+Google's Rambler keeps listening until you tap ✓ or ✕, with a five-minute limit per dictation. With **Rambler stop after silence** applied it stops by itself once you have stopped speaking, like Parakeet does, and keeps the text just as if you tapped ✓.
 
-- Choose 3, 5, 8 or 10 seconds. Rambler then stops once it has received no new speech for that long and keeps the text, just like tapping ✓. **Off** keeps Google's behaviour.
-- It uses Gboard's own voice timeout, the one that stops standard voice typing after a pause. Only new text restarts the countdown: while you are silent, Rambler's server keeps sending updates without new text (it hears background noise), and those no longer keep it listening.
-- Experimental: not yet confirmed on a phone.
+- The default is 3 seconds. Change it under Gboard settings → Voice typing → Rambler → **Stop after silence**: 3, 5, 8 or 10 seconds, or **Off** for Google's behaviour.
+- Speech is detected from Gboard's own speech level, measured against the background noise around you. Steady noise does not keep Rambler listening; a sudden loud sound can add a moment.
+- Each session is noted in logcat under `MorpheRamblerSilence` (the chosen time, how much speech was detected and why it stopped), never with what you said.
 
 ## Before using
 

@@ -23,14 +23,13 @@ import java.util.List;
 public final class GboardRamblerSilenceRuntime {
     /** Preference written by the Stop after silence list under Rambler settings. */
     public static final String PREF_KEY = "morphe_rambler_silence_stop";
-    /** Off unless the user picks a time. */
-    public static final String DEFAULT_VALUE = "0";
+    /** Three seconds unless the user picks another time or Off. */
+    public static final String DEFAULT_VALUE = "3";
     static final long MAX_SECONDS = 60L;
     static final String TAG = "MorpheRamblerSilence";
     /** Gboard's own speech threshold (agentic_dictation_min_speech_level_for_animation). */
     static final int SPEECH_LEVEL = 50;
     private static final long RESTART_INTERVAL_MS = 250L;
-    private static final long SUMMARY_INTERVAL_MS = 2000L;
 
     private static final Object LOCK = new Object();
     private static long sessionSeconds;
@@ -38,7 +37,6 @@ public final class GboardRamblerSilenceRuntime {
     private static String lastText = "";
     private static long sessionStartMs;
     private static long lastNewSpeechMs;
-    private static long lastSummaryMs;
     private static int updates;
     private static int newText;
     private static int withoutNewText;
@@ -77,7 +75,6 @@ public final class GboardRamblerSilenceRuntime {
             lastText = "";
             sessionStartMs = now();
             lastNewSpeechMs = sessionStartMs;
-            lastSummaryMs = sessionStartMs;
             updates = 0;
             newText = 0;
             withoutNewText = 0;
@@ -108,7 +105,6 @@ public final class GboardRamblerSilenceRuntime {
             return false;
         }
         boolean restart = false;
-        String summary = null;
         synchronized (LOCK) {
             if (!sessionActive) {
                 return false;
@@ -126,16 +122,6 @@ public final class GboardRamblerSilenceRuntime {
                     restart = true;
                 }
             }
-            if (at - lastSummaryMs >= SUMMARY_INTERVAL_MS) {
-                summary = "levels n=" + levels + " min=" + levelMin + " avg=" + (levelSum / levels) + " max=" + levelMax
-                        + " atSpeech(>=" + SPEECH_LEVEL + ")=" + levelsAtSpeech + ", " + seconds(at - lastNewSpeechMs)
-                        + " s since speech, updates=" + updates;
-                lastSummaryMs = at;
-                resetLevels();
-            }
-        }
-        if (summary != null) {
-            log(summary);
         }
         return restart;
     }
@@ -179,7 +165,8 @@ public final class GboardRamblerSilenceRuntime {
             }
             long at = now();
             line = "stop listening: " + reason + " (timeout " + (sessionSeconds > 0L ? sessionSeconds + " s" : "off") + ") after " + seconds(at - sessionStartMs) + " s, "
-                    + seconds(at - lastNewSpeechMs) + " s since speech (updates=" + updates
+                    + seconds(at - lastNewSpeechMs) + " s since speech (levels=" + levels + " atSpeech=" + levelsAtSpeech
+                    + " max=" + levelMax + ", updates=" + updates
                     + " newText=" + newText + " withoutNewText=" + withoutNewText + ")";
             sessionActive = false;
         }

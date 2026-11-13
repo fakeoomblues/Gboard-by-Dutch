@@ -28,7 +28,7 @@ class RamblerSilenceStopPatchTest {
         val choice = cards[1].children().single()
         assertEquals("ListPreference", choice.tagName)
         assertEquals(SILENCE_KEY, choice.getAttributeNS(android, "key"))
-        assertEquals("0", choice.getAttributeNS(android, "defaultValue"))
+        assertEquals("3", choice.getAttributeNS(android, "defaultValue"))
         assertEquals("@string/feedback", cards[2].children().single().getAttributeNS(android, "key"))
         assertThrows(PatchException::class.java) { addSilenceStopPreference(screen) }
     }
