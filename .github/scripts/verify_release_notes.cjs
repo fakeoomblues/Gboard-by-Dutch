@@ -32,7 +32,15 @@ function verifyNotes(context) {
       .filter(file => changed.includes(file));
     if (!files.some(isShared)) continue;
     const message = git("show", "-s", "--format=%B", hash);
-    const declared = /^Release-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(name => normalizeAppName(name)) || [];
+    let declared = /^Release-Apps: (.+)$/mi.exec(message)?.[1].split(",").map(name => normalizeAppName(name)) || [];
+    // A conventional-commit scope that names the app is an explicit scope too: `build(Gboard):
+    // ...` touching shared files is not unscoped just because it carries no trailer.
+    if (!declared.length) {
+      const subject = (git("show", "-s", "--format=%s", hash) || "").trim();
+      const scope = /^[a-z]+(?:\(([^)]+)\))?!?:/i.exec(subject)?.[1];
+      const inferred = scope && allNames.has(normalizeAppName(scope)) ? normalizeAppName(scope) : null;
+      if (inferred) declared = [inferred];
+    }
     if (!namesFor(files).length && !declared.length) throw new Error(`Shared-only commit ${hash} needs its own Release-Apps trailer`);
     for (const name of declared) {
       if (!allNames.has(name)) throw new Error(`Unknown Release-Apps name ${name}`);
