@@ -38,12 +38,12 @@ internal val gboardAiWritingTools1853PreferenceObserverPatch = bytecodePatch(
             original.hiddenApiRestrictions, original.implementation).toMutable()
         check(owner.methods.remove(original) && owner.methods.add(renamed))
         owner.addHelperMethodIfMissing("x", original.parameterTypes.map { it.toString() }, "Z", original.accessFlags, 4,
-            writingTools1853ObserverBody())
+            writingToolsObserverBody(original.definingClass))
     }
 }
 
-internal fun writingTools1853ObserverBody() = """
-    invoke-direct {p0, p1, p2}, Lchu;->morpheWritingToolsStockRead(IZ)Z
+internal fun writingToolsObserverBody(owner: String) = """
+    invoke-direct {p0, p1, p2}, $owner->morpheWritingToolsStockRead(IZ)Z
     move-result v0
     ${RuntimeCallEmitter.invoke(RuntimeCallId.AI_WRITING_TOOLS_RUNTIME_NOTE_OFFICIAL_PREFERENCE, "p1, v0")}
     return v0

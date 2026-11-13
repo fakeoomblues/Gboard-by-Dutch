@@ -4,7 +4,6 @@ import app.morphe.patcher.patch.resourcePatch
 import patches.gboard.features.ocr.gboardOcrFeatureMarkerPatch
 import patches.gboard.features.ocr.gboardOcrFlagValuePatch
 import patches.gboard.features.ocr.gboardOcrRuntimePatch
-import patches.gboard.features.writingtools.gboardAiWritingTools1853PreferenceObserverPatch
 import patches.gboard.features.writingtools.gboardAiWritingTools1863AutoFixAcceptancePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
@@ -56,7 +55,6 @@ val gboardAiWritingToolsPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardAiWritingToolsFeatureMarkerPatch,
         gboardAiWritingToolsFlagValuePatch,
-        gboardAiWritingTools1853PreferenceObserverPatch,
         gboardAiWritingTools1863AutoFixAcceptancePatch,
     )
 }
