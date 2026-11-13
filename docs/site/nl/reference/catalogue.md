@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.73.0**
+**Patchbundel: 1.74.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -311,29 +311,31 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Add Gboard Signature Bypass | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Change package name | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Clipboard Enhancements | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Cursor trackpad mode | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Custom Theme | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Custom branding | Uit | 18.6.3.1002251336-release-arm64-v8a |
-| Frosted Glass | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| G Logo on Spacebar | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Key Shape Selection | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Parakeet personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Parakeet voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler app context | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler contact names | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler cursor-aware editing | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler custom instructions | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler personal dictionary | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler stop after silence | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rambler voice typing | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Rounded Keyboard Panel | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Simple Calculator | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-arm64-v8a |
-| Web Clipboard | Aan | 18.6.3.1002251336-release-arm64-v8a |
+| AI Writing Tools | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Add Gboard Signature Bypass | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Change package name | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Clipboard Enhancements | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Cursor trackpad mode | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Custom Theme | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Custom branding | Uit | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Enable OCR / Scan Text | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Frosted Glass | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| G Logo on Spacebar | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Incognito Mode Toggle | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Key Shape Selection | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Parakeet personal dictionary | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Parakeet voice typing | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler app context | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler contact names | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler cursor-aware editing | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler custom instructions | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler personal dictionary | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler stop after silence | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rambler voice typing | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Rounded Keyboard Panel | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Simple Calculator | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Toolbar Editing Buttons | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| Web Clipboard | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 
 ## Gearslip
 
@@ -513,9 +515,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Android Auto Up next | Uit | 2.3.0, 2.4.0 |
+| Allow any Android Auto host | Aan | Alle versies |
+| Android Auto Up next | Uit | 2.3.0, 2.4.0, 2.4.1 |
 | Custom branding | Uit | Alle versies |
-| Gearslip personal library | Aan | Alle versies |
 
 ## Nieuwsblad
 
@@ -616,6 +618,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 20.1 |
 | Hide ads | Aan | 20.1 |
 | Skip consent screens | Aan | 20.1 |
+
+## Orpheon
+
+[Wat veranderen de patches?](../apps/orpheon.md)
+
+`app.orpheon.beta`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow any Android Auto host | Aan | Alle versies |
+| Android Auto Up next | Uit | 1.0.0-beta.1 |
+| Custom branding | Uit | Alle versies |
 
 ## Parool
 

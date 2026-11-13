@@ -1,4 +1,31 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/626a493ab45b469e0e7d173d6bf0ed60deaa8243/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.74.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [626a493ab45b](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/626a493ab45b469e0e7d173d6bf0ed60deaa8243). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.74.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.73.0...v1.74.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** declare both 18.6.3 ABI targets with minSdk 26 ([3de8e5e](https://gitlab.com/johninnld/nl-morphe-patches/commit/3de8e5e6ddd4ec761dd7b6466172fc42cea22cbf))
+* **Gboard:** stop forcing a stale server writing config on 18.6.3 ([360a84c](https://gitlab.com/johninnld/nl-morphe-patches/commit/360a84c72c956dcfd48bb18e4ed5b4b1f649149e))
+* **release:** accept a Release-Apps trailer on commits the notes never render ([6b715c4](https://gitlab.com/johninnld/nl-morphe-patches/commit/6b715c43f5fa15933cff665714dd0ffc83412c40))
+* **release:** map extension-only commits to their app when notes are skipped ([626a493](https://gitlab.com/johninnld/nl-morphe-patches/commit/626a493ab45b469e0e7d173d6bf0ed60deaa8243))
+
+### ✨ New Features
+
+* **Gboard:** enable AI Writing Tools and OCR / Scan Text on 18.6.3 ([4868e0c](https://gitlab.com/johninnld/nl-morphe-patches/commit/4868e0c29f9db7e52dd708f013c3bf334f1c349a))
+* **Gboard:** port the AI Writing Tools AUTO_FIX shim to 18.6.3 ([8c8f347](https://gitlab.com/johninnld/nl-morphe-patches/commit/8c8f347b7d6878799326db9a64fdfa54501f1db4))
+* **Myspoti:** port patches to 2.4.1 and the rebranded Orpheon ([ed56fa6](https://gitlab.com/johninnld/nl-morphe-patches/commit/ed56fa6307e83c9709b65e6e929b2f18fba5ac96))
+* **Orpheon:** port patches to 2.4.1 and the rebranded Orpheon ([ed56fa6](https://gitlab.com/johninnld/nl-morphe-patches/commit/ed56fa6307e83c9709b65e6e929b2f18fba5ac96))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c09e36e734995b1154c7797576e439d833d8b61f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.73.0.**

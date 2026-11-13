@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">67 apps</span> · Patch bundle: 1.73.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">68 apps</span> · Patch bundle: 1.74.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -515,39 +515,41 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-arm64-v8a add gboard signature bypass change package name clipboard enhancements cursor trackpad mode custom theme custom branding frosted glass g logo on spacebar incognito mode toggle key shape selection parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing rounded keyboard panel simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-armeabi-v7a 18.6.3.1002251336-release-arm64-v8a ai writing tools add gboard signature bypass change package name clipboard enhancements cursor trackpad mode custom theme custom branding enable ocr / scan text frosted glass g logo on spacebar incognito mode toggle key shape selection parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing rounded keyboard panel simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Gboard](apps/gboard.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">18.6.3.1002251336-release-arm64-v8a</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>23 patches</summary>
+<summary>25 patches</summary>
 <ul>
-<li>Add Gboard Signature Bypass <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Cursor trackpad mode <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Custom Theme <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a · default off</span></li>
-<li>Frosted Glass <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>G Logo on Spacebar <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Key Shape Selection <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Parakeet personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler cursor-aware editing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler custom instructions <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler stop after silence <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Rounded Keyboard Panel <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
-<li>Web Clipboard <span class="dap-app-card__target">18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>AI Writing Tools <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Add Gboard Signature Bypass <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Cursor trackpad mode <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Custom Theme <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Custom branding <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a · default off</span></li>
+<li>Enable OCR / Scan Text <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Frosted Glass <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>G Logo on Spacebar <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Incognito Mode Toggle <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Key Shape Selection <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Parakeet personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Parakeet voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler app context <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler contact names <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler cursor-aware editing <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler custom instructions <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler personal dictionary <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler stop after silence <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rambler voice typing <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Rounded Keyboard Panel <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Simple Calculator <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Toolbar Editing Buttons <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>Web Clipboard <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
 </ul>
 </details>
 
@@ -813,19 +815,19 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable 2.3.0 2.4.0 any android auto up next custom branding gearslip personal library" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="myspoti app.myspoti.stable any 2.3.0 2.4.0 2.4.1 allow any android auto host android auto up next custom branding" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Myspoti](apps/myspoti.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">2.3.0, 2.4.0, Any</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any, 2.3.0, 2.4.0, 2.4.1</span></p>
 <p class="dap-app-card__package">app.myspoti.stable</p>
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Android Auto Up next <span class="dap-app-card__target">2.3.0, 2.4.0 · default off</span></li>
+<li>Allow any Android Auto host <span class="dap-app-card__target">Any</span></li>
+<li>Android Auto Up next <span class="dap-app-card__target">2.3.0, 2.4.0, 2.4.1 · default off</span></li>
 <li>Custom branding <span class="dap-app-card__target">Any · default off</span></li>
-<li>Gearslip personal library <span class="dap-app-card__target">Any</span></li>
 </ul>
 </details>
 
@@ -994,6 +996,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/omroep-west.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="orpheon app.orpheon.beta any 1.0.0-beta.1 allow any android auto host android auto up next custom branding" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Orpheon](apps/orpheon.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any, 1.0.0-beta.1</span></p>
+<p class="dap-app-card__package">app.orpheon.beta</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">Any</span></li>
+<li>Android Auto Up next <span class="dap-app-card__target">1.0.0-beta.1 · default off</span></li>
+<li>Custom branding <span class="dap-app-card__target">Any · default off</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/orpheon.md){ .dap-app-card__link }
 
 </article>
 

@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.73.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.73.0)** · 67 apps · 350 patches
+**Patch bundle [v1.74.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.74.0)** · 68 apps · 355 patches
 
 ### Weather
 
@@ -114,9 +114,10 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |
-| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, 2.4.0, Any | APK | 3 |
+| [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, 2.4.0, 2.4.1, Any | APK | 3 |
 | [NPO Start](docs/site/en/apps/npo-start.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
+| [Orpheon](docs/site/en/apps/orpheon.md) | See guide | 1.0.0-beta.1, Any | APK | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
 | [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.11.02-release | APKM | 5 |
 | [TIDAL](docs/site/en/apps/tidal.md) | See guide | 2.216.0 | APKM | 1 |
@@ -136,7 +137,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 10 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
-| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a | APK | 23 |
+| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 25 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
