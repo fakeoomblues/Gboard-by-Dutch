@@ -485,9 +485,22 @@ public final class GboardOcrRuntime {
                 return requests[0].getClass();
             }
         }
-        return fallbackClassLoader == null
-                ? null
-                : Class.forName("lrf", false, fallbackClassLoader);
+        if (fallbackClassLoader == null) {
+            return null;
+        }
+        // The optional-module spec class is renamed between Gboard builds: 18.5.x calls it lrf,
+        // 18.6.3 calls it kzf. Both can exist, so pick the one that really carries the
+        // (String, int, long, boolean) constructor instead of trusting a name.
+        for (String name : new String[]{"kzf", "lrf"}) {
+            try {
+                Class<?> candidate = Class.forName(name, false, fallbackClassLoader);
+                candidate.getDeclaredConstructor(String.class, int.class, long.class, boolean.class);
+                return candidate;
+            } catch (Throwable ignored) {
+                // Try the next build's name.
+            }
+        }
+        return null;
     }
 
     private static String readModuleRequestName(Object request) {
