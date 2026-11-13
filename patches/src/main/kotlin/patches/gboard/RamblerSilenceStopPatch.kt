@@ -21,10 +21,10 @@ import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodRefere
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
-// Gboard's VoiceInputManager restarts a timeout on every transcript update for standard voice
-// typing and stops listening (keeping the text) when it runs out. For Rambler it skips the restart,
-// which turns the same timer into a fixed five-minute session limit. This patch lets the user pick a
-// silence time: the timer then gets that length and restarts on Rambler's transcript updates too.
+// Gboard's VoiceInputManager stops listening (keeping the text) when its timeout runs out; for
+// Rambler that timer is a fixed five-minute session limit. This patch lets the user pick a silence
+// time: the timer gets that length and restarts while Gboard's speech level shows speech. Rambler
+// sends no transcript text until it stops, so transcript updates cannot measure silence.
 
 private const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
 private const val RAMBLER_SETTINGS_SCREEN = "res/xml/setting_rambler_voice_typing.xml"
@@ -36,6 +36,7 @@ private const val STRING = "Ljava/lang/String;"
 internal const val SILENCE_KEY = "morphe_rambler_silence_stop"
 private const val START_HELPER = "morpheRamblerSilenceStart"
 private const val UPDATE_HELPER = "morpheRamblerSilenceUpdate"
+private const val LEVEL_HELPER = "morpheRamblerSilenceLevel"
 
 private val silenceTexts = mapOf(
     "values" to listOf(
@@ -195,42 +196,81 @@ private val silenceStopTimer = bytecodePatch(
             it.name == "ofSeconds" && it.parameterTypes.map(CharSequence::toString) == listOf("J")
         } ?: throw PatchException("Duration.ofSeconds is not in this Gboard build")
 
-        fun helper(name: String, restart: Boolean) {
-            if (callback.methods.any { it.name == name }) throw PatchException("$name already exists")
-            val body = listOfNotNull(
-                "iget-object v0, p0, ${wiring.manager.smali()}",
-                "iget-boolean v1, v0, ${wiring.ramblerSession.smali()}",
-                "if-eqz v1, :done",
-                "iget-object v1, v0, ${wiring.preferences.smali()}",
-                "if-eqz v1, :done",
-                "const-string v2, \"$SILENCE_KEY\"",
-                "const-string v3, \"0\"",
-                "invoke-virtual {v1, v2, v3}, ${wiring.readString.smali()}",
-                "move-result-object v1",
-                "invoke-static {v1}, $SILENCE_RUNTIME->silenceSeconds($STRING)J",
-                "move-result-wide v1",
-                "const-wide/16 v3, 0x0",
-                "cmp-long v5, v1, v3",
-                "if-lez v5, :done",
-                "invoke-static {v1, v2}, $DURATION->${ofSeconds.name}(J)$DURATION",
-                "move-result-object v1",
-                "iget-object v2, v0, ${wiring.timer.smali()}",
-                "invoke-virtual {v2, v1}, ${wiring.setLength.smali()}",
-                if (restart) "invoke-virtual {v2}, ${wiring.restart.smali()}" else null,
-                ":done",
-                "return-void",
-            ).joinToString("\n")
-            callback.methods.add(ImmutableMethod(
-                callback.type, name, listOf(ImmutableMethodParameter(callback.type, null, null)), "V",
-                AccessFlags.PRIVATE.value or AccessFlags.STATIC.value, null, null, MutableMethodImplementation(7),
-            ).toMutable().apply { addInstructions(0, body) })
-        }
-        helper(START_HELPER, restart = false)
-        helper(UPDATE_HELPER, restart = true)
+        val manager = mutableClassDefBy(wiring.manager.type)
+        val stopListening = manager.methods.singleOrNull { method ->
+            !AccessFlags.STATIC.isSet(method.accessFlags) && method.returnType == "V" && method.parameterTypes.size == 1 &&
+                "stopListeningVoice" in method.strings()
+        } ?: throw PatchException("VoiceInputManager stopListeningVoice not found")
 
-        // Set the length before onStartSuccess starts the timer; restart it on every Rambler update.
+        fun addHelper(name: String, parameters: List<String>, registers: Int, body: List<String>) {
+            if (callback.methods.any { it.name == name }) throw PatchException("$name already exists")
+            callback.methods.add(ImmutableMethod(
+                callback.type, name, parameters.map { ImmutableMethodParameter(it, null, null) }, "V",
+                AccessFlags.PRIVATE.value or AccessFlags.STATIC.value, null, null, MutableMethodImplementation(registers),
+            ).toMutable().apply { addInstructions(0, body.joinToString("\n")) })
+        }
+        // The settings screen writes Gboard's default preferences; the manager's own preferences
+        // object is the separate private file, so read the choice through the default instance.
+        val contextField = manager.fields.singleOrNull { it.type == "Landroid/content/Context;" }
+            ?: throw PatchException("VoiceInputManager has no single Context field")
+        val defaultPreferences = classDefBy(wiring.preferences.type).methods.singleOrNull {
+            AccessFlags.STATIC.isSet(it.accessFlags) && it.returnType == wiring.preferences.type &&
+                it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+        } ?: throw PatchException("Gboard default preferences accessor not found")
+        val levelUpdate = named("onSpeechLevelUpdate")
+        if (levelUpdate.parameterTypes.map(CharSequence::toString) != listOf("I")) throw PatchException("onSpeechLevelUpdate changed shape")
+
+        // Start: arm the timer with the chosen seconds for a Rambler session (and log the session).
+        addHelper(START_HELPER, listOf(callback.type), 7, listOf(
+            "iget-object v0, p0, ${wiring.manager.smali()}",
+            "iget-boolean v1, v0, ${wiring.ramblerSession.smali()}",
+            "const-string v3, \"0\"",
+            "iget-object v2, v0, ${wiring.manager.type}->${contextField.name}:Landroid/content/Context;",
+            "if-eqz v2, :read",
+            "invoke-static {v2}, ${wiring.preferences.type}->${defaultPreferences.name}(Landroid/content/Context;)${wiring.preferences.type}",
+            "move-result-object v2",
+            "if-eqz v2, :read",
+            "const-string v4, \"$SILENCE_KEY\"",
+            "invoke-virtual {v2, v4, v3}, ${wiring.readString.smali()}",
+            "move-result-object v3",
+            ":read",
+            "invoke-static {v1, v3}, $SILENCE_RUNTIME->onSessionStart(Z$STRING)J",
+            "move-result-wide v1",
+            "const-wide/16 v3, 0x0",
+            "cmp-long v5, v1, v3",
+            "if-lez v5, :done",
+            "invoke-static {v1, v2}, $DURATION->${ofSeconds.name}(J)$DURATION",
+            "move-result-object v1",
+            "iget-object v2, v0, ${wiring.timer.smali()}",
+            "invoke-virtual {v2, v1}, ${wiring.setLength.smali()}",
+            ":done",
+            "return-void",
+        ))
+        // Speech level: restart the countdown while the level shows speech.
+        addHelper(LEVEL_HELPER, listOf(callback.type, "I"), 6, listOf(
+            "iget-object v0, p0, ${wiring.manager.smali()}",
+            "iget-boolean v1, v0, ${wiring.ramblerSession.smali()}",
+            "invoke-static {v1, p1}, $SILENCE_RUNTIME->onSpeechLevel(ZI)Z",
+            "move-result v1",
+            "if-eqz v1, :done",
+            "iget-object v2, v0, ${wiring.timer.smali()}",
+            "invoke-virtual {v2}, ${wiring.restart.smali()}",
+            ":done",
+            "return-void",
+        ))
+        // Transcript updates: counted for the log only (Rambler sends text only when it stops).
+        addHelper(UPDATE_HELPER, listOf(callback.type, update.parameterTypes.single().toString()), 4, listOf(
+            "iget-object v0, p0, ${wiring.manager.smali()}",
+            "iget-boolean v1, v0, ${wiring.ramblerSession.smali()}",
+            "invoke-static {v1, p1}, $SILENCE_RUNTIME->onTranscriptionUpdate(ZLjava/lang/Object;)Z",
+            "return-void",
+        ))
+
         start.addInstructions(0, "invoke-static {p0}, ${callback.type}->$START_HELPER(${callback.type})V")
-        update.addInstructions(0, "invoke-static {p0}, ${callback.type}->$UPDATE_HELPER(${callback.type})V")
+        levelUpdate.addInstructions(0, "invoke-static {p0, p1}, ${callback.type}->$LEVEL_HELPER(${callback.type}I)V")
+        update.addInstructions(0, "invoke-static {p0, p1}, ${callback.type}->$UPDATE_HELPER(${callback.type}${update.parameterTypes.single()})V")
+        // Record why listening stops, so a session that does not stop can be diagnosed from logcat.
+        stopListening.addInstructions(0, "invoke-static {p1}, $SILENCE_RUNTIME->onStopListening(Ljava/lang/Object;)V")
     }
 }
 

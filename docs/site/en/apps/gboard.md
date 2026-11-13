@@ -104,7 +104,7 @@ With **Rambler app context** applied, each dictation also tells Rambler which ap
 Rambler normally keeps listening until you tap ✓ or ✕, with a five-minute limit per dictation, so you can pause to think. With **Rambler stop after silence (experimental)** applied, Gboard settings → Voice typing → Rambler shows **Stop after silence**.
 
 - Choose 3, 5, 8 or 10 seconds. Rambler then stops once it has received no new speech for that long and keeps the text, just like tapping ✓. **Off** keeps Google's behaviour.
-- It uses Gboard's own voice timeout, the one that stops standard voice typing after a pause. Background noise that Rambler hears as speech keeps it listening.
+- It uses Gboard's own voice timeout, the one that stops standard voice typing after a pause. Only new text restarts the countdown: while you are silent, Rambler's server keeps sending updates without new text (it hears background noise), and those no longer keep it listening.
 - Experimental: not yet confirmed on a phone.
 
 ## Before using

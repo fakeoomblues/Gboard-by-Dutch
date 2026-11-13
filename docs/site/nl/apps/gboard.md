@@ -104,7 +104,7 @@ Met **Rambler app context** vertelt elk dictaat Rambler ook in welke app je bent
 Normaal blijft Rambler luisteren tot je op ✓ of ✕ tikt, met een limiet van vijf minuten per dictaat, zodat je even kunt nadenken. Met **Rambler stop after silence (experimental)** toont Gboard-instellingen → Spraakinvoer → Rambler het onderdeel **Stoppen na stilte**.
 
 - Kies 3, 5, 8 of 10 seconden. Rambler stopt dan zodra er zo lang geen nieuwe spraak is binnengekomen en houdt de tekst, net als wanneer je op ✓ tikt. **Uit** houdt het gedrag van Google.
-- Het gebruikt de eigen spraaktime-out van Gboard, dezelfde die standaard spraakinvoer na een pauze stopt. Achtergrondgeluid dat Rambler als spraak hoort, houdt hem aan het luisteren.
+- Het gebruikt de eigen spraaktime-out van Gboard, dezelfde die standaard spraakinvoer na een pauze stopt. Alleen nieuwe tekst start het aftellen opnieuw: terwijl je stil bent, blijft de server van Rambler updates zonder nieuwe tekst sturen (hij hoort achtergrondgeluid), en die houden hem niet meer aan het luisteren.
 - Experimenteel: nog niet op een telefoon bevestigd.
 
 ## Voor gebruik
