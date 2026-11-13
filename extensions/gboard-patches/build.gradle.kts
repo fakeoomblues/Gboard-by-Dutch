@@ -124,6 +124,11 @@ android {
 
 dependencies {
     compileOnly("androidx.annotation:annotation:1.9.1")
+    // Bundled OCR engine: the recognition pipeline and models ship with the extension
+    // because Play Services refuses its module download to a re-signed Gboard. The five
+    // classes Gboard already carries (ML Kit registration plumbing) are excluded from the
+    // jar, so Gboard's own copies stay authoritative.
+    implementation(files("libs/mlkit-ocr-classes.jar"))
     implementation(libs.apache.ftpserver.core)
     implementation(libs.apache.mina.core)
     implementation(libs.hidden.api.bypass)
