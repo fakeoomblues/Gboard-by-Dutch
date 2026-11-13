@@ -1,12 +1,17 @@
 package patches.pdfcraft
 
+import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.Compatibility
 import patches.shared.ARTCRAFT_ORIGINAL_ICON
 import patches.shared.ArtCraftBrand
+import patches.shared.anyArtCraftRelease
 import patches.shared.artCraftBrandingPatch
 
 internal val pdfCraftBrand = ArtCraftBrand(
-    appName = "PdfCraft",
-    packageName = "io.github.artcraftandroid.pdfcraft",
+    compatibility = Compatibility(
+        name = "PdfCraft", packageName = "io.github.artcraftandroid.pdfcraft", apkFileType = ApkFileType.APK,
+        targets = anyArtCraftRelease,
+    ),
     slug = "pdfcraft",
     brandName = "Adobe Acrobat",
     iconStyles = linkedMapOf(

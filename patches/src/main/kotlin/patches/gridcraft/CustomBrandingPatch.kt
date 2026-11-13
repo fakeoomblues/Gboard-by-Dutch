@@ -1,12 +1,17 @@
 package patches.gridcraft
 
+import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.Compatibility
 import patches.shared.ARTCRAFT_ORIGINAL_ICON
 import patches.shared.ArtCraftBrand
+import patches.shared.anyArtCraftRelease
 import patches.shared.artCraftBrandingPatch
 
 internal val gridCraftBrand = ArtCraftBrand(
-    appName = "GridCraft",
-    packageName = "io.github.artcraftandroid.gridcraft",
+    compatibility = Compatibility(
+        name = "GridCraft", packageName = "io.github.artcraftandroid.gridcraft", apkFileType = ApkFileType.APK,
+        targets = anyArtCraftRelease,
+    ),
     slug = "gridcraft",
     brandName = "Microsoft Excel",
     iconStyles = linkedMapOf(

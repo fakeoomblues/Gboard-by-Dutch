@@ -1,12 +1,17 @@
 package patches.lightcraft
 
+import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.Compatibility
 import patches.shared.ARTCRAFT_ORIGINAL_ICON
 import patches.shared.ArtCraftBrand
+import patches.shared.anyArtCraftRelease
 import patches.shared.artCraftBrandingPatch
 
 internal val lightCraftBrand = ArtCraftBrand(
-    appName = "LightCraft",
-    packageName = "io.github.artcraftandroid.lightcraft",
+    compatibility = Compatibility(
+        name = "LightCraft", packageName = "io.github.artcraftandroid.lightcraft", apkFileType = ApkFileType.APK,
+        targets = anyArtCraftRelease,
+    ),
     slug = "lightcraft",
     brandName = "Adobe Lightroom",
     iconStyles = linkedMapOf(

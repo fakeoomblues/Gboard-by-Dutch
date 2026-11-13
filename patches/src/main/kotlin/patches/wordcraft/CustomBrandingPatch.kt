@@ -1,12 +1,17 @@
 package patches.wordcraft
 
+import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.Compatibility
 import patches.shared.ARTCRAFT_ORIGINAL_ICON
 import patches.shared.ArtCraftBrand
+import patches.shared.anyArtCraftRelease
 import patches.shared.artCraftBrandingPatch
 
 internal val wordCraftBrand = ArtCraftBrand(
-    appName = "WordCraft",
-    packageName = "io.github.artcraftandroid.wordcraft",
+    compatibility = Compatibility(
+        name = "WordCraft", packageName = "io.github.artcraftandroid.wordcraft", apkFileType = ApkFileType.APK,
+        targets = anyArtCraftRelease,
+    ),
     slug = "wordcraft",
     brandName = "Microsoft Word",
     iconStyles = linkedMapOf(

@@ -1,6 +1,5 @@
 package patches.shared
 
-import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.PatchException
@@ -13,6 +12,12 @@ private const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
 private const val LAUNCHER = "android.intent.category.LAUNCHER"
 
 /**
+ * Any release: declare the app's Compatibility with this single unrestricted target, because the
+ * patch only touches the manifest's label and icon and adds its own resources.
+ */
+internal val anyArtCraftRelease = listOf(AppTarget(version = null))
+
+/**
  * One artcraft-android app (PdfCraft, LightCraft, WordCraft, GridCraft) and the brand it can wear.
  *
  * The icon styles are ordered as the Manager dropdown shows them: the app's original icon first and
@@ -20,8 +25,8 @@ private const val LAUNCHER = "android.intent.category.LAUNCHER"
  * resources/<slug>/branding/<style>/, named morphe_<slug>_*.
  */
 internal class ArtCraftBrand(
-    val appName: String,
-    val packageName: String,
+    /** Declared in the app's own patch folder, where the release tooling reads its name. */
+    val compatibility: Compatibility,
     val slug: String,
     val brandName: String,
     val iconStyles: Map<String, String>,
@@ -29,11 +34,7 @@ internal class ArtCraftBrand(
     val description: String,
     private val extraResources: Map<String, List<String>> = emptyMap(),
 ) {
-    /** Any release: the patch only touches the manifest's label and icon and adds its own resources. */
-    val compatibility = Compatibility(
-        name = appName, packageName = packageName, apkFileType = ApkFileType.APK,
-        targets = listOf(AppTarget(version = null)),
-    )
+    val appName get() = compatibility.name!!
 
     val nameResource get() = "morphe_${slug}_app_name"
     val iconResource get() = "morphe_${slug}_launcher"
