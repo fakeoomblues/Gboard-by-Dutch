@@ -41,8 +41,17 @@ function verifyNotes(context) {
         // Commit types the notes never render (chore, build, ci) cannot produce a bullet.
         // Accept the declaration only when the commit's own files map to that app, so an
         // unscoped or misattributed shared change still fails.
+        // Extension files carry no patch-folder owner, so map them by their module
+        // directory: extensions/gboard-patches belongs to Gboard.
         const mapped = namesFor(files).map(normalizeAppName);
-        if (!mapped.includes(name)) throw new Error(`Missing Release-Apps scope ${name} for shared commit ${hash}`);
+        const inExtension = files.every(file => file.startsWith("extensions/")) && files.some(file => {
+          const module = (file.split("/")[1] || "").toLowerCase();
+          const app = compact(name);
+          return module.includes(app) || app.includes(module.replace(/-?patches$/, ""));
+        });
+        if (!mapped.includes(name) && !inExtension) {
+          throw new Error(`Missing Release-Apps scope ${name} for shared commit ${hash}`);
+        }
       }
     }
     authorizedShared.set(hash, new Set(declared));
