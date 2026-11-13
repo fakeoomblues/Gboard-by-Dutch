@@ -1,8 +1,8 @@
 # Medium
 
-**Appversie:** 4.5.1784911033 · **Build:** 1784911033 · **Origineel bestand:** APKS
+**Appversie:** 4.5.1784911134 · **Build:** 1784911134 · **Origineel bestand:** APKS
 
-[Download originele app](https://buzzheavier.com/ky9k5pmnicni){ .md-button .md-button--primary }
+[Gebruik je originele APKS](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gesplitste app het volledige archief.
 
@@ -12,7 +12,6 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 | --- | --- | --- |
 | **Disable optional tracking** | Aan | Stopt optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
 | **Hide native promotions** | Aan | Verbergt artikelbanners en lidmaatschapsaanbiedingen. De ledenbadge opent geen aanbieding meer. |
-| **Read full articles natively** | Aan | Leest beschikbare Freedium-artikelen in de app, met afbeeldingen en een overzicht van opgeslagen artikelen. |
 
 ## Advertentie- en trackingdiensten
 
@@ -22,6 +21,6 @@ Metingen blokkeren blokkeert niet elke functie van dezelfde aanbieder. Noodzakel
 
 ## Voor gebruik
 
-De lezer gebruikt Freedium, dat de artikel-URL en je IP-adres ontvangt. Beschikbaarheid hangt af van die dienst. Open Offline articles voor opgeslagen tekst; sla afbeeldingen op terwijl je verbonden bent. De lezercache wissen verwijdert opgeslagen artikelen en afbeeldingen.
+De native artikellezer is nog niet beschikbaar voor deze versie; die blijft de eerdere build 4.5.1784911033 als enige doel gebruiken, omdat deze update de artikel- en afbeeldingskoppelingen waarop hij steunt heeft hernoemd.
 
 [Installeren](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardkeuzes](../reference/catalogue.md)

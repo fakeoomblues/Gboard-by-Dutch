@@ -24,7 +24,7 @@ val readFullArticles = bytecodePatch(
     name = "Read full articles natively",
     description = "Replaces locked article previews with editorial-only mirror content rendered by Medium's native paragraph components.",
 ) {
-    compatibleWith(medium)
+    compatibleWith(mediumReaderSource)
     dependsOn(readerExtension, readerImageResources)
     execute {
         val outer = exact("Lxub;", "invokeSuspend", "Ljava/lang/Object;", "Ljava/lang/Object;").method

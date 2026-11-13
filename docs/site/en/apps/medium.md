@@ -1,8 +1,8 @@
 # Medium
 
-**App version:** 4.5.1784911033 · **Build:** 1784911033 · **Original file:** APKS
+**App version:** 4.5.1784911134 · **Build:** 1784911134 · **Original file:** APKS
 
-[Download original app](https://buzzheavier.com/ky9k5pmnicni){ .md-button .md-button--primary }
+[Use your original APKS](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 
@@ -12,7 +12,6 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 | --- | --- | --- |
 | **Disable optional tracking** | On | Stops optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide native promotions** | On | Hides article banners and membership offers. The member badge no longer opens an offer. |
-| **Read full articles natively** | On | Reads available Freedium articles inside the app, with pictures and a saved-article shelf. |
 
 ## Advertising and tracking services
 
@@ -22,6 +21,6 @@ Blocking measurement does not block every function from the same provider. Essen
 
 ## Before using
 
-The reader uses Freedium, which receives the article URL and your IP address. Availability depends on that service. Open Offline articles to find saved text; save pictures while connected. Clearing the reader cache deletes saved articles and pictures.
+The native article reader is not yet available for this version; it keeps the earlier 4.5.1784911033 build as its only target, because this update renamed the article and image bindings it depends on.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

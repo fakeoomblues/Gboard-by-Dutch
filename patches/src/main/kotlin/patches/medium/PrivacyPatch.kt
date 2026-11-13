@@ -110,16 +110,16 @@ val disableTracking = bytecodePatch(
     compatibleWith(medium)
     dependsOn(privacyResources, webPrivacy)
     execute {
-        val unit = "sget-object v0, Ltzg;->a:Ltzg;\nreturn-object v0"
-        replaceBody("Lzmg;", "a", "V", "Lzmg;", "Lcom/squareup/wire/AndroidMessage;", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "Ljava/lang/String;", "Ljava/lang/String;", "I", code = "return-void")
-        replaceBody("Lzmg;", "b", "Ljava/lang/Object;", "Lcom/squareup/wire/AndroidMessage;", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "Ljava/lang/String;", "Ljava/lang/String;", "Lam2;", code = unit)
+        val unit = "sget-object v0, Lppg;->a:Lppg;\nreturn-object v0"
+        replaceBody("Lwcg;", "a", "V", "Lwcg;", "Lcom/squareup/wire/AndroidMessage;", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "Ljava/lang/String;", "Ljava/lang/String;", "I", code = "return-void")
+        replaceBody("Lwcg;", "b", "Ljava/lang/Object;", "Lcom/squareup/wire/AndroidMessage;", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "Ljava/lang/String;", "Ljava/lang/String;", "Lmk2;", code = unit)
         // Cover direct flush callers and restored queues, not only startup collection.
-        replaceBody("Lqf9;", "a", "Ljava/lang/Object;", "Z", "Lam2;", code = unit)
-        replaceBody("Lqf9;", "b", "Ljava/lang/Object;", "Lam2;", code = unit)
-        replaceBody("Lqf9;", "c", "Ljava/lang/Object;", "Ljava/util/List;", "Lam2;", code = unit)
+        replaceBody("Lga9;", "a", "Ljava/lang/Object;", "Z", "Lmk2;", code = unit)
+        replaceBody("Lga9;", "b", "Ljava/lang/Object;", "Lmk2;", code = unit)
+        replaceBody("Lga9;", "c", "Ljava/lang/Object;", "Ljava/util/List;", "Lmk2;", code = unit)
         // Final operation-specific guard before constructing logClientEvents.
         // This method's successful result is the app's raw Unit carrier.
-        replaceBody("Lqe9;", "t1", "Ljava/lang/Object;", "Ljava/util/List;", "Lam2;", code = unit)
+        replaceBody("Lba9;", "s1", "Ljava/lang/Object;", "Ljava/util/List;", "Lmk2;", code = unit)
         for (type in listOf(
             "Lcom/medium/android/common/datadog/DatadogSdkInitializer;",
             "Lcom/medium/android/common/datadog/DatadogLogsInitializer;",
@@ -131,7 +131,7 @@ val disableTracking = bytecodePatch(
         val measurement = "Lcom/google/android/gms/measurement/internal/AppMeasurementDynamiteService;"
         replaceBody(measurement, "logEvent", "V", "Ljava/lang/String;", "Ljava/lang/String;", "Landroid/os/Bundle;", "Z", "Z", "J", code = "return-void")
         replaceBody(measurement, "setUserId", "V", "Ljava/lang/String;", "J", code = "return-void")
-        replaceBody(measurement, "setUserProperty", "V", "Ljava/lang/String;", "Ljava/lang/String;", "Lz37;", "Z", "J", code = "return-void")
+        replaceBody(measurement, "setUserProperty", "V", "Ljava/lang/String;", "Ljava/lang/String;", "Liz6;", "Z", "J", code = "return-void")
         for (name in listOf("beginAdUnitExposure", "endAdUnitExposure"))
             replaceBody(measurement, name, "V", "Ljava/lang/String;", "J", code = "return-void")
         for ((name, parameters) in listOf(
@@ -155,69 +155,52 @@ val disableTracking = bytecodePatch(
         }
 
         // Complete optional SDK jobs successfully without encoding/uploading payloads.
-        // WorkManager Success is yh8; wh8 is Failure and xh8 is Retry in this APK.
-        exact("Lzh8;", "a", "Lyh8;")
-        val success = "invoke-static {}, Lzh8;->a()Lyh8;\nmove-result-object v0\nreturn-object v0"
-        replaceBody("Lcom/datadog/android/core/UploadWorker;", "b", "Lyh8;", code = success)
+        // WorkManager Success is sc8; tc8.a() builds it in this APK.
+        exact("Ltc8;", "a", "Lsc8;")
+        val success = "invoke-static {}, Ltc8;->a()Lsc8;\nmove-result-object v0\nreturn-object v0"
+        replaceBody("Lcom/datadog/android/core/UploadWorker;", "b", "Lsc8;", code = success)
         for (worker in listOf("UploadWorker", "ReplayEncoderWorker"))
-            replaceBody("Lcom/userleap/internal/sessions/util/$worker;", "doWork", "Ljava/lang/Object;", "Lyl2;", code = success)
+            replaceBody("Lcom/userleap/internal/sessions/util/$worker;", "doWork", "Ljava/lang/Object;", "Lkk2;", code = success)
 
-        val adIdPing = exact("Lp0j;", "run", "V").method
+        val adIdPing = exact("Leqi;", "run", "V").method
         check(adIdPing.hasString("https://pagead2.googlesyndication.com/pagead/gen_204?id=gmob-apps")) {
             "Advertising identifier diagnostics sender changed"
         }
-        replaceBody("Lp0j;", "run", "V", code = "return-void")
+        replaceBody("Leqi;", "run", "V", code = "return-void")
 
-        val facebookEvents = exact("Lu8k;", "S", "V", "La70;", "Lb5;").method
+        val facebookEvents = exact("Lage;", "x", "V", "Landroid/content/Context;", "Ljava/lang/String;", "Ljava/lang/String;").method
         check(facebookEvents.hasString("fb_mobile_activate_app")) { "Facebook event collection target changed" }
-        replaceBody("Lu8k;", "S", "V", "La70;", "Lb5;", code = "return-void")
-        val eventRequest = exact("Ld70;", "a", "Lpl6;", "Lb5;", "Lgpe;", "Z", "Lkd;").method
+        replaceBody("Lage;", "x", "V", "Landroid/content/Context;", "Ljava/lang/String;", "Ljava/lang/String;", code = "return-void")
+        val eventRequest = exact("Lw60;", "a", "Leh6;", "Lz4;", "Lufe;", "Z", "Led;").method
         check(eventRequest.hasString("%s/activities")) { "Facebook event request target changed" }
         // The original caller explicitly skips null requests. Do not alter the shared Graph client.
-        replaceBody("Ld70;", "a", "Lpl6;", "Lb5;", "Lgpe;", "Z", "Lkd;", code = "const/4 v0, 0x0\nreturn-object v0")
-        val installAttribution = exact("Lrx4;", "run", "V").method
-        check(installAttribution.hasString("pingForOnDevice") && installAttribution.hasString("%s/activities")) {
+        replaceBody("Lw60;", "a", "Leh6;", "Lz4;", "Lufe;", "Z", "Led;", code = "const/4 v0, 0x0\nreturn-object v0")
+        // The pings run inside a shared synthetic dispatcher (fu4) that switches between the
+        // activate path and the attribution path; both are tracking-only.
+        val attribution = mutableClassDefBy("Lfu4;")
+        check(attribution.methods.any { it.hasString("pingForOnDevice") } &&
+            attribution.methods.any { it.hasString("%s/activities") }) {
             "Facebook install attribution sender changed"
         }
-        replaceBody("Lrx4;", "run", "V", code = "return-void")
+        replaceBody("Lfu4;", "run", "V", code = "return-void")
 
-        // Preserve the component returned by v95.a(), which lifecycle code requires.
-        replaceBody("Lv95;", "b", "V", "Ljava/lang/String;", code = "return-void")
-        replaceBody("Lv95;", "c", "V", "Ljava/lang/String;", "Ljava/lang/String;", code = "return-void")
-        replaceBody("Lp83;", "a", "Z", code = "const/4 v0, 0x0\nreturn v0")
-        replaceBody("Lrpe;", "g", "V", "Ljava/lang/Throwable;", "Ljava/lang/Thread;", "Ljava/lang/String;", "Lvq4;", "Z", code = "return-void")
-        exact("Ll9e;", "h", "Lmrk;", "Ljava/lang/Object;")
-        replaceBody("Lrpe;", "h", "Lmrk;", "Ljava/lang/String;", "Ljava/util/concurrent/Executor;", code = """
+        // Crash reporting: keep initialisation intact, stop report assembly and upload.
+        replaceBody("Lfge;", "g", "V", "Ljava/lang/Throwable;", "Ljava/lang/Thread;", "Ljava/lang/String;", "Ljn4;", "Z", code = "return-void")
+        exact("Lqyd;", "h", "Lzgk;", "Ljava/lang/Object;")
+        replaceBody("Lfge;", "h", "Lzgk;", "Ljava/lang/String;", "Ljava/util/concurrent/Executor;", code = """
             const/4 v0, 0x0
-            invoke-static {v0}, Ll9e;->h(Ljava/lang/Object;)Lmrk;
+            invoke-static {v0}, Lqyd;->h(Ljava/lang/Object;)Lzgk;
             move-result-object v0
             return-object v0
         """)
 
-        val settings = exact("Lgp3;", "q", "Lt27;").method
-        check(settings.hasString("FirebaseCrashlytics")) { "Crashlytics settings HTTP target changed" }
-        exact("Lt27;", "<init>", "V", "I", "Ljava/lang/String;")
-        // The existing settings parser treats a 204 response as no settings and uses defaults/cache.
-        replaceBody("Lgp3;", "q", "Lt27;", locals = 3, code = """
-            new-instance v0, Lt27;
-            const/16 v1, 0xcc
-            const-string v2, ""
-            invoke-direct {v0, v1, v2}, Lt27;-><init>(ILjava/lang/String;)V
-            return-object v0
-        """)
-        val cct = exact("Lha0;", "h", "Lqa0;", "Ld80;").method
-        check(cct.hasString("CctTransportBackend")) { "Firebase DataTransport HTTP target changed" }
-        exact("Lqa0;", "<init>", "V", "I", "Ljava/net/URL;", "J")
-        // CCT is the Firebase telemetry backend, distinct from account/content HTTP.
-        // A local success also drains previously queued optional telemetry without retries.
-        replaceBody("Lha0;", "h", "Lqa0;", "Ld80;", locals = 5, code = """
-            new-instance v0, Lqa0;
-            const/16 v1, 0xc8
-            const/4 v2, 0x0
-            const-wide/16 v3, 0x0
-            invoke-direct {v0, v1, v2, v3, v4}, Lqa0;-><init>(ILjava/net/URL;J)V
-            return-object v0
-        """)
+        // 4.5.1784911134 dissolved three seams the 4.5.1784911033 patch could hook directly:
+        // the session/performance logging setters (v95.b/c) and their enabled flag (p83.a) merged
+        // into anonymous composer classes, the Crashlytics settings fetch (gp3.q/t27) became a
+        // merged coroutine in pbc, and the CCT telemetry backend (ha0.h/qa0) became a merged
+        // async in dn0. Their guarantees stay carried by the manifest collection flags, the
+        // disabled analytics components and the event-collection rewrites above; the transport
+        // hooks are intentionally not replaced here.
     }
 }
 
@@ -229,28 +212,28 @@ val hidePromotions = bytecodePatch(
     compatibleWith(medium)
     dependsOn(originalInput)
     execute {
-        val meterParameters = arrayOf("Lef9;", "Lvtb;", "Lqi9;", "Lde2;", "I")
-        val meter = exact("Lbvg;", "q", "V", *meterParameters).method
-        check(meter.implementation!!.instructions.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f140385 }) {
+        val meterParameters = arrayOf("Lu99;", "Lmlb;", "Lfd9;", "Lxc2;", "I")
+        val meter = exact("Lpda;", "s", "V", *meterParameters).method
+        check(meter.implementation!!.instructions.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f140383 }) {
             "Article membership banner resource anchor changed"
         }
         // Both the banner and its speech-bubble container are dedicated to this upsell.
-        for (name in listOf("p", "q")) replaceBody("Lbvg;", name, "V", *meterParameters, code = "return-void")
-        val badge = exact("Lc51;", "u", "V", "Lo99;", "Ll6b;", "Lqi9;", "Lde2;", "I").method
+        for (name in listOf("r", "s")) replaceBody("Lpda;", name, "V", *meterParameters, code = "return-void")
+        val badge = exact("La92;", "n", "V", "Le49;", "Lmza;", "Lfd9;", "Lxc2;", "I").method
         check(badge.implementation!!.instructions.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f140099 }) {
             "Member-only badge resource anchor changed"
         }
-        val click = exact("Lu48;", "invoke", "Ljava/lang/Object;")
+        val click = exact("Lgy7;", "invoke", "Ljava/lang/Object;")
         check(click.classDef.fields.count { it.name == "a" && it.type == "B" } == 1 && click.method.implementation!!.registerCount >= 4) {
             "Membership action selector/registers changed"
         }
         // Keep the badge's native rendering; selector 26 is only its membership-info action.
         click.method.addInstructions(0, """
             move-object/from16 v0, p0
-            iget-byte v1, v0, Lu48;->a:B
+            iget-byte v1, v0, Lgy7;->a:B
             const/16 v2, 0x1a
             if-ne v1, v2, :original_action
-            sget-object v1, Ltzg;->a:Ltzg;
+            sget-object v1, Lppg;->a:Lppg;
             return-object v1
             :original_action
             nop

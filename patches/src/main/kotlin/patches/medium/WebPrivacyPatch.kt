@@ -13,7 +13,7 @@ internal val webPrivacy = bytecodePatch {
     dependsOn(webPrivacyExtension)
     execute {
         // Exact root client inventory in the pinned APK. Subclasses inherit these guards.
-        for (type in setOf("Lv90;", "Le57;", "Lhcb;", "Lwnh;", "Ldfi;", "Lbx4;", "Ldoj;", "Lsprig/b/f;")) {
+        for (type in setOf("Lt4i;", "Lpt4;", "Lrdj;", "La4b;", "Lm90;", "Lp07;", "Lvdh;", "Lsprig/b/f;")) {
             val cls = Fingerprint(definingClass = type).matchAll(1..500).first().classDef
             check(cls.superclass == "Landroid/webkit/WebViewClient;") { "Web client inheritance changed: $type" }
             for (request in listOf("Landroid/webkit/WebResourceRequest;", "Ljava/lang/String;")) {
