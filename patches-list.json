@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.80.0",
+  "version": "1.81.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -2269,6 +2269,104 @@
     },
     {
       "name": "Custom branding",
+      "description": "Renames GridCraft to Microsoft Excel and gives it the Microsoft Excel launcher icon. Choose another name or GridCraft's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "io.github.artcraftandroid.gridcraft",
+          "name": "GridCraft",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep GridCraft.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Microsoft Excel",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "excel",
+          "values": {
+            "Original GridCraft": "original",
+            "Microsoft Excel (default)": "excel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
+      "description": "Renames LightCraft to Adobe Lightroom and gives it the Adobe Lightroom launcher icon. Choose another name or LightCraft's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "io.github.artcraftandroid.lightcraft",
+          "name": "LightCraft",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep LightCraft.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Adobe Lightroom",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "lightroom",
+          "values": {
+            "Original LightCraft": "original",
+            "Adobe Lightroom (default)": "lightroom"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
       "description": "Changes the Myspoti or Orpheon launcher icon and app name. Choose from six bundled icons or keep the original.",
       "default": false,
       "category": null,
@@ -2341,6 +2439,56 @@
     },
     {
       "name": "Custom branding",
+      "description": "Renames PdfCraft to Adobe Acrobat and gives it the Adobe Acrobat launcher icon. Choose another name, the classic Acrobat icon or PdfCraft's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "io.github.artcraftandroid.pdfcraft",
+          "name": "PdfCraft",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep PdfCraft.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Adobe Acrobat",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "acrobat",
+          "values": {
+            "Original PdfCraft": "original",
+            "Adobe Acrobat (default)": "acrobat",
+            "Adobe Acrobat classic": "acrobat_classic"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
       "description": "Changes Reolink's app name and launcher icon. Defaults to \"Reolink AA\" with the Reolink AA icon; Reolink's original icon is also available.",
       "default": true,
       "category": null,
@@ -2391,6 +2539,55 @@
           "values": {
             "Reolink AA (default)": "aa",
             "Original Reolink": "original"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
+      "description": "Renames WordCraft to Microsoft Word and gives it the Microsoft Word launcher icon. Choose another name or WordCraft's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "io.github.artcraftandroid.wordcraft",
+          "name": "WordCraft",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep WordCraft.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Microsoft Word",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "word",
+          "values": {
+            "Original WordCraft": "original",
+            "Microsoft Word (default)": "word"
           }
         }
       ]

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">71 apps</span> · Patch bundle: 1.80.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">75 apps</span> · Patch bundle: 1.81.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -626,6 +626,24 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="other" data-search="gridcraft io.github.artcraftandroid.gridcraft any custom branding" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [GridCraft](apps/gridcraft.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__package">io.github.artcraftandroid.gridcraft</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Custom branding <span class="dap-app-card__target">Any</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/gridcraft.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="news" data-search="gva be.concentra.gva.mediaapp 22.0.0 disable tracking hide premium banner hide ads hide newspaper navigation skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
@@ -770,6 +788,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/kijk-android-tv.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="lightcraft io.github.artcraftandroid.lightcraft any custom branding" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [LightCraft](apps/lightcraft.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__package">io.github.artcraftandroid.lightcraft</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Custom branding <span class="dap-app-card__target">Any</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/lightcraft.md){ .dap-app-card__link }
 
 </article>
 
@@ -1057,6 +1093,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/parool.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="pdfcraft io.github.artcraftandroid.pdfcraft any custom branding" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [PdfCraft](apps/pdfcraft.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__package">io.github.artcraftandroid.pdfcraft</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Custom branding <span class="dap-app-card__target">Any</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/pdfcraft.md){ .dap-app-card__link }
 
 </article>
 
@@ -1513,6 +1567,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/weerplaza.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="wordcraft io.github.artcraftandroid.wordcraft any custom branding" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [WordCraft](apps/wordcraft.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">Any</span></p>
+<p class="dap-app-card__package">io.github.artcraftandroid.wordcraft</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Custom branding <span class="dap-app-card__target">Any</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/wordcraft.md){ .dap-app-card__link }
 
 </article>
 

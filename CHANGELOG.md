@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/df76577ce59c184f099284981f00b2d25908d79f/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.81.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [df76577ce59c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/df76577ce59c184f099284981f00b2d25908d79f). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.81.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.80.0...v1.81.0) (2026-11-13)
+
+### ✨ New Features
+
+* **GridCraft:** add Custom branding for PdfCraft, LightCraft, WordCraft and GridCraft ([d2a7d36](https://gitlab.com/johninnld/nl-morphe-patches/commit/d2a7d36a2e3736c71e44dedc69810aa1e9b875f8))
+* **LightCraft:** add Custom branding for PdfCraft, LightCraft, WordCraft and GridCraft ([d2a7d36](https://gitlab.com/johninnld/nl-morphe-patches/commit/d2a7d36a2e3736c71e44dedc69810aa1e9b875f8))
+* **PdfCraft:** add Custom branding for PdfCraft, LightCraft, WordCraft and GridCraft ([d2a7d36](https://gitlab.com/johninnld/nl-morphe-patches/commit/d2a7d36a2e3736c71e44dedc69810aa1e9b875f8))
+* **WordCraft:** add Custom branding for PdfCraft, LightCraft, WordCraft and GridCraft ([d2a7d36](https://gitlab.com/johninnld/nl-morphe-patches/commit/d2a7d36a2e3736c71e44dedc69810aa1e9b875f8))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/07ef47beb9612da6318419e79dabe7946324ea39/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.80.0.**

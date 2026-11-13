@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.80.0**
+**Patch bundle: 1.81.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -390,6 +390,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | On | 26.44.06.1006895251 |
 
+## GridCraft
+
+[What do the patches change?](../apps/gridcraft.md)
+
+`io.github.artcraftandroid.gridcraft`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
+
 ## GVA
 
 [What do the patches change?](../apps/gva.md)
@@ -480,6 +490,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 7.2.7 |
 | Enable WebView debugging | Off | 7.2.7 |
 | Hide ads | On | 7.2.7 |
+
+## LightCraft
+
+[What do the patches change?](../apps/lightcraft.md)
+
+`io.github.artcraftandroid.lightcraft`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
 
 ## Marktplaats
 
@@ -655,6 +675,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 7.53.1 |
 | Read full articles | On | 7.53.1 |
 | Skip consent screens | On | 7.53.1 |
+
+## PdfCraft
+
+[What do the patches change?](../apps/pdfcraft.md)
+
+`io.github.artcraftandroid.pdfcraft`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
 
 ## Podimo
 
@@ -951,6 +981,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide Premium banner | On | 3.13.1 |
 | Hide ads | On | 3.13.1 |
 | Skip consent screens | On | 3.13.1 |
+
+## WordCraft
+
+[What do the patches change?](../apps/wordcraft.md)
+
+`io.github.artcraftandroid.wordcraft`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
 
 ## Wuplay Android TV
 

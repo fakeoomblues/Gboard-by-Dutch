@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.80.0**
+**Patchbundel: 1.81.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -390,6 +390,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | Aan | 26.44.06.1006895251 |
 
+## GridCraft
+
+[Wat veranderen de patches?](../apps/gridcraft.md)
+
+`io.github.artcraftandroid.gridcraft`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
+
 ## GVA
 
 [Wat veranderen de patches?](../apps/gva.md)
@@ -480,6 +490,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 7.2.7 |
 | Enable WebView debugging | Uit | 7.2.7 |
 | Hide ads | Aan | 7.2.7 |
+
+## LightCraft
+
+[Wat veranderen de patches?](../apps/lightcraft.md)
+
+`io.github.artcraftandroid.lightcraft`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
 
 ## Marktplaats
 
@@ -655,6 +675,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 7.53.1 |
 | Read full articles | Aan | 7.53.1 |
 | Skip consent screens | Aan | 7.53.1 |
+
+## PdfCraft
+
+[Wat veranderen de patches?](../apps/pdfcraft.md)
+
+`io.github.artcraftandroid.pdfcraft`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
 
 ## Podimo
 
@@ -951,6 +981,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide Premium banner | Aan | 3.13.1 |
 | Hide ads | Aan | 3.13.1 |
 | Skip consent screens | Aan | 3.13.1 |
+
+## WordCraft
+
+[Wat veranderen de patches?](../apps/wordcraft.md)
+
+`io.github.artcraftandroid.wordcraft`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
 
 ## Wuplay Android TV
 

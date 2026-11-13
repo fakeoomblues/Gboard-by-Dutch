@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.80.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.80.0)** · 71 apps · 361 patches
+**Patch bundle [v1.81.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.81.0)** · 75 apps · 365 patches
 
 ### Weather
 
@@ -138,12 +138,16 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 25 |
+| [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
+| [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
+| [PdfCraft](docs/site/en/apps/pdfcraft.md) | See guide | Any | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 | [Reolink](docs/site/en/apps/reolink.md) | See guide | 4.64.3.20261023 | APKM | 4 |
 | [Tuya Smart Life](docs/site/en/apps/tuya.md) | See guide | 7.12.6 | APKS | 1 |
+| [WordCraft](docs/site/en/apps/wordcraft.md) | See guide | Any | APK | 1 |
 | [Zoom Workplace](docs/site/en/apps/zoom.md) | See guide | 7.2.1.43844 | APKS | 1 |
 
 [Patch defaults and supported versions](docs/site/nl/reference/catalogue.md) · [English](docs/site/en/reference/catalogue.md)
