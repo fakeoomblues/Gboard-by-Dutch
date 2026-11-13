@@ -1,4 +1,39 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c833d9f8e57e22c24efbdf3f04df9d518c9e058a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.77.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [c833d9f8e57e](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/c833d9f8e57e22c24efbdf3f04df9d518c9e058a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.77.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.76.0...v1.77.0) (2026-11-13)
+
+### 🐛 Bug Fixes
+
+* **Flitsmeister:** keep the average-speed control's end icon steady in Maps and Vela ([4fc83f2](https://gitlab.com/johninnld/nl-morphe-patches/commit/4fc83f2dc0bad644cc69f0a34d21460f07f8c484))
+* **Google Maps:** draw our own warning icon during navigation and remove it after passing ([b7fd5f9](https://gitlab.com/johninnld/nl-morphe-patches/commit/b7fd5f97f94bda35c5dbb6967ecd6018e0afa65d))
+* **Google Maps:** keep the average-speed control's end icon steady in Maps and Vela ([4fc83f2](https://gitlab.com/johninnld/nl-morphe-patches/commit/4fc83f2dc0bad644cc69f0a34d21460f07f8c484))
+* **Google Maps:** keep warning pins on the map while a route is shown ([95eadb5](https://gitlab.com/johninnld/nl-morphe-patches/commit/95eadb53a2beb867fb53a7c7184b1ab92b20f11d))
+* **Google Maps:** stop Maps crashing when navigation starts with warning icons on ([eed4ede](https://gitlab.com/johninnld/nl-morphe-patches/commit/eed4ede787ee3810d45e3159b5cb9403aa2a5a70))
+* **Vela Maps:** keep the average-speed control's end icon steady in Maps and Vela ([4fc83f2](https://gitlab.com/johninnld/nl-morphe-patches/commit/4fc83f2dc0bad644cc69f0a34d21460f07f8c484))
+
+### ✨ New Features
+
+* **Flitsmeister:** share native camera positions with Maps and Vela ([4cf93b9](https://gitlab.com/johninnld/nl-morphe-patches/commit/4cf93b9ec37125b13d32caf2adfba2cb48f72509))
+* **Flitsmeister:** show the average-speed control's start and end on the map in Maps and Vela ([48ad194](https://gitlab.com/johninnld/nl-morphe-patches/commit/48ad194737d82c9d8eb9402fb16797903e5acc9a))
+* **Google Maps:** pin each warning pill's alert at the provider's own position ([34b4167](https://gitlab.com/johninnld/nl-morphe-patches/commit/34b41671ae75810d687244a25e991e22d1a3344e))
+* **Google Maps:** share native camera positions with Maps and Vela ([4cf93b9](https://gitlab.com/johninnld/nl-morphe-patches/commit/4cf93b9ec37125b13d32caf2adfba2cb48f72509))
+* **Google Maps:** show the average-speed control's start and end on the map in Maps and Vela ([48ad194](https://gitlab.com/johninnld/nl-morphe-patches/commit/48ad194737d82c9d8eb9402fb16797903e5acc9a))
+* **Google Maps:** show warning icons as Google's own incident callouts during navigation ([bde74c4](https://gitlab.com/johninnld/nl-morphe-patches/commit/bde74c45984c83c723af4c7486e4bc1e67621e16))
+* **Vela Maps:** share native camera positions with Maps and Vela ([4cf93b9](https://gitlab.com/johninnld/nl-morphe-patches/commit/4cf93b9ec37125b13d32caf2adfba2cb48f72509))
+* **Vela Maps:** show provider alert icons at their reported positions on the map ([a8958e3](https://gitlab.com/johninnld/nl-morphe-patches/commit/a8958e375ccd1bcad3c5100a80ad2f18ca457935))
+* **Vela Maps:** show the average-speed control's start and end on the map in Maps and Vela ([48ad194](https://gitlab.com/johninnld/nl-morphe-patches/commit/48ad194737d82c9d8eb9402fb16797903e5acc9a))
+* **Waze:** share native camera positions with Maps and Vela ([4cf93b9](https://gitlab.com/johninnld/nl-morphe-patches/commit/4cf93b9ec37125b13d32caf2adfba2cb48f72509))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/b7385eb108b8b2cbc27888a91c9fe3ca9b7c7f12/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.76.0.**
