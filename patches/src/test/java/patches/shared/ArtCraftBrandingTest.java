@@ -11,7 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/** Inspect the compiled artcraft-android branding patches, as consumed by Manager and the bundle generator. */
+/** Inspect the compiled branding patches built on the shared ArtCraft helper, as consumed by Manager and the bundle generator. */
 public class ArtCraftBrandingTest {
     private static final class App {
         final Patch<?> patch; final ArtCraftBrand brand; final String packageName; final String brandName; final Set<String> icons;
@@ -37,7 +37,10 @@ public class ArtCraftBrandingTest {
             "io.github.artcraftandroid.wordcraft", "Microsoft Word", Set.of("word")),
         new App(patches.gridcraft.CustomBrandingPatchKt.getCustomBrandingPatch(),
             patches.gridcraft.CustomBrandingPatchKt.getGridCraftBrand(),
-            "io.github.artcraftandroid.gridcraft", "Microsoft Excel", Set.of("excel")));
+            "io.github.artcraftandroid.gridcraft", "Microsoft Excel", Set.of("excel")),
+        new App(patches.titanium.CustomBrandingPatchKt.getCustomBrandingPatch(),
+            patches.titanium.CustomBrandingPatchKt.getTitaniumBrand(),
+            "io.github.jqssun.helium", "Chrome", Set.of("chrome")));
 
     @Test public void brandingFollowsEveryRelease() {
         for (App app : APPS) {

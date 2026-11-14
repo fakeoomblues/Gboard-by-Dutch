@@ -18,7 +18,8 @@ private const val LAUNCHER = "android.intent.category.LAUNCHER"
 internal val anyArtCraftRelease = listOf(AppTarget(version = null))
 
 /**
- * One artcraft-android app (PdfCraft, LightCraft, WordCraft, GridCraft) and the brand it can wear.
+ * One open-source app (the artcraft-android PdfCraft, LightCraft, WordCraft and GridCraft, and
+ * Titanium Browser) and the brand it can wear.
  *
  * The icon styles are ordered as the Manager dropdown shows them: the app's original icon first and
  * the brand icon second, which is the default. Each non-original style ships its resources under
