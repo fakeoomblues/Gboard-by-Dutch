@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.90.0**
+**Patch bundle: 1.90.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -622,9 +622,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 1.48.2-2405 |
-| Fix PairIP startup | On | 1.48.2-2405 |
-| Hide ads | On | 1.48.2-2405 |
+| Disable tracking (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
+| Fix PairIP startup (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
+| Hide ads (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
 
 ## NPO Start Android TV
 
@@ -634,9 +634,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 1.48.2-2405 |
-| Fix PairIP startup | On | 1.48.2-2405 |
-| Hide ads | On | 1.48.2-2405 |
+| Disable tracking (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
+| Fix PairIP startup (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
+| Hide ads (Android & Android TV - v48.2-2405) | On | 1.48.2-2405 |
 
 ## NRC
 
@@ -922,9 +922,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 1.116.4 |
-| Hide ads | On | 1.116.4 |
-| Skip consent screens | On | 1.116.4 |
+| Disable tracking (Android - v116.4) | On | 1.116.4 |
+| Hide ads (Android - v116.4) | On | 1.116.4 |
+| Skip consent screens (Android - v116.4) | On | 1.116.4 |
 
 ## Videoland Android TV
 
@@ -934,9 +934,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 1.118.0 |
-| Hide ads | On | 1.118.0 |
-| Hide unavailable content | On | 1.118.0 |
+| Disable tracking (Android TV - v118) | On | 1.118.0 |
+| Hide ads (Android TV - v118) | On | 1.118.0 |
+| Hide unavailable content (Android TV - v118) | On | 1.118.0 |
 
 ## Voetbal International
 

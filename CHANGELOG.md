@@ -1,4 +1,24 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a2988e2cbd11ed2bd7f7c29a934c2926da82205c/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.90.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [a2988e2cbd11](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/a2988e2cbd11ed2bd7f7c29a934c2926da82205c). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.90.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.90.0...v1.90.1) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **NPO Start Android TV:** label Videoland and NPO Start patch titles with their platform ([a2988e2](https://gitlab.com/johninnld/nl-morphe-patches/commit/a2988e2cbd11ed2bd7f7c29a934c2926da82205c))
+* **NPO Start:** label Videoland and NPO Start patch titles with their platform ([a2988e2](https://gitlab.com/johninnld/nl-morphe-patches/commit/a2988e2cbd11ed2bd7f7c29a934c2926da82205c))
+* **Videoland Android TV:** label Videoland and NPO Start patch titles with their platform ([a2988e2](https://gitlab.com/johninnld/nl-morphe-patches/commit/a2988e2cbd11ed2bd7f7c29a934c2926da82205c))
+* **Videoland Android:** label Videoland and NPO Start patch titles with their platform ([a2988e2](https://gitlab.com/johninnld/nl-morphe-patches/commit/a2988e2cbd11ed2bd7f7c29a934c2926da82205c))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dcf8ab7b7e69524ce5f77b8c440b9edfc29894eb/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.90.0.**

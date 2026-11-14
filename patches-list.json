@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.90.0",
+  "version": "1.90.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -4334,65 +4334,6 @@
     },
     {
       "name": "Disable tracking",
-      "description": "Stops NPO Tag/Topspin/DAM, STER targeting, Bitmovin/Sentry collection, Cast diagnostics and Google telemetry collection/uploads, including queued batches. Preserves playback, authentication and functional Cast controls.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.uitzendinggemist",
-          "name": "NPO Start Android TV",
-          "description": "Patches for Android TV only; not the phone application.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
-          ],
-          "formFactor": "TV",
-          "targets": [
-            {
-              "version": "1.48.2-2405",
-              "versionCodes": {
-                "ARM64_V8A": 245497937,
-                "ARMEABI_V7A": 245497937,
-                "X86_64": 245497937,
-                "X86": 245497937
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "nl.uitzendinggemist",
-          "name": "NPO Start",
-          "description": "Patches for the Android phone and tablet application.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.48.2-2405",
-              "versionCodes": {
-                "ARM64_V8A": 240497937,
-                "ARMEABI_V7A": 240497937,
-                "X86_64": 240497937,
-                "X86": 240497937
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable tracking",
       "description": "Disables inventoried native/web collectors, analytics-only partner/heartbeat/profile launchers, queued Firebase exports and advertising IDs while retaining session refresh, account, media and notification state.",
       "default": true,
       "category": null,
@@ -4839,74 +4780,6 @@
     },
     {
       "name": "Disable tracking",
-      "description": "Disables inspected Tealium, Snowplow, NPAW, advertising ID, New Relic, Salesforce analytics and automatic Google/Facebook measurement, including queued CCT uploads. Preserves functional account, media and notification services.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.rtl.videoland.v2",
-          "name": "Videoland Android",
-          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.116.4",
-              "versionCodes": {
-                "ARM64_V8A": 1627,
-                "ARMEABI_V7A": 1627,
-                "X86_64": 1627,
-                "X86": 1627
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable tracking",
-      "description": "Disables inspected Tealium, Snowplow, NPAW, advertising-ID, New Relic and automatic Google/Facebook measurement paths, including queued CCT uploads. Functional services remain; full traffic acceptance is pending.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.rtl.videoland.v2",
-          "name": "Videoland Android TV",
-          "description": "Stable controls for the tested Videoland TV build, validated with Premium and free accounts. Hide ads, disable tracking and hide subscription-required catalogue content without changing account rights. The paid ad-supported plan has not been separately validated.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
-          ],
-          "formFactor": "TV",
-          "targets": [
-            {
-              "version": "1.118.0",
-              "versionCodes": {
-                "ARM64_V8A": 1630,
-                "ARMEABI_V7A": 1630,
-                "X86_64": 1630,
-                "X86": 1630
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable tracking",
       "description": "Suppresses native analytics collectors and queued uploads, advertising identifiers, ContentSquare/Heap WebView instrumentation and known web collector requests while preserving content, account and push.",
       "default": true,
       "category": null,
@@ -5035,6 +4908,133 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking (Android & Android TV - v48.2-2405)",
+      "description": "Stops NPO Tag/Topspin/DAM, STER targeting, Bitmovin/Sentry collection, Cast diagnostics and Google telemetry collection/uploads, including queued batches. Preserves playback, authentication and functional Cast controls.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.uitzendinggemist",
+          "name": "NPO Start Android TV",
+          "description": "Patches for Android TV only; not the phone application.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.48.2-2405",
+              "versionCodes": {
+                "ARM64_V8A": 245497937,
+                "ARMEABI_V7A": 245497937,
+                "X86_64": 245497937,
+                "X86": 245497937
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "nl.uitzendinggemist",
+          "name": "NPO Start",
+          "description": "Patches for the Android phone and tablet application.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.48.2-2405",
+              "versionCodes": {
+                "ARM64_V8A": 240497937,
+                "ARMEABI_V7A": 240497937,
+                "X86_64": 240497937,
+                "X86": 240497937
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking (Android - v116.4)",
+      "description": "Disables inspected Tealium, Snowplow, NPAW, advertising ID, New Relic, Salesforce analytics and automatic Google/Facebook measurement, including queued CCT uploads. Preserves functional account, media and notification services.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.rtl.videoland.v2",
+          "name": "Videoland Android",
+          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.116.4",
+              "versionCodes": {
+                "ARM64_V8A": 1627,
+                "ARMEABI_V7A": 1627,
+                "X86_64": 1627,
+                "X86": 1627
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable tracking (Android TV - v118)",
+      "description": "Disables inspected Tealium, Snowplow, NPAW, advertising-ID, New Relic and automatic Google/Facebook measurement paths, including queued CCT uploads. Functional services remain; full traffic acceptance is pending.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.rtl.videoland.v2",
+          "name": "Videoland Android TV",
+          "description": "Stable controls for the tested Videoland TV build, validated with Premium and free accounts. Hide ads, disable tracking and hide subscription-required catalogue content without changing account rights. The paid ad-supported plan has not been separately validated.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.118.0",
+              "versionCodes": {
+                "ARM64_V8A": 1630,
+                "ARMEABI_V7A": 1630,
+                "X86_64": 1630,
+                "X86": 1630
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -5681,7 +5681,7 @@
       "options": []
     },
     {
-      "name": "Fix PairIP startup",
+      "name": "Fix PairIP startup (Android & Android TV - v48.2-2405)",
       "description": "Restores build-specific startup data, lifecycle helpers, authentication and media/network callbacks. Preserves genuine token and entitlement checks and retains other protected native callbacks.",
       "default": true,
       "category": null,
@@ -7955,65 +7955,6 @@
     },
     {
       "name": "Hide ads",
-      "description": "Suppresses nullable preroll inputs and the optional IMA ad loader. Uses the player's existing content-only path while retaining real content, DRM, subtitles and player state.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.uitzendinggemist",
-          "name": "NPO Start Android TV",
-          "description": "Patches for Android TV only; not the phone application.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
-          ],
-          "formFactor": "TV",
-          "targets": [
-            {
-              "version": "1.48.2-2405",
-              "versionCodes": {
-                "ARM64_V8A": 245497937,
-                "ARMEABI_V7A": 245497937,
-                "X86_64": 245497937,
-                "X86": 245497937
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "nl.uitzendinggemist",
-          "name": "NPO Start",
-          "description": "Patches for the Android phone and tablet application.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.48.2-2405",
-              "versionCodes": {
-                "ARM64_V8A": 240497937,
-                "ARMEABI_V7A": 240497937,
-                "X86_64": 240497937,
-                "X86": 240497937
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Hide ads",
       "description": "Hides evidenced web ad slots and their reserved space, and removes wholly advertising replica pages while preserving mixed editorial pages and media.",
       "default": true,
       "category": null,
@@ -8392,74 +8333,6 @@
     },
     {
       "name": "Hide ads",
-      "description": "Suppresses inspected video, banner and pause-ad requests and uses a supplied live fallback when available. Ad-supported playback and stitched streams require runtime feedback.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.rtl.videoland.v2",
-          "name": "Videoland Android",
-          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.116.4",
-              "versionCodes": {
-                "ARM64_V8A": 1627,
-                "ARMEABI_V7A": 1627,
-                "X86_64": 1627,
-                "X86": 1627
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Hide ads",
-      "description": "Suppresses client video, banner and pause-ad requests. Uses the supplied live fallback when Yospace resource creation is omitted. Ad-supported playback and server-side coverage need feedback.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.rtl.videoland.v2",
-          "name": "Videoland Android TV",
-          "description": "Stable controls for the tested Videoland TV build, validated with Premium and free accounts. Hide ads, disable tracking and hide subscription-required catalogue content without changing account rights. The paid ad-supported plan has not been separately validated.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
-          ],
-          "formFactor": "TV",
-          "targets": [
-            {
-              "version": "1.118.0",
-              "versionCodes": {
-                "ARM64_V8A": 1630,
-                "ARMEABI_V7A": 1630,
-                "X86_64": 1630,
-                "X86": 1630
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Hide ads",
       "description": "Suppresses native ad requests, header bidding, video prerolls, body ad DTOs and exact article newsletter promotions; filters known web advertising resources.",
       "default": true,
       "category": null,
@@ -8622,6 +8495,133 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads (Android & Android TV - v48.2-2405)",
+      "description": "Suppresses nullable preroll inputs and the optional IMA ad loader. Uses the player's existing content-only path while retaining real content, DRM, subtitles and player state.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.uitzendinggemist",
+          "name": "NPO Start Android TV",
+          "description": "Patches for Android TV only; not the phone application.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.48.2-2405",
+              "versionCodes": {
+                "ARM64_V8A": 245497937,
+                "ARMEABI_V7A": 245497937,
+                "X86_64": 245497937,
+                "X86": 245497937
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "nl.uitzendinggemist",
+          "name": "NPO Start",
+          "description": "Patches for the Android phone and tablet application.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "7bfd84443c8e1fefc1b9cd8b5d0fcf18c922a2d4b778e2d109427d2cc418b1f2"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.48.2-2405",
+              "versionCodes": {
+                "ARM64_V8A": 240497937,
+                "ARMEABI_V7A": 240497937,
+                "X86_64": 240497937,
+                "X86": 240497937
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads (Android - v116.4)",
+      "description": "Suppresses inspected video, banner and pause-ad requests and uses a supplied live fallback when available. Ad-supported playback and stitched streams require runtime feedback.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.rtl.videoland.v2",
+          "name": "Videoland Android",
+          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.116.4",
+              "versionCodes": {
+                "ARM64_V8A": 1627,
+                "ARMEABI_V7A": 1627,
+                "X86_64": 1627,
+                "X86": 1627
+              },
+              "isExperimental": false,
+              "minSdk": 24,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads (Android TV - v118)",
+      "description": "Suppresses client video, banner and pause-ad requests. Uses the supplied live fallback when Yospace resource creation is omitted. Ad-supported playback and server-side coverage need feedback.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.rtl.videoland.v2",
+          "name": "Videoland Android TV",
+          "description": "Stable controls for the tested Videoland TV build, validated with Premium and free accounts. Hide ads, disable tracking and hide subscription-required catalogue content without changing account rights. The paid ad-supported plan has not been separately validated.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
+          ],
+          "formFactor": "TV",
+          "targets": [
+            {
+              "version": "1.118.0",
+              "versionCodes": {
+                "ARM64_V8A": 1630,
+                "ARMEABI_V7A": 1630,
+                "X86_64": 1630,
+                "X86": 1630
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]
@@ -9114,7 +9114,7 @@
       "options": []
     },
     {
-      "name": "Hide unavailable content",
+      "name": "Hide unavailable content (Android TV - v118)",
       "description": "Hides subscription-required catalogue entries and action buttons, and removes empty seasons. Preserves content available to the current account and other access checks.",
       "default": true,
       "category": null,
@@ -12824,40 +12824,6 @@
     },
     {
       "name": "Skip consent screens",
-      "description": "Includes tracking controls. Saves OneTrust's real Reject All choice after SDK readiness and skips automatic notification setup. Notifications default off; manual privacy and notification settings remain available.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "nl.rtl.videoland.v2",
-          "name": "Videoland Android",
-          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
-          "apkFileType": "APKS",
-          "appIconColor": null,
-          "signatures": [
-            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
-          ],
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.116.4",
-              "versionCodes": {
-                "ARM64_V8A": 1627,
-                "ARMEABI_V7A": 1627,
-                "X86_64": 1627,
-                "X86": 1627
-              },
-              "isExperimental": false,
-              "minSdk": 24,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Skip consent screens",
       "description": "Completes automatic consent refresh without opening the advertising choice screen or writing acceptance; automatically finishes first-launch login, welcome and notification setup with fresh subscriptions off; manual privacy, account and notification settings remain available.",
       "default": true,
       "category": null,
@@ -13020,6 +12986,40 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Skip consent screens (Android - v116.4)",
+      "description": "Includes tracking controls. Saves OneTrust's real Reject All choice after SDK readiness and skips automatic notification setup. Notifications default off; manual privacy and notification settings remain available.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "nl.rtl.videoland.v2",
+          "name": "Videoland Android",
+          "description": "Advertising and optional tracking controls for the inspected Videoland Android phone/tablet build. Runtime acceptance is recorded separately; subscription rights and catalogue availability are unchanged.",
+          "apkFileType": "APKS",
+          "appIconColor": null,
+          "signatures": [
+            "6c7782ca5cabbaaf0546c31b63b7a5ed112ef6a00a5422fa263c2516dee2c141"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.116.4",
+              "versionCodes": {
+                "ARM64_V8A": 1627,
+                "ARMEABI_V7A": 1627,
+                "X86_64": 1627,
+                "X86": 1627
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]

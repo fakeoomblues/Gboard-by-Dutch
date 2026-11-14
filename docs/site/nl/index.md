@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.90.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.90.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -994,7 +994,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="npo start nl.uitzendinggemist 1.48.2-2405 disable tracking fix pairip startup hide ads" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="npo start nl.uitzendinggemist 1.48.2-2405 disable tracking (android &amp; android tv - v48.2-2405) fix pairip startup (android &amp; android tv - v48.2-2405) hide ads (android &amp; android tv - v48.2-2405)" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [NPO Start](apps/npo-start.md)
@@ -1004,9 +1004,9 @@ hide:
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">1.48.2-2405</span></li>
-<li>Fix PairIP startup <span class="dap-app-card__target">1.48.2-2405</span></li>
-<li>Hide ads <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Disable tracking (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Fix PairIP startup (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Hide ads (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
 </ul>
 </details>
 
@@ -1014,7 +1014,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="npo start android tv nl.uitzendinggemist 1.48.2-2405 disable tracking fix pairip startup hide ads" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="npo start android tv nl.uitzendinggemist 1.48.2-2405 disable tracking (android &amp; android tv - v48.2-2405) fix pairip startup (android &amp; android tv - v48.2-2405) hide ads (android &amp; android tv - v48.2-2405)" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [NPO Start Android TV](apps/npo-start-android-tv.md)
@@ -1024,9 +1024,9 @@ hide:
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">1.48.2-2405</span></li>
-<li>Fix PairIP startup <span class="dap-app-card__target">1.48.2-2405</span></li>
-<li>Hide ads <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Disable tracking (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Fix PairIP startup (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
+<li>Hide ads (Android &amp; Android TV - v48.2-2405) <span class="dap-app-card__target">1.48.2-2405</span></li>
 </ul>
 </details>
 
@@ -1486,7 +1486,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="videoland android nl.rtl.videoland.v2 1.116.4 disable tracking hide ads skip consent screens" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="videoland android nl.rtl.videoland.v2 1.116.4 disable tracking (android - v116.4) hide ads (android - v116.4) skip consent screens (android - v116.4)" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Videoland Android](apps/videoland.md)
@@ -1496,9 +1496,9 @@ hide:
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">1.116.4</span></li>
-<li>Hide ads <span class="dap-app-card__target">1.116.4</span></li>
-<li>Skip consent screens <span class="dap-app-card__target">1.116.4</span></li>
+<li>Disable tracking (Android - v116.4) <span class="dap-app-card__target">1.116.4</span></li>
+<li>Hide ads (Android - v116.4) <span class="dap-app-card__target">1.116.4</span></li>
+<li>Skip consent screens (Android - v116.4) <span class="dap-app-card__target">1.116.4</span></li>
 </ul>
 </details>
 
@@ -1506,7 +1506,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="videoland android tv nl.rtl.videoland.v2 1.118.0 disable tracking hide ads hide unavailable content" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="videoland android tv nl.rtl.videoland.v2 1.118.0 disable tracking (android tv - v118) hide ads (android tv - v118) hide unavailable content (android tv - v118)" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Videoland Android TV](apps/videoland-android-tv.md)
@@ -1516,9 +1516,9 @@ hide:
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">1.118.0</span></li>
-<li>Hide ads <span class="dap-app-card__target">1.118.0</span></li>
-<li>Hide unavailable content <span class="dap-app-card__target">1.118.0</span></li>
+<li>Disable tracking (Android TV - v118) <span class="dap-app-card__target">1.118.0</span></li>
+<li>Hide ads (Android TV - v118) <span class="dap-app-card__target">1.118.0</span></li>
+<li>Hide unavailable content (Android TV - v118) <span class="dap-app-card__target">1.118.0</span></li>
 </ul>
 </details>
 
