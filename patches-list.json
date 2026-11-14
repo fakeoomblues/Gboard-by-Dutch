@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.87.1",
+  "version": "1.87.2",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -576,7 +576,7 @@
           "packageName": "com.google.android.apps.messaging",
           "name": "Google Messages",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": "#3186FF",
           "signatures": [
             "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
@@ -585,9 +585,12 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "version": "messages.android_20261106_00_RC01.phone_dynamic",
               "versionCodes": {
-                "ARM64_V8A": 327677900
+                "ARM64_V8A": 328483063,
+                "ARMEABI_V7A": 328483063,
+                "X86_64": 328483063,
+                "X86": 328483063
               },
               "isExperimental": true,
               "minSdk": 32,
@@ -2145,7 +2148,7 @@
           "packageName": "com.google.android.apps.messaging",
           "name": "Google Messages",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": "#3186FF",
           "signatures": [
             "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
@@ -2154,9 +2157,12 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "version": "messages.android_20261106_00_RC01.phone_dynamic",
               "versionCodes": {
-                "ARM64_V8A": 327677900
+                "ARM64_V8A": 328483063,
+                "ARMEABI_V7A": 328483063,
+                "X86_64": 328483063,
+                "X86": 328483063
               },
               "isExperimental": true,
               "minSdk": 32,
@@ -2601,7 +2607,7 @@
           "packageName": "com.google.android.apps.messaging",
           "name": "Google Messages",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": "#3186FF",
           "signatures": [
             "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
@@ -2610,9 +2616,12 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "version": "messages.android_20261106_00_RC01.phone_dynamic",
               "versionCodes": {
-                "ARM64_V8A": 327677900
+                "ARM64_V8A": 328483063,
+                "ARMEABI_V7A": 328483063,
+                "X86_64": 328483063,
+                "X86": 328483063
               },
               "isExperimental": true,
               "minSdk": 32,
@@ -3431,7 +3440,7 @@
           "packageName": "com.google.android.apps.messaging",
           "name": "Google Messages",
           "description": null,
-          "apkFileType": "APKS",
+          "apkFileType": "APKM",
           "appIconColor": "#3186FF",
           "signatures": [
             "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
@@ -3440,9 +3449,12 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "version": "messages.android_20261106_00_RC01.phone_dynamic",
               "versionCodes": {
-                "ARM64_V8A": 327677900
+                "ARM64_V8A": 328483063,
+                "ARMEABI_V7A": 328483063,
+                "X86_64": 328483063,
+                "X86": 328483063
               },
               "isExperimental": true,
               "minSdk": 32,

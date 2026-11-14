@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9ac7fa8d215f2b563ff34c32118d8553ce187941/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.87.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9ac7fa8d215f](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9ac7fa8d215f2b563ff34c32118d8553ce187941). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.87.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.1...v1.87.2) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **Google Messages:** target the regular phone build instead of the Samsung build ([9ac7fa8](https://gitlab.com/johninnld/nl-morphe-patches/commit/9ac7fa8d215f2b563ff34c32118d8553ce187941))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8acb2b4c1a8a65d85409f729cc2aedf0970ae6fc/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.87.1.**

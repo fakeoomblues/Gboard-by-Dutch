@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.87.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.87.1)** · 81 apps · 379 patches
+**Patch bundle [v1.87.2](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.87.2)** · 81 apps · 379 patches
 
 ### Weather
 
@@ -142,7 +142,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Fennec](docs/site/en/apps/fennec.md) | See guide | Any | APK | 1 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 25 |
-| [Google Messages](docs/site/en/apps/messages.md) | See guide | messages.android_20261030_00_RC00.phone_samsung_dynamic | APKS | 4 |
+| [Google Messages](docs/site/en/apps/messages.md) | See guide | messages.android_20261106_00_RC01.phone_dynamic | APKM | 4 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
 | [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.87.1**
+**Patch bundle: 1.87.2**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -419,10 +419,10 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Allow any Android Auto host | Off | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Change package name | Off | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Custom branding | Off | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Disable screen-share warning | Off | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Allow any Android Auto host | Off | messages.android_20261106_00_RC01.phone_dynamic |
+| Change package name | Off | messages.android_20261106_00_RC01.phone_dynamic |
+| Custom branding | Off | messages.android_20261106_00_RC01.phone_dynamic |
+| Disable screen-share warning | Off | messages.android_20261106_00_RC01.phone_dynamic |
 
 ## GridCraft
 
