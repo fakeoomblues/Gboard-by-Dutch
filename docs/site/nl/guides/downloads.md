@@ -57,7 +57,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Parool](../apps/parool.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/mezktjli0rmt) |
 | [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
 | [AT4K Launcher](../apps/at4k.md) | 1.2 / 19 | [APK](https://buzzheavier.com/qalqg672rt8k) |
-| [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | [APK](https://buzzheavier.com/brg76oa9losi) |
+| [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | [GitHub releases](https://github.com/spocky/miproja1/releases) |
 | [RainViewer](../apps/rainviewer.md) | 8.4.1 / 44084 | [APKM](https://buzzheavier.com/ai8s8yfupvev) |
 | [Rollerbank](../apps/rollerbank.md) | 4.5.3.1 / 4531 | [APKS](https://buzzheavier.com/k9v1po19ewp9) |
 | [RTL Nieuws](../apps/rtl-nieuws.md) | 12.7.1 / 1558 | [APKS](https://buzzheavier.com/lvklis48sf8r) |
@@ -84,6 +84,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Myspoti](../apps/myspoti.md) | 2.4.1 / 1175 | [APK](#local-original-inputs) |
 | [Orpheon](../apps/orpheon.md) | 1.0.0-beta.1 / 1173 | [APK](#local-original-inputs) |
 | [SoundCloud](../apps/soundcloud.md) | 2026.11.02-release / 379060 | [APKM](#local-original-inputs) |
+| [Spotify](../apps/spotify.md) | 9.2.0.2053 / 148387875 | [APK](#local-original-inputs) |
 | [Gboard](../apps/gboard.md) | 18.6.3.1002251336-release-arm64-v8a / 176071766 | [APK](#local-original-inputs) |
 | [Waze](../apps/waze.md) | 5.26.90.901 / 1030746 | [APKM](https://buzzheavier.com/cpwy7pirf997) |
 | [Weeronline](../apps/weeronline.md) | 3.61.0 / 2030006811 | [APKS](https://buzzheavier.com/mj9n1s9e3ihs) |

@@ -2,7 +2,7 @@
 
 **App version:** 4.73 · **Build:** 98 · **Original file:** APK
 
-[Download original app](https://buzzheavier.com/brg76oa9losi){ .md-button .md-button--primary }
+[Download original app](https://github.com/spocky/miproja1/releases){ .md-button .md-button--primary }
 
 ## Patches
 
@@ -17,6 +17,6 @@ The control covers the supported paths in Firebase Analytics, Firebase Performan
 
 ## Before using
 
-Use the publisher-signed 4.73 build 98 APK. Firebase installation registration and crash reporting may be unavailable. These patches have build and output checks; launcher operation has not been tested on a device or emulator.
+Use the publisher-signed 4.73 build 98 APK from the official [spocky/miproja1](https://github.com/spocky/miproja1) GitHub releases. That repository is the only supported source; file mirrors are not supported. Firebase installation registration and crash reporting may be unavailable. These patches have build and output checks; launcher operation has not been tested on a device or emulator.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)
