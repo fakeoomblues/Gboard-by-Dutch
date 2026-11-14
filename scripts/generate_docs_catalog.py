@@ -18,6 +18,7 @@ APP_PAGES = {
     'io.homeassistant.companion.android': ('homeassistant', 'other'),
     'com.tuya.smart': ('tuya', 'other'),
     'com.mcu.reolink': ('reolink', 'other'),
+    'com.google.android.apps.messaging': ('messages', 'other'),
     'io.github.artcraftandroid.pdfcraft': ('pdfcraft', 'other'),
     'io.github.artcraftandroid.lightcraft': ('lightcraft', 'other'),
     'io.github.artcraftandroid.wordcraft': ('wordcraft', 'other'),
