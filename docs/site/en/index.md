@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patch bundle: 1.88.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.89.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -169,17 +169,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="at4k launcher (tv) com.overdevs.at4k 1.2 unlock premium" markdown>
+<article class="dap-app-card" data-category="other" data-search="at4k launcher (tv) com.overdevs.at4k 1.3 unlock premium" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [AT4K Launcher (TV)](apps/at4k.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">1.2</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.3</span></p>
 <p class="dap-app-card__package">com.overdevs.at4k</p>
 <details class="dap-app-card__patches">
 <summary>1 patch</summary>
 <ul>
-<li>Unlock Premium <span class="dap-app-card__target">1.2</span></li>
+<li>Unlock Premium <span class="dap-app-card__target">1.3</span></li>
 </ul>
 </details>
 
@@ -664,27 +664,6 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="google messages com.google.android.apps.messaging messages.android_20261106_00_rc01.phone_dynamic allow any android auto host change package name custom branding disable screen-share warning" markdown>
-<p class="dap-app-card__category">Other</p>
-
-### [Google Messages](apps/messages.md)
-
-<p class="dap-app-card__version">App versions: <span class="dap-data">messages.android_20261106_00_RC01.phone_dynamic</span></p>
-<p class="dap-app-card__package">com.google.android.apps.messaging</p>
-<details class="dap-app-card__patches">
-<summary>4 patches</summary>
-<ul>
-<li>Allow any Android Auto host <span class="dap-app-card__target">messages.android_20261106_00_RC01.phone_dynamic · default off</span></li>
-<li>Change package name <span class="dap-app-card__target">messages.android_20261106_00_RC01.phone_dynamic · default off</span></li>
-<li>Custom branding <span class="dap-app-card__target">messages.android_20261106_00_RC01.phone_dynamic · default off</span></li>
-<li>Disable screen-share warning <span class="dap-app-card__target">messages.android_20261106_00_RC01.phone_dynamic · default off</span></li>
-</ul>
-</details>
-
-[Guide and downloads](apps/messages.md){ .dap-app-card__link }
-
-</article>
-
 <article class="dap-app-card" data-category="other" data-search="gridcraft io.github.artcraftandroid.gridcraft any custom branding" markdown>
 <p class="dap-app-card__category">Other</p>
 
@@ -932,17 +911,17 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.0 individual wuplay catalog rows" markdown>
+<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.1 individual wuplay catalog rows" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Monet Android TV](apps/monet.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">1.1.0</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.1.1</span></p>
 <p class="dap-app-card__package">com.klevico.monet</p>
 <details class="dap-app-card__patches">
 <summary>1 patch</summary>
 <ul>
-<li>Individual Wuplay catalog rows <span class="dap-app-card__target">1.1.0 · default off</span></li>
+<li>Individual Wuplay catalog rows <span class="dap-app-card__target">1.1.1 · default off</span></li>
 </ul>
 </details>
 

@@ -1,4 +1,26 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3fee928d39731551a2bd5d9c65a4dbd28a0987f3/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.89.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [3fee928d3973](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/3fee928d39731551a2bd5d9c65a4dbd28a0987f3). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.89.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.88.0...v1.89.0) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **General:** remove the Google Messages patches ([806e94f](https://gitlab.com/johninnld/nl-morphe-patches/commit/806e94fa6f5c8e72eb859b65ed07dad13c88df04))
+
+### ✨ New Features
+
+* **AT4K Launcher:** support latest 1.3 and 1.1.1 originals ([1ae3be9](https://gitlab.com/johninnld/nl-morphe-patches/commit/1ae3be9c43fc50e6daf03efef1213ea9b667185d))
+* **Monet Android TV:** support latest 1.3 and 1.1.1 originals ([1ae3be9](https://gitlab.com/johninnld/nl-morphe-patches/commit/1ae3be9c43fc50e6daf03efef1213ea9b667185d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0e5fbd86e19c9417a3d322e399939d52fb9b1f73/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.88.0.**

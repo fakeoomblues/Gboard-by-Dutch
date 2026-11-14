@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.88.0**
+**Patchbundel: 1.89.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -93,7 +93,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Unlock Premium | Aan | 1.2 |
+| Unlock Premium | Aan | 1.3 |
 
 ## Beach Buggy Racing
 
@@ -412,19 +412,6 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | Aan | 26.44.06.1006895251 |
 
-## Google Messages
-
-[Wat veranderen de patches?](../apps/messages.md)
-
-`com.google.android.apps.messaging`
-
-| Patch | Standaard | App-versies |
-| --- | --- | --- |
-| Allow any Android Auto host | Uit | messages.android_20261106_00_RC01.phone_dynamic |
-| Change package name | Uit | messages.android_20261106_00_RC01.phone_dynamic |
-| Custom branding | Uit | messages.android_20261106_00_RC01.phone_dynamic |
-| Disable screen-share warning | Uit | messages.android_20261106_00_RC01.phone_dynamic |
-
 ## GridCraft
 
 [Wat veranderen de patches?](../apps/gridcraft.md)
@@ -584,7 +571,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Individual Wuplay catalog rows | Uit | 1.1.0 |
+| Individual Wuplay catalog rows | Uit | 1.1.1 |
 
 ## Myspoti
 

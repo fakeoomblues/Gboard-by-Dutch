@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.88.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.88.0)** · 81 apps · 380 patches
+**Patch bundle [v1.89.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.89.0)** · 80 apps · 376 patches
 
 ### Weather
 
@@ -138,16 +138,15 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [2dehands](docs/site/en/apps/2dehands.md) | Ads · Tracking · Prompts | 16.19.0 | XAPK | 4 |
 | [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 10 |
-| [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
+| [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.3 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Fennec](docs/site/en/apps/fennec.md) | See guide | Any | APK | 1 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 26 |
-| [Google Messages](docs/site/en/apps/messages.md) | See guide | messages.android_20261106_00_RC01.phone_dynamic | APKM | 4 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
 | [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
-| [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.0 | APK | 1 |
+| [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.1 | APK | 1 |
 | [PdfCraft](docs/site/en/apps/pdfcraft.md) | See guide | Any | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 | [Reolink](docs/site/en/apps/reolink.md) | See guide | 4.64.3.20261023 | APKM | 4 |

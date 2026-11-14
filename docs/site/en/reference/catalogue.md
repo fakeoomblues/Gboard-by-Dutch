@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.88.0**
+**Patch bundle: 1.89.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -93,7 +93,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Unlock Premium | On | 1.2 |
+| Unlock Premium | On | 1.3 |
 
 ## Beach Buggy Racing
 
@@ -412,19 +412,6 @@ Check the supported app versions and default setting for each patch. The app pag
 | Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | On | 26.44.06.1006895251 |
 
-## Google Messages
-
-[What do the patches change?](../apps/messages.md)
-
-`com.google.android.apps.messaging`
-
-| Patch | Default | App versions |
-| --- | --- | --- |
-| Allow any Android Auto host | Off | messages.android_20261106_00_RC01.phone_dynamic |
-| Change package name | Off | messages.android_20261106_00_RC01.phone_dynamic |
-| Custom branding | Off | messages.android_20261106_00_RC01.phone_dynamic |
-| Disable screen-share warning | Off | messages.android_20261106_00_RC01.phone_dynamic |
-
 ## GridCraft
 
 [What do the patches change?](../apps/gridcraft.md)
@@ -584,7 +571,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Individual Wuplay catalog rows | Off | 1.1.0 |
+| Individual Wuplay catalog rows | Off | 1.1.1 |
 
 ## Myspoti
 
