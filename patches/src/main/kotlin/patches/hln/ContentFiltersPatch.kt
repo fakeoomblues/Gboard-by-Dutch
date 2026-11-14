@@ -546,7 +546,7 @@ internal val contentFilters = bytecodePatch {
             invoke-static/range {p4 .. p4}, $FILTER->morpheFilter(Ljava/util/List;)Ljava/util/List;
             move-result-object p4
         """)
-        change("${MODEL}RegionPromotionTeaser;", "<init>(Ldee;Ljava/util/List;Lcom/popular/core/model/data/Title;Lcom/popular/core/model/data/Button;)V", """
+        change("${MODEL}RegionPromotionTeaser;", "<init>(Ljie;Ljava/util/List;Lcom/popular/core/model/data/Title;Lcom/popular/core/model/data/Button;)V", """
             invoke-static/range {p2 .. p2}, $FILTER->morpheFilter(Ljava/util/List;)Ljava/util/List;
             move-result-object p2
         """)

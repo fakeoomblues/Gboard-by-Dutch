@@ -16,7 +16,7 @@ val hideEmptyListeningCarousel = bytecodePatch(
     compatibleWith(hln)
     dependsOn(originalInput)
     execute {
-        val renderer = exact("Ls09;", "k(Lix;IZLxe7;ZLtg3;I)V").method
+        val renderer = exact("Lqbi;", "i(Lbx;IZLcf7;ZLjg3;I)V").method
         check(renderer.implementation!!.registerCount == 27) {
             "HLN Continue Listening renderer register layout changed"
         }

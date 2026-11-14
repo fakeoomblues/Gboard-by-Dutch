@@ -17,51 +17,51 @@ val disableTracking = bytecodePatch(name = "Disable tracking", description = "Di
     compatibleWith(hln)
     dependsOn(originalInput, hideAds, trackingResources, suppressMarketingRequests)
     execute {
-        change("Lqx2;", "a()V", STOP)
+        change("Lbx2;", "a()V", STOP)
         change("Lcom/kubusapp/analytics/cim/CimEventTransmitter;", "execute(Ljava/util/Map;)V", STOP)
         // Amalia returns its actual Success<Unit> wrapper, consumed as Ll10.
-        val success = exact("Lk10;", "<init>(Ljava/lang/Object;)V").classDef
-        check("Ll10;" in success.interfaces) { "HLN Amalia completion result type changed" }
-        change("Lxz8;", "a(Lst;Lbt3;)Ljava/lang/Object;", """
-            new-instance v0, Lk10;
+        val success = exact("Lul7;", "<init>(Ljava/lang/Object;)V").classDef
+        check("Lvl7;" in success.interfaces) { "HLN Amalia completion result type changed" }
+        change("Lkce;", "a(Lx6e;Lws3;)Ljava/lang/Object;", """
+            new-instance v0, Lul7;
             sget-object v1, Llbi;->a:Llbi;
-            invoke-direct {v0, v1}, Lk10;-><init>(Ljava/lang/Object;)V
+            invoke-direct {v0, v1}, Lul7;-><init>(Ljava/lang/Object;)V
             return-object v0
         """)
         change("Lcom/kubusapp/analytics/ComscoreEventTransmitter;", "execute(Ljava/util/Map;)V", STOP)
-        change("Lj73;", "a(Ljava/lang/String;)V", STOP)
-        change("Lzvh;", "b(Lbe/persgroep/tracking/base/model/TrackingEvent;)V", STOP)
-        change("Lfzh;", "c(Lhuh;Lfo0;)V", STOP)
-        change("Lfzh;", "d(Lkkc;Lfo0;)V", STOP)
-        change("Lzbh;", "b(Lq3b;Ljava/lang/String;Ljava/lang/String;)V", STOP)
-        change("Lfef;", "run()V", STOP)
-        change("Ly64;", "a()V", STOP)
-        change("Lhm0;", "e(Ljava/lang/String;Ljava/lang/Double;Landroid/os/Bundle;ZLjava/util/UUID;Lh4c;)V", STOP)
-        change("Lt9;", "c(Landroid/app/Application;Ljava/lang/String;)V", STOP)
+        change("Ls63;", "a(Ljava/lang/String;)V", STOP)
+        change("Lh1i;", "b(Lbe/persgroep/tracking/base/model/TrackingEvent;)V", STOP)
+        change("Lg4i;", "c(Lhzh;Lpo0;)V", STOP)
+        change("Lg4i;", "d(Lymc;Lpo0;)V", STOP)
+        change("Lvhh;", "b(Lw5b;Ljava/lang/String;Ljava/lang/String;)V", STOP)
+        change("Leif;", "run()V", STOP)
+        change("Lu64;", "a()V", STOP)
+        change("Lim0;", "e(Ljava/lang/String;Ljava/lang/Double;Landroid/os/Bundle;ZLjava/util/UUID;Lo6c;)V", STOP)
+        change("Lm9;", "c(Landroid/app/Application;Ljava/lang/String;)V", STOP)
         change("Lcom/kubusapp/webview/TrackingEventJsListener;", "trackEvent(Ljava/lang/String;)V", STOP)
-        change("La59;", "sendAnalytics(Ljava/lang/String;)V", STOP)
-        change("Lafi;", "c(Ljava/lang/String;)V", STOP)
-        change("Lafi;", "d(Ljava/util/Map;)V", STOP)
-        change("Lml0;", "c(Lqp6;)V", STOP)
-        change("Lml0;", "d(Lqp6;)V", STOP)
+        change("Ld59;", "sendAnalytics(Ljava/lang/String;)V", STOP)
+        change("Lvii;", "c(Ljava/lang/String;)V", STOP)
+        change("Lvii;", "d(Ljava/util/Map;)V", STOP)
+        change("Lnl0;", "c(Lmp6;)V", STOP)
+        change("Lnl0;", "d(Lmp6;)V", STOP)
         change("Lbe/dpgmedia/privacy/privacygatesdk/client/metrics/MetricsClient;", "sendErrorMetric\$privacygatesdk_release(Lbe/dpgmedia/privacy/privacygatesdk/client/metrics/ErrorMessage;Lbe/dpgmedia/privacy/privacygatesdk/client/metrics/ErrorType;Ljava/lang/String;)V", STOP)
         change("Lbe/persgroep/advertising/userprofile/IdManager;", "setExternalUserIds(Ljava/util/Map;)V", STOP)
-        change("Li94;", "o()Z", FALSE)
+        change("Lh94;", "o()Z", FALSE)
         change("Lbe/persgroep/tracking/config/FeatureFlags;", "getSnowplowEnabled()Z", FALSE)
-        change("Lixj;", "K2()Z", TRUE)
-        change("Lw64;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
-        change("Lu0d;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
+        change("Ly4k;", "H3()Z", TRUE)
+        change("Ls64;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
+        change("Ll3d;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
         change("Lbe/persgroep/advertising/userprofile/IdManager\$1;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
         change("Lbe/persgroep/advertising/userprofile/IdManager\$fetchUserIds\$1;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", UNIT)
-        change("Lde4;", "N(Landroid/content/Intent;)V", STOP)
-        change("Lde4;", "O(Ljava/lang/String;Landroid/os/Bundle;)V", STOP)
-        change("Lde4;", "U(Landroid/content/Intent;)Z", FALSE)
-        change("Lde4;", "w()Z", FALSE)
+        changeIfPresent("Lj94;", "N(Landroid/content/Intent;)V", STOP)
+        changeIfPresent("Lj94;", "O(Ljava/lang/String;Landroid/os/Bundle;)V", STOP)
+        changeIfPresent("Lj94;", "U(Landroid/content/Intent;)Z", FALSE)
+        changeIfPresent("Lj94;", "w()Z", FALSE)
         disableBooleanWrites(VIDEO, "l", 3)
         suppressCatsureUploads()
         disableFiamConsumers()
         disableIdentifierAcquisition()
-        val usability = exact("Lafi;", "a(Lbt3;)Ljava/lang/Object;").method
+        val usability = exact("Lvii;", "a(Lws3;)Ljava/lang/Object;").method
         val sends = usability.instructions.withIndex().filter { (_, insn) ->
             val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
             ref?.definingClass == "Lcom/usabilla/sdk/ubform/Usabilla;" && ref.name == "sendEvent"
@@ -74,24 +74,24 @@ val disableTracking = bytecodePatch(name = "Disable tracking", description = "Di
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 private fun disableFiamConsumers() {
     val cls = exact(FILTER, "morpheAds()Z").classDef
-    cls.methods.add(helper("morpheSuppressFiam", "V", listOf("Lff6;", "Z"), 0, """
+    cls.methods.add(helper("morpheSuppressFiam", "V", listOf("Lze6;", "Z"), 0, """
         if-eqz p0, :done
-        iput-boolean p1, p0, Lff6;->c:Z
+        iput-boolean p1, p0, Lze6;->c:Z
         :done
         return-void
     """))
-    val sites = listOf("Lcom/kubusapp/MainApplication;" to "onCreate()V", "Lcom/kubusapp/MainActivity;" to "onCreate(Landroid/os/Bundle;)V", "Ldwh;" to "b(Lbt3;)Ljava/lang/Object;")
+    val sites = listOf("Lcom/kubusapp/MainApplication;" to "onCreate()V", "Lcom/kubusapp/MainActivity;" to "onCreate(Landroid/os/Bundle;)V", "Ldwh;" to "b(Lws3;)Ljava/lang/Object;")
     sites.forEach { (owner, sig) ->
-        val method = exact(owner, sig).method
+        val method = optionalExact(owner, sig) ?: return@forEach
         val code = method.instructions.toList()
         val casts = code.withIndex().filter { (_, insn) -> insn.opcode == Opcode.CHECK_CAST &&
-            ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type == "Lff6;" }
+            ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type == "Lze6;" }
         check(casts.size == 1) { "HLN optional FIAM consumer changed: $owner" }
         val cast = casts.single()
         val receiver = (cast.value as OneRegisterInstruction).registerA
         val end = (cast.index + 1 until code.size).firstOrNull { index ->
             val ref = (code[index] as? ReferenceInstruction)?.reference as? FieldReference
-            ref?.definingClass == "Lff6;" && ref.name == "c" && code[index].opcode == Opcode.IPUT_BOOLEAN
+            ref?.definingClass == "Lze6;" && ref.name == "c" && code[index].opcode == Opcode.IPUT_BOOLEAN
         } ?: error("HLN FIAM suppression assignment missing")
         check(end - cast.index in 2..4)
         val checks = (cast.index + 1 until end).filter { index ->
@@ -102,7 +102,7 @@ private fun disableFiamConsumers() {
         val field = code[end] as TwoRegisterInstruction
         check(field.registerB == receiver)
         method.replaceInstruction(checks.single(), "nop")
-        method.replaceInstruction(end, "invoke-static {v$receiver, v${field.registerA}}, $FILTER->morpheSuppressFiam(Lff6;Z)V")
+        method.replaceInstruction(end, "invoke-static {v$receiver, v${field.registerA}}, $FILTER->morpheSuppressFiam(Lze6;Z)V")
     }
 }
 
@@ -117,7 +117,7 @@ private fun disableIdentifierAcquisition() {
     }
     check(base.size == 1)
     appSet.addInstructions(base.single().index + 1, STOP)
-    val piano = exact("Lgk;", "<init>(Landroid/content/Context;Ljava/util/concurrent/ScheduledExecutorService;)V").method
+    val piano = exact("Lak;", "<init>(Landroid/content/Context;Ljava/util/concurrent/ScheduledExecutorService;)V").method
     val schedules = piano.instructions.withIndex().filter { (_, insn) ->
         val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
         ref?.definingClass == "Ljava/util/concurrent/ScheduledExecutorService;" && ref.name == "schedule"
@@ -145,5 +145,5 @@ private fun disableIdentifierAcquisition() {
         change(idManager, sig, "sget-object v0, Lmt5;->a:Lmt5;\nreturn-object v0")
     }
     // Kotlin inline Result<String> represents success by the actual raw String.
-    change(idManager, "fetch-IoAF18A(Lzs3;)Ljava/lang/Object;", "const-string v0, \"\"\nreturn-object v0")
+    change(idManager, "fetch-IoAF18A(Lus3;)Ljava/lang/Object;", "const-string v0, \"\"\nreturn-object v0")
 }

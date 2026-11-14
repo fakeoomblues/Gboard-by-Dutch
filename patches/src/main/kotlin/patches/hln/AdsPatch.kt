@@ -40,14 +40,14 @@ val hideAds = bytecodePatch(name = "Hide ads", description = "Filters commercial
     dependsOn(originalInput, contentFilters, suppressCompanionCampaigns)
     execute {
         change(FILTER, "morpheAds()Z", TRUE)
-        change("Li96;", "<init>(ZZZZZZ)V", "const/4 p1, 0x0\nconst/4 p2, 0x0\nconst/4 p3, 0x0\nconst/4 p4, 0x0")
+        change("Ld96;", "<init>(ZZZZZZ)V", "const/4 p1, 0x0\nconst/4 p2, 0x0\nconst/4 p3, 0x0\nconst/4 p4, 0x0")
         disableBooleanWrites(VIDEO, "k", 2)
-        disableBooleanWrites("Lbj7;", "e", 1)
-        disableBooleanWrites("Lbwg;", "l", 1)
+        disableBooleanWrites("Lhj7;", "e", 1)
+        disableBooleanWrites("Ly0h;", "l", 1)
         // Transition the existing game ad StateFlow to its supported error
         // state. Original collectors deliver RewardRejected and resume playing.
-        val game = exact("Lo37;", "<init>(Lcom/google/ads/interactivemedia/v3/api/AdsLoader;Lcom/google/ads/interactivemedia/v3/api/AdsRequest;Lcom/google/ads/interactivemedia/v3/api/AdsRenderingSettings;Lcb7;)V").method
-        exact("Lo37;", "b(Ljava/lang/String;)V")
+        val game = exact("Lr37;", "<init>(Lcom/google/ads/interactivemedia/v3/api/AdsLoader;Lcom/google/ads/interactivemedia/v3/api/AdsRequest;Lcom/google/ads/interactivemedia/v3/api/AdsRenderingSettings;Ljb7;)V").method
+        exact("Lr37;", "b(Ljava/lang/String;)V")
         val requests = game.instructions.withIndex().filter { (_, instruction) ->
             val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
             ref?.definingClass == "Lcom/google/ads/interactivemedia/v3/api/AdsLoader;" && ref.name == "requestAds"
@@ -55,6 +55,6 @@ val hideAds = bytecodePatch(name = "Hide ads", description = "Filters commercial
         check(requests.size == 1) { "HLN game ad request boundary changed" }
         val index = requests.single().index
         game.replaceInstruction(index, "const-string p1, \"disabled\"")
-        game.addInstructions(index + 1, "invoke-virtual {p0, p1}, Lo37;->b(Ljava/lang/String;)V")
+        game.addInstructions(index + 1, "invoke-virtual {p0, p1}, Lr37;->b(Ljava/lang/String;)V")
     }
 }

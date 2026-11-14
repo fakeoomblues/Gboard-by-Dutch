@@ -8,8 +8,8 @@ val hidePremiumBanner = bytecodePatch(name = "Hide Premium banner", description 
     dependsOn(originalInput, emptyMarketingTemplates, contentFilters)
     execute {
         change(FILTER, "morphePremium()Z", TRUE)
-        change("Lsgc;", "j(Lnv0;ZLtg3;I)V", STOP)
-        change("Lk4c;", "z(Lk8b;FLtg3;II)V", STOP)
-        change("Lfyb;", "o(Lk8b;Ljava/lang/String;Lpc2;Lij5;Ltg3;II)V", STOP)
+        change("Luki;", "i(Lkv0;ZLjg3;I)V", STOP)
+        change("Lx8l;", "n(Lqab;FLjg3;II)V", STOP)
+        change("Li8l;", "l(Lahc;Ljava/lang/String;Lx07;Lqab;Ljg3;II)V", STOP)
     }
 }

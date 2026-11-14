@@ -18,37 +18,37 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
  * publication/persistence and the shared device/radio/auth providers intact. */
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 internal fun suppressCatsureUploads() {
-    change("Lxr2;", "a(Lro;Ljava/lang/String;)V", STOP)
-    val commit = exact("Ldd1;", "a(Lb54;)V").method
+    change("Ljr2;", "a(Lko;Ljava/lang/String;)V", STOP)
+    val commit = exact("Ljc1;", "a(Lx44;)V").method
     val code = commit.instructions.toList()
     val publications = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        instruction.opcode == Opcode.INVOKE_VIRTUAL && ref?.definingClass == "Lq3g;" && ref.name == "m" &&
+        instruction.opcode == Opcode.INVOKE_VIRTUAL && ref?.definingClass == "Ll8g;" && ref.name == "m" &&
             ref.parameterTypes == listOf("Ljava/lang/Object;", "Ljava/lang/Object;") && ref.returnType == "Z"
     }
     val persistence = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? FieldReference
-        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Lb54;" &&
+        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Lx44;" &&
             ref.name == "e" && ref.type == "Ljava/util/ArrayList;"
     }
     val deviceReads = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? FieldReference
-        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Lqs;" && ref.name == "b" && ref.type == "Lwlg;"
+        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Ljs;" && ref.name == "b" && ref.type == "Luqg;"
     }
     val currentReads = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? FieldReference
-        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Lb54;" &&
+        instruction.opcode == Opcode.IGET_OBJECT && ref?.definingClass == "Lx44;" &&
             ref.name == "a" && ref.type == "Ljava/lang/String;"
     }
     val taskConstructors = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        instruction.opcode == Opcode.INVOKE_DIRECT && ref?.definingClass == "Lib1;" && ref.name == "<init>" &&
-            ref.parameterTypes == listOf("Ljava/lang/Object;", "Ljava/lang/Object;", "Lzs3;", "B")
+        instruction.opcode == Opcode.INVOKE_DIRECT && ref?.definingClass == "Lna1;" && ref.name == "<init>" &&
+            ref.parameterTypes == listOf("Ljava/lang/Object;", "Ljava/lang/Object;", "Lus3;", "B")
     }
     val launches = code.withIndex().filter { (_, instruction) ->
         val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        instruction.opcode == Opcode.INVOKE_STATIC && ref?.definingClass == "Lrw8;" && ref.name == "N" &&
-            ref.parameterTypes == listOf("Lfw3;", "Lsv3;", "Ljw3;", "Lh17;", "I") && ref.returnType == "Ld2g;"
+        instruction.opcode == Opcode.INVOKE_STATIC && ref?.definingClass == "Lmzm;" && ref.name == "N" &&
+            ref.parameterTypes == listOf("Lxv3;", "Lkv3;", "Lbw3;", "Ll17;", "I") && ref.returnType == "Lx6g;"
     }
     check(publications.size == 1 && persistence.size == 1 && deviceReads.size == 1 && currentReads.size == 1 &&
         launches.size == 2 && taskConstructors.size == 2) {

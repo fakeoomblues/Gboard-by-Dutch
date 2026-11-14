@@ -7,10 +7,10 @@ val skipConsentScreens = bytecodePatch(name = "Skip consent screens", descriptio
     compatibleWith(hln)
     dependsOn(originalInput, hideAds, disableTracking)
     execute {
-        change("Lbe/dpgmedia/privacy/privacygatesdk/ConsentService;", "collectConsent(Landroid/app/Activity;Ljava/lang/String;Lbe/dpgmedia/privacy/privacygatesdk/OpenModalOptions;Ljava/lang/String;Lzs3;)Ljava/lang/Object;", UNIT)
+        change("Lbe/dpgmedia/privacy/privacygatesdk/ConsentService;", "collectConsent(Landroid/app/Activity;Ljava/lang/String;Lbe/dpgmedia/privacy/privacygatesdk/OpenModalOptions;Ljava/lang/String;Lus3;)Ljava/lang/Object;", UNIT)
         // This leaf owns only the recommendation permission warning. Keep its
         // caller's authentic consent decision and recommendation request guard.
-        change("Lhaj;", "h(ILtg3;Lt07;Lk8b;)V", STOP)
+        change("Ltdk;", "d(Lx07;Lyp3;Ljg3;I)V", STOP)
         skipOnboardingPrompts()
     }
 }
