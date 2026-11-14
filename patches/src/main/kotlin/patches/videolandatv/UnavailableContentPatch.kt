@@ -38,11 +38,11 @@ val hideUnavailableContentPatch = bytecodePatch(
         // This caller still has the block template. The generic LV/s source
         // factory itself lacks that context and also serves non-collections.
         factory.addInstructions(42, """
-            invoke-static {v2, v6}, $helper->visibleFactory(${block}Ljv/a;)Ljv/a;
+            invoke-static {v2, v6}, $helper->visibleFactory(${block}Lnv/a;)Lnv/a;
             move-result-object v6
         """.trimIndent())
         row.addInstructions(0, """
-            invoke-static {p0}, $helper->rowCount(LQk/t;)I
+            invoke-static {p0}, $helper->rowCount(LPk/t;)I
             move-result v0
             return v0
         """.trimIndent())
@@ -59,19 +59,19 @@ val hideUnavailableContentPatch = bytecodePatch(
         // Clear recycled text/listener and restore visibility on the next bind.
         targets[5 + unavailableRenderHooks.size].addInstructionsWithLabels(0, """
             if-eqz p1, :hideCover
-            invoke-static {p1}, LWu/I;->G(Ljava/util/List;)Ljava/lang/Object;
+            invoke-static {p1}, Lav/I;->G(Ljava/util/List;)Ljava/lang/Object;
             move-result-object v0
             if-eqz v0, :hideCover
-            instance-of v1, v0, Lkn/f${'$'}e;
+            instance-of v1, v0, Ljn/f${'$'}e;
             if-eqz v1, :originalCover
-            iget-object v0, p0, LEo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
+            iget-object v0, p0, LIo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
             invoke-virtual {v0}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->getButtonView()Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;
             move-result-object v0
             const/4 v1, 0x0
             invoke-virtual {v0, v1}, Landroid/view/View;->setVisibility(I)V
             goto :originalCover
             :hideCover
-            iget-object v0, p0, LEo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
+            iget-object v0, p0, LIo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
             const/4 v1, 0x0
             invoke-virtual {v0, v1}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->setButtonText(Ljava/lang/String;)V
             invoke-virtual {v0}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->getButtonView()Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;
@@ -84,7 +84,7 @@ val hideUnavailableContentPatch = bytecodePatch(
         """.trimIndent(), ExternalLabel("originalCover", targets[5 + unavailableRenderHooks.size].getInstruction(0)))
         // A shrinking section needs aggregate offsets/counts rebuilt; the
         // shipped onChanged observer otherwise forwards a fixed-size redraw.
-        val observer = "LNk/a\$b;"
+        val observer = "LMk/a\$b;"
         targets.last().addInstructionsWithLabels(0, """
             invoke-static {p0}, $helper->sectionsChanged($observer)Z
             move-result v0

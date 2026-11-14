@@ -11,10 +11,10 @@ import w4.A1$c;
 
 /** Transient UI subscriptions only; the current row always owns its decision. */
 final class Rows {
-    private static final WeakHashMap<Qk.t, Observer> observers = new WeakHashMap<>();
+    private static final WeakHashMap<Pk.t, Observer> observers = new WeakHashMap<>();
     private Rows() {}
 
-    static int count(Qk.t row) {
+    static int count(Pk.t row) {
         if (!(row.Q instanceof d8.a)) return 1;
         d8.a model = (d8.a) row.Q;
         if (!Availability.collection(model.N)) return 1;
@@ -40,10 +40,10 @@ final class Rows {
         return source.exhausted && !source.awaitingPublication ? 0 : 1;
     }
 
-    static boolean changed(Nk.a$b observer) {
-        Nk.a parent = observer.b;
+    static boolean changed(Mk.a$b observer) {
+        Mk.a parent = observer.b;
         if (parent == null || parent.R < 0 || parent.S == null || observer.a < 0 || observer.a >= parent.S.length) return false;
-        Nk.a$a section = parent.S[observer.a];
+        Mk.a$a section = parent.S[observer.a];
         if (section == null || section.a == null || !containsCollection(section.a, 0)) return false;
         int end = parent.R;
         for (int next = observer.a + 1; next < parent.S.length; next++) {
@@ -59,23 +59,23 @@ final class Rows {
 
     private static boolean containsCollection(androidx.recyclerview.widget.RecyclerView$a adapter, int depth) {
         if (depth > 16) return false;
-        if (adapter instanceof Qk.t) {
-            Object model = ((Qk.t) adapter).Q;
+        if (adapter instanceof Pk.t) {
+            Object model = ((Pk.t) adapter).Q;
             return model instanceof d8.a && Availability.collection(((d8.a) model).N);
         }
-        if (adapter instanceof Nk.a) {
-            Nk.a$a[] children = ((Nk.a) adapter).S;
-            if (children != null) for (Nk.a$a child : children)
+        if (adapter instanceof Mk.a) {
+            Mk.a$a[] children = ((Mk.a) adapter).S;
+            if (children != null) for (Mk.a$a child : children)
                 if (child != null && containsCollection(child.a, depth + 1)) return true;
         }
         return false;
     }
 
     private static final class Observer extends A1$c implements Runnable {
-        final WeakReference<Qk.t> row;
+        final WeakReference<Pk.t> row;
         final WeakReference<A1> list;
         final AtomicBoolean queued = new AtomicBoolean();
-        Observer(Qk.t row, A1 list) {
+        Observer(Pk.t row, A1 list) {
             this.row = new WeakReference<>(row);
             this.list = new WeakReference<>(list);
         }
@@ -87,7 +87,7 @@ final class Rows {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override public void run() {
                     queued.set(false);
-                    Qk.t current = row.get();
+                    Pk.t current = row.get();
                     if (current != null) current.f();
                 }
             });

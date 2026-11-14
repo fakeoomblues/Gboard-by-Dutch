@@ -12,7 +12,7 @@ internal const val SUBSCRIPTION = "Lcom/bedrockstreaming/component/layout/domain
 internal const val NAVIGATION = "Lcom/bedrockstreaming/component/navigation/domain/NavigationMapper;"
 internal const val HANDLE_ACTION = "Lcom/bedrockstreaming/feature/player/domain/mediaplayer/usecase/HandleActionUseCase;"
 internal const val NAVIGATION_SIGNATURE = "a($NAVIGATION$TARGET" + "Ljava/lang/String;Ljava/util/List;Lcom/bedrockstreaming/component/layout/domain/core/model/Item;I)Lcom/bedrockstreaming/component/navigation/domain/usecase/a;"
-internal const val HANDLE_ACTION_SIGNATURE = "a(LZe/c;Lmf/d;LR7/g;Lcom/bedrockstreaming/component/layout/domain/core/model/MediaItem;Lcom/bedrockstreaming/component/layout/domain/core/model/Action;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lbv/c;)Ljava/lang/Object;"
+internal const val HANDLE_ACTION_SIGNATURE = "a(LYe/c;Llf/d;LR7/g;Lcom/bedrockstreaming/component/layout/domain/core/model/MediaItem;Lcom/bedrockstreaming/component/layout/domain/core/model/Action;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lfv/c;)Ljava/lang/Object;"
 
 /** Pin operand values, references, payloads and exception edges, not just opcodes/counts.
  * Debug line information is deliberately excluded. FULL bytecode mode is required.
@@ -57,8 +57,8 @@ internal fun subscriptionTargets() = run {
     val navigation = exact(NAVIGATION, NAVIGATION_SIGNATURE, 17, 377)
     val action = exact(HANDLE_ACTION, HANDLE_ACTION_SIGNATURE, 48, 656)
     val accessor = exact(SUBSCRIPTION, "b()$TARGET", 2, 2)
-    requireSubscriptionMethod(navigation, 9, "15c7c906c38a83f62f3cd49fef7155603429db7465773587863b48cf73817fa7")
-    requireSubscriptionMethod(action, 17, "5f1257af67ca08054ddd83d3150441d76e61173575380936a9c20eb20f84379b")
+    requireSubscriptionMethod(navigation, 9, "37a565dbf4ee7af0c902ca9128432dcd7378b5bb663377181a4cb094479baa87")
+    requireSubscriptionMethod(action, 17, "500d1ebd55c2f085652a3420894a2c02ed4428858b86c6b9254513e114348d6f")
     requireSubscriptionMethod(accessor, 17, "5ab6d34b79ad5460a6102b144adf7ebe65b445dfee8974f2b51df62fde1970de")
     navigation to action
 }

@@ -117,19 +117,19 @@ nop"""
 
 
 COVER_ACTION_RESET = """if-eqz p1, :hideCover
-invoke-static {p1}, LWu/I;->G(Ljava/util/List;)Ljava/lang/Object;
+invoke-static {p1}, Lav/I;->G(Ljava/util/List;)Ljava/lang/Object;
 move-result-object v0
 if-eqz v0, :hideCover
-instance-of v1, v0, Lkn/f$e;
+instance-of v1, v0, Ljn/f$e;
 if-eqz v1, :originalCover
-iget-object v0, p0, LEo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
+iget-object v0, p0, LIo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
 invoke-virtual {v0}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->getButtonView()Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;
 move-result-object v0
 const/4 v1, 0x0
 invoke-virtual {v0, v1}, Landroid/view/View;->setVisibility(I)V
 goto :originalCover
 :hideCover
-iget-object v0, p0, LEo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
+iget-object v0, p0, LIo/a;->b:Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;
 const/4 v1, 0x0
 invoke-virtual {v0, v1}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->setButtonText(Ljava/lang/String;)V
 invoke-virtual {v0}, Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;->getButtonView()Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;
@@ -147,7 +147,7 @@ def unavailable_effect(original, contract):
     block = 'Lcom/bedrockstreaming/component/layout/domain/core/model/Block;'
     kind = contract['kind']
     if kind == 'section_notification':
-        effect = [f'invoke-static {{p0}}, {helper}->sectionsChanged(LNk/a$b;)Z', 'move-result v0', 'if-eqz v0, @5', 'return-void']
+        effect = [f'invoke-static {{p0}}, {helper}->sectionsChanged(LMk/a$b;)Z', 'move-result v0', 'if-eqz v0, @5', 'return-void']
         shifted = [re.sub(r'@(\d+)', lambda m: '@' + str(int(m[1]) + 4), row) for row in original]
         return shifted[:1] + effect + shifted[1:]
     if kind == 'cover_action_reset':
@@ -190,12 +190,12 @@ invoke-static {{p1}}, {helper}->visibleBlock({block}){block}
 move-result-object p1"""
     elif kind == 'factory':
         start = original.index(contract['after']) + 1
-        code = f"""invoke-static {{v2, v6}}, {helper}->visibleFactory({block}Ljv/a;)Ljv/a;
+        code = f"""invoke-static {{v2, v6}}, {helper}->visibleFactory({block}Lnv/a;)Lnv/a;
 move-result-object v6"""
     else:
         assert kind == 'row'
         start = 1
-        code = f"""invoke-static {{p0}}, {helper}->rowCount(LQk/t;)I
+        code = f"""invoke-static {{p0}}, {helper}->rowCount(LPk/t;)I
 move-result v0
 return v0"""
     effect = graph(code)
@@ -280,7 +280,7 @@ def verify(original, patched, ads, tracking, subscription=False, unavailable=Fal
         shape = [line for line in text.splitlines() if line.startswith(('.class ', '.super ', '.implements ', '.field '))]
         assert shape == expected, 'Availability helper declaration changed: ' + name
     before = methods(original)
-    assert len(before) == 140770, 'Incomplete or unsupported stock method inventory'
+    assert len(before) == 140911, 'Incomplete or unsupported stock method inventory'
     return verify_methods(before, methods(patched), ads, tracking, subscription, unavailable)
 
 

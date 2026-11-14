@@ -38,15 +38,15 @@ val disableTrackingPatch = bytecodePatch(
         """.trimIndent())
 
         val tealium = "Lcom/bedrockstreaming/plugin/tealium/TealiumTaggingPlan;"
-        exact(tealium, "o0(Ljava/lang/String;Ljava/util/Map;)V", 11, 18).addInstructions(0, "return-void")
-        exact(tealium, "s0(Ljava/util/Map;)V", 5, 15).addInstructions(0, "return-void")
+        exact(tealium, "n0(Ljava/lang/String;Ljava/util/Map;)V", 11, 18).addInstructions(0, "return-void")
+        exact(tealium, "r0(Ljava/util/Map;)V", 5, 15).addInstructions(0, "return-void")
 
         // The constructor otherwise creates an emitter and sends InitEvent immediately,
         // before the player-session feature flag is read. Keep its initialized object
         // and three dependencies; nullable tracker/session fields remain null.
         val snowplow = "Lcom/bedrockstreaming/plugin/snowplow/SnowplowTracker;"
         exact(snowplow,
-            "<init>(Landroid/content/Context;Lfp/c;LBj/a;Lcom/bedrockstreaming/feature/player/domain/mediaplayer/usecase/GetDeviceVolumeUseCase;Lcom/bedrockstreaming/plugin/snowplow/SnowplowEntityMapper;)V",
+            "<init>(Landroid/content/Context;Ljp/c;LDj/a;Lcom/bedrockstreaming/feature/player/domain/mediaplayer/usecase/GetDeviceVolumeUseCase;Lcom/bedrockstreaming/plugin/snowplow/SnowplowEntityMapper;)V",
             15, 114).apply {
             val anchors = instructions.withIndex().filter { (_, instruction) ->
                 val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference
@@ -65,7 +65,7 @@ val disableTrackingPatch = bytecodePatch(
         // The inspected uploader maps local 403 to fatal, deletes the batch and
         // completes. No redirect, HTTP call or transient retry is introduced.
         // Other methods on this R8-merged class belong to media and stay intact.
-        exact("LA3/T;", "e(LBr/h;)LA3/X;", 16, 184).addInstructions(0, """
+        exact("LA3/T;", "e(LF2/c;)LA3/X;", 16, 184).addInstructions(0, """
             new-instance v0, LA3/X;
             const/16 v1, 0x193
             const/4 v2, 0x0

@@ -1,2 +1,2 @@
 // Compile-only app ABI. Never package.
-package Zu; public interface i {}
+package dv; public interface j {}

@@ -46,16 +46,16 @@ public class VideolandProbe {
   String root="com.bedrockstreaming.";
   Object main=asset(dai?"yospace":"dash"),fallback=asset("dash");
   Object drm=instance(root+"component.layout.domain.core.model.player.Drm");set(fallback,"P",drm);
-  Object mainWrapper=type("De.c").getConstructor(type(root+"component.layout.domain.core.model.player.Asset")).newInstance(main);
-  Object fallbackWrapper=type("De.c").getConstructor(type(root+"component.layout.domain.core.model.player.Asset")).newInstance(fallback);
+  Object mainWrapper=type("De.c").getConstructor(type(root+"component.layout.domain.core.model.player.Asset"),Boolean.TYPE).newInstance(main,false);
+  Object fallbackWrapper=type("De.c").getConstructor(type(root+"component.layout.domain.core.model.player.Asset"),Boolean.TYPE).newInstance(fallback,false);
   Object content=alternative?type("De.b").getConstructor(type("De.a"),type("De.a")).newInstance(mainWrapper,fallbackWrapper):mainWrapper;
   if(alternative)set(content,"c",alreadySelected);
-  Object media=instance("of.a");set(media,"c",content);
+  Object media=instance("nf.a");set(media,"c",content);
   Object queue=instance(root+"feature.player.domain.queue.item.LiveQueueItem");set(queue,"o",media);
   set(queue,"x",instance(root+"plugin.yospace.YospaceIsDaiAssetUseCase"));
   Object creator=instance(root+"plugin.yospace.YospaceDaiResourceCreator");int[] calls={0};
   Object factory=Proxy.newProxyInstance(apk,new Class<?>[]{type("Qe.b")},(p,m,a)->{
-   calls[0]++;return type(root+"plugin.yospace.YospaceDaiResourceCreator").getDeclaredMethod("a",type("of.a")).invoke(creator,(Object)null);
+   calls[0]++;return type(root+"plugin.yospace.YospaceDaiResourceCreator").getDeclaredMethod("a",type("nf.a")).invoke(creator,(Object)null);
   });set(queue,"w",factory);
   // Deliberately stop at the next dependency, after the source decision. No
   // real preferences, media resource, player, DRM session or network is opened.
@@ -103,17 +103,17 @@ public class VideolandProbe {
   if(ads){
    check(Boolean.FALSE.equals(call(root+"feature.player.data.config.PlayerConfigImpl","d",new String[]{})),"loader gate");pass("loader gate");
    String requester=root+"feature.adengine.domain.requester.AdEngineAdRequester";
-   empty(call(requester,"a",new String[]{"bv.c"},(Object)null),"video cuepoints");
-   empty(call(requester,"b",new String[]{"long","ze.n"},0L,null),"video ads");
+   empty(call(requester,"a",new String[]{"fv.c"},(Object)null),"video cuepoints");
+   empty(call(requester,"b",new String[]{"long","ze.o"},0L,null),"video ads");
    requester=root+"feature.adengine.domain.lbanner.LBannerAdRequester";
-   empty(call(requester,"a",new String[]{"bv.c"},(Object)null),"banner cuepoints");
-   nil(call(requester,"b",new String[]{"long","ze.n"},0L,null),"nullable banner item");
+   empty(call(requester,"a",new String[]{"fv.c"},(Object)null),"banner cuepoints");
+   nil(call(requester,"b",new String[]{"long","ze.o"},0L,null),"nullable banner item");
    nil(call(root+"feature.adengine.data.config.AdEngineConfigImpl","a",new String[]{}),"pause configuration");
    Object pause=call(root+"feature.adengine.domain.pausead.usecase.GetFirstPlayablePauseAdItemUseCaseImpl","a",
-    new String[]{root+"feature.adengine.domain.pausead.requester.PauseAdAdRequestUrlData","bv.c"},null,null);
+    new String[]{root+"feature.adengine.domain.pausead.requester.PauseAdAdRequestUrlData","fv.c"},null,null);
    check(pause.getClass()==type("J9.d")&&pause.toString().equals("Empty"),"typed pause Empty");pass("typed pause Empty");
    nil(call(root+"feature.player.presentation.tv.control.TvReplayControl","U",new String[]{}),"legacy pause gate");
-   nil(call(root+"plugin.yospace.YospaceDaiResourceCreator","a",new String[]{"of.a"},(Object)null),"Yospace nullable resource");
+   nil(call(root+"plugin.yospace.YospaceDaiResourceCreator","a",new String[]{"nf.a"},(Object)null),"Yospace nullable resource");
    liveFallbackCase(true,true,false);
    liveFallbackCase(false,true,false);
    liveFallbackCase(true,true,true);
@@ -128,12 +128,12 @@ public class VideolandProbe {
     try{call(config,"g",new String[]{"java.lang.String"},key);throw new AssertionError("Unknown key did not delegate");}
     catch(NullPointerException expected){pass("unknown/null key delegates to original backing store");}
    }
-   nil(call(root+"plugin.tealium.TealiumTaggingPlan","o0",new String[]{"java.lang.String","java.util.Map"},null,null),"Tealium event gate");
-   nil(call(root+"plugin.tealium.TealiumTaggingPlan","s0",new String[]{"java.util.Map"},(Object)null),"Tealium view gate");
+   nil(call(root+"plugin.tealium.TealiumTaggingPlan","n0",new String[]{"java.lang.String","java.util.Map"},null,null),"Tealium event gate");
+   nil(call(root+"plugin.tealium.TealiumTaggingPlan","r0",new String[]{"java.util.Map"},(Object)null),"Tealium view gate");
    Object id=call(root+"plugin.advertisingid.google.data.GoogleAdvertisingIdSource","a",new String[]{});
    check(id.getClass()==type("x6.b"),"limited advertising ID result");pass("limited advertising ID result");
    nil(call("com.newrelic.agent.android.NewRelic","start",new String[]{"android.content.Context"},(Object)null),"New Relic start gate");
-   Object response=call("A3.T","e",new String[]{"Br.h"},(Object)null);
+   Object response=call("A3.T","e",new String[]{"F2.c"},(Object)null);
    check(response.getClass()==type("A3.X"),"CCT response type");
    check(type("A3.X").getDeclaredField("a").getInt(response)==403,"CCT fatal403");
    check(type("A3.X").getDeclaredField("b").getLong(response)==0L,"CCT zero delay");

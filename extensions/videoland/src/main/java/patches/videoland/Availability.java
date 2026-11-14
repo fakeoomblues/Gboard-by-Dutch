@@ -77,17 +77,17 @@ public final class Availability {
             && loads.c instanceof w4.s0$b && loads.b.a && loads.c.a;
     }
 
-    public static boolean sectionsChanged(Nk.a$b observer) { return Rows.changed(observer); }
+    public static boolean sectionsChanged(Mk.a$b observer) { return Rows.changed(observer); }
 
-    public static int rowCount(Qk.t row) { return Rows.count(row); }
+    public static int rowCount(Pk.t row) { return Rows.count(row); }
 
-    public static jv.a visibleFactory(Block block, jv.a original) {
+    public static nv.a visibleFactory(Block block, nv.a original) {
         return collection(block) ? new Factory(original) : original;
     }
 
-    private static final class Factory implements jv.a {
-        private final jv.a delegate;
-        Factory(jv.a delegate) { this.delegate = delegate; }
+    private static final class Factory implements nv.a {
+        private final nv.a delegate;
+        Factory(nv.a delegate) { this.delegate = delegate; }
         @Override public Object invoke() { return wrapSource((w4.W1) delegate.invoke()); }
     }
 

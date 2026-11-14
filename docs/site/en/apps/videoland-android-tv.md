@@ -1,8 +1,8 @@
 # Videoland Android TV
 
-**App version:** 1.117.0 · **Build:** 1622 · **Original file:** APKS
+**App version:** 1.118.0 · **Build:** 1630 · **Original file:** APKS
 
-[Download original app](https://buzzheavier.com/56tfd9zgaf6g){ .md-button .md-button--primary }
+[Use your original APKS](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 Select the exact original file in Morphe Manager. Use the complete archive for a split app.
 

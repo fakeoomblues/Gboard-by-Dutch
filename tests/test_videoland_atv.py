@@ -103,7 +103,7 @@ class VideolandSubscriptionArtifactTests(unittest.TestCase):
         cls.keys = [c['owner'] + '->' + c['signature'] for c in SUBSCRIPTION_CONTRACTS]
 
     def test_actual_candidate_preserves_all_original_methods(self):
-        self.assertEqual(verify_methods(self.before, self.after, False, False, True), 140770)
+        self.assertEqual(verify_methods(self.before, self.after, False, False, True), 140911)
 
     def test_subscription_effects_rejected_when_unselected(self):
         with self.assertRaisesRegex(AssertionError, 'Unrelated'):
@@ -128,7 +128,7 @@ class VideolandSubscriptionArtifactTests(unittest.TestCase):
                     verify_methods(before, self.after, False, False, True)
 
     def test_account_and_drm_mutations_rejected(self):
-        for fragment in ('/WidevineDrmTodayMediaDrmCallback;', 'Lei/a;->invokeSuspend'):
+        for fragment in ('/WidevineDrmTodayMediaDrmCallback;', 'Lgi/a;->invokeSuspend'):
             key = next(k for k, rows in self.after.items() if fragment in k and len(rows) > 2)
             with self.subTest(key=key):
                 changed = dict(self.after)

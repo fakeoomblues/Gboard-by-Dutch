@@ -1,6 +1,6 @@
 package patches.videoland;
 
-import bv.c;
+import fv.c;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +35,7 @@ public final class FilteredSource extends W1 {
     @Override public Object d(W1$a params, c caller) {
         Operation operation = new Operation(this, params, caller);
         Object result = delegate.d(params, operation);
-        return result == av.a.N ? result : operation.process(result);
+        return result == ev.a.N ? result : operation.process(result);
     }
 
     void seed(W1$b$c original) {
@@ -58,10 +58,10 @@ public final class FilteredSource extends W1 {
         }
     }
 
-    private static final class Invalidation implements jv.a {
+    private static final class Invalidation implements nv.a {
         private final W1 peer;
         Invalidation(W1 peer) { this.peer = peer; }
-        @Override public Object invoke() { peer.c(); return Vu.M.a; }
+        @Override public Object invoke() { peer.c(); return Zu.M.a; }
     }
 
     private static final class Operation extends c {
@@ -85,7 +85,7 @@ public final class FilteredSource extends W1 {
 
         Object process(Object value) {
             while (true) {
-                jq.g.U(value); // Preserve cancellation/exceptional completion.
+                M5.h.b0(value); // Preserve cancellation/exceptional completion.
                 if (!(value instanceof W1$b$c)) return value;
                 W1$b$c raw = (W1$b$c) value;
                 if (first) {
@@ -109,7 +109,7 @@ public final class FilteredSource extends W1 {
                     ? new W1$a$c(next, params.a, params.b)
                     : new W1$a$a(next, params.a, params.b);
                 value = owner.delegate.d(params, this);
-                if (value == av.a.N) return value;
+                if (value == ev.a.N) return value;
             }
         }
     }

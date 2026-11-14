@@ -24,76 +24,78 @@ internal fun unavailableClassDigest(type: ClassDef): String {
 // Populated from the publisher base DEX; source and independent graph contracts
 // identify the exact inspected build. All checks run before any hook mutation.
 internal val unavailableClasses = mapOf(
-    "LNk/a\$a;" to "24366a111ed6021da47962686da2b6eca62bcee7e6a98b626a09275d268fd780",
-    "LNk/a\$b;" to "5bad0453e05f7f4438f0f072d859093756047a1d8c7ac92bbe7c49a4bb6c4c47",
-    "LNk/a;" to "4d2bb0a34236b3a33fcdd94bbc9104fb5e42acec6dc8bbef0310e168d98b7633",
+    "LMk/a\$a;" to "ae299b731af4d6aa132986a4e7c367f0a8f27630ed7b52b3052523e2b3d3ef98",
+    "LMk/a\$b;" to "359e1dbcc8adf35978472df00d159fc5ab87480819d859722755480fe47784b9",
+    "LMk/a;" to "ac0cda36b4052f57af1a4d36fc8c2c6885882386b1253e5b92b9de6c6bd9d94f",
 
-    "LEo/a;" to "5730af1f7bfb9ac30eb805022be511c1ecb52d1676b9885f233e421d9b69a96f",
-    "Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;" to "bdcbfb6ba578b7cd80057ff7127a41549367cc03c01bc8ac8decd7a35cf766fd",
-    "Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;" to "b9742ebd49ef922745a953af52982a552db193117568f801a55d9b57875c4fdb",
+    "LIo/a;" to "47cd7173bef8bb7e801497b91ffd69cc8e78120eb608318d954e3d447a689d25",
+    "Lcom/bedrockstreaming/tornado/compose/molecule/button/TornadoButton;" to "4e35a485d16c998a46263cda9f7d15817814b236e7e9d11fecbd82686d061016",
+    "Lcom/bedrockstreaming/tornado/tv/molecule/CoverView;" to "1bbf25f2f3fa04357289d006d846cc3214920a200b7a24aa991dfed7380e4856",
 
-    "Lkn/k;" to "17640e22cec803efdf4d90f0ece8f5993928f87fea14ce841779b03fadc2bfe2",
+    "Ljn/k;" to "1034829a4cc2b97ff67fd37659ab26ba01a502c9a7ad345d5f8a5eb49f6e2dbf",
     "Landroidx/recyclerview/widget/RecyclerView\$a;" to "cb3f71292ae526a2fc94c9321e4cda03fb05d9cd6c317fa1ceaff7f2f88daaa2",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/Action;" to "a26d1913376dd3492f28db5e6b5b73590d840b8bfd0240fe7a91ea84f82d49a5",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/AlternativeBlockContent;" to "0f4899d1f30009fb08c9d0150cb9234acf1852e59fa3b3190ce6c45a57bf7186",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/Bag;" to "ff2228b8f33ab047e89a86571159450f1fc224b0268f7ba2999d31af06db876a",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/Block;" to "7fbc6086b0f760cdc278a0cd5195ed9dde16319d39ff97e082136b93cdd4e162",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/Block\$LayoutBlock;" to "edcb7757507511ab6a316087ea52b75ed98080f5ec918db7746ba21c50551d86",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/BlockTemplateId;" to "5e282c9a3668dcfb92c796737096c1d500889c5823f29b60f05b5aba858178f7",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/AlternativeBlockContent;" to "1b5b315a9fb668429e1a5be1f8d443019d9e0e59125c9cf528c85ae48fa4a572",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/Bag;" to "61f18d377a732d0abdbdf341f0e862829b51821a4697f097faa5ccb6ed1edad3",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/Block;" to "5edcde917d6245ca62d5fb81787c97f9212500f6a2ef57ca8a6d823c64d68c59",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/Block\$LayoutBlock;" to "8d7bb84e13da6c206177de3054f8b3f4f39a2a824c8b7762e781fae93c818115",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/BlockTemplateId;" to "a900e1f8852a4bde305cfc968a7a30310ae3061b599d5bb6bccf5d990f0876b2",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/BlockTheme;" to "4c764ffd1a871e3e2489bd1e4237ed419894424c5a5008be54fe5a0a08853988",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/Item;" to "02612ef2e45f686fc750082cf6d1055e438b9dd479fa72b50a3c6db46418a6d1",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/ItemPagination;" to "8c39baa712bc7090ed99bbb439867a43cd7639be3a74ef4668c8825741ba41c9",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/LayoutBlockContent;" to "12522039a1eac21f991db067043da1b4dc5ef0b6e2dcbd1e5eba168c5e5a8660",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/Item;" to "cdf857fc455fb7cf5adcc6d3bf7f75098b5f880ad6b18e7047d9a3c909a5c447",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/ItemPagination;" to "0128511382d80108a09d7287fda65222e543214f5aceab556f8e0389de3fb14e",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/LayoutBlockContent;" to "297d282dd3797323d9e94eb6e4781296672216d5708b743885612647b40a5514",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/Target;" to "64f127816c3871c7ff60df14a2d7f56efe4a414a216a1db7bf326d641ce60086",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/Target\$Lock;" to "d2f646dbc92b77913fddd11cbfca3a1d6509d8e5e36d70c3668a36d5f65f8173",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/Target\$Lock\$RequireSubscriptionLock;" to "c896060c0b5007ffe8db46b13cc4395e7fa08f8239a6f9e056281451f884bc91",
     "Lcom/bedrockstreaming/component/layout/domain/core/model/Target\$OptionalTargetLock;" to "04677b557747c19ee255c0bd709d6082089874d1b3ef04b6f8a1947f337a2e6e",
-    "Lcom/bedrockstreaming/component/layout/domain/core/model/Title;" to "e1c5566c322103cb9e703eac1719ef56a26e005d8614ed0879f22cf00541e513",
-    "Ld8/a;" to "a1163dc5306b890b715009a0864e2a2e5bc89a04fd13729100ad0a320d687558",
-    "Lw4/W1;" to "dca8921001b0f78e5facc7cae6a7976f0c0b5c07eeeda04867b7b4577684be06",
-    "Le8/a;" to "5555e3e0fc60bc2e262ea2203fd66af264919f63a555bbee48796790d66d516e",
-    "Lj8/Q;" to "b473c9aa4bf8b883f34e532238f44d78285f151373ea92520456236b5002eec8",
-    "Lw4/A1\$b;" to "be575572145a14de5a8d1726b604deac13aa06dfa5535c6355d4004a0c578556",
+    "Lcom/bedrockstreaming/component/layout/domain/core/model/Title;" to "5388dcd4db92755bbe44292d5ee2af1e9fa4a6eb0d0866cf4f6f4c63b2403cd1",
+    "Ld8/a;" to "8e6ea79d8eed0f7c76406e1f189dfdbf4a8441d73e85297d8f5e3ddf7dae934b",
+    "Lw4/W1;" to "27f5374929c5048207f345c1a1f0dbb14d9e4fa67f10a4c86ad686505737835b",
+    "Le8/a;" to "c66c1d38bb4dbcaa04cdd4894c4c30d9041b5d7171995d0fa7a8514dd12ba331",
+    "Lj8/Q;" to "2c77a5b3c3d2a07c1116cc3766fa4bf0a612383fa68e2e88dc5fa149ad1ecf41",
+    "Lw4/A1\$b;" to "8566d15191f00415c2835b716d136bb901874dac24a276f35901516d3fb6df1e",
     "Lw4/A1\$c;" to "67ff018331844fc27b28b39f5c169129d91d30443eb58d90416e1e7a8ac075c1",
     "Lw4/A1\$e;" to "04631679cccf5769899db76d25adb9ce59168c03f3f38fff7f647c8c23511ac0",
-    "Lw4/A1;" to "ef5aeeacc386963e55a4a699dc12684478c70f2a40c02fe31664c7cb049fedf1",
-    "Lw4/H1;" to "2bbf05c4f53b7fbc022458b9355279209cc2c1c2f3fcb823271f311b3536f223",
-    "Lw4/H;" to "75cf43218827694b3559d2068306f79bb65f48b26ae0b3418a5e329bef58dc61",
+    "Lw4/A1;" to "6e6c9b030f82889442fd63c6cf09cc1abecabadb83658f6c566270bd80f1c31d",
+    "Lw4/H1;" to "2f348b55cdd127a5eb143efd53f8fdb9d8a7719db1a57803439851d38db3e60a",
+    "Lw4/H;" to "9c14aeb963de8e639ec5bb88346cec97f24670c252defe653779139f0e354ee9",
     "Lw4/W1\$a;" to "4c5aa3d238e25c08ad1e6fc4d6fad21a9f1ee7df3a95469e0698033a6f830f67",
     "Lw4/W1\$a\$a;" to "e737be74a0f5cdd20823b556444fe97b9fc916f9ce40571dbea0d2d72302a0df",
     "Lw4/W1\$a\$c;" to "12f846c2f95e4fb9eaf177507e56cc02d0552cd0ae85364325e71d50be491d2a",
     "Lw4/W1\$a\$d;" to "2da2866eede7a74fdc50058ecd7a5e6b47d5aecca59ddfd4dd12665260e3f4ea",
-    "Lw4/W1\$b\$a;" to "576152ad8cb2c80f2821b2fc9cc0ff976d15a71baf6a5edf984da4305770583b",
+    "Lw4/W1\$b\$a;" to "07cfc8e214213cef1fd5daf428c796cddad8608b5a6c8ec8b4615af2d6f04895",
     "Lw4/W1\$b\$b;" to "ded3884b0b535889d47b1541876a4dc5e071ba6b64dd668e10afa1af1386b3de",
-    "Lw4/W1\$b\$c;" to "a45e75d15c87fa33594188fd076d3b6c92ee9402b9e19f3d2021407705facbae",
-    "Lw4/X1;" to "5f1c1b49dbbf78e465baa2f27c638bc8a1370c554ef38bf653160550706788f8",
-    "Lw4/h0;" to "494c0698fd5a81961d8cfdd8b47173c0ca0da16880e27f40335e55370f753653",
-    "Lw4/o0;" to "2b97b5e254652aa2b5aac8e5b1c7939846683dc4827f45ccbc07f762297a3b86",
-    "Ljq/g;" to "2eab55161f6e742b80fde7b19ef18a9be6c5cd836f0df6ca852991b9e77e55f6",
-    "LQk/t;" to "aa096e4e86a50351731fb3eaead5d7e4daa1c3ad615a1e33d34f0d74f35568e3",
-    "LZu/i;" to "4423c88a540313025f1d68a6a57dc3a3240c7f942f30a1ce9c4de26c09439baa",
-    "LZu/d;" to "88861b6272949911e1956639db5b592a7f81dc11091fd9c67696dad330779ea7",
-    "Lbv/a;" to "6ab43b5805bba1b93f62b3d86b5cc571f6107d6d9fe7fe2eb3a55786a5dc334f",
-    "Lbv/c;" to "933b01bbb9638408dd39aad0796a87edb298f3d140a2300a1b79a85bed22b03f",
-    "LBv/x;" to "3a53cc3f1d29401b1f028f2d33ba7f8837561260fb3fe6ac1c7449665eb60b42",
-    "Ljv/a;" to "f1b419b941d534c4b96702aec047ee9b8b0f72585b0cf2ac4f525d63e8c5e448",
-    "LVu/M;" to "d9ff92b762f6533558b5e204403e1e6fd4e48cfb6b28e36784484bba35ca7eff",
-    "LZu/j;" to "3a9625096929abe2ccce3c79c66cbbd6a67cacb63988dc035b308a45c9800f4b",
-    "Lav/a;" to "858c17ef6867deaab469d11f222807dade7a81962d42813fdad7ba0ed7c15a31",
+    "Lw4/W1\$b\$c;" to "9099811d29266ff29334103284137b309ed1a04abf2aabc2d1aa2f6b9a46324d",
+    "Lw4/X1;" to "8e8e7e4193141b66b80df3e2547c5f01b4e863fff0353f81ee91b722729aa318",
+    "Lw4/h0;" to "eee4f63eee496494835af92998ec9a4b2658bb92b2c7fa2c0ac4ac1e7027b103",
+    "Lw4/o0;" to "68e647495840023a0550be398665b24466346209c041bbdd3f51f11bccf89325",
+    // 1.118.0 splits the 1.117.0 merged jq/g helper owner; the cancellation
+    // completion check U(Object) consumed by FilteredSource now lives here.
+    "LM5/h;" to "b3284c9efcb47ee3cd27c95c4f929a08ac801aad2bf2df2afef802d8b461c63f",
+    "LPk/t;" to "e9565a863e7364f952f297d7a1f9d3f508ad2faba64f4911855f1024186a7e44",
+    "Ldv/j;" to "dd9930d57f9e611f3e46cdd9c5a79f12d6ba8f1a749060d0c219050b63db8a3e",
+    "Ldv/d;" to "a940d68cb455929dffd8ee86bb9f04122501c0ae11c7e78316ab86717961eaec",
+    "Lfv/a;" to "e721a56c19a315ea9fe1bf37966e059d55f556b43bad354c84e4c0efea5dfa20",
+    "Lfv/c;" to "c7c7dcb05bfb06b2aa5a5a98569079a91d0ef0674c88645b801d39a4d36fb32f",
+    "LFv/x;" to "03aa88a81137970827234ae7e61de675d519eb1119e7c13e522b9a6474748d02",
+    "Lnv/a;" to "b9f6c702e8fd53c5aba6d241702f92f5f992363e93d57210da0c2859b92476c3",
+    "LZu/M;" to "ae60dae3492704a6f60e24e318ecdacb7c30353cdcd5e8a9fe0ed290b3061df7",
+    "Ldv/k;" to "44e750094ae38235ce12c176f2bf090d39d1bb964c75651d761ef900a070afdc",
+    "Lev/a;" to "5142359dd0b92c0de22050d53590ff66bca1ae0d8c20676a41e07032277a8305",
     "Ld0/q1;" to "5348f2f54e31f30c6d64da0e5957aa9ab92e3066a274f2b5ef0e7939a5525444",
     "Ld0/q0;" to "4d01bf93f50ca5c96d4caffa008af6fcf9008ae0a7f9f50fd72a35f29998c219",
     "Landroidx/recyclerview/widget/RecyclerView\$b;" to "4bb10e61c67a6a029470c0a60ec7c66df857fbf238355a25257c5e9a3c5d850d",
     "Lw4/C;" to "19611d22830b0df6aac8cf034091265bf4aaeb1f810ddcd3cc286d9a2169b1be",
     "Lw4/s0;" to "68eb6dd84dad8e5ff9ee4db7de528c133d44c38a59d9f74dfebff67854daf3ed",
-    "Lw4/s0\$b;" to "f33a66380aec95e9488ae5cf4e811c77858b2a337a7b1de6c4900f511ac6bd9f",
-    "Lx4/c;" to "80a82d711e6ace3b7e512c8e9d632bb54db238549bad0484d5e6316164b4bcde",
-    "Lcom/bedrockstreaming/tornado/compose/block/belly/BellyBlockFactory;" to "e3decc5c2c3e510a0f8d138d1a28ea1c59fc6a5efaef473fda1364e335ad9d19",
-    "Lcom/bedrockstreaming/tornado/compose/block/grid/GridBlockFactory;" to "8ee0c6984d049522bc207983bb8e38d917e7613eaa9d94aa6442d55661b7c44f",
-    "Lcom/bedrockstreaming/tornado/compose/block/grid/PaginatedGridBlockFactory;" to "026e47831a69c379c86db3a220f5f9967445137af1510691faac50a3c63143e7",
-    "Lcom/bedrockstreaming/tornado/compose/block/list/HorizontalListBlockFactory;" to "68af5b10f88da3b45068fa748ce108458fdecbfa7a987a21391f2070c1915d35",
-    "Lil/l;" to "d47121be777304958650939074b6d726b9ddd847616b55e24659e79cd440a111",
+    "Lw4/s0\$b;" to "4b2c6c010bcf26190c2a6a7563ab526ac74f23503659fbbbe1ea1abdb8135f9c",
+    "Lx4/c;" to "057fd8939767326e9da7934a6bac54ba263d781cb4be6cf161d82ea77c3364bd",
+    "Lcom/bedrockstreaming/tornado/compose/block/belly/BellyBlockFactory;" to "b91321755d6412ab42962ecbb0661f3078760f274952ed9e5dcea49705bc6489",
+    "Lcom/bedrockstreaming/tornado/compose/block/grid/GridBlockFactory;" to "6c310f5db74d0e93778abe5778bf41f0f397503501a25dc0acedb22808a26080",
+    "Lcom/bedrockstreaming/tornado/compose/block/grid/PaginatedGridBlockFactory;" to "6b8112d44ba5398398b5c4bf376fe616195648906b9312cad254de2a405d0dae",
+    "Lcom/bedrockstreaming/tornado/compose/block/list/HorizontalListBlockFactory;" to "caa3e629ee8a4e9a0f6dc88fa23e852e3062118580a9c230f333e52e866da410",
+    "Lhl/l;" to "db4e5a831b6ce08ea29d291771a390ee036b72949cb6e191e80d78fe8a15c603",
 
-)
+    )
 
 context(context: BytecodePatchContext)
 internal fun unavailableTargets() = run {
@@ -102,12 +104,12 @@ internal fun unavailableTargets() = run {
     }
     val block = "Lcom/bedrockstreaming/component/layout/domain/core/model/Block;"
     val legacy = exact("Ld8/a;", "<init>(${block}Lw4/A1;I)V", 5, 7)
-    val compose = exact("Lf8/a;", "<init>(${block}LEv/j;I)V", 5, 9)
+    val compose = exact("Lf8/a;", "<init>(${block}LIv/j;I)V", 5, 9)
     val factory = exact("Lj8/Q;", "invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;", 22, 55)
-    val row = exact("LQk/t;", "c()I", 2, 2)
+    val row = exact("LPk/t;", "c()I", 2, 2)
     listOf(legacy to "16b4e0c1fc345099e4a735fbbef986d3bdcc8b4e837155b4c00e2675dad3fc1e",
-        compose to "c2eeb2b5b6126eb870cbe42babab7f3bc125fab49401733887c23426fccfb18e",
-        factory to "a30e6394d183a4f947301834bf64d28176907d61eb8302ddd58d795327b4fe50",
+        compose to "82046a1210a332263e392707b0f4bee60c0cb8460cdbd8619f17bac7e103b621",
+        factory to "5cc35faf7bc3ae8ebca25133f081cfe8e745459c88690cd85cab31342582aa2d",
         row to "b977c4650734b6680561ba88afa10c3f921fc3c09033b76560776019f298591f")
         .forEach { (method, hash) -> check(subscriptionMethodDigest(method) == hash) { "Changed availability hook: ${method.definingClass}" } }
     val renders = unavailableRenderHooks.map { hook ->
@@ -115,12 +117,12 @@ internal fun unavailableTargets() = run {
             check(subscriptionMethodDigest(it) == hook.digest) { "Changed availability rendering hook: ${hook.owner}" }
         }
     }
-    val action = exact("Lkn/k;", "c(Lcom/bedrockstreaming/component/layout/domain/core/model/Action;Lkn/e;)Lkn/f;", 9, 82)
-    check(subscriptionMethodDigest(action) == "485f8310d6d93e91f368a7fe1c82bb0f57bf8e0b3067aa0f53e2cd99daf9006f")
-    val cover = exact("LEo/a;", "r(Ljava/util/List;)V", 4, 19)
-    check(subscriptionMethodDigest(cover) == "9551340bb95b08aa7344b6e0fefe2bb84d24101db4e39995c4a218d76bb35f3c")
-    val notification = exact("LNk/a\$b;", "a()V", 4, 17)
-    check(subscriptionMethodDigest(notification) == "e7745edd3ac8e36ac885db36b3e06ffee96bd1634b297999f8bd875bdb126449")
+    val action = exact("Ljn/k;", "c(Lcom/bedrockstreaming/component/layout/domain/core/model/Action;Ljn/e;)Ljn/f;", 9, 82)
+    check(subscriptionMethodDigest(action) == "0777a5ddda0d477d93d0a818021dd43c782713f67858ce609cb191a50f339fdd")
+    val cover = exact("LIo/a;", "o(Ljava/util/List;)V", 4, 19)
+    check(subscriptionMethodDigest(cover) == "b390ece322e3ac719507d9a63d56a33304d2d686cd740247cc6578d8beb73e6f")
+    val notification = exact("LMk/a\$b;", "a()V", 4, 17)
+    check(subscriptionMethodDigest(notification) == "a2055a0e71e7ff8ac4e5ada25e0406666a0553fcef63bbeebdbea654ff89315f")
     listOf(legacy, compose, factory, row) + renders + action + cover + notification
 }
 
@@ -128,9 +130,9 @@ internal data class UnavailableRenderHook(val owner: String, val signature: Stri
     val count: Int, val digest: String, val insertion: Int, val exit: Int,
     val block: Int, val paging: Int, val scratch: Int)
 internal val unavailableRenderHooks = listOf(
-    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/list/HorizontalListBlockFactory;", "a(Lgl/c;Lu0/r;Ld0/n;I)V", 25, 107, "1da0a63f3f0373b280eb6b72c8bc9710b9d89db2e0402e831259a3920110db9b", 63, 95, 3, 5, 0),
-    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/grid/GridBlockFactory;", "a(Lgl/c;Lu0/r;Ld0/n;I)V", 26, 108, "69bc8d0bac352c5cd0aafd0bf6509fa4c942766c5c1abb5ccf8c34330777280f", 63, 96, 3, 5, 0),
-    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/belly/BellyBlockFactory;", "a(Lgl/c;Lu0/r;Ld0/n;I)V", 23, 104, "6f1a8e7df8558e38bd35602d59769550d4cf51e784481c709e3e07ba8fbbb2cb", 63, 92, 3, 5, 0),
-    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/grid/PaginatedGridBlockFactory;", "a(Lgl/c;Lu0/r;Ld0/n;I)V", 26, 193, "2640cf3c02e272e0f15a6779f2419a42693ee3e4d42d9bf4d47b94247a4e0f2b", 147, 178, 1, 2, 0),
-    UnavailableRenderHook("Lil/l;", "b(Lf8/a;Lcom/bedrockstreaming/tornado/compose/renderer/TemplateRenderer;Ljava/util/Map;LAl/T;ZLu0/r;LK/F;Lil/e;Ljv/e;Ljv/f;Ljv/e;Ljv/e;Ld0/n;I)V", 36, 357, "4eea37d99cbef6f929170c07fc5702517c84088894a7f61592f619e5cb29b274", 213, 337, 0, 7, 9),
+    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/list/HorizontalListBlockFactory;", "a(Lfl/d;Lu0/r;Ld0/n;I)V", 25, 107, "e7fa9086264e955ba3c8d07aa29781139d038ebe452c87fc8f17b934ba3eadf4", 63, 95, 3, 5, 0),
+    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/grid/GridBlockFactory;", "a(Lfl/d;Lu0/r;Ld0/n;I)V", 26, 108, "f59f69778e5211d34f00feb4676a85a276df303bd94ee77a061acae38d89c7f7", 63, 96, 3, 5, 0),
+    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/belly/BellyBlockFactory;", "a(Lfl/d;Lu0/r;Ld0/n;I)V", 23, 104, "344819b057c3147fd9584120b07370896a58005b947f202687c1f889ab55bf2e", 63, 92, 3, 5, 0),
+    UnavailableRenderHook("Lcom/bedrockstreaming/tornado/compose/block/grid/PaginatedGridBlockFactory;", "a(Lfl/d;Lu0/r;Ld0/n;I)V", 26, 193, "2f6a9ad0b408c3623cbd683b275b2de64b71f09323b587623b59c9d6ef680b3e", 147, 178, 1, 2, 0),
+    UnavailableRenderHook("Lhl/l;", "b(Lf8/a;Lcom/bedrockstreaming/tornado/compose/renderer/TemplateRenderer;Ljava/util/Map;Lzl/D;ZLu0/r;LK/F;Lhl/e;Lnv/e;Lnv/f;Lnv/e;Lnv/e;Ld0/n;I)V", 36, 357, "1878ef093e2b82183c0c7cef186bed48d18bff29e55dce5a3a79a462acf5a5b5", 213, 337, 0, 7, 9),
 )

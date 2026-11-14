@@ -122,6 +122,27 @@
     "resource_api_floor": 24
   },
   {
+    "filename": "nl.rtl.videoland.v2_1.118.0-1630_2arch_1dpi_b072dcaa515fec23cfe4c1cfd8e1f08f_apkmirror.com.apkm",
+    "package": "nl.rtl.videoland.v2",
+    "version": "1.118.0",
+    "version_code": 1630,
+    "min_sdk": 24,
+    "base_member": "base.apk",
+    "base_sha256": "3683831d8b13d3c51d47fdfe734cf26bc1f927289cd086bf3e439705be8cf606",
+    "members": {
+      "base.apk": "3683831d8b13d3c51d47fdfe734cf26bc1f927289cd086bf3e439705be8cf606",
+      "split_config.arm64_v8a.apk": "a865b15bf10e94f0429f2bfb0616b9736ee8fbd3c8a8fc6285988972ed4a57eb",
+      "split_config.armeabi_v7a.apk": "1257a407f7ee70a4631beda08adf26f2a0f940fbe9bc59352dc0399102d839b4",
+      "split_config.xhdpi.apk": "4daed7344c53eb9d9152be4040c813581a5a7eca574cdf0c504a44401df38d25"
+    },
+    "dex_sha256": {
+      "classes.dex": "debac714ffbcdc57148ee3b6ed1369e7d930118c36b756a593528e8cc90238e5",
+      "classes2.dex": "c87e76ae0277477f3df5caec8976f8891e700c7e972d3fefc6df9b84318b02de",
+      "classes3.dex": "8b9a4673f70115bd9d1d5a8c6ebf93ae5ee28bc2350e70755899f5dc6d3c7147",
+      "classes4.dex": "6c621100e4070a7f894b67bfdbc253da612f14e3fc4daa467bfc08f0f108febb"
+    }
+  },
+  {
     "filename": "nl.uitzendinggemist_1.48.2-2405-240497937_1arch_2dpi_24lang_7f9c7f0a8392139794cbac35fd2cb429_apkmirror.com.apkm",
     "package": "nl.uitzendinggemist",
     "version": "1.48.2-2405",
