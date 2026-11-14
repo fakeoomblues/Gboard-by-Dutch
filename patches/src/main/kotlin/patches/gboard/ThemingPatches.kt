@@ -1,6 +1,8 @@
 package patches.gboard
 
+import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
+import patches.gboard.features.amoleddark.gboardAmoledDynamicDarkBytecodePatch
 import patches.gboard.features.customtheme.gboardCustomThemeAssetsPatch
 import patches.gboard.features.customtheme.gboardCustomThemeFeatureMarkerPatch
 import patches.gboard.features.customtheme.gboardCustomThemeManifestPatch
@@ -94,6 +96,33 @@ val gboardCustomThemePatch = resourcePatch(
         gboardCustomThemeManifestPatch,
         gboardCustomThemeOfficialImportPatch,
     )
+}
+
+/**
+ * Pure black keyboard surfaces for Gboard's Material-coloured dark keyboards.
+ *
+ * Gboard resolves the dynamic (wallpaper coloured) theme's keys area, non-prime panels, title
+ * frame and header panels from the Material 3 `surface_dim`, `surface_container`,
+ * `surface_container_low` and `surface_container_lowest` palette entries, which Google fills from
+ * the wallpaper neutral ramp (a grey) instead of black. This patch rewrites those four entries of
+ * the dark palette only: with the system in light mode Gboard keeps its light dynamic theme, and
+ * with the system in dark mode the keyboard goes #000000. Accent colours and the elevated surfaces
+ * (keys, chips, dialogs) keep Gboard's own values.
+ *
+ * Marked experimental for its first release: the dark palette override is confirmed on an AOSP
+ * Android 16 emulator, not yet on a physical phone with a wallpaper-derived palette.
+ */
+@Suppress("unused")
+val gboardAmoledDynamicDarkPatch = bytecodePatch(
+    name = "AMOLED dark keyboard",
+    description = "Experimental. Turns Gboard's dark keyboard background pure black instead of " +
+        "Google's grey, including the dynamic theme that follows the wallpaper. Light mode and " +
+        "the light theme stay unchanged.",
+    default = false,
+) {
+    compatibleWith(gboardExperimental)
+
+    dependsOn(gboardAmoledDynamicDarkBytecodePatch)
 }
 
 /**

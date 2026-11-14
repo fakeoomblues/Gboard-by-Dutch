@@ -679,6 +679,43 @@ internal object GboardVersionBindings {
         returnType = "Z",
     )
 
+    val `dynamicDarkPaletteConstructor` = GboardMethodTarget(
+        classType = "Lrgr;",
+        name = "<init>",
+        parameterTypes = listOf("Landroid/content/Context;", "Z"),
+        returnType = "V",
+    )
+
+    val `dynamicDarkPaletteIsLightField` = GboardFieldTarget(
+        classType = "Lrgr;",
+        name = "a",
+        type = "Z",
+    )
+
+    val `dynamicDarkPaletteSurfaceContainerField` = GboardFieldTarget(
+        classType = "Lrgr;",
+        name = "Q",
+        type = "I",
+    )
+
+    val `dynamicDarkPaletteSurfaceContainerLowField` = GboardFieldTarget(
+        classType = "Lrgr;",
+        name = "R",
+        type = "I",
+    )
+
+    val `dynamicDarkPaletteSurfaceContainerLowestField` = GboardFieldTarget(
+        classType = "Lrgr;",
+        name = "S",
+        type = "I",
+    )
+
+    val `dynamicDarkPaletteSurfaceDimField` = GboardFieldTarget(
+        classType = "Lrgr;",
+        name = "P",
+        type = "I",
+    )
+
     val `editingAccessPointsApController` = GboardMethodTarget(
         classType = "Lmpq;",
         name = "<init>",
