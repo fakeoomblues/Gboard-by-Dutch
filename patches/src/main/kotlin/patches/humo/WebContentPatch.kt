@@ -53,8 +53,12 @@ internal val trackingResources = resourcePatch {
             }
             check(optional.size == 8) { "Humo optional registrar inventory changed: ${optional.size}" }
             optional.forEach { it.parentNode.removeChild(it) }
+            // Heap removed its autocapture provider in 7.55.0; disable it in the
+            // builds that still declare it and skip the rest.
+            doc.zeroOrOne("io.heap.autocapture.HeapViewAutocaptureContentProvider")
+                ?.setAttributeNS(ANDROID, "android:enabled", "false")
             listOf("com.facebook.internal.FacebookInitProvider",
-                "io.heap.core.HeapContentProvider", "io.heap.autocapture.HeapViewAutocaptureContentProvider",
+                "io.heap.core.HeapContentProvider",
                 "com.google.android.gms.tagmanager.TagManagerService", "com.google.android.gms.tagmanager.TagManagerPreviewActivity",
                 "com.google.android.gms.measurement.AppMeasurementReceiver","com.google.android.gms.measurement.AppMeasurementService",
                 "com.google.android.gms.measurement.AppMeasurementJobService",

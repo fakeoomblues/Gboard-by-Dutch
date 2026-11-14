@@ -124,7 +124,16 @@ val disableTracking = bytecodePatch(name = "Disable tracking", description = "Su
         }
         // These detached uploads have no playback result/callback consumer.
         // Local queue publication/persistence and the device/radio ID remain.
-        change("Lnl/dpgmedia/mcdpg/amalia/player/audio/tracking/catsure/CatsureHeartbeatRepository;", "sendHeartbeat(Lnl/dpgmedia/mcdpg/amalia/player/audio/statemachine/model/AmaliaAudioPlayerState;Ljava/lang/String;)V", STOP)
+        // 7.55.0 removed the Catsure heartbeat repository and moved playback
+        // heartbeats to the audio telemetry ingest repository; both expose the
+        // same detached upload, so suppress whichever one the input ships.
+        if (packageMetadata.versionName == "7.55.0") {
+            change("Lnl/dpgmedia/mcdpg/amalia/player/audio/tracking/telemetry/AudioTelemetryEventRepository;",
+                "onHeartbeat(Lnl/dpgmedia/mcdpg/amalia/player/audio/model/AmaliaAudioPlayable;Lnl/dpgmedia/mcdpg/amalia/player/audio/statemachine/model/AmaliaAudioPlayerState;)V", STOP)
+        } else {
+            change("Lnl/dpgmedia/mcdpg/amalia/player/audio/tracking/catsure/CatsureHeartbeatRepository;",
+                "sendHeartbeat(Lnl/dpgmedia/mcdpg/amalia/player/audio/statemachine/model/AmaliaAudioPlayerState;Ljava/lang/String;)V", STOP)
+        }
         change("Lnl/dpgmedia/mcdpg/amalia/audio/queue/catsure/CatsureQueueSyncRepository;", "syncQueue(Lnl/dpgmedia/mcdpg/amalia/audio/queue/holder/CurrentQueue;)V", STOP)
         // Belgian brands choose the Gemius implementation by default. Reuse
         // the SDK's normal no-op implementation before any CIM init occurs.

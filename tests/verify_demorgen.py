@@ -10,6 +10,13 @@ from verify_weerplaza import method as _method, canonical_method as _canonical, 
 
 def method(*args):return [x.replace('const-string/jumbo ','const-string ') for x in _method(*args)]
 def canonical(*args):return [x.replace('const-string/jumbo ','const-string ') for x in _canonical(*args)]
+
+def input_version(root):
+    """Publisher input version from the decoded apktool metadata."""
+    match = re.search(r"versionName: ['\"]?([0-9.]+)", resource(root, 'apktool.yml').read_text())
+    assert match, 'Decoded input has no versionName'
+    return match.group(1)
+
 NAMES={'Hide ads','Disable tracking','Hide Premium banner','Skip consent screens','Read full articles'}
 A='{http://schemas.android.com/apk/res/android}'
 E='nl/persgroep/edition/'
@@ -575,6 +582,27 @@ def verify_optional_firebase_consumers(root,tracking):
 
 
 
+# Publisher 7.55.0 (23136519) rebuilds: original-body pins recomputed on
+# 2026-11-14 from the APKCube minSdk-29 distribution with the same digesters.
+ARTICLE_RESULT_755 = 'nl/persgroep/edition/article/data/repository/ArticleRepositoryImpl$getArticle$2'
+ARTICLE_MOMENT_755 = 'nl/persgroep/edition/article/data/repository/ArticleRepositoryImpl$getArticleMoment$2'
+DIGESTS_755 = {
+    ('nl/persgroep/edition/component/web/ui/DefaultWebViewClient', 'shouldOverrideUrlLoading(Ljava/lang/String;Z)Z'): '10aa344191a1ecddead2be697cb2384609c4647b5764f5853617930ab4e575e9',
+    ('nl/persgroep/edition/component/web/ui/DefaultWebViewClient', 'onPageStarted(Landroid/webkit/WebView;Ljava/lang/String;Landroid/graphics/Bitmap;)V'): '1366fc3b8cbe5ffe3168da9c76ddb183cef1eb01fdfd8b98bcb900be74a89b22',
+    ('nl/persgroep/edition/component/web/ui/MyEnvironmentActionMessageReceiverJSInterface', 'postMessage(Ljava/lang/String;)V'): '9b0def6bef66d7634abe7d18f69df842ca83bd071f4d6de524ddd5a6f5917e48',
+    ('nl/persgroep/feature/component/privacy/domain/ConsentManagerImpl', 'resurfaceConsent(Landroid/app/Activity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;'): '10de8e66c32067e5bef06fbf7e21c92c0b85e164f1f5491ad8451179af7dbc72',
+    ('io/piano/android/cxense/SendTask', 'notifyCallback(Ljava/util/List;Ljava/lang/Exception;)Lkotlin/Unit;'): '51a506f95e1b3a7596d1f23bca0000994ffcb0bde6ac36a55205964757bc9c78',
+    ('nl/dpgmedia/mcdpg/amalia/audio/queue/catsure/CatsureQueueSyncRepository$syncQueue$1', 'invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;'): 'd7898208eec0c46a851c888412d10fc9eac0486eb7f9a5e664c492696f2e1c57',
+    ('nl/dpgmedia/puzzels/gg/game/player/gameview/ad/ui/GameAdViewModel', 'handlePlayerState(Lnl/dpgmedia/puzzels/gg/game/player/gameview/ad/ui/player/GameAdPlayerState;Lnl/dpgmedia/puzzels/gg/game/player/gameview/ad/ui/player/GameAdPlayerState;)V'): 'd46c5bc46a8b177985ec612e176e7ffa95c4ff177a07b3056f625389e35bf004',
+    ('nl/dpgmedia/puzzels/gg/game/player/gameview/container/GameContainerKt', 'GameContainer$lambda$1$0$0(Lnl/dpgmedia/puzzels/gg/game/player/gameview/container/GameContainerViewModel;Lkotlin/jvm/functions/Function1;Lnl/dpgmedia/puzzels/gg/game/ad/player/GgGamePlayerAdContainerFactory$GameAdContainerEvent;)Lkotlin/Unit;'): 'fda52d2e647a76e65ebb33f4877a4aaf16f3f2b9bc5ba0f8738a79605044c204',
+    ('nl/dpgmedia/puzzels/gg/game/player/gameview/container/state/RewardedGameAdKt', 'RewardedGameAd$lambda$0$0(Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lnl/dpgmedia/puzzels/gg/game/ad/player/GgGamePlayerAdContainerFactory$GameAdContainerEvent;)Lkotlin/Unit;'): 'c78ac607a35ae059c6a8937e4b1463d6e400a91fdc312c43787acbbce804e09a',
+    ('nl/dpgmedia/mcdpg/amalia/tracking/internal/AmaliaInternalTracker', 'track(Lnl/dpgmedia/publishingservices/audiosdk/analytics/AudioUiInteractionGenCodeTrackingEvent;)V'): '7d822285e83d09983f09e0811875dbb3b844e4dab5c825ffbd10ce407a3b6fdb',
+    ('nl/persgroep/edition/entertainment/games/GameSdkInterfaceProvider$createExceptionRecorderInterface$1', 'setCustomKey(Ljava/lang/String;Ljava/lang/String;)V'): 'f897cd14a51e39a4c4e82b47c1ba74653a806bc445f8dda207da0d93f014f014',
+    ('nl/persgroep/edition/integration/AudioSdkMonitoringImpl', 'setCustomKey(Ljava/lang/String;Ljava/lang/String;)V'): '5348f85a2201bb6ad8489ca1d1c1f12dec09e1f1e798df86d697bd704ff78065',
+    ('nl/persgroep/edition/article/data/repository/ArticleRepositoryImpl$getArticle$2',): '9847875ca0a55e0cf474fdca9091100a2607e91ed102fc59fa64147cfa8b9b6d',
+    ('nl/persgroep/edition/article/data/repository/ArticleRepositoryImpl$getArticleMoment$2',): '53894770326ad94e14523c5b6959b207d110db532639c70b5ad0a985d208eefc',
+}
+
 # Independently pinned De Morgen originals, additional to the verified shared cohort.
 EXTRA_STOP = [('nl/dpgmedia/mcdpg/amalia/tracking/internal/AmaliaInternalTracker',
   'track(Lnl/dpgmedia/publishingservices/audiosdk/analytics/AudioUiInteractionGenCodeTrackingEvent;)V'),
@@ -616,8 +644,8 @@ def verify_demorgen_additions(root, selected):
     manifest = ET.parse(resource(root, 'AndroidManifest.xml')).getroot()
     assert manifest.get('package') == 'be.persgroep.android.news.mobiledm', 'De Morgen package identity'
     metadata = resource(root, 'apktool.yml').read_text()
-    assert re.search(r"versionName: ['\"]?7\.53\.1['\"]?\s*$", metadata, re.M), 'De Morgen version identity'
-    assert re.search(r"versionCode: ['\"]?23136515['\"]?\s*$", metadata, re.M), 'De Morgen code identity'
+    assert re.search(r"versionName: ['\"]?(7\.53\.1|7\.55\.0)['\"]?\s*$", metadata, re.M), 'De Morgen version identity'
+    assert re.search(r"versionCode: ['\"]?(23136515|23136519)['\"]?\s*$", metadata, re.M), 'De Morgen code identity'
     tracking = bool(selected & {'Disable tracking', 'Skip consent screens'})
     ads = tracking or 'Hide ads' in selected
     expected = {pair: ['return-void'] for pair in EXTRA_STOP}
@@ -664,6 +692,22 @@ def verify_demorgen_additions(root, selected):
 
 
 def verify(root: Path, selected: set[str]) -> None:
+
+    if input_version(root) == '7.55.0':
+        # Publisher 7.55.0 rebuilds of preserved bodies: retarget the pins
+        # recomputed on 2026-11-14 from the 23136519 APKCube inputs (same
+        # digesters; provenance in belgian_edition_originals_755) and drop the
+        # removed Catsure heartbeat continuation. Its detached upload stops at
+        # the 7.55.0 telemetry ingest repository in belgian_catsure instead.
+        for group in (RETAINED, GAME_RETAINED):
+            for i, (c, s, d) in enumerate(group):
+                if (c, s) in DIGESTS_755: group[i] = (c, s, DIGESTS_755[(c, s)])
+        RETAINED[:] = [t for t in RETAINED if 'CatsureHeartbeatRepository' not in t[0]]
+        for k, v in DIGESTS_755.items():
+            if k in EXTRA_ORIGINAL: EXTRA_ORIGINAL[k] = v
+        global ARTICLE_RESULT_ORIGINAL_SHA256, ARTICLE_MOMENT_ORIGINAL_SHA256
+        ARTICLE_RESULT_ORIGINAL_SHA256 = DIGESTS_755[(ARTICLE_RESULT_755,)]
+        ARTICLE_MOMENT_ORIGINAL_SHA256 = DIGESTS_755[(ARTICLE_MOMENT_755,)]
     tracking=bool(selected & {'Disable tracking','Skip consent screens'})
     ads=tracking or 'Hide ads' in selected
     premium='Hide Premium banner' in selected
@@ -727,9 +771,14 @@ def verify(root: Path, selected: set[str]) -> None:
         assert (md.get(n)==v)==tracking,'Hard collector flag '+n
     for n in ['com.google.firebase.installations.FirebaseInstallationsRegistrar','com.google.firebase.messaging.FirebaseMessagingRegistrar','com.google.firebase.remoteconfig.RemoteConfigRegistrar']:
         assert 'com.google.firebase.components:'+n in md,'Preserve '+n
-    for n,en in [('com.google.android.gms.ads.MobileAdsInitProvider',ads),('com.google.android.gms.ads.AdService',ads),('io.heap.autocapture.HeapViewAutocaptureContentProvider',tracking),('io.heap.core.HeapContentProvider',tracking),('com.facebook.internal.FacebookInitProvider',tracking),('org.acra.sender.LegacySenderService',tracking),('org.acra.sender.JobSenderService',tracking),('org.acra.attachment.AcraContentProvider',tracking),('com.google.android.gms.tagmanager.TagManagerService',tracking),('com.google.android.gms.tagmanager.TagManagerPreviewActivity',tracking)]:
+    for n,en in [('com.google.android.gms.ads.MobileAdsInitProvider',ads),('com.google.android.gms.ads.AdService',ads),('io.heap.core.HeapContentProvider',tracking),('com.facebook.internal.FacebookInitProvider',tracking),('org.acra.sender.LegacySenderService',tracking),('org.acra.sender.JobSenderService',tracking),('org.acra.attachment.AcraContentProvider',tracking),('com.google.android.gms.tagmanager.TagManagerService',tracking),('com.google.android.gms.tagmanager.TagManagerPreviewActivity',tracking)]:
         e,=[e for e in manifest.iter() if e.get(A+'name')==n]
         assert (e.get(A+'enabled')=='false')==en,'Disable startup component '+n
+    # Heap removed its autocapture provider in 7.55.0; check it only in inputs that declare it.
+    autocapture=[e for e in manifest.iter() if e.get(A+'name')=='io.heap.autocapture.HeapViewAutocaptureContentProvider']
+    assert len(autocapture)<=1,'Duplicate Heap autocapture provider'
+    for e in autocapture:
+        assert (e.get(A+'enabled')=='false')==tracking,'Disable startup component io.heap.autocapture.HeapViewAutocaptureContentProvider'
     for asset in ['ad.html','apn_omsdk.js','apn_renderNativeAssets.html','mraid.js','omsdk-v1.js']:
         assert resource(root,'assets/'+asset).exists()!=ads,'Remove ad executable '+asset
     assert resource(root,'assets/containers/GTM-KQGZHLB.json').exists()!=tracking,'Remove collector container'
@@ -780,8 +829,13 @@ def verify_belgian_boundaries(root, selected):
     for cls in AD_SETTINGS:
         code = method(root, cls, 'init()V')
         assert (code[:1] == ['return-void']) == ads, 'No video/game ad-settings prefetch: '+cls
-    from belgian_edition_originals import BELGIAN_BOUNDARIES
-    for cls, sig, digest in BELGIAN_BOUNDARIES["demorgen"]:
+    if input_version(root) == '7.55.0':
+        # 7.55.0 rebuild pins recorded on 2026-11-14; see the 755 module's provenance.
+        from belgian_edition_originals_755 import BELGIAN_BOUNDARIES as boundaries
+    else:
+        from belgian_edition_originals import BELGIAN_BOUNDARIES
+        boundaries = BELGIAN_BOUNDARIES
+    for cls, sig, digest in boundaries["demorgen"]:
         skip = 3 if tracking and cls == VIDEO_MODULE else 1 if ads and cls in AD_SETTINGS else 0
         assert hashlib.sha256('\n'.join(canonical(root,cls,sig,skip)).encode()).hexdigest() == digest, 'Preserve Belgian video/ad-settings original body: '+cls+'->'+sig
     if tracking:

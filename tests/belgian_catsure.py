@@ -4,16 +4,25 @@ StateFlow and local storage are platform boundaries; commit order, duplicate
 queue handling and entry into the real emitted no-ops are app instructions.
 """
 import json
+import re
 from pathlib import Path
 from ad_onboarding import VM, Obj, method, digest
 
 A = 'nl/dpgmedia/mcdpg/amalia/'
 QUEUE = A+'audio/queue/catsure/CatsureQueueSyncRepository'
 HEARTBEAT = A+'player/audio/tracking/catsure/CatsureHeartbeatRepository'
+TELEMETRY = A+'player/audio/tracking/telemetry/AudioTelemetryEventRepository'
 HOLDER = A+'audio/queue/holder/AudioQueueHolder'
 COMMIT = 'commit(L'+A+'audio/queue/holder/CurrentQueue;)V'
 SINKS = [(QUEUE, 'syncQueue(L'+A+'audio/queue/holder/CurrentQueue;)V'),
          (HEARTBEAT, 'sendHeartbeat(L'+A+'player/audio/statemachine/model/AmaliaAudioPlayerState;Ljava/lang/String;)V')]
+
+
+def input_version(root):
+    """Publisher input version from the decoded apktool metadata."""
+    match = re.search(r"versionName: ['\"]?([0-9.]+)", (Path(root) / 'apktool.yml').read_text())
+    assert match, 'Decoded input has no versionName'
+    return match.group(1)
 
 
 class QueueVM(VM):
@@ -62,7 +71,8 @@ class QueueVM(VM):
 
 
 def verify_catsure(root, enabled, brand):
-    original = json.loads(Path(__file__).with_name('belgian_catsure_originals.json').read_text())[brand]
+    dataset = 'belgian_catsure_originals_755.json' if input_version(root) == '7.55.0' else 'belgian_catsure_originals.json'
+    original = json.loads(Path(__file__).with_name(dataset).read_text())[brand]
     for cls, sig, expected in original['retained']:
         assert digest(method(root,cls,sig).canonical()) == expected, 'Preserve local queue/persistence/device/radio/auth: '+cls+'->'+sig
     for cls, sig, expected in original['sinks']:
@@ -77,6 +87,9 @@ def verify_catsure(root, enabled, brand):
             args = [Obj('L'+cls+';'), Obj('Lopaque/Fixture;')]
             if cls == HEARTBEAT:
                 args.append('playing')
+            elif cls == TELEMETRY:
+                # The 7.55.0 ingest sink takes the opaque playable and state pair.
+                args.append(Obj('Lopaque/Fixture;'))
             assert vm.call(cls, sig, args) is None
             assert not vm.events and not vm.saved
     for current in [None, 'fixture-current-uid']:

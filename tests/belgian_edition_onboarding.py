@@ -1,7 +1,14 @@
 """Execute edition onboarding with independent De Morgen and Humo graph pins."""
 import re
+from pathlib import Path
 from dpg_onboarding import (verify_startup, verify_resumed_startup, verify_notification_defaults,
     verify_manual, digest, method, source, VALIDATE, SUSPEND, MAIN, E)
+
+def input_version(root):
+    """Publisher input version from the decoded apktool metadata."""
+    match = re.search(r"versionName: ['\"]?([0-9.]+)", (Path(root) / 'apktool.yml').read_text())
+    assert match, 'Decoded input has no versionName'
+    return match.group(1)
 
 def verify_onboarding(root, enabled, brand):
     assert brand in {"demorgen", "humo"}
@@ -12,8 +19,13 @@ def verify_onboarding(root, enabled, brand):
     verify_preserved(root, enabled, brand)
 
 def verify_preserved(root,enabled,brand):
-    from belgian_edition_originals import ORIGINAL
-    original=ORIGINAL[brand]
+    if input_version(root) == '7.55.0':
+        # 7.55.0 rebuild pins recorded on 2026-11-14; see the 755 module's provenance.
+        from belgian_edition_originals_755 import ORIGINAL as original
+        original = original[brand]
+    else:
+        from belgian_edition_originals import ORIGINAL
+        original = ORIGINAL[brand]
     for cls,sig,sha in original['retained']:
         assert digest(method(root,cls,sig).canonical())==sha,brand+' preserve manual/account/intent/notification flow: '+cls+'->'+sig
     m=method(root,VALIDATE,SUSPEND);remove=set();replace={}

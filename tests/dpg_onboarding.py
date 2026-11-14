@@ -62,6 +62,8 @@ class StartupVM(VM):
         if typ=='Lkotlin/collections/CollectionsKt;':
             if sig=='emptyList()Ljava/util/List;':return []
             if sig=='collectionSizeOrDefault(Ljava/lang/Iterable;)I':return len(v[0].fields['values'] if isinstance(v[0],Obj) else v[0])
+            # The 7.55.0 rebuild uses the standard two-argument stdlib form.
+            if sig=='collectionSizeOrDefault(Ljava/lang/Iterable;I)I':return max(len(v[0].fields['values'] if isinstance(v[0],Obj) else v[0]),v[1])
         model_classes={PUSH+'data/PushSectionsDtoMapper',PUSH+'data/PushSectionLocalStorage',PUSH+'data/PushSectionLocalStorage$special$$inlined$listPref$default$1',
             PUSH+'data/model/PushSectionDto',PUSH+'data/model/PushCategoryDto',PUSH+'domain/model/Category',PUSH+'domain/model/Section',PUSH+'domain/model/PushSections'}
         if cls in model_classes:return self.call(cls,sig,v)
@@ -106,6 +108,8 @@ class StartupVM(VM):
         if typ=='Landroidx/lifecycle/ViewModelKt;':return Obj('Lkotlinx/coroutines/CoroutineScope;')
         if typ=='L'+E+'foundation/coroutines/Coroutines;' and sig=='getIO()Lkotlinx/coroutines/CoroutineDispatcher;':return Obj('Lkotlinx/coroutines/CoroutineDispatcher;')
         if typ=='Landroidx/media3/ui/HtmlUtils;' and sig.startswith('areEqual('):return v[0] is v[1] or v[0]==v[1]
+        # The 7.55.0 rebuild compares states through the standard null-safe intrinsic.
+        if typ=='Lkotlin/jvm/internal/Intrinsics;' and sig=='areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z':return v[0]==v[1]
         if typ=='Ljava/lang/Number;' and sig=='intValue()I':return int(v[0])
         if typ=='Lkotlinx/coroutines/flow/MutableSharedFlow;' and sig.startswith('emit('):
             self.emitted.append(v[1]);return self.unit

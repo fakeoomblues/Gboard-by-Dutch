@@ -18,7 +18,13 @@ internal const val ANDROID = "http://schemas.android.com/apk/res/android"
 internal val demorgen = Compatibility(
     name = "De Morgen", packageName = "be.persgroep.android.news.mobiledm", apkFileType = ApkFileType.APKS,
     signatures = setOf("34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"),
-    targets = listOf(AppTarget(version = "7.53.1", versionCode = 23136515, minSdk = 32)),
+    // Both the Play and APKCube distributions of each build share one DEX set;
+    // the publisher floors the APKCube variants at manifest minSdk 29 (RainViewer
+    // precedent: declare the lowest publisher floor, never pin the manifest).
+    targets = listOf(
+        AppTarget(version = "7.53.1", versionCode = 23136515, minSdk = 29),
+        AppTarget(version = "7.55.0", versionCode = 23136519, minSdk = 29),
+    ),
 )
 internal val originalInput = patches.shared.originalInput(demorgen)
 
@@ -31,6 +37,15 @@ internal fun org.w3c.dom.Document.one(name: String): Element {
         .filter { it.getAttribute("android:name") == name }.also {
             check(it.size == 1) { "Expected one De Morgen manifest entry $name, found ${it.size}" }
         }.single()
+}
+/** Publishers drop optional SDK components between builds (Heap removed its
+ * autocapture provider in 7.55.0); disable such entries only when present. */
+internal fun org.w3c.dom.Document.zeroOrOne(name: String): Element? {
+    val nodes = getElementsByTagName("*")
+    return (0 until nodes.length).map { nodes.item(it) as Element }
+        .filter { it.getAttribute("android:name") == name }.also {
+            check(it.size <= 1) { "Expected at most one De Morgen manifest entry $name, found ${it.size}" }
+        }.singleOrNull()
 }
 
 /** Helpers live in existing public app classes; no extension or reflection is needed. */
