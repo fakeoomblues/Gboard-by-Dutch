@@ -1,7 +1,7 @@
 extension { name = "extensions/hln.mpe" }
 android {
  namespace = "nl.johninnl.hln"
- defaultConfig { minSdk = 24 }
+ defaultConfig { minSdk = 29 }
  testOptions { unitTests.isReturnDefaultValues = true }
     lint {
         abortOnError = true
