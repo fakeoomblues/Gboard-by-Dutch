@@ -2,6 +2,7 @@ package patches.monet;
 
 import app.morphe.patcher.util.proxy.mutableTypes.*;
 import com.android.tools.smali.dexlib2.Opcode;
+import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation;
 import com.android.tools.smali.dexlib2.builder.instruction.*;
 import com.android.tools.smali.dexlib2.iface.*;
 import com.android.tools.smali.dexlib2.iface.instruction.*;
