@@ -13,6 +13,8 @@ import java.util.*;
  * Derived from Santodan/santodan-patches under GPL-3.0; see NOTICE. */
 final class MonetWuplayHooks {
     static final String EXTENSION = "Lnl/johninnl/monetwuplay/MonetWuplayCatalogs;";
+    static final String NUVIO_EXTENSION = "Lnl/johninnl/monetnuvio/MonetNuvioCatalogs;";
+    static final String NUVIO_REFRESH = "Lnl/johninnl/monetnuvio/NuvioCatalogRefresh;";
     static final String READER = "La/s46;->l(Landroid/content/Context;Landroid/net/Uri;ILjava/lang/Long;)La/rx5;";
     static final String PROGRAMS = "La/s46;->e(Ljava/util/List;)Ljava/util/List;";
     static final String STATE = "La/b42;->k(Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZZLa/h63;ZLa/rm;Ljava/util/Locale;La/nm2;)La/x84;";
@@ -133,12 +135,15 @@ final class MonetWuplayHooks {
             throw unsupported("Missing native reader/item/picker/action/flow ABI");
         return found;
     }
-    static void replace(MutableMethod method,int index,String name,List<String> args,String result,int... registers) {
+    static void replace(MutableMethod method,String extension,int index,String name,List<String> args,String result,int... registers) {
         int[] r=new int[5]; System.arraycopy(registers,0,r,0,registers.length);
         method.getImplementation().replaceInstruction(index,new BuilderInstruction35c(Opcode.INVOKE_STATIC,registers.length,r[0],r[1],r[2],r[3],r[4],
-            new ImmutableMethodReference(EXTENSION,name,args,result)));
+            new ImmutableMethodReference(extension,name,args,result)));
     }
     static void apply(MutableMethod method) {
+        apply(method, EXTENSION, "Lnl/johninnl/monetwuplay/WuplayCatalogRefresh;");
+    }
+    static void apply(MutableMethod method, String extension, String refresh) {
         String s=method.toString();
         if (!TARGETS.contains(s) || !CONTRACTS.get(s).equals(fingerprint(method))) throw unsupported("Changed or already patched method " + method);
         var code=method.getImplementation();
@@ -146,49 +151,49 @@ final class MonetWuplayHooks {
             var sourceArgs=List.of("Ljava/util/List;","Ljava/util/LinkedHashMap;","Ljava/util/Set;","Ljava/util/Locale;");
             // Selection: native first-source read on the MEDIA row (v6) resolves
             // catalog selections through the extension instead.
-            replace(method,382,"selection",List.of("Ljava/lang/Object;"),"Ljava/lang/String;",6);
+            replace(method,extension,382,"selection",List.of("Ljava/lang/Object;"),"Ljava/lang/String;",6);
             // Row items: the second filter loop consumes the first loop's list in v1;
             // catalog selections swap that source for the channel items before filtering.
             code.addInstruction(535,new BuilderInstruction35c(Opcode.INVOKE_STATIC,2,3,9,0,0,0,
-                new ImmutableMethodReference(EXTENSION,"rowItems",List.of("Ljava/util/ArrayList;","Ljava/lang/Object;"),"Ljava/util/ArrayList;")));
+                new ImmutableMethodReference(extension,"rowItems",List.of("Ljava/util/ArrayList;","Ljava/lang/Object;"),"Ljava/util/ArrayList;")));
             code.addInstruction(536,new BuilderInstruction11x(Opcode.MOVE_RESULT_OBJECT,3));
             // Owner match: keep the branch on the loop item (v13) and selected id (v9);
             // the owner string read at 546 is dead once its result register is reused.
-            replace(method,549,"matches",List.of("Ljava/lang/Object;","Ljava/lang/Object;"),"Z",13,9);
-            replace(method,552,"matchesChannel",List.of("Ljava/lang/Object;","Ljava/lang/String;","Ljava/lang/Object;"),"Z",1,9,10);
-            replace(method,565,"hidden",List.of("Ljava/util/Set;","Ljava/lang/Object;"),"Ljava/util/LinkedHashSet;",4,6);
-            replace(method,902,"sources",sourceArgs,"Ljava/util/List;",11,10,9,12);
-            replace(method,913,"sources",sourceArgs,"Ljava/util/List;",3,10,1,12);
+            replace(method,extension,549,"matches",List.of("Ljava/lang/Object;","Ljava/lang/Object;"),"Z",13,9);
+            replace(method,extension,552,"matchesChannel",List.of("Ljava/lang/Object;","Ljava/lang/String;","Ljava/lang/Object;"),"Z",1,9,10);
+            replace(method,extension,565,"hidden",List.of("Ljava/util/Set;","Ljava/lang/Object;"),"Ljava/util/LinkedHashSet;",4,6);
+            replace(method,extension,902,"sources",sourceArgs,"Ljava/util/List;",11,10,9,12);
+            replace(method,extension,913,"sources",sourceArgs,"Ljava/util/List;",3,10,1,12);
         } else if (s.equals(MODEL)) {
             var original=(ThreeRegisterInstruction)instructions(method).get(225);
-            code.replaceInstruction(225,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,54,1,new ImmutableMethodReference(EXTENSION,"wrap",List.of("Ljava/lang/Object;"),"Ljava/lang/Object;")));
+            code.replaceInstruction(225,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,54,1,new ImmutableMethodReference(extension,"wrap",List.of("Ljava/lang/Object;"),"Ljava/lang/Object;")));
             code.addInstruction(226,new BuilderInstruction11x(Opcode.MOVE_RESULT_OBJECT,15));
             code.addInstruction(227,new BuilderInstruction21c(Opcode.CHECK_CAST,15,new ImmutableTypeReference("La/ap1;")));
             code.addInstruction(228,new BuilderInstruction23x(Opcode.APUT_OBJECT,15,original.getRegisterB(),original.getRegisterC()));
         } else if (s.equals(FILTER)) {
-            replace(method,118,"disabled",List.of("Ljava/util/Set;","Ljava/lang/Object;"),"Z",2,14);
+            replace(method,extension,118,"disabled",List.of("Ljava/util/Set;","Ljava/lang/Object;"),"Z",2,14);
         } else if (s.equals(OWNER)) {
             // MEDIA rows read their first source after a null-check cast; map saved
             // catalog selections to their real owner before the caller compares it.
             code.addInstruction(7,new BuilderInstruction35c(Opcode.INVOKE_STATIC,1,2,0,0,0,0,
-                new ImmutableMethodReference(EXTENSION,"owner",List.of("Ljava/lang/String;"),"Ljava/lang/String;")));
+                new ImmutableMethodReference(extension,"owner",List.of("Ljava/lang/String;"),"Ljava/lang/String;")));
             code.addInstruction(8,new BuilderInstruction11x(Opcode.MOVE_RESULT_OBJECT,2));
         } else if (s.equals(HEADER)) {
             // Wrap the shared header title before the vq6 allocation consumes it,
             // preserving the original wrapper allocation and both label branches.
             code.addInstruction(113,new BuilderInstruction35c(Opcode.INVOKE_STATIC,2,7,2,0,0,0,
-                new ImmutableMethodReference(EXTENSION,"contentLabel",List.of("Ljava/lang/String;","Ljava/lang/Object;"),"Ljava/lang/String;")));
+                new ImmutableMethodReference(extension,"contentLabel",List.of("Ljava/lang/String;","Ljava/lang/Object;"),"Ljava/lang/String;")));
             code.addInstruction(114,new BuilderInstruction11x(Opcode.MOVE_RESULT_OBJECT,7));
         } else if (s.equals(PICKER)) {
             var parameters=List.of("Ljava/lang/String;","Ljava/lang/String;","Ljava/util/List;","Ljava/lang/Object;","Ljava/lang/Object;","Z",
                 "Ljava/lang/Object;","Ljava/lang/Object;","Ljava/lang/Object;","Ljava/util/Set;","Ljava/util/Set;","Ljava/lang/Object;",
                 "Ljava/lang/Object;","Ljava/lang/Object;","Ljava/lang/Object;","I","I","I");
-            code.replaceInstruction(398,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,4,18,new ImmutableMethodReference(EXTENSION,"contentPicker",parameters,"V")));
-            code.addInstruction(398,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,28,1,new ImmutableMethodReference(EXTENSION,"preparePicker",List.of("Ljava/lang/Object;"),"V")));
+            code.replaceInstruction(398,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,4,18,new ImmutableMethodReference(extension,"contentPicker",parameters,"V")));
+            code.addInstruction(398,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,28,1,new ImmutableMethodReference(extension,"preparePicker",List.of("Ljava/lang/Object;"),"V")));
         } else {
             boolean resume=s.equals(RESUME);
             code.addInstruction(0,new BuilderInstruction3rc(Opcode.INVOKE_STATIC_RANGE,resume?15:6,1,
-                new ImmutableMethodReference("Lnl/johninnl/monetwuplay/WuplayCatalogRefresh;",resume?"resume":"pause",
+                new ImmutableMethodReference(refresh,resume?"resume":"pause",
                     List.of("Ljava/lang/Object;"),"V")));
         }
     }

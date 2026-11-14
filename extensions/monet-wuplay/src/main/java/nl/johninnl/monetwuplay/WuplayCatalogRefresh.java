@@ -55,7 +55,7 @@ public final class WuplayCatalogRefresh {
             };
             context.getContentResolver().registerContentObserver(Uri.parse("content://android.media.tv/channel"), true, observer);
             context.getContentResolver().registerContentObserver(Uri.parse("content://android.media.tv/preview_program"), true, observer);
-            Log.i("MonetWuplay", "Wuplay catalog rows 1.1.0" + ": foreground subscription started");
+            Log.i("MonetWuplay", "Wuplay catalog rows 1.1.1" + ": foreground subscription started");
             schedule(0);
         }
         void schedule(long delay) {

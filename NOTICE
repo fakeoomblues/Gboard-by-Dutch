@@ -28,9 +28,16 @@ Monet Wuplay catalog rows
 
 Derived from the Monet catalog integration and runtime fixtures in
 Santodan/santodan-patches, source snapshot
-93f9a743ccd9feb25fbd6461c766a2808fb6d6d4, licensed under GPL-3.0.
+93f9a743ccd9feb25fbd6461c766a2808fb6d6d4 and Monet 1.1.1 support from
+da8228ff00fa55c27e59c0d4b0f8217e83346a37, licensed under GPL-3.0.
 Modified by this project for a dedicated Wuplay publisher boundary, branding,
-and Monet 1.1.0-only integration. The repository LICENSE applies.
+and Monet 1.1.1 integration. The Unlock Premium, Unlimited displayed cards and
+Individual Nuvio catalog rows patches are ports of Santodan's Monet 1.1.1
+patches (originally from Doom's Patches for premium). The ports were required
+for compatibility with this repository's Wuplay catalog rows patch, which hooks
+the same shared header method with a different hook encoding, and they reuse
+this repository's fingerprint algorithm and refresh architecture. The
+repository LICENSE applies.
 
 7c. Project Name Restriction
 ----------------------------
