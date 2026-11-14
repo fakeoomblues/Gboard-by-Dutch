@@ -23,6 +23,7 @@ APP_PAGES = {
     'io.github.artcraftandroid.wordcraft': ('wordcraft', 'other'),
     'io.github.artcraftandroid.gridcraft': ('gridcraft', 'other'),
     'io.github.jqssun.helium': ('titanium', 'other'),
+    'org.mozilla.fennec_fdroid': ('fennec', 'other'),
     'com.spocky.projengmenu': ('projectivy', 'other'),
     'com.king.candycrushsodasaga': ('candy-crush-soda-saga', 'entertainment'),
     'com.vectorunit.purple.googleplay': ('beach-buggy-racing', 'entertainment'),

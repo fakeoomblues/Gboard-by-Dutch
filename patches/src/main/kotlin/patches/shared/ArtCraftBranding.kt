@@ -18,8 +18,8 @@ private const val LAUNCHER = "android.intent.category.LAUNCHER"
 internal val anyArtCraftRelease = listOf(AppTarget(version = null))
 
 /**
- * One open-source app (the artcraft-android PdfCraft, LightCraft, WordCraft and GridCraft, and
- * Titanium Browser) and the brand it can wear.
+ * One open-source app (the artcraft-android PdfCraft, LightCraft, WordCraft and GridCraft,
+ * Titanium Browser and Fennec) and the brand it can wear.
  *
  * The icon styles are ordered as the Manager dropdown shows them: the app's original icon first and
  * the brand icon second, which is the default. Each non-original style ships its resources under
@@ -116,8 +116,9 @@ internal fun artCraftBrandingPatch(brand: ArtCraftBrand) = resourcePatch(
             if (icon != ARTCRAFT_ORIGINAL_ICON) {
                 application.setAttributeNS(ANDROID_NS, "android:icon", launcherIcon)
                 application.setAttributeNS(ANDROID_NS, "android:roundIcon", launcherIcon)
-                // Explicit launcher component icons override the application icon.
-                for (launcher in launchers) {
+                // Explicit launcher component icons override the application icon. Disabled aliases are
+                // the app's own alternative icons (Fennec's icon picker), so they keep their artwork.
+                for (launcher in launchers.filter { it.getAttributeNS(ANDROID_NS, "enabled") != "false" }) {
                     for (attribute in listOf("icon", "roundIcon")) {
                         if (launcher.hasAttributeNS(ANDROID_NS, attribute)) {
                             launcher.setAttributeNS(ANDROID_NS, "android:$attribute", launcherIcon)

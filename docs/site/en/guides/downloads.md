@@ -31,6 +31,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [WordCraft](../apps/wordcraft.md) | 0.0.1-beta / 1012 | [APK](#local-original-inputs) |
 | [GridCraft](../apps/gridcraft.md) | 0.0.1-beta / 1012 | [APK](#local-original-inputs) |
 | [Titanium Browser](../apps/titanium.md) | 157.0.8103.78 / 810307874 | [APK](#local-original-inputs) |
+| [Fennec](../apps/fennec.md) | 159.0.1 / 1590120 | [APK](#local-original-inputs) |
 | [ED](../apps/ed.md) | 9.22.0 / 9220000 | [APKS](https://buzzheavier.com/pi3usslla0jt) |
 | [GVA](../apps/gva.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/1thesia58zm2) |
 | [FTM](../apps/ftm.md) | 2.6.8 / 58 | [APKS](https://buzzheavier.com/2cv2n5bgc3tn) |

@@ -40,7 +40,10 @@ public class ArtCraftBrandingTest {
             "io.github.artcraftandroid.gridcraft", "Microsoft Excel", Set.of("excel")),
         new App(patches.titanium.CustomBrandingPatchKt.getCustomBrandingPatch(),
             patches.titanium.CustomBrandingPatchKt.getTitaniumBrand(),
-            "io.github.jqssun.helium", "Chrome", Set.of("chrome")));
+            "io.github.jqssun.helium", "Chrome", Set.of("chrome")),
+        new App(patches.fennec.CustomBrandingPatchKt.getCustomBrandingPatch(),
+            patches.fennec.CustomBrandingPatchKt.getFennecBrand(),
+            "org.mozilla.fennec_fdroid", "Firefox", Set.of("firefox")));
 
     @Test public void brandingFollowsEveryRelease() {
         for (App app : APPS) {
