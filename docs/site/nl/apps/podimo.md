@@ -1,6 +1,6 @@
 # Podimo
 
-**App-versie:** 3.7.0 · **Build:** 944 · **Origineel bestand:** APKS
+**Appversie:** 3.7.0 · **Build:** 944 · **Origineel bestand:** APKS
 
 [Originele app downloaden](https://buzzheavier.com/2r6c8rh2ol63){ .md-button .md-button--primary }
 
@@ -8,7 +8,7 @@ Kies het exacte originele bestand in Morphe Manager. Gebruik het volledige archi
 
 ## Patches
 
-| Patch | Standaard | Wat het doet |
+| Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
 | **Android Auto show grid browse** | Aan | Herbouwt de Android Auto-browser rond podcastseries: Voor jou-rasters met seriehoezen, alle afleveringen van een show bij het openen, geen lege bibliotheektab voor gasten, en elke auto-client mag verbinden. |
 | **Guest session playback host** | Aan | Laat gasten ondersteunde afleveringen beluisteren zonder account. Gebruik samen met Unlock Premium playback. |

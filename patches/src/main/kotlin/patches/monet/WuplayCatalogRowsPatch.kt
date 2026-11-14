@@ -8,7 +8,7 @@ val wuplayCatalogRows = bytecodePatch(
     name = "Individual Wuplay catalog rows",
     description = "Choose individual published Wuplay catalogs in Monet's Content picker, with Wuplay icons " +
         "and refresh independent of Recommendations. Requires Wuplay's catalog publisher. " +
-        "Select only one catalog source patch.",
+        "Enable only one catalog source patch; enabling both fails by design.",
     default = false,
 ) {
     compatibleWith(monet)

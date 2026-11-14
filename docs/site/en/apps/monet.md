@@ -10,11 +10,16 @@ Select the original Monet launcher APK in Morphe Manager. The patch verifies Mon
 
 | Patch | Default | What it does |
 | --- | --- | --- |
+| **Unlock Premium** | On | Unlocks Monet's local premium features. Billing and license storage stay native; only the local evaluator's false return changes. |
+| **Unlimited displayed cards** | Off | Remove the 20-card limit from Displayed Cards. Add -10, +10 and Max to the original themed picker, preserving its layout and single-card steps. |
 | **Individual Wuplay catalog rows** | Off | Adds individual published Wuplay catalogs to Monet's Content picker, with Wuplay icons and refresh independent of Recommendations. |
+| **Individual Nuvio catalog rows** | Off | Adds individual published catalogs to Monet's Content picker, accepting every supported catalog publisher. |
+
+Select only one catalog source patch: the Wuplay and Nuvio rows patches hook the same native methods and cannot be combined. Unlock Premium and Unlimited displayed cards combine freely with either.
 
 ## Advertising and tracking services
 
-This patch adds Wuplay content choices. It does not change advertising or tracking controls.
+These patches add Wuplay or Nuvio content choices and local premium and card-count controls. They do not change advertising or tracking controls.
 
 ## Before using
 

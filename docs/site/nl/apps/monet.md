@@ -10,11 +10,16 @@ Selecteer de originele Monet-launcher-APK in Morphe Manager. De patch verifieert
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
+| **Unlock Premium** | Aan | Schakelt Monets lokale premiumfuncties in. Facturering en licentieopslag blijven native; alleen de valse return van de lokale evaluator verandert. |
+| **Unlimited displayed cards** | Uit | Verwijdert de limiet van 20 kaarten bij Weergavekaarten. Voegt -10, +10 en Max toe aan de originele thematische kiezer, met behoud van indeling en enkelvoudige stappen. |
 | **Individual Wuplay catalog rows** | Uit | Voegt afzonderlijke gepubliceerde Wuplay-catalogi toe aan Monets Content-keuzelijst, met Wuplay-iconen en verversing onafhankelijk van Recommendations. |
+| **Individual Nuvio catalog rows** | Uit | Voegt afzonderlijke gepubliceerde catalogi toe aan Monets Content-keuzelijst, met ondersteuning voor elke ondersteunde catalogusuitgever. |
+
+Kies slechts één catalogusbronpatch: de Wuplay- en Nuvio-rijenpatches gebruiken dezelfde native methodes en zijn niet te combineren. Unlock Premium en Unlimited displayed cards combineren vrij met beide.
 
 ## Advertentie- en trackingdiensten
 
-Deze patch voegt Wuplay-inhoudskeuzes toe. Advertentie- en trackinginstellingen veranderen niet.
+Deze patches voegen Wuplay- of Nuvio-inhoudskeuzes en lokale premium- en kaartaantalcontroles toe. Advertentie- en trackinginstellingen veranderen niet.
 
 ## Voor gebruik
 

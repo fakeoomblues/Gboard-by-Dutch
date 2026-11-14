@@ -38,7 +38,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Flitsmeister](../apps/flitsmeister.md) | 14.17 / 1287 | [APKM](https://buzzheavier.com/1esn82va0l3d) |
 | Gearslip | 0.3.12-alpha / 12 | [APK](https://buzzheavier.com/buqabfpck73r) |
 | [HBVL](../apps/hbvl.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/7lz3azzelidy) |
-| [HLN](../apps/hln.md) | 9.22.0 / 2009220000 | [APKS](https://buzzheavier.com/0p35mq8c5mu7) |
+| [HLN](../apps/hln.md) | 9.23.3 / 2009230300 | [APKS](https://buzzheavier.com/0p35mq8c5mu7) |
 | [Humo](../apps/humo.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/fe1uzx562ngl) |
 | [KIJK Android](../apps/kijk.md) | 9.8.0 / 2026101500 | [APK](https://buzzheavier.com/88t73zvige6p) |
 | [KIJK Android TV](../apps/kijk-android-tv.md) | 7.2.7 / 10003 | [APKS](https://buzzheavier.com/oh3usdc9o9xi) |
@@ -53,7 +53,8 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Omroep Brabant](../apps/omroep-brabant.md) | 11.1.0 / 7331764 | [APKS](https://buzzheavier.com/hkxqb9c6hj02) |
 | [Omroep West](../apps/omroep-west.md) | 20.1 / 10596 | [APKS](https://buzzheavier.com/c79v6uimo26s) |
 | [Parool](../apps/parool.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/mezktjli0rmt) |
-| [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
+| [Podimo](../apps/podimo.md) | 3.7.0 / 944 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
+| [ABRP](../apps/abrp.md) | 8.0.0 / 6087 | [APKS](#local-original-inputs) |
 | [AT4K Launcher](../apps/at4k.md) | 1.3 / 20 | Use your own file |
 | [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | [GitHub releases](https://github.com/spocky/miproja1/releases) |
 | [RainViewer](../apps/rainviewer.md) | 8.4.1 / 44084 | [APKM](https://buzzheavier.com/ai8s8yfupvev) |
@@ -62,7 +63,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [TVgids.nl](../apps/tvgids-nl.md) | 7.0.16 / 106691 | [APK](https://buzzheavier.com/tgxpzbzghwec) |
 | [Trouw](../apps/trouw.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/30zwvpz9wqse) |
 | [Tubantia](../apps/tubantia.md) | 9.23.2 / 9230200 | [APKS](https://buzzheavier.com/dewwv45bqcl3) |
-| [Magic Earth](../apps/magicearth.md) | 7.1.26.38.B4684D03.6207A61BA / 2026141716 | [APKM](#local-original-inputs) |
+| [Magic Earth](../apps/magic-earth.md) | 7.1.26.38.B4684D03.6207A61BA / 2026141716 | [APKM](#local-original-inputs) |
 | [Google Maps](../apps/google-maps.md) | 26.44.06.1006895251 / 1068856906 | [APK](#local-original-inputs) |
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | [APKM](https://buzzheavier.com/nbgqof6ngf98) |

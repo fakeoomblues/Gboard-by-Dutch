@@ -12,7 +12,7 @@ val nuvioCatalogRows = bytecodePatch(
     name = "Individual Nuvio catalog rows",
     description = "Choose individual published catalogs in Monet's Content picker, with the publisher's " +
         "identity and refresh independent of Recommendations. Requires a catalog publisher such as " +
-        "NuvioTV. Select only one catalog source patch.",
+        "NuvioTV. Enable only one catalog source patch; enabling both fails by design.",
     default = false,
 ) {
     compatibleWith(monet)
