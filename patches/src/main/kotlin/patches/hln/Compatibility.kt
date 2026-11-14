@@ -16,7 +16,11 @@ internal const val MODEL = "Lcom/kubus/module/network/model/"
 internal const val FILTER = "${MODEL}SectionResponse;"
 internal val hln = Compatibility(name = "HLN", packageName = "be.persgroep.android.news.mobilehln", apkFileType = ApkFileType.APKS,
     signatures = setOf("34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"),
-    targets = listOf(AppTarget(version = "9.23.3", versionCode = 2009230300, minSdk = 29)))
+    // 9.23.3 is withdrawn: the Android Auto and tracking patches crash the app when
+    // applied together (androidx.startup.InitializationProvider at launch), which the
+    // static patch check cannot catch. Only the certified 9.22.0 build is offered
+    // until the interaction is fixed, so Morphe cannot install a crashing update.
+    targets = listOf(AppTarget(version = "9.22.0", versionCode = 2009220000, minSdk = 32)))
 internal val originalInput = patches.shared.originalInput(hln)
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
