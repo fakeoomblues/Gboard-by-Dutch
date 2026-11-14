@@ -2,7 +2,7 @@
 
 **App version:** 1.1.1 · **Build:** 135 · **Original file:** APK
 
-[Download original app](https://buzzheavier.com/xk5uwpz9uobd){ .md-button .md-button--primary }
+[Download original app](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 Select the original Monet launcher APK in Morphe Manager. The patch verifies Monet 1.1.1 (build 135) by its exact native contracts before changing anything, and rejects other versions.
 

@@ -55,7 +55,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Omroep West](../apps/omroep-west.md) | 20.1 / 10596 | [APKS](https://buzzheavier.com/c79v6uimo26s) |
 | [Parool](../apps/parool.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/mezktjli0rmt) |
 | [Podimo](../apps/podimo.md) | 3.5.1 / 941 | [APKS](https://buzzheavier.com/2r6c8rh2ol63) |
-| [AT4K Launcher](../apps/at4k.md) | 1.2 / 19 | [APK](https://buzzheavier.com/qalqg672rt8k) |
+| [AT4K Launcher](../apps/at4k.md) | 1.3 / 20 | Use your own file |
 | [Projectivy Launcher](../apps/projectivy.md) | 4.73 / 98 | [GitHub releases](https://github.com/spocky/miproja1/releases) |
 | [RainViewer](../apps/rainviewer.md) | 8.4.1 / 44084 | [APKM](https://buzzheavier.com/ai8s8yfupvev) |
 | [Rollerbank](../apps/rollerbank.md) | 4.5.3.1 / 4531 | [APKS](https://buzzheavier.com/k9v1po19ewp9) |
@@ -70,7 +70,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.118.0 / 1630 | [APKS](#local-original-inputs) |
 | [WuPlay Mobile](../apps/wuplay-mobile.md) | 0.1.9-alpha / 9 | [APK](#local-original-inputs) |
 | [Wuplay Android TV](../apps/wuplay.md) | 0.9.4-beta / 49 | [APK](https://buzzheavier.com/03cd7t0bs8qt) |
-| [Monet Android TV](../apps/monet.md) | 1.1.0 / 134 | [APK](https://buzzheavier.com/xk5uwpz9uobd) |
+| [Monet Android TV](../apps/monet.md) | 1.1.1 / 135 | Use your own file |
 | [Voetbal International](../apps/voetbal-international.md) | 5.13.52 / 910 | [APKS](https://buzzheavier.com/93s2c0j8pw5n) |
 | [Volkskrant](../apps/volkskrant.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/gsqypsmnoa36) |
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |

@@ -2,7 +2,7 @@
 
 **App version:** 1.3 · **Build:** 20 · **Original file:** APK
 
-[Download original app](https://buzzheavier.com/qalqg672rt8k){ .md-button .md-button--primary }
+[Download original app](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
 ## Patches
 
