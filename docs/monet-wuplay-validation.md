@@ -1,10 +1,35 @@
 # Dedicated Monet Wuplay catalog rows: validation
 
-Target: original `com.klevico.monet` 1.1.0 / 134 / minSdk 26.
-Input APK SHA-256: `3fdd45e7ed85f4a26ab6a56924e8a9c298c42c3cb036cb121d15ed6504b9a69c`.
+Target: original `com.klevico.monet` 1.1.1 / 135 / minSdk 26.
+Input APK SHA-256: `dd742a4eb7a4cdc0f9315d25d799e9a8aca51c942160e94f8b298d1e68c501f6`.
 Original signing certificate SHA-256: `4bec386a6baae56f0694d3be54f67e0625b973109e0dbb947df2a5d0254975e0`.
 
 The optional **Individual Wuplay catalog rows** patch recognizes only `app.wuplay.androidtv` preview channels whose provider IDs begin `santodan-launcher/wuplay/`. There is no Nuvio mode, legacy Monet binding or publisher-generalization option. Upstream source and runtime-fixture attribution are retained in NOTICE and AUTHORS.md.
+
+## 1.1.1 upgrade
+
+Monet 1.1.1 re-obfuscated the catalog contracts: every hooked class and method name
+changed while the reflected field names (`g`, `A`, `l`, `m`, `F`, `M`, `n`, `b`, `c`, `f`, `a`)
+and the `RECOMMENDATIONS`/`BOTH`/`CONTINUE_WATCHING` enum constants stayed identical.
+The contract table was re-derived from the 1.1.1 DEX (class map cross-checked with
+upstream Santodan's published 1.1.1 port, then confirmed instruction-by-instruction
+in the original APK): reader/converter `s46.l/m`, programs `s46.e`, aggregate state
+`b42.k`, filter `b42.C` (now with two extra booleans), sources `b42.n`, row model
+`nx0` with owner read `nx0.i`, picker `b84.X`/`b84.E1`, shared header `bv3.f`,
+view-model `qc4.<init>` (revision-flow store now at index 225, wrap source v54,
+dead v15), native filter `m42.d0`, flow combine `zl0.q`, revision flow `lz7.g`
+returning `w47` with update method `j`, and the `nd3`/`o43` picker callbacks.
+All 23 fingerprints were recomputed and the hook positions re-derived: selection 382,
+row-item source 535, owner match 549 (item register v13), channel match 552, hidden 565
+(row v6), source lists 902/913, disabled-source membership 118, model store 225,
+owner passthrough 7, header label wrap 113, picker capture/replace 398.
+
+Validation on 1.1.1: the bundle applied with `--validate --bytecode-mode FULL`; the
+independent audit reports `PASS: 9351 native classes; eight exact additive hooks;
+18 owned extension classes; 672 unchanged non-DEX/non-signature entries`, with complete
+manifest declarations and resource configurations/values unchanged. The runtime fixture
+and publisher-policy suites pass against the renamed stub ABI; `:patches:test` and the
+full Python regression suite pass.
 
 ## Native and archive verification
 

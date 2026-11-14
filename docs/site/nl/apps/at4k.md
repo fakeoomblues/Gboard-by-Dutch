@@ -1,6 +1,6 @@
 # AT4K Launcher
 
-**Appversie:** 1.2 · **Build:** 19 · **Origineel bestand:** APK
+**Appversie:** 1.3 · **Build:** 20 · **Origineel bestand:** APK
 
 [Download originele app](https://buzzheavier.com/qalqg672rt8k){ .md-button .md-button--primary }
 
@@ -12,7 +12,7 @@
 
 ## Voor gebruik
 
-Gebruik de originele APK van versie 1.2, build 19. Deze patch maakt geen aankoop of recht op een externe dienst aan. De oude PairIP-optie voor 0.99 is niet nodig voor deze build en is niet opgenomen.
+Gebruik de originele APK van versie 1.3, build 20. Deze patch maakt geen aankoop of recht op een externe dienst aan. De oude PairIP-optie voor 0.99 is niet nodig voor deze build en is niet opgenomen.
 
 Gecontroleerd met build- en APK-controles, een schone installatie en opnieuw starten in een Android 16 TV-emulator. Fysieke tv-hardware is niet getest.
 

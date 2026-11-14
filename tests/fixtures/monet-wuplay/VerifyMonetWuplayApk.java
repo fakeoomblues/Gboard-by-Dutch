@@ -28,33 +28,32 @@ public final class VerifyMonetWuplayApk {
         String s=original.toString();
         if(s.equals(MonetWuplayHooks.STATE)) {
             require(after.size()==before.size()+2,"State size changed");
-            call(after,1331,"selection",8);call(after,1470,"rowItems",2,4);call(after,1486,"matches",1,4);
-            call(after,1489,"matchesChannel",1,4,10);call(after,1503,"hidden",2,8);
-            call(after,1793,"sources",3,11,6,9);call(after,1802,"sources",14,11,0,9);
-            require(after.get(1485).getOpcode()==Opcode.MOVE_OBJECT_FROM16 && ((TwoRegisterInstruction)after.get(1485)).getRegisterA()==1 && ((TwoRegisterInstruction)after.get(1485)).getRegisterB()==1,"Item object lost");
-            for(int[] pair:new int[][]{{1802,1800},{1793,1791},{1503,1501},{1489,1487},{1486,1484},{1485,1483}})code.replaceInstruction(pair[0],nativeCode.get(pair[1]));
-            code.removeInstruction(1472);code.removeInstruction(1471);code.replaceInstruction(1470,nativeCode.get(1470));code.replaceInstruction(1331,nativeCode.get(1331));
+            call(after,382,"selection",6);call(after,535,"rowItems",3,9);call(after,549,"matches",13,9);
+            call(after,552,"matchesChannel",1,9,10);call(after,565,"hidden",4,6);
+            call(after,902,"sources",11,10,9,12);call(after,913,"sources",3,10,1,12);
+            for(int[] pair:new int[][]{{913,911},{902,900},{565,563},{552,550},{549,547},{382,382}})code.replaceInstruction(pair[0],nativeCode.get(pair[1]));
+            code.removeInstruction(536);code.removeInstruction(535);
         } else if(s.equals(MonetWuplayHooks.MODEL)) {
-            require(after.size()==before.size()+3 && ref(after.get(215)).contains("->wrap("),"Missing revision flow");
-            var range=(RegisterRangeInstruction)after.get(215);
-            require(range.getStartRegister()==20 && range.getRegisterCount()==1 && ((OneRegisterInstruction)after.get(216)).getRegisterA()==15
-                && ref(after.get(217)).equals("La/in1;"),"Wrong flow registers/types");
-            var oldStore=(ThreeRegisterInstruction)before.get(215); var newStore=(ThreeRegisterInstruction)after.get(218);
+            require(after.size()==before.size()+3 && ref(after.get(225)).contains("->wrap("),"Missing revision flow");
+            var range=(RegisterRangeInstruction)after.get(225);
+            require(range.getStartRegister()==54 && range.getRegisterCount()==1 && ((OneRegisterInstruction)after.get(226)).getRegisterA()==15
+                && ref(after.get(227)).equals("La/ap1;"),"Wrong flow registers/types");
+            var oldStore=(ThreeRegisterInstruction)before.get(225); var newStore=(ThreeRegisterInstruction)after.get(228);
             require(newStore.getRegisterA()==15 && oldStore.getRegisterB()==newStore.getRegisterB() && oldStore.getRegisterC()==newStore.getRegisterC(),"Flow array store changed");
-            code.removeInstruction(218);code.removeInstruction(217);code.removeInstruction(216);code.replaceInstruction(215,nativeCode.get(215));
+            code.removeInstruction(228);code.removeInstruction(227);code.removeInstruction(226);code.replaceInstruction(225,nativeCode.get(225));
         } else if(s.equals(MonetWuplayHooks.FILTER)) {
-            require(after.size()==before.size(),"Filter size changed");call(after,113,"disabled",1,8);code.replaceInstruction(113,nativeCode.get(113));
+            require(after.size()==before.size(),"Filter size changed");call(after,118,"disabled",2,14);code.replaceInstruction(118,nativeCode.get(118));
         } else if(s.equals(MonetWuplayHooks.OWNER)) {
             require(after.size()==before.size()+2,"Owner size changed");call(after,7,"owner",2);
-            code.removeInstruction(9);code.removeInstruction(8);code.replaceInstruction(7,nativeCode.get(7));
+            code.removeInstruction(8);code.removeInstruction(7);code.replaceInstruction(7,nativeCode.get(7));
         } else if(s.equals(MonetWuplayHooks.HEADER)) {
-            require(after.size()==before.size()+2,"Header size changed");call(after,112,"contentLabel",3,2);
-            code.removeInstruction(114);code.removeInstruction(113);code.replaceInstruction(112,nativeCode.get(112));
+            require(after.size()==before.size()+2,"Header size changed");call(after,113,"contentLabel",7,2);
+            code.removeInstruction(114);code.removeInstruction(113);
         } else if(s.equals(MonetWuplayHooks.PICKER)) {
-            require(after.size()==before.size()+1 && ref(after.get(397)).contains("->preparePicker(") && ref(after.get(398)).contains("->contentPicker("),"Picker hooks missing");
-            var capture=(RegisterRangeInstruction)after.get(397);var picker=(RegisterRangeInstruction)after.get(398);
+            require(after.size()==before.size()+1 && ref(after.get(398)).contains("->preparePicker(") && ref(after.get(399)).contains("->contentPicker("),"Picker hooks missing");
+            var capture=(RegisterRangeInstruction)after.get(398);var picker=(RegisterRangeInstruction)after.get(399);
             require(capture.getStartRegister()==28 && capture.getRegisterCount()==1 && picker.getStartRegister()==4 && picker.getRegisterCount()==18,"Picker range/row changed");
-            code.removeInstruction(397);code.replaceInstruction(397,nativeCode.get(397));
+            code.removeInstruction(398);code.replaceInstruction(398,nativeCode.get(398));
         } else {
             boolean reader=s.equals(MonetWuplayHooks.READER),programs=s.equals(MonetWuplayHooks.PROGRAMS),resume=s.equals(MonetWuplayHooks.RESUME);
             require(after.size()==before.size()+1,"Entry hook size changed");

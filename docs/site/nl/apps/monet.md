@@ -1,10 +1,10 @@
 # Monet Android TV
 
-**Appversie:** 1.1.0 · **Build:** 134 · **Origineel bestand:** APK
+**Appversie:** 1.1.1 · **Build:** 135 · **Origineel bestand:** APK
 
 [Download originele app](https://buzzheavier.com/xk5uwpz9uobd){ .md-button .md-button--primary }
 
-Selecteer de originele Monet-launcher-APK in Morphe Manager.
+Selecteer de originele Monet-launcher-APK in Morphe Manager. De patch verifieert Monet 1.1.1 (build 135) op de exacte native contracts voordat er iets verandert, en wijst andere versies af.
 
 ## Patches
 

@@ -11,7 +11,7 @@ private val monet = Compatibility(
     name = "Monet Android TV", packageName = "com.klevico.monet", apkFileType = ApkFileType.APK,
     formFactor = FormFactor.TV,
     signatures = setOf("4bec386a6baae56f0694d3be54f67e0625b973109e0dbb947df2a5d0254975e0"),
-    targets = listOf(AppTarget(version = "1.1.0", versionCode = 134, minSdk = 26)),
+    targets = listOf(AppTarget(version = "1.1.1", versionCode = 135, minSdk = 26)),
 )
 private val originalInput = patches.shared.originalInput(monet)
 

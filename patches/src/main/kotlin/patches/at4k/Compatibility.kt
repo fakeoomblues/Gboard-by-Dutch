@@ -11,5 +11,5 @@ internal val at4k = Compatibility(
     apkFileType = ApkFileType.APK,
     formFactor = FormFactor.TV,
     signatures = setOf("bfc84ab1296c72653ebca20a2f4cd293bc342a67dd4c61df931edfbad5271685"),
-    targets = listOf(AppTarget(version = "1.2", versionCode = 19, minSdk = 27)),
+    targets = listOf(AppTarget(version = "1.3", versionCode = 20, minSdk = 27)),
 )

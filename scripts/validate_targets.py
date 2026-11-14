@@ -468,7 +468,7 @@ def main() -> None:
     trusted_decoded = None
     if args.app in {"rollerbank", "at4k"}:
         digest = {"rollerbank": "d8e32f93fe1d9697a9897076b2cbfac8f20f6f98cf5113098cfe6a8d60243d7c",
-                  "at4k": "ac34c0abf1ceee5d5133dc3e99bde9173a00c5a16132852507ed23c0fbd41341"}[args.app]
+                  "at4k": "1bb6dad64f26e8d82d65f5a02f76327affb24b825f4d8d3f99c4d56d6fab77a3"}[args.app]
         if hashlib.sha256(reference.read_bytes()).hexdigest() != digest:
             raise SystemExit(f"Expected inspected {args.app} original base APK")
         trusted_decoded = out / "decoded-original"

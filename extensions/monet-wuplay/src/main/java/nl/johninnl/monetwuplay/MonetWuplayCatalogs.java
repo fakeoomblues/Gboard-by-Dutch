@@ -7,7 +7,7 @@ import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-/** Dedicated Wuplay catalog rows for the verified Monet 1.1.0 ABI.
+/** Dedicated Wuplay catalog rows for the verified Monet 1.1.1 ABI.
  * Derived from Santodan/santodan-patches under GPL-3.0; see NOTICE. */
 public final class MonetWuplayCatalogs {
     private static final String PREFIX = "johninnl-wuplay-channel:";
@@ -104,15 +104,15 @@ public final class MonetWuplayCatalogs {
 
     public static void preparePicker(Object row) { PICKER_ROW.set(row); }
 
-    /** 1.1.0 adds native channel wrappers, extra picker callbacks, and an independent channel filter. */
+    /** 1.1.1 keeps native channel wrappers, extra picker callbacks, and an independent channel filter. */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void contentPicker(String title, String subtitle, List options, Object selected, Object label,
             boolean enabled, Object secondary, Object first, Object second, Set checked, Set disabled,
             Object predicate, Object onSelect, Object dismiss, Object composer, int changed, int changed1, int defaults) {
         Object row = PICKER_ROW.get(); PICKER_ROW.remove();
         try {
-            Class<?> labels = Class.forName("a.lv1"), action = Class.forName("a.wu1"), click = Class.forName("a.uu1");
-            Class<?> mode = Class.forName("a.vv0"), wrapper = Class.forName("a.wr4"), channelOption = Class.forName("a.vr4");
+            Class<?> labels = Class.forName("a.kx1"), action = Class.forName("a.vw1"), click = Class.forName("a.tw1");
+            Class<?> mode = Class.forName("a.mx0"), wrapper = Class.forName("a.by4"), channelOption = Class.forName("a.ay4");
             Object recommendations = wrapper.getConstructor(mode).newInstance(mode.getField("RECOMMENDATIONS").get(null));
             String saved = row == null ? null : selection(row), app = owner(saved);
             Snapshot current = snapshot;
@@ -161,19 +161,19 @@ public final class MonetWuplayCatalogs {
                 if (choice instanceof String || saved != null && saved.startsWith(PREFIX)) {
                     Object actions = onSelect.getClass().getField("l").get(onSelect);
                     String rowId = (String)onSelect.getClass().getField("m").get(onSelect);
-                    Method update = Class.forName("a.kv1").getMethod("f",Object.class,Object.class);
+                    Method update = Class.forName("a.jx1").getMethod("f",Object.class,Object.class);
                     if (choice instanceof String) update.invoke(actions.getClass().getField("F").get(actions),rowId,null);
                     update.invoke(actions.getClass().getField("M").get(actions),rowId,
                         Collections.singletonList(choice instanceof String ? choice : app));
                 }
                 return result;
             });
-            Class.forName("a.f24").getMethod("D1",String.class,String.class,List.class,Object.class,labels,boolean.class,
-                labels,action,action,Set.class,Set.class,Class.forName("a.nv1"),action,click,Class.forName("a.jw1"),int.class,int.class,int.class)
+            Class.forName("a.b84").getMethod("E1",String.class,String.class,List.class,Object.class,labels,boolean.class,
+                labels,action,action,Set.class,Set.class,Class.forName("a.mx1"),action,click,Class.forName("a.iy1"),int.class,int.class,int.class)
                 .invoke(null,title,subtitle,choices,selected,primary,enabled,secondaryLabels,
                     pickerAction(first,action,recommendations,true),pickerAction(second,action,recommendations,false),checked,disabled,predicate,
                     callback,dismiss,composer,0,0,defaults);
-        } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Monet 1.1.0 content picker contract changed",failure); }
+        } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Monet 1.1.1 content picker contract changed",failure); }
     }
 
     private static Object pickerAction(Object original, Class<?> action, Object recommendations, boolean key) {
@@ -198,13 +198,13 @@ public final class MonetWuplayCatalogs {
      * Native aggregate contents remain unchanged; revisions also invalidate equal-item projections. */
     public static synchronized Object wrap(Object nativeFlow) {
         try {
-            Class<?> flow = Class.forName("a.in1"), transform = Class.forName("a.mv1");
-            if (revisionFlow == null) revisionFlow = Class.forName("a.k88").getMethod("g", Object.class).invoke(null, revision);
+            Class<?> flow = Class.forName("a.ap1"), transform = Class.forName("a.lx1");
+            if (revisionFlow == null) revisionFlow = Class.forName("a.lz7").getMethod("g", Object.class).invoke(null, revision);
             Object callback = Proxy.newProxyInstance(transform.getClassLoader(), new Class<?>[]{transform}, (proxy, method, args) -> {
                 if (method.getDeclaringClass() == Object.class) return proxyObject(proxy, method, args);
                 return new CatalogList((List<?>) args[0], Math.max(((Number) args[1]).longValue(), ((Number) args[2]).longValue()));
             });
-            return Class.forName("a.p35").getMethod("s", flow, flow, flow, transform)
+            return Class.forName("a.zl0").getMethod("q", flow, flow, flow, transform)
                 .invoke(null, nativeFlow, revisionFlow, revisionFlow, callback);
         } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Monet catalog flow contract changed", failure); }
     }
@@ -223,7 +223,7 @@ public final class MonetWuplayCatalogs {
     /** Called on the channel worker. A failed read aborts publication and retains the last good snapshot. */
     static Object channel(Context context, String owner, String provider, String title, long id) throws ReflectiveOperationException {
         Channel channel = new Channel(owner, provider, title, id);
-        Object result = Class.forName("a.vt5").getMethod("l", Context.class, Uri.class, int.class, Long.class)
+        Object result = Class.forName("a.s46").getMethod("l", Context.class, Uri.class, int.class, Long.class)
             .invoke(null, context, Uri.parse("content://android.media.tv/preview_program?channel=" + id), 101, id);
         if (result == null) throw new IllegalStateException("Catalog program query returned null");
         List<?> raw = (List<?>) result.getClass().getField("a").get(result);
@@ -249,8 +249,8 @@ public final class MonetWuplayCatalogs {
         snapshot = new Snapshot(mapped);
         int itemCount = 0;
         for (Channel channel : mapped.values()) itemCount += channel.items.size();
-        Log.i("MonetWuplay", ("Wuplay catalog rows 1.1.0") + ": published " + mapped.size() + " channels / " + itemCount + " entries");
-        if (revisionFlow != null) revisionFlow.getClass().getMethod("k", Object.class).invoke(revisionFlow, ++revision);
+        Log.i("MonetWuplay", ("Wuplay catalog rows 1.1.1") + ": published " + mapped.size() + " channels / " + itemCount + " entries");
+        if (revisionFlow != null) revisionFlow.getClass().getMethod("j", Object.class).invoke(revisionFlow, ++revision);
     }
 
     /** Preserve normal app matching; catalog selections use the unmerged membership snapshot. */
@@ -267,10 +267,10 @@ public final class MonetWuplayCatalogs {
         }
     }
 
-    /** Preserve 1.1.0's additional native channel filter while resolving only catalog ownership. */
+    /** Preserve 1.1.1's additional native channel filter while resolving only catalog ownership. */
     public static boolean matchesChannel(Object item, String selected, Object filter) {
         try {
-            boolean nativeMatch = (boolean)Class.forName("a.yp7").getMethod("M",Class.forName("a.vs0"),String.class,Class.forName("a.ip4"))
+            boolean nativeMatch = (boolean)Class.forName("a.m42").getMethod("d0",Class.forName("a.mu0"),String.class,Class.forName("a.ov4"))
                 .invoke(null,item,owner(selected),filter);
             return nativeMatch && (!selected.startsWith(PREFIX) || matches(item,selected));
         } catch (ReflectiveOperationException failure) { throw new IllegalStateException("Monet native channel filter contract changed",failure); }
@@ -308,13 +308,13 @@ public final class MonetWuplayCatalogs {
         final Method convert, sources;
         final Field channel, artwork, programOwner, key, owner, optionId;
         Bridge() throws ReflectiveOperationException {
-            Class<?> raw = Class.forName("a.pt5"), label = Class.forName("a.do4"), item = Class.forName("a.vs0");
+            Class<?> raw = Class.forName("a.n46"), label = Class.forName("a.ss4"), item = Class.forName("a.mu0");
             labels = label.getConstructor(Context.class);
-            Class<?> optionType = Class.forName("a.gt4");
+            Class<?> optionType = Class.forName("a.lz4");
             option = optionType.getConstructor(int.class, String.class, String.class, boolean.class);
             optionId = optionType.getField("a");
-            convert = Class.forName("a.vt5").getMethod("m",raw,label,List.class,long.class,Map.class);
-            sources = Class.forName("a.c32").getMethod("q", List.class, LinkedHashMap.class, Set.class, Locale.class);
+            convert = Class.forName("a.s46").getMethod("m",raw,label,List.class,long.class,Map.class);
+            sources = Class.forName("a.b42").getMethod("n", List.class, LinkedHashMap.class, Set.class, Locale.class);
             channel = raw.getField("c"); artwork = raw.getField("f"); programOwner = raw.getField("b");
             key = item.getField("n"); owner = item.getField("b");
         }

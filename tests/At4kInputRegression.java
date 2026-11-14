@@ -35,11 +35,11 @@ class At4kInputRegression extends OriginalInputRegression {
         List<X509Certificate> untrusted = resigned.getSigningCertificates().values().stream().flatMap(Collection::stream).distinct().toList();
         check(!trusted.isEmpty() && !untrusted.isEmpty() && Collections.disjoint(trusted, untrusted), "real distinct input and output signers");
         var mixed = new ArrayList<>(trusted); mixed.addAll(untrusted);
-        String pkg = "com.overdevs.at4k", version = "1.2", build = "19";
+        String pkg = "com.overdevs.at4k", version = "1.3", build = "20";
         PackageMetadata[] invalid = {
             metadata(original, "wrong.package", version, build, trusted),
             metadata(original, pkg, "0.99", "12", trusted),
-            metadata(original, pkg, version, "18", trusted),
+            metadata(original, pkg, version, "19", trusted),
             new PackageMetadata(pkg, version, build, null),
             metadata(original, pkg, version, build, untrusted),
             metadata(original, pkg, version, build, mixed),
@@ -58,9 +58,13 @@ class At4kInputRegression extends OriginalInputRegression {
                 check(Files.readString(manifest).equals(xml), "rejected input unchanged");
             }
             field.set(context, original);
-            for (String sdk : List.of("<uses-sdk android:minSdkVersion=\"26\"/>", "")) {
-                Files.writeString(manifest, "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">" + sdk + "</manifest>");
-                refused(() -> guard.execute(context));
+            // Manifest minimum-SDK differences must not fail patching: publishers
+            // ship variants of one build with different manifest minSdk values.
+            for (String sdk : List.of("<uses-sdk android:minSdkVersion=\"26\"/>", "<uses-sdk android:minSdkVersion=\"28\"/>")) {
+                String variant = "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">" + sdk + "</manifest>";
+                Files.writeString(manifest, variant);
+                guard.execute(context);
+                check(Files.readString(manifest).equals(variant), "variant minSdk accepted unchanged");
             }
         }
         System.out.println("PASS: AT4K production input guard assertions=" + checks);

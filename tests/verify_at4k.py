@@ -9,8 +9,16 @@ from verify_targets import classes
 
 ACTIVITY = 'Lcom/overdevs/at4k/MainActivity;'
 HEADER = '.method public final onCreate(Landroid/os/Bundle;)V'
-WRITE = 'invoke-static {p1, v5, v2}, LQ3/T4;->r(Landroid/content/SharedPreferences;Ljava/lang/String;Z)V'
+WRITE = ('invoke-interface {p1}, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;\n'
+         'move-result-object v6\n'
+         'const-string v7, "is_premium"\n'
+         'invoke-interface {v6, v7, v2}, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;\n'
+         'move-result-object v6\n'
+         'invoke-interface {v6}, Landroid/content/SharedPreferences$Editor;->apply()V')
 READ = 'invoke-interface {p1, v5, v3}, Landroid/content/SharedPreferences;->getBoolean(Ljava/lang/String;Z)Z'
+# The patch reuses the app's own premium persistence idiom; keep asserting the
+# original purchase-path writer so the idiom stays publisher-provided.
+WRITER = 'LT3/O8;'
 
 
 def normalized(text):
@@ -74,11 +82,11 @@ def verify(original, output, enabled, original_apk=None, patched_apk=None):
                 assert normalized(expected) == normalized(new[header]), 'Unexpected premium edit'
             else:
                 assert normalized(body) == normalized(new[header]), f'Activity method changed: {header}'
-    # Confirm that the existing writer persists its boolean argument, rather than
-    # merely changing the UI or using the value as a preference default.
-    writer = before['LQ3/T4;'].split('.method public static r(', 1)[1].split('.end method', 1)[0]
-    assert '->putBoolean(Ljava/lang/String;Z)' in writer and '->apply()V' in writer
-    assert '{p0, p1, p2}' in writer
+    # Confirm that the app's own purchase path persists the boolean through the
+    # same editor idiom the patch reuses, rather than merely changing the UI.
+    writer_source = ''.join(text for name, text in before.items() if name.startswith(WRITER))
+    assert '->putBoolean(Ljava/lang/String;Z)' in writer_source and '->apply()V' in writer_source
+    assert '"is_premium"' in writer_source
     assert resource_xml(original, 'AndroidManifest.xml') == resource_xml(output, 'AndroidManifest.xml')
     for path in original.glob('res/**/*.xml'):
         relative = path.relative_to(original)
