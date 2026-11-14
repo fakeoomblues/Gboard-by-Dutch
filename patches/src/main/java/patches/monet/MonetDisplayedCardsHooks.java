@@ -102,6 +102,7 @@ final class MonetDisplayedCardsHooks {
         for (ClassDef c : classes) {
             if (!types.add(c.getType())) throw unsupported("Duplicate class " + c.getType());
             for (Method m : c.getMethods()) {
+                if ((m.getAccessFlags() & 1) != 0) present.add(m.toString());
                 if (!CONTRACTS.containsKey(m.toString())) continue;
                 int flags = m.getDefiningClass().equals("La/or1;") ? 1 : m.toString().equals(SCHEMA) ? 9
                     : m.getName().equals("<init>") ? 65537
