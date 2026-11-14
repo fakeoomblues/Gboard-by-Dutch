@@ -37,7 +37,7 @@ val screenShareWarningPatch = bytecodePatch(
     default = false,
 ) {
     compatibleWith(messages)
-    dependsOn(originalInput)
+    dependsOn(originalInput, playServicesRefusalPatch)
 
     execute {
         val owners = mutableListOf<ClassDef>()

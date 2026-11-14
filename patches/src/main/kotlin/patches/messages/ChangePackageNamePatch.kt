@@ -155,7 +155,7 @@ val changePackageNamePatch = resourcePatch(
     default = false,
 ) {
     compatibleWith(messages)
-    dependsOn(originalInput, codeIdentitiesPatch)
+    dependsOn(originalInput, playServicesRefusalPatch, codeIdentitiesPatch)
 
     val packageName by stringOption(
         key = "packageName",

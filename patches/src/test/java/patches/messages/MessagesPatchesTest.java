@@ -43,6 +43,14 @@ public class MessagesPatchesTest {
         }
     }
 
+    @Test public void everyPatchSurvivesPlayServicesRefusingTheCopy() {
+        // Any one of the patches re-signs Messages, and a re-signed copy crashed at start-up.
+        Patch<?> fix = PlayServicesRefusalPatchKt.getPlayServicesRefusalPatch();
+        for (Patch<?> patch : PATCHES) {
+            assertTrue(patch.getName() + " includes the Play services refusal fix", patch.getDependencies().contains(fix));
+        }
+    }
+
     @Test public void anyHostIsAdmittedWithoutAHostList() {
         Patch<?> patch = CarHostPatchKt.getCarHostPatch();
         assertEquals("Allow any Android Auto host", patch.getName());

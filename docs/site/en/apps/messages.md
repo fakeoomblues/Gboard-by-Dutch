@@ -25,7 +25,7 @@ The car screen lists your ten most recent conversations. Opening one lets the ho
 
 The patched copy is a separate app with its own data. It only receives and shows texts while it is your default SMS app: set it in Android's default apps settings, or when the patched Messages asks. Switching back to the stock Google Messages works the same way.
 
-The patched copy is signed with your Morphe key, not Google's. Expect RCS chat, Google account sign-in, backups and other Google features to be unreliable or unavailable in it. SMS and MMS are expected to keep working. Keep the stock Google Messages installed if you rely on those features.
+The patched copy is signed with your Morphe key, not Google's. Expect RCS chat, Google account sign-in, backups and other Google features to be unreliable or unavailable in it. SMS and MMS are expected to keep working. Google Play services refuses some of its features to a copy Google did not sign; Messages now treats that refusal as a failed connection instead of closing at start-up. Keep the stock Google Messages installed if you rely on those features.
 
 Hosts that only read message notifications, such as DriveDeck's own Messages screen, work with stock Google Messages as well and need none of these patches.
 

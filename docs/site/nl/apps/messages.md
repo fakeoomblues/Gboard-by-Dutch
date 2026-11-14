@@ -25,7 +25,7 @@ Het autoscherm toont je tien meest recente gesprekken. Als je er een opent, kan 
 
 De gepatchte kopie is een aparte app met eigen gegevens. Hij ontvangt en toont sms'jes alleen als hij je standaard-sms-app is: stel dat in bij de standaardapps van Android, of wanneer de gepatchte Messages erom vraagt. Terugschakelen naar de standaard Google Messages gaat op dezelfde manier.
 
-De gepatchte kopie is ondertekend met je Morphe-sleutel, niet met die van Google. Reken erop dat RCS-chat, aanmelden met een Google-account, back-ups en andere Google-functies in deze kopie onbetrouwbaar zijn of ontbreken. Sms en mms blijven naar verwachting werken. Houd de standaard Google Messages geïnstalleerd als je die functies nodig hebt.
+De gepatchte kopie is ondertekend met je Morphe-sleutel, niet met die van Google. Reken erop dat RCS-chat, aanmelden met een Google-account, back-ups en andere Google-functies in deze kopie onbetrouwbaar zijn of ontbreken. Sms en mms blijven naar verwachting werken. Google Play-services weigert sommige functies aan een kopie die Google niet heeft ondertekend; Messages behandelt die weigering nu als een mislukte verbinding in plaats van bij het opstarten te sluiten. Houd de standaard Google Messages geïnstalleerd als je die functies nodig hebt.
 
 Hosts die alleen berichtmeldingen lezen, zoals het eigen Berichten-scherm van DriveDeck, werken ook met de standaard Google Messages en hebben deze patches niet nodig.
 

@@ -46,7 +46,7 @@ val customBrandingPatch = resourcePatch(
     default = false,
 ) {
     compatibleWith(messages)
-    dependsOn(originalInput)
+    dependsOn(originalInput, playServicesRefusalPatch)
 
     val customName by stringOption(
         key = "customName", title = "App name", default = MESSAGES_DEFAULT_NAME,

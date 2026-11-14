@@ -67,7 +67,7 @@ val carHostPatch = bytecodePatch(
     default = false,
 ) {
     compatibleWith(messages)
-    dependsOn(originalInput, enableCarServicePatch)
+    dependsOn(originalInput, playServicesRefusalPatch, enableCarServicePatch)
 
     execute {
         val owner = mutableClassDefBy(CAR_SERVICE)
