@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.84.0**
+**Patchbundel: 1.85.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -510,6 +510,20 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Custom branding | Aan | Alle versies |
+
+## Magic Earth
+
+[Wat veranderen de patches?](../apps/magic-earth.md)
+
+`com.generalmagic.magicearth`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | Aan | 7.1.26.38.B4684D03.6207A61BA |
+| Disable GEM telemetry dispatch | Uit | 7.1.26.38.B4684D03.6207A61BA |
+| Disable Google telemetry transport | Uit | 7.1.26.38.B4684D03.6207A61BA |
+| Enable TV launcher | Aan | 7.1.26.38.B4684D03.6207A61BA |
+| Enable local feature controls | Uit | 7.1.26.38.B4684D03.6207A61BA |
 
 ## Marktplaats
 

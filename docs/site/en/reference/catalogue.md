@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.84.0**
+**Patch bundle: 1.85.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -510,6 +510,20 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Custom branding | On | Any |
+
+## Magic Earth
+
+[What do the patches change?](../apps/magic-earth.md)
+
+`com.generalmagic.magicearth`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | On | 7.1.26.38.B4684D03.6207A61BA |
+| Disable GEM telemetry dispatch | Off | 7.1.26.38.B4684D03.6207A61BA |
+| Disable Google telemetry transport | Off | 7.1.26.38.B4684D03.6207A61BA |
+| Enable TV launcher | On | 7.1.26.38.B4684D03.6207A61BA |
+| Enable local feature controls | Off | 7.1.26.38.B4684D03.6207A61BA |
 
 ## Marktplaats
 

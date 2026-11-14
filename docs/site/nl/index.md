@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">77 apps</span> · Patchbundel: 1.84.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">78 apps</span> · Patchbundel: 1.85.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -824,6 +824,28 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/lightcraft.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="magic earth com.generalmagic.magicearth 7.1.26.38.b4684d03.6207a61ba allow custom android auto hosts disable gem telemetry dispatch disable google telemetry transport enable tv launcher enable local feature controls" markdown>
+<p class="dap-app-card__category">Verkeer</p>
+
+### [Magic Earth](apps/magic-earth.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.1.26.38.B4684D03.6207A61BA</span></p>
+<p class="dap-app-card__package">com.generalmagic.magicearth</p>
+<details class="dap-app-card__patches">
+<summary>5 patches</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">7.1.26.38.B4684D03.6207A61BA</span></li>
+<li>Disable GEM telemetry dispatch <span class="dap-app-card__target">7.1.26.38.B4684D03.6207A61BA · standaard uit</span></li>
+<li>Disable Google telemetry transport <span class="dap-app-card__target">7.1.26.38.B4684D03.6207A61BA · standaard uit</span></li>
+<li>Enable TV launcher <span class="dap-app-card__target">7.1.26.38.B4684D03.6207A61BA</span></li>
+<li>Enable local feature controls <span class="dap-app-card__target">7.1.26.38.B4684D03.6207A61BA · standaard uit</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/magic-earth.md){ .dap-app-card__link }
 
 </article>
 

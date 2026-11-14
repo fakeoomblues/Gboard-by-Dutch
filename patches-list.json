@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.84.0",
+  "version": "1.85.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -771,6 +771,40 @@
           "values": null
         }
       ]
+    },
+    {
+      "name": "Allow custom Android Auto hosts",
+      "description": "Removes Magic Earth's service binding permission so compatible custom HUD hosts can reach its existing allow-all host validator. Keeps navigation discovery and caller-UID validation.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.generalmagic.magicearth",
+          "name": "Magic Earth",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "fa91bd3a8bfa2b03bda48422b238d584f23921154a5279e721f2f90a74d38806"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.1.26.38.B4684D03.6207A61BA",
+              "versionCodes": {
+                "ARM64_V8A": 2026141716,
+                "ARMEABI_V7A": 2026141716,
+                "X86_64": 2026141716,
+                "X86": 2026141716
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
     },
     {
       "name": "Allow custom Android Auto hosts",
@@ -2749,6 +2783,74 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable GEM telemetry dispatch",
+      "description": "ARM64 only: prevents the traced GEM storage and usage telemetry jobs from being queued. Keeps SDK initialization intact. Local statistics storage may remain; runtime validation pending.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.generalmagic.magicearth",
+          "name": "Magic Earth",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "fa91bd3a8bfa2b03bda48422b238d584f23921154a5279e721f2f90a74d38806"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.1.26.38.B4684D03.6207A61BA",
+              "versionCodes": {
+                "ARM64_V8A": 2026141716,
+                "ARMEABI_V7A": 2026141716,
+                "X86_64": 2026141716,
+                "X86": 2026141716
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Google telemetry transport",
+      "description": "Drops new Google DataTransport events and completes queued CCT uploads locally. Does not disable GEM engine telemetry. Runtime validation pending.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.generalmagic.magicearth",
+          "name": "Magic Earth",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "fa91bd3a8bfa2b03bda48422b238d584f23921154a5279e721f2f90a74d38806"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.1.26.38.B4684D03.6207A61BA",
+              "versionCodes": {
+                "ARM64_V8A": 2026141716,
+                "ARMEABI_V7A": 2026141716,
+                "X86_64": 2026141716,
+                "X86": 2026141716
+              },
+              "isExperimental": false,
+              "minSdk": 28,
               "description": null
             }
           ]
@@ -4848,6 +4950,40 @@
       "options": []
     },
     {
+      "name": "Enable TV launcher",
+      "description": "Lists Magic Earth in Android TV launchers and makes touch input optional. Remote navigation and rendering depend on the device.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.generalmagic.magicearth",
+          "name": "Magic Earth",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "fa91bd3a8bfa2b03bda48422b238d584f23921154a5279e721f2f90a74d38806"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.1.26.38.B4684D03.6207A61BA",
+              "versionCodes": {
+                "ARM64_V8A": 2026141716,
+                "ARMEABI_V7A": 2026141716,
+                "X86_64": 2026141716,
+                "X86": 2026141716
+              },
+              "isExperimental": false,
+              "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable WebView debugging",
       "description": "Diagnostic only: permits local inspection of KIJK's hosted frontend. Disabled by default; use for test builds.",
       "default": false,
@@ -4985,6 +5121,40 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable local feature controls",
+      "description": "ARM64 only: skips local premium prompts for recording, map downloads and map styles, preserves traffic/elevation selections, and hides four premium promotion widgets. Online services still require server authorization. Runtime validation pending.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.generalmagic.magicearth",
+          "name": "Magic Earth",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "fa91bd3a8bfa2b03bda48422b238d584f23921154a5279e721f2f90a74d38806"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "7.1.26.38.B4684D03.6207A61BA",
+              "versionCodes": {
+                "ARM64_V8A": 2026141716,
+                "ARMEABI_V7A": 2026141716,
+                "X86_64": 2026141716,
+                "X86": 2026141716
+              },
+              "isExperimental": false,
+              "minSdk": 28,
               "description": null
             }
           ]
