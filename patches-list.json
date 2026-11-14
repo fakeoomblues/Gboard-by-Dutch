@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.82.0",
+  "version": "1.83.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -2198,6 +2198,55 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Custom branding",
+      "description": "Renames Fennec to Firefox and gives it the Firefox launcher icon. Choose another name or Fennec's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "org.mozilla.fennec_fdroid",
+          "name": "Fennec",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep Fennec.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Firefox",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "firefox",
+          "values": {
+            "Original Fennec": "original",
+            "Firefox (default)": "firefox"
+          }
+        }
+      ]
     },
     {
       "name": "Custom branding",

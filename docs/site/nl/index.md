@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">76 apps</span> · Patchbundel: 1.82.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">77 apps</span> · Patchbundel: 1.83.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -463,6 +463,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/ed.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="fennec org.mozilla.fennec_fdroid alle versies custom branding" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Fennec](apps/fennec.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies</span></p>
+<p class="dap-app-card__package">org.mozilla.fennec_fdroid</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Custom branding <span class="dap-app-card__target">Alle versies</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/fennec.md){ .dap-app-card__link }
 
 </article>
 

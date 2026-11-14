@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.82.0**
+**Patch bundle: 1.83.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -269,6 +269,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide empty listening carousel | On | 9.22.0 |
 | Read full articles | On | 9.22.0 |
 | Skip consent screens | On | 9.22.0 |
+
+## Fennec
+
+[What do the patches change?](../apps/fennec.md)
+
+`org.mozilla.fennec_fdroid`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
 
 ## Flitsmeister
 

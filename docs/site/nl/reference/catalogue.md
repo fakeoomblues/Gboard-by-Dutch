@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.82.0**
+**Patchbundel: 1.83.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -269,6 +269,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide empty listening carousel | Aan | 9.22.0 |
 | Read full articles | Aan | 9.22.0 |
 | Skip consent screens | Aan | 9.22.0 |
+
+## Fennec
+
+[Wat veranderen de patches?](../apps/fennec.md)
+
+`org.mozilla.fennec_fdroid`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
 
 ## Flitsmeister
 

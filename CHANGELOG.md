@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3e4bb16de33414b6eb3f7fb9082c881b5ca1d0c8/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.83.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [3e4bb16de334](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/3e4bb16de33414b6eb3f7fb9082c881b5ca1d0c8). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.83.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.82.0...v1.83.0) (2026-11-14)
+
+### ✨ New Features
+
+* **Fennec:** add Custom branding with the Firefox name and icon ([3e4bb16](https://gitlab.com/johninnld/nl-morphe-patches/commit/3e4bb16de33414b6eb3f7fb9082c881b5ca1d0c8))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/53a7584d4486fc002893fd90bc543fcf8d9c5c6e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.82.0.**
