@@ -162,3 +162,25 @@ After live Gradle clients disappeared and every live daemon's latest lifecycle s
 The installed Morphe desktop CLI is `/opt/homebrew/Cellar/morphe/2.0.0/libexec/morphe.jar`. The shell wrapper inherited an older JAVA_HOME and initially failed with UnsupportedClassVersionError (requires class-file version 70); the installed `/opt/homebrew/opt/openjdk/bin/java` (27.0.1.0.3) launches it successfully. Use an explicit task-owned MORPHE_DATA_DIR for future invocations. CLI help exposes `--exclusive`, per-name enable flags, `--striplibs=arm64-v8a`, result JSON, full bytecode mode, SDK verification, and unsigned output. The engine's BundleFormats declares APKM support. These establish tool capabilities, not successful patching of this input or ABI-strip ordering. No patch application or installation was performed.
 
 Local engineering bundle identity must follow PUBLISHING.md: a clean source commit and `<canonical-version>+review.<source-sha>`, with the existing bundle signing identity. A feature branch remains local/unpublished; main promotion and release approval remain separate. Full verification and actual-input APK/runtime acceptance remain mandatory.
+
+## Authorized phone installation
+
+The owner explicitly requested a patched APK on the phone. Magic Earth was absent on the selected OnePlus phone; no existing installation or app data was removed. Other connected devices were not touched.
+
+Built signed MPP `1.84.0+review.c53de0c004c2` from clean source commit c53de0c004c28be44b849c4e0bfe264615d4a599 after checking Gradle was unused. Bundle signature verified against committed morphe-signing.pub; SHA-256 644729dbf680fc42de4d46b02fd4b9617e84688e54ef0ebe8d16ddf02ae1d64b. No publication or main promotion occurred.
+
+Applied all four app controls with the installed Morphe CLI to an ARM64 archive copy whose original base/native split hashes were verified unchanged. CLI patch, resource/DEX rebuild and signing all completed successfully, with no failed patches. APK signer uses the existing desktop Morphe keystore (certificate SHA-256 5d1055df4dc046456b2ce56ab4b3d89f4f7a21d54e8705c6891f2f96f57436e5).
+
+Verified both patched native image hashes against the independent edit receipts, ARM64-only selection, phone/TV launcher declarations, and decompiled transport completion paths. Installed with explicit phone-targeted adb; exit 0 and Success. Pulled the installed base APK back and verified exact full-file SHA-256 a18846e29535454c55dc23ca499762fd1949dc9c259db4a3b84df8beaf65e820.
+
+Delivered APK: `/Users/jneerdael/Downloads/MagicEarth-review-c53de0c004c2.apk`. Bundle and compact receipts are retained in `.analysis/magic-earth/phone-review/`. This proves installation of the intended patched bytes, not healthy runtime behavior or working traffic/offline/recording/elevation features. The app was not launched, permissions were not granted and no functional UI/GPS/network acceptance was performed. Full verification and the original goal's remaining acceptance requirements stay open.
+
+## Owner-reported Android Auto failure and host compatibility correction
+
+Owner confirms all four requested features work directly on the phone; Android Auto is the remaining critical reported failure. The screenshot reports that DriveDeck cannot bind because Magic Earth's AndroidAutoService requires androidx.car.app.ACCESS_SURFACE. The earlier observation that HostValidator accepts all hosts was incomplete: it did not account for the Android service permission checked before the validator runs. The TV launcher declaration does not solve Android Auto admission.
+
+Added a guarded custom-host resource patch removing only that service's incoming permission attribute. Preserve the app's own uses-permission declarations, native navigation intents and library caller-package/UID ownership checks. Reused the shared androidAutoHostVisibility dependency used by Deezer so Android 11+ can resolve arbitrary host packages, with no host package allowlist. Maps likewise declares its navigation service without an incoming ACCESS_SURFACE binding gate while retaining its own surface permission.
+
+Tracing the native session also found a separate preference-based AppUtils.checkSubscriptionStatus check: false displays a subscription dialog and prevents navigation service registration. Added a guarded native-car dependency to the existing local feature control, returning local eligibility without changing stored preferences, purchase receipts or SDK/server authorization. The previous working Flutter/native feature edits remain byte-identical.
+
+The connected host batch compiled and its focused Kotlin checks passed against the actual original base APK, with no failures/errors/skips. Checks cover removal of only the binding gate, preserved unrelated service permissions/discovery, and replacement/repeat-rejection of the actual native eligibility method. Full host handshake, rendering and navigation acceptance remain pending until the corrected APK is installed and exercised.

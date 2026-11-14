@@ -69,7 +69,7 @@ val localFeatureControls = resourcePatch(
     default = false,
 ) {
     compatibleWith(magicEarth)
-    dependsOn(originalInput)
+    dependsOn(originalInput, nativeCarFeatureControls)
     execute {
         val libraries = listApkEntries("lib").filter { it.endsWith("/libapp.so") }.toSet()
         check(libraries == setOf(LIBRARY)) { "Select the complete original ARM64 Magic Earth split set" }
