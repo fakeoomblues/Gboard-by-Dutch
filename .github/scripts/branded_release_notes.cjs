@@ -91,7 +91,7 @@ function unreleasedCommitHashes(context) {
 
 // Short app names used in commit trailers. Keep the public release-note scope
 // equal to the app's Compatibility name so Morphe badges the right app.
-const APP_ALIASES = new Map([["maps", "Google Maps"], ["googlemaps", "Google Maps"]]);
+const APP_ALIASES = new Map([["maps", "Google Maps"], ["googlemaps", "Google Maps"], ["projectivy", "Projectivy Launcher"]]);
 function normalizeAppName(name) {
   const trimmed = String(name).trim();
   return APP_ALIASES.get(trimmed.toLowerCase()) || trimmed;
