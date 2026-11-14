@@ -1,6 +1,6 @@
 # HLN
 
-**App version:** 9.22.0 · **Build:** 2009220000 · **Original file:** APKS
+**App version:** 9.23.3 · **Build:** 2009230300 · **Original file:** APKS
 
 [Download original app](https://buzzheavier.com/0p35mq8c5mu7){ .md-button .md-button--primary }
 
@@ -10,6 +10,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 
 | Patch | Default | What it does |
 | --- | --- | --- |
+| **Android Auto nieuws** | On | Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio, and lets any car client connect: DriveDeck, desktop head units, Android Automotive and aftermarket head units. |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide Premium banner** | On | Hides automatic subscription offers and Premium promotions. |
 | **Hide ads** | On | Removes supported ads in feeds, articles, videos and games. |

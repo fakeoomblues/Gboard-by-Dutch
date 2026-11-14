@@ -10,6 +10,7 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
+| **Android Auto nieuws** | Aan | Maakt Nieuws de primaire Android Auto-tab met uitgesproken audio van de uitgever, en laat elke auto-client verbinden: DriveDeck, desktop-headunits, Android Automotive en aftermarket-units. |
 | **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
 | **Hide Premium banner** | Aan | Verbergt automatische abonnementsaanbiedingen en Premium-promoties. |
 | **Hide ads** | Aan | Verwijdert ondersteunde advertenties in overzichten, artikelen, video’s en spellen. |

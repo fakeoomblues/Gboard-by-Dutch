@@ -1,4 +1,4 @@
-"""Independently verify Podimo guest-playback patch output against the original decode."""
+"""Independently verify Podimo guest-playback and Android Auto patch output."""
 import argparse
 import hashlib
 from pathlib import Path
@@ -6,8 +6,9 @@ import re
 
 from atv_smali import methods
 from podimo_contracts import (
-    BASE_SHA256, BANNER, CHAIN, GATEWAY_URL, HIDDEN_BANNER, PATCH_METHODS, REGISTER_TOTALS, SUCCESS_RESULT,
-    UNLOCK, URL_CTOR, WEBSITE_URL,
+    BASE_SHA256, BANNER, CALLER_GATE, CHAIN, EXTENSION_PREFIXES, FILTER_CALL, FOR_YOU_MAPPER,
+    GATEWAY_URL, HIDDEN_BANNER, LIBRARY_RESULT, PATCH_METHODS, REGISTER_TOTALS, ROOT_BROWSE,
+    ROOT_TABS, SUCCESS_RESULT, TREE_FILTER, TREE_FOR, UNLOCK, URL_CTOR, WEBSITE_URL,
 )
 from verify_weerplaza import canonical_method
 
@@ -28,11 +29,16 @@ def original_contract(root: Path) -> None:
     assert len(code) == count, 'URL map constructor instruction count drifted'
     urls = [line for line in code if 'const-string' in line and 'graphql' in line]
     assert [GATEWAY_URL] == [_unquote(urls[0])], 'Production GraphQL URL contract drifted'
+    for cls, signature, locals_, count in (FOR_YOU_MAPPER, ROOT_BROWSE, CALLER_GATE):
+        code = canonical_method(root, cls, signature)
+        assert _locals(root, cls, signature) == locals_, f'{cls}.{signature} car hook locals drifted'
+        assert len(code) == count, f'{cls}.{signature} car hook instruction count drifted: {len(code)}'
     for cls, signature, needles in CHAIN:
         code = '\n'.join(canonical_method(root, cls, signature))
         for needle in needles:
             assert needle in code, f'{cls}.{signature} missing swap-chain evidence: {needle}'
-    for cls, signature, locals_, _ in UNLOCK + [BANNER, URL_CTOR]:
+    pinned = UNLOCK + [BANNER, URL_CTOR, FOR_YOU_MAPPER, ROOT_BROWSE, CALLER_GATE]
+    for cls, signature, locals_, _ in pinned:
         parameters = signature.split('(', 1)[1].split(')')[0]
         total = locals_ + _parameter_slots(parameters) + 1
         expected = REGISTER_TOTALS[f'{cls}->{signature}']
@@ -62,18 +68,23 @@ def _unquote(const_line: str) -> str:
     return parts[-1].strip('"')
 
 
-def _rebase(rows: list[str], delta: int) -> list[str]:
-    """Shift canonical @target offsets by delta; the prefix insertion moves every later target."""
-    def adjust(line: str) -> str:
-        return re.sub(r'@(\d+)', lambda m: '@' + str(int(m.group(1)) + delta), line)
-    return [adjust(line) for line in rows]
+def _plain(rows: list[str]) -> list[str]:
+    """Drop resolved label targets so spliced bodies compare by instruction identity."""
+    return [re.sub(r'@-?\d+', '@', line) for line in rows]
+
+
+def _splice(rows: list[str], index: int, block: list[str]) -> list[str]:
+    return rows[:index] + block + rows[index:]
 
 
 def patched_contract(original: Path, patched: Path, selected: set[str]) -> None:
-    """Only the selected patches' methods may differ, by exactly the expected patch body."""
+    """Only the selected patches' methods may differ, by exactly the expected edits."""
     before, after = methods(original), methods(patched)
     assert before, 'Empty original method inventory'
-    assert before.keys() == after.keys(), 'Podimo patch changed the method inventory'
+    added = set(after) - set(before)
+    unexpected_added = {key for key in added if not key.startswith(EXTENSION_PREFIXES)}
+    assert not unexpected_added, f'Podimo patch added unexpected classes: {sorted(unexpected_added)}'
+    assert before.keys() <= after.keys(), 'Podimo patch removed methods'
     changed = {key for key in before if before[key] != after[key]}
     expected = {key for name in selected for key in PATCH_METHODS[name]}
     assert changed == expected, f'Unexpected Podimo changes: {sorted(changed - expected)} / missing: {sorted(expected - changed)}'
@@ -87,8 +98,17 @@ def patched_contract(original: Path, patched: Path, selected: set[str]) -> None:
         if key not in expected:
             assert body == canonical_method(original, cls, signature), f'{cls}.{signature} must stay original'
             continue
+        if cls == BANNER[0]:
+            # The invisible banner is spliced in front of the pill row assembly,
+            # not prepended to the method.
+            original_body = _plain(canonical_method(original, cls, signature))
+            row = next(i for i, line in enumerate(original_body) if line == 'new-instance v1, Lwv/f;')
+            assert _plain(body) == _splice(original_body, row, _plain(HIDDEN_BANNER)), \
+                f'{cls}.{signature} banner splice changed'
+            continue
         assert body[:len(prefix)] == prefix, f'{cls}.{signature} missing patch prefix'
-        tail = _rebase(body[len(prefix):], -len(prefix))
+        tail = [re.sub(r'@(-?\d+)', lambda m: '@' + str(int(m.group(1)) - len(prefix)), line)
+                for line in body[len(prefix):]]
         assert tail == canonical_method(original, cls, signature), f'{cls}.{signature} original body must be preserved after the prefix'
 
     cls, signature = URL_CTOR[0], URL_CTOR[1]
@@ -97,12 +117,53 @@ def patched_contract(original: Path, patched: Path, selected: set[str]) -> None:
     original_body = canonical_method(original, cls, signature)
     if key not in expected:
         assert body == original_body, 'URL constructor must stay original'
-        return
-    replaced = [line for line in body if 'const-string' in line and 'graphql' in line]
-    assert _unquote(replaced[0]) == WEBSITE_URL, 'Patched production GraphQL URL'
-    assert body == [line.replace(GATEWAY_URL, WEBSITE_URL) if GATEWAY_URL in line else line
-                    for line in original_body], \
-        'URL constructor changed outside the production constant'
+    else:
+        replaced = [line for line in body if 'const-string' in line and 'graphql' in line]
+        assert _unquote(replaced[0]) == WEBSITE_URL, 'Patched production GraphQL URL'
+        assert body == [line.replace(GATEWAY_URL, WEBSITE_URL) if GATEWAY_URL in line else line
+                        for line in original_body], \
+            'URL constructor changed outside the production constant'
+
+    car_hooks = [
+        (FOR_YOU_MAPPER, _for_you_model(original)),
+        (ROOT_BROWSE, _root_model(original)),
+        (CALLER_GATE, _gate_model(original)),
+    ]
+    for (cls, signature, _, _), model in car_hooks:
+        key = f'L{cls};->{signature}'
+        body = canonical_method(patched, cls, signature)
+        if key not in expected:
+            assert body == canonical_method(original, cls, signature), f'{cls}.{signature} must stay original'
+            continue
+        assert _plain(body) == model, f'{cls}.{signature} Android Auto hook changed'
+
+
+def _for_you_model(original: Path) -> list[str]:
+    """Both for-you filter sites each gain the CarBrowse filter call after their move-result."""
+    body = _plain(canonical_method(original, *FOR_YOU_MAPPER[:2]))
+    sites = [i for i, line in enumerate(body) if FILTER_CALL in line]
+    assert len(sites) == 2, f'Expected two for-you filter sites, found {len(sites)}'
+    block = [f'invoke-static {{v1}}, {TREE_FILTER}', 'move-result-object v1']
+    for index in sorted(sites, reverse=True):
+        assert body[index + 1].startswith('move-result-object '), 'Filter site result contract changed'
+        body = _splice(body, index + 2, block)
+    return body
+
+
+def _root_model(original: Path) -> list[str]:
+    """The tab list passes through the CarBrowse root filter just before the library result."""
+    body = _plain(canonical_method(original, *ROOT_BROWSE[:2]))
+    index = next(i for i, line in enumerate(body) if LIBRARY_RESULT in line)
+    return _splice(body, index, [f'invoke-static {{p0, p1}}, {ROOT_TABS}', 'move-result-object p1'])
+
+
+def _gate_model(original: Path) -> list[str]:
+    """The allow-all CarBrowse lookup returns before any certificate check; the
+    cast restores the declared tree type for the verifier and the app's
+    original validation stays in place as unreachable code."""
+    prefix = [f'invoke-static {{p0, p2}}, {TREE_FOR}', 'move-result-object v0',
+              'check-cast v0, Lhs/b;', 'return-object v0']
+    return prefix + _plain(canonical_method(original, *CALLER_GATE[:2]))
 
 
 def main():

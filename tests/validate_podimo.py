@@ -32,7 +32,21 @@ sys.path.insert(0, str(ROOT / "tests"))
 from podimo_contracts import BASE_SHA256, PATCH_NAMES  # noqa: E402
 
 DESKTOP = ROOT / ".tools/morphe-desktop-1.19.1-all.jar"
-INPUT_FILES = ("base.apk", "split_config.arm64_v8a.apk", "split_config.xxxhdpi.apk")
+# 3.5.1 shipped an xxxhdpi split, 3.7.0 an mdpi split; stage whichever
+# density split the bundle carries alongside base and arm64.
+DENSITY_SUFFIX = ("xxxhdpi", "mdpi", "xhdpi", "hdpi")
+
+
+def input_files(archive: zipfile.ZipFile) -> list[str]:
+    names = archive.namelist()
+    files = [name for name in ("base.apk", "split_config.arm64_v8a.apk") if name in names]
+    for suffix in DENSITY_SUFFIX:
+        candidate = f"split_config.{suffix}.apk"
+        if candidate in names:
+            files.append(candidate)
+            break
+    assert len(files) == 3, f"Unsupported Podimo split layout: {sorted(names)}"
+    return files
 
 
 def run(command, **kwargs):
@@ -62,9 +76,9 @@ def prepare_input(original: Path, out: Path) -> Path:
         if unexpected:
             raise SystemExit(f"Unexpected non-APK input: {unexpected}")
     elif original.suffix.lower() == ".apks":
-        files = [out / name for name in INPUT_FILES]
         with zipfile.ZipFile(original) as archive:
-            for name in INPUT_FILES:
+            files = [out / name for name in input_files(archive)]
+            for name in input_files(archive):
                 (out / name).write_bytes(archive.read(name))
     else:
         raise SystemExit("Provide the Podimo .apks bundle or a directory of base and split APKs")

@@ -23,7 +23,6 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [EasyPark](../apps/easypark.md) | 26.40.1 / 82640010 | [APKM](#local-original-inputs) |
 | [EasyPark NL](../apps/easypark-nl.md) | 26.42.4 / 82642040 | [APKS](#local-original-inputs) |
 | [Zoom Workplace](../apps/zoom.md) | 7.2.1.43844 / 6702010 | [APKS](#local-original-inputs) |
-| [Magic Earth](../apps/magic-earth.md) | 7.1.26.38.B4684D03.6207A61BA / 2026141716 | [APKM](#local-original-inputs) |
 | [Home Assistant](../apps/homeassistant.md) | 2026.10.1-full / 24906 | [APKS](#local-original-inputs) |
 | [Reolink](../apps/reolink.md) | 4.64.3.20261023 / 796 | [APKM](#local-original-inputs) |
 | [Tuya Smart Life](../apps/tuya.md) | 7.12.6 / 872 | [APKS](#local-original-inputs) |
@@ -63,7 +62,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [TVgids.nl](../apps/tvgids-nl.md) | 7.0.16 / 106691 | [APK](https://buzzheavier.com/tgxpzbzghwec) |
 | [Trouw](../apps/trouw.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/30zwvpz9wqse) |
 | [Tubantia](../apps/tubantia.md) | 9.23.2 / 9230200 | [APKS](https://buzzheavier.com/dewwv45bqcl3) |
-| [ABRP](../apps/abrp.md) | 8.0.0 / 6087 | [APKS](#local-original-inputs) |
+| [Magic Earth](../apps/magicearth.md) | 7.1.26.38.B4684D03.6207A61BA / 2026141716 | [APKM](#local-original-inputs) |
 | [Google Maps](../apps/google-maps.md) | 26.44.06.1006895251 / 1068856906 | [APK](#local-original-inputs) |
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.116.4 / 1627 | [APKM](https://buzzheavier.com/nbgqof6ngf98) |
@@ -76,7 +75,6 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
 | [YouTube](../apps/youtube.md) | 21.30.216 / 1561187872 | [APK](#local-original-inputs) |
 | [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
-| [Spotify](../apps/spotify.md) | 9.2.0.2053 / 148387875 | [APKS](#local-original-inputs) |
 | [Apple Music](../apps/apple-music.md) | 7.0.0 / 1614 | [APKM](#local-original-inputs) |
 | [TIDAL](../apps/tidal.md) | 2.216.0 / 10020 | [APKM](#local-original-inputs) |
 | [Deezer](../apps/deezer.md) | 9.0.26.3 / 9002603 | [APKM](#local-original-inputs) |

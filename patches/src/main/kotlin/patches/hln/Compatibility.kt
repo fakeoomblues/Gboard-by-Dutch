@@ -16,7 +16,7 @@ internal const val MODEL = "Lcom/kubus/module/network/model/"
 internal const val FILTER = "${MODEL}SectionResponse;"
 internal val hln = Compatibility(name = "HLN", packageName = "be.persgroep.android.news.mobilehln", apkFileType = ApkFileType.APKS,
     signatures = setOf("34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"),
-    targets = listOf(AppTarget(version = "9.22.0", versionCode = 2009220000, minSdk = 32)))
+    targets = listOf(AppTarget(version = "9.23.3", versionCode = 2009230300, minSdk = 29)))
 internal val originalInput = patches.shared.originalInput(hln)
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)

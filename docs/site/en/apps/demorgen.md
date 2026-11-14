@@ -10,6 +10,7 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 
 | Patch | Default | What it does |
 | --- | --- | --- |
+| **Android Auto nieuws** | On | Makes Nieuws the primary Android Auto tab with publisher-supplied spoken audio, and lets any car client connect: DriveDeck, desktop head units, Android Automotive and aftermarket head units. |
 | **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
 | **Hide Premium banner** | On | Hides automatic subscription offers and Premium promotions. |
 | **Hide ads** | On | Removes supported ads in feeds, articles, videos and games. |
