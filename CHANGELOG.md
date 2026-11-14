@@ -1,4 +1,33 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/dcf8ab7b7e69524ce5f77b8c440b9edfc29894eb/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.90.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [dcf8ab7b7e69](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/dcf8ab7b7e69524ce5f77b8c440b9edfc29894eb). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.90.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.89.0...v1.90.0) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **De Morgen:** scope lint to NewApi in the new car-screen extensions ([68bd7f4](https://gitlab.com/johninnld/nl-morphe-patches/commit/68bd7f4136d37159e0fbb40bf3f721ca478df38e))
+* **HLN:** align the extension module minSdk with the 9.23.3 app target (API 29) ([2e7e09d](https://gitlab.com/johninnld/nl-morphe-patches/commit/2e7e09dfcf6d01ed19daecbb6d85df4aa5d19a6b))
+* **HLN:** scope lint to NewApi in the new car-screen extensions ([68bd7f4](https://gitlab.com/johninnld/nl-morphe-patches/commit/68bd7f4136d37159e0fbb40bf3f721ca478df38e))
+* **Monet Android TV:** collect public methods into the displayed-cards ABI symbol check ([56a5b06](https://gitlab.com/johninnld/nl-morphe-patches/commit/56a5b06cb04d6bacd9b8af17e3df03df9b0b7594))
+* **Monet Android TV:** import the smali MutableMethodImplementation used by the cards hooks ([99096b0](https://gitlab.com/johninnld/nl-morphe-patches/commit/99096b08e601ee65bade5b822b70d70ede80fed2))
+* **Podimo:** scope lint to NewApi in the new car-screen extensions ([68bd7f4](https://gitlab.com/johninnld/nl-morphe-patches/commit/68bd7f4136d37159e0fbb40bf3f721ca478df38e))
+
+### ✨ New Features
+
+* **De Morgen:** catalog uplifts and car-screen news patches ([51d00d6](https://gitlab.com/johninnld/nl-morphe-patches/commit/51d00d62845bfca472ddbb838197aa3e40253d74))
+* **HLN:** catalog uplifts and car-screen news patches ([51d00d6](https://gitlab.com/johninnld/nl-morphe-patches/commit/51d00d62845bfca472ddbb838197aa3e40253d74))
+* **Monet Android TV:** port premium, displayed cards and Nuvio rows to 1.1.1 ([8510377](https://gitlab.com/johninnld/nl-morphe-patches/commit/8510377429d377e57db96054237cd6cb64eb94df))
+* **Podimo:** catalog uplifts and car-screen news patches ([51d00d6](https://gitlab.com/johninnld/nl-morphe-patches/commit/51d00d62845bfca472ddbb838197aa3e40253d74))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3fee928d39731551a2bd5d9c65a4dbd28a0987f3/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.89.0.**

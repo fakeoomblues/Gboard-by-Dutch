@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.89.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.90.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -314,7 +314,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="de morgen be.persgroep.android.news.mobiledm 7.53.1 7.55.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="de morgen be.persgroep.android.news.mobiledm 7.53.1 7.55.0 android auto nieuws disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [De Morgen](apps/demorgen.md)
@@ -322,8 +322,9 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">7.53.1, 7.55.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobiledm</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
+<li>Android Auto nieuws <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
@@ -726,22 +727,23 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="hln be.persgroep.android.news.mobilehln 9.22.0 disable tracking hide premium banner hide ads hide empty listening carousel read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="hln be.persgroep.android.news.mobilehln 9.23.3 android auto nieuws disable tracking hide premium banner hide ads hide empty listening carousel read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
 ### [HLN](apps/hln.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">9.22.0</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">9.23.3</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobilehln</p>
 <details class="dap-app-card__patches">
-<summary>6 patches</summary>
+<summary>7 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">9.22.0</span></li>
-<li>Hide Premium banner <span class="dap-app-card__target">9.22.0</span></li>
-<li>Hide ads <span class="dap-app-card__target">9.22.0</span></li>
-<li>Hide empty listening carousel <span class="dap-app-card__target">9.22.0</span></li>
-<li>Read full articles <span class="dap-app-card__target">9.22.0</span></li>
-<li>Skip consent screens <span class="dap-app-card__target">9.22.0</span></li>
+<li>Android Auto nieuws <span class="dap-app-card__target">9.23.3</span></li>
+<li>Disable tracking <span class="dap-app-card__target">9.23.3</span></li>
+<li>Hide Premium banner <span class="dap-app-card__target">9.23.3</span></li>
+<li>Hide ads <span class="dap-app-card__target">9.23.3</span></li>
+<li>Hide empty listening carousel <span class="dap-app-card__target">9.23.3</span></li>
+<li>Read full articles <span class="dap-app-card__target">9.23.3</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">9.23.3</span></li>
 </ul>
 </details>
 
@@ -911,7 +913,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.1 individual wuplay catalog rows" markdown>
+<article class="dap-app-card" data-category="other" data-search="monet android tv com.klevico.monet 1.1.1 individual nuvio catalog rows individual wuplay catalog rows unlimited displayed cards unlock premium" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Monet Android TV](apps/monet.md)
@@ -919,9 +921,12 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">1.1.1</span></p>
 <p class="dap-app-card__package">com.klevico.monet</p>
 <details class="dap-app-card__patches">
-<summary>1 patch</summary>
+<summary>4 patches</summary>
 <ul>
+<li>Individual Nuvio catalog rows <span class="dap-app-card__target">1.1.1 · default off</span></li>
 <li>Individual Wuplay catalog rows <span class="dap-app-card__target">1.1.1 · default off</span></li>
+<li>Unlimited displayed cards <span class="dap-app-card__target">1.1.1 · default off</span></li>
+<li>Unlock Premium <span class="dap-app-card__target">1.1.1</span></li>
 </ul>
 </details>
 
@@ -1174,18 +1179,19 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="podimo com.podimo 3.5.1 guest session playback host unlock premium playback" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="podimo com.podimo 3.7.0 android auto show grid browse guest session playback host unlock premium playback" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Podimo](apps/podimo.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">3.5.1</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">3.7.0</span></p>
 <p class="dap-app-card__package">com.podimo</p>
 <details class="dap-app-card__patches">
-<summary>2 patches</summary>
+<summary>3 patches</summary>
 <ul>
-<li>Guest session playback host <span class="dap-app-card__target">3.5.1</span></li>
-<li>Unlock Premium playback <span class="dap-app-card__target">3.5.1</span></li>
+<li>Android Auto show grid browse <span class="dap-app-card__target">3.7.0</span></li>
+<li>Guest session playback host <span class="dap-app-card__target">3.7.0</span></li>
+<li>Unlock Premium playback <span class="dap-app-card__target">3.7.0</span></li>
 </ul>
 </details>
 

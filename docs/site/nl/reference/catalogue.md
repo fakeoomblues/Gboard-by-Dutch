@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.89.0**
+**Patchbundel: 1.90.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -182,6 +182,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Android Auto nieuws | Aan | 7.53.1, 7.55.0 |
 | Disable tracking | Aan | 7.53.1, 7.55.0 |
 | Hide Premium banner | Aan | 7.53.1, 7.55.0 |
 | Hide ads | Aan | 7.53.1, 7.55.0 |
@@ -458,12 +459,13 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 9.22.0 |
-| Hide Premium banner | Aan | 9.22.0 |
-| Hide ads | Aan | 9.22.0 |
-| Hide empty listening carousel | Aan | 9.22.0 |
-| Read full articles | Aan | 9.22.0 |
-| Skip consent screens | Aan | 9.22.0 |
+| Android Auto nieuws | Aan | 9.23.3 |
+| Disable tracking | Aan | 9.23.3 |
+| Hide Premium banner | Aan | 9.23.3 |
+| Hide ads | Aan | 9.23.3 |
+| Hide empty listening carousel | Aan | 9.23.3 |
+| Read full articles | Aan | 9.23.3 |
+| Skip consent screens | Aan | 9.23.3 |
 
 ## Home Assistant
 
@@ -571,7 +573,10 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
+| Individual Nuvio catalog rows | Uit | 1.1.1 |
 | Individual Wuplay catalog rows | Uit | 1.1.1 |
+| Unlimited displayed cards | Uit | 1.1.1 |
+| Unlock Premium | Aan | 1.1.1 |
 
 ## Myspoti
 
@@ -730,8 +735,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Guest session playback host | Aan | 3.5.1 |
-| Unlock Premium playback | Aan | 3.5.1 |
+| Android Auto show grid browse | Aan | 3.7.0 |
+| Guest session playback host | Aan | 3.7.0 |
+| Unlock Premium playback | Aan | 3.7.0 |
 
 ## Projectivy Launcher
 

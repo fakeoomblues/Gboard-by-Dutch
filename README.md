@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.89.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.89.0)** · 80 apps · 376 patches
+**Patch bundle [v1.90.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.90.0)** · 80 apps · 382 patches
 
 ### Weather
 
@@ -66,14 +66,14 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Bright](docs/site/en/apps/bright.md) | Ads · Tracking · Prompts · Articles | 10.181.0 | APKS | 4 |
-| [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1, 7.55.0 | APKS | 5 |
+| [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1, 7.55.0 | APKS | 6 |
 | [De Tijd](docs/site/en/apps/detijd.md) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 8 |
 | [DS Nieuws](docs/site/en/apps/dsnieuws.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [ED](docs/site/en/apps/ed.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [FTM](docs/site/en/apps/ftm.md) | Ads · Tracking · Prompts · Articles | 2.6.8 | APKS | 5 |
 | [GVA](docs/site/en/apps/gva.md) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
 | [HBVL](docs/site/en/apps/hbvl.md) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
-| [HLN](docs/site/en/apps/hln.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
+| [HLN](docs/site/en/apps/hln.md) | Ads · Tracking · Prompts · Articles | 9.23.3 | APKS | 7 |
 | [Humo](docs/site/en/apps/humo.md) | Ads · Tracking · Prompts · Articles | 7.53.1, 7.55.0 | APKS | 5 |
 | [Medium](docs/site/en/apps/medium.md) | Tracking · Prompts · Articles | 4.5.1784911033, 4.5.1784911134 | APKS | 3 |
 | [Nieuwsblad](docs/site/en/apps/nieuwsblad.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
@@ -120,7 +120,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [NPO Start](docs/site/en/apps/npo-start.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [Orpheon](docs/site/en/apps/orpheon.md) | See guide | 1.0.0-beta.1, Any | APK | 3 |
-| [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
+| [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.7.0 | APKS | 3 |
 | [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.11.02-release | APKM | 5 |
 | [Spotify](docs/site/en/apps/spotify.md) | See guide | 9.2.0.2053 | APKS | 1 |
 | [TIDAL](docs/site/en/apps/tidal.md) | See guide | 2.216.0 | APKM | 1 |
@@ -146,7 +146,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
 | [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
-| [Monet Android TV](docs/site/en/apps/monet.md) | See guide | 1.1.1 | APK | 1 |
+| [Monet Android TV](docs/site/en/apps/monet.md) | Plus/Pro | 1.1.1 | APK | 4 |
 | [PdfCraft](docs/site/en/apps/pdfcraft.md) | See guide | Any | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 | [Reolink](docs/site/en/apps/reolink.md) | See guide | 4.64.3.20261023 | APKM | 4 |

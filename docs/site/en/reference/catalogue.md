@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.89.0**
+**Patch bundle: 1.90.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -182,6 +182,7 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Android Auto nieuws | On | 7.53.1, 7.55.0 |
 | Disable tracking | On | 7.53.1, 7.55.0 |
 | Hide Premium banner | On | 7.53.1, 7.55.0 |
 | Hide ads | On | 7.53.1, 7.55.0 |
@@ -458,12 +459,13 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 9.22.0 |
-| Hide Premium banner | On | 9.22.0 |
-| Hide ads | On | 9.22.0 |
-| Hide empty listening carousel | On | 9.22.0 |
-| Read full articles | On | 9.22.0 |
-| Skip consent screens | On | 9.22.0 |
+| Android Auto nieuws | On | 9.23.3 |
+| Disable tracking | On | 9.23.3 |
+| Hide Premium banner | On | 9.23.3 |
+| Hide ads | On | 9.23.3 |
+| Hide empty listening carousel | On | 9.23.3 |
+| Read full articles | On | 9.23.3 |
+| Skip consent screens | On | 9.23.3 |
 
 ## Home Assistant
 
@@ -571,7 +573,10 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
+| Individual Nuvio catalog rows | Off | 1.1.1 |
 | Individual Wuplay catalog rows | Off | 1.1.1 |
+| Unlimited displayed cards | Off | 1.1.1 |
+| Unlock Premium | On | 1.1.1 |
 
 ## Myspoti
 
@@ -730,8 +735,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Guest session playback host | On | 3.5.1 |
-| Unlock Premium playback | On | 3.5.1 |
+| Android Auto show grid browse | On | 3.7.0 |
+| Guest session playback host | On | 3.7.0 |
+| Unlock Premium playback | On | 3.7.0 |
 
 ## Projectivy Launcher
 
