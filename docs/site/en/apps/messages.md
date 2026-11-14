@@ -12,12 +12,14 @@ Select the complete original APKS archive in Morphe Manager, including the base,
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Allow any Android Auto host** | On | Lets any Android Auto compatible host open Messages' car screen, such as DriveDeck, Gearslip, AARE or Flywheel, whatever its package name or signing key. Stock Messages only accepts Google's own Android Auto. The car screen is also switched on from the start, instead of waiting for a Google settings sync. |
-| **Disable screen-share warning** | On | Stops Messages treating a car host's screen as screen sharing, so message text stays visible in notifications and Messages does not warn that someone has access to your screen. This also turns the warning off for real screen sharing in this copy. |
-| **Change package name** | On | Installs the patched Messages beside the stock Google Messages that comes with the phone. Every provider and permission Messages declares moves with it, so the two never collide. |
-| **Custom branding** | On | Names the patched copy "Messages AA" with its own launcher icon. Another name or Messages' original icon can be chosen instead. |
+| **Allow any Android Auto host** | Off | Lets any Android Auto compatible host open Messages' car screen, such as DriveDeck, Gearslip, AARE or Flywheel, whatever its package name or signing key. Stock Messages only accepts Google's own Android Auto. The car screen is also switched on from the start, instead of waiting for a Google settings sync. |
+| **Disable screen-share warning** | Off | Stops Messages treating a car host's screen as screen sharing, so message text stays visible in notifications and Messages does not warn that someone has access to your screen. This also turns the warning off for real screen sharing in this copy. |
+| **Change package name** | Off | Installs the patched Messages beside the stock Google Messages that comes with the phone. Every provider and permission Messages declares moves with it, so the two never collide. |
+| **Custom branding** | Off | Names the patched copy "Messages AA" with its own launcher icon. Another name or Messages' original icon can be chosen instead. |
 
 ## Before using
+
+All four patches are off by default while they are experimental. Turn all four on: without **Change package name** the patched copy cannot install beside the stock Google Messages.
 
 The car screen lists your ten most recent conversations. Opening one lets the host read messages aloud, send a reply and mark the conversation as read; Messages sends the reply itself, the same way as from the phone. Starting a new conversation is up to the host, because Messages' car screen only offers the button.
 

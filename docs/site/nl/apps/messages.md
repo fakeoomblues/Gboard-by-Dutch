@@ -12,12 +12,14 @@ Selecteer het volledige originele APKS-archief in Morphe Manager, inclusief de b
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Allow any Android Auto host** | Aan | Laat elke Android Auto-compatibele host het autoscherm van Messages openen, zoals DriveDeck, Gearslip, AARE of Flywheel, ongeacht de pakketnaam of ondertekeningssleutel. Standaard accepteert Messages alleen Googles eigen Android Auto. Het autoscherm staat ook meteen aan, in plaats van te wachten op een synchronisatie van Google-instellingen. |
-| **Disable screen-share warning** | Aan | Zorgt dat Messages het scherm van een carhost niet als schermdelen ziet, zodat berichttekst zichtbaar blijft in meldingen en Messages niet waarschuwt dat iemand toegang tot je scherm heeft. Dit zet de waarschuwing in deze kopie ook uit bij echt schermdelen. |
-| **Change package name** | Aan | Installeert de gepatchte Messages naast de standaard Google Messages die op de telefoon staat. Elke provider en permissie die Messages declareert, verhuist mee, zodat de twee nooit botsen. |
-| **Custom branding** | Aan | Noemt de gepatchte kopie "Messages AA" met een eigen app-icoon. Je kunt ook een andere naam of het originele icoon van Messages kiezen. |
+| **Allow any Android Auto host** | Uit | Laat elke Android Auto-compatibele host het autoscherm van Messages openen, zoals DriveDeck, Gearslip, AARE of Flywheel, ongeacht de pakketnaam of ondertekeningssleutel. Standaard accepteert Messages alleen Googles eigen Android Auto. Het autoscherm staat ook meteen aan, in plaats van te wachten op een synchronisatie van Google-instellingen. |
+| **Disable screen-share warning** | Uit | Zorgt dat Messages het scherm van een carhost niet als schermdelen ziet, zodat berichttekst zichtbaar blijft in meldingen en Messages niet waarschuwt dat iemand toegang tot je scherm heeft. Dit zet de waarschuwing in deze kopie ook uit bij echt schermdelen. |
+| **Change package name** | Uit | Installeert de gepatchte Messages naast de standaard Google Messages die op de telefoon staat. Elke provider en permissie die Messages declareert, verhuist mee, zodat de twee nooit botsen. |
+| **Custom branding** | Uit | Noemt de gepatchte kopie "Messages AA" met een eigen app-icoon. Je kunt ook een andere naam of het originele icoon van Messages kiezen. |
 
 ## Voor gebruik
+
+Alle vier de patches staan standaard uit zolang ze experimenteel zijn. Zet ze alle vier aan: zonder **Change package name** kan de gepatchte kopie niet naast de standaard Google Messages worden geïnstalleerd.
 
 Het autoscherm toont je tien meest recente gesprekken. Als je er een opent, kan de host berichten voorlezen, een antwoord sturen en het gesprek als gelezen markeren; Messages verstuurt het antwoord zelf, net als vanaf de telefoon. Een nieuw gesprek beginnen hangt van de host af, omdat het autoscherm van Messages alleen de knop aanbiedt.
 

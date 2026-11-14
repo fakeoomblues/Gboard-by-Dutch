@@ -34,7 +34,7 @@ val screenShareWarningPatch = bytecodePatch(
     description = "Experimental. Stops Messages treating a car host's screen as screen sharing, so it does not hide message " +
         "text in notifications or warn that someone has access to your screen while a host such as DriveDeck is connected. " +
         "This also turns the warning off for real screen sharing in this copy of Messages.",
-    default = true,
+    default = false,
 ) {
     compatibleWith(messages)
     dependsOn(originalInput)

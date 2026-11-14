@@ -43,7 +43,7 @@ val customBrandingPatch = resourcePatch(
     name = "Custom branding",
     description = "Experimental. Changes Messages' app name and launcher icon. Defaults to \"$MESSAGES_DEFAULT_NAME\" with " +
         "the Messages AA icon; Messages' original icon is also available.",
-    default = true,
+    default = false,
 ) {
     compatibleWith(messages)
     dependsOn(originalInput)

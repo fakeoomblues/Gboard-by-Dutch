@@ -151,8 +151,8 @@ private val codeIdentitiesPatch = bytecodePatch {
 val changePackageNamePatch = resourcePatch(
     name = "Change package name",
     description = "Experimental. Installs Messages under its own package name, alongside the stock Google Messages. " +
-        "On by default, because a patched copy cannot replace the Google Messages that comes with the phone.",
-    default = true,
+        "Turn it on with the other Messages patches, because a patched copy cannot replace the Google Messages that comes with the phone.",
+    default = false,
 ) {
     compatibleWith(messages)
     dependsOn(originalInput, codeIdentitiesPatch)

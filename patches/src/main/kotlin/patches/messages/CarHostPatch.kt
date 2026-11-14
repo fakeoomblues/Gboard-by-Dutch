@@ -64,7 +64,7 @@ val carHostPatch = bytecodePatch(
     description = "Experimental. Lets any Android Auto compatible host open Messages' car screen, " +
         "including DriveDeck, Gearslip, AARE and Flywheel, whatever its package name or signing key. " +
         "Google's Android Auto keeps working.",
-    default = true,
+    default = false,
 ) {
     compatibleWith(messages)
     dependsOn(originalInput, enableCarServicePatch)

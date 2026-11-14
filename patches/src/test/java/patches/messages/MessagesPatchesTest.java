@@ -21,7 +21,7 @@ public class MessagesPatchesTest {
 
     @Test public void everyPatchTargetsTheExperimentalSamsungBuild() {
         for (Patch<?> patch : PATCHES) {
-            assertTrue(patch.getName() + " is on by default", patch.getDefault());
+            assertFalse(patch.getName() + " is off by default while experimental", patch.getDefault());
             assertTrue(patch.getName() + " says it is experimental", patch.getDescription().startsWith("Experimental."));
             List<Compatibility> apps = patch.getCompatibility();
             assertNotNull(apps);
