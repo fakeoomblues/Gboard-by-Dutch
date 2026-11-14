@@ -3,6 +3,11 @@ android {
  namespace = "nl.johninnl.hln"
  defaultConfig { minSdk = 24 }
  testOptions { unitTests.isReturnDefaultValues = true }
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = false
+        checkOnly += "NewApi"
+    }
 }
 dependencies { testImplementation("junit:junit:4.13.2") }
 configurations.matching { it.name == "releaseRuntimeClasspath" || it.name == "debugRuntimeClasspath" }

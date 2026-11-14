@@ -5,6 +5,11 @@ extension {
 android {
     namespace = "nl.johninnl.podimo.car"
     buildFeatures { buildConfig = false }
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = false
+        checkOnly += "NewApi"
+    }
 }
 
 // The extension is plain Java. Without this the Kotlin Gradle plugin's default
