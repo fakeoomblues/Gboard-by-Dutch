@@ -1,8 +1,8 @@
 {
-  "created_at": "2026-11-14T06:55:52",
-  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9ac7fa8d215f2b563ff34c32118d8553ce187941/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.87.2.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [9ac7fa8d215f](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9ac7fa8d215f2b563ff34c32118d8553ce187941). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.87.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.1...v1.87.2) (2026-11-14)\n\n### 🐛 Bug Fixes\n\n* **Google Messages:** target the regular phone build instead of the Samsung build ([9ac7fa8](https://gitlab.com/johninnld/nl-morphe-patches/commit/9ac7fa8d215f2b563ff34c32118d8553ce187941))",
-  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.87.2/downloads/patches-1.87.2.mpp",
+  "created_at": "2026-11-14T07:42:53",
+  "description": "<!-- dap-release-branding:v1 -->\n![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f75f050343c7097869140fc5a3e605d7b2a603b9/docs/site/assets/brand/release-banner.png)\n\n**Release · patch bundle v1.87.3.**\n\n[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)\n\nSource: [f75f050343c7](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/f75f050343c7097869140fc5a3e605d7b2a603b9). Check each app's target versions in the user guide before patching.\n\n---\n\n## [1.87.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.2...v1.87.3) (2026-11-14)\n\n### 🐛 Bug Fixes\n\n* **Google Messages:** stop the patched copy crashing when Play services refuses it ([f75f050](https://gitlab.com/johninnld/nl-morphe-patches/commit/f75f050343c7097869140fc5a3e605d7b2a603b9))",
+  "download_url": "https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.87.3/downloads/patches-1.87.3.mpp",
   "signature_download_url": "",
-  "version": "1.87.2",
+  "version": "1.87.3",
   "public_key": "Gp+rcVdfG00AT14kr3zzEioKV5j8Cdu+/KAK88T8h4s="
 }

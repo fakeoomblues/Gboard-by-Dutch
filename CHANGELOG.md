@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f75f050343c7097869140fc5a3e605d7b2a603b9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.87.3.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [f75f050343c7](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/f75f050343c7097869140fc5a3e605d7b2a603b9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.87.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.2...v1.87.3) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **Google Messages:** stop the patched copy crashing when Play services refuses it ([f75f050](https://gitlab.com/johninnld/nl-morphe-patches/commit/f75f050343c7097869140fc5a3e605d7b2a603b9))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9ac7fa8d215f2b563ff34c32118d8553ce187941/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.87.2.**
