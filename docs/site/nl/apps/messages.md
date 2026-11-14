@@ -2,11 +2,11 @@
 
 Open het eigen autoscherm van Messages op DriveDeck en andere Android Auto-hosts, vanuit een kopie van Messages die naast de standaardapp wordt geïnstalleerd. **Experimenteel:** deze patches zijn nog niet op een telefoon bevestigd.
 
-**Appversie:** messages.android_20261030_00_RC00.phone_samsung_dynamic · **Build:** 327677900 · **Origineel bestand:** APKS
+**Appversie:** messages.android_20261106_00_RC01.phone_dynamic · **Build:** 328483063 · **Origineel bestand:** APKM
 
-[Gebruik je originele APKS](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Gebruik je originele APKM](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer het volledige originele APKS-archief in Morphe Manager, inclusief de basis-, arm64-, scherm- en taal-APK's. Dit is de Samsung-telefoonversie van Messages; andere versies van Messages worden niet ondersteund.
+Selecteer het volledige originele APKM-archief in Morphe Manager, inclusief de basis-, architectuur-, scherm- en taal-APK's. Dit is de gewone telefoonversie van Messages (het universele archief van APKMirror); andere versies van Messages, zoals de Samsung-versie, worden niet ondersteund.
 
 ## Patches
 

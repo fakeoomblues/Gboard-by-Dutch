@@ -26,7 +26,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Magic Earth](../apps/magic-earth.md) | 7.1.26.38.B4684D03.6207A61BA / 2026141716 | [APKM](#local-original-inputs) |
 | [Home Assistant](../apps/homeassistant.md) | 2026.10.1-full / 24906 | [APKS](#local-original-inputs) |
 | [Reolink](../apps/reolink.md) | 4.64.3.20261023 / 796 | [APKM](#local-original-inputs) |
-| [Google Messages](../apps/messages.md) | messages.android_20261030_00_RC00.phone_samsung_dynamic / 327677900 | [APKS](#local-original-inputs) |
+| [Google Messages](../apps/messages.md) | messages.android_20261106_00_RC01.phone_dynamic / 328483063 | [APKM](#local-original-inputs) |
 | [Tuya Smart Life](../apps/tuya.md) | 7.12.6 / 872 | [APKS](#local-original-inputs) |
 | [PdfCraft](../apps/pdfcraft.md) | 0.0.7-beta / 7012 | [APK](#local-original-inputs) |
 | [LightCraft](../apps/lightcraft.md) | 0.0.6-beta / 6012 | [APK](#local-original-inputs) |

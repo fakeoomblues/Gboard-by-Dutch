@@ -19,7 +19,7 @@ public class MessagesPatchesTest {
         ChangePackageNamePatchKt.getChangePackageNamePatch(),
         CustomBrandingPatchKt.getCustomBrandingPatch());
 
-    @Test public void everyPatchTargetsTheExperimentalSamsungBuild() {
+    @Test public void everyPatchTargetsTheExperimentalPhoneBuild() {
         for (Patch<?> patch : PATCHES) {
             assertFalse(patch.getName() + " is off by default while experimental", patch.getDefault());
             assertTrue(patch.getName() + " says it is experimental", patch.getDescription().startsWith("Experimental."));
@@ -29,15 +29,16 @@ public class MessagesPatchesTest {
             Compatibility app = apps.get(0);
             assertEquals("Google Messages", app.getName());
             assertEquals("com.google.android.apps.messaging", app.getPackageName());
-            assertEquals(ApkFileType.APKS, app.getApkFileType());
+            assertEquals(ApkFileType.APKM, app.getApkFileType());
             assertEquals("Google's current and original Messages signers are pinned", Set.of(
                 "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
                 "cc75526d6c0f80ac3b3a84eb44838440dbbe6b124443a7c7d7bd19182ac022c9"), Set.copyOf(app.getSignatures()));
             assertEquals(1, app.getTargets().size());
             AppTarget target = app.getTargets().get(0);
-            assertEquals("messages.android_20261030_00_RC00.phone_samsung_dynamic", target.getVersion());
-            assertEquals(Set.of(327677900), new HashSet<>(target.getVersionCodes().values()));
+            assertEquals("messages.android_20261106_00_RC01.phone_dynamic", target.getVersion());
+            assertEquals(Set.of(328483063), new HashSet<>(target.getVersionCodes().values()));
             assertEquals(32, target.getMinSdk().intValue());
+            assertEquals("Universal archive: every architecture shares the build", 4, target.getVersionCodes().size());
             assertTrue("Released as experimental", target.isExperimental());
         }
     }

@@ -2,11 +2,11 @@
 
 Open Messages' own car screen on DriveDeck and other Android Auto hosts, from a copy of Messages that installs beside the stock app. **Experimental:** these patches have not yet been confirmed on a phone.
 
-**App version:** messages.android_20261030_00_RC00.phone_samsung_dynamic · **Build:** 327677900 · **Original file:** APKS
+**App version:** messages.android_20261106_00_RC01.phone_dynamic · **Build:** 328483063 · **Original file:** APKM
 
-[Use your original APKS](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
+[Use your original APKM](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Select the complete original APKS archive in Morphe Manager, including the base, arm64, display and language APKs. This is the Samsung phone build of Messages; other Messages builds are not supported.
+Select the complete original APKM archive in Morphe Manager, including the base, architecture, display and language APKs. This is the regular phone build of Messages (APKMirror's universal archive); other Messages builds, such as the Samsung build, are not supported.
 
 ## Patches
 
