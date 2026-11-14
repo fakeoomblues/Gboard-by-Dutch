@@ -30,6 +30,7 @@ APP_PAGES = {
     'app.wuplay.androidtv': ('wuplay', 'entertainment'),
     'app.wuplay.android': ('wuplay-mobile', 'entertainment'),
     'com.waze': ('waze', 'mobility'),
+    'com.generalmagic.magicearth': ('magic-earth', 'mobility'),
     'net.easypark.android': ('easypark', 'mobility'),
     'com.parkmobile': ('easypark-nl', 'mobility'),
     'us.zoom.videomeetings': ('zoom', 'other'),
