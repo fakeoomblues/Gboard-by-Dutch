@@ -49,6 +49,7 @@ APP_PAGES = {
     'com.google.android.inputmethod.latin': ('gboard', 'other'),
     'app.vela': ('vela', 'mobility'),
     'com.google.android.apps.maps': ('google-maps', 'mobility'),
+    'com.iternio.abrpapp': ('abrp', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),

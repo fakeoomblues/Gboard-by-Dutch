@@ -159,6 +159,7 @@ nav:
           - apps/nos-teletekst.md
       - Traffic and navigation:
           - apps/mobility/index.md
+          - apps/abrp.md
           - apps/9292.md
           - apps/flitsmeister.md
           - apps/easypark.md
