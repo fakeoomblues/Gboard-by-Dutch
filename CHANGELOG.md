@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/8acb2b4c1a8a65d85409f729cc2aedf0970ae6fc/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.87.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [8acb2b4c1a8a](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/8acb2b4c1a8a65d85409f729cc2aedf0970ae6fc). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.87.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.0...v1.87.1) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **Google Messages:** turn the experimental patches off by default ([8acb2b4](https://gitlab.com/johninnld/nl-morphe-patches/commit/8acb2b4c1a8a65d85409f729cc2aedf0970ae6fc))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0b31a705c437af2948ab58cc8dd4c36c234636ed/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.87.0.**

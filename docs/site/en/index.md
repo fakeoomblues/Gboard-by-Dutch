@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patch bundle: 1.87.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patch bundle: 1.87.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -673,10 +673,10 @@ hide:
 <details class="dap-app-card__patches">
 <summary>4 patches</summary>
 <ul>
-<li>Allow any Android Auto host <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
-<li>Change package name <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
-<li>Custom branding <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
-<li>Disable screen-share warning <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
+<li>Allow any Android Auto host <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic · default off</span></li>
+<li>Change package name <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic · default off</span></li>
+<li>Custom branding <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic · default off</span></li>
+<li>Disable screen-share warning <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic · default off</span></li>
 </ul>
 </details>
 

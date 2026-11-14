@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.87.0**
+**Patchbundel: 1.87.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -419,10 +419,10 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Allow any Android Auto host | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Change package name | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Custom branding | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
-| Disable screen-share warning | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Allow any Android Auto host | Uit | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Change package name | Uit | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Custom branding | Uit | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Disable screen-share warning | Uit | messages.android_20261030_00_RC00.phone_samsung_dynamic |
 
 ## GridCraft
 

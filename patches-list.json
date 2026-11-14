@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.87.0",
+  "version": "1.87.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -569,7 +569,7 @@
     {
       "name": "Allow any Android Auto host",
       "description": "Experimental. Lets any Android Auto compatible host open Messages' car screen, including DriveDeck, Gearslip, AARE and Flywheel, whatever its package name or signing key. Google's Android Auto keeps working.",
-      "default": true,
+      "default": false,
       "category": null,
       "compatiblePackages": [
         {
@@ -2137,8 +2137,8 @@
     },
     {
       "name": "Change package name",
-      "description": "Experimental. Installs Messages under its own package name, alongside the stock Google Messages. On by default, because a patched copy cannot replace the Google Messages that comes with the phone.",
-      "default": true,
+      "description": "Experimental. Installs Messages under its own package name, alongside the stock Google Messages. Turn it on with the other Messages patches, because a patched copy cannot replace the Google Messages that comes with the phone.",
+      "default": false,
       "category": null,
       "compatiblePackages": [
         {
@@ -2594,7 +2594,7 @@
     {
       "name": "Custom branding",
       "description": "Experimental. Changes Messages' app name and launcher icon. Defaults to \"Messages AA\" with the Messages AA icon; Messages' original icon is also available.",
-      "default": true,
+      "default": false,
       "category": null,
       "compatiblePackages": [
         {
@@ -3424,7 +3424,7 @@
     {
       "name": "Disable screen-share warning",
       "description": "Experimental. Stops Messages treating a car host's screen as screen sharing, so it does not hide message text in notifications or warn that someone has access to your screen while a host such as DriveDeck is connected. This also turns the warning off for real screen sharing in this copy of Messages.",
-      "default": true,
+      "default": false,
       "category": null,
       "compatiblePackages": [
         {
