@@ -11,11 +11,17 @@ tasks.named<org.gradle.api.tasks.javadoc.Javadoc>("javadoc") {
     options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PACKAGE
 }
 
-// Spotify is withdrawn from the published bundle: its patched app gets accounts
-// restricted after a short period of use. Keep the sources in the checkout, but
-// compile neither the patches nor their extension into the MPP or its patch list
-// until that is fixed.
-kotlin.sourceSets.main { kotlin.exclude("patches/spotify/**") }
+// Publish only the Spotify Android Auto control approved on 9.2.0.2053.
+// Other Spotify controls and their extension remain withdrawn from the bundle.
+val publishedSpotifySources = setOf(
+    "patches/spotify/AndroidAutoSupportPatch.kt",
+    "patches/spotify/AndroidAutoCompatibility.kt",
+)
+kotlin.sourceSets.main {
+    kotlin.exclude { entry ->
+        entry.path.startsWith("patches/spotify/") && entry.path !in publishedSpotifySources
+    }
+}
 tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
     exclude("extensions/spotify.mpe")
     dependsOn(":extensions:waze:stripReleaseDebugSymbols")

@@ -76,6 +76,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Gearslip](../apps/gearslip.md) | 0.3.31-alpha / 13 | [APK](https://buzzheavier.com/szlgyqfl0ghx) |
 | [YouTube](../apps/youtube.md) | 21.30.216 / 1561187872 | [APK](#local-original-inputs) |
 | [YouTube Music](../apps/youtube-music.md) | 9.30.53 / 93053240 | [APK](#local-original-inputs) |
+| [Spotify](../apps/spotify.md) | 9.2.0.2053 / 148387875 | [APKS](#local-original-inputs) |
 | [Apple Music](../apps/apple-music.md) | 7.0.0 / 1614 | [APKM](#local-original-inputs) |
 | [TIDAL](../apps/tidal.md) | 2.216.0 / 10020 | [APKM](#local-original-inputs) |
 | [Deezer](../apps/deezer.md) | 9.0.26.3 / 9002603 | [APKM](#local-original-inputs) |
