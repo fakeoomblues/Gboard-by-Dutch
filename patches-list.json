@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.86.1",
+  "version": "1.87.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -559,6 +559,38 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Allow any Android Auto host",
+      "description": "Experimental. Lets any Android Auto compatible host open Messages' car screen, including DriveDeck, Gearslip, AARE and Flywheel, whatever its package name or signing key. Google's Android Auto keeps working.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.messaging",
+          "name": "Google Messages",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#3186FF",
+          "signatures": [
+            "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
+            "cc75526d6c0f80ac3b3a84eb44838440dbbe6b124443a7c7d7bd19182ac022c9"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "versionCodes": {
+                "ARM64_V8A": 327677900
+              },
+              "isExperimental": true,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -2105,6 +2137,48 @@
     },
     {
       "name": "Change package name",
+      "description": "Experimental. Installs Messages under its own package name, alongside the stock Google Messages. On by default, because a patched copy cannot replace the Google Messages that comes with the phone.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.messaging",
+          "name": "Google Messages",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#3186FF",
+          "signatures": [
+            "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
+            "cc75526d6c0f80ac3b3a84eb44838440dbbe6b124443a7c7d7bd19182ac022c9"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "versionCodes": {
+                "ARM64_V8A": 327677900
+              },
+              "isExperimental": true,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "packageName",
+          "title": "Package name",
+          "description": "The package name to install under. Must be a valid Android package name that differs from com.google.android.apps.messaging.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "app.morphe.android.apps.messaging",
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Change package name",
       "description": "Installs Reolink under its own package name, alongside the Reolink from the Play Store. On by default, because a patched copy cannot update the Play Store Reolink.",
       "default": true,
       "category": null,
@@ -2513,6 +2587,60 @@
           "values": {
             "Original LightCraft": "original",
             "Adobe Lightroom (default)": "lightroom"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
+      "description": "Experimental. Changes Messages' app name and launcher icon. Defaults to \"Messages AA\" with the Messages AA icon; Messages' original icon is also available.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.messaging",
+          "name": "Google Messages",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#3186FF",
+          "signatures": [
+            "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
+            "cc75526d6c0f80ac3b3a84eb44838440dbbe6b124443a7c7d7bd19182ac022c9"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "versionCodes": {
+                "ARM64_V8A": 327677900
+              },
+              "isExperimental": true,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and in app information. Leave empty to keep Messages.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Messages AA",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "aa",
+          "values": {
+            "Messages AA (default)": "aa",
+            "Original Messages": "original"
           }
         }
       ]
@@ -3286,6 +3414,38 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable screen-share warning",
+      "description": "Experimental. Stops Messages treating a car host's screen as screen sharing, so it does not hide message text in notifications or warn that someone has access to your screen while a host such as DriveDeck is connected. This also turns the warning off for real screen sharing in this copy of Messages.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.apps.messaging",
+          "name": "Google Messages",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#3186FF",
+          "signatures": [
+            "3284b53cbc699d6adf924945cc5a26dc5a0066b1d6767ffcd7bca44d0ea9fab8",
+            "cc75526d6c0f80ac3b3a84eb44838440dbbe6b124443a7c7d7bd19182ac022c9"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "messages.android_20261030_00_RC00.phone_samsung_dynamic",
+              "versionCodes": {
+                "ARM64_V8A": 327677900
+              },
+              "isExperimental": true,
+              "minSdk": 32,
               "description": null
             }
           ]

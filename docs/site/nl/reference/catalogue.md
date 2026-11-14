@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.86.1**
+**Patchbundel: 1.87.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -410,6 +410,19 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Trim account menu | Aan | 26.44.06.1006895251 |
 | Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | Aan | 26.44.06.1006895251 |
+
+## Google Messages
+
+[Wat veranderen de patches?](../apps/messages.md)
+
+`com.google.android.apps.messaging`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow any Android Auto host | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Change package name | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Custom branding | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Disable screen-share warning | Aan | messages.android_20261030_00_RC00.phone_samsung_dynamic |
 
 ## GridCraft
 

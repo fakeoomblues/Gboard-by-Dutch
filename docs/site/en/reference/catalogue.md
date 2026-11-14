@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.86.1**
+**Patch bundle: 1.87.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -410,6 +410,19 @@ Check the supported app versions and default setting for each patch. The app pag
 | Trim account menu | On | 26.44.06.1006895251 |
 | Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
 | Zoom controls in navigation | On | 26.44.06.1006895251 |
+
+## Google Messages
+
+[What do the patches change?](../apps/messages.md)
+
+`com.google.android.apps.messaging`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow any Android Auto host | On | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Change package name | On | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Custom branding | On | messages.android_20261030_00_RC00.phone_samsung_dynamic |
+| Disable screen-share warning | On | messages.android_20261030_00_RC00.phone_samsung_dynamic |
 
 ## GridCraft
 

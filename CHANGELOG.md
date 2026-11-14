@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0b31a705c437af2948ab58cc8dd4c36c234636ed/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.87.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [0b31a705c437](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/0b31a705c437af2948ab58cc8dd4c36c234636ed). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.87.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.86.1...v1.87.0) (2026-11-14)
+
+### ✨ New Features
+
+* **Google Messages:** add experimental car screen support for any Android Auto host ([0b31a70](https://gitlab.com/johninnld/nl-morphe-patches/commit/0b31a705c437af2948ab58cc8dd4c36c234636ed))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c731a265d4ed5c58d5dd03e8f3cc4a7886d23d35/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.86.1.**

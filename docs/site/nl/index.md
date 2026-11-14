@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.86.1</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patchbundel: 1.87.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -660,6 +660,27 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/google-maps.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="google messages com.google.android.apps.messaging messages.android_20261030_00_rc00.phone_samsung_dynamic allow any android auto host change package name custom branding disable screen-share warning" markdown>
+<p class="dap-app-card__category">Overige</p>
+
+### [Google Messages](apps/messages.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></p>
+<p class="dap-app-card__package">com.google.android.apps.messaging</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
+<li>Change package name <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
+<li>Custom branding <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
+<li>Disable screen-share warning <span class="dap-app-card__target">messages.android_20261030_00_RC00.phone_samsung_dynamic</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/messages.md){ .dap-app-card__link }
 
 </article>
 
