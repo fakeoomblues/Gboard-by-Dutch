@@ -12,7 +12,7 @@ class HelperVM(VM):
 
 class HandoffVM(HelperVM):
     def invoke(self,ref,values,kind):
-        if ref=='Ligj;->'+ROUTE:
+        if ref=='Ligj;->a(Landroid/content/Context;Ln20;)V':
             self.handoff=(kind,values);return None
         return super().invoke(ref,values,kind)
 
@@ -68,16 +68,26 @@ class HlnOnboardingInstructionTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError,'Keep existing encrypted topic preferences|idempotent'):
             verify_seed(root,HelperVM)
 
-    def test_generated_guest_helper_forwards_real_context_and_push_transition(self):
+    def test_generated_guest_helper_completes_onboarding_with_live_tracker(self):
         root=self.helpers();vm=HandoffVM(root)
         tracker=Obj('Ln20;')
         vm.call(Q9,'morpheContinueGuest(Landroid/content/Context;Ln20;)V',[vm.context,tracker])
         kind,args=vm.handoff
-        self.assertEqual(kind,'invoke-static');self.assertIs(args[0],vm.context)
-        self.assertEqual(args[1].name,'PUSH_NOTIFICATION_SCREEN')
-        self.assertIs(args[2],tracker,'the router supplies its own live tracker, never a fabricated one')
-        self.assertEqual(args[3],0)
+        self.assertEqual(kind,'invoke-static')
+        self.assertIs(args[0],vm.context,'the real Context must be forwarded')
+        self.assertIs(args[1],tracker,'the router supplies its own live tracker, never a fabricated one')
         self.assertFalse(vm.events);self.assertFalse(vm.topics.writes)
+
+    def test_router_redirects_every_step_except_region_selection(self):
+        path=Path(__file__).parents[1]/'patches/src/main/kotlin/patches/hln/OnboardingPatch.kt'
+        text=path.read_text()
+        self.assertIn('Lggj;->REGION_SELECTION_SCREEN:Lggj;',text,
+            'The only screen still allowed is the localized news source picker')
+        self.assertIn('invoke-static {p0, p2}, Ligj;->morpheContinueGuest(Landroid/content/Context;Ln20;)V',text,
+            'Every other onboarding step must continue as a guest')
+        self.assertNotIn('Lg33;->y(',text,
+            'Automatic login call sites must not be rewritten: n20 is already clobbered there')
+        self.assertNotIn('Llbi;',text)
 
     def test_packed_switch_rows_preserve_real_case_declaration(self):
         text='''\

@@ -16,11 +16,13 @@ internal const val MODEL = "Lcom/kubus/module/network/model/"
 internal const val FILTER = "${MODEL}SectionResponse;"
 internal val hln = Compatibility(name = "HLN", packageName = "be.persgroep.android.news.mobilehln", apkFileType = ApkFileType.APKS,
     signatures = setOf("34a28a4862a6204d7c70ebacc7105fae14ac880486c5d2d56a2b9c17907b27c4"),
-    // 9.23.3 is withdrawn: the Android Auto and tracking patches crash the app when
-    // applied together (androidx.startup.InitializationProvider at launch), which the
-    // static patch check cannot catch. Only the certified 9.22.0 build is offered
-    // until the interaction is fixed, so Morphe cannot install a crashing update.
-    targets = listOf(AppTarget(version = "9.22.0", versionCode = 2009220000, minSdk = 32)))
+    // The launch crash on 9.23.3 came from a single hook: `Lgn0;` is the app's startup
+    // service locator, and truncating its constructor left `gn0->d` null, so
+    // androidx.startup.InitializationProvider threw while building its ComponentName.
+    // Every patch set containing "Disable tracking" (including "Skip consent screens",
+    // which depends on it) therefore failed at launch. The constructor is no longer
+    // touched; startup wiring is verified byte-identical to the original.
+    targets = listOf(AppTarget(version = "9.23.3", versionCode = 2009230300, minSdk = 29)))
 internal val originalInput = patches.shared.originalInput(hln)
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
@@ -61,4 +63,7 @@ internal fun optionalExact(cls: String, sig: String) = runCatching {
 internal const val STOP = "return-void"
 internal const val FALSE = "const/4 v0, 0x0\nreturn v0"
 internal const val TRUE = "const/4 v0, 0x1\nreturn v0"
-internal const val UNIT = "sget-object v0, Llbi;->a:Llbi;\nreturn-object v0"
+// 9.23.3 maps kotlin.Unit to `Lifi;` (`.field public static final a:Lifi;`, the only
+// class in the app whose toString() is "kotlin.Unit"). The 9.22.0 descriptor `Llbi;`
+// now names an unrelated type, so emitting it fails with NoSuchFieldError at runtime.
+internal const val UNIT = "sget-object v0, Lifi;->a:Lifi;\nreturn-object v0"

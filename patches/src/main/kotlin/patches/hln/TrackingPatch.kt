@@ -19,15 +19,6 @@ val disableTracking = bytecodePatch(name = "Disable tracking", description = "Di
     execute {
         change("Lbx2;", "a()V", STOP)
         change("Lcom/kubusapp/analytics/cim/CimEventTransmitter;", "execute(Ljava/util/Map;)V", STOP)
-        // Amalia returns its actual Success<Unit> wrapper, consumed as Ll10.
-        val success = exact("Lul7;", "<init>(Ljava/lang/Object;)V").classDef
-        check("Lvl7;" in success.interfaces) { "HLN Amalia completion result type changed" }
-        change("Lkce;", "a(Lx6e;Lws3;)Ljava/lang/Object;", """
-            new-instance v0, Lul7;
-            sget-object v1, Llbi;->a:Llbi;
-            invoke-direct {v0, v1}, Lul7;-><init>(Ljava/lang/Object;)V
-            return-object v0
-        """)
         change("Lcom/kubusapp/analytics/ComscoreEventTransmitter;", "execute(Ljava/util/Map;)V", STOP)
         change("Ls63;", "a(Ljava/lang/String;)V", STOP)
         change("Lh1i;", "b(Lbe/persgroep/tracking/base/model/TrackingEvent;)V", STOP)
@@ -80,7 +71,11 @@ private fun disableFiamConsumers() {
         :done
         return-void
     """))
-    val sites = listOf("Lcom/kubusapp/MainApplication;" to "onCreate()V", "Lcom/kubusapp/MainActivity;" to "onCreate(Landroid/os/Bundle;)V", "Ldwh;" to "b(Lws3;)Ljava/lang/Object;")
+    // `trackingResources` removes the four FIAM component registrars from the manifest,
+    // so FirebaseApp.get(FirebaseInAppMessaging.class) returns null in every consumer.
+    // The app dereferences it unconditionally (`TrackingStarterInitializer` fails at
+    // launch), so every such site must go through the null-safe helper below.
+    val sites = listOf("Lcom/kubusapp/MainApplication;" to "onCreate()V", "Lcom/kubusapp/MainActivity;" to "onCreate(Landroid/os/Bundle;)V", "Ldwh;" to "b(Lws3;)Ljava/lang/Object;", "Lcom/kubusapp/startup/TrackingStarterInitializer;" to "b(Landroid/content/Context;)Ljava/lang/Object;")
     sites.forEach { (owner, sig) ->
         val method = optionalExact(owner, sig) ?: return@forEach
         val code = method.instructions.toList()
@@ -108,15 +103,10 @@ private fun disableFiamConsumers() {
 
 context(patchContext: app.morphe.patcher.patch.BytecodePatchContext)
 private fun disableIdentifierAcquisition() {
-    // Keep initialized provider objects and their nullable asynchronous fields.
-    val appSet = exact("Lgn0;", "<init>(Landroid/content/Context;)V").method
-    val code = appSet.instructions.toList()
-    val base = code.withIndex().filter { (_, insn) ->
-        val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
-        insn.opcode == Opcode.INVOKE_DIRECT && ref?.definingClass == "Ljava/lang/Object;" && ref.name == "<init>"
-    }
-    check(base.size == 1)
-    appSet.addInstructions(base.single().index + 1, STOP)
+    // `gn0` is the app's startup service locator in 9.23.3 (its field `d` is the
+    // Context androidx.startup.InitializationProvider builds its ComponentName
+    // from), so its constructor must run untouched. Advertising identifiers are
+    // still blocked through the AdvertisingIdClient and IdManager hooks below.
     val piano = exact("Lak;", "<init>(Landroid/content/Context;Ljava/util/concurrent/ScheduledExecutorService;)V").method
     val schedules = piano.instructions.withIndex().filter { (_, insn) ->
         val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference

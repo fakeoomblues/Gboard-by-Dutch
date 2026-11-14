@@ -67,32 +67,32 @@ internal fun skipOnboardingPrompts() {
         return-void
     """)
     addOnboardingHelper("morpheContinueGuest", listOf("Landroid/content/Context;", "Ln20;"), 2, """
-        sget-object v0, Lggj;->PUSH_NOTIFICATION_SCREEN:Lggj;
-        const/4 v1, 0x0
-        invoke-static {p0, v0, p1, v1}, Ligj;->b(Landroid/content/Context;Lggj;Ln20;Landroid/content/Intent;)V
+        invoke-static {p0, p1}, Ligj;->a(Landroid/content/Context;Ln20;)V
         return-void
     """)
 
     val router = exact(ROUTER, ROUTE).method
-    val original = router.instructions.toList()
-    val logins = original.withIndex().filter { (_, instruction) ->
-        val ref = (instruction as? ReferenceInstruction)?.reference as? MethodReference
-        ref?.definingClass == "Lg33;" && ref.name == "y" && ref.returnType == "V" &&
-            ref.parameterTypes == listOf("Landroid/content/Context;", "Z", "Lcom/kubusapp/feature/auth/LoginDrivers;", "I")
-    }
-    // 9.22.0 had two automatic-login paths here; 9.23.3 keeps one. Neutralise
-    // whichever remain so onboarding cannot log the reader in automatically.
-    check(logins.isNotEmpty()) { "HLN automatic onboarding login call not found" }
-    logins.forEach { (index, instruction) ->
-        check(instruction.opcode == Opcode.INVOKE_STATIC)
-        val caller = (instruction as FiveRegisterInstruction).registerC
-        check(caller == router.implementation!!.registerCount - 4) { "HLN login context register changed" }
-        router.replaceInstruction(index,
-            "invoke-static {v$caller, p2}, Ligj;->morpheContinueGuest(Landroid/content/Context;Ln20;)V")
-    }
+    // Every onboarding step except region selection must go straight to the news
+    // activity: `Ligj;->a(Context, n20)` persists KEY_ON_BOARDING_COMPLETE, emits
+    // tutorial_complete and starts MainActivity.
+    //
+    // The redirect has to happen at method entry. Replacing the automatic-login
+    // call sites (as 9.22.0 did) cannot work here: by the time those branches run,
+    // `p2` no longer holds `n20` (it has been overwritten with a screen-name String
+    // and then a byte constant), so injecting `{p0, p2}` produced
+    // "register v4 has type PositiveByteConstant but expected Reference: n20"
+    // and the class was rejected by the verifier.
+    val seedTopics = if (seedTopicChoices) "invoke-static {}, Ligj;->morpheSeedTopicChoices()V\n        " else ""
+    router.addInstructionsWithLabels(0, """
+        sget-object v0, Lggj;->REGION_SELECTION_SCREEN:Lggj;
+        if-eq p1, v0, :originalRouter
+        ${seedTopics}invoke-static {p0, p2}, Ligj;->morpheContinueGuest(Landroid/content/Context;Ln20;)V
+        return-void
+    """.trimIndent(), ExternalLabel("originalRouter", router.getInstruction(0)))
     // 9.23.3 routes the login-seduction destination from the onboarding
-    // navigation owners rather than inside the router; redirect the destination
-    // to the topics screen wherever those owners carry it.
+    // navigation owners rather than inside the router; redirect it to the news
+    // activity. It must not fall back to $TOPICS, which is the push-notification
+    // screen the reader is not supposed to see either.
     var seduction = 0
     listOf("Lafd;", "Lad8;").forEach { owner ->
         val ownerClass = context.mutableClassDefBy(owner)
@@ -102,20 +102,13 @@ internal fun skipOnboardingPrompts() {
                 if (insn.opcode == Opcode.CONST_CLASS &&
                     type == "Lcom/kubusapp/onboarding/LoginSeductionActivity;") {
                     method.replaceInstruction(index,
-                        "const-class v${(insn as OneRegisterInstruction).registerA}, $TOPICS")
+                        "const-class v${(insn as OneRegisterInstruction).registerA}, Lcom/kubusapp/MainActivity;")
                     seduction++
                 }
             }
         }
     }
     check(seduction >= 1) { "HLN login-seduction route not found" }
-    // Bind to the real original instruction; a trailing injected label can
-    // otherwise attach to an unrelated existing label when parsed/emitted.
-    router.addInstructionsWithLabels(0, """
-        sget-object v0, Lggj;->PUSH_NOTIFICATION_SCREEN:Lggj;
-        if-ne p1, v0, :originalOnboarding
-        invoke-static {}, Ligj;->morpheSeedTopicChoices()V
-    """.trimIndent(), ExternalLabel("originalOnboarding", router.getInstruction(0)))
 
     val topic = exact(TOPICS, "onCreate(Landroid/os/Bundle;)V").method
     val topicCode = topic.instructions.toList()
