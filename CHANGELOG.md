@@ -1,4 +1,27 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/0e5fbd86e19c9417a3d322e399939d52fb9b1f73/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.88.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [0e5fbd86e19c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/0e5fbd86e19c9417a3d322e399939d52fb9b1f73). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.88.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.87.3...v1.88.0) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **release:** accept the Projectivy short name in commit trailers ([395dca6](https://gitlab.com/johninnld/nl-morphe-patches/commit/395dca68c034c11d4949304552d4e1912777bc7b))
+
+### ✨ New Features
+
+* **De Morgen:** support 7.55.0 and the minSdk 29 APKCube variants ([e9bd3a3](https://gitlab.com/johninnld/nl-morphe-patches/commit/e9bd3a3370676d6dc6fd4e204a2c26b020e04c49))
+* **Gboard:** add experimental AMOLED dark keyboard patch ([f91bc25](https://gitlab.com/johninnld/nl-morphe-patches/commit/f91bc2599fb3c02f8fd740a6fc317c86829c2901)), closes [#FF000000](https://gitlab.com/johninnld/nl-morphe-patches/issues/FF000000) [#1E1F25](https://gitlab.com/johninnld/nl-morphe-patches/issues/1E1F25) [#000000](https://gitlab.com/johninnld/nl-morphe-patches/issues/000000)
+* **Humo:** support 7.55.0 and the minSdk 29 APKCube variants ([e9bd3a3](https://gitlab.com/johninnld/nl-morphe-patches/commit/e9bd3a3370676d6dc6fd4e204a2c26b020e04c49))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f75f050343c7097869140fc5a3e605d7b2a603b9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.87.3.**

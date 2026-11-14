@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.87.3**
+**Patch bundle: 1.88.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -182,11 +182,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 7.53.1 |
-| Hide Premium banner | On | 7.53.1 |
-| Hide ads | On | 7.53.1 |
-| Read full articles | On | 7.53.1 |
-| Skip consent screens | On | 7.53.1 |
+| Disable tracking | On | 7.53.1, 7.55.0 |
+| Hide Premium banner | On | 7.53.1, 7.55.0 |
+| Hide ads | On | 7.53.1, 7.55.0 |
+| Read full articles | On | 7.53.1, 7.55.0 |
+| Skip consent screens | On | 7.53.1, 7.55.0 |
 
 ## De Tijd
 
@@ -333,6 +333,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | AI Writing Tools | On | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| AMOLED dark keyboard | Off | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Add Gboard Signature Bypass | On | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Change package name | On | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Clipboard Enhancements | On | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
@@ -495,11 +496,11 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 7.53.1 |
-| Hide Premium banner | On | 7.53.1 |
-| Hide ads | On | 7.53.1 |
-| Read full articles | On | 7.53.1 |
-| Skip consent screens | On | 7.53.1 |
+| Disable tracking | On | 7.53.1, 7.55.0 |
+| Hide Premium banner | On | 7.53.1, 7.55.0 |
+| Hide ads | On | 7.53.1, 7.55.0 |
+| Read full articles | On | 7.53.1, 7.55.0 |
+| Skip consent screens | On | 7.53.1, 7.55.0 |
 
 ## KIJK Android
 

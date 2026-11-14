@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.87.3](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.87.3)** · 81 apps · 379 patches
+**Patch bundle [v1.88.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.88.0)** · 81 apps · 380 patches
 
 ### Weather
 
@@ -66,7 +66,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | --- | --- | --- | --- | --- |
 | [AD](docs/site/en/apps/ad.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
 | [Bright](docs/site/en/apps/bright.md) | Ads · Tracking · Prompts · Articles | 10.181.0 | APKS | 4 |
-| [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [De Morgen](docs/site/en/apps/demorgen.md) | Ads · Tracking · Prompts · Articles | 7.53.1, 7.55.0 | APKS | 5 |
 | [De Tijd](docs/site/en/apps/detijd.md) | Ads · Tracking · Prompts · Articles | 5.6.1 | APKS | 8 |
 | [DS Nieuws](docs/site/en/apps/dsnieuws.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [ED](docs/site/en/apps/ed.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
@@ -74,7 +74,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [GVA](docs/site/en/apps/gva.md) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
 | [HBVL](docs/site/en/apps/hbvl.md) | Ads · Tracking · Prompts · Navigation | 22.0.0 | APKS | 5 |
 | [HLN](docs/site/en/apps/hln.md) | Ads · Tracking · Prompts · Articles | 9.22.0 | APKS | 6 |
-| [Humo](docs/site/en/apps/humo.md) | Ads · Tracking · Prompts · Articles | 7.53.1 | APKS | 5 |
+| [Humo](docs/site/en/apps/humo.md) | Ads · Tracking · Prompts · Articles | 7.53.1, 7.55.0 | APKS | 5 |
 | [Medium](docs/site/en/apps/medium.md) | Tracking · Prompts · Articles | 4.5.1784911033, 4.5.1784911134 | APKS | 3 |
 | [Nieuwsblad](docs/site/en/apps/nieuwsblad.md) | Ads · Tracking · Prompts | 22.0.0 | APKS | 4 |
 | [NOS Teletekst](docs/site/en/apps/nos-teletekst.md) | Tracking | 2.8.10 | APKS | 2 |
@@ -141,7 +141,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.2 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Fennec](docs/site/en/apps/fennec.md) | See guide | Any | APK | 1 |
-| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 25 |
+| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.6.3.1002251336-release-arm64-v8a, 18.6.3.1002251336-release-armeabi-v7a | APK | 26 |
 | [Google Messages](docs/site/en/apps/messages.md) | See guide | messages.android_20261106_00_RC01.phone_dynamic | APKM | 4 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |

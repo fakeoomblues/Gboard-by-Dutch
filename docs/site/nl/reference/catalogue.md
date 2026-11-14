@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.87.3**
+**Patchbundel: 1.88.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -182,11 +182,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 7.53.1 |
-| Hide Premium banner | Aan | 7.53.1 |
-| Hide ads | Aan | 7.53.1 |
-| Read full articles | Aan | 7.53.1 |
-| Skip consent screens | Aan | 7.53.1 |
+| Disable tracking | Aan | 7.53.1, 7.55.0 |
+| Hide Premium banner | Aan | 7.53.1, 7.55.0 |
+| Hide ads | Aan | 7.53.1, 7.55.0 |
+| Read full articles | Aan | 7.53.1, 7.55.0 |
+| Skip consent screens | Aan | 7.53.1, 7.55.0 |
 
 ## De Tijd
 
@@ -333,6 +333,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | AI Writing Tools | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
+| AMOLED dark keyboard | Uit | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Add Gboard Signature Bypass | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Change package name | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
 | Clipboard Enhancements | Aan | 18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a |
@@ -495,11 +496,11 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 7.53.1 |
-| Hide Premium banner | Aan | 7.53.1 |
-| Hide ads | Aan | 7.53.1 |
-| Read full articles | Aan | 7.53.1 |
-| Skip consent screens | Aan | 7.53.1 |
+| Disable tracking | Aan | 7.53.1, 7.55.0 |
+| Hide Premium banner | Aan | 7.53.1, 7.55.0 |
+| Hide ads | Aan | 7.53.1, 7.55.0 |
+| Read full articles | Aan | 7.53.1, 7.55.0 |
+| Skip consent screens | Aan | 7.53.1, 7.55.0 |
 
 ## KIJK Android
 

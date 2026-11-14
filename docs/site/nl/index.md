@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patchbundel: 1.87.3</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patchbundel: 1.88.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -314,21 +314,21 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="de morgen be.persgroep.android.news.mobiledm 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="de morgen be.persgroep.android.news.mobiledm 7.53.1 7.55.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [De Morgen](apps/demorgen.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1, 7.55.0</span></p>
 <p class="dap-app-card__package">be.persgroep.android.news.mobiledm</p>
 <details class="dap-app-card__patches">
 <summary>5 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
-<li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
-<li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
-<li>Read full articles <span class="dap-app-card__target">7.53.1</span></li>
-<li>Skip consent screens <span class="dap-app-card__target">7.53.1</span></li>
+<li>Disable tracking <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Hide Premium banner <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Read full articles <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
 </ul>
 </details>
 
@@ -552,7 +552,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-armeabi-v7a 18.6.3.1002251336-release-arm64-v8a ai writing tools add gboard signature bypass change package name clipboard enhancements cursor trackpad mode custom theme custom branding enable ocr / scan text frosted glass g logo on spacebar incognito mode toggle key shape selection parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing rounded keyboard panel simple calculator toolbar editing buttons web clipboard" markdown>
+<article class="dap-app-card" data-category="other" data-search="gboard com.google.android.inputmethod.latin 18.6.3.1002251336-release-armeabi-v7a 18.6.3.1002251336-release-arm64-v8a ai writing tools amoled dark keyboard add gboard signature bypass change package name clipboard enhancements cursor trackpad mode custom theme custom branding enable ocr / scan text frosted glass g logo on spacebar incognito mode toggle key shape selection parakeet personal dictionary parakeet voice typing rambler app context rambler contact names rambler cursor-aware editing rambler custom instructions rambler personal dictionary rambler stop after silence rambler voice typing rounded keyboard panel simple calculator toolbar editing buttons web clipboard" markdown>
 <p class="dap-app-card__category">Overige</p>
 
 ### [Gboard](apps/gboard.md)
@@ -560,9 +560,10 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></p>
 <p class="dap-app-card__package">com.google.android.inputmethod.latin</p>
 <details class="dap-app-card__patches">
-<summary>25 patches</summary>
+<summary>26 patches</summary>
 <ul>
 <li>AI Writing Tools <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
+<li>AMOLED dark keyboard <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a · standaard uit</span></li>
 <li>Add Gboard Signature Bypass <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Change package name <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
 <li>Clipboard Enhancements <span class="dap-app-card__target">18.6.3.1002251336-release-armeabi-v7a, 18.6.3.1002251336-release-arm64-v8a</span></li>
@@ -787,21 +788,21 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="news" data-search="humo be.humo.tvgids 7.53.1 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
+<article class="dap-app-card" data-category="news" data-search="humo be.humo.tvgids 7.53.1 7.55.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
 ### [Humo](apps/humo.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1</span></p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">7.53.1, 7.55.0</span></p>
 <p class="dap-app-card__package">be.humo.tvgids</p>
 <details class="dap-app-card__patches">
 <summary>5 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">7.53.1</span></li>
-<li>Hide Premium banner <span class="dap-app-card__target">7.53.1</span></li>
-<li>Hide ads <span class="dap-app-card__target">7.53.1</span></li>
-<li>Read full articles <span class="dap-app-card__target">7.53.1</span></li>
-<li>Skip consent screens <span class="dap-app-card__target">7.53.1</span></li>
+<li>Disable tracking <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Hide Premium banner <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Read full articles <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
+<li>Skip consent screens <span class="dap-app-card__target">7.53.1, 7.55.0</span></li>
 </ul>
 </details>
 
