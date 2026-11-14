@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.86.0",
+  "version": "1.86.1",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -1143,6 +1143,40 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Android Auto support",
+      "description": "Allows compatible Android Auto hosts to connect to Spotify's native car screen and browse Home, Recently played and Library.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.spotify.music",
+          "name": "Spotify",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#1ED760",
+          "signatures": [
+            "6505b181933344f93893d586e399b94616183f04349cb572a9e81a3335e28ffd"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.2.0.2053",
+              "versionCodes": {
+                "ARM64_V8A": 148387875,
+                "ARMEABI_V7A": 148387875,
+                "X86_64": 148387875,
+                "X86": 148387875
+              },
+              "isExperimental": false,
+              "minSdk": 24,
               "description": null
             }
           ]

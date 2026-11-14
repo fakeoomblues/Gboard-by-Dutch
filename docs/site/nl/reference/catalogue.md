@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.86.0**
+**Patchbundel: 1.86.1**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -815,6 +815,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Enable SoundCloud Go | Aan | 2026.11.02-release |
 | Home in Android Auto | Aan | 2026.11.02-release |
 | Ignore device limit | Aan | 2026.11.02-release |
+
+## Spotify
+
+[Wat veranderen de patches?](../apps/spotify.md)
+
+`com.spotify.music`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Android Auto support | Aan | 9.2.0.2053 |
 
 ## TIDAL
 

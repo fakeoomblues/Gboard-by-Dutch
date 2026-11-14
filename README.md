@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.86.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.86.0)** · 79 apps · 374 patches
+**Patch bundle [v1.86.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.86.1)** · 80 apps · 375 patches
 
 ### Weather
 
@@ -122,6 +122,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Orpheon](docs/site/en/apps/orpheon.md) | See guide | 1.0.0-beta.1, Any | APK | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.5.1 | APKS | 2 |
 | [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.11.02-release | APKM | 5 |
+| [Spotify](docs/site/en/apps/spotify.md) | See guide | 9.2.0.2053 | APKS | 1 |
 | [TIDAL](docs/site/en/apps/tidal.md) | See guide | 2.216.0 | APKM | 1 |
 | [TVgids.nl](docs/site/en/apps/tvgids-nl.md) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
 | [Videoland Android](docs/site/en/apps/videoland.md) | Ads · Tracking · Prompts | 1.116.4 | APKS | 3 |

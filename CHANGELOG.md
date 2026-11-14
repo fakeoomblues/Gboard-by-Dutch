@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/c731a265d4ed5c58d5dd03e8f3cc4a7886d23d35/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.86.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [c731a265d4ed](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/c731a265d4ed5c58d5dd03e8f3cc4a7886d23d35). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.86.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.86.0...v1.86.1) (2026-11-14)
+
+### 🐛 Bug Fixes
+
+* **Spotify:** restore Android Auto browsing for custom hosts ([c731a26](https://gitlab.com/johninnld/nl-morphe-patches/commit/c731a265d4ed5c58d5dd03e8f3cc4a7886d23d35))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/95b6d4f690264de2fefa8f58edeaa803d7223fff/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.86.0.**

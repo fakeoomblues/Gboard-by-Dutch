@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">79 apps</span> · Patchbundel: 1.86.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.86.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1321,6 +1321,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/soundcloud.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="spotify com.spotify.music 9.2.0.2053 android auto support" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Spotify](apps/spotify.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">9.2.0.2053</span></p>
+<p class="dap-app-card__package">com.spotify.music</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Android Auto support <span class="dap-app-card__target">9.2.0.2053</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/spotify.md){ .dap-app-card__link }
 
 </article>
 

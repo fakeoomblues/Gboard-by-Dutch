@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.86.0**
+**Patch bundle: 1.86.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -815,6 +815,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Enable SoundCloud Go | On | 2026.11.02-release |
 | Home in Android Auto | On | 2026.11.02-release |
 | Ignore device limit | On | 2026.11.02-release |
+
+## Spotify
+
+[What do the patches change?](../apps/spotify.md)
+
+`com.spotify.music`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Android Auto support | On | 9.2.0.2053 |
 
 ## TIDAL
 
