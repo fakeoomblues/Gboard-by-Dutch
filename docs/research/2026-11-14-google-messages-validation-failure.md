@@ -111,26 +111,52 @@ The published bundle was re-applied to the exact input, not just tested at sourc
   (SHA-256 `9e8d25576eef01e02d31a3da0142711db20d0b47fe94401eaad88fcf0f21e782`, signer
   `b16b4097649da960b9788350f1b7ef394cf23b37795659782a4b29913918f212`).
 
-## Open: the phone still fails
+## Phone-side cause: Play services' uncertified-device notice
 
-The owner reports the patched build does not open on the OnePlus CPH2747 (Android 17), while the
-same artifact opens on the emulator. The bundle, the bytecode change and the runtime behaviour are
-verified, so the remaining cause is device-specific and needs the phone's own crash log: either a
-different installed build, or a second fatal path on that device/GMS version. The phone was not
-connected (`adb devices` listed only emulators), so this could not be captured here.
+With the phone connected (OnePlus CPH2747, Android 17, Play services `26.45.31`), the released
+v1.87.3 artifact was installed and launched. It does not crash: logcat shows the re-signing refusal
+being handled by the patched handler (`BaseGmsClient.p(PG:179)`), and the crash buffer stays empty.
+What blocks the app is Play services' device-compliance code, bundled in the APK:
+
+```
+mCurrentFocus=Window{… app.morphe.android.apps.messaging/
+    com.google.android.gms.gmscompliance.ui.UncertifiedDeviceActivity}
+```
+
+Decompiled, that activity only displays the notice; its Close button calls `finish()` and it
+provides no function of its own. The emulator never shows it because its Play services version
+(`25.26.35`) does not run the compliance check, which is why the emulator run passed while the
+phone did not.
+
+The device itself is reported as uncertified by Play services, which is the device-level status
+shown in the owner's screenshots (`08:51`, `08:57`, and again on the live capture at `14:07`).
+
+`uncertifiedDeviceNoticePatch` (new, internal) finishes the notice in `onCreate`, before
+`super.onCreate`, so it never reaches the screen. It is inert on a certified device, where the
+notice is never started, and it changes nothing else about the activity. All four public Messages
+patches depend on it, as they do on the refusal fix.
+
+What this does not change: the Google features the notice warns about (RCS, Google sign-in,
+backups) are refused by Play services for a re-signed copy, and on an uncertified device for the
+stock app too. SMS and MMS keep working. Registering the device's Google Services Framework ID at
+`google.com/android/uncertified` remains the only route that clears the device status itself.
 
 ## Device certification
 
-A "This device isn't Play Protect certified" screen appeared in this conversation but the owner
-confirmed the phone has no Play Protect problem; it was sent in error and is not part of this
-failure. It is a separate, device-level status (Google Services Framework ID registration) and has
-nothing to do with re-signing or patching. The Messages pages do not mention it, and no device
-registration step is needed here.
+The notice is device-level: Play services reports the build as not certified, independently of the
+patch. It does not block SMS/MMS once the notice is skipped, but it is why Google-side features stay
+unavailable. It is separate from the re-signing refusal and cannot be changed from inside the app.
+
 
 ## Decision
 
 - No PairIP patch: Messages contains no PairIP.
 - No microG RE route: it cannot provide a Google-signed identity or RCS.
-- Keep the v1.87.3 client-side fix; it converts the re-signing refusal from a crash into a handled
-  failed connection.
-- Google features stay unavailable in a re-signed copy by design; keep the stock app for those.
+- The v1.87.3 client-side fix stays in the released history; it converts the re-signing refusal
+  from a crash into a handled failed connection.
+- `uncertifiedDeviceNoticePatch` was written and wired into all four patches, but has not shipped:
+  it only removed the notice on top of the app.
+- Google Messages support was then removed from the bundle by the owner (2026-11-14). The Android
+  Auto car screen it was built for cannot be reached on a re-signed copy whose device Play services
+  reports as uncertified, and the remaining Google features cannot be restored from the app side.
+  Keep the stock app.

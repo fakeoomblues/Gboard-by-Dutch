@@ -203,7 +203,6 @@ nav:
           - apps/homeassistant.md
           - apps/tuya.md
           - apps/reolink.md
-          - apps/messages.md
           - apps/pdfcraft.md
           - apps/lightcraft.md
           - apps/wordcraft.md
