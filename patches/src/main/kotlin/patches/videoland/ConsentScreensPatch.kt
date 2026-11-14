@@ -16,7 +16,7 @@ import patches.atv.exact
 
 @Suppress("unused")
 val skipConsentScreens = bytecodePatch(
-    name = "Skip consent screens",
+    name = "Skip consent screens ${patches.shared.platformTitleSuffix(videolandMobile)}",
     description = "Includes tracking controls. Saves OneTrust's real Reject All choice after SDK readiness and skips automatic notification setup. Notifications default off; manual privacy and notification settings remain available.",
     default = true,
 ) {

@@ -16,6 +16,11 @@ CATEGORIES = {
 }
 
 
+def has_patch(names, base):
+    """Match a patch title with or without the platform suffix used for shared package names."""
+    return any(name == base or name.startswith(f'{base} (') for name in names)
+
+
 def render(data, repository):
     gitlab = bool(os.environ.get('GITLAB_REPOSITORY'))
     groups = _app_groups(data)
@@ -46,9 +51,9 @@ def render(data, repository):
             formats = ', '.join(sorted({own.get('apkFileType', '—') for _, own in group['patches']}))
             names = {patch['name'] for patch, _ in group['patches']}
             changes = [label for label, present in [
-                ('Ads', 'Hide ads' in names),
+                ('Ads', has_patch(names, 'Hide ads')),
                 ('Tracking', any('tracking' in name.lower() for name in names)),
-                ('Prompts', any(name in names for name in ('Skip consent screens', 'Hide Premium banner', 'Hide Pro notices', 'Hide native promotions'))),
+                ('Prompts', any(has_patch(names, name) for name in ('Skip consent screens', 'Hide Premium banner', 'Hide Pro notices', 'Hide native promotions'))),
                 ('Articles', any(name.startswith('Read full articles') for name in names)),
                 ('Plus/Pro', any(name.startswith('Unlock ') for name in names)),
                 ('Compatibility', any(name.startswith('Fix ') for name in names)),

@@ -10,9 +10,9 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
-| **Fix PairIP startup** | Aan | Laat de gepatchte app na installatie starten en de ondersteunde functies gebruiken. Laat deze patch aan. |
-| **Hide ads** | Aan | Verwijdert ondersteunde advertenties vóór of rond video’s. Reclame die al in het programma of de stream zit kan blijven. |
+| **Disable tracking (Android & Android TV - v48.2-2405)** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
+| **Fix PairIP startup (Android & Android TV - v48.2-2405)** | Aan | Laat de gepatchte app na installatie starten en de ondersteunde functies gebruiken. Laat deze patch aan. |
+| **Hide ads (Android & Android TV - v48.2-2405)** | Aan | Verwijdert ondersteunde advertenties vóór of rond video’s. Reclame die al in het programma of de stream zit kan blijven. |
 
 ## Advertentie- en trackingdiensten
 

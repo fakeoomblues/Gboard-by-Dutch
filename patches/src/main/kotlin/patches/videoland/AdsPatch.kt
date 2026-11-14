@@ -6,7 +6,7 @@ import patches.atv.exact
 
 @Suppress("unused")
 val hideAdsPatch = bytecodePatch(
-    name = "Hide ads",
+    name = "Hide ads ${patches.shared.platformTitleSuffix(videolandMobile)}",
     description = "Suppresses inspected video, banner and pause-ad requests and uses a supplied live fallback when available. Ad-supported playback and stitched streams require runtime feedback.",
     default = true,
 ) {

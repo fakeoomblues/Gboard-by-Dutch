@@ -9,7 +9,7 @@ import patches.atv.exact
 
 @Suppress("unused")
 val disableTrackingPatch = bytecodePatch(
-    name = "Disable tracking",
+    name = "Disable tracking ${patches.shared.platformTitleSuffix(videolandTv)}",
     description = "Disables inspected Tealium, Snowplow, NPAW, advertising-ID, New Relic and automatic Google/Facebook measurement paths, including queued CCT uploads. Functional services remain; full traffic acceptance is pending.",
     default = true,
 ) {

@@ -6,7 +6,7 @@ import patches.atv.exact
 
 @Suppress("unused")
 val disableTrackingPatch = bytecodePatch(
-    name = "Disable tracking",
+    name = "Disable tracking ${patches.shared.platformTitleSuffix(npoTv, npoPhone)}",
     description = "Stops NPO Tag/Topspin/DAM, STER targeting, Bitmovin/Sentry collection, Cast diagnostics and Google telemetry collection/uploads, including queued batches. Preserves playback, authentication and functional Cast controls.",
     default = true,
 ) {

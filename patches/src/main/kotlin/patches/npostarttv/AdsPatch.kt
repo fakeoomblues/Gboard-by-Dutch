@@ -6,7 +6,7 @@ import patches.atv.exact
 
 @Suppress("unused")
 val hideAdsPatch = bytecodePatch(
-    name = "Hide ads",
+    name = "Hide ads ${patches.shared.platformTitleSuffix(npoTv, npoPhone)}",
     description = "Suppresses nullable preroll inputs and the optional IMA ad loader. Uses the player's existing content-only path while retaining real content, DRM, subtitles and player state.",
     default = true,
 ) {

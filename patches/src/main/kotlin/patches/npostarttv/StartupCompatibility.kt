@@ -69,7 +69,7 @@ private fun classConstant(type: String) = when (type) {
 }
 
 internal val startupCompatibility = bytecodePatch(
-    name = "Fix PairIP startup",
+    name = "Fix PairIP startup ${patches.shared.platformTitleSuffix(npoTv, npoPhone)}",
     description = "Restores build-specific startup data, lifecycle helpers, authentication and media/network callbacks. Preserves genuine token and entitlement checks and retains other protected native callbacks.",
     default = true,
 ) {

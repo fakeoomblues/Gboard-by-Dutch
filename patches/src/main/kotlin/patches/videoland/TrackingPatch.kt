@@ -9,7 +9,7 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 @Suppress("unused")
 val disableTrackingPatch = bytecodePatch(
-    name = "Disable tracking",
+    name = "Disable tracking ${patches.shared.platformTitleSuffix(videolandMobile)}",
     description = "Disables inspected Tealium, Snowplow, NPAW, advertising ID, New Relic, Salesforce analytics and automatic Google/Facebook measurement, including queued CCT uploads. Preserves functional account, media and notification services.",
     default = true,
 ) {

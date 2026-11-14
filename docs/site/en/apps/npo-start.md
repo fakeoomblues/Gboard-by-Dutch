@@ -10,9 +10,9 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
-| **Fix PairIP startup** | On | Lets the patched app start and use its supported features after installation. Keep this enabled. |
-| **Hide ads** | On | Removes the supported ads before or around videos. Ads already included in the programme or stream may remain. |
+| **Disable tracking (Android & Android TV - v48.2-2405)** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
+| **Fix PairIP startup (Android & Android TV - v48.2-2405)** | On | Lets the patched app start and use its supported features after installation. Keep this enabled. |
+| **Hide ads (Android & Android TV - v48.2-2405)** | On | Removes the supported ads before or around videos. Ads already included in the programme or stream may remain. |
 
 ## Advertising and tracking services
 

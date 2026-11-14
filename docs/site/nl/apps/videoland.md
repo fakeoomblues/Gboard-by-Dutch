@@ -10,9 +10,9 @@ Selecteer het exacte originele bestand in Morphe Manager. Gebruik bij een gespli
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Disable tracking** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
-| **Hide ads** | Aan | Verwijdert ondersteunde advertenties vóór of rond video’s. Reclame die al in het programma of de stream zit kan blijven. |
-| **Skip consent screens** | Aan | Weigert optionele cookies en slaat automatische meldingsinstellingen over. Meldingen staan aanvankelijk uit; handmatige keuzes blijven beschikbaar. |
+| **Disable tracking (Android - v116.4)** | Aan | Stopt de ondersteunde optionele gebruiksstatistieken, advertentie-ID’s en diagnostiek. |
+| **Hide ads (Android - v116.4)** | Aan | Verwijdert ondersteunde advertenties vóór of rond video’s. Reclame die al in het programma of de stream zit kan blijven. |
+| **Skip consent screens (Android - v116.4)** | Aan | Weigert optionele cookies en slaat automatische meldingsinstellingen over. Meldingen staan aanvankelijk uit; handmatige keuzes blijven beschikbaar. |
 
 ## Advertentie- en trackingdiensten
 

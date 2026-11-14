@@ -8,7 +8,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 
 @Suppress("unused")
 val hideUnavailableContentPatch = bytecodePatch(
-    name = "Hide unavailable content",
+    name = "Hide unavailable content ${patches.shared.platformTitleSuffix(videolandTv)}",
     description = "Hides subscription-required catalogue entries and action buttons, and removes empty seasons. Preserves content available to the current account and other access checks.",
     default = true,
 ) {

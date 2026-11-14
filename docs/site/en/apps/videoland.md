@@ -10,9 +10,9 @@ Select the exact original file in Morphe Manager. Use the complete archive for a
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Disable tracking** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
-| **Hide ads** | On | Removes the supported ads before or around videos. Ads already included in the programme or stream may remain. |
-| **Skip consent screens** | On | Rejects optional cookies and skips automatic notification setup. Notifications start off; manual choices remain available. |
+| **Disable tracking (Android - v116.4)** | On | Stops the supported optional usage statistics, advertising identifiers and diagnostics. |
+| **Hide ads (Android - v116.4)** | On | Removes the supported ads before or around videos. Ads already included in the programme or stream may remain. |
+| **Skip consent screens (Android - v116.4)** | On | Rejects optional cookies and skips automatic notification setup. Notifications start off; manual choices remain available. |
 
 ## Advertising and tracking services
 
