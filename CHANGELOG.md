@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/53a7584d4486fc002893fd90bc543fcf8d9c5c6e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.82.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [53a7584d4486](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/53a7584d4486fc002893fd90bc543fcf8d9c5c6e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.82.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.81.0...v1.82.0) (2026-11-14)
+
+### ✨ New Features
+
+* **Titanium Browser:** add Custom branding with the Chrome name and icon ([53a7584](https://gitlab.com/johninnld/nl-morphe-patches/commit/53a7584d4486fc002893fd90bc543fcf8d9c5c6e))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/df76577ce59c184f099284981f00b2d25908d79f/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.81.0.**

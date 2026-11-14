@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.81.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.81.0)** · 75 apps · 365 patches
+**Patch bundle [v1.82.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.82.0)** · 76 apps · 366 patches
 
 ### Weather
 
@@ -146,6 +146,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [PdfCraft](docs/site/en/apps/pdfcraft.md) | See guide | Any | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 | [Reolink](docs/site/en/apps/reolink.md) | See guide | 4.64.3.20261023 | APKM | 4 |
+| [Titanium Browser](docs/site/en/apps/titanium.md) | See guide | Any | APK | 1 |
 | [Tuya Smart Life](docs/site/en/apps/tuya.md) | See guide | 7.12.6 | APKS | 1 |
 | [WordCraft](docs/site/en/apps/wordcraft.md) | See guide | Any | APK | 1 |
 | [Zoom Workplace](docs/site/en/apps/zoom.md) | See guide | 7.2.1.43844 | APKS | 1 |

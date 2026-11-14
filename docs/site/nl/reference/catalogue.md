@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.81.0**
+**Patchbundel: 1.82.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -790,6 +790,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Allow custom Android Auto hosts | Aan | 2.216.0 |
+
+## Titanium Browser
+
+[Wat veranderen de patches?](../apps/titanium.md)
+
+`io.github.jqssun.helium`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Custom branding | Aan | Alle versies |
 
 ## Trouw
 

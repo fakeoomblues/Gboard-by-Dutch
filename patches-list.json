@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.81.0",
+  "version": "1.82.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -2539,6 +2539,55 @@
           "values": {
             "Reolink AA (default)": "aa",
             "Original Reolink": "original"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom branding",
+      "description": "Renames Titanium Browser to Chrome and gives it the Chrome launcher icon. Choose another name or Titanium's original icon.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "io.github.jqssun.helium",
+          "name": "Titanium Browser",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": null,
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "customName",
+          "title": "App name",
+          "description": "Name shown in the launcher and Android app information. Leave empty to keep Titanium Browser.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "Chrome",
+          "values": null
+        },
+        {
+          "key": "appIcon",
+          "title": "App icon",
+          "description": "Launcher icon applied when patching.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "chrome",
+          "values": {
+            "Original Titanium": "original",
+            "Chrome (default)": "chrome"
           }
         }
       ]

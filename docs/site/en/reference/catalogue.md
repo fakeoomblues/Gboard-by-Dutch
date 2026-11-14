@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.81.0**
+**Patch bundle: 1.82.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -790,6 +790,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Allow custom Android Auto hosts | On | 2.216.0 |
+
+## Titanium Browser
+
+[What do the patches change?](../apps/titanium.md)
+
+`io.github.jqssun.helium`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Custom branding | On | Any |
 
 ## Trouw
 
