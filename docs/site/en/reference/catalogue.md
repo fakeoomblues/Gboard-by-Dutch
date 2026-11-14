@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.85.0**
+**Patch bundle: 1.86.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -29,6 +29,17 @@ Check the supported app versions and default setting for each patch. The app pag
 | Fix PairIP startup | On | 2.48.1 |
 | Hide ads | On | 2.48.1 |
 | Skip consent screens | On | 2.48.1 |
+
+## ABRP
+
+[What do the patches change?](../apps/abrp.md)
+
+`com.iternio.abrpapp`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow custom Android Auto hosts | On | 8.0.0 |
+| Unlock Premium | On | 8.0.0 |
 
 ## AD
 

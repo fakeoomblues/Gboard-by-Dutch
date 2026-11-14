@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">78 apps</span> · Patchbundel: 1.85.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">79 apps</span> · Patchbundel: 1.86.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -79,6 +79,25 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/9292.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="mobility" data-search="abrp com.iternio.abrpapp 8.0.0 allow custom android auto hosts unlock premium" markdown>
+<p class="dap-app-card__category">Verkeer</p>
+
+### [ABRP](apps/abrp.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">8.0.0</span></p>
+<p class="dap-app-card__package">com.iternio.abrpapp</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Allow custom Android Auto hosts <span class="dap-app-card__target">8.0.0</span></li>
+<li>Unlock Premium <span class="dap-app-card__target">8.0.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/abrp.md){ .dap-app-card__link }
 
 </article>
 
