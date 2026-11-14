@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.83.0",
+  "version": "1.84.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -4539,12 +4539,12 @@
           "formFactor": "TV",
           "targets": [
             {
-              "version": "1.117.0",
+              "version": "1.118.0",
               "versionCodes": {
-                "ARM64_V8A": 1622,
-                "ARMEABI_V7A": 1622,
-                "X86_64": 1622,
-                "X86": 1622
+                "ARM64_V8A": 1630,
+                "ARMEABI_V7A": 1630,
+                "X86_64": 1630,
+                "X86": 1630
               },
               "isExperimental": false,
               "minSdk": 24,
@@ -7976,12 +7976,12 @@
           "formFactor": "TV",
           "targets": [
             {
-              "version": "1.117.0",
+              "version": "1.118.0",
               "versionCodes": {
-                "ARM64_V8A": 1622,
-                "ARMEABI_V7A": 1622,
-                "X86_64": 1622,
-                "X86": 1622
+                "ARM64_V8A": 1630,
+                "ARMEABI_V7A": 1630,
+                "X86_64": 1630,
+                "X86": 1630
               },
               "isExperimental": false,
               "minSdk": 24,
@@ -8665,12 +8665,12 @@
           "formFactor": "TV",
           "targets": [
             {
-              "version": "1.117.0",
+              "version": "1.118.0",
               "versionCodes": {
-                "ARM64_V8A": 1622,
-                "ARMEABI_V7A": 1622,
-                "X86_64": 1622,
-                "X86": 1622
+                "ARM64_V8A": 1630,
+                "ARMEABI_V7A": 1630,
+                "X86_64": 1630,
+                "X86": 1630
               },
               "isExperimental": false,
               "minSdk": 24,

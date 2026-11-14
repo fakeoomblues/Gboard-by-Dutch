@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">77 apps</span> · Patch bundle: 1.83.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">77 apps</span> · Patch bundle: 1.84.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1440,19 +1440,19 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="videoland android tv nl.rtl.videoland.v2 1.117.0 disable tracking hide ads hide unavailable content" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="videoland android tv nl.rtl.videoland.v2 1.118.0 disable tracking hide ads hide unavailable content" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Videoland Android TV](apps/videoland-android-tv.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">1.117.0</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">1.118.0</span></p>
 <p class="dap-app-card__package">nl.rtl.videoland.v2</p>
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
-<li>Disable tracking <span class="dap-app-card__target">1.117.0</span></li>
-<li>Hide ads <span class="dap-app-card__target">1.117.0</span></li>
-<li>Hide unavailable content <span class="dap-app-card__target">1.117.0</span></li>
+<li>Disable tracking <span class="dap-app-card__target">1.118.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">1.118.0</span></li>
+<li>Hide unavailable content <span class="dap-app-card__target">1.118.0</span></li>
 </ul>
 </details>
 

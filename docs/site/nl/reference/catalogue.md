@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.83.0**
+**Patchbundel: 1.84.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -892,9 +892,9 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Disable tracking | Aan | 1.117.0 |
-| Hide ads | Aan | 1.117.0 |
-| Hide unavailable content | Aan | 1.117.0 |
+| Disable tracking | Aan | 1.118.0 |
+| Hide ads | Aan | 1.118.0 |
+| Hide unavailable content | Aan | 1.118.0 |
 
 ## Voetbal International
 

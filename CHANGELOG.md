@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/691aca8d2a5341a25a8dd0fcaefa0a5f17e6a126/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.84.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [691aca8d2a53](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/691aca8d2a5341a25a8dd0fcaefa0a5f17e6a126). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.84.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.83.0...v1.84.0) (2026-11-14)
+
+### ✨ New Features
+
+* **Videoland Android TV:** support 1.118.0 build 1630 ([691aca8](https://gitlab.com/johninnld/nl-morphe-patches/commit/691aca8d2a5341a25a8dd0fcaefa0a5f17e6a126))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3e4bb16de33414b6eb3f7fb9082c881b5ca1d0c8/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.83.0.**

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.83.0**
+**Patch bundle: 1.84.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -892,9 +892,9 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Disable tracking | On | 1.117.0 |
-| Hide ads | On | 1.117.0 |
-| Hide unavailable content | On | 1.117.0 |
+| Disable tracking | On | 1.118.0 |
+| Hide ads | On | 1.118.0 |
+| Hide unavailable content | On | 1.118.0 |
 
 ## Voetbal International
 
