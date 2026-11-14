@@ -14,7 +14,7 @@ TOPIC='com/kubusapp/onboarding/OnBoardingPushNotificationActivity'
 REGION='com/kubusapp/onboarding/regionselection/OnboardingRegionSelectionActivity'
 FOLLOW='com/kubusapp/onboarding/followablepush/FollowablePushActivity'
 Q9='r9j'
-ROUTE='b(Landroid/content/Context;Lp9j;Landroid/content/Intent;)V'
+ROUTE='b(Landroid/content/Context;Lggj;Ln20;Landroid/content/Intent;)V'
 A='Landroid/content/'
 
 
@@ -127,7 +127,7 @@ class VM:
         self.events=[];self.started=[];self.finished=0;self.steps=0;self.stack=[];self.flow_events=[];self.subscriptions=[]
         self.context=Obj('Landroid/content/Context;')
         self.intent=Obj('Landroid/content/Intent;',{'extras':{'deep_link':'preserve','number':7},'data':'hln://article/preserve','flags':0})
-        self.static={'Lr9j;->a:Landroid/net/Uri;':self.intent.fields['data'],'Lr9j;->b:Landroid/os/Bundle;':self.intent.fields['extras']}
+        self.static={'Ligj;->a:Landroid/net/Uri;':self.intent.fields['data'],'Ligj;->b:Landroid/os/Bundle;':self.intent.fields['extras']}
         self.enums={}
         self.case_map=self.switch_case_map()
 
@@ -139,7 +139,7 @@ class VM:
         # Read the app's actual compiler-generated enum switch mapping.
         text=source(self.root,'q9j');mapping={};current=None;value=None
         for line in method(self.root,'q9j','<clinit>()V').instructions:
-            m=re.search(r'Lp9j;->(\w+):Lp9j;',line)
+            m=re.search(r'Lggj;->(\w+):Lggj;',line)
             if m:current=m[1]
             m=re.match(r'const(?:/4|/16)? v2, (\S+)',line)
             if m:value=int(m[1],0)
@@ -170,7 +170,7 @@ class VM:
                     dest,typ=line.split(' ',1)[1].split(', ');r[dest]=Obj(typ)
                 elif line.startswith(('sget-object ','sget ')):
                     dest,ref=line.split(' ',1)[1].split(', ')
-                    if ref.startswith('Lp9j;->'):result=self.enum(ref.split('->')[1].split(':')[0])
+                    if ref.startswith('Lggj;->'):result=self.enum(ref.split('->')[1].split(':')[0])
                     elif ref=='Lq9j;->a:[I':result=self.case_map
                     elif ref=='Landroid/os/Build$VERSION;->SDK_INT:I':result=35
                     elif ref=='Landroid/os/Bundle;->EMPTY:Landroid/os/Bundle;':result={}
@@ -226,14 +226,14 @@ class VM:
         typ,target=ref.split('->');cls=typ[1:-1]
         if cls==Q9:return self.call(cls,target,v)
         if typ in {'Lds6;','Les6;','Lor6;'} and target.startswith('<init>('):return self.call(cls,target,v)
-        if typ=='Lfs6;' and target=='x(Lbt3;)Ljava/lang/Object;':return self.call(cls,target,v)
+        if typ=='Lfs6;' and target=='x(Lws3;)Ljava/lang/Object;':return self.call(cls,target,v)
         if typ=='Lpr6;' and target in {'b()V','c(Z)V','e(Z)V'}:return self.call(cls,target,v)
         if typ=='Lkt2;' and target=='X(Ljava/lang/Object;)V':
             assert not isinstance(v[0],Exception),'Coroutine failure';return None
-        if typ=='Liee;' and target=='b(Lbt3;)Ljava/lang/Object;':return self.selected_region
+        if typ=='Liee;' and target=='b(Lws3;)Ljava/lang/Object;':return self.selected_region
         if typ=='Lcom/dpg/auth/authentication/model/AuthenticationInfo;' and target=='getEmail()Ljava/lang/String;':return v[0].fields['email']
-        if typ=='Llu8;' and target=='O(Lbt3;)Ljava/lang/Object;':return self.selected_region.fields['id']
-        if typ=='Lppf;' and target=='n(Lx7h;Ljava/lang/String;Lbt3;)Ljava/lang/Object;':
+        if typ=='Llu8;' and target=='O(Lws3;)Ljava/lang/Object;':return self.selected_region.fields['id']
+        if typ=='Lppf;' and target=='n(Lx7h;Ljava/lang/String;Lws3;)Ljava/lang/Object;':
             assert kind=='invoke-virtual';self.subscriptions.append((v[1].type,v[2]));return True
         if typ=='Lmlf;' and target=='a(Ljava/lang/Object;)Z':self.flow_events.append(v[1]);return True
         if typ=='Lwzi;' and target=='a(Ltzi;)Lm23;':return Obj('Lm23;')
@@ -250,7 +250,7 @@ class VM:
             if target=='getValue()Ljava/lang/Object;':return v[0].fields['value']
             if target=='k(Ljava/lang/Object;Ljava/lang/Object;)Z':assert v[0].fields['value'] is v[1];v[0].fields['value']=v[2];return True
             if target=='m(Ljava/lang/Object;Ljava/lang/Object;)Z':v[0].fields['value']=v[2];return True
-        if typ=='Lp9j;':
+        if typ=='Lggj;':
             if target=='getEntries()Lrw5;':return [self.enum(name) for name in self.case_map]
             if target=='name()Ljava/lang/String;':return v[0].name
         if target=='ordinal()I' and isinstance(v[0],Enum):return v[0].name
@@ -260,18 +260,18 @@ class VM:
         if target.startswith('<init>('):
             if typ=='La45;':
                 assert target=='<init>(B)V' and v[1]==29,'Use actual topic preferences provider'
-                v[0].fields['b']=Obj('Lwlg;',{'value':Obj('Lkaf;',{'encrypted':self.topics})})
+                v[0].fields['b']=Obj('Luqg;',{'value':Obj('Ljef;',{'encrypted':self.topics})})
             elif typ=='Ljava/lang/Object;':return None
             elif typ=='Ljava/util/HashSet;':v[0].fields['set']=set()
-            elif typ=='Llu8;':v[0].fields['c']=Obj('Lwlg;',{'value':self.prefs})
+            elif typ=='Llu8;':v[0].fields['c']=Obj('Luqg;',{'value':self.prefs})
             elif typ=='Landroid/content/Intent;':v[0].fields.update(context=v[1],cls=v[2],extras={},data=None,flags=0)
             elif typ=='Le27;':v[0].fields['receiver']=v[2]
-            elif typ not in {'Lhzf;','Lppf;','Lbkg;','Lbt3;'}:
+            elif typ not in {'Lhzf;','Lppf;','Lbkg;','Lws3;'}:
                 raise AssertionError('Unsupported emitted onboarding constructor: '+ref)
             return None
         if typ=='Llu8;' and target=='S(Ljava/lang/String;)V':self.prefs['KEY_ON_BOARDING_PROGRESS']=v[1];return None
-        if typ=='Lwlg;' and target=='getValue()Ljava/lang/Object;':return v[0].fields['value']
-        if typ=='Lkaf;':
+        if typ=='Luqg;' and target=='getValue()Ljava/lang/Object;':return v[0].fields['value']
+        if typ=='Ljef;':
             storage=v[0].fields['encrypted'];assert v[1:]==['USER_CHANNELS'] or target=='edit()Landroid/content/SharedPreferences$Editor;'
             if target=='contains(Ljava/lang/String;)Z':return storage.key in storage.physical
             if target=='edit()Landroid/content/SharedPreferences$Editor;':return Obj('Ljaf;',{'target':storage,'pending':{}})
@@ -299,7 +299,7 @@ class VM:
         if typ=='Lpge;' and target.startswith('c('):return self.topic_feature if v[1]=='FEATURE_DISPLAY_PUSH_NOTIFICATIONS_IN_ONBOARDING' else self.seduction
         if typ=='Lxv8;' and target.startswith('f('):return Obj('Ljk1;',{'b':Obj('Lek1;')})
         if typ=='Lek1;' and target=='b()Z':return self.authenticated
-        if typ=='Lox8;' and target.startswith('w('):self.events.append('automatic_login');return None
+        if typ=='Lg33;' and target.startswith('y('):self.events.append('automatic_login');return None
         if typ=='Lo7i;' and target.startswith('T('):self.started.append({'cls':'Lcom/kubusapp/MainActivity;','data':v[1],'extras':v[2]});return None
         if cls==FOLLOW and target=='k()Lfs6;':return v[0].fields['viewmodel']
         if typ=='Landroidx/fragment/app/f;' and target=='onResume()V':self.events.append('super_onResume');return None
@@ -308,7 +308,7 @@ class VM:
             if target=='j()Lo9;':return Obj('Lo9;',{'activity':v[0]})
             if target=='setContentView(I)V':self.events.append('topic_fragment_created');raise TopicBoundary()
         if typ=='Lo9;' and target=='c()V':
-            activity=v[0].fields['activity'];activity.fields['d']=Obj('Llu8;',{'c':Obj('Lwlg;',{'value':self.prefs})});self.events.append('hilt_initialized');return None
+            activity=v[0].fields['activity'];activity.fields['d']=Obj('Llu8;',{'c':Obj('Luqg;',{'value':self.prefs})});self.events.append('hilt_initialized');return None
         if typ=='Landroidx/fragment/app/f;' and target=='onCreate(Landroid/os/Bundle;)V':self.events.append('super_onCreate');return None
         if typ in {'Lppf;','Lhzf;'} and target=='k()V':return None  # Android theme/window boundary, no subscription/permission result.
         if typ.startswith('Landroid/'):
@@ -414,7 +414,7 @@ def region_fixture(vm,notifications=False,newsletter=False,email='fixture@exampl
     model=Obj('Lfs6;',{'b':Obj('Liee;'),'c':Obj('Lppf;'),'d':Obj('Llu8;'),
         'e':Obj('Lqwd;'),'f':Obj('Lpsl;',{'a':Obj('Ljk1;')}),'h':holder,'i':Obj('Lmlf;')})
     origin=vm.static.setdefault('Lb2c;->ONBOARDING:Lb2c;',Obj('Lb2c;'))
-    activity=Obj('L'+FOLLOW+';',{'viewmodel':model,'d':Obj('Lga;'),'f':Obj('Lwlg;',{'value':origin})})
+    activity=Obj('L'+FOLLOW+';',{'viewmodel':model,'d':Obj('Lga;'),'f':Obj('Luqg;',{'value':origin})})
     callback=Obj('Lpr6;');vm.call('pr6','<init>(L'+FOLLOW+';)V',[callback,activity])
     return model,holder,activity,callback
 
@@ -494,7 +494,7 @@ def verify_helper_invokes(root):
     from ad_sdk import sdk_classes
     sdk,archive=sdk_classes()
     try:
-        for signature in ['morpheSeedTopicChoices()V','morpheContinueGuest(Landroid/content/Context;)V']:
+        for signature in ['morpheSeedTopicChoices()V','morpheContinueGuest(Landroid/content/Context;Ln20;)V']:
             helper=method(root,Q9,signature)
             assert {'public','static'}<=helper.flags and helper.locals==(3 if 'Seed' in signature else 2)
             for line in helper.instructions:
@@ -518,8 +518,8 @@ def verify_helper_invokes(root):
 
 def verify_guest_replacements(root):
     route = method(root, Q9, ROUTE).instructions
-    assert not any('Lox8;->w(Landroid/content/Context;ZLcom/dpg/auth/authentication/LoginDrivers;I)V' in line for line in route), 'HLN automatic login remains in emitted onboarding router'
-    assert sum('Lr9j;->morpheContinueGuest(Landroid/content/Context;)V' in line for line in route) == 2, 'HLN both real onboarding login calls must continue as guest'
+    assert not any('Lg33;->y(Landroid/content/Context;ZLcom/kubusapp/feature/auth/LoginDrivers;I)V' in line for line in route), 'HLN automatic login remains in emitted onboarding router'
+    assert sum('Ligj;->morpheContinueGuest(Landroid/content/Context;Ln20;)V' in line for line in route) == 2, 'HLN both real onboarding login calls must continue as guest'
 
 
 def verify_onboarding(root: Path, enabled: bool) -> None:
@@ -538,16 +538,16 @@ def verify_preserved(root,enabled):
     for cls,sig,expected in MODIFIED:
         m=method(root,cls,sig);remove=set();replace={}
         if enabled and cls==Q9:
-            assert m.instructions[0]=='sget-object v0, Lp9j;->PUSH_NOTIFICATION_SCREEN:Lp9j;'
+            assert m.instructions[0]=='sget-object v0, Lggj;->PUSH_NOTIFICATION_SCREEN:Lggj;'
             assert m.instructions[1].startswith('if-ne p1, v0, ')
             original=m.instructions[1].split(', ')[-1];assert m.labels[original]==3
-            assert m.instructions[2]=='invoke-static {}, Lr9j;->morpheSeedTopicChoices()V'
+            assert m.instructions[2]=='invoke-static {}, Ligj;->morpheSeedTopicChoices()V'
             remove.update([0,1,2]);calls=[];classes=[]
             for i,line in enumerate(m.instructions):
                 if '->morpheContinueGuest(' in line:calls.append(i)
                 if line=='const-class p2, L'+TOPIC+';':classes.append(i)
             assert len(calls)==2 and len(classes)==1,'HLN exact onboarding-only gateway replacements'
-            for i in calls:replace[i]='invoke-static {p0, v7, v2, v1}, Lox8;->w(Landroid/content/Context;ZLcom/dpg/auth/authentication/LoginDrivers;I)V'
+            for i in calls:replace[i]='invoke-static {p0, v7, v2, v1}, Lg33;->y(Landroid/content/Context;ZLcom/kubusapp/feature/auth/LoginDrivers;I)V'
             replace[classes[0]]='const-class p2, Lcom/kubusapp/onboarding/LoginSeductionActivity;'
         elif enabled and cls==TOPIC:
             slots=[i for i,line in enumerate(m.instructions) if line=='invoke-virtual {p0}, L'+TOPIC+';->k()V']

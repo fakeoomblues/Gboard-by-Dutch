@@ -49,8 +49,8 @@ internal fun skipOnboardingPrompts() {
         const/16 v1, 0x1d
         invoke-direct {v0, v1}, La45;-><init>(B)V
         iget-object v0, v0, La45;->b:Ljava/lang/Object;
-        check-cast v0, Lwlg;
-        invoke-virtual {v0}, Lwlg;->getValue()Ljava/lang/Object;
+        check-cast v0, Luqg;
+        invoke-virtual {v0}, Luqg;->getValue()Ljava/lang/Object;
         move-result-object v0
         check-cast v0, Ljef;
         const-string v1, "USER_CHANNELS"

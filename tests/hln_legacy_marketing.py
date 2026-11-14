@@ -11,19 +11,19 @@ from hln_onboarding import Obj, digest, method, source
 from hln_typed import CompletionVM
 
 
-TARGET = ('ydh', 'a(Landroid/app/Application;Lcom/persgroep/temptationsdk/data/model/ContentType;Ljava/lang/String;Lbt3;)Ljava/lang/Object;')
+TARGET = ('rjh', 'a(Landroid/app/Application;Lcom/persgroep/temptationsdk/data/model/ContentType;Ljava/lang/String;Lws3;)Ljava/lang/Object;')
 ORIGINAL = 'a9ccad226a1913296f173b24766eb3dbd1d0627e466591b65a5b6ef04c6da53d'
 PREFIX = [
     'new-instance v0, Ljava/lang/IllegalAccessException;',
     'const-string v1, "TemptationView is disabled"',
     'invoke-direct {v0, v1}, Ljava/lang/IllegalAccessException;-><init>(Ljava/lang/String;)V',
-    'new-instance v1, Lgpe;',
-    'invoke-direct {v1, v0}, Lgpe;-><init>(Ljava/lang/Throwable;)V',
-    'new-instance v0, Ljpe;',
-    'invoke-direct {v0, v1}, Ljpe;-><init>(Ljava/lang/Object;)V',
-    'new-instance v1, Lrg;',
-    'const/16 v2, 0x8',
-    'invoke-direct {v1, v0, v2}, Lrg;-><init>(Ljava/lang/Object;B)V',
+    'new-instance v1, Lnte;',
+    'invoke-direct {v1, v0}, Lnte;-><init>(Ljava/lang/Throwable;)V',
+    'new-instance v0, Lqte;',
+    'invoke-direct {v0, v1}, Lqte;-><init>(Ljava/lang/Object;)V',
+    'new-instance v1, Llg;',
+    'const/16 v2, 0x9',
+    'invoke-direct {v1, v0, v2}, Llg;-><init>(Ljava/lang/Object;B)V',
     'return-object v1',
 ]
 RETAINED = [
@@ -57,9 +57,9 @@ class LegacyMarketingVM(CompletionVM):
 
     def invoke(self, ref, values, kind):
         owner, signature = ref.split('->')
-        constructors = {'Lrg;': '<init>(Ljava/lang/Object;B)V',
-                        'Ljpe;': '<init>(Ljava/lang/Object;)V',
-                        'Lgpe;': '<init>(Ljava/lang/Throwable;)V'}
+        constructors = {'Llg;': '<init>(Ljava/lang/Object;B)V',
+                        'Lqte;': '<init>(Ljava/lang/Object;)V',
+                        'Lnte;': '<init>(Ljava/lang/Throwable;)V'}
         if owner in constructors and signature == constructors[owner]:
             assert kind == 'invoke-direct'
             return self.call(owner[1:-1], signature, values)
@@ -78,15 +78,15 @@ class LegacyMarketingVM(CompletionVM):
 
 def verify_completion(root, suspended=False):
     vm = LegacyMarketingVM(root, suspended)
-    flow = vm.call(*TARGET, [Obj('Lydh;'), Obj('Landroid/app/Application;'), None, 'fixture-section', None])
-    assert flow.type == 'Lrg;' and flow.fields['a'] == 8, 'Legacy marketing returns the supported finite Flow selector 8'
+    flow = vm.call(*TARGET, [Obj('Lrjh;'), Obj('Landroid/app/Application;'), None, 'fixture-section', None])
+    assert flow.type == 'Llg;' and flow.fields['a'] == 9, 'Legacy marketing returns the supported finite Flow selector 9'
     wrapped = flow.fields['b']
-    assert wrapped.type == 'Ljpe;', 'Legacy Flow retains inline Result wrapper'
+    assert wrapped.type == 'Lqte;', 'Legacy Flow retains inline Result wrapper'
     failure = wrapped.fields['a']
-    assert failure.type == 'Lgpe;', 'Legacy Flow reports the original disabled failure, never success or auth state'
+    assert failure.type == 'Lnte;', 'Legacy Flow reports the original disabled failure, never success or auth state'
     error = failure.fields['a']
     assert error.type == 'Ljava/lang/IllegalAccessException;' and error.fields['message'] == 'TemptationView is disabled'
-    result = vm.call('rg', 'collect(Lsk6;Lzs3;)Ljava/lang/Object;', [flow, Obj('Lsk6;'), None])
+    result = vm.call('lg', 'collect(Lsk6;Lzs3;)Ljava/lang/Object;', [flow, Obj('Lsk6;'), None])
     assert len(vm.emitted) == 1 and vm.emitted[0] is wrapped, 'Finite Flow emits exactly the retained wrapper once'
     assert result is vm.sentinel if suspended else result.type == 'Llbi;', 'Finite Flow preserves suspended emission or completes with actual Unit'
     return flow
@@ -101,7 +101,7 @@ def verify_legacy_marketing(root, enabled):
     assert digest(target.canonical(remove=range(count))) == ORIGINAL, 'HLN retain entire original legacy resolver behind prefix'
     for cls, sig, expected in RETAINED:
         assert digest(method(root, cls, sig).canonical()) == expected, 'HLN legacy completion/auth caller changed: ' + cls + '->' + sig
-    assert '.implements Lrk6;' in source(root, 'rg'), 'Legacy completion must implement the real Flow interface'
+    assert '.implements Lnk6;' in source(root, 'lg'), 'Legacy completion must implement the real Flow interface'
     # The replacement must be the actual existing disabled branch, not a newly
     # invented result. Keep branch instructions and caller contracts independent.
     assert any(target.instructions[i:i+len(PREFIX)] == PREFIX for i in range(count, len(target.instructions)-len(PREFIX)+1)), 'HLN original feature-disabled completion changed'

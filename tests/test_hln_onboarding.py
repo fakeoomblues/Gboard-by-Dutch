@@ -12,7 +12,7 @@ class HelperVM(VM):
 
 class HandoffVM(HelperVM):
     def invoke(self,ref,values,kind):
-        if ref=='Lr9j;->'+ROUTE:
+        if ref=='Ligj;->'+ROUTE:
             self.handoff=(kind,values);return None
         return super().invoke(ref,values,kind)
 
@@ -23,9 +23,9 @@ class HlnOnboardingInstructionTests(unittest.TestCase):
             root = Path(temp)
             path = root / 'smali/r9j.smali'
             path.parent.mkdir()
-            guest = 'invoke-static {p0}, Lr9j;->morpheContinueGuest(Landroid/content/Context;)V'
-            login = 'invoke-static {p0, v0, v1, v2}, Lox8;->w(Landroid/content/Context;ZLcom/dpg/auth/authentication/LoginDrivers;I)V'
-            header = '.class public Lr9j;\n.super Ljava/lang/Object;\n.method public static ' + ROUTE + '\n.locals 3\n'
+            guest = 'invoke-static {p0}, Ligj;->morpheContinueGuest(Landroid/content/Context;Ln20;)V'
+            login = 'invoke-static {p0, v0, v1, v2}, Lg33;->y(Landroid/content/Context;ZLcom/kubusapp/feature/auth/LoginDrivers;I)V'
+            header = '.class public Ligj;\n.super Ljava/lang/Object;\n.method public static ' + ROUTE + '\n.locals 3\n'
             path.write_text(header + guest + '\n' + login + '\nreturn-void\n.end method\n')
             with self.assertRaisesRegex(AssertionError, 'automatic login remains'):
                 verify_guest_replacements(root)
@@ -43,7 +43,7 @@ class HlnOnboardingInstructionTests(unittest.TestCase):
         self.assertEqual(len(methods),2)
         temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup)
         root=Path(temp.name);path=root/'smali/r9j.smali';path.parent.mkdir(parents=True)
-        path.write_text('.class public Lr9j;\n.super Ljava/lang/Object;\n'+'\n'.join(methods))
+        path.write_text('.class public Ligj;\n.super Ljava/lang/Object;\n'+'\n'.join(methods))
         return root
 
     def test_generated_seed_establishes_only_missing_topic_default(self):
@@ -70,15 +70,18 @@ class HlnOnboardingInstructionTests(unittest.TestCase):
 
     def test_generated_guest_helper_forwards_real_context_and_push_transition(self):
         root=self.helpers();vm=HandoffVM(root)
-        vm.call(Q9,'morpheContinueGuest(Landroid/content/Context;)V',[vm.context])
+        tracker=Obj('Ln20;')
+        vm.call(Q9,'morpheContinueGuest(Landroid/content/Context;Ln20;)V',[vm.context,tracker])
         kind,args=vm.handoff
         self.assertEqual(kind,'invoke-static');self.assertIs(args[0],vm.context)
-        self.assertEqual(args[1].name,'PUSH_NOTIFICATION_SCREEN');self.assertEqual(args[2],0)
+        self.assertEqual(args[1].name,'PUSH_NOTIFICATION_SCREEN')
+        self.assertIs(args[2],tracker,'the router supplies its own live tracker, never a fabricated one')
+        self.assertEqual(args[3],0)
         self.assertFalse(vm.events);self.assertFalse(vm.topics.writes)
 
     def test_packed_switch_rows_preserve_real_case_declaration(self):
         text='''\
-.class public Lr9j;
+.class public Ligj;
 .super Ljava/lang/Object;
 .method public static exercise(I)I
 .locals 1

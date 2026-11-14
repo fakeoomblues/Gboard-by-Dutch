@@ -13,33 +13,33 @@ class HlnLegacyMarketingTests(unittest.TestCase):
         path = Path(__file__).parents[1] / 'patches/src/main/kotlin/patches/hln/LegacyMarketingPatch.kt'
         self.assertTrue(path.is_file(), 'Generated legacy section marketing stop must exist')
         source = path.read_text()
-        bodies = re.findall(r'change\("Lydh;", "[^"]+", """(.*?)"""\)', source, re.S)
+        bodies = re.findall(r'change\("Lrjh;", "[^"]+", """(.*?)"""\)', source, re.S)
         self.assertEqual(len(bodies), 1, 'One real generated legacy resolver prefix must exist')
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         root = Path(temp.name)
         smali = root / 'smali'
         smali.mkdir()
-        (smali / 'ydh.smali').write_text('.class public Lydh;\n.super Ljava/lang/Object;\n.method public ' + TARGET[1] + '\n.locals 3\n' + bodies[0] + '\n.end method\n')
+        (smali / 'rjh.smali').write_text('.class public Lrjh;\n.super Ljava/lang/Object;\n.method public ' + TARGET[1] + '\n.locals 3\n' + bodies[0] + '\n.end method\n')
         # Minimal platform-free data holders. The output verifier executes and
         # independently hashes the complete original publisher constructors.
         for cls, sig, writes in [
-            ('gpe', '<init>(Ljava/lang/Throwable;)V', 'iput-object p1, p0, Lgpe;->a:Ljava/lang/Throwable;'),
-            ('jpe', '<init>(Ljava/lang/Object;)V', 'iput-object p1, p0, Ljpe;->a:Ljava/lang/Object;'),
-            ('rg', '<init>(Ljava/lang/Object;B)V', 'iput-byte p2, p0, Lrg;->a:B\niput-object p1, p0, Lrg;->b:Ljava/lang/Object;'),
+            ('nte', '<init>(Ljava/lang/Throwable;)V', 'iput-object p1, p0, Lnte;->a:Ljava/lang/Throwable;'),
+            ('qte', '<init>(Ljava/lang/Object;)V', 'iput-object p1, p0, Lqte;->a:Ljava/lang/Object;'),
+            ('lg', '<init>(Ljava/lang/Object;B)V', 'iput-byte p2, p0, Llg;->a:B\niput-object p1, p0, Llg;->b:Ljava/lang/Object;'),
         ]:
             text = '.class public L' + cls + ';\n.super Ljava/lang/Object;\n.method public ' + sig + '\n.locals 0\n' + writes + '\nreturn-void\n.end method\n'
             (smali / (cls + '.smali')).write_text(text)
-        with (smali / 'rg.smali').open('a') as target:
+        with (smali / 'lg.smali').open('a') as target:
             target.write('''
 .method public collect(Lsk6;Lzs3;)Ljava/lang/Object;
 .locals 2
-iget-byte v0, p0, Lrg;->a:B
+iget-byte v0, p0, Llg;->a:B
 packed-switch v0, :table
 invoke-static {}, Ljk1;->unexpectedNetwork()V
 return-object p0
 :once
-iget-object v0, p0, Lrg;->b:Ljava/lang/Object;
+iget-object v0, p0, Llg;->b:Ljava/lang/Object;
 invoke-interface {p1, v0, p2}, Lsk6;->emit(Ljava/lang/Object;Lzs3;)Ljava/lang/Object;
 move-result-object v0
 sget-object v1, Lgw3;->COROUTINE_SUSPENDED:Lgw3;
@@ -48,7 +48,7 @@ sget-object v0, Llbi;->a:Llbi;
 :done
 return-object v0
 :table
-.packed-switch 0x8
+.packed-switch 0x9
 :once
 .end packed-switch
 .end method
@@ -63,15 +63,15 @@ return-object v0
 
     def test_wrong_flow_selector_is_rejected_before_collection(self):
         root = self.fixture()
-        path = root / 'smali/ydh.smali'
-        path.write_text(path.read_text().replace('const/16 v2, 0x8', 'const/16 v2, 0x7'))
-        with self.assertRaisesRegex(AssertionError, 'finite Flow selector 8'):
+        path = root / 'smali/rjh.smali'
+        path.write_text(path.read_text().replace('const/16 v2, 0x9', 'const/16 v2, 0x7'))
+        with self.assertRaisesRegex(AssertionError, 'finite Flow selector 9'):
             verify_completion(root)
 
     def test_missing_result_wrapper_is_rejected(self):
         root = self.fixture()
-        path = root / 'smali/ydh.smali'
-        path.write_text(path.read_text().replace('invoke-direct {v1, v0, v2}, Lrg;-><init>', 'invoke-direct {v1, v1, v2}, Lrg;-><init>'))
+        path = root / 'smali/rjh.smali'
+        path.write_text(path.read_text().replace('invoke-direct {v1, v0, v2}, Llg;-><init>', 'invoke-direct {v1, v1, v2}, Llg;-><init>'))
         with self.assertRaisesRegex(AssertionError, 'inline Result wrapper'):
             verify_completion(root)
 
