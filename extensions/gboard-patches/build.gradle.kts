@@ -77,10 +77,14 @@ val generatedLanFtpMessagesJavaDir = layout.buildDirectory.dir(
 val generatedCustomThemeBindingsJavaDir = layout.buildDirectory.dir(
     "generated/source/customThemeBindings/java"
 )
+// The runtime factory in this extension resolves Gboard's theme classes by name, so it must
+// follow the same 18.6.3 profile as GboardVersionBindings.kt. The vendored 18.5.11
+// gboard-version-bindings.json still describes the upstream reference profile and would make
+// every Custom Theme import fail on 18.6.3 with "The theme could not be verified or installed".
 val customThemeBindingsOverride = providers.gradleProperty("gboardReviewedBindingsFile")
 val customThemeBindingsAuthority = objects.fileProperty().apply {
     set(rootProject.layout.projectDirectory.file(
-        "patches/src/main/resources/gboard/gboard-version-bindings.json"
+        "patches/src/main/resources/gboard/gboard-custom-theme-bindings.json"
     ))
     if (customThemeBindingsOverride.isPresent) {
         set(layout.file(customThemeBindingsOverride.map { path -> file(path) }))
