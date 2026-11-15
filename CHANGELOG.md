@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/e369830c26565f9580bf414ac857e6897a86515b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.90.3.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [e369830c2656](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/e369830c26565f9580bf414ac857e6897a86515b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.90.3](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.90.2...v1.90.3) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **HLN:** make 9.23.3 work again with ads, consent and login skipped ([e369830](https://gitlab.com/johninnld/nl-morphe-patches/commit/e369830c26565f9580bf414ac857e6897a86515b))
+* **HLN:** withdraw 9.23.3 support until the Android Auto/tracking crash is fixed ([b0dd729](https://gitlab.com/johninnld/nl-morphe-patches/commit/b0dd72937475b368e40e7c3250d9dc0ccea6b387))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/46381d2474fc9a9b7937ff1a56e444844049aca4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.90.2.**
