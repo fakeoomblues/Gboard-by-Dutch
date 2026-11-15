@@ -18,3 +18,5 @@ Grouped checkpoint: canonical complete verification; apply to the supplied compl
 After a successful batch build, reserve one bounded owned emulator/DHU acceptance session with read-only Frida coverage established before stimuli. Record the deadline and stop all owned runtimes after collection. Any artificial input proves only the controlled path. A real ring plus bidirectional audio through a real car remains a separate physical acceptance gate requiring explicit device authorization.
 
 Do not publish this new app behavior until owner acceptance. The prior Reolink release authorization concerned the already-published push-registration fix.
+
+Owner release decision, 2026-11-16: the owner accepted the current implementation as sufficient and explicitly requested commit/push/release on main. Publish the new call patch as experimental and off by default. The first real-device attempt produced only a phone notification; background Firebase routing, typed visitor handling and notification delegation were corrected afterwards. Do not claim that Android Auto call controls or bidirectional car audio have been confirmed.
