@@ -3,9 +3,10 @@ package patches.abrp
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val CONFIG_MODULE = "Lcom/lugg/RNCConfig/RNCConfigModule;"
@@ -24,7 +25,7 @@ private const val HASH_MAP_PUT = "Ljava/util/HashMap;->put(Ljava/lang/Object;Lja
  *
  * The regular build carries no `USE_AUTOMOTIVE_TEMPLATES` field, so editing existing
  * constants cannot turn the template flag on. Both entries are written into the same map
- * immediately before it is wrapped as `{ config: ... }`.
+ * before the wrapper is converted to a React Native map.
  */
 @Suppress("unused")
 val automotivePremium = bytecodePatch(
@@ -42,33 +43,43 @@ val automotivePremium = bytecodePatch(
             candidate.name == "getConfig" && candidate.returnType == CONFIG_MAP
         } ?: throw IllegalStateException("ABRP config bridge changed")
 
-        val implementation = method.implementation
-            ?: throw IllegalStateException("ABRP config bridge has no code")
-
-        // The reflected map is filled by a loop and then stored as the "config" entry of a
-        // second map. Inserting in front of that store keeps the reflection copy intact and
-        // adds the two keys this build does not carry.
-        val store = (0 until implementation.instructions.size - 1).singleOrNull { index ->
-            val key = method.getInstruction(index)
-            val put = method.getInstruction(index + 1)
-            key.opcode == Opcode.CONST_STRING &&
-                (key as? ReferenceInstruction)?.reference?.let { it as? StringReference }?.string == "config" &&
-                put.opcode == Opcode.INVOKE_VIRTUAL &&
-                (put as? ReferenceInstruction)?.reference?.toString() == HASH_MAP_PUT
-        } ?: throw IllegalStateException("ABRP config map assembly changed")
-
-        // put(outer, key, reflected) - the reflected map is the value register.
-        val reflected = "v${(method.getInstruction(store + 1) as ThreeRegisterInstruction).registerC}"
-
-        method.addInstructions(
-            store,
-            """
-                const-string v0, "ANDROID_AUTOMOTIVE"
-                const-string v1, "true"
-                invoke-virtual {$reflected, v0, v1}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-                const-string v0, "USE_AUTOMOTIVE_TEMPLATES"
-                invoke-virtual {$reflected, v0, v1}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-            """.trimIndent(),
-        )
+        enableAutomotivePremium(method)
     }
+}
+
+internal fun enableAutomotivePremium(method: MutableMethod) {
+    val implementation = method.implementation
+        ?: throw IllegalStateException("ABRP config bridge has no code")
+
+    // Find the native store of the reflected map into the outer "config" map.
+    val store = (0 until implementation.instructions.size - 1).singleOrNull { index ->
+        val key = method.getInstruction(index)
+        val put = method.getInstruction(index + 1)
+        key.opcode == Opcode.CONST_STRING &&
+            (key as? ReferenceInstruction)?.reference?.let { it as? StringReference }?.string == "config" &&
+            put.opcode == Opcode.INVOKE_VIRTUAL &&
+            (put as? ReferenceInstruction)?.reference?.toString() == HASH_MAP_PUT
+    } ?: throw IllegalStateException("ABRP config map assembly changed")
+
+    // Format 35c encodes receiver/key/value in C/D/E, even for a three-argument call.
+    val put = method.getInstruction<FiveRegisterInstruction>(store + 1)
+    check(put.registerCount == 3 && put.registerD == 0 &&
+        put.registerC !in 0..1 && put.registerE !in 0..1 && put.registerC != put.registerE) {
+        "ABRP config map registers changed"
+    }
+    val reflected = "v${put.registerE}"
+
+    // The loop branches directly to the original "config" constant. Inserting before
+    // that label would be skipped on the normal path. Mutate the same nested map after
+    // it is stored, before the outer map is converted to WritableMap.
+    method.addInstructions(
+        store + 2,
+        """
+            const-string v0, "ANDROID_AUTOMOTIVE"
+            const-string v1, "true"
+            invoke-virtual {$reflected, v0, v1}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+            const-string v0, "USE_AUTOMOTIVE_TEMPLATES"
+            invoke-virtual {$reflected, v0, v1}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        """.trimIndent(),
+    )
 }
