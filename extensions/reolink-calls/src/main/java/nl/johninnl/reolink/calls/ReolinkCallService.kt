@@ -106,6 +106,7 @@ class ReolinkCallService : Service() {
         try {
             val calls = CallsManager(TelecomContext(this))
             calls.registerAppWithTelecom(CallsManager.CAPABILITY_BASELINE)
+            Log.i("ReolinkCalls", "Telecom account registered")
             calls.addCall(
                 CallAttributesCompat(incoming.displayName, Uri.parse("reolink-doorbell:${incoming.address}"),
                     CallAttributesCompat.DIRECTION_INCOMING, CallAttributesCompat.CALL_TYPE_AUDIO_CALL,
@@ -128,6 +129,7 @@ class ReolinkCallService : Service() {
             ) {
                 admitted = true
                 controls = this
+                Log.i("ReolinkCalls", "Telecom incoming call admitted")
                 scope.launch { isMuted.collect { session.setMuted(it) } }
                 scope.launch {
                     delay(20_000) // Same unanswered-call timeout as Reolink's doorbell activity.
