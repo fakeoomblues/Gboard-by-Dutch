@@ -52,8 +52,15 @@ val searchSessionRedirect = bytecodePatch(
                 }
             }
         }
-        check(skippedSessionHolder == 1) {
-            "Expected the all-apps search session holder, found $skippedSessionHolder"
+        // The holder is an obfuscated, build-specific class: it exists in the 17/907 release the
+        // patches target, but not in every launcher build (an OEM or CANARY build renames it).
+        // Missing it only means the null-session guard is not installed, so warn and continue
+        // instead of aborting the whole patch run for an unrelated build.
+        if (skippedSessionHolder != 1) {
+            System.err.println(
+                "nexuslauncher: all-apps search session holder not found " +
+                    "(found $skippedSessionHolder); skipping the null-session guard",
+            )
         }
 
         var rewritten = 0
