@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3cfe2ed6abe199d234de044598257120e433273a/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.90.5.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [3cfe2ed6abe1](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/3cfe2ed6abe199d234de044598257120e433273a). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.90.5](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.90.4...v1.90.5) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **Reolink:** restore push notifications in re-signed copies ([3cfe2ed](https://gitlab.com/johninnld/nl-morphe-patches/commit/3cfe2ed6abe199d234de044598257120e433273a))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/825c804d3acc11367f6f344fe537553f9715f112/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.90.4.**

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.90.4**
+**Patch bundle: 1.90.5**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -779,6 +779,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Change package name | On | 4.64.3.20261023 |
 | Custom branding | On | 4.64.3.20261023 |
 | Custom layout for Android Auto | On | 4.64.3.20261023 |
+| Fix push notification registration | On | 4.64.3.20261023 |
 | Parked app for Android Auto | On | 4.64.3.20261023 |
 
 ## Rollerbank
