@@ -94,7 +94,7 @@ tasks.named("sourcesJar") { dependsOn(generateBrightKeyStatus) }
 
 patches {
     about {
-        name = "Dutch App Patches"
+        name = "Pixel Launcher sideload (test)"
         description = "App-specific controls for advertising, publisher promotions, tracking, onboarding and article delivery in Dutch applications"
         source = "https://gitlab.com/johninnld/nl-morphe-patches"
         author = "johninnl"
