@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.90.6**
+**Patchbundel: 1.91.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -779,6 +779,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Change package name | Aan | 4.64.3.20261023 |
 | Custom branding | Aan | 4.64.3.20261023 |
 | Custom layout for Android Auto | Aan | 4.64.3.20261023 |
+| Doorbell calls through Android Auto | Uit | 4.64.3.20261023 |
 | Fix push notification registration | Aan | 4.64.3.20261023 |
 | Parked app for Android Auto | Aan | 4.64.3.20261023 |
 

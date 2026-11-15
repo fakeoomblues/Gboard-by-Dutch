@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/614d4a613eaa4541fd176f300d11b6487664831b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.91.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [614d4a613eaa](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/614d4a613eaa4541fd176f300d11b6487664831b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.91.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.90.6...v1.91.0) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **Reolink:** route background visitor alerts into Telecom ([642dc17](https://gitlab.com/johninnld/nl-morphe-patches/commit/642dc17cca11e63bb0d9f3eae8fe87223c741f0d))
+
+### ✨ New Features
+
+* **Reolink:** add experimental Telecom doorbell calls ([946c04d](https://gitlab.com/johninnld/nl-morphe-patches/commit/946c04dce85c417f2467cb993c760a1047c19f3a))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/19085bb13580784e8842df9c5a924e09be21096d/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.90.6.**

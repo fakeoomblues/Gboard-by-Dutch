@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.90.6</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.91.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1244,7 +1244,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="other" data-search="reolink com.mcu.reolink 4.64.3.20261023 change package name custom branding custom layout for android auto fix push notification registration parked app for android auto" markdown>
+<article class="dap-app-card" data-category="other" data-search="reolink com.mcu.reolink 4.64.3.20261023 change package name custom branding custom layout for android auto doorbell calls through android auto fix push notification registration parked app for android auto" markdown>
 <p class="dap-app-card__category">Other</p>
 
 ### [Reolink](apps/reolink.md)
@@ -1252,11 +1252,12 @@ hide:
 <p class="dap-app-card__version">App versions: <span class="dap-data">4.64.3.20261023</span></p>
 <p class="dap-app-card__package">com.mcu.reolink</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
 <li>Change package name <span class="dap-app-card__target">4.64.3.20261023</span></li>
 <li>Custom branding <span class="dap-app-card__target">4.64.3.20261023</span></li>
 <li>Custom layout for Android Auto <span class="dap-app-card__target">4.64.3.20261023</span></li>
+<li>Doorbell calls through Android Auto <span class="dap-app-card__target">4.64.3.20261023 · default off</span></li>
 <li>Fix push notification registration <span class="dap-app-card__target">4.64.3.20261023</span></li>
 <li>Parked app for Android Auto <span class="dap-app-card__target">4.64.3.20261023</span></li>
 </ul>
