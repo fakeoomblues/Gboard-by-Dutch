@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/19085bb13580784e8842df9c5a924e09be21096d/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.90.6.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [19085bb13580](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/19085bb13580784e8842df9c5a924e09be21096d). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.90.6](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.90.5...v1.90.6) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** bind the Custom Theme runtime to 18.6.3 and check both ABIs ([19085bb](https://gitlab.com/johninnld/nl-morphe-patches/commit/19085bb13580784e8842df9c5a924e09be21096d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/3cfe2ed6abe199d234de044598257120e433273a/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.90.5.**
