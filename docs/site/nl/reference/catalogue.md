@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.90.3**
+**Patchbundel: 1.90.4**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
