@@ -33,7 +33,7 @@ val customBrandingPatch = resourcePatch(
             targets = listOf(AppTarget(version = null)),
         ),
         Compatibility(
-            name = "Orpheon", packageName = "app.orpheon.beta", apkFileType = ApkFileType.APK,
+            name = "Orpheon", packageName = "app.orpheon", apkFileType = ApkFileType.APK,
             targets = listOf(AppTarget(version = null)),
         ),
     )

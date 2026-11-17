@@ -40,15 +40,15 @@ private val queueTarget = Compatibility(
     ),
 )
 
-/** Orpheon is the rebranded Myspoti: same code and media session, its own package and signer. */
+/** Orpheon is the rebranded Myspoti: same code and media session under its own package. */
 private val orpheonTarget = Compatibility(
-    name = "Orpheon", packageName = "app.orpheon.beta", apkFileType = ApkFileType.APK,
-    signatures = setOf("d439d2f456201f46b19a251a38fb51010bbf8126a4c1567e43b2b61312be4d6b"),
-    targets = listOf(AppTarget(version = "1.0.0-beta.1", versionCode = 1173, minSdk = 29)),
+    name = "Orpheon", packageName = "app.orpheon", apkFileType = ApkFileType.APK,
+    signatures = setOf("2b8f54daf60ce32cee1ab9206553c7e5741e96f2f32efdf2545758bf210a2c41"),
+    targets = listOf(AppTarget(version = "1.0.0", versionCode = 1194, minSdk = 29)),
 )
 
 /** Versions that publish the current and upcoming queue through the framework media session. */
-private val nativeQueueVersions = setOf("2.4.0", "2.4.1", "1.0.0-beta.1")
+private val nativeQueueVersions = setOf("2.4.0", "2.4.1", "1.0.0")
 
 private val queueOriginalInput = patches.shared.originalInput(queueTarget, variants = listOf(orpheonTarget))
 

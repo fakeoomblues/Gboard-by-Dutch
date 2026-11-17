@@ -29,7 +29,7 @@ public class CompatibilityTest {
             assertNull("Any must not filter by build code or ABI", target.getVersionCodes());
             assertFalse(target.isExperimental());
         }
-        assertEquals(Set.of("app.myspoti.stable", "app.orpheon.beta"), packages);
+        assertEquals(Set.of("app.myspoti.stable", "app.orpheon"), packages);
     }
 
     @Test public void allowAnyHostAdmitsEveryHostWithoutAWhitelistOption() {
@@ -51,6 +51,6 @@ public class CompatibilityTest {
             assertNull(versions.put(app.getPackageName(), names));
         }
         assertEquals(Set.of("2.3.0", "2.4.0", "2.4.1"), versions.get("app.myspoti.stable"));
-        assertEquals(Set.of("1.0.0-beta.1"), versions.get("app.orpheon.beta"));
+        assertEquals(Set.of("1.0.0"), versions.get("app.orpheon"));
     }
 }

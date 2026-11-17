@@ -1,10 +1,13 @@
 # Orpheon
 
-**Appversie:** 1.0.0-beta.1 · **Build:** 1173 · **Origineel bestand:** APK
+**Appversie:** 1.0.0 · **Build:** 1194 · **Origineel bestand:** APK
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Orpheon is de hernoemde Myspoti-muziekapp: dezelfde code en mediasessie, gepubliceerd onder een eigen pakketnaam en ondertekeningssleutel. Selecteer de door de uitgever ondertekende Orpheon-APK. **Allow any Android Auto host** en **Custom branding** zijn compatibel met elke versie waarvan de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. **Android Auto Up next** accepteert 1.0.0-beta.1 / 1173. De versie hierboven is het referentiebestand. Myspoti zelf blijft beschikbaar op de eigen [apppagina](myspoti.md).
+Orpheon is de hernoemde Myspoti-muziekapp: dezelfde code en mediasessie, gepubliceerd onder een eigen pakketnaam. Selecteer de door de uitgever ondertekende Orpheon-APK. **Allow any Android Auto host** en **Custom branding** zijn compatibel met elke versie waarvan de bestaande toegangsstructuur van de muziekbrowser eenduidig wordt herkend; bij een onbekende of dubbelzinnige structuur stopt het patchen. **Android Auto Up next** accepteert 1.0.0 / 1194. De versie hierboven is het referentiebestand. Myspoti zelf blijft beschikbaar op de eigen [apppagina](myspoti.md).
+
+!!! warning "Orpheon 1.0.0 heeft de Spotify-functionaliteit verwijderd"
+    De niet-bèta Orpheon 1.0.0-release biedt geen Spotify-functionaliteit meer. Deze patches veranderen alleen de toegang tot de Android Auto-muziekbrowser, het publiceren van de wachtrij en de branding voor de eigen bibliotheek van de app.
 
 [Muziekspelers en persoonlijke bibliotheken in Gearslip instellen](../guides/gearslip-music.md){ .md-button }
 
@@ -28,6 +31,6 @@ Orpheon publiceert zijn eigen wachtrij naar de mediasessie, dus **Android Auto U
 
 Schakel **Custom branding** in om **App name** en de keuzelijst **App icon** te gebruiken. De keuzes zijn Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal en Black Spotify on warm white. Een lege naam behoudt Orpheon. Naam en icoon zijn onafhankelijk instelbaar; voor een wijziging moet de APK opnieuw worden gepatcht. Branding kan samen met de andere twee patches uit dezelfde bundel worden gekozen. De patch verandert de Android-appnaam en het launchericoon; logo’s in de app, het opstartscherm, notificatieafbeeldingen en accounttoegang blijven zoals Orpheon ze levert.
 
-Orpheon is een beta. Meld je aan voordat je de auto test en bewaar de door de uitgever ondertekende installatie: een gepatchte APK moet opnieuw worden ondertekend en kan een installatie met een andere sleutel niet bijwerken.
+Orpheon is de uitgebrachte variant van Myspoti. Meld je aan voordat je de auto test en bewaar de door de uitgever ondertekende installatie: een gepatchte APK moet opnieuw worden ondertekend en kan een installatie met een andere sleutel niet bijwerken.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md)

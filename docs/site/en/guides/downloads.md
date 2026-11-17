@@ -80,7 +80,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [TIDAL](../apps/tidal.md) | 2.216.0 / 10020 | [APKM](#local-original-inputs) |
 | [Deezer](../apps/deezer.md) | 9.0.26.3 / 9002603 | [APKM](#local-original-inputs) |
 | [Myspoti](../apps/myspoti.md) | 2.4.1 / 1175 | [APK](#local-original-inputs) |
-| [Orpheon](../apps/orpheon.md) | 1.0.0-beta.1 / 1173 | [APK](#local-original-inputs) |
+| [Orpheon](../apps/orpheon.md) | 1.0.0 / 1194 | [APK](#local-original-inputs) |
 | [SoundCloud](../apps/soundcloud.md) | 2026.11.02-release / 379060 | [APKM](#local-original-inputs) |
 | [Spotify](../apps/spotify.md) | 9.2.0.2053 / 148387875 | [APK](#local-original-inputs) |
 | [Gboard](../apps/gboard.md) | 18.6.3.1002251336-release-arm64-v8a / 176071766 | [APK](#local-original-inputs) |

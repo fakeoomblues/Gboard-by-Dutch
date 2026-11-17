@@ -1,10 +1,13 @@
 # Orpheon
 
-**App version:** 1.0.0-beta.1 · **Build:** 1173 · **Original file:** APK
+**App version:** 1.0.0 · **Build:** 1194 · **Original file:** APK
 
 [Use your original APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Orpheon is the rebranded Myspoti music app: the same code and media session, published under its own package and signing key. Select the publisher-signed Orpheon APK. **Allow any Android Auto host** and **Custom branding** are compatible with any version whose existing browser access structure is uniquely recognized; an unsupported or ambiguous structure stops patching. **Android Auto Up next** accepts 1.0.0-beta.1 / 1173. The version above is the reference input. Myspoti itself stays available on its own [app page](myspoti.md).
+Orpheon is the rebranded Myspoti music app: the same code and media session, published under its own package name. Select the publisher-signed Orpheon APK. **Allow any Android Auto host** and **Custom branding** are compatible with any version whose existing browser access structure is uniquely recognized; an unsupported or ambiguous structure stops patching. **Android Auto Up next** accepts 1.0.0 / 1194. The version above is the reference input. Myspoti itself stays available on its own [app page](myspoti.md).
+
+!!! warning "Orpheon 1.0.0 removed Spotify functionality"
+    The non-beta Orpheon 1.0.0 release no longer provides any Spotify functionality. These patches only change Android Auto browser access, queue publication and branding for the app's own library.
 
 [Set up music players and personal libraries in Gearslip](../guides/gearslip-music.md){ .md-button }
 
@@ -28,6 +31,6 @@ Orpheon publishes its own queue to the media session, so **Android Auto Up next*
 
 Enable **Custom branding** to use its **App name** field and **App icon** dropdown. The choices are Original, Classic Spotify Green, Elegant dark Spotify, Emerald Spotify on pitch black, Dark emerald Spotify glass, Platinum Spotify on charcoal, and Black Spotify on warm white. An empty name keeps Orpheon. Name and icon can be changed independently; changing them requires patching again. Branding can be selected together with the other two patches from the same bundle. It changes the Android app label and launcher icon; in-app logos, the splash screen, notification artwork and account access stay as provided by Orpheon.
 
-Orpheon is a beta. Sign in before testing the car and keep the publisher-signed installation: a patched APK must be signed again and cannot update an installation signed with a different key.
+Orpheon is the released rebrand of Myspoti. Sign in before testing the car and keep the publisher-signed installation: a patched APK must be signed again and cannot update an installation signed with a different key.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md)

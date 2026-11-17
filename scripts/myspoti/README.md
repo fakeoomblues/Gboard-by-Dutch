@@ -1,7 +1,7 @@
 # Verify Myspoti custom branding
 
 Build the normal Dutch App Patches bundle with `./gradlew :patches:buildAndroid :patches:test`. Use the repository's normal authenticated build environment.
-The resulting bundle contains the Myspoti patches, including the opt-in **Android Auto Up next** addition for original 2.3.0 / 1121, 2.4.0 / 1142 and 2.4.1 / 1175, and for Orpheon 1.0.0-beta.1 / 1173; no separate pack is needed. On 2.4.0, 2.4.1 and Orpheon the native queue is kept and the default **Allow any Android Auto host** patch opens the library to every Android Auto host. **Android Auto Up next** can still restrict browsing to an explicit host package list. Queue research is tracked in `docs/research/2026-11-05-myspoti-up-next.md`, the 2.4.0 port in `docs/research/2026-11-07-myspoti-2.4.0-port.md` and the 2.4.1/Orpheon port in `docs/research/2026-11-13-myspoti-2.4.1-orpheon-port.md`.
+The resulting bundle contains the Myspoti patches, including the opt-in **Android Auto Up next** addition for original 2.3.0 / 1121, 2.4.0 / 1142 and 2.4.1 / 1175, and for Orpheon 1.0.0 / 1194; no separate pack is needed. On 2.4.0, 2.4.1 and Orpheon the native queue is kept and the default **Allow any Android Auto host** patch opens the library to every Android Auto host. **Android Auto Up next** can still restrict browsing to an explicit host package list. Queue research is tracked in `docs/research/2026-11-05-myspoti-up-next.md`, the 2.4.0 port in `docs/research/2026-11-07-myspoti-2.4.0-port.md` and the 2.4.1/Orpheon port in `docs/research/2026-11-13-myspoti-2.4.1-orpheon-port.md`.
 
 Run the APK regression matrix against an original publisher APK:
 
