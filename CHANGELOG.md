@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/a4c2955b40d86eaebfae9bfa6cacc82f762552a7/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.92.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [a4c2955b40d8](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/a4c2955b40d86eaebfae9bfa6cacc82f762552a7). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.92.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.91.0...v1.92.0) (2026-11-17)
+
+### ✨ New Features
+
+* **Orpheon:** support 1.0.0 and warn that the non-beta release removed all Spotify functionality ([148035d](https://gitlab.com/johninnld/nl-morphe-patches/commit/148035de22eeaa484a2ea3007a72ec9f6fce3694))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/614d4a613eaa4541fd176f300d11b6487664831b/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.91.0.**

@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.91.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.92.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -1118,18 +1118,18 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="orpheon app.orpheon.beta alle versies 1.0.0-beta.1 allow any android auto host android auto up next custom branding" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="orpheon app.orpheon alle versies 1.0.0 allow any android auto host android auto up next custom branding" markdown>
 <p class="dap-app-card__category">Amusement</p>
 
 ### [Orpheon](apps/orpheon.md)
 
-<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies, 1.0.0-beta.1</span></p>
-<p class="dap-app-card__package">app.orpheon.beta</p>
+<p class="dap-app-card__version">App-versies: <span class="dap-data">Alle versies, 1.0.0</span></p>
+<p class="dap-app-card__package">app.orpheon</p>
 <details class="dap-app-card__patches">
 <summary>3 patches</summary>
 <ul>
 <li>Allow any Android Auto host <span class="dap-app-card__target">Alle versies</span></li>
-<li>Android Auto Up next <span class="dap-app-card__target">1.0.0-beta.1 · standaard uit</span></li>
+<li>Android Auto Up next <span class="dap-app-card__target">1.0.0 · standaard uit</span></li>
 <li>Custom branding <span class="dap-app-card__target">Alle versies · standaard uit</span></li>
 </ul>
 </details>

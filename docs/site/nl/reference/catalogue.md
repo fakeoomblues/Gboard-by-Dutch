@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.91.0**
+**Patchbundel: 1.92.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -694,12 +694,12 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 [Wat veranderen de patches?](../apps/orpheon.md)
 
-`app.orpheon.beta`
+`app.orpheon`
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Allow any Android Auto host | Aan | Alle versies |
-| Android Auto Up next | Uit | 1.0.0-beta.1 |
+| Android Auto Up next | Uit | 1.0.0 |
 | Custom branding | Uit | Alle versies |
 
 ## Parool

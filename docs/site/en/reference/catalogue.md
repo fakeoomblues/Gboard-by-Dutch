@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.91.0**
+**Patch bundle: 1.92.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -694,12 +694,12 @@ Check the supported app versions and default setting for each patch. The app pag
 
 [What do the patches change?](../apps/orpheon.md)
 
-`app.orpheon.beta`
+`app.orpheon`
 
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Allow any Android Auto host | On | Any |
-| Android Auto Up next | Off | 1.0.0-beta.1 |
+| Android Auto Up next | Off | 1.0.0 |
 | Custom branding | Off | Any |
 
 ## Parool

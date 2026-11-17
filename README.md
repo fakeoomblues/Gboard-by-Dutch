@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.91.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.91.0)** · 80 apps · 384 patches
+**Patch bundle [v1.92.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.92.0)** · 80 apps · 384 patches
 
 ### Weather
 
@@ -119,7 +119,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, 2.4.0, 2.4.1, Any | APK | 3 |
 | [NPO Start](docs/site/en/apps/npo-start.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
 | [NPO Start Android TV](docs/site/en/apps/npo-start-android-tv.md) | Ads · Tracking · Compatibility | 1.48.2-2405 | APKS | 3 |
-| [Orpheon](docs/site/en/apps/orpheon.md) | See guide | 1.0.0-beta.1, Any | APK | 3 |
+| [Orpheon](docs/site/en/apps/orpheon.md) | See guide | 1.0.0, Any | APK | 3 |
 | [Podimo](docs/site/en/apps/podimo.md) | Plus/Pro | 3.7.0 | APKS | 3 |
 | [SoundCloud](docs/site/en/apps/soundcloud.md) | See guide | 2026.11.02-release | APKM | 5 |
 | [Spotify](docs/site/en/apps/spotify.md) | See guide | 9.2.0.2053 | APKS | 1 |
