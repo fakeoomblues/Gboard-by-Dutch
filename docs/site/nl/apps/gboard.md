@@ -6,6 +6,8 @@
 
 Selecteer de armeabi-v7a-APK (build 176124765) of arm64-v8a-APK (build 176124766) van Google voor precies deze release; de versionName van elke build eindigt op zijn eigen ABI. Android 8.0+ volstaat: zowel de minAPI26- als de minAPI32-variant van elke build werkt.
 
+[Lees hoe je elke Gboard-patch gebruikt en test](../guides/gboard.md) · [Frosted Glass zichtbaar maken](../guides/gboard.md#frosted-glass)
+
 ## Patches
 
 | Patch | Standaard | Wat verandert er? |
@@ -20,38 +22,34 @@ Selecteer de armeabi-v7a-APK (build 176124765) of arm64-v8a-APK (build 176124766
 | **Rambler stop after silence** | Aan | Rambler stopt vanzelf na 3 seconden zonder spraak en houdt de tekst, net als wanneer je op ✓ tikt. Pas de tijd aan (3, 5, 8 of 10 seconden) of zet het uit onder Gboard-instellingen → Spraakinvoer → Rambler → **Stoppen na stilte**. Werkt alleen samen met Rambler voice typing. |
 | **Parakeet personal dictionary** | Aan | Laat Parakeet de namen en woorden uit de lijst met spraakcorrecties van het **Spraakwoordenboek** goed schrijven, ook de contactnamen die daar staan. Parakeet geeft ze voorrang tijdens het luisteren en verbetert een woord dat erop lijkt alleen als een tweede keer luisteren dat bevestigt. Vraagt een download van 2 MB aan spellinggegevens onder Parakeet-spraakinvoer. Werkt alleen samen met Parakeet voice typing en Rambler personal dictionary. |
 | **Change package name** | Aan | Installeert de gepatchte Gboard onder een eigen pakketnaam (standaard app.morphe.android.inputmethod.latin), zodat hij naast de standaard-Gboard staat die op de meeste telefoons is ingebouwd. Je standaard-Gboard, de instellingen en het woordenboek blijven onaangeroerd; kies het gepatchte toetsenbord in de toetsenbordinstellingen van Android. |
-| **Custom branding** | Uit | Verandert de appnaam in de launcher, de toetsenbordlijst van Android en de app-informatie, en het app-icoon (standaard Parakeet, het originele Gboard-icoon of vijf andere ontwerpen), zodat je het gepatchte toetsenbord makkelijk onderscheidt van de standaardversie. |
+| **Custom branding** | Aan | Gebruikt standaard **Gboard Parakeet/Rambler** als naam en het Parakeet-pictogram. Pas beide desgewenst aan in de patchopties van Morphe. |
 | **Add Gboard Signature Bypass** | Aan | Laat de gepatchte, opnieuw ondertekende Gboard de onderdelen gebruiken die de handtekening van de app controleren, zoals Thema's; zonder deze patch stopt dat met een waarschuwing over een onbekend certificaat. |
 | **Rounded Keyboard Panel** | Aan | Kiest welke hoeken van het toetsenbordpaneel afgerond zijn en stelt de straal boven en onder apart in, bij elk actief thema. |
 | **Frosted Glass** | Aan | Voegt live vervaging van de achtergrond achter het toetsenbord toe, met transparantie uit het thema of eigen waarden voor achtergrond en toetsen, en de mogelijkheid het effect door te trekken naar de navigatiebalk. Vervaging vereist Android 12 of nieuwer. |
 | **Custom Theme** | Aan | Voegt ZIP-thema-import toe aan het themascherm van Gboard zelf en een galerij met kant-en-klare themapakketten die op verzoek worden gedownload en op checksum gecontroleerd. Voegt de INTERNET-machtiging toe. |
 | **G Logo on Spacebar** | Aan | Toont een ingebouwd pictogram of je eigen PNG, WebP of JPEG op de spatiebalk, in eigen kleuren of één kleur, met instelbare grootte. |
 | **Key Shape Selection** | Aan | Zet de eigen optie Toetsvorm van Gboard aan in themadetails, zodat de toetsen van een thema hun vorm houden in plaats van vierkant te worden. |
-| **AMOLED dark keyboard** | Uit | Maakt de donkere toetsenbordachtergrond zuiver zwart in plaats van het grijs van Google, ook in het dynamische thema dat je achtergrond volgt; de lichte modus houdt het lichte toetsenbord. Er is geen aparte tegel: kies Dynamische kleur in het themascherm van Gboard — zie [AMOLED-donker toetsenbord](#amoled-donker-toetsenbord). |
+| **AMOLED dark keyboard** | Aan | Maakt de donkere toetsenbordachtergrond zuiver zwart in plaats van het grijs van Google, ook in het dynamische thema dat je achtergrond volgt; de lichte modus houdt het lichte toetsenbord. Er is geen aparte tegel: kies Dynamische kleur in het themascherm van Gboard — zie [AMOLED-donker toetsenbord](#amoled-donker-toetsenbord). |
 | **Enable OCR / Scan Text** | Aan | Voegt Gboard's Scan Text-camera toe: richt de camera op tekst en de tekst wordt herkend en op je cursor ingevoegd. De patch levert zijn eigen OCR-engine mee, omdat Play Services de download weigert aan een opnieuw ondertekende Gboard. Alleen Latijnse tekst. Je kunt in de Gboard-instellingen ook een bestaande schermafbeelding of foto kiezen en de tekst daarvan naar het klembord laten kopiëren. |
-| **AI Writing Tools** | Aan | Zet Gboard's Writing tools aan op geselecteerde tekst: proeflezen op spelling, grammatica en leestekens, herschrijven en een toon kiezen. Google's eigen client doet het werk; op Pixel-toestellen kan dat op het toestel zelf, elders via Google's server. Werkt in elke taal en met elk toetsenbord. |
+| **AI Writing Tools** | Aan | Maakt de Google-functies voor herschrijven en toon beschikbaar bij geselecteerde tekst waar ondersteund. Proofread / Auto Fix valt buiten deze port. |
 | **Clipboard Enhancements** | Aan | Bepaalt hoe lang gekopieerde fragmenten bewaard blijven, hoeveel er worden bewaard, hoeveel voorbeeldregels een kaart toont en of kaarten een aftelling, aanmaaktijd, volgnummer en kolomaantal tonen. |
 | **Web Clipboard** | Aan | Host een klein Web Clipboard-portaal op de telefoon, zodat een desktopbrowser op hetzelfde lokale netwerk clipboardtekst met Gboard kan uitwisselen. Het portaal is beveiligd met een koppelcode en is bereikbaar via een Quick Settings-tegel. |
 | **Toolbar Editing Buttons** | Aan | Voegt Alles selecteren, Kopiëren, Knippen en Plakken toe aan het Gboard-menu, zodat je ze naar de bovenste werkbalk kunt slepen en in ondersteunde toetsenbordtalen en editors kunt gebruiken. |
 | **Cursor trackpad mode** | Aan | Houd de spatiebalk lang ingedrukt om de cursor nauwkeuriger te verplaatsen met een trackpad en de vergrendelmodus te gebruiken. |
 | **Incognito Mode Toggle** | Aan | Voegt een incognito-schakelaar toe aan de Access Point-werkbalk en laat je kiezen of het clipboard en spraakinvoer beschikbaar blijven terwijl incognito actief is. Dit regelt de incognito-status van Gboard zelf; het is geen netwerkbrede anti-trackingfunctie. |
 | **Simple Calculator** | Aan | Typ een rekenkundige expressie in een tekstveld en zie een scrollbare vergelijking met het antwoord in de suggestieregel van Gboard, klaar om in te voegen. |
-| **Advanced voice typing (NGA)** | Uit | Zet Gboard's NGA-dicteerstack aan: de geavanceerde spraakopdrachten, de geconsolideerde spraakstack, lang dicteren en de formatter-bibliotheek, die de patch voor beide ABI's meelevert. Het voegt **geen** derde dicteeroptie toe: kies Dicteertype → **Rambler** om het te gebruiken. |
-| **Use Bluetooth microphone** | Uit | Toont Gboard's eigen schakelaar Voice typing → **Use Bluetooth microphone**, die standaard verborgen is, zodat dicteren van een gekoppelde headset kan opnemen. De routering blijft Gboard's eigen keuze. |
-| **Rambler toolbar & revert extras (18.8)** | Uit | Voegt de overflow-knop toe aan de zwevende Rambler-werkbalk, houdt herschreven tekst bij het terugdraaien van het volledige transcript naar de opgeschoonde tekst, en geeft bewerkingsgeschiedenis door op het Jetson Lite-pad. |
-| **Hidden flags (18.8)** | Uit | Drie interne 18.8-flags via Gboard's eigen override-opslag: app-specifieke woordweging, de app-specifieke suggestiebalk en de vierkante genormaliseerde zoekradius. Zie [Verborgen flags](#verborgen-flags-188). |
-| **Beta features (18.8)** | Uit | Zet vijf afgewerkte functies uit de 18.8-beta aan die Google voor een opnieuw ondertekende build uit laat staan: een snelplak-chip met één tik, de klembord-chip op het zwevende toetsenbord, onzichtbaar formaat wijzigen van het zwevende toetsenbord, de Emoji2-provider van het systeem en de nieuwere bevestiging bij wegvegen. Eén schakelaar onder Gboard-instellingen → **Patch settings** → **More settings** → **Beta features**; zie [Beta-functies](#beta-functies-188) hieronder. |
+| **Advanced voice typing (NGA)** | Aan | Schakelt de geavanceerde dicteerfuncties van Google in en levert het passende dicteeronderdeel voor beide architecturen mee. Beschikbaarheid hangt af van de herkenningscontroles van Gboard. |
+| **Use Bluetooth microphone** | Aan | Toont Gboard's eigen schakelaar Voice typing → **Use Bluetooth microphone**, die standaard verborgen is, zodat dicteren van een gekoppelde headset kan opnemen. De routering blijft Gboard's eigen keuze. |
+| **Rambler toolbar & revert extras (18.8)** | Aan | Voegt de overflow-knop toe aan de zwevende Rambler-werkbalk, houdt herschreven tekst bij het terugdraaien van het volledige transcript naar de opgeschoonde tekst, en geeft bewerkingsgeschiedenis door op het Jetson Lite-pad. |
+| **Rambler automatic retry (18.8)** | Aan | Laat Rambler na een geschikte herkenningsfout opnieuw proberen met het geluid van de huidige dicteerbeurt. Het geluid kan opnieuw naar Google gaan. |
+| **Hidden flags (18.8)** | Aan | Drie interne 18.8-flags via Gboard's eigen override-opslag: app-specifieke woordweging, de app-specifieke suggestiebalk en de vierkante genormaliseerde zoekradius. Zie [Verborgen flags](#verborgen-flags-188). |
+| **Beta features (18.8)** | Aan | Schakelt vijf functies voor het klembord, het zwevende toetsenbord, Emoji2 en het verwijderen van suggesties in. Per functie instelbaar via **Patches → More settings → Beta features**. Zie [Beta-functies](#beta-functies-188). |
 
 Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle, Simple Calculator, Rounded Keyboard Panel, Frosted Glass, Custom Theme, G Logo on Spacebar en Key Shape Selection zijn overgenomen van het GPLv3-project [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) en bijgewerkt voor Gboard 18.8.0.
 
 
 ### Advanced voice typing (NGA)
-Gboard 18.8 heeft een "geavanceerde" dicteermachine (intern NGA/Jetson): spraakopdrachten die tekst bewerken en emoji invoegen, lang dicteren en de geconsolideerde spraakstack. Die staat uit voor een opnieuw ondertekende build; deze patch zet de flags aan en levert de formatter-bibliotheek (`libdictation_jni.so`) mee voor **arm64-v8a en armeabi-v7a**, uit de bijpassende Play-featuresplit van dezelfde build.
-
-- De patch voegt **geen** nieuwe optie aan de lijst toe. 18.8 kent precies twee dicteertypes — **Rambler** (de geavanceerde/agentic machine) en **Standard** (Parakeet, als die patch meedoet) — kies dus **Dicteertype → Rambler**.
-- Gboard weigert de machine zonder de formatter-bibliotheek ("native split is not loaded"). De bundel bevat hem, dus `adb logcat` toont `dictation payload loaded=true` en die melding niet.
-- Of Google's servers de machine vanaf jouw toestel accepteren blijft Google's beslissing, en de modellen per taal moeten beschikbaar zijn.
-- De bibliotheek hoort bij deze versie: een andere Gboard-build heeft zijn eigen split nodig.
+De patch schakelt geavanceerde dicteerfuncties in en bevat het passende dicteeronderdeel. Gboard controleert nog steeds of de herkenner met je taal kan starten. De kiezer heeft twee ingangen, **Rambler** en **Standaard** (Parakeet als de patch en het model klaar zijn). Zie [instellen en testen](../guides/gboard.md#advanced-voice-typing-nga).
 
 ### Use Bluetooth microphone
 Standaard zet `enable_use_bluetooth_setting` op false, waardoor de rij nooit verschijnt. Deze patch toont Gboard's schakelaar **Voice typing → Use Bluetooth microphone**; die schakelaar bepaalt daarna of opnames van de headset komen.
@@ -60,7 +58,7 @@ Standaard zet `enable_use_bluetooth_setting` op false, waardoor de rij nooit ver
 - Gboard past zijn eigen regels toe (Android-versie, voorkeur voor draad/USB, auto-apparaten kunnen worden uitgesloten). Een gekoppelde headset bewijst niets — dicteer met telefoon en headset bij verschillende geluiden.
 
 ### Rambler-werkbalk en terugdraai-extras (18.8)
-Drie optionele Rambler-gedragingen, elk uit in deze bèta:
+Drie functies die beschikbaar komen wanneer de extra patch is toegepast:
 
 - **Overflow-menu** op de zwevende Rambler-werkbalk, waar de secundaire acties staan.
 - **Herschreven tekst bewaren bij terugdraaien**: bij het terugdraaien van het volledige transcript naar de opgeschoonde tekst blijft de herschreven versie staan.
@@ -73,7 +71,7 @@ Drie flags die Gboard voor interne builds bewaart, via Gboard's **eigen override
 - **App-specifieke suggestiebalk** (`enable_dcontext_suggestion_bar`)
 - **Vierkante genormaliseerde zoekradius** (`square_normalized_search_radius`)
 
-Het scherm openen schrijft niets. Een schakelaar die je omzet wordt als expliciet Aan of Uit vastgelegd en na een herstart opnieuw toegepast; rijen die je nooit aanraakte houden Gboard's standaardwaarde. Elke schrijfactie wordt teruggelezen en een fout verschijnt als `Hidden flag switch did not take`.
+Het scherm openen schrijft niets. Een schakelaar die je omzet wordt als expliciet Aan of Uit vastgelegd en na een herstart opnieuw toegepast; de geselecteerde flags staan standaard aan en een bewuste Uit-keuze blijft behouden. Elke schrijfactie wordt teruggelezen en een fout verschijnt als `Hidden flag switch did not take`.
 
 ### AMOLED-donker toetsenbord
 Deze patch heeft geen eigen tegel in de themakiezer van Gboard; hij herkleurt het donkere palet dat
