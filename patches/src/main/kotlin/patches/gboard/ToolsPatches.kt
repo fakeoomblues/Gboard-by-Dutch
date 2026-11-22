@@ -11,6 +11,8 @@ import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoice1803ZhTwPatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFeatureMarkerPatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFlagValuePatch
+import patches.gboard.features.bluetoothmicrophone.gboardBluetoothMicrophoneFeatureMarkerPatch
+import patches.gboard.features.bluetoothmicrophone.gboardBluetoothMicrophoneFlagValuePatch
 import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
@@ -173,5 +175,29 @@ val gboardRamblerToolbarExtrasPatch = resourcePatch(
     dependsOn(
         gboardPatchesSettingsPatch,
         gboardRamblerExtrasMarkerPatch,
+    )
+}
+
+/**
+ * Gboard's own "Use Bluetooth microphone" voice-typing setting.
+ *
+ * Stock declares `enable_use_bluetooth_setting` false, so the row never appears on a normal build.
+ * This exposes the stock row; whether a recording is captured from the headset is decided by
+ * Gboard afterwards (`anis.c(Context)` plus its Android-version and input-device checks, which
+ * prefer wired/USB and can exclude car devices).
+ */
+@Suppress("unused")
+val gboardUseBluetoothMicrophonePatch = resourcePatch(
+    name = "Use Bluetooth microphone",
+    description = "Shows Gboard's Voice typing \u2192 Use Bluetooth microphone setting so dictation " +
+        "can capture from a paired headset. Routing stays Gboard's own decision.",
+    default = false,
+) {
+    compatibleWith(gboard)
+
+    dependsOn(
+        gboardPatchesSettingsPatch,
+        gboardBluetoothMicrophoneFeatureMarkerPatch,
+        gboardBluetoothMicrophoneFlagValuePatch,
     )
 }
