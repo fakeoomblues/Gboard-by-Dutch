@@ -289,17 +289,25 @@ internal val hideAiPatch = bytecodePatch(
                     it.parameterTypes.isEmpty() && it.returnType == "Z" &&
                         it.implementation?.instructions?.firstOrNull()?.opcode == Opcode.IGET_BOOLEAN
                 } ?: throw PatchException("place sheet Ask action has no boolean visibility answer")
-                if (show.implementation!!.registerCount < 1) throw PatchException("place sheet Ask action has no local register")
-                show.addInstructionsWithLabels(
-                    0,
-                    """
-                        sget-boolean v0, $SHAPES->HIDE_AI:Z
-                        if-eqz v0, :place_ask
-                        const/4 v0, 0x0
-                        return v0
-                    """,
-                    ExternalLabel("place_ask", show.implementation!!.instructions.first()),
-                )
+                // 26.47 compiles this to `iget-boolean v0,v0,field; return v0`: its only register is
+                // `this`, so an entry guard would clobber it before the field read. Change the answer
+                // on its way out instead: false stays false, true becomes !HIDE_AI.
+                val askReturns = show.implementation!!.instructions.withIndex()
+                    .filter { it.value.opcode == Opcode.RETURN }.map { it.index }.reversed()
+                if (askReturns.isEmpty()) throw PatchException("place sheet Ask action has no return")
+                for (r in askReturns) {
+                    val ret = show.implementation!!.instructions[r]
+                    val register = (ret as OneRegisterInstruction).registerA
+                    show.addInstructionsWithLabels(
+                        r,
+                        """
+                            if-eqz v$register, :place_ask
+                            sget-boolean v$register, $SHAPES->HIDE_AI:Z
+                            xor-int/lit8 v$register, v$register, 0x1
+                        """,
+                        ExternalLabel("place_ask", ret),
+                    )
+                }
             } else {
             val show = askClass.methods.singleOrNull {
                 it.parameterTypes.isEmpty() && it.returnType == "Ljava/lang/Boolean;" &&
@@ -380,16 +388,25 @@ internal val hideAiPatch = bytecodePatch(
         // Ask Maps in navigation (issues #17, #68): the navigation sheet's Gemini button and its voice session
         // only start when this says yes, as on a phone the server gives no Ask Maps.
         AskMapsInNavigationFingerprint.method.let { inNavigation ->
-            inNavigation.addInstructionsWithLabels(
-                0,
-                """
-                    sget-boolean v0, $SHAPES->HIDE_AI:Z
-                    if-eqz v0, :ask_maps_navigation
-                    const/4 v0, 0x0
-                    return v0
-                """,
-                ExternalLabel("ask_maps_navigation", inNavigation.implementation!!.instructions.first()),
-            )
+            // Its only register may be `this` (26.47's answer is `iget-boolean v0,v0,field; return v0`),
+            // so an entry guard would clobber `this` before the field read. Change the answer on its way
+            // out instead: false stays false, true becomes !HIDE_AI.
+            val returns = inNavigation.implementation!!.instructions.withIndex()
+                .filter { it.value.opcode == Opcode.RETURN }.map { it.index }.reversed()
+            if (returns.isEmpty()) throw PatchException("Ask Maps navigation check has no return")
+            for (r in returns) {
+                val ret = inNavigation.implementation!!.instructions[r]
+                val register = (ret as OneRegisterInstruction).registerA
+                inNavigation.addInstructionsWithLabels(
+                    r,
+                    """
+                        if-eqz v$register, :ask_maps_navigation
+                        sget-boolean v$register, $SHAPES->HIDE_AI:Z
+                        xor-int/lit8 v$register, v$register, 0x1
+                    """,
+                    ExternalLabel("ask_maps_navigation", ret),
+                )
+            }
         }
     }
 }

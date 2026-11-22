@@ -77,8 +77,17 @@ internal val hideAdsPatch = bytecodePatch(
     execute {
         markPatched("hideAdsPatched")
 
-        /** At method entry v0 is a free local in all three (none takes more than 4 parameter registers). */
+        /**
+         * At method entry v0 is a free local, but only when the method has a local at all: a method
+         * whose registers are just its parameters has `this` in v0, and overwriting it turns an
+         * object register into a boolean (the verifier then rejects the class on first use).
+         */
         fun app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.leaveEarlyWhenHidingAds(leave: String) {
+            val parameterRegisters = parameterTypes.size +
+                if (com.android.tools.smali.dexlib2.AccessFlags.STATIC.isSet(accessFlags)) 0 else 1
+            if (implementation!!.registerCount - parameterRegisters < 1) {
+                throw PatchException("$definingClass->$name has no local register for the hide-ads guard")
+            }
             addInstructionsWithLabels(
                 0,
                 """
