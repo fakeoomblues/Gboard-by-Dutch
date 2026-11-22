@@ -89,6 +89,20 @@ public final class NativeCarNavigationSession implements AutoCloseable {
     }
 
     /** Original version-1 dispatch, called locally after the adapter authenticates its host. */
+    /** The binder's transaction handler: 26.44 names it y, 26.47 z. Match the signature, not the name. */
+    private static Method findDispatch(Class<?> type) throws NoSuchMethodException {
+        for (Class<?> owner = type; owner != null; owner = owner.getSuperclass())
+            for (Method candidate : owner.getDeclaredMethods()) {
+                if (candidate.getReturnType() != boolean.class) continue;
+                Class<?>[] parameters = candidate.getParameterTypes();
+                if (parameters.length != 3 || parameters[0] != int.class ||
+                    parameters[1] != Parcel.class || parameters[2] != Parcel.class) continue;
+                candidate.setAccessible(true);
+                return candidate;
+            }
+        throw new NoSuchMethodException("car binder dispatch");
+    }
+
     static final class LocalProvider implements AutoCloseable {
         private final IBinder binder;
         private final Method dispatch;
@@ -96,8 +110,7 @@ public final class NativeCarNavigationSession implements AutoCloseable {
 
         LocalProvider(IBinder binder) throws Exception {
             this.binder = binder;
-            dispatch = binder.getClass().getDeclaredMethod("y", int.class, Parcel.class, Parcel.class);
-            dispatch.setAccessible(true);
+            dispatch = findDispatch(binder.getClass());
         }
 
         void start() throws Exception {

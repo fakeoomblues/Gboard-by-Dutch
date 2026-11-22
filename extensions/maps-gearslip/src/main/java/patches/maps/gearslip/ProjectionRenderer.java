@@ -385,9 +385,8 @@ public final class ProjectionRenderer {
 
     private void resizeCanvas(int w,int h,int density) throws Exception {
         finishTouch();
-        Object holder=displayHolder();
-        Object target=field(holder,"b");
-        if(!(target instanceof VirtualDisplay))throw new IllegalStateException("Maps virtual display ABI changed");
+        Object holder=displayHolder(controller);
+        VirtualDisplay target=virtualDisplay(holder);
         // Resize the existing display/window, including while a host keyboard is
         // open. Recreating the activity would invalidate its native editor.
         member(controller, "C").set(controller,drawing(w,h,density));
@@ -532,8 +531,8 @@ public final class ProjectionRenderer {
     private void showSurface() throws Exception {
         if (controller == null || surface == null || !surface.isValid() || intent == null) return;
         if (created) {
-            Object holder = displayHolder();
-            call(holder, "f", new Class<?>[]{Surface.class}, surface);
+            Object holder = displayHolder(controller);
+            setSurface(holder, surface);
             member(controller, "C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
             applyAreas();
             watchOccupied();
@@ -549,8 +548,8 @@ public final class ProjectionRenderer {
         initialUiState = null;
         nativeWidth = width; nativeHeight = height; nativeDpi = dpi;
         created = true;
-        Object target=field(displayHolder(),"b");
-        if(target instanceof VirtualDisplay)NativeCarScopes.display(this,((VirtualDisplay)target).getDisplay().getDisplayId());
+        VirtualDisplay target=virtualDisplay(displayHolder(controller));
+        NativeCarScopes.display(this,target.getDisplay().getDisplayId());
         appliedInsets = null; applyAreas();
         watchOccupied();
         if (resumed) { lifecycle(5); telemetrySession(true); telemetrySurface(decor()); }
@@ -573,8 +572,8 @@ public final class ProjectionRenderer {
         if (controller != null && created) {
             // Maps' original VirtualDisplay holder can change its output without destroying
             // the Presentation/window. Destroying it here invalidates IProxyInputConnection.
-            Object holder = displayHolder();
-            call(holder, "f", new Class<?>[]{Surface.class}, new Object[]{null});
+            Object holder = displayHolder(controller);
+            setSurface(holder, null);
         }
         if (surface != null) surface.release();
         surface = null;
@@ -645,7 +644,54 @@ public final class ProjectionRenderer {
         try { view.dispatchTouchEvent(event); } finally { event.recycle(); }
     }
     private Class<?> type(String name) throws ClassNotFoundException { return service.getClassLoader().loadClass(name); }
-    private Object displayHolder() throws Exception { return field(field(controller, "k"), "j"); }
+    /**
+     * Maps keeps the car VirtualDisplay in a small holder under the projection controller, but both
+     * the holder's location and its member names move between releases (26.44 presentation.j -> b/f,
+     * 26.47 bfgv.a -> bfdp.a with setter e). Find it by the types it must contain instead.
+     */
+    private static Object displayHolder(Object controller) throws Exception {
+        java.util.IdentityHashMap<Object, Boolean> seen = new java.util.IdentityHashMap<>();
+        java.util.ArrayDeque<Object[]> queue = new java.util.ArrayDeque<>();
+        queue.add(new Object[]{controller, 0});
+        while (!queue.isEmpty()) {
+            Object[] item = queue.poll();
+            Object value = item[0];
+            int depth = (Integer) item[1];
+            if (value == null || seen.put(value, Boolean.TRUE) != null) continue;
+            for (Class<?> type = value.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+                for (Field candidate : type.getDeclaredFields()) {
+                    if (java.lang.reflect.Modifier.isStatic(candidate.getModifiers())) continue;
+                    Class<?> declared = candidate.getType();
+                    if (VirtualDisplay.class.isAssignableFrom(declared)) return value;
+                    if (depth < 3 && declared.getName().indexOf('.') < 0) {
+                        candidate.setAccessible(true);
+                        queue.add(new Object[]{candidate.get(value), depth + 1});
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("Maps virtual display ABI changed");
+    }
+    private static VirtualDisplay virtualDisplay(Object holder) throws Exception {
+        for (Class<?> type = holder.getClass(); type != null; type = type.getSuperclass())
+            for (Field candidate : type.getDeclaredFields()) {
+                if (!VirtualDisplay.class.isAssignableFrom(candidate.getType())) continue;
+                candidate.setAccessible(true);
+                Object found = candidate.get(holder);
+                if (found instanceof VirtualDisplay) return (VirtualDisplay) found;
+            }
+        throw new IllegalStateException("Maps virtual display ABI changed");
+    }
+    private static void setSurface(Object holder, Surface surface) throws Exception {
+        for (Class<?> type = holder.getClass(); type != null; type = type.getSuperclass())
+            for (Method candidate : type.getDeclaredMethods()) {
+                if (candidate.getParameterCount() != 1 || candidate.getParameterTypes()[0] != Surface.class) continue;
+                candidate.setAccessible(true);
+                candidate.invoke(holder, surface);
+                return;
+            }
+        throw new IllegalStateException("Maps virtual display surface setter changed");
+    }
     private static Field member(Object target, String name) throws Exception {
         for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass())
             try { Field found = type.getDeclaredField(name); found.setAccessible(true); return found; } catch (NoSuchFieldException absent) {}

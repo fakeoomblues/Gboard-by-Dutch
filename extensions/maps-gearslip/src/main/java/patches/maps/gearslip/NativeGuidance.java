@@ -92,24 +92,40 @@ final class NativeGuidance implements AutoCloseable {
         try{return method(app,"rS").invoke(app);}
         catch(NoSuchMethodException older){return method(app,"pY").invoke(app);}
     }
+    /** A shape test for a provider's value. Maps renumbers its dependency slots every release. */
+    interface Shape{boolean matches(Object value)throws Exception;}
+    static boolean hasMethod(Object value,String name,int arguments){
+        for(Class<?> type=value.getClass();type!=null;type=type.getSuperclass())
+            for(java.lang.reflect.Method candidate:type.getDeclaredMethods())
+                if(candidate.getName().equals(name)&&candidate.getParameterCount()==arguments)return true;
+        return false;
+    }
+    /** The first slot whose value has the expected shape: 26.44 and 26.47 put them in different slots. */
+    static Object provider(Object component,String[] slots,Shape shape)throws Exception{
+        Exception last=null;
+        for(String slot:slots)try{
+            Object provider=field(component,slot);
+            Object value=method(provider,"a").invoke(provider);
+            if(value!=null&&shape.matches(value))return value;
+        }catch(ReflectiveOperationException|RuntimeException ignored){last=ignored;}
+        throw new IllegalStateException("Maps guidance provider changed: "+java.util.Arrays.toString(slots),last);
+    }
     static Object acquire(Object app)throws Exception{
-        // 26.44 inherits this cached component accessor from nsm. Do not call
-        // the protected e() factory, which creates another application manager.
         Object component=component(app);
-        Object provider=field(component,"bR");
-        return method(provider,"a").invoke(provider);
+        // The guidance source takes (marker, Executor); 26.44 slot bR, 26.47 slot bS.
+        return provider(component,new String[]{"bS","bR"},value->hasMethod(value,"a",2));
     }
     static Object acquireDistanceUtil(Object app)throws Exception{
-        Object component=component(app),provider=field(component,"hN");
-        Object util=method(provider,"a").invoke(provider);
-        // 26.44 names this awxs; 26.47 renames every obfuscated class, so check the shape instead:
-        // the utility converts a distance unit through a one-argument c(...).
-        boolean converts=false;
-        for(Class<?> owner=util.getClass();owner!=null&&!converts;owner=owner.getSuperclass())
-            for(java.lang.reflect.Method candidate:owner.getDeclaredMethods())
-                if(candidate.getName().equals("c")&&candidate.getParameterCount()==1){converts=true;break;}
-        if(!converts)throw new IllegalStateException("Maps distance utility changed");
-        return util;
+        Object component=component(app);
+        // The unit converter is the class whose c(unit) returns the same unit type:
+        // 26.44 awxs.c(cizm)cizm, 26.47 axju.c(cjkl)cjkl, in slots hN and hQ.
+        return provider(component,new String[]{"hQ","hN"},value->{
+            for(Class<?> owner=value.getClass();owner!=null;owner=owner.getSuperclass())
+                for(java.lang.reflect.Method candidate:owner.getDeclaredMethods())
+                    if(candidate.getName().equals("c")&&candidate.getParameterCount()==1&&
+                        candidate.getParameterTypes()[0]==candidate.getReturnType())return true;
+            return false;
+        });
     }
     /** The distance unit is whatever the utility converts through its one-argument c(...). */
     static Class<?> unitParameter(Object util)throws Exception{

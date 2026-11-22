@@ -58,12 +58,16 @@ public final class MapsGuidanceCoordinator {
     private void bind() {
         try {
             Object component=applicationComponent(app);
-            Object provider=field(component.getClass(),"hU").get(component);
-            Object actual=method(provider.getClass(),"a").invoke(provider);
-            // 26.44 calls the native manager bmxs; 26.47 reuses that name for another class and
-            // calls it bnfl (same parallel fields f/j/p/q).
-            String managerClass=actual.getClass().getName();
-            if(!managerClass.equals("bmxs")&&!managerClass.equals("bnfl"))throw new IllegalStateException("NATIVE_MANAGER");
+            // The native manager keeps the f/j/p/q slots. 26.44 reaches it through the component's hU
+            // provider, 26.47 through hX; hU there holds an aywx instead. Pick by shape, not by slot or
+            // class name, because both are renamed between releases.
+            Object actual=null;Exception wrong=null;
+            for(String slot:new String[]{"hX","hU"})try{
+                Object provider=field(component.getClass(),slot).get(component);
+                Object value=method(provider.getClass(),"a").invoke(provider);
+                if(value!=null&&field(value.getClass(),"f")!=null&&field(value.getClass(),"q")!=null){actual=value;break;}
+            }catch(ReflectiveOperationException|RuntimeException error){wrong=error;}
+            if(actual==null)throw new IllegalStateException("NATIVE_MANAGER",wrong);
             manager=actual;bound=true;
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }
