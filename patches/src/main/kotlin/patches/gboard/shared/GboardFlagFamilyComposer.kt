@@ -148,6 +148,11 @@ internal enum class GboardFlagFamilyFeature(
         RuntimeCallId.RAMBLER_APP_CONTEXT_RUNTIME_APPLY_FLAG_VALUE,
         GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
     ),
+    RAMBLER_TOOLBAR_EXTRAS(
+        1550,
+        RuntimeCallId.RAMBLER_EXTRAS_RUNTIME_APPLY_FLAG_VALUE,
+        GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
+    ),
     ;
 
     val spec: GboardFlagFamilyFeatureSpec

@@ -16,6 +16,7 @@ import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
 import patches.gboard.features.rambler.gboardRambler1803OfficialSelectorPatch
+import patches.gboard.features.ramblerextras.gboardRamblerExtrasFlagValuePatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
 /**
@@ -149,7 +150,30 @@ val gboardAdvancedVoiceTypingPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardAdvancedVoiceFeatureMarkerPatch,
         gboardAdvancedVoiceFlagValuePatch,
-        gboardAdvancedVoice1803ZhTwPatch,
         gboardRambler1803OfficialSelectorPatch,
+    )
+}
+
+
+/**
+ * Optional Rambler toolbar and revert behaviour.
+ *
+ * Three 18.8 paths that are off by default and that the core Rambler patch does not need:
+ * the overflow button on the floating Rambler toolbar, keeping the rewritten text when reverting
+ * from the full transcript, and passing edit history into a Jetson Lite request (only read while
+ * the Lite path is active). Kept as its own patch so the feature is visible in the list.
+ */
+@Suppress("unused")
+val gboardRamblerToolbarExtrasPatch = resourcePatch(
+    name = "Rambler toolbar & revert extras (18.8)",
+    description = "Adds the overflow button to the floating Rambler toolbar, keeps rewritten " +
+        "text when you revert a transcript, and passes edit history on the Jetson Lite path.",
+    default = false,
+) {
+    compatibleWith(gboard)
+
+    dependsOn(
+        gboardPatchesSettingsPatch,
+        gboardRamblerExtrasFlagValuePatch,
     )
 }

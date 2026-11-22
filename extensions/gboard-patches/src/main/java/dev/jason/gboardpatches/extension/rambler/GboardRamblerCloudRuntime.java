@@ -21,14 +21,6 @@ public final class GboardRamblerCloudRuntime {
      */
     public static final String JETSON_POSITION_INPUT_CURSOR_AFTER_DIFF_FLAG =
             "jetson_position_cursor_after_last_diff";
-    /** Adds the overflow button to the floating Rambler (AL) toolbar. Off by default in this beta. */
-    public static final String RAMBLER_AL_OVERFLOW_MENU_FLAG =
-            "enable_rambler_al_toolbar_overflow_menu";
-    /** Keeps the rewritten text when you revert from the full transcript to the cleaned-up text. */
-    public static final String RAMBLER_PRESERVE_REWRITTEN_ON_REVERT_FLAG =
-            "rambler_preserve_rewritten_text_on_revert";
-    /** Passes edit history into a Jetson Lite request; only read while the Lite path is active. */
-    public static final String JETSON_LITE_EDIT_HISTORY_FLAG = "jetson_lite_enable_edit_history";
 
     private GboardRamblerCloudRuntime() {
     }
@@ -43,9 +35,6 @@ public final class GboardRamblerCloudRuntime {
             case ENABLE_RAMBLER_AL_TOOLBAR_FLAG:
             case ENABLE_RAMBLER_TOOLBAR_AT_CURSOR_POSITION_FLAG:
             case JETSON_POSITION_INPUT_CURSOR_AFTER_DIFF_FLAG:
-            case RAMBLER_AL_OVERFLOW_MENU_FLAG:
-            case RAMBLER_PRESERVE_REWRITTEN_ON_REVERT_FLAG:
-            case JETSON_LITE_EDIT_HISTORY_FLAG:
                 return originalResult instanceof Boolean ? Boolean.TRUE : originalResult;
             case AD_ACTIVATION_TYPE_FLAG:
                 return originalResult instanceof Long
