@@ -720,6 +720,10 @@ private fun emitFlagFamilyRuntimeCall(call: RuntimeCallId, registers: String): S
         RuntimeCallId.RAMBLER_APP_CONTEXT_RUNTIME_APPLY_FLAG_VALUE,
         registers,
     )
+    RuntimeCallId.RAMBLER_EXTRAS_RUNTIME_APPLY_FLAG_VALUE -> RuntimeCallEmitter.invoke(
+        RuntimeCallId.RAMBLER_EXTRAS_RUNTIME_APPLY_FLAG_VALUE,
+        registers,
+    )
     else -> error("Runtime call $call does not belong to the flag family")
 }
 

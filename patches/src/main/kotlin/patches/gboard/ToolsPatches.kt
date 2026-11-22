@@ -15,7 +15,6 @@ import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
-import patches.gboard.features.rambler.gboardRambler1803OfficialSelectorPatch
 import patches.gboard.features.ramblerextras.gboardRamblerExtrasFlagValuePatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
@@ -132,7 +131,7 @@ val gboardHiddenFlagsPatch = resourcePatch(
  * The client ships in the APK (`AgenticDictationIme`, `libs/genaivoice`) but is gated behind
  * signature-scoped flags a re-signed build never receives. This forces `enable_nga`, the
  * consolidated speech-stack features, split feature-module install, sticky mic and SODA long-form,
- * and registers Rambler as an official selectable backend. It is off by default because the engine
+ * It is off by default because the engine
  * may still require server eligibility or Google's TTS/Scribe packages, which the marker exposes as
  * package queries.
  */
@@ -150,7 +149,6 @@ val gboardAdvancedVoiceTypingPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardAdvancedVoiceFeatureMarkerPatch,
         gboardAdvancedVoiceFlagValuePatch,
-        gboardRambler1803OfficialSelectorPatch,
     )
 }
 
