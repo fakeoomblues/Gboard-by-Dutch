@@ -161,6 +161,28 @@ The 26.44 path is unchanged and still verified: `MapsWarningVoiceTest` and `Maps
 pass with `MAPS_ORIGINAL_APK` pointing at 26.44.06.1006895251 (51 pinned contracts, resume bytecode,
 pinned dispatch fence).
 
+## Android Auto options: the four menu switches
+
+The `Android Auto options` patch is on by default, but every switch inside it is off by default, so
+nothing changes until you tick one. In Morphe they appear under `Android Auto options` in the Patches
+list, each with the title shown here.
+
+| Menu option | Key | Default | What it changes | What it does not do |
+|---|---|---|---|---|
+| **Satellite view in the car** | `carSatellite` | off | Replaces the `false` fallback of Maps' `car_satellite` setting at its 3 read sites, so the car map can start on satellite instead of the plain map. | Does not pick a layer for you permanently: a value you set in Maps still wins, and the imagery still needs the tiles Maps already fetches. |
+| **Restore satellite view on startup** | `satelliteOnStartup` | off | Replaces the `false` fallback of `satellite_on_at_startup` at its 1 read site, so a session that used satellite starts on it again. | Same: your own choice wins, no extra content is requested. |
+| **Keep your navatar in the car** | `navatarKeepState` | off | Makes the navatar controller's private guard answer `false`, so `a()` (colour) and `e()` (model) return what you already have instead of the plain arrow. | Writes nothing: no setting is changed, and phone behaviour is untouched. It only changes what the car is told. |
+| **Preselect a navatar** | `navatarModel` | `Maps decides` | Overrides the model-name getter result at its 3 read sites and forces `custom_chevron_opt_in` to 1 at its 4 sites, so one of the ten built-in navatars counts as chosen. | Does not download or create a model: it must be one Maps already fetched for your account, and colour is left alone. |
+
+Reported on every run with the selected switches:
+
+```
+Android Auto options: car_satellite default flipped at 3 read sites
+Android Auto options: satellite_on_at_startup default flipped at 1 read sites
+Android Auto options: navatar preset Navatar_Sedan at 3 read sites (custom chevron opted in at 4)
+Android Auto options: navatar guard answers no at Lvot; (car keeps its avatar)
+```
+
 ## Navatar: the third Android Auto option
 
 `Android Auto options` now exposes `navatarKeepState` (off by default) alongside `carSatellite` and
@@ -220,7 +242,7 @@ the preset as chosen. Model name lands at 3 read sites (`Lvot.e`, `Lvov.e`, `Lvo
 
 Colour is deliberately not exposed: ids come from the server palette
 (`NavatarsColorPickerItemViewModelImpl(color=<int>, colorName=<server name>)` from
-`Naviagtion2Parameters.NavatarsConfig.ColorConfig`), so there is no local set to validate against.
+`Navigation2Parameters.NavatarsConfig.ColorConfig`), so there is no local set to validate against.
 
 ### Custom navatars are a separate project
 
