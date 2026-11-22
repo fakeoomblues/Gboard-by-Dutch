@@ -206,7 +206,7 @@ public final class ProjectionRenderer {
     }
     public void configurationChanged(Configuration value) {
         if (value == null) return;
-        configuration = created ? canvasConfiguration(value,nativeWidth,nativeHeight,nativeDpi) : new Configuration(value);
+        configuration = created ? canvasConfiguration(value,nativeWidth,nativeHeight,nativeDpi) : themed(new Configuration(value));
         guard(() -> {
             if (created) {
                 member(controller, "o").set(controller, configuration);
@@ -414,7 +414,31 @@ public final class ProjectionRenderer {
         value.screenHeightDp=Math.round(h*160f/density);
         value.smallestScreenWidthDp=Math.min(value.screenWidthDp,value.screenHeightDp);
         value.orientation=w>=h?Configuration.ORIENTATION_LANDSCAPE:Configuration.ORIENTATION_PORTRAIT;
+        return themed(value);
+    }
+    /**
+     * Carry the app's own theme qualifiers onto the car surface.
+     *
+     * "Black theme" and "Rectangle shapes" ship -mcc9999 / -mnc9999 resource variants and the phone
+     * gets them because the patch wraps each Activity's configuration. The car UI is drawn in a
+     * Presentation inside our VirtualDisplay, which never goes through that Activity hook, and the
+     * configuration we hand it comes from the host - so the car resolved the light, rounded resources
+     * even with both toggles on. mcc/mnc are Morphe's reserved 9999 codes; the host's own day/night is
+     * left alone unless the user enabled the black theme.
+     */
+    static Configuration themed(Configuration value) {
+        if (!toggle("RECT") && !toggle("BLACK")) return value;
+        if (toggle("RECT")) value.mnc = 9999;
+        if (toggle("BLACK")) {
+            value.mcc = 9999;
+            value.uiMode = (value.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) | Configuration.UI_MODE_NIGHT_YES;
+        }
         return value;
+    }
+    /** Read one Shapes toggle without a compile-time dependency on the other extension module. */
+    static boolean toggle(String name) {
+        try { return Class.forName("org.ungoogled.ui.Shapes").getField(name).getBoolean(null); }
+        catch (Throwable absent) { return false; }
     }
     /** Ends a drag the host stopped feeding (for example on leaving pan mode). */
     public void endGesture() { guard(this::finishTouch); }
