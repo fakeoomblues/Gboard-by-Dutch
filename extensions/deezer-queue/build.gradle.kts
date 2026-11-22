@@ -1,7 +1,7 @@
 extension { name = "extensions/deezer-queue.mpe" }
 android {
     namespace = "nl.johninnl.deezer.queue"
-    defaultConfig { minSdk = 28 }
+    defaultConfig { minSdk = 26 }
 }
 dependencies {
     compileOnly("androidx.media:media:1.6.0")

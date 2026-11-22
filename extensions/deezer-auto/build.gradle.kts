@@ -8,7 +8,7 @@ val carAppApiArchive by configurations.creating {
 
 android {
     namespace = "nl.johninnl.deezer.auto"
-    defaultConfig { minSdk = 28 }
+    defaultConfig { minSdk = 26 }
     buildTypes.getByName("release") {
         isMinifyEnabled = true
         proguardFiles("proguard-rules.pro")
@@ -16,6 +16,8 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.gson)
     implementation("androidx.car.app:app:$carAppVersion") {
         // The token crosses the host Binder boundary using Deezer's existing compat ABI.
         exclude(group = "androidx.media", module = "media")

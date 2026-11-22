@@ -35,6 +35,6 @@ Deezer's media-browser service validates the caller package and signing certific
 
 ## Before using
 
-Sign in to Deezer on the phone first. A patched APK is signed with a new certificate and cannot be updated in place from the Play Store.
+Use the standard `deezer.android.app` installation and sign in on the phone first. Select that Deezer entry in your car host if an older cloned copy is also installed. A patched APK is signed with a new certificate and cannot be updated in place from the Play Store.
 
 [Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)

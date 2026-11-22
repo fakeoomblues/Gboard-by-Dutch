@@ -16,14 +16,15 @@ public final class QueueHandles {
     private Object source, cursor, holder;
     private long epoch, sourceEpoch, mutationEpoch;
     private final Map<Long, Entry> handles = new HashMap<>();
-    private final Map<Integer, Entry> positions = new HashMap<>();
+    private final Map<Long, Entry> nativeIds = new HashMap<>();
 
     private static final class Entry {
         final long handle;
         final int position;
+        final long rawId;
         final Object occurrence;
-        Entry(long handle, int position, Object occurrence) {
-            this.handle = handle; this.position = position; this.occurrence = occurrence;
+        Entry(long handle, int position, long rawId, Object occurrence) {
+            this.handle = handle; this.position = position; this.rawId = rawId; this.occurrence = occurrence;
         }
     }
     private static final class Request {
@@ -41,6 +42,15 @@ public final class QueueHandles {
         CommandFrame(Request request) { this.request = request; }
     }
 
+    private String lastRejection;
+    private String lastPublicationFailure;
+    private void report(String reason) {
+        if (reason.equals(lastRejection)) return;
+        lastRejection = reason;
+        try { android.util.Log.w("DeezerQueue", reason); } catch (RuntimeException unavailable) { }
+    }
+    private List<Long> reject(String reason) { lastPublicationFailure=reason; report(reason); return null; }
+
     public QueueHandles(NativeQueue owner) { this.owner = owner; }
 
     /** Each publication gets fresh IDs, including same-content reloads and A -> B -> A. */
@@ -50,29 +60,53 @@ public final class QueueHandles {
         synchronized (nativeQueue.queueLock()) {
             synchronized (this) {
                 clear();
-                if (owner != nativeQueue || producingSource == null ||
-                        nativeQueue.queueSource() != producingSource || nativeQueue.queueSourceEpoch() != producingEpoch ||
-                        producingMutation < 0 || QueueMutation.version() != producingMutation ||
-                        nativeQueue.queueCursorStamp() != producingMutation || nativeQueue.queueSourceStamp() != producingMutation || occurrences == null ||
-                        rawIds.size() != occurrences.size() || rawIds.isEmpty() || rawIds.size() > MAX_ROWS) return null;
+                if (owner != nativeQueue || producingSource == null) return reject("publication: missing source owner");
+                if (nativeQueue.queueSource() != producingSource || nativeQueue.queueSourceEpoch() != producingEpoch)
+                    return reject("publication: source identity changed");
+                if (producingMutation < 0 || QueueMutation.version() != producingMutation)
+                    return reject("publication: provider generation changed");
+                if (nativeQueue.queueCursorStamp() != producingMutation || nativeQueue.queueSourceStamp() != producingMutation)
+                    return reject("publication: cursor generation differs");
+                if (occurrences == null || rawIds.size() != occurrences.size() || rawIds.isEmpty() || rawIds.size() > MAX_ROWS)
+                    return reject("publication: invalid occurrence window");
                 Object currentCursor = nativeQueue.queueCursor();
                 long currentEpoch = nativeQueue.queueEpoch();
-                if (currentCursor == null || currentEpoch < 0 || producingEpoch < 0) return null;
+                if (currentCursor == null || currentEpoch < 0 || producingEpoch < 0) return reject("publication: playback cursor not ready");
+                // Native 9002703 resolves hashed IDs over the FULL queue, not just its exported window.
+                // Scan once so an off-window hash collision cannot redirect a valid-looking row.
+                int count = nativeQueue.queueSize();
+                if (count <= 0 || count > MAX_ROWS || !(producingSource instanceof List)) return reject("publication: unsupported native queue size/type ("+count+")");
+                List<?> domain = (List<?>) producingSource;
+                if (domain.size() > MAX_ROWS) return reject("publication: source queue exceeds mapping bound");
+                Map<Long, Object> full = new HashMap<>();
+                java.util.Set<Integer> domainPositions = new java.util.HashSet<>();
+                for (Object row : domain) {
+                    if (row == null) return reject("publication: null source occurrence");
+                    int position = nativeQueue.queuePosition(row);
+                    if (position < 0 || position >= count || !domainPositions.add(position)) return reject("publication: invalid source position ("+position+"/"+count+")");
+                    long raw = nativeQueue.queueRawId(row);
+                    if (raw == -1 || full.put(raw, row) != null) return reject("publication: ambiguous native queue IDs");
+                }
                 List<Long> ids = new ArrayList<>(rawIds.size());
+                java.util.Set<Integer> seenPositions = new java.util.HashSet<>();
                 for (int i = 0; i < rawIds.size(); i++) {
                     Long raw = rawIds.get(i);
-                    if (raw == null || raw < 0 || raw > Integer.MAX_VALUE || positions.containsKey(raw.intValue())) {
+                    Object provided = occurrences.get(i);
+                    if (raw == null || raw == -1 || provided == null || nativeIds.containsKey(raw)) {
                         clear(); return null;
                     }
-                    int position = raw.intValue();
-                    Object actual = nativeQueue.queueItem(position);
-                    Object provided = occurrences.get(i);
-                    if (actual == null || provided == null || nativeQueue.queuePosition(provided) != position ||
-                            !nativeQueue.queueSame(provided, actual)) { clear(); return null; }
+                    int position = nativeQueue.queuePosition(provided);
+                    Object sourceOccurrence = full.get(raw);
+                    Object actual = position < 0 || position >= count ? null : nativeQueue.queueItem(position);
+                    if (!seenPositions.add(position) || actual == null || sourceOccurrence == null ||
+                            nativeQueue.queueRawId(provided) != raw || nativeQueue.queueRawId(actual) != raw ||
+                            !nativeQueue.queueSame(sourceOccurrence, provided) || !nativeQueue.queueSame(provided, actual)) {
+                        clear(); return reject("publication: source and playback rows differ");
+                    }
                     long id = NEXT.getAndIncrement();
                     if (id < 0x100000000L) { clear(); return null; }
-                    Entry entry = new Entry(id, position, actual);
-                    handles.put(id, entry); positions.put(position, entry); ids.add(id);
+                    Entry entry = new Entry(id, position, raw, actual);
+                    handles.put(id, entry); nativeIds.put(raw, entry); ids.add(id);
                 }
                 if (currentCursor != nativeQueue.queueCursor() || currentEpoch != nativeQueue.queueEpoch() ||
                         producingEpoch != nativeQueue.queueSourceEpoch() || producingSource != nativeQueue.queueSource() ||
@@ -93,19 +127,43 @@ public final class QueueHandles {
             sourceEpoch == nativeQueue.queueSourceEpoch() && QueueMutation.version() == mutationEpoch &&
             nativeQueue.queueCursorStamp() == mutationEpoch && nativeQueue.queueSourceStamp() == mutationEpoch && !handles.isEmpty();
     }
+    /** Mapping freshness is independent of native playback eligibility. */
+    public String describe() {
+        NativeQueue q=nativeOwner();if(q==null)return "retired";
+        try { synchronized(q.queueLock()){ synchronized(this){
+            return "entries="+handles.size()+" current="+live(q)+" eligible="+q.queueAllowed()+
+                " lastPublicationFailure="+lastPublicationFailure+" readiness="+lastRejection+
+                " provider="+QueueMutation.version()+" capturedProvider="+mutationEpoch+
+                " targetStamp="+q.queueCursorStamp()+" sourceStamp="+q.queueSourceStamp()+
+                " cursorEpoch="+epoch+"/"+q.queueEpoch()+" sourceEpoch="+sourceEpoch+"/"+q.queueSourceEpoch()+
+                " cursorSame="+(cursor==q.queueCursor())+" sourceSame="+(source==q.queueSource())+" nativeSize="+q.queueSize();
+        }}}catch(RuntimeException failure){return failure.getClass().getSimpleName()+(failure instanceof ClassCastException?": "+failure.getMessage():"");}
+    }
+    public boolean mapped() {
+        NativeQueue nativeQueue = nativeOwner();
+        if (nativeQueue == null) return false;
+        synchronized (nativeQueue.queueLock()) {
+            synchronized (this) { return live(nativeQueue); }
+        }
+    }
     public boolean ready() {
         NativeQueue nativeQueue = nativeOwner();
         if (nativeQueue == null) return false;
         synchronized (nativeQueue.queueLock()) {
-            synchronized (this) { return live(nativeQueue) && nativeQueue.queueAllowed(); }
+            synchronized (this) {
+                if (!live(nativeQueue)) { report("selection unavailable: no current queue snapshot"); return false; }
+                boolean allowed = nativeQueue.queueAllowed();
+                if (!allowed) report("selection unavailable: native policy or interruption");
+                return allowed;
+            }
         }
     }
     public long active(long rawId) {
         NativeQueue nativeQueue = nativeOwner();
-        if (nativeQueue == null || rawId < 0 || rawId > Integer.MAX_VALUE) return -1;
+        if (nativeQueue == null || rawId == -1) return -1;
         synchronized (nativeQueue.queueLock()) {
             synchronized (this) {
-                Entry entry = positions.get((int) rawId);
+                Entry entry = nativeIds.get(rawId);
                 Object current = nativeQueue.queueCurrent();
                 return live(nativeQueue) && entry != null && current != null &&
                     nativeQueue.queueSame(entry.occurrence, current) ? entry.handle : -1;
@@ -131,7 +189,8 @@ public final class QueueHandles {
         Request request = new Request(this, nativeQueue, entry);
         REQUEST.set(request);
         try {
-            nativeQueue.queueDispatch(entry.position);
+            nativeQueue.queueDispatch(entry.rawId);
+            if (!request.consumed) report("selection dispatch did not reach selected-row consumption");
             return request.consumed;
         } finally {
             if (previous == null) REQUEST.remove(); else REQUEST.set(previous);
@@ -178,7 +237,7 @@ public final class QueueHandles {
         } catch (RuntimeException failure) { session.invalidate(); return false; }
     }
 
-    private void clear() { handles.clear(); positions.clear(); source = null; cursor = null; holder = null; }
+    private void clear() { handles.clear(); nativeIds.clear(); source = null; cursor = null; holder = null; }
     public synchronized void invalidate() { clear(); }
     public synchronized void retire() { clear(); owner = null; }
 }

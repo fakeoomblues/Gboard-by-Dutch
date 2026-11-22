@@ -1,6 +1,6 @@
 package nl.johninnl.deezer.queue;
 
-/** Implemented by the Kotlin patch using the inspected original 9.0.26.3 ABI. */
+/** Implemented by the Kotlin patch using the inspected original 9002703 ABI. */
 public interface NativeQueue {
     Object queueLock();
     Object queueHolder();
@@ -12,6 +12,8 @@ public interface NativeQueue {
     long queueEpoch();
     Object queueItem(int position);
     int queuePosition(Object item);
+    long queueRawId(Object item);
+    int queueSize();
     boolean queueSame(Object left, Object right);
     boolean queueAllowed();
     Object queueCurrent();

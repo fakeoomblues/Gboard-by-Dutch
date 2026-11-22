@@ -35,6 +35,6 @@ De mediabrowserservice van Deezer controleert pakket en ondertekeningscertificaa
 
 ## Voor gebruik
 
-Meld je eerst op de telefoon aan bij Deezer. Een gepatchte APK heeft een nieuw certificaat en kan niet in-place via de Play Store worden bijgewerkt.
+Gebruik de standaardinstallatie `deezer.android.app` en meld je eerst op de telefoon aan. Kies die Deezer-vermelding in de autohost als er ook nog een oudere gekloonde kopie is geïnstalleerd. Een gepatchte APK heeft een nieuw certificaat en kan niet in-place via de Play Store worden bijgewerkt.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md) · [Compatibiliteit en standaardkeuzes](../reference/catalogue.md)

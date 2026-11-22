@@ -7,6 +7,31 @@ import java.util.List;
 import org.junit.Test;
 
 public class QueueHandlesTest {
+    @Test public void mediaSessionAdvertisesImplementedStandardActionsWithoutInventingSkipAvailability() {
+        long required = 4L | 2L | 1L | 1024L | 2048L;
+        for (long nativeActions : new long[]{0, 257330, 16 | 32, 1L << 39}) {
+            long exported = QueueSession.standardActions(nativeActions);
+            assertEquals(required, exported & required);
+            assertEquals(nativeActions & (16 | 32 | 4096), exported & (16 | 32 | 4096));
+            assertEquals(nativeActions & ~required, exported & ~required);
+        }
+    }
+
+    @Test public void currentSourceCanBeMappedAfterTheIndependentPlaybackCursorArrives() {
+        Native n = new Native();
+        QueueHandles handles = new QueueHandles(n);
+        List<Long> raw = Arrays.asList(n.raw(0), n.raw(1), n.raw(2));
+        n.cursorStamp = -1;
+        assertNull(handles.replace(n.source, n.rows, raw, n.sourceEpoch, n.sourceStamp));
+        assertFalse(handles.mapped());
+        n.cursorStamp = n.sourceStamp;
+        assertNotNull(handles.replace(n.source, n.rows, raw, n.sourceEpoch, n.sourceStamp));
+        assertTrue(handles.mapped());
+        n.allowed = false;
+        assertTrue(handles.mapped());
+        assertFalse(handles.ready());
+    }
+
     static final class Row {
         final String song; final int occurrence, position;
         Row(String song, int occurrence, int position) {
@@ -16,12 +41,13 @@ public class QueueHandlesTest {
     static final class Command { final int position; Command(int position) { this.position = position; } }
     static final class Native implements NativeQueue, SourceEpoch {
         final Object lock = new Object(), holder = new Object();
-        Object cursor = new Object(), source = new Object();
+        Object cursor = new Object(), source;
         long epoch = 1, sourceEpoch = 1;
         long cursorStamp = QueueMutation.version(), sourceStamp = QueueMutation.version();
         int sourceReads, advanceOnSourceRead = -1;
         boolean allowed = true, failStampReads;
         List<Row> rows = Arrays.asList(new Row("A", 0, 0), new Row("X", 1, 1), new Row("A", 2, 2));
+        Native() { source = rows; }
         int events, reads, currentPosition;
         List<Row> played = new ArrayList<>();
         Runnable afterEvent, beforeConsume;
@@ -43,6 +69,13 @@ public class QueueHandlesTest {
         public long queueEpoch() { return epoch; }
         public Object queueItem(int position) { reads++; return position >= 0 && position < rows.size() ? rows.get(position) : null; }
         public int queuePosition(Object item) { return ((Row) item).position; }
+        final java.util.Map<Integer, Long> forcedIds = new java.util.HashMap<>();
+        public long queueRawId(Object item) {
+            Row row = (Row) item;
+            return forcedIds.getOrDefault(row.position, (long) java.util.Objects.hash(441L, row.song, row.occurrence));
+        }
+        long raw(int position) { return queueRawId(rows.get(position)); }
+        public int queueSize() { return rows.size(); }
         public boolean queueSame(Object left, Object right) {
             if (!(left instanceof Row) || !(right instanceof Row)) return false;
             Row a = (Row) left, b = (Row) right;
@@ -53,7 +86,9 @@ public class QueueHandlesTest {
         public void queueDispatch(long rawId) {
             events++;
             if (afterEvent != null) { Runnable action = afterEvent; afterEvent = null; action.run(); }
-            QueueHandles.selectedCommand(this, new Command((int) rawId));
+            for (Row row : rows) if (queueRawId(row) == rawId) {
+                QueueHandles.selectedCommand(this, new Command(row.position)); return;
+            }
         }
         public void queueCommand(Object command) {
             if (beforeConsume != null) { Runnable action = beforeConsume; beforeConsume = null; action.run(); }
@@ -61,12 +96,12 @@ public class QueueHandlesTest {
             if (QueueHandles.consume(holder, selected)) played.add(selected);
         }
         void replaceRows(List<Row> replacement) {
-            rows = replacement; cursor = new Object(); source = new Object(); epoch++; sourceEpoch++;
+            rows = replacement; cursor = new Object(); source = rows; epoch++; sourceEpoch++;
         }
     }
     private List<Long> publish(QueueHandles session, Native nativeQueue) {
         List<Long> positions = new ArrayList<>();
-        for (Row row : nativeQueue.rows) positions.add((long) row.position);
+        for (Row row : nativeQueue.rows) positions.add(nativeQueue.queueRawId(row));
         return session.replace(nativeQueue.source, nativeQueue.rows, positions, nativeQueue.sourceEpoch, nativeQueue.sourceStamp);
     }
 
@@ -74,7 +109,7 @@ public class QueueHandlesTest {
         Native n = new Native(); QueueHandles session = new QueueHandles(n);
         List<Long> ids = publish(session, n);
         assertNotEquals(ids.get(0), ids.get(2));
-        assertEquals(ids.get(0).longValue(), session.active(0));
+        assertEquals(ids.get(0).longValue(), session.active(n.raw(0)));
         assertTrue(session.select(ids.get(2)));
         assertSame(n.rows.get(2), n.played.get(0));
         assertEquals(2, n.played.get(0).occurrence);
@@ -87,7 +122,7 @@ public class QueueHandlesTest {
         assertFalse(session.select(-1)); assertFalse(session.select(0)); assertFalse(session.select(Long.MAX_VALUE));
         n.allowed = false; assertFalse(session.ready()); assertFalse(session.select(ids.get(2)));
         n.allowed = true; n.replaceRows(Arrays.asList(new Row("B", 0, 0)));
-        assertFalse(session.select(ids.get(0))); assertEquals(-1, session.active(0));
+        assertFalse(session.select(ids.get(0))); assertEquals(-1, session.active(n.raw(0)));
         assertEquals(0, n.events); assertTrue(n.played.isEmpty());
     }
 
@@ -114,7 +149,7 @@ public class QueueHandlesTest {
         n.rows = oldRows; n.cursor = oldCursor; n.source = oldSource;
         n.epoch++; n.sourceEpoch++;
         assertFalse(session.select(ids.get(0)));
-        assertNull(session.replace(oldSource, oldRows, Arrays.asList(0L, 1L, 2L), oldEpoch, n.sourceStamp));
+        assertNull(session.replace(oldSource, oldRows, Arrays.asList(n.raw(0), n.raw(1), n.raw(2)), oldEpoch, n.sourceStamp));
         assertFalse(session.ready()); assertTrue(n.played.isEmpty());
         QueueSource delayed = new QueueSource(3, oldSource, n);
         n.sourceEpoch++; delayed.seal(); assertFalse(delayed.current());
@@ -153,7 +188,7 @@ public class QueueHandlesTest {
     @Test public void invalidationAndTeardownRetireAllHandles() {
         Native n = new Native(); QueueHandles session = new QueueHandles(n);
         List<Long> ids = publish(session, n);
-        assertNull(session.replace(n.source, n.rows, Arrays.asList(0L, 0L, 2L), n.sourceEpoch, n.sourceStamp));
+        assertNull(session.replace(n.source, n.rows, Arrays.asList(n.raw(0), n.raw(0), n.raw(2)), n.sourceEpoch, n.sourceStamp));
         assertFalse(session.select(ids.get(0)));
         ids = publish(session, n); session.invalidate(); assertFalse(session.select(ids.get(0)));
         ids = publish(session, n); session.retire(); assertFalse(session.ready()); assertFalse(session.select(ids.get(0)));
@@ -163,6 +198,7 @@ public class QueueHandlesTest {
     @Test public void snapshotWorkIsLinearAndSelectionReadsOneDirectRow() {
         Native n = new Native(); n.rows = new ArrayList<>();
         for (int i = 0; i < 1000; i++) n.rows.add(new Row("same-song", i, i));
+        n.source = n.rows;
         QueueHandles session = new QueueHandles(n);
         List<Long> ids = publish(session, n); assertEquals(1000, n.reads);
         assertTrue(session.select(ids.get(999))); assertEquals(1002, n.reads);
@@ -207,6 +243,32 @@ public class QueueHandlesTest {
         assertTrue(QueueMutation.identityKeys(Arrays.asList("BOOKMARK", "MEDIA_ID")));
     }
 
+    @Test public void nativeTrackMetadataRefreshMayRewriteOnlyTheSelectedIdentityUnchanged() {
+        List<String> keys = Arrays.asList("MEDIA_ID", "MEDIA_TYPE", "MEDIA_VERSION", "ORIGIN_ID", "FALLBACK_ID",
+            "PUID", "TITLE", "TYPE", "ALBUM_ID", "ALBUM_NAME", "ARTIST_ID", "ARTIST_NAME", "ARTIST_PICTURE",
+            "BOOKMARK", "HEARD_STATUS", "DURATION", "COVER_INFO", "COVER_TYPE", "EXTERNAL_URL", "LYRICS_ID",
+            "LYRICS_STATUS", "OPTIONS", "AVAILABLE_FORMATS", "STREAMING_QUALITY", "LAST_STREAMING_QUALITY",
+            "STREAMING_URL", "PAYLOAD", "EXPLICIT_LYRICS_STATUS", "EXPLICIT_COVER_STATUS", "TRACK_TOKEN",
+            "TRACK_TOKEN_EXPIRATION_TIME_MILLIS", "AUTHORS", "COMPOSERS", "ARTISTS", "GAIN", "TRACK_NUMBER", "DISK_NUMBER");
+        String selection = "MEDIA_ID=? AND MEDIA_TYPE=?";
+        String[] args = {"native-id", "song"};
+        // This full native refresh was formerly classified as a replacement merely because
+        // MEDIA_ID/MEDIA_TYPE were present, stranding the unchanged cursors at epoch 22.
+        assertTrue(QueueMutation.identityKeys(keys));
+        assertTrue(QueueMutation.metadataRefresh(keys, selection, args, "native-id", "song"));
+        assertFalse(QueueMutation.metadataRefresh(keys, selection, args, "different-id", "song"));
+        assertFalse(QueueMutation.metadataRefresh(keys, selection, args, "native-id", "episode"));
+        assertFalse(QueueMutation.metadataRefresh(keys, null, args, "native-id", "song"));
+        assertFalse(QueueMutation.metadataRefresh(keys, "MEDIA_ID=?", args, "native-id", "song"));
+        assertFalse(QueueMutation.metadataRefresh(keys, selection, null, "native-id", "song"));
+        assertFalse(QueueMutation.metadataRefresh(keys, selection, new String[]{"native-id"}, "native-id", "song"));
+        for (String structural : Arrays.asList("POSITION", "ORIGINAL_POSITION", "AUDIO_CONTEXT_ID", "rowid", "_rowid_", "unknown_future_field")) {
+            List<String> changed = new ArrayList<>(keys); changed.add(structural);
+            assertFalse(structural, QueueMutation.metadataRefresh(changed, selection, args, "native-id", "song"));
+        }
+        assertFalse(QueueMutation.metadataRefresh(Arrays.asList("MEDIA_ID", "TITLE"), selection, args, "native-id", "song"));
+    }
+
     @Test public void nativeProviderFailureIsPreservedAndMutationAlwaysEnds() {
         RuntimeException original = new RuntimeException("native provider failure");
         NativeProvider provider = (NativeProvider) java.lang.reflect.Proxy.newProxyInstance(
@@ -242,20 +304,43 @@ public class QueueHandlesTest {
     @Test public void publishedWindowUsesNativePositionsAndNeverExpandsToPhoneQueue() {
         Native n = new Native(); n.rows = new ArrayList<>();
         for (int i = 0; i < 80; i++) n.rows.add(new Row("track-" + i, i, i));
+        n.source = n.rows;
         QueueHandles session = new QueueHandles(n);
         List<Row> window = n.rows.subList(20, 51);
-        List<Long> positions = new ArrayList<>(); for (Row row : window) positions.add((long) row.position);
+        List<Long> positions = new ArrayList<>(); for (Row row : window) positions.add(n.queueRawId(row));
         List<Long> ids = session.replace(n.source, window, positions, n.sourceEpoch, n.sourceStamp);
         assertEquals(31, ids.size()); assertEquals(80, n.rows.size());
-        assertEquals(-1, session.active(0));
+        assertEquals(-1, session.active(n.raw(0)));
         n.currentPosition = 31;
-        assertEquals(ids.get(11).longValue(), session.active(31));
+        assertEquals(ids.get(11).longValue(), session.active(n.raw(31)));
         assertTrue(session.select(ids.get(0))); assertSame(n.rows.get(20), n.played.get(0));
         // Ordinary native phone selection remains independent of exported handles/window.
         QueueHandles.command(n, new Command(79));
         assertSame(n.rows.get(79), n.played.get(1));
-        List<Long> crossed = session.replace(n.source, n.rows.subList(30, 61),
-            positions.stream().map(value -> value + 10).collect(java.util.stream.Collectors.toList()), n.sourceEpoch, n.sourceStamp);
+        List<Long> nextIds = new ArrayList<>();
+        for (Row row : n.rows.subList(30, 61)) nextIds.add(n.queueRawId(row));
+        List<Long> crossed = session.replace(n.source, n.rows.subList(30, 61), nextIds, n.sourceEpoch, n.sourceStamp);
         assertEquals(31, crossed.size()); assertFalse(session.select(ids.get(0)));
     }
+    @Test public void signedNativeHashIsNotAQueuePositionOrExportedHandle() {
+        Native n = new Native(); n.replaceRows(Arrays.asList(new Row("negative-native-hash", 0, 0)));
+        assertTrue(n.raw(0) < -1);
+        QueueHandles session = new QueueHandles(n);
+        List<Long> ids = publish(session, n);
+        assertNotNull(ids); assertNotEquals(n.raw(0), ids.get(0).longValue());
+        assertEquals(ids.get(0).longValue(), session.active(n.raw(0)));
+        assertTrue(session.select(ids.get(0))); assertSame(n.rows.get(0), n.played.get(0));
+        n.forcedIds.put(0, -1L);
+        assertNull(publish(session, n));
+    }
+
+    @Test public void nativeHashCollisionOutsidePublishedWindowCannotRedirectTheSelection() {
+        Native n = new Native();
+        n.replaceRows(Arrays.asList(new Row("B", 0, 0), new Row("A", 31, 1)));
+        assertEquals(n.raw(0), n.raw(1)); // Actual Objects.hash collision for distinct tuples.
+        QueueHandles session = new QueueHandles(n);
+        assertNull(session.replace(n.source, n.rows.subList(1, 2), Arrays.asList(n.raw(1)), n.sourceEpoch, n.sourceStamp));
+        assertFalse(session.ready()); assertEquals(0, n.events); assertTrue(n.played.isEmpty());
+    }
+
 }
