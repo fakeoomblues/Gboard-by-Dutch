@@ -15,7 +15,7 @@ import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
-import patches.gboard.features.ramblerextras.gboardRamblerExtrasFlagValuePatch
+import patches.gboard.features.ramblerextras.gboardRamblerExtrasMarkerPatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
 /**
@@ -172,6 +172,6 @@ val gboardRamblerToolbarExtrasPatch = resourcePatch(
 
     dependsOn(
         gboardPatchesSettingsPatch,
-        gboardRamblerExtrasFlagValuePatch,
+        gboardRamblerExtrasMarkerPatch,
     )
 }

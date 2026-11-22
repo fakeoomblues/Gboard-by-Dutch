@@ -110,7 +110,6 @@ internal enum class RuntimeCallId(internal val encodedAbi: String) {
     MANUAL_INCOGNITO_RUNTIME_ON_INPUT_WINDOW_HIDDEN("Ldev/jason/gboardpatches/extension/manualincognito/GboardManualIncognitoRuntime;->onInputWindowHidden(Ljava/lang/Object;)V"),
     OCR_RUNTIME_AFTER_THIN_INIT("Ldev/jason/gboardpatches/extension/ocr/GboardOcrRuntime;->afterThinInit(Ljava/lang/Object;)V"),
     OCR_RUNTIME_APPLY_CONFIG_LABEL("Ldev/jason/gboardpatches/extension/ocr/GboardOcrRuntime;->applyConfigLabel(Ljava/lang/String;)Ljava/lang/String;"),
-    RAMBLER_EXTRAS_RUNTIME_APPLY_FLAG_VALUE("Ldev/jason/gboardpatches/extension/rambler/GboardRamblerExtrasRuntime;->applyFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),
     OCR_RUNTIME_APPLY_FLAG_VALUE("Ldev/jason/gboardpatches/extension/ocr/GboardOcrRuntime;->applyFlagValue(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"),
     OCR_RUNTIME_APPLY_LANGUAGE_HINT("Ldev/jason/gboardpatches/extension/ocr/GboardOcrRuntime;->applyLanguageHint(Ljava/lang/String;)Ljava/lang/String;"),
     OCR_RUNTIME_APPLY_LOGGING_LIBRARY("Ldev/jason/gboardpatches/extension/ocr/GboardOcrRuntime;->applyLoggingLibrary(Ljava/lang/String;)Ljava/lang/String;"),

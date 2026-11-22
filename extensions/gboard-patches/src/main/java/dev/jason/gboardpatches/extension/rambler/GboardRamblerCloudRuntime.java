@@ -14,6 +14,15 @@ public final class GboardRamblerCloudRuntime {
     public static final String ENABLE_RAMBLER_TOOLBAR_AT_CURSOR_POSITION_FLAG =
             "enable_rambler_toolbar_at_cursor_position";
     public static final String AD_ACTIVATION_TYPE_FLAG = "ad_activation_type";
+    /** Optional extras live behind this manifest marker, written by their own patch. */
+    private static final String RAMBLER_EXTRAS_FEATURE_MARKER =
+            "dev.jason.gboardpatches.feature.rambler_extras";
+    public static final String RAMBLER_AL_OVERFLOW_MENU_FLAG =
+            "enable_rambler_al_toolbar_overflow_menu";
+    public static final String RAMBLER_PRESERVE_REWRITTEN_ON_REVERT_FLAG =
+            "rambler_preserve_rewritten_text_on_revert";
+    public static final String JETSON_LITE_EDIT_HISTORY_FLAG = "jetson_lite_enable_edit_history";
+    private static volatile Boolean extrasEnabled;
     public static final long AGENTIC_ACTIVATION_TYPE = 2L;
     /**
      * 18.8.0 addition: after Rambler rewrites a span, put the cursor after the last change instead
@@ -25,12 +34,42 @@ public final class GboardRamblerCloudRuntime {
     private GboardRamblerCloudRuntime() {
     }
 
+    /** True when the optional-extras patch added its manifest marker to this build. */
+    static boolean extrasEnabled() {
+        Boolean cached = extrasEnabled;
+        if (cached != null) {
+            return cached.booleanValue();
+        }
+        boolean resolved = false;
+        try {
+            android.content.Context context =
+                    dev.jason.gboardpatches.extension.flagsettings.GboardFlagRuntimeContext.resolveContext();
+            resolved = context != null && dev.jason.gboardpatches.extension.settings
+                    .GboardPatchesFeatureAvailability.hasFeature(
+                            context, RAMBLER_EXTRAS_FEATURE_MARKER);
+        } catch (Throwable ignored) {
+            resolved = false;
+        }
+        extrasEnabled = Boolean.valueOf(resolved);
+        return resolved;
+    }
+
     /** Flag-family hook: called with every flag name and Gboard's own value for it. */
     public static Object applyFlagValue(String flagName, Object originalResult) {
         if (flagName == null) {
             return originalResult;
         }
+        return applyFlagValue(flagName, originalResult, extrasEnabled());
+    }
+
+    static Object applyFlagValue(String flagName, Object originalResult, boolean extras) {
         switch (flagName) {
+            case RAMBLER_AL_OVERFLOW_MENU_FLAG:
+            case RAMBLER_PRESERVE_REWRITTEN_ON_REVERT_FLAG:
+            case JETSON_LITE_EDIT_HISTORY_FLAG:
+                return extras && originalResult instanceof Boolean
+                        ? Boolean.TRUE
+                        : originalResult;
             case ENABLE_AGENTIC_DICTATION_FLAG:
             case ENABLE_RAMBLER_AL_TOOLBAR_FLAG:
             case ENABLE_RAMBLER_TOOLBAR_AT_CURSOR_POSITION_FLAG:
