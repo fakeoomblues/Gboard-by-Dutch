@@ -20,17 +20,6 @@ internal object GboardVersionBindings {
         name = "g",
         type = "Laaia;",
     )
-    val `apDescriptorAction` = GboardMethodTarget(
-        classType = "Lmmh;",
-        name = "q",
-        parameterTypes = listOf("Ljava/lang/Runnable;"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
-    val `apDescriptorActions` = GboardFieldTarget(
-        classType = "Lmmh;",
-        name = "e",
-        type = "Lwhl;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `apDescriptorBuild` = GboardMethodTarget(
         classType = "Laaej;",
         name = "a",
@@ -43,12 +32,6 @@ internal object GboardVersionBindings {
         parameterTypes = emptyList(),
         returnType = "Laadm;",
     )
-    val `apDescriptorIcon` = GboardMethodTarget(
-        classType = "Lmmh;",
-        name = "i",
-        parameterTypes = listOf("I"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `apDescriptorLabel` = GboardFieldTarget(
         classType = "Laaej;",
         name = "d",
@@ -125,11 +108,6 @@ internal object GboardVersionBindings {
         name = "g",
         type = "Llgn;",
     )
-    val `clipboardClipTimestamp` = GboardFieldTarget(
-        classType = "Lfmy;",
-        name = "e",
-        type = "Lj${'$'}/time/Instant;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `clipboardColumns` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/clipboard/ClipboardKeyboard;",
         name = "b",
@@ -246,12 +224,6 @@ internal object GboardVersionBindings {
         parameterTypes = listOf("Landroid/content/Context;"),
         returnType = "Lahws;",
     )
-    val `clipboardPrimaryTimestamp` = GboardMethodTarget(
-        classType = "Lfok;",
-        name = "a",
-        parameterTypes = listOf("Landroid/content/Context;"),
-        returnType = "J",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `clipboardPrune` = GboardMethodTarget(
         classType = "Lljp;",
         name = "m",
@@ -428,46 +400,18 @@ internal object GboardVersionBindings {
         parameterTypes = listOf("Ljava/lang/Object;"),
         returnType = "V",
     )
-    val `customSymbolsHeaderCallback` = GboardMethodTarget(
-        classType = "Lgle;",
-        name = "accept",
-        parameterTypes = listOf("Ljava/lang/Object;"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `customSymbolsHeaderGuard` = GboardMethodTarget(
         classType = "Lcom/google/android/apps/inputmethod/libs/expression/header/ConstraintHeaderViewImpl;",
         name = "n",
         parameterTypes = listOf("Lnji;"),
         returnType = "V",
     )
-    val `customSymbolsHistoryCase` = GboardFieldTarget(
-        classType = "Ljsk;",
-        name = "${'$'}cid",
-        type = "I",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
-    val `customSymbolsHistoryConsumer` = GboardMethodTarget(
-        classType = "Ljsk;",
-        name = "accept",
-        parameterTypes = listOf("Ljava/lang/Object;"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
-    val `customSymbolsHistoryReceiver` = GboardFieldTarget(
-        classType = "Ljsk;",
-        name = "a",
-        type = "Ljava/lang/Object;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `customSymbolsHistorySink` = GboardMethodTarget(
         classType = "Lnmn;",
         name = "c",
         parameterTypes = listOf("Ljava/lang/String;"),
         returnType = "V",
     )
-    val `customSymbolsIdentityFactory` = GboardMethodTarget(
-        classType = "Lpjp;",
-        name = "ag",
-        parameterTypes = listOf("Ljava/lang/Object;"),
-        returnType = "Lpkx;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `customSymbolsKeyboardReady` = GboardMethodTarget(
         classType = "Laepb;",
         name = "a",
@@ -921,11 +865,6 @@ internal object GboardVersionBindings {
         parameterTypes = emptyList(),
         returnType = "Laxvc;",
     )
-    val `latinGlobeIntervalField` = GboardFieldTarget(
-        classType = "Lykz;",
-        name = "h",
-        type = "F",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `longPressQuickActionsInputEvent` = GboardMethodTarget(
         classType = "Lafae;",
         name = "ay",
@@ -998,12 +937,6 @@ internal object GboardVersionBindings {
         parameterTypes = emptyList(),
         returnType = "V",
     )
-    val `menuDragSetup` = GboardMethodTarget(
-        classType = "Lmpw;",
-        name = "z",
-        parameterTypes = listOf("Ljava/lang/String;", "Z"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `menuNativeView` = GboardMethodTarget(
         classType = "Lcom/google/android/libraries/inputmethod/keyboard/impl/Keyboard;",
         name = "eD",
@@ -1052,12 +985,6 @@ internal object GboardVersionBindings {
         parameterTypes = emptyList(),
         returnType = "[Lxli;",
     )
-    val `ocrOptionalRequest` = GboardMethodTarget(
-        classType = "Lzej;",
-        name = "a",
-        parameterTypes = listOf("Laabb;"),
-        returnType = "[Lkzf;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `ocrThinInit` = GboardMethodTarget(
         classType = "Lbajx;",
         name = "b",
@@ -1188,12 +1115,6 @@ internal object GboardVersionBindings {
         name = "a",
         type = "I",
     )
-    val `settingsHomepageOnCreate` = GboardMethodTarget(
-        classType = "Lcom/google/android/apps/inputmethod/latin/preference/SettingsActivity;",
-        name = "onCreate",
-        parameterTypes = listOf("Landroid/os/Bundle;"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `settingsHomepageSelector` = GboardMethodTarget(
         classType = "Lgpv;",
         name = "a",
@@ -1214,11 +1135,6 @@ internal object GboardVersionBindings {
     )
     val `softKeyMetadataType` = GboardTypeTarget("Lcom/google/android/libraries/inputmethod/metadata/SoftKeyDef;")
     val `softKeyViewType` = GboardTypeTarget("Lcom/google/android/libraries/inputmethod/widgets/SoftKeyView;")
-    val `splitAccessPointName` = GboardFieldTarget(
-        classType = "Lsze;",
-        name = "d",
-        type = "Ljava/lang/Object;",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `splitDeviceEligibility` = GboardMethodTarget(
         classType = "Lafvk;",
         name = "w",
@@ -1261,12 +1177,6 @@ internal object GboardVersionBindings {
         parameterTypes = emptyList(),
         returnType = "V",
     )
-    val `splitModeTransition` = GboardMethodTarget(
-        classType = "Lpks;",
-        name = "ah",
-        parameterTypes = listOf("I", "Z", "Z"),
-        returnType = "Z",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `splitOrder` = GboardMethodTarget(
         classType = "Laaia;",
         name = "c",
@@ -1309,12 +1219,6 @@ internal object GboardVersionBindings {
         parameterTypes = listOf("Ljava/util/Locale;", "Liee;", "Lamot;", "I", "Z", "Lalhn;", "Lanfy;", "Laned;", "Ljava/util/concurrent/Executor;"),
         returnType = "V",
     )
-    val `voiceMddConstructor` = GboardMethodTarget(
-        classType = "Lsdy;",
-        name = "<init>",
-        parameterTypes = listOf("Landroid/content/Context;", "Lsvb;", "Lsdr;", "Lacdy;"),
-        returnType = "V",
-    ) // PORT-18.8: unresolved, 18.6.3 value kept
     val `voiceNativeReadiness` = GboardMethodTarget(
         classType = "Lalyi;",
         name = "a",
