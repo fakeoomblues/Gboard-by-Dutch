@@ -1,4 +1,46 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/43a747f95ce6e1f37c255ba68536e9900c2f9bd4/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.97.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [43a747f95ce6](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/43a747f95ce6e1f37c255ba68536e9900c2f9bd4). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.97.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.96.1...v1.97.0) (2026-11-22)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** 18.8 has no Advanced dictation row; drop the selector port ([470d403](https://gitlab.com/johninnld/nl-morphe-patches/commit/470d403d99b27601fbbb7fd42f57379baffd9503))
+* **Gboard:** 18.8 is a fully supported target, not experimental ([72941e8](https://gitlab.com/johninnld/nl-morphe-patches/commit/72941e8c4119ba86710ee7d2da8ea260b57a85b0))
+* **Gboard:** allow the Rambler-extras flag-family runtime call; drop the NGA selector dep ([3efad44](https://gitlab.com/johninnld/nl-morphe-patches/commit/3efad44591ce861f5f2b31f373bff10ca2ff17b8))
+* **Gboard:** close the review's offline findings ([4f11dbd](https://gitlab.com/johninnld/nl-morphe-patches/commit/4f11dbd39355ff3a2811988222b7126e43ab88d6))
+* **Gboard:** derive the access-point cast type; per-feature beta toggles ([756fbbc](https://gitlab.com/johninnld/nl-morphe-patches/commit/756fbbcb316c97ff3cdcc1205ba31e857b11b0e9))
+* **Gboard:** gate the Rambler extras on their own marker instead of a flag-family call ([fed591f](https://gitlab.com/johninnld/nl-morphe-patches/commit/fed591f53107871be6c275b08ce6217aaf734660))
+* **Gboard:** Hidden Flags keeps three storage states ([a3a23fb](https://gitlab.com/johninnld/nl-morphe-patches/commit/a3a23fb316f5a8a989b663b6451cc63fe9ae68f7))
+* **Gboard:** map provably stale obfuscated types; add the audit tools ([624c694](https://gitlab.com/johninnld/nl-morphe-patches/commit/624c69437192736a865f4390ff8acea0a12d84dc))
+* **Gboard:** resolve the last provably stale type literals at member level ([eb5c0b1](https://gitlab.com/johninnld/nl-morphe-patches/commit/eb5c0b15b7987e5ed87ce689750b396228ac3268))
+* **Gboard:** settings groups list unavailable rows and use accurate summaries ([66e7097](https://gitlab.com/johninnld/nl-morphe-patches/commit/66e7097b267e1c09e25292b70c419f366d3078e2))
+* **Gboard:** valid register file for the Parakeet inherited stubs ([6581f41](https://gitlab.com/johninnld/nl-morphe-patches/commit/6581f413eacc4150e4b44ae37fa8fa671f4c18a2))
+* **Gboard:** write hidden flags through adgd.g(name, value) ([4e8cd2a](https://gitlab.com/johninnld/nl-morphe-patches/commit/4e8cd2a52a66096cf2d87334f249fe0549bd42b9))
+
+### ✨ New Features
+
+* **Gboard:** Beta features (18.8) unlock + function notes for kov and ljp ([51df8b2](https://gitlab.com/johninnld/nl-morphe-patches/commit/51df8b22f0d248c2f43ef9fcb21abb0b36fac2ea))
+* **Gboard:** Bluetooth microphone patch; decouple Advanced Voice from zh-TW and sticky mic ([0a6a339](https://gitlab.com/johninnld/nl-morphe-patches/commit/0a6a3390939c1c51f30c343aae1925319a322d67))
+* **Gboard:** bundle the 18.8 dictation payload with the NGA patch ([08c97ad](https://gitlab.com/johninnld/nl-morphe-patches/commit/08c97ad86976ae58bde772a2e7c175ccff094d35))
+* **Gboard:** bundle the armeabi-v7a dictation payload too ([9fdffff](https://gitlab.com/johninnld/nl-morphe-patches/commit/9fdffff69e58d773f980032ba5735651fa98dfec))
+* **Gboard:** complete the 18.8.0-beta port - 26/26 patches apply on both ABIs ([feb62cb](https://gitlab.com/johninnld/nl-morphe-patches/commit/feb62cb3f89cc1fc227ffce6b87d541ef0f354c9))
+* **Gboard:** expose NGA advanced voice typing; unlock three more Rambler paths ([4d78737](https://gitlab.com/johninnld/nl-morphe-patches/commit/4d78737bbe98595d827fa6ff6667edb718be7288))
+* **Gboard:** force the 18.8 beta cursor-after-diff Rambler flag ([9a94e28](https://gitlab.com/johninnld/nl-morphe-patches/commit/9a94e28cd99d17a18ec02f7784ec0f502c881ab8))
+* **Gboard:** move the Standard engine switches into the patch settings ([53251dc](https://gitlab.com/johninnld/nl-morphe-patches/commit/53251dc364aabbeb4f92ddc6c6d972a7f2121831))
+* **Gboard:** port the patch set to 18.8.0.1022711984-beta ([be90485](https://gitlab.com/johninnld/nl-morphe-patches/commit/be9048573805ac45f58dd1a8633d180e507d818e))
+* **Gboard:** port the voice-backend selector scope to 18.8 ([8dd20c4](https://gitlab.com/johninnld/nl-morphe-patches/commit/8dd20c406d61ce9ef221c43162c03fdb415f8d2e))
+* **Gboard:** Rambler extras as its own patch; NGA without zh-TW ([9b7ad33](https://gitlab.com/johninnld/nl-morphe-patches/commit/9b7ad3373e15e63a91ad830daba2ab52e42fa6a7))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/11f2e73c90f4876c9ae1afbbdf00b5f88b16848e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.96.1.**
