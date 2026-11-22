@@ -6,6 +6,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -107,6 +108,49 @@ private fun bindMapsCarSearch2647(
         ExternalLabel("original_car_search", body[0]),
         ExternalLabel("native_local_search", body[localIndex]),
     )
+}
+
+/**
+ * The resource ids, per Maps version, of the views the extension presses to start guidance on the
+ * host's request. Their names are the extension's own list (`NativeRoutePreview.START_NAMES`).
+ */
+internal val MAPS_ROUTE_PREVIEW_START_IDS = linkedMapOf(
+    "place_details_navigation_footer_action_button" to 0x7f0b0906,
+    "place_details_navigation_footer_spinner_or_action_icon" to 0x7f0b0909,
+)
+
+/** 26.47: the same two views under the newer resource table. */
+private val MAPS_ROUTE_PREVIEW_START_IDS_2647 = linkedMapOf(
+    "place_details_navigation_footer_action_button" to 0x7f0b090a,
+    "place_details_navigation_footer_spinner_or_action_icon" to 0x7f0b090d,
+)
+
+/**
+ * Refuse a Maps whose car route preview no longer builds the Start views the extension presses: the
+ * footer builder (`snl.a()` in 26.44, `tdd.a()` in 26.47) must be one method and must still use every
+ * id above. A Start the extension cannot find at run time is silent; one the patch cannot find here
+ * stops the patch.
+ */
+internal fun validateMapsRoutePreviewStart(
+    classBy: (String) -> ClassDef,
+    ids: Map<String, Int> = MAPS_ROUTE_PREVIEW_START_IDS,
+) {
+    val is2647 = classBy("Ltdd;").methods.any {
+        it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == "Lbhwh;"
+    }
+    val owner = if (is2647) "Ltdd;" else "Lsnl;"
+    val result = if (is2647) "Lbhwh;" else "Lbhjq;"
+    val effective = if (is2647) MAPS_ROUTE_PREVIEW_START_IDS_2647 else ids
+    check(effective.isNotEmpty()) { "Maps' car route preview Start control is not identified" }
+    val builders = classBy(owner).methods.filter {
+        it.name == "a" && it.parameterTypes.isEmpty() && it.returnType == result
+    }
+    check(builders.size == 1) { "Maps' car route preview footer builder changed" }
+    val literals = (builders.single().implementation?.instructions ?: emptyList())
+        .mapNotNull { (it as? NarrowLiteralInstruction)?.narrowLiteral }.toSet()
+    for ((name, id) in effective) {
+        check(id in literals) { "Maps' car route preview Start view changed: $name" }
+    }
 }
 
 /** Keep unsupported private clients disconnected; never forge a retail-host grant. */
@@ -382,6 +426,7 @@ val nativeCarNavigationPatch = bytecodePatch(
             requireField("Lbesz;", "b", "Ljava/lang/Object;")
         }
         validateMapsGuidanceComponent { classDefBy(it) }
+        validateMapsRoutePreviewStart({ classDefBy(it) })
         bindMapsCarSearch({ classDefBy(it) }) { owner, name, parameters, result ->
             mutableClassDefBy(owner).methods.single { it.name == name && it.parameterTypes.map(CharSequence::toString) == parameters && it.returnType == result }
         }
