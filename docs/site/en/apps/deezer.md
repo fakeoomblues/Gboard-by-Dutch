@@ -14,17 +14,17 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | --- | --- | --- |
 | **Remove advertising** | On | Disables banner, native, audio and preroll advertising. Playback continues without an ad break and the audio-ad launcher never receives its ad payload. |
 | **Disable tracking** | On | Disables Adjust initialization and events, Segment event delivery and its Braze destination, the Firebase Analytics/Crashlytics/Performance/Sessions collectors, Facebook automatic app events and advertising IDs. |
-| **Search and sort playlists** | Off | Shows native playlist header search and Sort, preserving ownership and chart checks. |
-| **Player queue shortcuts** | Off | Adds Deezer’s existing Add to queue and Play Next choices to the full player menu when available for the selected track. |
+| **Search and sort playlists** | On | Shows native playlist header search and Sort, preserving ownership and chart checks. |
+| **Player queue shortcuts** | On | Adds Deezer’s existing Add to queue and Play Next choices to the full player menu when available for the selected track. |
 | **Enable queue item selection** | On | Lets a connected car host request a particular occurrence in Deezer’s current Up next queue. Selections from a replaced queue are discarded, and the active queue item follows the current occurrence. |
-| **Android Auto API 9 media surface** | Off | Adds a car browser and player. Allows compatible custom hosts and uses API 9 presentation only when the host negotiates API 9; lower-level hosts keep the fallback. |
-| **Google sign-in through microG-RE** | Off | Routes Google account selection and authorization through installed microG-RE, using Deezer’s original OAuth identity and standard package name. |
+| **Android Auto API 9 media surface** | On | Adds a car browser and player. Allows compatible custom hosts and uses API 9 presentation only when the host negotiates API 9; lower-level hosts keep the fallback. |
+| **Google sign-in through microG-RE** | On | Routes Google account selection and authorization through installed microG-RE, using Deezer’s original OAuth identity and standard package name. |
 | **Remove premium upsell UI** | On | Removes the Premium tab from the bottom navigation bar, the Get Premium button on the user profile, the conversion banner and Plan management row in Settings, and shows the free account plan as Deezer Premium. The rest of Settings, profile, account and playback stay intact. |
 | **Enable full streaming** | On | Restores full-track client playback controls, without changing the account or media service. |
 | **Remove subscription paywalls** | On | Skips the country/plans startup redirect and closes subscription prompts. |
 | **Allow any Android Auto host** | On | Allows Deezer’s native media browser and templated car service to accept compatible custom hosts. |
 
-This port targets 9.0.27.3 exclusively and offers eleven patches. The owner confirmed Google sign-in, Up next selection and the negotiated API 9 surface on the phone with DriveDeck. The final clean bundle is awaiting the owner’s last test before release.
+This port targets 9.0.27.3 exclusively. All eleven patches are selected by default.
 
 ## Playback
 

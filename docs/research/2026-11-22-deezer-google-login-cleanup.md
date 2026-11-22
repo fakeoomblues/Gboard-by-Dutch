@@ -3,13 +3,13 @@
 The owner validated Google sign-in and the Android Auto API 9 surface after
 using Deezer's standard `deezer.android.app` package. Two installed Deezer
 entries had also caused confusion when opening the car surface. These are
-owner-reported phone results; the final clean bundle remains subject to the
-owner's requested last test.
+owner-reported phone results. The owner subsequently confirmed the clean bundle
+worked and requested that all eleven remaining patches be enabled by default.
 
 Remove Deezer's `Side-by-side installation` patch and its implementation/tests.
 Remove the temporary `Trace Google sign-in (temporary diagnostic)` patch,
 Gadget resource input and loader. Retain the eleven functional Deezer patches,
-including the optional Google sign-in patch and the original OAuth identity
+including Google sign-in and the original OAuth identity
 metadata verified against the supported APK's signing certificate.
 
 The bounded phone Gadget capture observed a genuine authorization activity

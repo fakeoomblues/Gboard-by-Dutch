@@ -40,7 +40,7 @@ val deezerApi9Media = bytecodePatch(
     description = "Adds Deezer's templated car browser and player for compatible Android Auto hosts. " +
         "Uses the negotiated car API level, enabling API 9 styling only on API 9 hosts. " +
         "All compatible custom hosts are allowed; Deezer's real session and queue stay authoritative.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(deezer)
     val linker = Api9Resources()

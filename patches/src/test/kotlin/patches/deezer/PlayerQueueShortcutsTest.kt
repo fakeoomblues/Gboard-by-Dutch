@@ -39,8 +39,8 @@ class PlayerQueueShortcutsTest {
     }
 
     @Test
-    fun isOptionalAndDependsOnTheDeezerBase() {
-        assertFalse(deezerPlayerQueueShortcuts.default)
+    fun enabledByDefaultAndDependsOnTheDeezerBase() {
+        assertTrue(deezerPlayerQueueShortcuts.default)
         assertEquals(setOf(deezerBase), deezerPlayerQueueShortcuts.dependencies.toSet())
     }
 

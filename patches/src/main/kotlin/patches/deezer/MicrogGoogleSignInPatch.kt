@@ -132,8 +132,8 @@ val deezerMicrogGoogleSignIn = bytecodePatch(
         "Uses Deezer's original OAuth identity through microG compatibility metadata. " +
         "Google SDK availability checks still apply. " +
         "Resolves interactive consent from foreground sign-in using Deezer's standard package name. " +
-        "Does not change email, Facebook or Apple sign-in. Off by default.",
-    default = false,
+        "Does not change email, Facebook or Apple sign-in.",
+    default = true,
 ) {
     compatibleWith(deezer)
     dependsOn(deezerBase, microgGoogleSignInResources, microgConsentInput)

@@ -99,7 +99,7 @@ val deezerPlayerQueueShortcuts = bytecodePatch(
     description = "Adds Add to queue and Play next candidates to the full player menu. " +
         "Deezer's native resolver decides visibility using the account, track and queue state, " +
         "and retains its normal confirmation and insertion paths. Grants no additional rights.",
-    default = false,
+    default = true,
 ) {
     // Original signer/build preflight stays mandatory. No startup or security dependency.
     compatibleWith(deezer)

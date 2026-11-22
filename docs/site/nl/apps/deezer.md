@@ -14,17 +14,17 @@ Selecteer het volledige originele archief voor deze versie in Morphe Manager, in
 | --- | --- | --- |
 | **Remove advertising** | Aan | Schakelt banner-, native-, audio- en preroll-advertenties uit. Weergave gaat verder zonder advertentiepauze en de audio-advertentielancering krijgt nooit zijn advertentiedata. |
 | **Disable tracking** | Aan | Schakelt Adjust-initialisatie en -events, Segment-eventlevering en de Braze-bestemming, de Firebase Analytics/Crashlytics/Performance/Sessions-verzamelaars, automatische Facebook-app-events en advertentie-ID's uit. |
-| **Search and sort playlists** | Uit | Toont de oorspronkelijke zoekfunctie boven de afspeellijst en Sorteren, met behoud van eigendoms- en hitlijstcontroles. |
-| **Player queue shortcuts** | Uit | Toont de bestaande opties voor toevoegen aan de wachtrij en hierna afspelen in het volledige spelermenu wanneer deze beschikbaar zijn voor het gekozen nummer. |
+| **Search and sort playlists** | Aan | Toont de oorspronkelijke zoekfunctie boven de afspeellijst en Sorteren, met behoud van eigendoms- en hitlijstcontroles. |
+| **Player queue shortcuts** | Aan | Toont de bestaande opties voor toevoegen aan de wachtrij en hierna afspelen in het volledige spelermenu wanneer deze beschikbaar zijn voor het gekozen nummer. |
 | **Enable queue item selection** | Aan | Laat de autohost een specifieke vermelding in de huidige Deezer-wachtrij kiezen. Keuzes uit een vervangen wachtrij vervallen en het actieve wachtrij-item volgt de huidige vermelding. |
-| **Android Auto API 9 media surface** | Uit | Voegt een autobrowser en speler toe. Laat geschikte aangepaste hosts toe en gebruikt de API 9-weergave alleen als de host API 9 onderhandelt; lagere niveaus behouden de terugvalweergave. |
-| **Google sign-in through microG-RE** | Uit | Leidt Google-accountkeuze en autorisatie via de geïnstalleerde microG-RE, met Deezer’s oorspronkelijke OAuth-identiteit en standaard pakketnaam. |
+| **Android Auto API 9 media surface** | Aan | Voegt een autobrowser en speler toe. Laat geschikte aangepaste hosts toe en gebruikt de API 9-weergave alleen als de host API 9 onderhandelt; lagere niveaus behouden de terugvalweergave. |
+| **Google sign-in through microG-RE** | Aan | Leidt Google-accountkeuze en autorisatie via de geïnstalleerde microG-RE, met Deezer’s oorspronkelijke OAuth-identiteit en standaard pakketnaam. |
 | **Remove premium upsell UI** | Aan | Verwijdert de Premium-tab uit de onderste navigatiebalk, de Get Premium-knop op het gebruikersprofiel, de conversiebanner en de Plan management-rij in Instellingen, en toont het gratis accountabonnement als Deezer Premium. De rest van Instellingen, profiel, account en weergave blijft intact. |
 | **Enable full streaming** | Aan | Herstelt de afspeelcontroles voor volledige nummers, zonder het account of de mediadienst te veranderen. |
 | **Remove subscription paywalls** | Aan | Slaat de land-/abonnementspagina bij opstarten over en sluit abonnementsprompts. |
 | **Allow any Android Auto host** | Aan | Laat de oorspronkelijke mediabrowser en de template-autoservice van Deezer geschikte aangepaste hosts toelaten. |
 
-Deze port is uitsluitend bedoeld voor 9.0.27.3 en biedt elf patches. De eigenaar bevestigde Google-aanmelding, keuzes in Hierna en de onderhandelde API 9-weergave op de telefoon met DriveDeck. Voor publicatie volgt nog de laatste test van de schone bundel door de eigenaar.
+Deze port is uitsluitend bedoeld voor 9.0.27.3. Alle elf patches zijn standaard geselecteerd.
 
 ## Weergave
 

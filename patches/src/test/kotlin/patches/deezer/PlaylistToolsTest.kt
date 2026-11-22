@@ -28,9 +28,9 @@ class PlaylistToolsTest {
     }
 
     @Test
-    fun retainsTheOptionalManagerChoiceWithoutPolicyDependencies() {
+    fun enabledByDefaultWithoutPolicyDependencies() {
         assertEquals("Search and sort playlists", deezerPlaylistTools.name)
-        assertFalse(deezerPlaylistTools.default)
+        assertTrue(deezerPlaylistTools.default)
         assertEquals(setOf(deezerBase), deezerPlaylistTools.dependencies.toSet())
     }
 

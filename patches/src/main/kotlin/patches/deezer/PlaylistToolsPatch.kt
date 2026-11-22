@@ -62,7 +62,7 @@ val deezerPlaylistTools = bytecodePatch(
     description = "Shows native playlist header search and the Sort menu action for playlist management. " +
         "Keeps Deezer's search, display-order preferences, ownership checks and chart exclusion. " +
         "Account, content access and playback permissions are unchanged.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(deezer)
     dependsOn(deezerBase)
