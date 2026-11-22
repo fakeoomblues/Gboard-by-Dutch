@@ -15,6 +15,12 @@ public final class GboardRamblerCloudRuntime {
             "enable_rambler_toolbar_at_cursor_position";
     public static final String AD_ACTIVATION_TYPE_FLAG = "ad_activation_type";
     public static final long AGENTIC_ACTIVATION_TYPE = 2L;
+    /**
+     * 18.8.0 addition: after Rambler rewrites a span, put the cursor after the last change instead
+     * of at the end of the text (kov reads it at two sites). Off by default in this beta.
+     */
+    public static final String JETSON_POSITION_INPUT_CURSOR_AFTER_DIFF_FLAG =
+            "jetson_position_cursor_after_last_diff";
 
     private GboardRamblerCloudRuntime() {
     }
@@ -28,6 +34,7 @@ public final class GboardRamblerCloudRuntime {
             case ENABLE_AGENTIC_DICTATION_FLAG:
             case ENABLE_RAMBLER_AL_TOOLBAR_FLAG:
             case ENABLE_RAMBLER_TOOLBAR_AT_CURSOR_POSITION_FLAG:
+            case JETSON_POSITION_INPUT_CURSOR_AFTER_DIFF_FLAG:
                 return originalResult instanceof Boolean ? Boolean.TRUE : originalResult;
             case AD_ACTIVATION_TYPE_FLAG:
                 return originalResult instanceof Long
