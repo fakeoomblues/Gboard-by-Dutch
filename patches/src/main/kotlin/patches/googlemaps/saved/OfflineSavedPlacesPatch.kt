@@ -1241,6 +1241,8 @@ private fun BytecodePatchContext.savedOnMap(featureType: String, positionType: S
             const-class v1, $aliasType
             invoke-static { v1, v3 }, Ljava/lang/Enum;->valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
             move-result-object v3
+            # valueOf is typed java.lang.Enum; 26.47 declares the builder field as the enum itself.
+            check-cast v3, ${aliasField.type}
             iput-object v3, v2, $builderType->${aliasField.name}:${aliasField.type}
             :alias_done
             if-eqz p11, :list_done
