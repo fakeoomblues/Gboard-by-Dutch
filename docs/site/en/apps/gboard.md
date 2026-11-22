@@ -36,10 +36,44 @@ Select Google's armeabi-v7a APK (build 176124765) or arm64-v8a APK (build 176124
 | **Cursor trackpad mode** | On | Long-press the space bar to move the cursor more precisely with a trackpad and use the lock mode. |
 | **Incognito Mode Toggle** | On | Adds an Incognito toggle to the Access Point toolbar and lets you choose whether the clipboard and voice typing stay available while Incognito is active. This controls Gboard's own incognito state; it is not a network-wide tracking blocker. |
 | **Simple Calculator** | On | Type an arithmetic expression in a text field and see a scrollable equation with its answer in Gboard's suggestion row, ready to insert. |
+| **Advanced voice typing (NGA)** | Off | Turns on Gboard's NGA dictation stack: the advanced voice commands, the consolidated speech stack, long-form dictation and the formatter library, which the patch bundles for both ABIs. It does **not** add a third dictation entry: choose Dictation type → **Rambler** to use it. |
+| **Use Bluetooth microphone** | Off | Shows Gboard's own Voice typing → **Use Bluetooth microphone** switch, which stock hides, so dictation can capture from a paired headset. The stock switch still decides routing. |
+| **Rambler toolbar & revert extras (18.8)** | Off | Adds the overflow button to the floating Rambler toolbar, keeps the rewritten text when you revert from the full transcript to the cleaned-up text, and passes edit history on the Jetson Lite path. |
+| **Hidden flags (18.8)** | Off | Three internal 18.8 flags written through Gboard's own override store: app-specific word biasing, the app-specific suggestion bar and the square normalised search radius. See [Hidden flags](#hidden-flags-188). |
 | **Beta features (18.8)** | Off | Turns on five finished features from the 18.8 beta that Google keeps off for a re-signed build: a one-tap quick-paste chip, the clipboard chip on the floating keyboard, invisible resizing of the floating keyboard, the platform Emoji2 provider and the newer swipe-to-remove confirmation. One switch under Gboard settings → Patch settings → More settings → Beta features; see [Beta features](#beta-features-188) below. |
 
 Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle, Simple Calculator, Rounded Keyboard Panel, Frosted Glass, Custom Theme, G Logo on Spacebar and Key Shape Selection are ported from the GPLv3 [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) project and updated for Gboard 18.8.0.
 
+
+### Advanced voice typing (NGA)
+Gboard 18.8 ships an "advanced" dictation engine (internally NGA/Jetson): voice commands that edit text and insert emoji, long-form dictation and the consolidated speech stack. It is off for a re-signed build; this patch forces its flags and bundles the formatter library (`libdictation_jni.so`) for **arm64-v8a and armeabi-v7a**, taken from the matching Play feature split of the same build.
+
+- The patch does **not** add a new entry to Gboard's list. 18.8 has exactly two dictation types — **Rambler** (the advanced/agentic engine) and **Standard** (Parakeet, if that patch is applied) — so choose **Dictation type → Rambler** to use it.
+- Gboard refuses the engine without the formatter library ("native split is not loaded"). The bundle carries it, so `adb logcat` shows `dictation payload loaded=true` and no such message.
+- Whether Google's servers accept the engine from your phone is still Google's call, and per-language models still have to be available.
+- The library is version-bound: a different Gboard build needs its own split.
+
+### Use Bluetooth microphone
+Stock declares `enable_use_bluetooth_setting` false, so the row never appears. This patch exposes Gboard's **Voice typing → Use Bluetooth microphone** switch; the switch then decides whether recordings come from the headset.
+
+- Two different things: the patch makes the row visible; the stock row enables routing.
+- Gboard applies its own input-device rules (Android version, wired/USB preference, car devices can be excluded). A paired headset alone proves nothing — dictating with the phone's and the headset's microphone near different sounds is the test.
+
+### Rambler toolbar and revert extras (18.8)
+Three optional Rambler behaviours, each off in this beta:
+
+- **Overflow menu** on the floating Rambler toolbar, where the secondary toolbar actions live.
+- **Keep rewritten text on revert**: when you revert from the full transcript to the cleaned-up text, the rewritten version is kept instead of discarded.
+- **Lite edit history**: passes edit history into a Jetson Lite request; it has no effect unless the Lite path is active.
+
+### Hidden flags (18.8)
+Three flags Gboard keeps for internal builds, written through Gboard's **own override store**, so they apply to the running keyboard:
+
+- **App-specific word biasing** (`enable_dcontext_biasing`)
+- **App-specific suggestion bar** (`enable_dcontext_suggestion_bar`)
+- **Square normalised search radius** (`square_normalized_search_radius`)
+
+Opening the screen writes nothing. A switch you toggle is recorded as an explicit On or Off and is re-applied after a restart; rows you never touched keep Gboard's stock value. Every write is read back, and a failure is logged as `Hidden flag switch did not take`.
 
 ### AMOLED dark keyboard
 This patch has no tile of its own in Gboard's theme picker; it recolours the dark palette that the

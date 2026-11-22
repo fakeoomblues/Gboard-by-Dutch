@@ -36,10 +36,44 @@ Selecteer de armeabi-v7a-APK (build 176124765) of arm64-v8a-APK (build 176124766
 | **Cursor trackpad mode** | Aan | Houd de spatiebalk lang ingedrukt om de cursor nauwkeuriger te verplaatsen met een trackpad en de vergrendelmodus te gebruiken. |
 | **Incognito Mode Toggle** | Aan | Voegt een incognito-schakelaar toe aan de Access Point-werkbalk en laat je kiezen of het clipboard en spraakinvoer beschikbaar blijven terwijl incognito actief is. Dit regelt de incognito-status van Gboard zelf; het is geen netwerkbrede anti-trackingfunctie. |
 | **Simple Calculator** | Aan | Typ een rekenkundige expressie in een tekstveld en zie een scrollbare vergelijking met het antwoord in de suggestieregel van Gboard, klaar om in te voegen. |
+| **Advanced voice typing (NGA)** | Uit | Zet Gboard's NGA-dicteerstack aan: de geavanceerde spraakopdrachten, de geconsolideerde spraakstack, lang dicteren en de formatter-bibliotheek, die de patch voor beide ABI's meelevert. Het voegt **geen** derde dicteeroptie toe: kies Dicteertype → **Rambler** om het te gebruiken. |
+| **Use Bluetooth microphone** | Uit | Toont Gboard's eigen schakelaar Voice typing → **Use Bluetooth microphone**, die standaard verborgen is, zodat dicteren van een gekoppelde headset kan opnemen. De routering blijft Gboard's eigen keuze. |
+| **Rambler toolbar & revert extras (18.8)** | Uit | Voegt de overflow-knop toe aan de zwevende Rambler-werkbalk, houdt herschreven tekst bij het terugdraaien van het volledige transcript naar de opgeschoonde tekst, en geeft bewerkingsgeschiedenis door op het Jetson Lite-pad. |
+| **Hidden flags (18.8)** | Uit | Drie interne 18.8-flags via Gboard's eigen override-opslag: app-specifieke woordweging, de app-specifieke suggestiebalk en de vierkante genormaliseerde zoekradius. Zie [Verborgen flags](#verborgen-flags-188). |
 | **Beta features (18.8)** | Uit | Zet vijf afgewerkte functies uit de 18.8-beta aan die Google voor een opnieuw ondertekende build uit laat staan: een snelplak-chip met één tik, de klembord-chip op het zwevende toetsenbord, onzichtbaar formaat wijzigen van het zwevende toetsenbord, de Emoji2-provider van het systeem en de nieuwere bevestiging bij wegvegen. Eén schakelaar onder Gboard-instellingen → **Patch settings** → **More settings** → **Beta features**; zie [Beta-functies](#beta-functies-188) hieronder. |
 
 Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle, Simple Calculator, Rounded Keyboard Panel, Frosted Glass, Custom Theme, G Logo on Spacebar en Key Shape Selection zijn overgenomen van het GPLv3-project [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) en bijgewerkt voor Gboard 18.8.0.
 
+
+### Advanced voice typing (NGA)
+Gboard 18.8 heeft een "geavanceerde" dicteermachine (intern NGA/Jetson): spraakopdrachten die tekst bewerken en emoji invoegen, lang dicteren en de geconsolideerde spraakstack. Die staat uit voor een opnieuw ondertekende build; deze patch zet de flags aan en levert de formatter-bibliotheek (`libdictation_jni.so`) mee voor **arm64-v8a en armeabi-v7a**, uit de bijpassende Play-featuresplit van dezelfde build.
+
+- De patch voegt **geen** nieuwe optie aan de lijst toe. 18.8 kent precies twee dicteertypes — **Rambler** (de geavanceerde/agentic machine) en **Standard** (Parakeet, als die patch meedoet) — kies dus **Dicteertype → Rambler**.
+- Gboard weigert de machine zonder de formatter-bibliotheek ("native split is not loaded"). De bundel bevat hem, dus `adb logcat` toont `dictation payload loaded=true` en die melding niet.
+- Of Google's servers de machine vanaf jouw toestel accepteren blijft Google's beslissing, en de modellen per taal moeten beschikbaar zijn.
+- De bibliotheek hoort bij deze versie: een andere Gboard-build heeft zijn eigen split nodig.
+
+### Use Bluetooth microphone
+Standaard zet `enable_use_bluetooth_setting` op false, waardoor de rij nooit verschijnt. Deze patch toont Gboard's schakelaar **Voice typing → Use Bluetooth microphone**; die schakelaar bepaalt daarna of opnames van de headset komen.
+
+- Twee verschillende dingen: de patch maakt de rij zichtbaar; de standaardschakelaar zet de routering aan.
+- Gboard past zijn eigen regels toe (Android-versie, voorkeur voor draad/USB, auto-apparaten kunnen worden uitgesloten). Een gekoppelde headset bewijst niets — dicteer met telefoon en headset bij verschillende geluiden.
+
+### Rambler-werkbalk en terugdraai-extras (18.8)
+Drie optionele Rambler-gedragingen, elk uit in deze bèta:
+
+- **Overflow-menu** op de zwevende Rambler-werkbalk, waar de secundaire acties staan.
+- **Herschreven tekst bewaren bij terugdraaien**: bij het terugdraaien van het volledige transcript naar de opgeschoonde tekst blijft de herschreven versie staan.
+- **Lite-bewerkingsgeschiedenis**: geeft bewerkingsgeschiedenis door aan een Jetson Lite-verzoek; heeft alleen effect als het Lite-pad actief is.
+
+### Verborgen flags (18.8)
+Drie flags die Gboard voor interne builds bewaart, via Gboard's **eigen override-opslag**, zodat ze op het draaiende toetsenbord werken:
+
+- **App-specifieke woordweging** (`enable_dcontext_biasing`)
+- **App-specifieke suggestiebalk** (`enable_dcontext_suggestion_bar`)
+- **Vierkante genormaliseerde zoekradius** (`square_normalized_search_radius`)
+
+Het scherm openen schrijft niets. Een schakelaar die je omzet wordt als expliciet Aan of Uit vastgelegd en na een herstart opnieuw toegepast; rijen die je nooit aanraakte houden Gboard's standaardwaarde. Elke schrijfactie wordt teruggelezen en een fout verschijnt als `Hidden flag switch did not take`.
 
 ### AMOLED-donker toetsenbord
 Deze patch heeft geen eigen tegel in de themakiezer van Gboard; hij herkleurt het donkere palet dat
