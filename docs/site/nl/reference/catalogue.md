@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.97.0**
+**Patchbundel: 1.98.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -219,6 +219,8 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Android Auto API 9 media surface | Aan | 9.0.27.3 |
 | Disable tracking | Aan | 9.0.27.3 |
 | Enable full streaming | Aan | 9.0.27.3 |
+| Enable lyrics | Aan | 9.0.27.3 |
+| Enable offline downloads | Aan | 9.0.27.3 |
 | Enable queue item selection | Aan | 9.0.27.3 |
 | Google sign-in through microG-RE | Aan | 9.0.27.3 |
 | Player queue shortcuts | Aan | 9.0.27.3 |

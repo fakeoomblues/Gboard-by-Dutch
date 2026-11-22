@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.97.0",
+  "version": "1.98.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -5750,6 +5750,68 @@
               },
               "isExperimental": false,
               "minSdk": 28,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable lyrics",
+      "description": "Opens Deezer's native lyrics view from the legacy and modern players instead of the Premium offer. Keeps native lyrics first and uses matching LRCLIB lyrics when native data is missing. Availability follows usable native or fallback data; LRCLIB metadata lookups use no account credentials.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "deezer.android.app",
+          "name": "Deezer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "51a891a6c5d17b4e36a6f46bab675c1cae786a5af06f51d0105dab7ec6a94516"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.0.27.3",
+              "versionCodes": {
+                "ARM64_V8A": 9002703
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable offline downloads",
+      "description": "Enables Deezer's native album, playlist and Favorite tracks downloads using the offline rights enabled by full streaming. Removes the contextual download upgrade offer. Downloaded media, library registration and offline playback remain native.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "deezer.android.app",
+          "name": "Deezer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "51a891a6c5d17b4e36a6f46bab675c1cae786a5af06f51d0105dab7ec6a94516"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "9.0.27.3",
+              "versionCodes": {
+                "ARM64_V8A": 9002703
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
@@ -12108,7 +12170,7 @@
     },
     {
       "name": "Remove premium upsell UI",
-      "description": "Removes the Premium navigation item, profile promotion, Settings conversion banner and Plan management row, and displays the free plan as Deezer Premium. Account and playback transport are unchanged.",
+      "description": "Removes the Premium navigation item, profile promotion, Settings conversion banner and Plan management row, the Downloaded music subscription banner and Listen without ads menu entries, and displays the free plan as Deezer Premium. Account and playback transport are unchanged.",
       "default": true,
       "category": null,
       "compatiblePackages": [

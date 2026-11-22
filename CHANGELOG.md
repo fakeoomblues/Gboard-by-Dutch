@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/6aba3cb8042d63c92ad3205fce769f7914e6c7b9/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.98.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [6aba3cb8042d](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/6aba3cb8042d63c92ad3205fce769f7914e6c7b9). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.98.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.97.0...v1.98.0) (2026-11-22)
+
+### ✨ New Features
+
+* **Deezer:** add working lyrics fallback and native offline controls ([6aba3cb](https://gitlab.com/johninnld/nl-morphe-patches/commit/6aba3cb8042d63c92ad3205fce769f7914e6c7b9))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/43a747f95ce6e1f37c255ba68536e9900c2f9bd4/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.97.0.**

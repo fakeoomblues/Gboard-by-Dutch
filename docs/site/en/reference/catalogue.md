@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.97.0**
+**Patch bundle: 1.98.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -219,6 +219,8 @@ Check the supported app versions and default setting for each patch. The app pag
 | Android Auto API 9 media surface | On | 9.0.27.3 |
 | Disable tracking | On | 9.0.27.3 |
 | Enable full streaming | On | 9.0.27.3 |
+| Enable lyrics | On | 9.0.27.3 |
+| Enable offline downloads | On | 9.0.27.3 |
 | Enable queue item selection | On | 9.0.27.3 |
 | Google sign-in through microG-RE | On | 9.0.27.3 |
 | Player queue shortcuts | On | 9.0.27.3 |
