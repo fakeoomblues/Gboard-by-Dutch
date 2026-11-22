@@ -14,7 +14,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [bol](../apps/bol.md) | 2026.23.1 / 430517 | [APKS](#local-original-inputs) |
 | [Bright](../apps/bright.md) | 10.181.0 / 2026072000 | [APKS](https://buzzheavier.com/a3m5bvvu9usp) |
 | [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/9fl1lzedekqp) |
-| [Buienradar](../apps/buienradar.md) | 7.4.8 / 7897 | [APKM](https://buzzheavier.com/v4m79608e677) |
+| [Buienradar](../apps/buienradar.md) | 7.4.8 / 7915 | [APKM](https://www.apkmirror.com/apk/dpg-media/buienradar-weer/buienradar-weer-7-4-8-release/buienradar-weer-7-4-8-4-android-apk-download/) |
 | [Candy Crush Soda Saga](../apps/candy-crush-soda-saga.md) | 1.330.1 / 13300010 | [APKM](#local-original-inputs) |
 | [DS Nieuws](../apps/dsnieuws.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/xekgzljrg2lg) |
 | [De Morgen](../apps/demorgen.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/ci8cm8ebuwf2) |
