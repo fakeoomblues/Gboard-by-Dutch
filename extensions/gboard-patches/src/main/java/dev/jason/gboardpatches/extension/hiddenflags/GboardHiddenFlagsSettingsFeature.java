@@ -2,6 +2,7 @@ package dev.jason.gboardpatches.extension.hiddenflags;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,8 +66,17 @@ public final class GboardHiddenFlagsSettingsFeature
                 rows.add(new GboardPatchesSettingsContract.ToggleRow(
                         entry.title, entry.summary, true, checked,
                         value -> {
-                            GboardHiddenFlagSettings.writeEnabled(preferences, flagName, value);
-                            GboardFlagOverrideRuntime.applyOne(context, flagName, value);
+                            boolean written = GboardHiddenFlagSettings.writeEnabled(
+                                    preferences, flagName, value);
+                            boolean readBack = GboardHiddenFlagSettings.readEnabled(
+                                    preferences, flagName);
+                            boolean applied = GboardFlagOverrideRuntime.applyOne(
+                                    context, flagName, value);
+                            if (!written || readBack != value || !applied) {
+                                Log.w("GboardPatches", "Hidden flag switch did not take: "
+                                        + flagName + "=" + value + " written=" + written
+                                        + " readBack=" + readBack + " applied=" + applied);
+                            }
                         }));
             }
             return new GboardPatchesSettingsContract.Screen(

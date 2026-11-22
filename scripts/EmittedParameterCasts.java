@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.*;
 
 /** Reports injected CHECK_CASTs on parameter registers whose type differs from the declaration. */
-public class C {
+public class EmittedParameterCasts {
   public static void main(String[] args) throws Exception {
     File apk = new File(args[0]);
     MultiDexContainer<?> c = DexFileFactory.loadDexContainer(apk, null);

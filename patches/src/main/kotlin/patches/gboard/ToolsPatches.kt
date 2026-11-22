@@ -47,14 +47,21 @@ val gboardOcrScanTextPatch = resourcePatch(
  *
  * The client ships inside Gboard but is gated behind signature-scoped flags plus a
  * v2 intent routing table a re-signed build never receives. This forces the flag
- * tuple, adds INTENT_AUTO_FIX to the routing set, and repairs the three init points
- * that otherwise throw on a client type the assistant never learns.
+ * tuple and repairs the three init points that otherwise throw on a client type the
+ * assistant never learns.
+ *
+ * Auto Fix / proofread is NOT ported to 18.8: 18.6.3 added INTENT_AUTO_FIX to a
+ * route-set builder (`wgv.h(Object)`) that no longer exists, and 18.8 builds the
+ * routed set from the `voice_command_intent_types_routed_to_writing_tools_v2` flag
+ * (`aeam.f`, an `adgn`) instead. The acceptance shim returns immediately on the 18.8
+ * binding, so depending on it would report success for behaviour that was never
+ * emitted. Rewrite and tone changes are unaffected.
  */
 @Suppress("unused")
 val gboardAiWritingToolsPatch = resourcePatch(
     name = "AI Writing Tools",
-    description = "Enables Gboard's Writing tools: proofread, rewrite and tone changes on " +
-        "selected text, in every language and keyboard.",
+    description = "Enables Gboard's Writing tools: rewrite and tone changes on selected " +
+        "text, in every language and keyboard. Proofread/Auto Fix is not ported to 18.8.",
     default = true,
 ) {
     compatibleWith(gboard)
@@ -63,7 +70,6 @@ val gboardAiWritingToolsPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardAiWritingToolsFeatureMarkerPatch,
         gboardAiWritingToolsFlagValuePatch,
-        gboardAiWritingTools1863AutoFixAcceptancePatch,
     )
 }
 

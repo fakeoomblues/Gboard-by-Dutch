@@ -36,8 +36,17 @@ public final class GboardFlagOverrideRuntime {
             if (preferences == null) {
                 return;
             }
-            for (String flagName : GboardHiddenFlagSettings.enabledNames(preferences)) {
-                applyOverride(flagName, Boolean.TRUE);
+            // Reapply every flag the user has configured, not only the enabled ones: Off is an
+            // explicit `false` override, so dropping it at startup would make the switch behave
+            // differently after a restart. Flags never touched keep Gboard's stock value.
+            for (GboardHiddenFlagCatalog.Entry entry : GboardHiddenFlagCatalog.entries()) {
+                String key = GboardHiddenFlagSettings.preferenceKey(entry.flagName);
+                if (key == null || !preferences.contains(key)) {
+                    continue;
+                }
+                applyOverride(entry.flagName,
+                        Boolean.valueOf(GboardHiddenFlagSettings.readEnabled(
+                                preferences, entry.flagName)));
             }
         } catch (Throwable failure) {
             log("Hidden flag override bootstrap failed", failure);

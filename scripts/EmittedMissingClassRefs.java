@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.*;
 
 /** Lists references to classes that are not defined in the APK (android/java excluded). */
-public class M {
+public class EmittedMissingClassRefs {
   public static void main(String[] args) throws Exception {
     File apk = new File(args[0]);
     MultiDexContainer<?> c = DexFileFactory.loadDexContainer(apk, null);
