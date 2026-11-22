@@ -1439,7 +1439,7 @@
         <translation locale="en">Controls whether Advanced Voice Typing is forced on.</translation>
     </string>
     <string name="gboard_patches_advanced_voice_header_summary">
-        <translation locale="en">Voice typing -&gt; Advanced features、 Add punctuation</translation>
+        <translation locale="en">Voice typing -&gt; Advanced features</translation>
     </string>
     <string name="gboard_patches_advanced_voice_error_title">
         <translation locale="en">Advanced Voice Typing unavailable</translation>
@@ -1470,12 +1470,6 @@
     </string>
     <string name="gboard_patches_advanced_voice_backend_rambler_label">
         <translation locale="en">Rambler (online only)</translation>
-    </string>
-    <string name="gboard_patches_advanced_voice_zh_tw_punctuation_title">
-        <translation locale="en">Automatically Add Punctuation to Chinese Input</translation>
-    </string>
-    <string name="gboard_patches_advanced_voice_zh_tw_punctuation_summary">
-        <translation locale="en">Force-stop and restart Gboard for changes to take effect.</translation>
     </string>
     <string name="gboard_patches_advanced_voice_section_behavior">
         <translation locale="en">Behavior</translation>

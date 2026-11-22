@@ -141,8 +141,8 @@ val gboardHiddenFlagsPatch = resourcePatch(
 val gboardAdvancedVoiceTypingPatch = resourcePatch(
     name = "Advanced voice typing (NGA)",
     description = "Enables Gboard's NGA dictation stack: advanced voice typing next to Standard " +
-        "and Rambler, sticky microphone, long-form dictation and the zh-TW speech-to-text " +
-        "conversion. Off by default; the engine may need server eligibility.",
+        "and Rambler, plus the consolidated speech-stack features and long-form dictation. Off by " +
+        "default; the engine may need server eligibility.",
     default = false,
 ) {
     compatibleWith(gboard)
