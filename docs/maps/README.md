@@ -2,13 +2,59 @@
 
 The Maps source is imported from [bearinmind patches](https://github.com/bearinmindcat/morphe-patches), checkout `bd522fe` (v2.8.3), preserving the `org.ungoogled` namespaces, GPL licence and upstream attribution. It is integrated into the Dutch App Patches bundle rather than distributed as a second patch source.
 
-Target: `com.google.android.apps.maps` 26.43.05.1002020710, version code 1068844719, standalone APK, minimum Android 10 (API 29).
+Targets, standalone APKs, minimum Android 10 (API 29): `com.google.android.apps.maps` 26.43.05.1002020710 (version code 1068844719), 26.44.06.1006895251 (1068856906), and — for the patch subset listed under "26.47 port" below — 26.47.00.1022347503 (1068892333).
 
 Supplied input SHA-256: `81506a2c54fc9a8faca34c18af7619d9c9d26cbfbe799b66884a59ac17791004`.
 
 REA package inspection evidence `ev_f21f97d5dcba22992f2bcb4c0d54e94446579cc80996a8e68bf745ae2fecc6bd` confirms the package/version/SDK declarations and counts 68,600 classes and 8,875 resources. This static inspection does not establish patch applicability, installability or runtime behavior.
 
-## Included scope
+## 26.47 port (26.47.00.1022347503, version code 1068892333)
+
+Input: `com.google.android.apps.maps_26.47.00.1022347503-1068892333_minAPI29(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk`,
+SHA-256 `28cd7b8f0fb3ac9a520c2b40c362337be6d9fbe6b264a568e711b93c7cc01cac`.
+
+The 26.47 build renames most of the obfuscated classes and several members again, so the 26.44 lookups were re-derived from the target's DEX with local smali dumps and class-name-agnostic structural matching (external-framework reference set, string constants, member shapes). The port adds version-selected fingerprints rather than rewriting the 26.43/26.44 paths.
+
+Confirmed 26.44 → 26.47 symbol moves used by the port:
+
+| Area | 26.44 | 26.47 |
+| --- | --- | --- |
+| Platform location dispatcher / listener | `ajcc` (fused manager), `ajjl` (listener) | `ajny` (fused manager, `k:Lajwn;` availability test), `ajvh` (dispatcher, `c()` modes), `ajvg` (listener) |
+| Play services connection descriptor | client `A()`/`d()`/`f()` → `<init>(String,String,Z)` | client `B()`/`d()`/`f()` in `bfrn.O(IILandroid/os/IInterface;I)Z` |
+| Navigation camera controller | `bmly` | `bmtc` (`l(Lbmtp;)Lcfxn;`, retarget `bmti.c(Lcfym;Lbmnu;Z)Lcfxn;`, teardown `g()`) |
+| Account sheet row holder / row / builder / category | `omf` / `brdm` / `brdk` / `brdj` | `ool` / `brlr` / `brlp` / `brlo` |
+| Account sheet builders | `omi.a(Z)`, `kam.t(Lagdp;)` | `ooo.a(Z)Lbrel;`, `oim.O(Lagnt;)Lbrgh;` |
+| Account sheet list / row listener | `bwpw`, `ome` | `bwzs`, `Look` |
+| Settings row / section title | `bsgx.aP`, `bsgx.D(proto,Context)` | `bucr.bg`, `bsqa.y(Lcmyb;Landroid/content/Context;)` |
+| Icon loader | `gez.aC(Context,I)` | `fzc.aP(Context,I)` |
+| Car SDK resource cohort | `lvh`/`lvi`/`jbz.b`,`jbz.c`/`nnu`/`lvg` | `lps`/`lpt`/`kyp.y`,`kyp.z`/`qqt`/`lpr` |
+| Monogram avatar strategy interface | `buhf`/`bunt` | `buxr` |
+| Offline picker model / Compose state | `laphb` (`c:J`, `h`) / `dzc` | `aptd` (`d:J`, `h:Ldtg;`) / `dtg` |
+
+Resource ids that patches emit as literals were remapped by resource *name* against the 26.47 table, for example `quantum_gm_ic_edit_vd_theme_24` `0x7f080baa` → `0x7f080b85`, `gs_directions_car_vd_theme_24` `0x7f080536` → `0x7f080514`, `ic_suitcase` `0x7f080867` → `0x7f080844` and `ic_qu_placelist_heart` `0x7f080813` → `0x7f0807f0`.
+
+Verified against the exact 26.47 APK with the release bundle (`patches-1.92.0.mpp`) and the desktop patcher 1.19.1: **28 controls apply, 0 failures**, the output verifies as a v2 signature under the Morphe key (`CN=Morphe`), and the injected rows/hooks/switches are present in the rebuilt DEX (`uaCustomizationRow`, `uaWazeRow`, `uaSavedRow`, `uaPowerRow`, `HIDE_ADS`/`HIDE_AI`/`HIDE_TABS`, two `Can't sign in` toast sites, `org/ungoogled/ui/Shapes`). Applying: `120 refresh rate`, `Account sheet cleanup`, `Any media app`, `Better offline maps`, `Black theme`, `Blue pin`, `Bypass Play Services checks`, `Change app name`, `Change package name`, `Customization screen`, `Avoid Flock cameras`, `Flock cameras`, `Hide ads and clutter`, `Legacy icon`, `Location provider toggle`, `Native navigation for any Android Auto host`, `Offline saved places`, `Power saving mode`, `Proxy`, `Rectangle shapes`, `Remove permissions`, `Android Auto options`, `Remove sign-in prompts`, `Remove telemetry`, `Speed cameras`, `Speeding chime`, `Trim account menu`, `Zoom controls in navigation`; the optional `Add microG-RE support` and `Follow playing media` also apply when enabled.
+
+`Remove sign-in prompts` is ported: 26.47 merged the "Your profile" dispatcher into `Look.onClick`, so its 14-instruction case (`Look.a` → `ool` row → its `o` action spec → `YourProfileActionSpecClicked` → profile open → close) is replaced with the "Can't sign in" toast, and the removed boxed `msc` case is skipped for that build.
+
+The optional `Use the system voice for navigation` is ported too (default off). With it enabled the same 26.47 APK reports **25 controls applied, 0 failures**; its three edits land on the 26.47 sites `bmld`/`acku.ad` (TextToSpeech → `ProviderSpeech.create`), `aqsc`'s engine check (`bnib.a()` → `ProviderSpeech.acceptedEngine`) and the queue callback `bmqa.b(Lbmpy;Lbjwm;String)Z` → `ProviderSpeech.synthesizeToFile`. The rebuilt DEX then carries nine `ProviderSpeech` references and both `acceptedEngine` call sites.
+
+`Hide ads and clutter` is ported too: the promoted-pin request is now inline in `avbe.e(F)` (guarded right before its `avbt.c(Lcecc;Lcnnv;)V` hand-off), the ads list builders are `lltk.h/lltp.h`, the pin drawer `lluv.c`, the callout `lluy.b` (answering `bwob.a`), the placemark factory `antt.c`, the unified row list `awgw.M`, the review-summary and Ask Maps gates moved to the 26.47 string ids, the explainer's link is skipped with `cuko.bx()` in front of the layout, and the home-strip bind is `agqf.u(ViewGroup)` into `aghs.de`.
+
+What that port touched beyond the 26.47 symbol table: the account-sheet rows are built against `ool/brlr/brlp/brlo` with the `fzc.aP` icon loader and the 26.47 drawable ids; `Trim account menu` cuts both sheet builders (`oim.O(Lagnt;)`, `ooo.a(Z)`) using `btto.aD`/`ool.a()` as the row identities; `Account sheet cleanup` uses the `bsqa.y` section-title resolver, the `Look.onClick` Settings case and `ai()` onDestroy; `Offline saved places` accepts a builder whose alias enum is stored directly (`armi`), remaps its content-description ids (`ACCESSIBILITY_SHARE_PLACE`, sign-in prompts) and its bookmark/save icons, and injects `uaSavedRow` into both builders; `Power saving mode` now also patches the plain static availability predicate `agqs.aa` (26.47 stopped using the boxed Dagger provider) besides the row.
+
+`Avoid Flock cameras` is ported as well: the steer hook now resolves the 26.47 directions chain (`xqc.d` request builder, `wsi` session with `g:Lwss`, `wav.f` fetcher, `wsh.d` record factory, `lygl` pass-through factory whose extra int is filled with 26.44's 200) and builds its ten extension stubs against `cqwk/cqwc/yer/cres/cjqs/bjws/bjwm/bjwf`. A new **Android Auto options** patch exposes the car flags Google ships off: `car_satellite` (three read sites) and `satellite_on_at_startup` (one literal-default site; the other reads use a stored value). Both default off, so the user opts in.
+
+`Better offline maps` is ported: 26.47's picker writes its window selection through `aptd.f(RectF)` instead of a state field, so its branch takes the cap test after the `d:J` read, relaxes the "not too big" check (the test register is overwritten on the second move) and installs `pickerRect`/`pickerOverlay` at the state write and the model call. Verified: 27 controls, 0 failures, four picker markers in the rebuilt DEX.
+
+`Native navigation for any Android Auto host` is ported too: the car SDK cohort (`lps/lpt/kyp/qqt/lpr`), microphone action (`tqh.s()`), guidance cluster (`blyp/blxv/blyl/blxy/blxx`, callback `qk(Lblxv;)V`), guidance validator (26.47 chain `app→nuq→nbh→nup→nbe→nbn`, `nup.n():crin`, `crin.pY()`), car-search hook (`rjs.v(Lqhg;)V` with `G()Z` and the `az:Lxch;` branch, via the new `NativeCarSearch.targetForContext`), content binders (`qeh/pyg/qeu`, `a(Lbhui;)Object`) and the models (`qfp/qdu/qfa/qdo/qfb/qdv`, with `qfp`'s Context at `d` and list at `e`) are all re-derived. The extension reflects those names (`qfp/qdu/qfa/qdo/qdv`, `pqg` consumer) so the recents/search rows read correctly.
+
+Still pinned to 26.44 through `Constants.COMPATIBILITY_MAPS_2644`: only `Receive alerts from a third-party application` (`mapsVoiceContracts` pins the *exact 26.44 bytecode hash, register count and instruction count* of every warning-voice method). These are static patch-application results; no 26.47 install, device launch or runtime behaviour is claimed.
+
+The local flag/settings catalogue and the new 26.47 feature surface are documented in
+[research/2026-11-22-maps-26.47-flags.md](../research/2026-11-22-maps-26.47-flags.md).
+
+
 
 The source port retains all 30 upstream Maps patches, including the two alternative microG builds and optional media-notification integration. The bilingual user catalogues list the actual patch names and patch-time defaults: [English](../site/en/apps/google-maps.md), [Nederlands](../site/nl/apps/google-maps.md).
 

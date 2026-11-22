@@ -117,6 +117,38 @@ internal fun mapsVoiceFingerprint(method:Method):String {
 internal fun validateMapsWarningVoice(classes:Iterable<ClassDef>):Map<String,Method> {
     val byType=classes.associateBy { it.type }
     validateMapsGuidanceComponent { byType.getValue(it) }
+    // 26.47 warning model (verified by field type on the target APK).
+    if (byType.containsKey("Lbnfl;") && byType.containsKey("Lngt;")) {
+        listOf(
+            Triple("Lngt;","hU","Lcrkc;"),
+            Triple("Lbnfl;","f","Lbngz;"),
+            Triple("Lbnfl;","j","Lbzyj;"),
+            Triple("Lbnfl;","p","Lcrhl;"),
+            Triple("Lbnfl;","q","Lcrhl;"),
+            Triple("Lbnhu;","s","Ljava/util/concurrent/atomic/AtomicBoolean;"),
+            Triple("Lbnhu;","w","Lbnij;"),
+            Triple("Lbnhq;","a","Lbnhu;"),
+            Triple("Lbmvq;","a","Lcrhl;"),
+            Triple("Lbmvq;","b","Lcrhl;"),
+            Triple("Lbmvq;","c","Lbmuy;"),
+            Triple("Lbmvq;","d","Landroid/content/Context;"),
+            Triple("Lbmvq;","e","Lbmca;"),
+            Triple("Lbmvq;","o","Lyga;"),
+            Triple("Lbngu;","a","Landroid/media/MediaPlayer;"),
+            Triple("Lbnid;","a","Lbnil;"),
+            Triple("Lbngr;","a","[Lbnil;"),
+        ).forEach { (owner,name,type) ->
+            check(byType.getValue(owner).fields.count { it.name==name && it.type==type }==1) { "Changed Maps warning field $owner->$name" }
+        }
+        listOf(Triple("Lbmca;","b","Lyfm;"),Triple("Lyfm;","k","Lbjws;")).forEach { (owner,name,type) ->
+            check(byType.getValue(owner).fields.count { it.name==name && it.type==type }==1) { "Changed Maps native route geometry field $owner->$name" }
+        }
+        return mapsVoiceContracts.mapValues { (descriptor,c) ->
+            val m=byType.getValue(descriptor.substringBefore("->")).methods.single { it.toString()==descriptor }
+            check(m.accessFlags==c.flags && m.implementation?.registerCount==c.registers && m.implementation!!.instructions.count()==c.count && mapsVoiceFingerprint(m)==c.hash) { "Changed or already patched Maps warning voice $descriptor" }
+            m
+        }
+    }
     listOf(
         Triple("Lnjz;","hU","Lcqya;"),
         Triple("Lbmxs;","f","Lbmzi;"),
@@ -150,7 +182,12 @@ internal fun validateMapsWarningVoice(classes:Iterable<ClassDef>):Map<String,Met
 
 context(context:BytecodePatchContext)
 internal fun bindMapsWarningVoice() {
-    val bindingTypes=listOf("Lcom/google/android/apps/gmm/base/app/GoogleMapsApplication;", "Lnsn;", "Lngb;", "Lnsm;", "Lcqwl;", "Lnjz;", "Lblra;")
+    val bindingTypes=listOf("Lcom/google/android/apps/gmm/base/app/GoogleMapsApplication;",
+        "Lnsn;", "Lngb;", "Lnsm;", "Lcqwl;", "Lnjz;", "Lblra;",
+        // 26.47: the same chain and guidance types under their new names.
+        "Lnuq;", "Lnbh;", "Lnup;", "Lnbe;", "Lnbn;", "Lcrin;", "Lngt;", "Lblxy;", "Lblxx;",
+        // 26.47 warning model classes validated below.
+        "Lbnfl;", "Lbnhu;", "Lbnhq;", "Lbmvq;", "Lbngu;", "Lbnid;", "Lbngr;", "Lbmca;", "Lyfm;")
     val classes=(mapsVoiceContracts.keys.map { it.substringBefore("->") }+bindingTypes).distinct().map { context.classDefBy(it) }
     val originals=validateMapsWarningVoice(classes)
     val methods=originals.keys.associateWith { descriptor -> context.mutableClassDefBy(descriptor.substringBefore("->")).methods.single { it.toString()==descriptor } }
