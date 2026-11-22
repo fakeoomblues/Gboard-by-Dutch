@@ -176,7 +176,22 @@ final class NativeGuidance implements AutoCloseable {
     @Override public void close()throws Exception{
         if(closed)return;closed=true;method(source,"c",marker).invoke(source,listener);
     }
-    private static Object field(Object value,String name)throws Exception{Field field=value.getClass().getField(name);field.setAccessible(true);return field.get(value);}
-    private static Class<?> fieldType(Object value,String name)throws Exception{return value.getClass().getField(name).getType();}
-    private static Method method(Object value,String name,Class<?>...parameters)throws Exception{Method method=value.getClass().getMethod(name,parameters);method.setAccessible(true);return method;}
+    /**
+     * Maps releases change a member's visibility as freely as its class name: 26.47's component has a
+     * public bR and a package-private hN. getField() only sees public members, so walk the declared
+     * fields of the whole hierarchy instead.
+     */
+    static Field declaredField(Class<?> type,String name)throws NoSuchFieldException{
+        for(Class<?> owner=type;owner!=null;owner=owner.getSuperclass())
+            try{Field found=owner.getDeclaredField(name);found.setAccessible(true);return found;}catch(NoSuchFieldException absent){}
+        throw new NoSuchFieldException(name);
+    }
+    private static Object field(Object value,String name)throws Exception{return declaredField(value.getClass(),name).get(value);}
+    private static Class<?> fieldType(Object value,String name)throws Exception{return declaredField(value.getClass(),name).getType();}
+    private static Method method(Object value,String name,Class<?>...parameters)throws Exception{return declaredMethod(value.getClass(),name,parameters);}
+    static Method declaredMethod(Class<?> type,String name,Class<?>...parameters)throws NoSuchMethodException{
+        for(Class<?> owner=type;owner!=null;owner=owner.getSuperclass())
+            try{Method found=owner.getDeclaredMethod(name,parameters);found.setAccessible(true);return found;}catch(NoSuchMethodException absent){}
+        throw new NoSuchMethodException(name);
+    }
 }

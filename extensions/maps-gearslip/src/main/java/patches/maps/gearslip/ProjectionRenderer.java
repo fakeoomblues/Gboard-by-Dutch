@@ -107,7 +107,7 @@ public final class ProjectionRenderer {
                 if (controller == null) throw new IllegalStateException("Maps native projection controller is unavailable");
                 // This private connection is entirely inside Maps. The exported adapter validates
                 // the external host first; the original service remains restricted to our own UID.
-                controller.getClass().getField("H").setInt(controller, Process.myUid());
+                member(controller, "H").setInt(controller, Process.myUid());
                 Parcel request = Parcel.obtain(), reply = Parcel.obtain();
                 try {
                     request.writeInterfaceToken(PROJECTION);
@@ -209,7 +209,7 @@ public final class ProjectionRenderer {
         configuration = created ? canvasConfiguration(value,nativeWidth,nativeHeight,nativeDpi) : new Configuration(value);
         guard(() -> {
             if (created) {
-                controller.getClass().getField("o").set(controller, configuration);
+                member(controller, "o").set(controller, configuration);
                 call(controller, "v", new Class<?>[0]);
                 call(controller, "t", new Class<?>[]{android.content.res.Resources.class}, service.getResources());
                 Object activity = field(controller, "J");
@@ -352,9 +352,9 @@ public final class ProjectionRenderer {
         if (insets.equals(appliedInsets)) return;
         Object presentation = field(controller, "k");
         if (presentation == null) return;
-        ((Rect) controller.getClass().getField("v").get(controller)).set(insets);
+        ((Rect) member(controller, "v").get(controller)).set(insets);
         call(presentation, "A", new Class<?>[]{Rect.class}, insets);
-        if (surface != null && surface.isValid()) controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+        if (surface != null && surface.isValid()) member(controller, "C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
         appliedInsets = new Rect(insets);
     }
     /**
@@ -390,7 +390,7 @@ public final class ProjectionRenderer {
         if(!(target instanceof VirtualDisplay))throw new IllegalStateException("Maps virtual display ABI changed");
         // Resize the existing display/window, including while a host keyboard is
         // open. Recreating the activity would invalidate its native editor.
-        controller.getClass().getField("C").set(controller,drawing(w,h,density));
+        member(controller, "C").set(controller,drawing(w,h,density));
         ((VirtualDisplay)target).resize(w,h,density);
         nativeWidth=w;nativeHeight=h;nativeDpi=density;
         Configuration updated=canvasConfiguration(configuration,w,h,density);
@@ -534,7 +534,7 @@ public final class ProjectionRenderer {
         if (created) {
             Object holder = displayHolder();
             call(holder, "f", new Class<?>[]{Surface.class}, surface);
-            controller.getClass().getField("C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
+            member(controller, "C").set(controller, drawing(nativeWidth, nativeHeight, nativeDpi));
             applyAreas();
             watchOccupied();
             if(resumed)telemetrySurface(decor());
@@ -617,7 +617,7 @@ public final class ProjectionRenderer {
         if (!created || controller == null) return null;
         Object presentation = field(controller, "k");
         if (presentation == null) return null;
-        Method method = presentation.getClass().getMethod("f");
+        Method method = method(presentation, "f");
         Window window = (Window) method.invoke(presentation);
         return window == null ? null : window.getDecorView();
     }
@@ -646,8 +646,16 @@ public final class ProjectionRenderer {
     }
     private Class<?> type(String name) throws ClassNotFoundException { return service.getClassLoader().loadClass(name); }
     private Object displayHolder() throws Exception { return field(field(controller, "k"), "j"); }
-    private static Object field(Object target, String name) throws Exception {
-        Field member = target.getClass().getDeclaredField(name); member.setAccessible(true); return member.get(target);
+    private static Field member(Object target, String name) throws Exception {
+        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass())
+            try { Field found = type.getDeclaredField(name); found.setAccessible(true); return found; } catch (NoSuchFieldException absent) {}
+        throw new NoSuchFieldException(name);
+    }
+    private static Object field(Object target, String name) throws Exception { return member(target, name).get(target); }
+    private static Method method(Object target, String name, Class<?>... parameters) throws Exception {
+        for (Class<?> type = target.getClass(); type != null; type = type.getSuperclass())
+            try { Method found = type.getDeclaredMethod(name, parameters); found.setAccessible(true); return found; } catch (NoSuchMethodException absent) {}
+        throw new NoSuchMethodException(name);
     }
     private static Object call(Object target, String name, Class<?>[] parameters, Object... values) throws Exception {
         try { return target.getClass().getMethod(name, parameters).invoke(target, values); }
