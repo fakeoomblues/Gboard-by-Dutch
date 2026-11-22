@@ -40,8 +40,6 @@ internal object GboardOcrPatchTargets {
             GboardMethodTarget("Lxws;", "<init>", listOf("Landroid/content/Context;"), "V"),
             GboardMethodTarget("Lxws;", "a", listOf("[Lxns;"), "Lzdv;"),
             GboardMethodTarget("Lxws;", "c", listOf("Lxvo;"), "V"),
-            GboardMethodTarget("Lxws;", "c", listOf("Lytk;"), "Lzdv;"),
-            GboardMethodTarget("Lytk;", "<init>", listOf("Ljava/util/List;", "Lxvo;"), "V"),
             GboardMethodTarget("Lxvo;", "a", listOf("Lxvx;"), "V"),
             GboardMethodTarget("Lzdv;", "g", emptyList(), "Z"),
             GboardMethodTarget("Lzdv;", "e", emptyList(), "Ljava/lang/Object;"),

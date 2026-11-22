@@ -22,10 +22,13 @@ internal object GboardEditingAccessPointsTargets {
         GboardMethodTarget(OWNER, name, parameters.toList(), "V")
 
     private val descriptorMethods = listOf(
-        GboardMethodTarget("Laadr;", "m", emptyList(), "Laaej;") to true,
+        // 18.8.0: AccessPoint.m() is the static factory and returns the abstract builder;
+        // the concrete AutoValue builder (Laaej) keeps q(String)/l(I)/field d:a(), while the
+        // click action setter moved to the base class as v(Runnable).
+        GboardMethodTarget("Laadr;", "m", emptyList(), "Laadm;") to true,
         GboardMethodTarget("Laaej;", "q", listOf("Ljava/lang/String;"), "V") to false,
-        GboardMethodTarget("Laaej;", "i", listOf("I"), "V") to false,
-        GboardMethodTarget("Laaej;", "q", listOf("Ljava/lang/Runnable;"), "V") to false,
+        GboardMethodTarget("Laaej;", "l", listOf("I"), "V") to false,
+        GboardMethodTarget("Laadm;", "v", listOf("Ljava/lang/Runnable;"), "V") to false,
         GboardMethodTarget("Laaej;", "a", emptyList(), "Laadr;") to false,
         GboardMethodTarget("Laajh;", "g", listOf("Laadr;", "Z"), "V") to false,
         GboardMethodTarget("Lauco;", "n", listOf("Ljava/util/Collection;"), "Lauco;") to true,
