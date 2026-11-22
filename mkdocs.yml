@@ -116,6 +116,7 @@ nav:
       - guides/install.md
       - guides/downloads.md
       - guides/choose-patches.md
+      - guides/gboard.md
       - guides/shizuku.md
       - guides/shizuku-tv.md
       - guides/android-auto.md

@@ -8,6 +8,11 @@ Hulp nodig? Lees [problemen oplossen](troubleshooting.md).
 
 Extra installatiehulp: [Android Auto](android-auto.md), [Shizuku op een telefoon](shizuku.md) en [Shizuku op Android TV](shizuku-tv.md).
 
+## Gboard
+
+- [Parakeet, Rambler en de andere Gboard-patches instellen](gboard.md).
+- [Frosted Glass zichtbaar maken en vergelijken met vervaging uit en aan](gboard.md#frosted-glass).
+
 ## Navigatie en muziek
 
 - [Waze, Flitsmeister of Ungoogled Maps voor Android Auto installeren](android-auto.md).
