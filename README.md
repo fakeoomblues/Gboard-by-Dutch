@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.94.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.94.0)** · 80 apps · 386 patches
+**Patch bundle [v1.95.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.95.0)** · 80 apps · 387 patches
 
 ### Weather
 
@@ -99,7 +99,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [EasyPark NL](docs/site/en/apps/easypark-nl.md) | See guide | 26.42.4 | APKS | 2 |
 | [Flitsmeister](docs/site/en/apps/flitsmeister.md) | Ads · Tracking · Prompts · Plus/Pro · Compatibility · Partner services | 14.17, 15.0 | APKS | 10 |
 | [Gearslip](docs/site/en/apps/gearslip.md) | See guide | 0.3.12-alpha, 0.3.31-alpha | APK | 3 |
-| [Google Maps](docs/site/en/apps/google-maps.md) | See guide | 26.43.05.1002020710, 26.44.06.1006895251 | APK | 32 |
+| [Google Maps](docs/site/en/apps/google-maps.md) | See guide | 26.43.05.1002020710, 26.44.06.1006895251, 26.47.00.1022347503 | APK | 33 |
 | [Magic Earth](docs/site/en/apps/magic-earth.md) | See guide | 7.1.26.38.B4684D03.6207A61BA | APKM | 5 |
 | [Rollerbank](docs/site/en/apps/rollerbank.md) | Ads · Tracking · Prompts · Compatibility | 4.5.3.1 | APKS | 6 |
 | [Vela Maps](docs/site/en/apps/vela.md) | See guide | 0.5.2621 | APK | 1 |

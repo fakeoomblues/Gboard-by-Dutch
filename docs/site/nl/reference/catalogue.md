@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.94.0**
+**Patchbundel: 1.95.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -380,38 +380,39 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| 120 refresh rate | Aan | 26.44.06.1006895251 |
-| Account sheet cleanup | Aan | 26.44.06.1006895251 |
-| Add microG-RE support | Uit | 26.44.06.1006895251 |
-| Add original microG support | Uit | 26.44.06.1006895251 |
-| Any media app | Aan | 26.44.06.1006895251 |
-| Avoid Flock cameras | Aan | 26.44.06.1006895251 |
-| Better offline maps | Aan | 26.44.06.1006895251 |
-| Black theme | Aan | 26.44.06.1006895251 |
-| Blue pin | Aan | 26.44.06.1006895251 |
-| Bypass Play Services checks | Aan | 26.44.06.1006895251 |
-| Change app name | Aan | 26.44.06.1006895251 |
-| Change package name | Aan | 26.44.06.1006895251 |
-| Customization screen | Aan | 26.44.06.1006895251 |
-| Flock cameras | Aan | 26.44.06.1006895251 |
-| Follow playing media | Uit | 26.44.06.1006895251 |
-| Hide ads and clutter | Aan | 26.44.06.1006895251 |
-| Legacy icon | Aan | 26.44.06.1006895251 |
-| Location provider toggle | Aan | 26.44.06.1006895251 |
-| Native navigation for any Android Auto host | Aan | 26.44.06.1006895251 |
-| Offline saved places | Aan | 26.44.06.1006895251 |
-| Power saving mode | Aan | 26.44.06.1006895251 |
-| Proxy | Aan | 26.44.06.1006895251 |
-| Receive alerts from a third-party application | Aan | 26.44.06.1006895251 |
-| Rectangle shapes | Aan | 26.44.06.1006895251 |
-| Remove permissions | Aan | 26.44.06.1006895251 |
-| Remove sign-in prompts | Aan | 26.44.06.1006895251 |
-| Remove telemetry | Aan | 26.44.06.1006895251 |
-| Speed cameras | Aan | 26.44.06.1006895251 |
-| Speeding chime | Aan | 26.44.06.1006895251 |
-| Trim account menu | Aan | 26.44.06.1006895251 |
-| Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Zoom controls in navigation | Aan | 26.44.06.1006895251 |
+| 120 refresh rate | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Account sheet cleanup | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Add microG-RE support | Uit | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Add original microG support | Uit | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Android Auto options | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Any media app | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Avoid Flock cameras | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Better offline maps | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Black theme | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Blue pin | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Bypass Play Services checks | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Change app name | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Change package name | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Customization screen | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Flock cameras | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Follow playing media | Uit | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Hide ads and clutter | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Legacy icon | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Location provider toggle | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Native navigation for any Android Auto host | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Offline saved places | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Power saving mode | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Proxy | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Receive alerts from a third-party application | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Rectangle shapes | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove permissions | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove sign-in prompts | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove telemetry | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Speed cameras | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Speeding chime | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Trim account menu | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Use the system voice for navigation | Uit | 26.43.05.1002020710, 26.44.06.1006895251, 26.47.00.1022347503 |
+| Zoom controls in navigation | Aan | 26.44.06.1006895251, 26.47.00.1022347503 |
 
 ## GridCraft
 

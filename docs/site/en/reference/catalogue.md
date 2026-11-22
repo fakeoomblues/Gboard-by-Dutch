@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.94.0**
+**Patch bundle: 1.95.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -380,38 +380,39 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| 120 refresh rate | On | 26.44.06.1006895251 |
-| Account sheet cleanup | On | 26.44.06.1006895251 |
-| Add microG-RE support | Off | 26.44.06.1006895251 |
-| Add original microG support | Off | 26.44.06.1006895251 |
-| Any media app | On | 26.44.06.1006895251 |
-| Avoid Flock cameras | On | 26.44.06.1006895251 |
-| Better offline maps | On | 26.44.06.1006895251 |
-| Black theme | On | 26.44.06.1006895251 |
-| Blue pin | On | 26.44.06.1006895251 |
-| Bypass Play Services checks | On | 26.44.06.1006895251 |
-| Change app name | On | 26.44.06.1006895251 |
-| Change package name | On | 26.44.06.1006895251 |
-| Customization screen | On | 26.44.06.1006895251 |
-| Flock cameras | On | 26.44.06.1006895251 |
-| Follow playing media | Off | 26.44.06.1006895251 |
-| Hide ads and clutter | On | 26.44.06.1006895251 |
-| Legacy icon | On | 26.44.06.1006895251 |
-| Location provider toggle | On | 26.44.06.1006895251 |
-| Native navigation for any Android Auto host | On | 26.44.06.1006895251 |
-| Offline saved places | On | 26.44.06.1006895251 |
-| Power saving mode | On | 26.44.06.1006895251 |
-| Proxy | On | 26.44.06.1006895251 |
-| Receive alerts from a third-party application | On | 26.44.06.1006895251 |
-| Rectangle shapes | On | 26.44.06.1006895251 |
-| Remove permissions | On | 26.44.06.1006895251 |
-| Remove sign-in prompts | On | 26.44.06.1006895251 |
-| Remove telemetry | On | 26.44.06.1006895251 |
-| Speed cameras | On | 26.44.06.1006895251 |
-| Speeding chime | On | 26.44.06.1006895251 |
-| Trim account menu | On | 26.44.06.1006895251 |
-| Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251 |
-| Zoom controls in navigation | On | 26.44.06.1006895251 |
+| 120 refresh rate | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Account sheet cleanup | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Add microG-RE support | Off | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Add original microG support | Off | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Android Auto options | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Any media app | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Avoid Flock cameras | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Better offline maps | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Black theme | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Blue pin | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Bypass Play Services checks | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Change app name | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Change package name | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Customization screen | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Flock cameras | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Follow playing media | Off | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Hide ads and clutter | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Legacy icon | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Location provider toggle | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Native navigation for any Android Auto host | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Offline saved places | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Power saving mode | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Proxy | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Receive alerts from a third-party application | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Rectangle shapes | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove permissions | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove sign-in prompts | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Remove telemetry | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Speed cameras | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Speeding chime | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Trim account menu | On | 26.44.06.1006895251, 26.47.00.1022347503 |
+| Use the system voice for navigation | Off | 26.43.05.1002020710, 26.44.06.1006895251, 26.47.00.1022347503 |
+| Zoom controls in navigation | On | 26.44.06.1006895251, 26.47.00.1022347503 |
 
 ## GridCraft
 

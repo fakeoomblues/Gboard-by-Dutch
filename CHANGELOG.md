@@ -1,4 +1,40 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d1c6e601c8834820275d23359344112d3de1f33e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.95.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [d1c6e601c883](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/d1c6e601c8834820275d23359344112d3de1f33e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.95.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.94.0...v1.95.0) (2026-11-22)
+
+### 🐛 Bug Fixes
+
+* **Google Maps:** accept the 26.47 navigation binder by kind, not name ([03b041e](https://gitlab.com/johninnld/nl-morphe-patches/commit/03b041e2f96221be44e31859b3abd45e7c22d35e))
+* **Google Maps:** car bridge walks declared members, not public ones ([d62bfe6](https://gitlab.com/johninnld/nl-morphe-patches/commit/d62bfe6bba5f11be8c6fc0727d05f395aed90294))
+* **Google Maps:** car guidance bridge uses the 26.47 component accessor ([e7e6d5a](https://gitlab.com/johninnld/nl-morphe-patches/commit/e7e6d5ab97011c7ea66ff064b80be600118a51e0))
+* **Google Maps:** carry the black/rectangle theme onto the car surface ([666ee16](https://gitlab.com/johninnld/nl-morphe-patches/commit/666ee16969c1e8742d71d4fffc12465d6fb3aec1))
+* **Google Maps:** find the car display holder through typed fields ([bad4192](https://gitlab.com/johninnld/nl-morphe-patches/commit/bad4192b88f02e7cf7b126151e7469f51805b7eb))
+* **Google Maps:** guards must not clobber live registers ([c7d0617](https://gitlab.com/johninnld/nl-morphe-patches/commit/c7d0617bc0ae29e02292079e41d3018da74ebb8f))
+* **Google Maps:** hide-ads guard keeps 26.47's live registers ([4ce396a](https://gitlab.com/johninnld/nl-morphe-patches/commit/4ce396a65e636c7c3add1d71ba0a29ad21390cc1))
+* **Google Maps:** name the car UI failure instead of swallowing it ([bda201e](https://gitlab.com/johninnld/nl-morphe-patches/commit/bda201e6acef57193b2823d2f8002755256a04f0))
+* **Google Maps:** resolve the car graph by shape on 26.47 ([cd4b3dc](https://gitlab.com/johninnld/nl-morphe-patches/commit/cd4b3dce37252758967e35e957c16de152c5fad7))
+* **Google Maps:** resolve the guidance ABI by shape on 26.47 ([919e263](https://gitlab.com/johninnld/nl-morphe-patches/commit/919e263e06562c4c08457c28be59b665dfeff807))
+* **Google Maps:** resolve the remaining guidance ABI by shape ([dd59b46](https://gitlab.com/johninnld/nl-morphe-patches/commit/dd59b463745dc2e2e9b97391ac7359d40b4ed3c7))
+* **Google Maps:** saved-place pins pass the verifier on 26.47 ([976e3fd](https://gitlab.com/johninnld/nl-morphe-patches/commit/976e3fd352b301c74b5ad4324e6fadde8bcc552a))
+
+### ✨ New Features
+
+* **Google Maps:** Android Auto switches in Customization, read at runtime ([3b37b19](https://gitlab.com/johninnld/nl-morphe-patches/commit/3b37b191a165e398949a8920a5b09c493263c518))
+* **Google Maps:** keep the navatar in the car ([63edd3e](https://gitlab.com/johninnld/nl-morphe-patches/commit/63edd3e2850a34930b5347b995dbd0b433e06fa1))
+* **Google Maps:** port Receive alerts to 26.47 ([8cb6860](https://gitlab.com/johninnld/nl-morphe-patches/commit/8cb68604da90f43623ffc2c8cd1ca83766836a1f))
+* **Google Maps:** preselect a built-in navatar ([cb3e3f5](https://gitlab.com/johninnld/nl-morphe-patches/commit/cb3e3f57e3d96c26a5fead2071ebcdc7f9dc9845))
+* **Google Maps:** support 26.47 and expose the car ABI as a toggle ([3ae46ed](https://gitlab.com/johninnld/nl-morphe-patches/commit/3ae46ed413f405e0f38b3c805a108fa59321bca7))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/1b7b11c95e944c62e23351fa87bd0c542e5dd079/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.94.0.**
