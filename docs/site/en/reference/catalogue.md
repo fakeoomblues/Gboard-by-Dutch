@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.96.0**
+**Patch bundle: 1.96.1**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -160,6 +160,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 7.4.8 |
 | Hide Premium banner | On | 7.4.8 |
 | Hide ads | On | 7.4.8 |
+| Hide update prompt | On | 7.4.8 |
 | Skip consent screens | On | 7.4.8 |
 
 ## Candy Crush Soda Saga

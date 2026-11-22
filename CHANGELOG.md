@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/11f2e73c90f4876c9ae1afbbdf00b5f88b16848e/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.96.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [11f2e73c90f4](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/11f2e73c90f4876c9ae1afbbdf00b5f88b16848e). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.96.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.96.0...v1.96.1) (2026-11-22)
+
+### 🐛 Bug Fixes
+
+* **Buienradar:** restore startup access on build 7915 ([7a030b8](https://gitlab.com/johninnld/nl-morphe-patches/commit/7a030b8c519861ee70a5f8576eec08b0e05a203b))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f935fc1749e29b740898c252c6e65f17c3e670b0/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.96.0.**

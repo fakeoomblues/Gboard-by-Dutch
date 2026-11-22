@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.96.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patchbundel: 1.96.1</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -272,7 +272,7 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="weather" data-search="buienradar com.supportware.buienradar 7.4.8 disable swrve and location upload disable tracking hide premium banner hide ads skip consent screens" markdown>
+<article class="dap-app-card" data-category="weather" data-search="buienradar com.supportware.buienradar 7.4.8 disable swrve and location upload disable tracking hide premium banner hide ads hide update prompt skip consent screens" markdown>
 <p class="dap-app-card__category">Weer</p>
 
 ### [Buienradar](apps/buienradar.md)
@@ -280,12 +280,13 @@ hide:
 <p class="dap-app-card__version">App-versies: <span class="dap-data">7.4.8</span></p>
 <p class="dap-app-card__package">com.supportware.Buienradar</p>
 <details class="dap-app-card__patches">
-<summary>5 patches</summary>
+<summary>6 patches</summary>
 <ul>
 <li>Disable Swrve and location upload <span class="dap-app-card__target">7.4.8 · standaard uit</span></li>
 <li>Disable tracking <span class="dap-app-card__target">7.4.8</span></li>
 <li>Hide Premium banner <span class="dap-app-card__target">7.4.8</span></li>
 <li>Hide ads <span class="dap-app-card__target">7.4.8</span></li>
+<li>Hide update prompt <span class="dap-app-card__target">7.4.8</span></li>
 <li>Skip consent screens <span class="dap-app-card__target">7.4.8</span></li>
 </ul>
 </details>

@@ -48,14 +48,14 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.96.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.96.0)** · 80 apps · 392 patches
+**Patch bundle [v1.96.1](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.96.1)** · 80 apps · 393 patches
 
 ### Weather
 
 | App | Changes | Target app versions | Input | Patches |
 | --- | --- | --- | --- | --- |
 | [Buienalarm](docs/site/en/apps/buienalarm.md) | Ads · Tracking · Prompts · Compatibility | 4.32.0 | APKS | 5 |
-| [Buienradar](docs/site/en/apps/buienradar.md) | Ads · Tracking · Prompts | 7.4.8 | APKM | 5 |
+| [Buienradar](docs/site/en/apps/buienradar.md) | Ads · Tracking · Prompts | 7.4.8 | APKM | 6 |
 | [RainViewer](docs/site/en/apps/rainviewer.md) | Ads · Tracking · Prompts · Compatibility | 8.4.1 | APKM | 9 |
 | [Weeronline](docs/site/en/apps/weeronline.md) | Ads · Tracking · Prompts · Plus/Pro | 3.61.0 | APKS | 5 |
 | [Weerplaza](docs/site/en/apps/weerplaza.md) | Ads · Tracking · Prompts · Compatibility | 3.13.1 | APKS | 5 |
