@@ -33,6 +33,17 @@ public class GboardRamblerCloudRuntimeTest {
     }
 
     @Test
+    public void automaticRetryRequiresItsOwnMarkerAndABooleanFlag() {
+        assertSame(Boolean.FALSE, GboardRamblerCloudRuntime.applyAutomaticRetryFlag(Boolean.FALSE, false));
+        assertSame(Boolean.TRUE, GboardRamblerCloudRuntime.applyAutomaticRetryFlag(Boolean.FALSE, true));
+        assertSame(Boolean.TRUE, GboardRamblerCloudRuntime.applyAutomaticRetryFlag(Boolean.TRUE, false));
+        Object stock = Long.valueOf(1L);
+        assertSame(stock, GboardRamblerCloudRuntime.applyAutomaticRetryFlag(stock, true));
+        assertSame(Boolean.FALSE, GboardRamblerCloudRuntime.applyFlagValue(
+                "agentic_dictation_enable_auto_parallel_retry", Boolean.FALSE, true));
+    }
+
+    @Test
     public void leavesOtherFlagsAndUnexpectedTypesAlone() {
         Object stock = Boolean.FALSE;
         assertSame(stock, GboardRamblerCloudRuntime.applyFlagValue("enable_jetson_s3_quota_experiment_override", stock));

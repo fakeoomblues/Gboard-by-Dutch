@@ -1,5 +1,10 @@
 package dev.jason.gboardpatches.extension.rambler;
 
+import android.content.Context;
+
+import dev.jason.gboardpatches.extension.flagsettings.GboardFlagRuntimeContext;
+import dev.jason.gboardpatches.extension.settings.GboardPatchesFeatureAvailability;
+
 /**
  * Exposes Gboard's cloud Rambler voice typing on phones Google does not roll it out to.
  *
@@ -17,6 +22,10 @@ public final class GboardRamblerCloudRuntime {
     /** Optional extras live behind this manifest marker, written by their own patch. */
     private static final String RAMBLER_EXTRAS_FEATURE_MARKER =
             "dev.jason.gboardpatches.feature.rambler_extras";
+    private static final String RAMBLER_AUTOMATIC_RETRY_FEATURE_MARKER =
+            "dev.jason.gboardpatches.feature.rambler_automatic_retry";
+    private static final String AUTOMATIC_RETRY_FLAG =
+            "agentic_dictation_enable_auto_parallel_retry";
     public static final String RAMBLER_AL_OVERFLOW_MENU_FLAG =
             "enable_rambler_al_toolbar_overflow_menu";
     public static final String RAMBLER_PRESERVE_REWRITTEN_ON_REVERT_FLAG =
@@ -40,16 +49,12 @@ public final class GboardRamblerCloudRuntime {
         if (cached != null) {
             return cached.booleanValue();
         }
-        boolean resolved = false;
-        try {
-            android.content.Context context =
-                    dev.jason.gboardpatches.extension.flagsettings.GboardFlagRuntimeContext.resolveContext();
-            resolved = context != null && dev.jason.gboardpatches.extension.settings
-                    .GboardPatchesFeatureAvailability.hasFeature(
-                            context, RAMBLER_EXTRAS_FEATURE_MARKER);
-        } catch (Throwable ignored) {
-            resolved = false;
+        Context context = GboardFlagRuntimeContext.resolveContext();
+        if (context == null) {
+            return false;
         }
+        boolean resolved = GboardPatchesFeatureAvailability.hasFeature(
+                context, RAMBLER_EXTRAS_FEATURE_MARKER);
         extrasEnabled = Boolean.valueOf(resolved);
         return resolved;
     }
@@ -59,7 +64,17 @@ public final class GboardRamblerCloudRuntime {
         if (flagName == null) {
             return originalResult;
         }
+        if (AUTOMATIC_RETRY_FLAG.equals(flagName)) {
+            return applyAutomaticRetryFlag(originalResult, Boolean.FALSE.equals(originalResult)
+                    && GboardPatchesFeatureAvailability.hasFeature(
+                            GboardFlagRuntimeContext.resolveContext(),
+                            RAMBLER_AUTOMATIC_RETRY_FEATURE_MARKER));
+        }
         return applyFlagValue(flagName, originalResult, extrasEnabled());
+    }
+
+    static Object applyAutomaticRetryFlag(Object originalResult, boolean enabled) {
+        return enabled && Boolean.FALSE.equals(originalResult) ? Boolean.TRUE : originalResult;
     }
 
     static Object applyFlagValue(String flagName, Object originalResult, boolean extras) {

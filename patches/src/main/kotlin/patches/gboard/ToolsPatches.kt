@@ -19,6 +19,7 @@ import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
+import patches.gboard.features.featureflags.applyFeatureMarker
 import patches.gboard.features.ramblerextras.gboardRamblerExtrasMarkerPatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
@@ -176,9 +177,25 @@ val gboardRamblerToolbarExtrasPatch = resourcePatch(
     compatibleWith(gboard)
 
     dependsOn(
+        ramblerVoiceTyping,
         gboardPatchesSettingsPatch,
         gboardRamblerExtrasMarkerPatch,
     )
+}
+
+@Suppress("unused")
+val gboardRamblerAutomaticRetryPatch = resourcePatch(
+    name = "Rambler automatic retry (18.8)",
+    description = "Lets Rambler retry eligible recognition errors automatically using the audio " +
+        "from the current dictation. Rambler may send that audio to Google again.",
+    default = false,
+) {
+    compatibleWith(gboard)
+    dependsOn(ramblerVoiceTyping)
+
+    finalize {
+        applyFeatureMarker("dev.jason.gboardpatches.feature.rambler_automatic_retry")
+    }
 }
 
 /**

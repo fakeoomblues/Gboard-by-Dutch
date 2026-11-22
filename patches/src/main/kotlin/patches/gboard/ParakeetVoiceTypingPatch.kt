@@ -569,11 +569,21 @@ val parakeetVoiceTyping = bytecodePatch(
                             ?: throw PatchException("Expected one Standard voice typing choice, found ${selectors.size}")
                         standard.setAttributeNS(ANDROID, "android:title", "@string/morphe_parakeet_selector_title")
                         standard.setAttributeNS(ANDROID, "android:summary", "@string/morphe_parakeet_selector_summary")
+                        standard.removeAttributeNS(ANDROID, "fragment")
                     }
                 }
                 screens++
             }
             if (screens == 0) throw PatchException("Gboard voice typing settings screens not found")
+
+            // The stock fragment also installs a gear listener when this screen contains rows.
+            // Leave the selector usable and direct configuration to the existing Parakeet entry.
+            document("res/xml/setting_traditional_voice.xml").use { xml ->
+                val screen = xml.documentElement
+                while (screen.firstChild != null) {
+                    screen.removeChild(screen.firstChild)
+                }
+            }
         }
     }
     dependsOn(originalInput, settings, gboardParakeetIconPatch)

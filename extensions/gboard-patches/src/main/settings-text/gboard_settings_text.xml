@@ -251,9 +251,6 @@
     <string name="gboard_patches_group_keyboard_header_summary">
         <translation locale="en"></translation>
     </string>
-    <string name="gboard_patches_group_row_unavailable">
-        <translation locale="en">Not in this build: the patch that adds it is not applied.</translation>
-    </string>
     <string name="gboard_patches_group_keyboard_empty_title">
         <translation locale="en">No keyboard settings available</translation>
     </string>
