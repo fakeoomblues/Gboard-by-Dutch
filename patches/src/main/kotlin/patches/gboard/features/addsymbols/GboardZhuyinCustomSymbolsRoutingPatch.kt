@@ -170,7 +170,7 @@ private val PROVIDER_WRAPPER_TYPE_DELEGATE = """
 
     move-result-object p1
 
-    check-cast p1, Lqnm;
+    check-cast p1, Lahsz;
 """.trimIndent()
 
 private val METRICS_ALIAS_DELEGATE = """
@@ -178,7 +178,7 @@ private val METRICS_ALIAS_DELEGATE = """
 
     move-result-object p0
 
-    check-cast p0, Lqnm;
+    check-cast p0, Lahsz;
 """.trimIndent()
 
 private val NAVIGATION_IDENTITY_DELEGATE = """
@@ -186,7 +186,7 @@ private val NAVIGATION_IDENTITY_DELEGATE = """
 
     move-result-object p2
 
-    check-cast p2, Lqnm;
+    check-cast p2, Lahsz;
 """.trimIndent()
 
 private val FOOTER_TAB_CLICK_DELEGATE = """

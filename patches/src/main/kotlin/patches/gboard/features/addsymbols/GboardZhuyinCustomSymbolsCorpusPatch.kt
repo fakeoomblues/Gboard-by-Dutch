@@ -135,7 +135,7 @@ private fun buildCorpusAppendDelegate(register: Int): String = """
 
     move-result-object v$register
 
-    check-cast v$register, Lwyw;
+    check-cast v$register, Lauys;
 """.trimIndent()
 
 private val CUSTOM_SYMBOLS_RUNTIME_DESCRIPTOR = RuntimeAbiCatalog.abi(
