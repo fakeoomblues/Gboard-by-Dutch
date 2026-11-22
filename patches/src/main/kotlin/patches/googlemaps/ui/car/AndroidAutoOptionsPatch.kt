@@ -1,5 +1,7 @@
 package org.ungoogled.patches.maps.ui.car
 
+import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.booleanOption
@@ -46,6 +48,15 @@ val androidAutoOptionsPatch = bytecodePatch(
         title = "Restore satellite view on startup",
         description = "Start with satellite imagery when the last session used it, instead of starting on the " +
             "plain map every time.",
+    )
+    val navatarKeepState = booleanOption(
+        key = "navatarKeepState",
+        default = false,
+        title = "Keep your navatar in the car",
+        description = "Maps only sends your navigation avatar to a car when it believes you chose it " +
+            "yourself; a navatar that was enabled automatically is treated as not wanted, so the plain arrow " +
+            "shows instead. Answer that check as \"chosen by me\" so the car keeps the avatar and style you " +
+            "already have. Nothing is written to your Maps settings.",
     )
 
     execute {
@@ -100,6 +111,24 @@ val androidAutoOptionsPatch = bytecodePatch(
             val sites = enableDefault("N") // satellite_on_at_startup
             if (sites == 0) throw PatchException("satellite-on-startup setting has no read site any more")
             println("Android Auto options: satellite_on_at_startup default flipped at $sites read sites")
+        }
+        if (navatarKeepState.value == true) {
+            // `vpg.e`/`vok.e` feeds the car an empty navatar model when `u(mode)` says the navatar was
+            // auto-enabled rather than chosen. Making that guard answer false returns the saved model
+            // name and colour instead; the stored navatar_enabled_state is left untouched.
+            val guard = listOf("Lvot;" to "Lckmg;", "Lvok;" to "Lckbl;").firstNotNullOfOrNull { (owner, mode) ->
+                runCatching {
+                    mutableClassDefBy(owner).methods.single {
+                        it.name == "u" && it.parameterTypes.map(CharSequence::toString) == listOf(mode) &&
+                            it.returnType == "Z"
+                    }
+                }.getOrNull()?.let { owner to it }
+            } ?: throw PatchException("the Android Auto navatar guard has no known read site")
+            guard.second.addInstructions(0, """
+                const/4 v0, 0x0
+                return v0
+            """)
+            println("Android Auto options: navatar guard answers no at ${guard.first} (car keeps its avatar)")
         }
     }
 }

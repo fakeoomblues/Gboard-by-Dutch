@@ -161,3 +161,50 @@ The 26.44 path is unchanged and still verified: `MapsWarningVoiceTest` and `Maps
 pass with `MAPS_ORIGINAL_APK` pointing at 26.44.06.1006895251 (51 pinned contracts, resume bytecode,
 pinned dispatch fence).
 
+## Navatar: the third Android Auto option
+
+`Android Auto options` now exposes `navatarKeepState` (off by default) alongside `carSatellite` and
+`satelliteOnStartup`.
+
+Maps only sends the navigation avatar to a car when it believes the user chose it. The guard is a
+private method on the navatar controller:
+
+```
+u(mode) = carFlag && d.u() == pnj.c && navatar_enabled_state(mode) == AUTO_ENABLED
+```
+
+`AUTO_ENABLED` means Maps turned the navatar on by itself. When the guard is true, `vot.e(DRIVE)`
+returns an empty model (plain arrow) and `vot.a(DRIVE)` returns 0 (no colour). The
+`is_navatar_enabled_state_reset_for_android_auto` boolean (`bace.ix`) is **not** that switch: it is a
+one-shot latch recording that the reset was applied, and forcing it changes nothing visible.
+
+The option makes the guard answer false instead:
+
+```
+Lvot;->u  (26.47) / Lvok;->u  (26.44)
+  0 CONST_4 v0, 0x0        <- inserted
+  1 RETURN v0              <- inserted
+  ... original body, now unreachable
+```
+
+Only two call sites use it — `a()` (colour id) and `e()` (model name) — so both return the stored
+`custom_chevron_model_name` / `custom_chevron_model_color_id`. Nothing is written to
+`navatar_enabled_state` and no user setting is mutated.
+
+```
+Android Auto options: navatar guard answers no at Lvot; (car keeps its avatar)
+success True  applied 29  failed 0   SIGNATURE_OK
+```
+
+With the option off the guard is untouched (instruction 0 is still `IGET_OBJECT v0,v2 Lvot;->c:Laywx;`)
+and the run is still `applied 29 failed 0`. The option adds no patch, so the applied count stays 29.
+
+### Custom navatars are a separate project
+
+The navatar is a server-delivered 3D model, not a bundled drawable: the APK contains
+`NavatarsLoadModelMissingTextureCount`, `CustomizableChevronPromo.model_manifest`,
+`NavatarsConfig.ModelConfig.model_name` and a picker carousel of `imageRequest`s, and
+`unzip -l | grep -i navatar` finds no assets at all. Model names also go through a fixed switch
+(`vps.p`: `Navatar_Sedan`->2, `Navatar_SUV`->4, `Navatar_City`->6, unknown->1). Bundling our own avatar
+means shipping that model format, extending the name map and driving the picker — its own project, not
+a theme variant. A cheaper first step is to preselect one of the built-in models and colours.
