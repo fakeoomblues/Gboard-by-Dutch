@@ -29,10 +29,11 @@ public final class NativeCarNavigationSession implements AutoCloseable {
         @Override public void onServiceConnected(ComponentName name, IBinder binder) {
             if (closed) return;
             try {
-                // This Binder is obtained only from the non-exported service in this APK.
-                // Its external onTransact Google-host check remains entirely unchanged.
-                Class<?> type = context.getClassLoader().loadClass("lvp");
-                if (binder == null || binder.getClass() != type || !(binder instanceof Binder))
+                // This Binder is obtained only from the non-exported service in this APK, so what
+                // matters is that it is a local Binder carrying the provider's transaction handler -
+                // not its obfuscated class name, which 26.47 reuses for an unrelated class (26.44 lvp,
+                // 26.47 lqa). Its external onTransact Google-host check remains entirely unchanged.
+                if (!(binder instanceof Binder))
                     throw new SecurityException("Maps navigation provider is not local");
                 provider = new LocalProvider(binder);
                 publicHostRegistered = true;
