@@ -276,6 +276,7 @@ public final class ProjectionRenderer {
      * Presses Maps' own Start on its route preview, as the driver's tap would; true when Maps
      * took the click. False, and one warning per run of failures, when there is no usable Start
      * view (not on a route preview, still loading, another action such as Add stop) or it took no click.
+     * Never fails the session: an exception, Maps' own click handler's included, is logged and is false.
      * Main thread only.
      */
     boolean startRoutePreview() {
@@ -294,7 +295,12 @@ public final class ProjectionRenderer {
                         : NativeRoutePreview.find(root) == null ? "Maps' route preview has no usable Start view" : "Maps' Start view took no click"));
             }
             return false;
-        } catch (Exception error) { fail(error); return false; }
+        } catch (Exception error) {
+            // A start request is a convenience on a session the driver is using: whatever goes wrong
+            // here (Maps' own click handler included) never ends it.
+            Log.w("MapsNativeCar", "Host asked to start guidance: Maps' route preview start failed", error);
+            return false;
+        }
     }
     private void watchOccupied() throws Exception {
         View root = occupiedListener == null && previewListener == null ? null : decor();

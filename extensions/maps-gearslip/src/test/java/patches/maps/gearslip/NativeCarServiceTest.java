@@ -643,6 +643,25 @@ public final class NativeCarServiceTest {
         assertNull(sessionField(session, "failure"));
     }
 
+    @Test public void aStartWhoseClickThrowsLeavesTheSessionRunningAndReportsFalse() throws Exception {
+        handshake(HOST);
+        FrameLayout root = nativeScene(); FrameLayout start = routePreview(root, "Start");
+        Object session = activeSession(); ProjectionRenderer renderer = rendererOf(session);
+        IBinder callback = overlayCallback(session);
+        start.setOnClickListener(view -> { throw new IllegalStateException("Maps' own click handler failed"); });
+        assertFalse("A failed start is reported as not started", renderer.startRoutePreview());
+        sendStartGuidance(callback); shadowOf(Looper.getMainLooper()).idle();
+        java.lang.reflect.Field failed = ProjectionRenderer.class.getDeclaredField("failed"); failed.setAccessible(true);
+        assertFalse("The renderer is not failed", failed.getBoolean(renderer));
+        assertNull("The session is not failed", sessionField(session, "failure"));
+        assertFalse("The session is not closed", (Boolean) sessionField(session, "closed"));
+        assertSame("The session is still the active one", session, activeSession());
+        assertSame("The renderer is still the session's", renderer, rendererOf(session));
+        start.setOnClickListener(startClicks::add);
+        sendStartGuidance(callback); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("The next request still works", java.util.Collections.singletonList(start), startClicks);
+    }
+
     @Test public void anotherActionInTheFootersViewIsNotPressed() throws Exception {
         handshake(HOST);
         FrameLayout root = nativeScene(); routePreview(root, "Add stop");
