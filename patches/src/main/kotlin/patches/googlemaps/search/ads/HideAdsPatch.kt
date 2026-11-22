@@ -14,8 +14,12 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction21t
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction35c
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.ungoogled.patches.maps.ui.SHAPES
 import org.ungoogled.patches.maps.ui.activityContextHookPatch
@@ -102,13 +106,37 @@ internal val hideAdsPatch = bytecodePatch(
         if (is2647) {
             // `avbe.e(F)` ends with the promoted-pin options hand-off, so return
             // right before it instead of skipping the whole request method.
+            // The hand-off is a virtual call, so its receiver and its arguments are live at that
+            // point: v0 is the receiver. Use a local that the call and everything after it do not
+            // touch, otherwise clobbering it turns a reference into a boolean and the verifier
+            // rejects the whole class on the first draw.
+            fun readRegisters(insn: com.android.tools.smali.dexlib2.iface.instruction.Instruction): List<Int> = buildList {
+                (insn as? OneRegisterInstruction)?.let { add(it.registerA) }
+                (insn as? TwoRegisterInstruction)?.let { add(it.registerB) }
+                (insn as? ThreeRegisterInstruction)?.let { add(it.registerC) }
+                (insn as? FiveRegisterInstruction)?.let {
+                    add(it.registerC); add(it.registerD); add(it.registerE); add(it.registerF); add(it.registerG)
+                }
+                (insn as? RegisterRangeInstruction)?.let {
+                    for (register in it.startRegister until it.startRegister + it.registerCount) add(register)
+                }
+            }
+            val method = promotedPinRequest.method
+            val code = method.implementation!!.instructions.toList()
             val callIndex = promotedPinRequest.instructionMatches.last().index
-            val call = promotedPinRequest.method.implementation!!.instructions[callIndex]
-            promotedPinRequest.method.addInstructionsWithLabels(
+            val call = code[callIndex]
+            val busy = buildSet {
+                addAll(readRegisters(call))
+                for (after in callIndex + 1 until code.size) addAll(readRegisters(code[after]))
+            }
+            val locals = method.implementation!!.registerCount - method.parameterTypes.size - 1
+            val scratch = (0 until locals).firstOrNull { it !in busy }
+                ?: throw PatchException("no free local register before ${method.name}'s ad hand-off")
+            method.addInstructionsWithLabels(
                 callIndex,
                 """
-                    sget-boolean v0, $SHAPES->HIDE_ADS:Z
-                    if-eqz v0, :ads_on
+                    sget-boolean v$scratch, $SHAPES->HIDE_ADS:Z
+                    if-eqz v$scratch, :ads_on
                     return-void
                 """,
                 ExternalLabel("ads_on", call),
