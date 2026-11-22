@@ -6,7 +6,6 @@ import patches.gboard.features.ocr.gboardOcrFlagValuePatch
 import patches.gboard.features.ocr.gboardOcrModelAssetsPatch
 import patches.gboard.features.ocr.gboardOcrBundledRecognizerPatch
 import patches.gboard.features.ocr.gboardOcrRuntimePatch
-import patches.gboard.features.writingtools.gboardAiWritingTools1863AutoFixAcceptancePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
 import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
