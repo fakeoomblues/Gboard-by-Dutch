@@ -49,7 +49,7 @@ internal val gboardAdvancedVoice1803ZhTwPatch = bytecodePatch(
         normalReadinessReturns.asReversed().forEach { i ->
             val r = (readiness.implementation!!.instructions[i] as OneRegisterInstruction).registerA
             readiness.addInstructions(i, """
-                invoke-static {v$r}, Ltdn;->morpheNativeSplitReady(Z)Z
+                invoke-static {v$r}, Lanoz;->morpheNativeSplitReady(Z)Z
                 move-result v$r
             """)
         }
@@ -76,7 +76,7 @@ internal fun advancedVoice1853NativeBody() = """
     ${RuntimeCallEmitter.invoke(RuntimeCallId.ADVANCED_VOICE_RUNTIME_SHOULD_CHECK_NATIVE, "p0")}
     move-result v0
     if-eqz v0, :done
-    sget-object v0, Ltor;->b:Lltr;
+    sget-object v0, Ltor;->b:Lyxd;
     invoke-interface {v0}, Lhrn;->a()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Ljava/lang/Boolean;
@@ -98,7 +98,7 @@ internal fun advancedVoice1853MddBody() = """
     move-result v0
     if-eqz v0, :done
     :start
-    iget-object v0, p0, Lwdm;->d:Ladic;
+    iget-object v0, p0, Latvr;->d:Lbgms;
     if-eqz v0, :reset
     const-string v1, "zh-TW"
     invoke-static {v1}, Ljava/util/Locale;->forLanguageTag(Ljava/lang/String;)Ljava/util/Locale;

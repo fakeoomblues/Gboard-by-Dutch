@@ -54,14 +54,7 @@ def patch_findings():
 # regress silently because any *new* stale literal fails the check below. Each
 # entry needs a member-level port (the 18.8 class exists but its fields/methods
 # must be resolved), which is why the classmap alone is not enough here.
-KNOWN_STALE = {
-    ('features/advancedvoice/GboardAdvancedVoiceZhTwPatch.kt', 'tdn'),
-    ('features/advancedvoice/GboardAdvancedVoiceZhTwPatch.kt', 'ltr'),
-    ('features/advancedvoice/GboardAdvancedVoiceZhTwPatch.kt', 'wdm'),
-    ('features/accesspointsmenu/GboardAccessPointsMenuPatch.kt', 'npq'),
-    ('features/accesspointsmenu/GboardAccessPointsMenuPatch.kt', 'qnp'),
-    ('features/writingtools/GboardAiWritingToolsFlagValuePatch.kt', 'wgv'),
-}
+KNOWN_STALE = set()
 
 def severity(n, new):
     if not (SRC / (n + '.java')).exists() and (SRC / (new + '.java')).exists():

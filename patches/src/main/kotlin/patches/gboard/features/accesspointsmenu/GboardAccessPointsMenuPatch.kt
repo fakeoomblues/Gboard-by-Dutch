@@ -74,7 +74,7 @@ internal val gboardAccessPointsMenu1853Patch = bytecodePatch(
             PRIVATE_FINAL, 5, menuRefreshBody())
         mutableClass("Lafhp;").addHelperMethodIfMissing("morpheMenuBodyId", emptyList(), "I",
             publicFinal, 2, """
-                iget v0, p0, Lqje;->k:I
+                iget v0, p0, Lafhp;->k:I
                 return v0
             """)
         mutableClass(KEYBOARD).addHelperMethodIfMissing("morpheMenuViewDef", listOf(VIEW_DEF), VIEW_DEF,
@@ -165,33 +165,33 @@ internal fun MutableMethod.applyMenu1853Drag() {
 }
 
 internal fun menuRefreshBody(): String = """
-    iget-boolean v0, p0, Lnth;->p:Z
+    iget-boolean v0, p0, Laajh;->p:Z
     if-nez v0, :done
-    iget-boolean v0, p0, Lnth;->r:Z
+    iget-boolean v0, p0, Laajh;->r:Z
     if-nez v0, :done
-    iget-object v0, p0, Lnth;->e:Lqje;
-    invoke-virtual {v0}, Lpxy;->morpheMenuBodyId()I
+    iget-object v0, p0, Laajh;->e:Lafhp;
+    invoke-virtual {v0}, Lafhp;->morpheMenuBodyId()I
     move-result v1
     ${RuntimeCallEmitter.invoke(RuntimeCallId.ACCESS_POINTS_MENU_RUNTIME_SELECT_BODY, "v1")}
     move-result v2
     if-eq v1, v2, :done
-    iget-object v3, p0, Lnth;->l:Lnpq;
+    iget-object v3, p0, Laajh;->l:Laarm;
     :try_start
-    invoke-virtual {v0, v2}, Lqje;->f(I)V
+    invoke-virtual {v0, v2}, Lafhp;->f(I)V
     if-eqz v3, :try_end
     invoke-interface {v3}, Laarm;->l()V
     :try_end
     const/4 v0, 0x0
-    iput-object v0, p0, Lnth;->k:Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;
-    iput-object v0, p0, Lnth;->l:Lnpq;
+    iput-object v0, p0, Laajh;->k:Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;
+    iput-object v0, p0, Laajh;->l:Laarm;
     :done
     return-void
     .catch Ljava/lang/Throwable; {:try_start .. :try_end} :cleanup
     :cleanup
     move-exception v1
     const/4 v0, 0x0
-    iput-object v0, p0, Lnth;->k:Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;
-    iput-object v0, p0, Lnth;->l:Lnpq;
+    iput-object v0, p0, Laajh;->k:Lcom/google/android/libraries/inputmethod/widgets/SoftKeyboardView;
+    iput-object v0, p0, Laajh;->l:Laarm;
     throw v1
 """.trimIndent()
 
@@ -201,7 +201,7 @@ internal fun menuViewDefBody(): String = """
     move-result-object v0
     const-class v1, Lcom/google/android/libraries/inputmethod/accesspoint/impl/AccessPointKeyboard;
     if-ne v0, v1, :unchanged
-    iget-object v0, p1, $VIEW_DEF->b:Lqnq;
+    iget-object v0, p1, $VIEW_DEF->b:Lagoz;
     sget-object v1, Lzbg;->b:Lzbg;
     if-ne v0, v1, :unchanged
     iget v0, p1, $VIEW_DEF->d:I
@@ -210,14 +210,14 @@ internal fun menuViewDefBody(): String = """
     if-eq v0, v4, :unchanged
     new-instance v0, $VIEW_DEF
     iget v1, p1, $VIEW_DEF->a:I
-    iget-object v2, p1, $VIEW_DEF->b:Lqnq;
+    iget-object v2, p1, $VIEW_DEF->b:Lagoz;
     iget-boolean v3, p1, $VIEW_DEF->c:Z
     iget-boolean v5, p1, $VIEW_DEF->e:Z
     iget-boolean v6, p1, $VIEW_DEF->f:Z
-    iget-object v7, p1, $VIEW_DEF->g:Lqnp;
+    iget-object v7, p1, $VIEW_DEF->g:Lagot;
     iget-object v8, p1, $VIEW_DEF->h:Lcom/google/android/libraries/inputmethod/metadata/KeyMappingDef;
     iget-object v9, p1, $VIEW_DEF->i:$MOTION
-    invoke-direct/range {v0 .. v9}, $VIEW_DEF-><init>(ILqcl;ZIZZLqck;Lcom/google/android/libraries/inputmethod/metadata/KeyMappingDef;$MOTION)V
+    invoke-direct/range {v0 .. v9}, $VIEW_DEF-><init>(ILagoz;ZIZZLagot;Lcom/google/android/libraries/inputmethod/metadata/KeyMappingDef;$MOTION)V
     return-object v0
     :unchanged
     return-object p1

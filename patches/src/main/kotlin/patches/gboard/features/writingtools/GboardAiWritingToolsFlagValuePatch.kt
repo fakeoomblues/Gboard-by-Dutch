@@ -160,13 +160,13 @@ internal fun MutableMethod.applyAutoFixRoute() {
     check(freezeCalls == 1) {
         "Expected one exact Writing Tools v2 route-set freeze call"
     }
-    addInstructions(
-        builderInitIndices.single() + 1,
-        """
-            sget-object v1, Laaim;->c:Laaim;
-            invoke-virtual {v0, v1}, Lwgv;->h(Ljava/lang/Object;)V
-        """.trimIndent(),
-    )
+    // 18.8 has no counterpart for the 18.6.3 route-set builder call (`wgv.h(Object)`): the class
+    // is gone and the 18.8 constructor's class (`vow`) does not take an Object. Injecting the old
+    // call put a reference to a class absent from the APK into a shipped method, so the route entry
+    // is not added. The rest of the patch is unaffected; revisit if the 18.8 route API is mapped.
+    check(builderInitIndices.size == 1) {
+        "Expected one exact Writing Tools v2 route-set builder initialization"
+    }
 }
 
 internal fun MutableMethod.applyAutoFixAcceptance() {
