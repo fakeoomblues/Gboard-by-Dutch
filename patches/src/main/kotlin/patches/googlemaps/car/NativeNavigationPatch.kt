@@ -16,7 +16,6 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.util.smali.ExternalLabel
 import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
-import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS_2644
 import org.w3c.dom.Element
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -206,18 +205,18 @@ internal fun validateMapsGuidanceComponent(classBy: (String) -> ClassDef) {
         check(classBy(child).superclass == parent) { "Maps' application component hierarchy changed: $child" }
     }
     listOf(Triple("Lnsm;", "rS", "Ljava/lang/Object;"),
-        Triple("Lnsn;", "n", "Lcrin;"),
-        Triple("Lcrin;", "rS", "Ljava/lang/Object;")).forEach { (owner, name, result) ->
+        Triple("Lnsn;", "n", "Lcqwl;"),
+        Triple("Lcqwl;", "rS", "Ljava/lang/Object;")).forEach { (owner, name, result) ->
         check(classBy(owner).methods.count { it.name == name && it.parameterTypes.isEmpty() && it.returnType == result } == 1) {
             "Maps' cached application component accessor changed: $owner->$name"
         }
     }
-    check(classBy("Lngt;").fields.count { it.name == "bR" && it.type == "Lcqya;" } == 1) {
+    check(classBy("Lnjz;").fields.count { it.name == "bR" && it.type == "Lcqya;" } == 1) {
         "Maps' native guidance provider changed"
     }
-    check("Lblxy;" in classBy("Lblxx;").interfaces) { "Maps' native guidance listener marker changed" }
+    check("Lblrb;" in classBy("Lblra;").interfaces) { "Maps' native guidance listener marker changed" }
     check(classBy("Lblra;").methods.count {
-        it.name == "se" && it.parameterTypes.map(CharSequence::toString) == listOf("Lblxv;") && it.returnType == "V"
+        it.name == "se" && it.parameterTypes.map(CharSequence::toString) == listOf("Lblqy;") && it.returnType == "V"
     } == 1) { "Maps' native guidance callback changed" }
 }
 

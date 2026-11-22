@@ -115,3 +115,49 @@ All 184 Maps/shared compiled class and extension entries in the downloaded relea
 Keep generated versions and release metadata under semantic-release. Before committing or pushing, run the repository's required login/effective-author/effective-committer/history identity checks. Only the `johninnl` identity is permitted.
 
 The release must contain the Maps extension and 30 Maps controls in the same published bundle as existing app patches. A source copy, successful compilation, a generated catalogue, or a green documentation job alone does not prove that delivery.
+
+## Upstream AA work merged (v1.93.0 + host-initiated guidance)
+
+`main` now contains `gitlab/main`'s car work: `feat(Google Maps): start guidance when the car host asks`
+(711bfe70) and `fix(Google Maps): a failed start request never ends the car session` (1b7b11c9), merged
+onto this 26.47 port. Their patch-side pieces were re-pointed for 26.47:
+`validateMapsRoutePreviewStart` now also accepts `tdd.a()Lbhwh;` with the 26.47 footer ids
+`0x7f0b090a` / `0x7f0b090d`, alongside the 26.44 `snl.a()Lbhjq;` pair (`0x7f0b0906` / `0x7f0b0909`).
+
+Verified after the merge: `success True applied 28 failed 0`, Native navigation applied, `SIGNATURE_OK`,
+`:patches:buildAndroid :patches:test` green, and the rebuilt DEX carries `NativeRoutePreview`.
+
+## Receive alerts ported: 29 of 29 controls apply on 26.47
+
+`Receive alerts from a third-party application` is no longer gated to 26.44. On
+`26.47.00.1022347503` (1068892333) the full set now applies:
+
+```
+success True  applied 29  failed 0
+  Receive alerts from a third-party application  => applied
+  Native navigation for any Android Auto host    => applied
+  Android Auto options                           => applied
+SIGNATURE_OK (CN=Morphe)
+:patches:buildAndroid :patches:test green
+```
+
+Bundle used for that run: `patches-1.94.0.mpp` (v1.94.0, the current release). Verified in the
+patched DEX — every 26.47 voice hook landed on the class with the matching body:
+
+| role | 26.44 | 26.47 | coordinator call |
+|---|---|---|---|
+| dispatch | `bmyo.b` | `bmcw.b` (19 regs, 572 instr, anchor at 370) | `dispatch` |
+| audio focus | `bmyh.g` | `bnfz.g` | `requestNativeFocus` |
+| terminal | `bmzz.a` | `bnhq.a` | `terminal` |
+| route ctor | `bmon.<init>` | `bmvq.<init>` | `captureRoute` |
+| route reset | `bmon.v` | `bmvq.t` | `routeEnded` |
+| voice resume | `bmon.u` | `bmvq.s` | `morpheResumeGuidance` |
+
+`Lbmvq` also gains `morpheCanResumeGuidance` and the `MapsGuidanceCoordinator$NativeReplay`
+interface. The 26.47 contract table pins exactly those six methods (flags/registers/count/SHA-256);
+the other 26.44 rows were integrity pins on classes no hook touches.
+
+The 26.44 path is unchanged and still verified: `MapsWarningVoiceTest` and `MapsSystemVoiceTest`
+pass with `MAPS_ORIGINAL_APK` pointing at 26.44.06.1006895251 (51 pinned contracts, resume bytecode,
+pinned dispatch fence).
+

@@ -7,7 +7,6 @@ import org.ungoogled.patches.maps.ui.markPatched
 import org.ungoogled.patches.maps.ui.navzoom.navigationCameraHookPatch
 import org.ungoogled.patches.maps.ui.sharedExtensionPatch
 import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS
-import org.ungoogled.patches.shared.Constants.COMPATIBILITY_MAPS_2644
 
 @Suppress("unused")
 val wazeAlertsPatch = bytecodePatch(
@@ -20,7 +19,7 @@ val wazeAlertsPatch = bytecodePatch(
         "external data is off by default. Updated patched providers start silently and are monitored while Maps is in use. Complete provider setup and location permissions once.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_MAPS_2644)
+    compatibleWith(COMPATIBILITY_MAPS)
     // The settings are read at every Activity (Shapes.wrap), which also registers the receiver; guidance
     // start and end come from the navigation camera hook. The pins are drawn as Maps' personal places
     // (mapMarkersPatch), and during navigation as Google's own incident callouts (incidentCalloutsPatch).
