@@ -677,24 +677,52 @@ public final class ProjectionRenderer {
         java.util.IdentityHashMap<Object, Boolean> seen = new java.util.IdentityHashMap<>();
         java.util.ArrayDeque<Object[]> queue = new java.util.ArrayDeque<>();
         queue.add(new Object[]{controller, 0});
+        Object surfaceSetter = null;
         while (!queue.isEmpty()) {
             Object[] item = queue.poll();
             Object value = item[0];
             int depth = (Integer) item[1];
             if (value == null || seen.put(value, Boolean.TRUE) != null) continue;
+            // The holder is the object carrying the VirtualDisplay; the surface setter is the fallback
+            // signal, because that is what a holder must expose in every version we support.
+            if (hasVirtualDisplay(value)) return value;
+            if (surfaceSetter == null && hasSurfaceSetter(value)) surfaceSetter = value;
+            if (depth >= 3) continue;
             for (Class<?> type = value.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
                 for (Field candidate : type.getDeclaredFields()) {
                     if (java.lang.reflect.Modifier.isStatic(candidate.getModifiers())) continue;
-                    Class<?> declared = candidate.getType();
-                    if (VirtualDisplay.class.isAssignableFrom(declared)) return value;
-                    if (depth < 3 && declared.getName().indexOf('.') < 0) {
-                        candidate.setAccessible(true);
-                        queue.add(new Object[]{candidate.get(value), depth + 1});
-                    }
+                    candidate.setAccessible(true);
+                    Object child = candidate.get(value);
+                    // Decide on the runtime class: a field declared Object still holds a Maps type,
+                    // and that type is the one whose graph we may walk.
+                    if (child != null && traverse(child.getClass())) queue.add(new Object[]{child, depth + 1});
                 }
             }
         }
+        if (surfaceSetter != null) return surfaceSetter;
         throw new IllegalStateException("Maps virtual display ABI changed");
+    }
+    /** Maps' own obfuscated classes and our extension types; never framework or JDK graphs. */
+    private static boolean traverse(Class<?> type) {
+        if (type.isPrimitive() || type.isArray()) return false;
+        String name = type.getName();
+        for (String skip : new String[]{"java.", "javax.", "android.", "androidx.", "dalvik.", "kotlin.",
+                "j$.", "com.google.android.gms.", "org.robolectric.", "org.junit."}) {
+            if (name.startsWith(skip)) return false;
+        }
+        return true;
+    }
+    private static boolean hasVirtualDisplay(Object value) {
+        for (Class<?> type = value.getClass(); type != null; type = type.getSuperclass())
+            for (Field candidate : type.getDeclaredFields())
+                if (VirtualDisplay.class.isAssignableFrom(candidate.getType())) return true;
+        return false;
+    }
+    private static boolean hasSurfaceSetter(Object value) {
+        for (Class<?> type = value.getClass(); type != null; type = type.getSuperclass())
+            for (Method candidate : type.getDeclaredMethods())
+                if (candidate.getParameterCount() == 1 && candidate.getParameterTypes()[0] == Surface.class) return true;
+        return false;
     }
     private static VirtualDisplay virtualDisplay(Object holder) throws Exception {
         for (Class<?> type = holder.getClass(); type != null; type = type.getSuperclass())
