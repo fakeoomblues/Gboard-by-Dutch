@@ -11,16 +11,14 @@ internal const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
 // (176124766) beta builds whose versionName embeds the ABI, and publishes each
 // build in minAPI26 and minAPI32 variants. The lowest supported variant
 // sets the catalog minSdk; the extension targets the same Android 8.0+.
-private fun gboardTargets(experimental: Boolean) = listOf(
+private fun gboardTargets() = listOf(
     AppTarget(
         version = "18.8.0.1022711984-beta-armeabi-v7a", minSdk = 26,
         versionCodes = mapOf(SupportedAbi.ARMEABI_V7A to 176124765),
-        isExperimental = experimental,
     ),
     AppTarget(
         version = "18.8.0.1022711984-beta-arm64-v8a", minSdk = 26,
         versionCodes = mapOf(SupportedAbi.ARM64_V8A to 176124766),
-        isExperimental = experimental,
     ),
 )
 
@@ -34,19 +32,7 @@ internal val gboard = Compatibility(
     name = "Gboard", packageName = GBOARD_PACKAGE, apkFileType = ApkFileType.APK,
     appIconColor = 0x4285F4,
     signatures = gboardSignatures,
-    targets = gboardTargets(experimental = false),
-)
-
-/**
- * The same builds, flagged as experimental for a patch that still needs field confirmation.
- * Morphe surfaces the flag on the patch's compatible versions, so it does not change the
- * catalogue entry of any other Gboard patch.
- */
-internal val gboardExperimental = Compatibility(
-    name = "Gboard", packageName = GBOARD_PACKAGE, apkFileType = ApkFileType.APK,
-    appIconColor = 0x4285F4,
-    signatures = gboardSignatures,
-    targets = gboardTargets(experimental = true),
+    targets = gboardTargets(),
 )
 
 internal val originalInput = patches.shared.originalInput(gboard)

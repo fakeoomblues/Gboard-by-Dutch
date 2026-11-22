@@ -120,7 +120,7 @@ val gboardAmoledDynamicDarkPatch = bytecodePatch(
         "the light theme stay unchanged.",
     default = false,
 ) {
-    compatibleWith(gboardExperimental)
+    compatibleWith(gboard)
 
     dependsOn(gboardAmoledDynamicDarkBytecodePatch)
 }
