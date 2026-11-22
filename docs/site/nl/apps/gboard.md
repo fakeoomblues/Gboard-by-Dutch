@@ -1,10 +1,10 @@
 # Gboard
 
-**Appversie:** 18.6.3.1002251336-release-arm64-v8a · **Build:** 176071766 · **Origineel bestand:** APK
+**Appversie:** 18.8.0.1022711984-beta-arm64-v8a · **Build:** 176124766 · **Origineel bestand:** APK
 
 [Gebruik je originele APK](../guides/downloads.md#local-original-inputs){ .md-button .md-button--primary }
 
-Selecteer de armeabi-v7a-APK (build 176071765) of arm64-v8a-APK (build 176071766) van Google voor precies deze release; de versionName van elke build eindigt op zijn eigen ABI. Android 8.0+ volstaat: zowel de minAPI26- als de minAPI32-variant van elke build werkt.
+Selecteer de armeabi-v7a-APK (build 176124765) of arm64-v8a-APK (build 176124766) van Google voor precies deze release; de versionName van elke build eindigt op zijn eigen ABI. Android 8.0+ volstaat: zowel de minAPI26- als de minAPI32-variant van elke build werkt.
 
 ## Patches
 
@@ -27,7 +27,7 @@ Selecteer de armeabi-v7a-APK (build 176071765) of arm64-v8a-APK (build 176071766
 | **Custom Theme** | Aan | Voegt ZIP-thema-import toe aan het themascherm van Gboard zelf en een galerij met kant-en-klare themapakketten die op verzoek worden gedownload en op checksum gecontroleerd. Voegt de INTERNET-machtiging toe. |
 | **G Logo on Spacebar** | Aan | Toont een ingebouwd pictogram of je eigen PNG, WebP of JPEG op de spatiebalk, in eigen kleuren of één kleur, met instelbare grootte. |
 | **Key Shape Selection** | Aan | Zet de eigen optie Toetsvorm van Gboard aan in themadetails, zodat de toetsen van een thema hun vorm houden in plaats van vierkant te worden. |
-| **AMOLED dark keyboard** | Uit | Maakt de donkere toetsenbordachtergrond zuiver zwart in plaats van het grijs van Google, ook in het dynamische thema dat je achtergrond volgt; de lichte modus houdt het lichte toetsenbord. Experimenteel: bevestigd op een emulator, nog niet op een telefoon. |
+| **AMOLED dark keyboard** | Uit | Maakt de donkere toetsenbordachtergrond zuiver zwart in plaats van het grijs van Google, ook in het dynamische thema dat je achtergrond volgt; de lichte modus houdt het lichte toetsenbord. Er is geen aparte tegel: kies Dynamische kleur in het themascherm van Gboard — zie [AMOLED-donker toetsenbord](#amoled-donker-toetsenbord). |
 | **Enable OCR / Scan Text** | Aan | Voegt Gboard's Scan Text-camera toe: richt de camera op tekst en de tekst wordt herkend en op je cursor ingevoegd. De patch levert zijn eigen OCR-engine mee, omdat Play Services de download weigert aan een opnieuw ondertekende Gboard. Alleen Latijnse tekst. Je kunt in de Gboard-instellingen ook een bestaande schermafbeelding of foto kiezen en de tekst daarvan naar het klembord laten kopiëren. |
 | **AI Writing Tools** | Aan | Zet Gboard's Writing tools aan op geselecteerde tekst: proeflezen op spelling, grammatica en leestekens, herschrijven en een toon kiezen. Google's eigen client doet het werk; op Pixel-toestellen kan dat op het toestel zelf, elders via Google's server. Werkt in elke taal en met elk toetsenbord. |
 | **Clipboard Enhancements** | Aan | Bepaalt hoe lang gekopieerde fragmenten bewaard blijven, hoeveel er worden bewaard, hoeveel voorbeeldregels een kaart toont en of kaarten een aftelling, aanmaaktijd, volgnummer en kolomaantal tonen. |
@@ -36,8 +36,78 @@ Selecteer de armeabi-v7a-APK (build 176071765) of arm64-v8a-APK (build 176071766
 | **Cursor trackpad mode** | Aan | Houd de spatiebalk lang ingedrukt om de cursor nauwkeuriger te verplaatsen met een trackpad en de vergrendelmodus te gebruiken. |
 | **Incognito Mode Toggle** | Aan | Voegt een incognito-schakelaar toe aan de Access Point-werkbalk en laat je kiezen of het clipboard en spraakinvoer beschikbaar blijven terwijl incognito actief is. Dit regelt de incognito-status van Gboard zelf; het is geen netwerkbrede anti-trackingfunctie. |
 | **Simple Calculator** | Aan | Typ een rekenkundige expressie in een tekstveld en zie een scrollbare vergelijking met het antwoord in de suggestieregel van Gboard, klaar om in te voegen. |
+| **Beta features (18.8)** | Uit | Zet vijf afgewerkte functies uit de 18.8-beta aan die Google voor een opnieuw ondertekende build uit laat staan: een snelplak-chip met één tik, de klembord-chip op het zwevende toetsenbord, onzichtbaar formaat wijzigen van het zwevende toetsenbord, de Emoji2-provider van het systeem en de nieuwere bevestiging bij wegvegen. Eén schakelaar onder Gboard-instellingen → **Patch settings** → **More settings** → **Beta features**; zie [Beta-functies](#beta-functies-188) hieronder. |
 
-Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle, Simple Calculator, Rounded Keyboard Panel, Frosted Glass, Custom Theme, G Logo on Spacebar en Key Shape Selection zijn overgenomen van het GPLv3-project [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) en bijgewerkt voor Gboard 18.6.3.
+Clipboard Enhancements, Web Clipboard, Toolbar Editing Buttons, Cursor trackpad mode, Incognito Mode Toggle, Simple Calculator, Rounded Keyboard Panel, Frosted Glass, Custom Theme, G Logo on Spacebar en Key Shape Selection zijn overgenomen van het GPLv3-project [Gboard Patches](https://github.com/jasonwu1994/Gboard-patches) en bijgewerkt voor Gboard 18.8.0.
+
+
+### AMOLED-donker toetsenbord
+Deze patch heeft geen eigen tegel in de themakiezer van Gboard; hij herkleurt het donkere palet dat
+het dynamische thema gebruikt.
+
+1. Zorg dat **AMOLED dark keyboard** is aangevinkt wanneer je in Morphe Manager patcht. Zo niet, patch
+   opnieuw met de optie aan en installeer de update.
+2. Open in de gepatchte Gboard **Instellingen → Thema**, kies **Dynamische kleur** en tik op
+   **Toepassen**.
+3. Zet het donkere thema van Android aan en open het toetsenbord opnieuw in een tekstveld.
+
+**Waar je op let:** de achtergrond achter en tussen de toetsen is zuiver zwart (`#000000`).
+Toetsvlakken mogen grijs of getint blijven. Zet Android voor een snelle A/B-test terug op licht en
+open het toetsenbord opnieuw — hetzelfde thema keert terug naar zijn lichte palet.
+
+AMOLED geldt automatisch voor het donkere palet.
+
+## Beta-functies (18.8)
+
+Gboard 18.8 bevat vijf afgewerkte functies die Google voor een opnieuw ondertekende build uit laat staan. **Beta features (18.8)** zet ze samen aan, achter één schakelaar: Gboard-instellingen → **Patch settings** → **More settings** → **Beta features** (de patchinstellingen zijn Engelstalig). De schakelaar staat aan zodra je de patch toepast; zet hem uit en herstart Gboard om het gedrag van Google terug te krijgen. Geen van de vijf vraagt een account, een download of een server.
+
+| Functie | Waar je het ziet | Hoe je het gebruikt |
+| --- | --- | --- |
+| Snelplak-chip | Suggestieregel boven het toetsenbord | Kopieer tekst en open een tekstveld: naast de klembord-suggestie staat een tweede chip die met één tik plakt |
+| Klembord-chip op het zwevende toetsenbord | Suggestieregel van het zwevende toetsenbord | Kopieer tekst en ga naar het zwevende toetsenbord: het klemborditem verschijnt daar nu ook |
+| Onzichtbaar formaat wijzigen | Randen van het zwevende toetsenbord | Sleep net binnen de linker- of rechterrand om het zwevende toetsenbord breder of smaller te maken; er is geen zichtbaar handvat |
+| Emoji2-weergave | Emoji-kiezer | Niets om in te drukken: emoji worden door de Emoji2-stack van het systeem getekend in plaats van door de oudere provider van Gboard |
+| Bevestiging bij wegvegen | Suggestieregel | Sleep een suggestie uit de balk: het bevestigingsballonnetje gebruikt de nieuwere indeling |
+
+### Snelplak-chip
+
+Gekopieerde tekst toont normaal één klembord-chip, en daarop tikken opent het klembordpaneel. Met de bèta-schakelaar aan krijgt een stuk platte tekst er een **plak**-chip bij: één tik voegt de tekst op de cursor in zonder het paneel te openen.
+
+- Alleen platte tekst krijgt de extra chip; afbeeldingen en opgemaakte inhoud houden de gewone chip.
+- De chip volgt het bovenste item van het klembord, net als de gewone suggestie.
+- Vereist dat klembordsuggesties aanstaan (Gboard-instellingen → Klembord), precies zoals de gewone chip.
+
+### Klembord-chip op het zwevende toetsenbord
+
+Het zwevende toetsenbord heeft zijn eigen suggestieregel, en de gewone Gboard weigert daar klemborditems. Met de bèta-schakelaar aan verschijnt de klembord-chip ook in de zwevende regel, zodat je kunt plakken terwijl het toetsenbord zweeft.
+
+- Vereist **Klembord**-suggesties in de Gboard-instellingen en het zwevende toetsenbord.
+- Op het vaste toetsenbord verandert er niets.
+
+### Onzichtbaar formaat wijzigen van het zwevende toetsenbord
+
+Het zwevende toetsenbord kun je van formaat laten veranderen door een onzichtbare strook net binnen de linker- of rechterrand te slepen. Er is geen greep of handvat, dus de functie is makkelijk te missen: sleep van de rand naar binnen of naar buiten en het toetsenbord volgt.
+
+- Alleen de zwevende indeling wijzigt; de gesplitste en vaste indeling blijven gelijk.
+- De maat blijft onthouden zolang het toetsenbord zweeft.
+
+### Emoji2-weergave
+
+Dit wisselt de emoji-provider van Gboard van de eigen implementatie naar de Emoji2-stack van het systeem. Er is geen zichtbare schakelaar: actuele emoji worden goed getekend en de kiezer werkt zoals voorheen. Het is de minst zichtbare van de vijf en veilig om aan te laten.
+
+### Bevestiging bij wegvegen
+
+Als je een suggestie of een aangeleerd woord uit de suggestiebalk sleept, vraagt Gboard om bevestiging. De bèta-schakelaar kiest de nieuwere indeling van dat ballonnetje. Sleep je nooit suggesties weg, dan merk je er niets van.
+
+### Cursor na een Rambler-bewerking
+
+Deze zit niet achter de bèta-schakelaar: met **Rambler voice typing** laat Rambler de cursor **achter de tekst die het net heeft aangepast** in plaats van aan het einde van het veld. Dicteer een bewerking midden in een tekst en typ daarna verder waar je was.
+
+### Als iets niet verschijnt
+
+- Herstart Gboard na het omzetten van de schakelaar; Android houdt het oude toetsenbordproces soms in leven.
+- `adb logcat | grep GboardPatches` laat zien waarom een bèta-functie niet start. Als het werkt, wordt er niets gelogd.
+- De vijf functies zijn geverifieerd als patch op de 18.8.0-beta, nog niet op een telefoon bevestigd. De twee klembord-chips vragen ook de eigen klembordinstelling van Gboard aan, en de chips op het zwevende toetsenbord vragen dat het toetsenbord zweeft.
 
 ## Een model kiezen
 
@@ -121,7 +191,7 @@ Rambler van Google blijft luisteren tot je op ✓ of ✕ tikt, met een limiet va
 - Een telefoon met 64-bit ARM is nodig. Houd tijdens het downloaden ongeveer 1,4 GB vrij; het geïnstalleerde model neemt ongeveer 650 MB in beslag.
 - Tijdens het dicteren gebruikt het model ongeveer 700 MB geheugen. Na vijf minuten zonder gebruik wordt het weer vrijgegeven, dus de eerste zin na een pauze duurt even iets langer.
 - Met Change package name aan is de gepatchte Gboard een aparte app met eigen instellingen: zet hem aan via Android-instellingen → Toetsenbord en kies hem daarna. Zonder die patch kan hij niet worden geïnstalleerd op telefoons waarop Gboard is ingebouwd. Functies die afhangen van de eigen app-handtekening van Google werken in de gepatchte versie mogelijk niet; Parakeet heeft ze niet nodig.
-- De zeventien Gboard-patches zijn gecontroleerd op bouwen en toepassen op deze 18.6.3-build. Toepassen is niet hetzelfde als elke functie op een toestel testen.
+- De 26 Gboard-patches (plus de Beta features-patch) zijn gecontroleerd op bouwen en toepassen op deze 18.8.0-beta, op beide ABI's. Toepassen is niet hetzelfde als elke functie op een toestel testen.
 - Gecontroleerd op een Android 14-emulator: de instelling, de download en Nederlands, Engels en gemengd Nederlands-Engels dicteren in een tekstveld, plus stilte en achtergrondgeluid zonder losse tekst. Dicteren op een telefoon is nog niet bevestigd.
 
 [Installatie](../guides/install.md) · [Patches kiezen](../guides/choose-patches.md)

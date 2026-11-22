@@ -115,9 +115,10 @@ val gboardCustomThemePatch = resourcePatch(
 @Suppress("unused")
 val gboardAmoledDynamicDarkPatch = bytecodePatch(
     name = "AMOLED dark keyboard",
-    description = "Experimental. Turns Gboard's dark keyboard background pure black instead of " +
-        "Google's grey, including the dynamic theme that follows the wallpaper. Light mode and " +
-        "the light theme stay unchanged.",
+    description = "Turns Gboard's dark keyboard background pure black instead of Google's grey, " +
+        "including the dynamic theme that follows the wallpaper. There is no separate AMOLED tile: " +
+        "choose Dynamic Color in Gboard \u2192 Theme, tap Apply, then use Android's dark theme. " +
+        "Light mode and the light theme stay unchanged.",
     default = false,
 ) {
     compatibleWith(gboard)
