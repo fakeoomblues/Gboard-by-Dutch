@@ -96,7 +96,7 @@ val gboardBetaFeaturesPatch = resourcePatch(
     description = "Unlocks five new Gboard 18.8 features that are off by default: plain-text " +
         "quick-paste chip, floating clipboard chip, invisible floating-keyboard resizing, the " +
         "Emoji2 provider and the swipe-to-remove confirmation.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(gboard)
     dependsOn(
@@ -120,7 +120,7 @@ val gboardHiddenFlagsPatch = resourcePatch(
     description = "Adds a Hidden flags screen that forces individual Gboard 18.8 flags through " +
         "Gboard's own override store: app-specific word biasing, the app-specific suggestion bar " +
         "and the square search radius.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(gboard)
     dependsOn(
@@ -135,17 +135,15 @@ val gboardHiddenFlagsPatch = resourcePatch(
  *
  * The client ships in the APK (`AgenticDictationIme`, `libs/genaivoice`) but is gated behind
  * signature-scoped flags a re-signed build never receives. This forces `enable_nga`, the
- * consolidated speech-stack features, split feature-module install and SODA long-form. It is off by
- * default because the engine may still require server eligibility or Google's TTS/Scribe packages,
- * which the marker exposes as package queries.
+ * consolidated speech-stack features, split feature-module install and SODA long-form. The engine
+ * may still require server eligibility or Google's TTS/Scribe packages.
  */
 @Suppress("unused")
 val gboardAdvancedVoiceTypingPatch = resourcePatch(
     name = "Advanced voice typing (NGA)",
-    description = "Enables Gboard's NGA dictation stack: advanced voice typing next to Standard " +
-        "and Rambler, plus the consolidated speech-stack features and long-form dictation. Off by " +
-        "default; the engine may need server eligibility.",
-    default = false,
+    description = "Enables Gboard's NGA dictation capabilities, consolidated speech-stack features " +
+        "and long-form dictation. Availability depends on Gboard's recognizer eligibility.",
+    default = true,
 ) {
     compatibleWith(gboard)
 
@@ -162,7 +160,7 @@ val gboardAdvancedVoiceTypingPatch = resourcePatch(
 /**
  * Optional Rambler toolbar and revert behaviour.
  *
- * Three 18.8 paths that are off by default and that the core Rambler patch does not need:
+ * Three 18.8 paths that are off in stock Gboard and that the core Rambler patch does not need:
  * the overflow button on the floating Rambler toolbar, keeping the rewritten text when reverting
  * from the full transcript, and passing edit history into a Jetson Lite request (only read while
  * the Lite path is active). Kept as its own patch so the feature is visible in the list.
@@ -172,7 +170,7 @@ val gboardRamblerToolbarExtrasPatch = resourcePatch(
     name = "Rambler toolbar & revert extras (18.8)",
     description = "Adds the overflow button to the floating Rambler toolbar, keeps rewritten " +
         "text when you revert a transcript, and passes edit history on the Jetson Lite path.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(gboard)
 
@@ -188,7 +186,7 @@ val gboardRamblerAutomaticRetryPatch = resourcePatch(
     name = "Rambler automatic retry (18.8)",
     description = "Lets Rambler retry eligible recognition errors automatically using the audio " +
         "from the current dictation. Rambler may send that audio to Google again.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(gboard)
     dependsOn(ramblerVoiceTyping)
@@ -211,7 +209,7 @@ val gboardUseBluetoothMicrophonePatch = resourcePatch(
     name = "Use Bluetooth microphone",
     description = "Shows Gboard's Voice typing \u2192 Use Bluetooth microphone setting so dictation " +
         "can capture from a paired headset. Routing stays Gboard's own decision.",
-    default = false,
+    default = true,
 ) {
     compatibleWith(gboard)
 

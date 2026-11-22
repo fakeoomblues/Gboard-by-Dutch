@@ -66,12 +66,10 @@ public final class GboardHiddenFlagsSettingsFeature
                         entry.title, entry.summary, true, checked,
                         value -> {
                             boolean written = GboardHiddenFlagSettings.writeEnabled(
-                                    preferences, flagName, value)
-                                    && GboardHiddenFlagSettings.markExplicit(
-                                            preferences, flagName, value);
+                                    preferences, flagName, value);
                             boolean readBack = GboardHiddenFlagSettings.readEnabled(
                                     preferences, flagName);
-                            boolean applied = GboardFlagOverrideRuntime.applyOne(
+                            boolean applied = written && readBack == value && GboardFlagOverrideRuntime.applyOne(
                                     context, flagName, value);
                             if (!written || readBack != value || !applied) {
                                 Log.w("GboardPatches", "Hidden flag switch did not take: "

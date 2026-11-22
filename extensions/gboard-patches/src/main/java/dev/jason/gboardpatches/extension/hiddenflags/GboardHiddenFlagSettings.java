@@ -2,9 +2,6 @@ package dev.jason.gboardpatches.extension.hiddenflags;
 
 import android.content.SharedPreferences;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import dev.jason.gboardpatches.extension.flagsettings.GboardBooleanFlagSettings;
 
 /** Per-flag preference for the hidden-flag overrides. */
@@ -21,9 +18,15 @@ public final class GboardHiddenFlagSettings {
     }
 
     public static boolean readEnabled(SharedPreferences preferences, String flagName) {
+        if (preferences == null || flagName == null || flagName.isEmpty()) {
+            return false;
+        }
         try {
-            return GboardBooleanFlagSettings.readEnabled(
-                    preferences, preferenceKey(flagName), false);
+            // Old versions persisted false when merely opening the screen. Only an explicit
+            // choice supersedes the on-by-default behavior.
+            return !preferences.contains(explicitKey(flagName))
+                    || GboardBooleanFlagSettings.readEnabled(
+                            preferences, preferenceKey(flagName), false);
         } catch (Throwable ignored) {
             return false;
         }
@@ -33,59 +36,18 @@ public final class GboardHiddenFlagSettings {
         return EXPLICIT_PREFIX + flagName;
     }
 
-    /** True when the user actually toggled this row (as opposed to the screen being opened). */
-    public static boolean isExplicit(SharedPreferences preferences, String flagName) {
-        if (preferences == null || flagName == null) {
-            return false;
-        }
-        try {
-            return preferences.contains(explicitKey(flagName));
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
-    /**
-     * Records that this row was toggled. A legacy {@code true} value also counts as explicit: it can
-     * only have come from a toggle or a replay, while a bare {@code false} could have been written by
-     * the old screen, so it carries no meaning and is left untouched (treated as "not configured").
-     */
-    public static boolean markExplicit(SharedPreferences preferences, String flagName, boolean enabled) {
-        if (preferences == null || flagName == null) {
-            return false;
-        }
-        try {
-            return preferences.edit().putBoolean(explicitKey(flagName), enabled).commit();
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
-
-    /** Whether this flag should be replayed at startup, with its stored value. */
-    public static boolean hasStoredChoice(SharedPreferences preferences, String flagName) {
-        return isExplicit(preferences, flagName) || readEnabled(preferences, flagName);
-    }
-
     public static boolean writeEnabled(
             SharedPreferences preferences, String flagName, boolean enabled) {
+        if (preferences == null || flagName == null || flagName.isEmpty()) {
+            return false;
+        }
         try {
-            return GboardBooleanFlagSettings.writeEnabled(
-                    preferences, preferenceKey(flagName), enabled);
+            return preferences.edit()
+                    .putBoolean(preferenceKey(flagName), enabled)
+                    .putBoolean(explicitKey(flagName), enabled)
+                    .commit();
         } catch (Throwable ignored) {
             return false;
         }
-    }
-
-    public static Set<String> enabledNames(SharedPreferences preferences) {
-        Set<String> names = new LinkedHashSet<>();
-        if (preferences == null) {
-            return names;
-        }
-        for (GboardHiddenFlagCatalog.Entry entry : GboardHiddenFlagCatalog.entries()) {
-            if (readEnabled(preferences, entry.flagName)) {
-                names.add(entry.flagName);
-            }
-        }
-        return names;
     }
 }
