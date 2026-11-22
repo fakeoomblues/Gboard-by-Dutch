@@ -19,12 +19,14 @@ Select the complete original archive for this exact version in Morphe Manager, i
 | **Enable queue item selection** | On | Lets a connected car host request a particular occurrence in Deezer’s current Up next queue. Selections from a replaced queue are discarded, and the active queue item follows the current occurrence. |
 | **Android Auto API 9 media surface** | On | Adds a car browser and player. Allows compatible custom hosts and uses API 9 presentation only when the host negotiates API 9; lower-level hosts keep the fallback. |
 | **Google sign-in through microG-RE** | On | Routes Google account selection and authorization through installed microG-RE, using Deezer’s original OAuth identity and standard package name. |
-| **Remove premium upsell UI** | On | Removes the Premium tab from the bottom navigation bar, the Get Premium button on the user profile, the conversion banner and Plan management row in Settings, and shows the free account plan as Deezer Premium. The rest of Settings, profile, account and playback stay intact. |
+| **Remove premium upsell UI** | On | Removes the Premium tab, profile promotion, Settings conversion banner and Plan management row, Downloaded music subscription banner and Listen without ads menu entry. Shows the free plan as Deezer Premium; account and playback remain unchanged. |
+| **Enable lyrics** | On | Uses native lyrics first, then matching LRCLIB plain or synchronized lyrics when native data is missing. Availability follows usable data. LRCLIB receives track metadata; Deezer and Google tokens are never sent to LRCLIB. |
+| **Enable offline downloads** | On | Enables native album, playlist and Favorite tracks downloads and removes the download upgrade offer. Deezer handles media storage, library registration and offline playback. Individual tracks follow Deezer's normal saved-library or playlist workflow. |
 | **Enable full streaming** | On | Restores full-track client playback controls, without changing the account or media service. |
 | **Remove subscription paywalls** | On | Skips the country/plans startup redirect and closes subscription prompts. |
 | **Allow any Android Auto host** | On | Allows Deezer’s native media browser and templated car service to accept compatible custom hosts. |
 
-This port targets 9.0.27.3 exclusively. All eleven patches are selected by default.
+This port targets 9.0.27.3 exclusively. All thirteen patches are selected by default.
 
 ## Playback
 
@@ -44,4 +46,4 @@ Deezer's media-browser service validates the caller package and signing certific
 
 Use the standard `deezer.android.app` installation and sign in on the phone first. Select that Deezer entry in your car host if an older cloned copy is also installed. A patched APK is signed with a new certificate and cannot be updated in place from the Play Store.
 
-[Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md)
+[Installation](../guides/install.md) · [Choose patches](../guides/choose-patches.md) · [Compatibility and defaults](../reference/catalogue.md) · [Coverage and comparison](../guides/deezer-patches.md)

@@ -44,7 +44,9 @@ class CosmeticUi2703Test {
         assertEquals("Remove premium upsell UI", deezerRemovePremiumUi.name)
         for (patch in listOf(deezerRemoveAdvertising, deezerRemovePremiumUi)) {
             assertTrue(patch.default)
-            assertEquals(setOf(deezerBase), patch.dependencies.toSet())
+            val expected = if (patch == deezerRemovePremiumUi)
+                setOf(deezerBase, deezerNativeOfferFilters) else setOf(deezerBase)
+            assertEquals(expected, patch.dependencies.toSet())
         }
         assertEquals(listOf("9.0.27.3"), deezer.targets.map { it.version })
         assertEquals(setOf(9002703), deezer.targets.flatMap { it.versionCodes!!.values }.toSet())

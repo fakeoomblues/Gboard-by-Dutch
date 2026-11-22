@@ -13,3 +13,4 @@ Extra installatiehulp: [Android Auto](android-auto.md), [Shizuku op een telefoon
 - [Waze, Flitsmeister of Ungoogled Maps voor Android Auto installeren](android-auto.md).
 - [Meldingen van Waze en Flitsmeister in Google Maps of Vela Maps gebruiken](navigation-data.md).
 - [Meer muziekspelers en persoonlijke bibliotheken in Gearslip instellen](gearslip-music.md).
+- [Deezer-patches en getest gedrag vergelijken](deezer-patches.md).

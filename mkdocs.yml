@@ -121,6 +121,7 @@ nav:
       - guides/android-auto.md
       - guides/navigation-data.md
       - guides/gearslip-music.md
+      - guides/deezer-patches.md
       - guides/troubleshooting.md
   - Apps:
       - apps/index.md

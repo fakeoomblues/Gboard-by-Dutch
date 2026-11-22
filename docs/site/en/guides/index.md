@@ -13,3 +13,4 @@ Additional setup: [Android Auto](android-auto.md), [Shizuku on a phone](shizuku.
 - [Install Waze, Flitsmeister or Ungoogled Maps for Android Auto](android-auto.md).
 - [Use Waze and Flitsmeister alerts in Google Maps or Vela Maps](navigation-data.md).
 - [Set up more music players and personal libraries in Gearslip](gearslip-music.md).
+- [Compare Deezer patch coverage and tested behavior](deezer-patches.md).

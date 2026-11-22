@@ -2,6 +2,7 @@ package patches.deezer
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.Opcode
@@ -46,13 +47,18 @@ internal fun hidePremiumUi2703(method: MutableMethod) {
 val deezerRemovePremiumUi = bytecodePatch(
     name = "Remove premium upsell UI",
     description = "Removes the Premium navigation item, profile promotion, Settings conversion banner " +
-        "and Plan management row, and displays the free plan as Deezer Premium. " +
+        "and Plan management row, the Downloaded music subscription banner and Listen without ads menu entries, " +
+        "and displays the free plan as Deezer Premium. " +
         "Account and playback transport are unchanged.",
     default = true,
 ) {
     compatibleWith(deezer)
-    dependsOn(deezerBase)
+    dependsOn(deezerBase, deezerNativeOfferFilters)
     execute {
+        hideDownloadedMusicOffer(exact("LlIIlIIllIIIllI;", "invokeSuspend", "Ljava/lang/Object;",
+            "Ljava/lang/Object;").method)
+        mutableClassDefBy(OFFER_ENTRIES).methods.single { it.name == HIDE_ADS_FREE_OFFER }
+            .replaceInstruction(0, "const/4 v0, 0x1")
         val tabs = exact("LlllIIIIllllllIl;", "build", "LIIIIlIIIlIlIIIIl;").method
         val createTabs = tabs.instructions.indexOfFirst {
             it.opcode == Opcode.NEW_INSTANCE &&
