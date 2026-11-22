@@ -56,7 +56,7 @@ final class NativeGuidance implements AutoCloseable {
     private boolean closed;
 
     NativeGuidance(Context context,Handler main,Consumer<Snapshot> callback,Consumer<Throwable> failure)throws Exception{
-        this(acquire(context.getApplicationContext()),context.getClassLoader().loadClass("blra"),context.getClassLoader().loadClass("blrb"),
+        this(acquire(context.getApplicationContext()),type(context.getClassLoader(),"blxx","blra"),type(context.getClassLoader(),"blxy","blrb"),
                 command->main.post(command),callback,failure,acquireDistanceUtil(context.getApplicationContext()));
     }
     NativeGuidance(Object source,Class<?> listenerType,Class<?> marker,Executor executor,Consumer<Snapshot> callback,Consumer<Throwable> failure)throws Exception{
@@ -70,7 +70,7 @@ final class NativeGuidance implements AutoCloseable {
                 if("equals".equals(method.getName()))return proxy==args[0];
                 return "Maps CAL guidance listener";
             }
-            if("se".equals(method.getName())&&!closed){
+            if(("se".equals(method.getName())||"qk".equals(method.getName()))&&!closed){
                 try{callback.accept(snapshot(args[0],this.distanceUtil));}catch(Exception error){failure.accept(error);}
             }
             return null;
@@ -79,17 +79,36 @@ final class NativeGuidance implements AutoCloseable {
         try{callback.accept(snapshot(field(source,"b"),distanceUtil));}
         catch(Exception error){close();throw error;}
     }
+    /** Maps renames obfuscated types every release; take the first name this build has. */
+    static Class<?> type(ClassLoader loader,String... names)throws ClassNotFoundException{
+        for(String name:names)try{return Class.forName(name,false,loader);}catch(ClassNotFoundException ignored){}
+        throw new ClassNotFoundException(java.util.Arrays.toString(names));
+    }
+    /**
+     * The cached application component. 26.44 inherits it as rS() from nsm; 26.47 inherits pY()
+     * from nup. Never the protected factory e(), which creates another application manager.
+     */
+    static Object component(Object app)throws Exception{
+        try{return method(app,"rS").invoke(app);}
+        catch(NoSuchMethodException older){return method(app,"pY").invoke(app);}
+    }
     static Object acquire(Object app)throws Exception{
         // 26.44 inherits this cached component accessor from nsm. Do not call
         // the protected e() factory, which creates another application manager.
-        Object component=method(app,"rS").invoke(app);
+        Object component=component(app);
         Object provider=field(component,"bR");
         return method(provider,"a").invoke(provider);
     }
     static Object acquireDistanceUtil(Object app)throws Exception{
-        Object component=method(app,"rS").invoke(app),provider=field(component,"hN");
+        Object component=component(app),provider=field(component,"hN");
         Object util=method(provider,"a").invoke(provider);
-        if(!util.getClass().getName().equals("awxs"))throw new IllegalStateException("Maps distance utility changed");
+        // 26.44 names this awxs; 26.47 renames every obfuscated class, so check the shape instead:
+        // the utility converts a distance unit through a one-argument c(...).
+        boolean converts=false;
+        for(Class<?> owner=util.getClass();owner!=null&&!converts;owner=owner.getSuperclass())
+            for(java.lang.reflect.Method candidate:owner.getDeclaredMethods())
+                if(candidate.getName().equals("c")&&candidate.getParameterCount()==1){converts=true;break;}
+        if(!converts)throw new IllegalStateException("Maps distance utility changed");
         return util;
     }
     static Snapshot snapshot(Object value)throws Exception{

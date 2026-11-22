@@ -67,7 +67,9 @@ public final class MapsGuidanceCoordinator {
     static Object applicationComponent(Object application)throws ReflectiveOperationException{
         // 26.44 inherits the cached component accessor from nsm. Its protected
         // e() factory creates a different manager and must never be used here.
-        return method(application.getClass(),"rS").invoke(application);
+        // 26.44 inherits the cached component accessor as rS(); 26.47 as pY().
+        try{return method(application.getClass(),"rS").invoke(application);}
+        catch(NoSuchMethodException older){return method(application.getClass(),"pY").invoke(application);}
     }
     public boolean isReady(){return hooksInstalled()&&bound&&!fault;}
     public WarningAudioOwner.Mode effectiveMode(WarningAudioOwner.Mode requested) {
