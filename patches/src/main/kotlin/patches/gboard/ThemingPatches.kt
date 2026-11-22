@@ -109,7 +109,7 @@ val gboardCustomThemePatch = resourcePatch(
  * with the system in dark mode the keyboard goes #000000. Accent colours and the elevated surfaces
  * (keys, chips, dialogs) keep Gboard's own values.
  *
- * The dark palette override was verified on an AOSP Android 16 emulator.
+ * The dark palette override was verified on an AOSP Android 16 emulator and on the owner's OnePlus 15.
  */
 @Suppress("unused")
 val gboardAmoledDynamicDarkPatch = bytecodePatch(
