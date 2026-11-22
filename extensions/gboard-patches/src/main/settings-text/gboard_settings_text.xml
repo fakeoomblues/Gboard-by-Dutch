@@ -2873,6 +2873,42 @@
     <string name="gboard_patches_beta_flags_error_summary">
         <translation locale="en">The beta features screen failed to load. Reopen Gboard settings and try again.</translation>
     </string>
+    <string name="gboard_patches_beta_flags_section">
+        <translation locale="en">Features</translation>
+    </string>
+    <string name="gboard_patches_beta_flags_master_summary">
+        <translation locale="en">Master switch for every feature below. Each one can also be turned on by itself.</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_quick_paste_title">
+        <translation locale="en">Plain-text quick-paste chip</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_quick_paste_summary">
+        <translation locale="en">Adds a second clipboard chip that pastes a plain-text clip in one tap.</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_floating_chip_title">
+        <translation locale="en">Floating clipboard chip</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_floating_chip_summary">
+        <translation locale="en">Shows the clipboard chip on a floating keyboard.</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_floating_resize_title">
+        <translation locale="en">Invisible resize band</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_floating_resize_summary">
+        <translation locale="en">Drag anywhere on the edge of a floating keyboard to resize it.</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_emoji2_title">
+        <translation locale="en">Emoji2 provider</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_emoji2_summary">
+        <translation locale="en">Uses the updated Emoji2 emoji provider instead of the legacy one.</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_remove_v2_title">
+        <translation locale="en">New swipe-to-remove confirmation</translation>
+    </string>
+    <string name="gboard_patches_beta_flag_remove_v2_summary">
+        <translation locale="en">Shows the redesigned confirmation when a suggested word is swiped away.</translation>
+    </string>
     <string name="gboard_patches_hidden_flags_title">
         <translation locale="en">Hidden flags</translation>
     </string>

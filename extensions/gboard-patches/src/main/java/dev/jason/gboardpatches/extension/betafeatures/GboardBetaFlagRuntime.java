@@ -51,7 +51,10 @@ public final class GboardBetaFlagRuntime {
             if (!isBetaFlag(flagName) || !(originalResult instanceof Boolean) || preferences == null) {
                 return originalResult;
             }
-            return GboardBetaFlagSettings.readEnabled(preferences) ? Boolean.TRUE : originalResult;
+            return GboardBetaFlagSettings.readEnabled(preferences)
+                    && GboardBetaFlagSettings.readFlagEnabled(preferences, flagName)
+                    ? Boolean.TRUE
+                    : originalResult;
         } catch (Throwable ignored) {
             return originalResult;
         }

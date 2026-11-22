@@ -8,17 +8,30 @@ import app.morphe.patcher.patch.SupportedAbi
 internal const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
 
 // Google ships 18.8.0 as separate armeabi-v7a (176124765) and arm64-v8a
-// (176124766) beta builds whose versionName embeds the ABI, and publishes each
-// build in minAPI26 and minAPI32 variants. The lowest supported variant
-// sets the catalog minSdk; the extension targets the same Android 8.0+.
+// (176124766) beta builds, and the ABI is part of the versionName itself, so each
+// build has to be its own target. They cannot be folded into one target with a
+// per-ABI versionCode map: the manager matches targets by versionName, and the
+// two builds genuinely report different ones.
+//
+// Morphe badges a bundle's *first* target as Recommended after sorting version
+// strings descending, which is a plain string compare: "-armeabi-v7a" sorts
+// above "-arm64-v8a" ('e' > '6'), so the 32-bit build would always wear the
+// badge, including on 64-bit-only phones where it cannot even be installed.
+// Marking the 32-bit target experimental keeps it out of the default picker
+// (Morphe only offers experimental targets when the source has experimental
+// versions enabled) while still letting it patch when that APK is chosen by
+// hand or the toggle is on.
 private fun gboardTargets() = listOf(
-    AppTarget(
-        version = "18.8.0.1022711984-beta-armeabi-v7a", minSdk = 26,
-        versionCodes = mapOf(SupportedAbi.ARMEABI_V7A to 176124765),
-    ),
     AppTarget(
         version = "18.8.0.1022711984-beta-arm64-v8a", minSdk = 26,
         versionCodes = mapOf(SupportedAbi.ARM64_V8A to 176124766),
+        description = "64-bit build (arm64-v8a), recommended for 64-bit devices.",
+    ),
+    AppTarget(
+        version = "18.8.0.1022711984-beta-armeabi-v7a", minSdk = 26,
+        versionCodes = mapOf(SupportedAbi.ARMEABI_V7A to 176124765),
+        description = "32-bit build (armeabi-v7a), for 32-bit devices only.",
+        isExperimental = true,
     ),
 )
 
