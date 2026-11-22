@@ -199,6 +199,29 @@ success True  applied 29  failed 0   SIGNATURE_OK
 With the option off the guard is untouched (instruction 0 is still `IGET_OBJECT v0,v2 Lvot;->c:Laywx;`)
 and the run is still `applied 29 failed 0`. The option adds no patch, so the applied count stays 29.
 
+### Preselecting a built-in navatar
+
+`navatarModel` (default `Maps decides`) preselects one of the ten models Maps knows
+(`vps.p`: `Navatar_Sedan`, `Navatar_SUV`, `Navatar_City`, `Navatar_Sportscar`, `Navatar_Truck`,
+`Navatar_Moped`, `Navatar_Scooter`, `Navatar_Sportbike`, `Navatar_ClassicBike`, `Navatar_LightBike`).
+
+Choosing one overrides the getter result, not the fallback literal, because Maps hoists those
+fallbacks into registers it reuses:
+
+```
+Lvot;->e   8 SGET_OBJECT      v5  Lbace;->it:Lbaca;
+           9 INVOKE_INTERFACE       Lbabo;->u(Lbaca;Ljava/lang/String;)Ljava/lang/String;
+          10 MOVE_RESULT_OBJECT v1
+          11 CONST_STRING       v1  "Navatar_Sedan"     <- inserted
+```
+
+The same shape is used for `custom_chevron_opt_in` (`bace.is`), which is forced to 1 so Maps treats
+the preset as chosen. Model name lands at 3 read sites (`Lvot.e`, `Lvov.e`, `Lvov.v`) and opt-in at 4.
+
+Colour is deliberately not exposed: ids come from the server palette
+(`NavatarsColorPickerItemViewModelImpl(color=<int>, colorName=<server name>)` from
+`Naviagtion2Parameters.NavatarsConfig.ColorConfig`), so there is no local set to validate against.
+
 ### Custom navatars are a separate project
 
 The navatar is a server-delivered 3D model, not a bundled drawable: the APK contains
