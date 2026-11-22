@@ -9,6 +9,8 @@ import patches.gboard.features.ocr.gboardOcrRuntimePatch
 import patches.gboard.features.writingtools.gboardAiWritingTools1863AutoFixAcceptancePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
+import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
+import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
 /**
@@ -60,5 +62,30 @@ val gboardAiWritingToolsPatch = resourcePatch(
         gboardAiWritingToolsFeatureMarkerPatch,
         gboardAiWritingToolsFlagValuePatch,
         gboardAiWritingTools1863AutoFixAcceptancePatch,
+    )
+}
+
+/**
+ * New 18.8 beta gates.
+ *
+ * Five switches that exist in the beta but are off for a re-signed build, each with a live
+ * consumer and no model or server dependency: the plain-text quick-paste chip, the floating
+ * clipboard chip, invisible floating-keyboard resizing, the Emoji2 provider and the new
+ * swipe-to-remove confirmation. The toggle lives under More settings; turning it off restores
+ * Gboard's own values.
+ */
+@Suppress("unused")
+val gboardBetaFeaturesPatch = resourcePatch(
+    name = "Beta features (18.8)",
+    description = "Unlocks five new Gboard 18.8 features that are off by default: plain-text " +
+        "quick-paste chip, floating clipboard chip, invisible floating-keyboard resizing, the " +
+        "Emoji2 provider and the swipe-to-remove confirmation.",
+    default = false,
+) {
+    compatibleWith(gboard)
+    dependsOn(
+        gboardPatchesSettingsPatch,
+        gboardBetaFlagFeatureMarkerPatch,
+        gboardBetaFlagValuePatch,
     )
 }

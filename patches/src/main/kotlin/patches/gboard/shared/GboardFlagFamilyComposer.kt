@@ -103,6 +103,11 @@ internal enum class GboardFlagFamilyFeature(
         RuntimeCallId.CLOSE_PROACTIVE_SUGGESTIONS_RUNTIME_APPLY_FLAG_VALUE,
         GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
     ),
+    BETA_FLAGS(
+        1100,
+        RuntimeCallId.BETA_FLAGS_RUNTIME_APPLY_FLAG_VALUE,
+        GboardFlagFamilyArgumentShape.FLAG_NAME_AND_RESULT,
+    ),
     QUICK_INSERT(
         1200,
         RuntimeCallId.QUICK_INSERT_RUNTIME_APPLY_FLAG_VALUE,
@@ -644,6 +649,10 @@ private fun emitFlagFamilyRuntimeCall(call: RuntimeCallId, registers: String): S
             RuntimeCallId.CLIPBOARD_CONTENT_LIMIT_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE,
             registers,
         )
+    RuntimeCallId.BETA_FLAGS_RUNTIME_APPLY_FLAG_VALUE -> RuntimeCallEmitter.invoke(
+        RuntimeCallId.BETA_FLAGS_RUNTIME_APPLY_FLAG_VALUE,
+        registers,
+    )
     RuntimeCallId.CLOSE_PROACTIVE_SUGGESTIONS_RUNTIME_APPLY_FLAG_VALUE ->
         RuntimeCallEmitter.invoke(
             RuntimeCallId.CLOSE_PROACTIVE_SUGGESTIONS_RUNTIME_APPLY_FLAG_VALUE,
@@ -736,6 +745,7 @@ private val ALL_FLAG_FAMILY_RUNTIME_CALLS: Set<RuntimeCallId> = setOf(
     RuntimeCallId.BLUETOOTH_MICROPHONE_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE,
     RuntimeCallId.CLIPBOARD_CONTENT_LIMIT_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE,
     RuntimeCallId.CLOSE_PROACTIVE_SUGGESTIONS_RUNTIME_APPLY_FLAG_VALUE,
+    RuntimeCallId.BETA_FLAGS_RUNTIME_APPLY_FLAG_VALUE,
     RuntimeCallId.CURSOR_TRACKPAD_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE,
     RuntimeCallId.DEVICE_INTELLIGENCE_RUNTIME_APPLY_FLAG_VALUE,
     RuntimeCallId.EMOJI_SIZE_RUNTIME_APPLY_OVERRIDDEN_FLAG_VALUE,

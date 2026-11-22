@@ -2858,4 +2858,19 @@
     <string name="gboard_patches_spacebar_logo_size_invalid">
         <translation locale="en">Enter a size between 12 and 40 dp.</translation>
     </string>
+    <string name="gboard_patches_beta_flags_title">
+        <translation locale="en">Beta features</translation>
+    </string>
+    <string name="gboard_patches_beta_flags_entry_summary">
+        <translation locale="en">New Gboard 18.8 features that are off by default.</translation>
+    </string>
+    <string name="gboard_patches_beta_flags_summary">
+        <translation locale="en">Plain-text quick-paste chip, floating clipboard chip, invisible floating-keyboard resize, Emoji2 provider and the new swipe-to-remove confirmation.</translation>
+    </string>
+    <string name="gboard_patches_beta_flags_error_title">
+        <translation locale="en">Beta features unavailable</translation>
+    </string>
+    <string name="gboard_patches_beta_flags_error_summary">
+        <translation locale="en">The beta features screen failed to load. Reopen Gboard settings and try again.</translation>
+    </string>
 </settings-text>
