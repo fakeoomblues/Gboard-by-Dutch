@@ -25,7 +25,7 @@ internal val gboardDictationPayloadAssetsPatch = resourcePatch(
 context(context: ResourcePatchContext)
 private fun copyDictationPayload() = with(context) {
     val loader = object {}.javaClass.classLoader ?: error("No classloader for the dictation payload")
-    for (abi in listOf("arm64-v8a")) {
+    for (abi in listOf("arm64-v8a", "armeabi-v7a")) {
         val bytes = loader.getResourceAsStream("gboard/dictation-native/$abi/libdictation_jni.so")
             ?.use { it.readBytes() }
             ?: error("dictation payload missing for $abi")
