@@ -60,7 +60,10 @@ public final class MapsGuidanceCoordinator {
             Object component=applicationComponent(app);
             Object provider=field(component.getClass(),"hU").get(component);
             Object actual=method(provider.getClass(),"a").invoke(provider);
-            if(!actual.getClass().getName().equals("bmxs"))throw new IllegalStateException("NATIVE_MANAGER");
+            // 26.44 calls the native manager bmxs; 26.47 reuses that name for another class and
+            // calls it bnfl (same parallel fields f/j/p/q).
+            String managerClass=actual.getClass().getName();
+            if(!managerClass.equals("bmxs")&&!managerClass.equals("bnfl"))throw new IllegalStateException("NATIVE_MANAGER");
             manager=actual;bound=true;
         }catch(ReflectiveOperationException | RuntimeException error){fault=true;}
     }

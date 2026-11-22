@@ -111,6 +111,13 @@ final class NativeGuidance implements AutoCloseable {
         if(!converts)throw new IllegalStateException("Maps distance utility changed");
         return util;
     }
+    /** The distance unit is whatever the utility converts through its one-argument c(...). */
+    static Class<?> unitParameter(Object util)throws Exception{
+        for(Class<?> owner=util.getClass();owner!=null;owner=owner.getSuperclass())
+            for(java.lang.reflect.Method candidate:owner.getDeclaredMethods())
+                if(candidate.getName().equals("c")&&candidate.getParameterCount()==1)return candidate.getParameterTypes()[0];
+        throw new NoSuchMethodException("distance utility has no one-argument c");
+    }
     static Snapshot snapshot(Object value)throws Exception{
         return snapshot(value,null);
     }
@@ -124,7 +131,7 @@ final class NativeGuidance implements AutoCloseable {
         if(model==null)return new Snapshot(true,null,0,0);
         Object progress=method(model,"e").invoke(model);
         Object path=field(progress,"b"),routeUnits=path==null?null:field(path,"N");
-        Class<?> unitType=distanceUtil==null?null:path==null?distanceUtil.getClass().getClassLoader().loadClass("cizm"):fieldType(path,"N");
+        Class<?> unitType=distanceUtil==null?null:path==null?unitParameter(distanceUtil):fieldType(path,"N");
         Object resolved=distanceUtil==null?routeUnits:method(distanceUtil,"c",unitType).invoke(distanceUtil,routeUnits);
         String units=resolved==null?null:enumName(resolved);
         Object step=field(progress,"d");
