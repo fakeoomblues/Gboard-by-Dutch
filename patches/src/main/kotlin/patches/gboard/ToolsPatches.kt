@@ -11,7 +11,6 @@ import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoice1803ZhTwPatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFeatureMarkerPatch
 import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFlagValuePatch
-import patches.gboard.features.advancedvoice.gboardVoiceBackendSelectionPatch
 import patches.gboard.features.advancedvoice.gboardDictationPayloadAssetsPatch
 import patches.gboard.features.bluetoothmicrophone.gboardBluetoothMicrophoneFeatureMarkerPatch
 import patches.gboard.features.bluetoothmicrophone.gboardBluetoothMicrophoneFlagValuePatch
@@ -153,7 +152,6 @@ val gboardAdvancedVoiceTypingPatch = resourcePatch(
         gboardAdvancedVoiceFeatureMarkerPatch,
         gboardAdvancedVoiceFlagValuePatch,
         gboardDictationPayloadAssetsPatch,
-        gboardVoiceBackendSelectionPatch,
     )
 }
 
