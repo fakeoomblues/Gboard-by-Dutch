@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cc9160a310701728f37ffeca87d3d0fe7236de69/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.99.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [cc9160a31070](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/cc9160a310701728f37ffeca87d3d0fe7236de69). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.99.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.98.0...v1.99.0) (2026-11-22)
+
+### ✨ New Features
+
+* **Gboard:** add Rambler retry and hide unavailable settings ([b9dfd80](https://gitlab.com/johninnld/nl-morphe-patches/commit/b9dfd808331e964a461845929af20e6e141d3014))
+* **Gboard:** enable the full patch set and default Parakeet branding ([fd1d32e](https://gitlab.com/johninnld/nl-morphe-patches/commit/fd1d32e0f12c19e94b2b946d864d9bb846e9ccc3))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/6aba3cb8042d63c92ad3205fce769f7914e6c7b9/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.98.0.**

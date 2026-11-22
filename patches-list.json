@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.98.0",
+  "version": "1.99.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -78,7 +78,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -90,7 +90,7 @@
     {
       "name": "AMOLED dark keyboard",
       "description": "Turns Gboard's dark keyboard background pure black instead of Google's grey, including the dynamic theme that follows the wallpaper. There is no separate AMOLED tile: choose Dynamic Color in Gboard → Theme, tap Apply, then use Android's dark theme. Light mode and the light theme stay unchanged.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -119,7 +119,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -204,7 +204,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -368,8 +368,8 @@
     },
     {
       "name": "Advanced voice typing (NGA)",
-      "description": "Enables Gboard's NGA dictation stack: advanced voice typing next to Standard and Rambler, plus the consolidated speech-stack features and long-form dictation. Off by default; the engine may need server eligibility.",
-      "default": false,
+      "description": "Enables Gboard's NGA dictation capabilities, consolidated speech-stack features and long-form dictation. Availability depends on Gboard's recognizer eligibility.",
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -398,7 +398,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -1775,7 +1775,7 @@
     {
       "name": "Beta features (18.8)",
       "description": "Unlocks five new Gboard 18.8 features that are off by default: plain-text quick-paste chip, floating clipboard chip, invisible floating-keyboard resizing, the Emoji2 provider and the swipe-to-remove confirmation.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -1804,7 +1804,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2540,7 +2540,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2635,7 +2635,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2708,7 +2708,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2749,7 +2749,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2810,7 +2810,7 @@
     {
       "name": "Custom branding",
       "description": "Changes Gboard's app name and launcher icon. Choose the Parakeet icon (default), Gboard's original icon or one of five other designs. The name also appears in Android's keyboard list.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -2839,7 +2839,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -2853,7 +2853,7 @@
           "description": "Name shown in the launcher, Android's keyboard list and app information. Leave empty to keep Gboard.",
           "required": false,
           "type": "kotlin.String",
-          "default": null,
+          "default": "Gboard Parakeet/Rambler",
           "values": null
         },
         {
@@ -5501,7 +5501,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -6447,7 +6447,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -6532,7 +6532,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -6772,7 +6772,7 @@
     {
       "name": "Hidden flags (18.8)",
       "description": "Adds a Hidden flags screen that forces individual Gboard 18.8 flags through Gboard's own override store: app-specific word biasing, the app-specific suggestion bar and the square search radius.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -6801,7 +6801,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -9898,7 +9898,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -10051,7 +10051,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -10673,7 +10673,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -10714,7 +10714,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11037,7 +11037,48 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Rambler automatic retry (18.8)",
+      "description": "Lets Rambler retry eligible recognition errors automatically using the audio from the current dictation. Rambler may send that audio to Google again.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.google.android.inputmethod.latin",
+          "name": "Gboard",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#4285F4",
+          "signatures": [
+            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053",
+            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "18.8.0.1022711984-beta-arm64-v8a",
+              "versionCodes": {
+                "ARM64_V8A": 176124766
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": "64-bit build (arm64-v8a), recommended for 64-bit devices."
+            },
+            {
+              "version": "18.8.0.1022711984-beta-armeabi-v7a",
+              "versionCodes": {
+                "ARMEABI_V7A": 176124765
+              },
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11078,7 +11119,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11119,7 +11160,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11160,7 +11201,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11201,7 +11242,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11242,7 +11283,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11254,7 +11295,7 @@
     {
       "name": "Rambler toolbar & revert extras (18.8)",
       "description": "Adds the overflow button to the floating Rambler toolbar, keeps rewritten text when you revert a transcript, and passes edit history on the Jetson Lite path.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -11283,7 +11324,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -11324,7 +11365,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -12578,7 +12619,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -12684,7 +12725,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -14562,7 +14603,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -14903,7 +14944,7 @@
     {
       "name": "Use Bluetooth microphone",
       "description": "Shows Gboard's Voice typing → Use Bluetooth microphone setting so dictation can capture from a paired headset. Routing stays Gboard's own decision.",
-      "default": false,
+      "default": true,
       "category": null,
       "compatiblePackages": [
         {
@@ -14932,7 +14973,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }
@@ -15090,7 +15131,7 @@
               "versionCodes": {
                 "ARMEABI_V7A": 176124765
               },
-              "isExperimental": true,
+              "isExperimental": false,
               "minSdk": 26,
               "description": "32-bit build (armeabi-v7a), for 32-bit devices only."
             }

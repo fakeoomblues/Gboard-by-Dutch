@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.98.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.98.0)** · 80 apps · 400 patches
+**Patch bundle [v1.99.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.99.0)** · 80 apps · 401 patches
 
 ### Weather
 
@@ -141,7 +141,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.3 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
 | [Fennec](docs/site/en/apps/fennec.md) | See guide | Any | APK | 1 |
-| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a | APK | 31 |
+| [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a | APK | 32 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
 | [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |
