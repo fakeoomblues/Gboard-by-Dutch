@@ -12,6 +12,12 @@ public class GboardRamblerCloudRuntimeTest {
         assertEquals(Boolean.TRUE, GboardRamblerCloudRuntime.applyFlagValue("enable_rambler_al_toolbar", Boolean.FALSE));
         assertEquals(Boolean.TRUE, GboardRamblerCloudRuntime.applyFlagValue(
                 "enable_rambler_toolbar_at_cursor_position", Boolean.FALSE));
+        assertEquals(Boolean.TRUE, GboardRamblerCloudRuntime.applyFlagValue(
+                "enable_rambler_al_toolbar_overflow_menu", Boolean.FALSE));
+        assertEquals(Boolean.TRUE, GboardRamblerCloudRuntime.applyFlagValue(
+                "rambler_preserve_rewritten_text_on_revert", Boolean.FALSE));
+        assertEquals(Boolean.TRUE, GboardRamblerCloudRuntime.applyFlagValue(
+                "jetson_lite_enable_edit_history", Boolean.FALSE));
     }
 
     @Test

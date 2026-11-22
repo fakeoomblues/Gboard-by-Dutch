@@ -8,10 +8,14 @@ import patches.gboard.features.ocr.gboardOcrBundledRecognizerPatch
 import patches.gboard.features.ocr.gboardOcrRuntimePatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPatch
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
+import patches.gboard.features.advancedvoice.gboardAdvancedVoice1803ZhTwPatch
+import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFeatureMarkerPatch
+import patches.gboard.features.advancedvoice.gboardAdvancedVoiceFlagValuePatch
 import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
 import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
+import patches.gboard.features.rambler.gboardRambler1803OfficialSelectorPatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
 /**
@@ -118,5 +122,34 @@ val gboardHiddenFlagsPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardHiddenFlagsFeatureMarkerPatch,
         gboardHiddenFlagsBootstrapPatch,
+    )
+}
+
+/**
+ * Gboard's NGA ("advanced") dictation stack.
+ *
+ * The client ships in the APK (`AgenticDictationIme`, `libs/genaivoice`) but is gated behind
+ * signature-scoped flags a re-signed build never receives. This forces `enable_nga`, the
+ * consolidated speech-stack features, split feature-module install, sticky mic and SODA long-form,
+ * and registers Rambler as an official selectable backend. It is off by default because the engine
+ * may still require server eligibility or Google's TTS/Scribe packages, which the marker exposes as
+ * package queries.
+ */
+@Suppress("unused")
+val gboardAdvancedVoiceTypingPatch = resourcePatch(
+    name = "Advanced voice typing (NGA)",
+    description = "Enables Gboard's NGA dictation stack: advanced voice typing next to Standard " +
+        "and Rambler, sticky microphone, long-form dictation and the zh-TW speech-to-text " +
+        "conversion. Off by default; the engine may need server eligibility.",
+    default = false,
+) {
+    compatibleWith(gboard)
+
+    dependsOn(
+        gboardPatchesSettingsPatch,
+        gboardAdvancedVoiceFeatureMarkerPatch,
+        gboardAdvancedVoiceFlagValuePatch,
+        gboardAdvancedVoice1803ZhTwPatch,
+        gboardRambler1803OfficialSelectorPatch,
     )
 }
