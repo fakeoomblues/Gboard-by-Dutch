@@ -22,6 +22,7 @@ public final class GboardMoreSettingsGroupFeature implements GboardPatchesSettin
                 GboardSettingsText.get(context, R.string.gboard_patches_group_more_empty_title),
                 GboardSettingsText.get(context, R.string.gboard_patches_group_more_empty_summary),
                 List.of(new dev.jason.gboardpatches.extension.betafeatures.GboardBetaFlagSettingsFeature(context),
+                        new dev.jason.gboardpatches.extension.hiddenflags.GboardHiddenFlagsSettingsFeature(context),
                         new GboardLanFtpSettingsFeature(context),
                         new GboardSettingsHomepageSettingsFeature(),
                         new GboardBackupRestoreSettingsFeature(context),

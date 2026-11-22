@@ -12,6 +12,9 @@ public final class GboardPatchesFeatureAvailability {
     public static final String FEATURE_EDITING_ACCESS_POINTS =
             "dev.jason.gboardpatches.feature.editing_access_points";
     /** 18.8.0 beta gates forced by the Beta features toggle. */
+    /** Per-flag overrides written through Gboard's own OVERRIDE store. */
+    public static final String FEATURE_HIDDEN_FLAGS =
+            "dev.jason.gboardpatches.feature.hidden_flags";
     public static final String FEATURE_BETA_FLAGS =
             "dev.jason.gboardpatches.feature.beta_flags";
     public static final String FEATURE_CLIPBOARD_ENHANCEMENTS =

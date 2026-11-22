@@ -2873,4 +2873,22 @@
     <string name="gboard_patches_beta_flags_error_summary">
         <translation locale="en">The beta features screen failed to load. Reopen Gboard settings and try again.</translation>
     </string>
+    <string name="gboard_patches_hidden_flags_title">
+        <translation locale="en">Hidden flags</translation>
+    </string>
+    <string name="gboard_patches_hidden_flags_entry_summary">
+        <translation locale="en">Force individual Gboard flags from this beta.</translation>
+    </string>
+    <string name="gboard_patches_hidden_flags_summary">
+        <translation locale="en">Each switch writes Gboard\'s own flag override, so it applies to the running keyboard without a restart.</translation>
+    </string>
+    <string name="gboard_patches_hidden_flags_section">
+        <translation locale="en">Flags</translation>
+    </string>
+    <string name="gboard_patches_hidden_flags_error_title">
+        <translation locale="en">Hidden flags unavailable</translation>
+    </string>
+    <string name="gboard_patches_hidden_flags_error_summary">
+        <translation locale="en">The hidden flags screen failed to load. Reopen Gboard settings and try again.</translation>
+    </string>
 </settings-text>
