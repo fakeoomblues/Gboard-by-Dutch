@@ -59,7 +59,6 @@ public final class GboardHiddenFlagsSettingsFeature
             SharedPreferences preferences = GboardPatchesSettings.preferences(context);
             List<GboardPatchesSettingsContract.Row> rows = new ArrayList<>();
             for (GboardHiddenFlagCatalog.Entry entry : GboardHiddenFlagCatalog.entries()) {
-                GboardHiddenFlagSettings.ensureDefault(preferences, entry.flagName);
                 boolean checked = GboardHiddenFlagSettings.readEnabled(
                         preferences, entry.flagName);
                 final String flagName = entry.flagName;
@@ -67,7 +66,9 @@ public final class GboardHiddenFlagsSettingsFeature
                         entry.title, entry.summary, true, checked,
                         value -> {
                             boolean written = GboardHiddenFlagSettings.writeEnabled(
-                                    preferences, flagName, value);
+                                    preferences, flagName, value)
+                                    && GboardHiddenFlagSettings.markExplicit(
+                                            preferences, flagName, value);
                             boolean readBack = GboardHiddenFlagSettings.readEnabled(
                                     preferences, flagName);
                             boolean applied = GboardFlagOverrideRuntime.applyOne(

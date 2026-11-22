@@ -36,12 +36,12 @@ public final class GboardFlagOverrideRuntime {
             if (preferences == null) {
                 return;
             }
-            // Reapply every flag the user has configured, not only the enabled ones: Off is an
-            // explicit `false` override, so dropping it at startup would make the switch behave
-            // differently after a restart. Flags never touched keep Gboard's stock value.
+            // Reapply only flags the user actually chose, with the stored value: Off is an explicit
+            // `false` override, so it has to survive a restart. Merely opening the screen writes
+            // nothing now, and a legacy bare `false` (which the old screen wrote on first view) is
+            // not a choice and is skipped by hasStoredChoice().
             for (GboardHiddenFlagCatalog.Entry entry : GboardHiddenFlagCatalog.entries()) {
-                String key = GboardHiddenFlagSettings.preferenceKey(entry.flagName);
-                if (key == null || !preferences.contains(key)) {
+                if (!GboardHiddenFlagSettings.hasStoredChoice(preferences, entry.flagName)) {
                     continue;
                 }
                 applyOverride(entry.flagName,
