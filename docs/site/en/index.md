@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.95.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.96.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -362,22 +362,27 @@ hide:
 
 </article>
 
-<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.26.3 allow any android auto host disable tracking enable full streaming remove advertising remove premium upsell ui remove subscription paywalls" markdown>
+<article class="dap-app-card" data-category="entertainment" data-search="deezer deezer.android.app 9.0.27.3 allow any android auto host android auto api 9 media surface disable tracking enable full streaming enable queue item selection google sign-in through microg-re player queue shortcuts remove advertising remove premium upsell ui remove subscription paywalls search and sort playlists" markdown>
 <p class="dap-app-card__category">Entertainment</p>
 
 ### [Deezer](apps/deezer.md)
 
-<p class="dap-app-card__version">App versions: <span class="dap-data">9.0.26.3</span></p>
+<p class="dap-app-card__version">App versions: <span class="dap-data">9.0.27.3</span></p>
 <p class="dap-app-card__package">deezer.android.app</p>
 <details class="dap-app-card__patches">
-<summary>6 patches</summary>
+<summary>11 patches</summary>
 <ul>
-<li>Allow any Android Auto host <span class="dap-app-card__target">9.0.26.3</span></li>
-<li>Disable tracking <span class="dap-app-card__target">9.0.26.3</span></li>
-<li>Enable full streaming <span class="dap-app-card__target">9.0.26.3</span></li>
-<li>Remove advertising <span class="dap-app-card__target">9.0.26.3</span></li>
-<li>Remove premium upsell UI <span class="dap-app-card__target">9.0.26.3</span></li>
-<li>Remove subscription paywalls <span class="dap-app-card__target">9.0.26.3</span></li>
+<li>Allow any Android Auto host <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Android Auto API 9 media surface <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Disable tracking <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Enable full streaming <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Enable queue item selection <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Google sign-in through microG-RE <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Player queue shortcuts <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Remove advertising <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Remove premium upsell UI <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Remove subscription paywalls <span class="dap-app-card__target">9.0.27.3</span></li>
+<li>Search and sort playlists <span class="dap-app-card__target">9.0.27.3</span></li>
 </ul>
 </details>
 

@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.95.0**
+**Patchbundel: 1.96.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -214,12 +214,17 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
-| Allow any Android Auto host | Aan | 9.0.26.3 |
-| Disable tracking | Aan | 9.0.26.3 |
-| Enable full streaming | Aan | 9.0.26.3 |
-| Remove advertising | Aan | 9.0.26.3 |
-| Remove premium upsell UI | Aan | 9.0.26.3 |
-| Remove subscription paywalls | Aan | 9.0.26.3 |
+| Allow any Android Auto host | Aan | 9.0.27.3 |
+| Android Auto API 9 media surface | Aan | 9.0.27.3 |
+| Disable tracking | Aan | 9.0.27.3 |
+| Enable full streaming | Aan | 9.0.27.3 |
+| Enable queue item selection | Aan | 9.0.27.3 |
+| Google sign-in through microG-RE | Aan | 9.0.27.3 |
+| Player queue shortcuts | Aan | 9.0.27.3 |
+| Remove advertising | Aan | 9.0.27.3 |
+| Remove premium upsell UI | Aan | 9.0.27.3 |
+| Remove subscription paywalls | Aan | 9.0.27.3 |
+| Search and sort playlists | Aan | 9.0.27.3 |
 
 ## DS Nieuws
 

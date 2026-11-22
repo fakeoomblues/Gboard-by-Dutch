@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/f935fc1749e29b740898c252c6e65f17c3e670b0/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.96.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [f935fc1749e2](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/f935fc1749e29b740898c252c6e65f17c3e670b0). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.96.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.95.0...v1.96.0) (2026-11-22)
+
+### 🐛 Bug Fixes
+
+* **Deezer:** enable all eleven patches by default ([f935fc1](https://gitlab.com/johninnld/nl-morphe-patches/commit/f935fc1749e29b740898c252c6e65f17c3e670b0))
+
+### ✨ New Features
+
+* **Deezer:** deliver native API 9 browsing, queue selection and Google sign-in ([8e5bd18](https://gitlab.com/johninnld/nl-morphe-patches/commit/8e5bd181fe648f11b5a4adbda2e53790460b1d15))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d1c6e601c8834820275d23359344112d3de1f33e/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.95.0.**

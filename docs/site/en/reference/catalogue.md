@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.95.0**
+**Patch bundle: 1.96.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -214,12 +214,17 @@ Check the supported app versions and default setting for each patch. The app pag
 
 | Patch | Default | App versions |
 | --- | --- | --- |
-| Allow any Android Auto host | On | 9.0.26.3 |
-| Disable tracking | On | 9.0.26.3 |
-| Enable full streaming | On | 9.0.26.3 |
-| Remove advertising | On | 9.0.26.3 |
-| Remove premium upsell UI | On | 9.0.26.3 |
-| Remove subscription paywalls | On | 9.0.26.3 |
+| Allow any Android Auto host | On | 9.0.27.3 |
+| Android Auto API 9 media surface | On | 9.0.27.3 |
+| Disable tracking | On | 9.0.27.3 |
+| Enable full streaming | On | 9.0.27.3 |
+| Enable queue item selection | On | 9.0.27.3 |
+| Google sign-in through microG-RE | On | 9.0.27.3 |
+| Player queue shortcuts | On | 9.0.27.3 |
+| Remove advertising | On | 9.0.27.3 |
+| Remove premium upsell UI | On | 9.0.27.3 |
+| Remove subscription paywalls | On | 9.0.27.3 |
+| Search and sort playlists | On | 9.0.27.3 |
 
 ## DS Nieuws
 
