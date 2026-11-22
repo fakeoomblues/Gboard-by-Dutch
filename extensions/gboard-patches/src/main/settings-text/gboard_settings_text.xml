@@ -2855,6 +2855,42 @@
     <string name="gboard_patches_spacebar_logo_size_invalid">
         <translation locale="en">Enter a size between 12 and 40 dp.</translation>
     </string>
+    <string name="gboard_patches_voice_extras_title">
+        <translation locale="en">Standard voice typing settings</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_entry_summary">
+        <translation locale="en">The advanced-features, punctuation and language-switch switches that stock hides under the Standard voice typing page.</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_summary">
+        <translation locale="en">These are Gboard\'s own Standard-engine preferences. They do not apply to Rambler or Parakeet transcription.</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_section">
+        <translation locale="en">Standard engine</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_features_title">
+        <translation locale="en">Advanced features</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_features_summary">
+        <translation locale="en">Use advanced voice commands to edit text, add emojis and more.</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_punctuation_title">
+        <translation locale="en">Add punctuation</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_punctuation_summary">
+        <translation locale="en">Add punctuation automatically when voice typing.</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_language_title">
+        <translation locale="en">Automatically switch language</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_language_summary">
+        <translation locale="en">Adjust to the language you speak if advanced voice typing detects it.</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_error_title">
+        <translation locale="en">Voice typing settings unavailable</translation>
+    </string>
+    <string name="gboard_patches_voice_extras_error_summary">
+        <translation locale="en">The screen failed to load. Reopen Gboard settings and try again.</translation>
+    </string>
     <string name="gboard_patches_beta_flags_title">
         <translation locale="en">Beta features</translation>
     </string>
