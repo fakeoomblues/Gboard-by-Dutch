@@ -3,6 +3,8 @@ package dev.jason.gboardpatches.extension.settings;
 import android.content.Context;
 import android.util.Log;
 
+import dev.jason.gboardpatches.extension.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,6 +91,24 @@ public final class GboardFeatureGroup implements GboardPatchesSettingsContract.F
                             .entryToggle(state.getMasterToggle()));
                 }
                 rows.add(row);
+            }
+            // The rest of the children are real screens whose patch is simply not part of this
+            // build. Hiding them made the group cards look like they promised rows that did not
+            // exist; listing them disabled says what is missing and why.
+            String unavailableNote = GboardSettingsText.get(
+                    host.getContext(), R.string.gboard_patches_group_row_unavailable);
+            for (GboardPatchesSettingsContract.Feature child : children) {
+                if (child == null || visibleChildren.contains(child)) {
+                    continue;
+                }
+                rows.add(new GboardPatchesSettingsContract.NavigationRow(
+                        child.getEntryTitle(),
+                        unavailableNote,
+                        null,
+                        false,
+                        null,
+                        null,
+                        false));
             }
             return new GboardPatchesSettingsContract.Screen(
                     entryTitle,

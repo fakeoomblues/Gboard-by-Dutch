@@ -234,22 +234,25 @@
         <translation locale="en">Keyboard Tools &amp; Shortcuts</translation>
     </string>
     <string name="gboard_patches_group_keyboard_tools_summary">
-        <translation locale="en">Customize the top row, incognito mode, long-press shortcuts, and OCR.</translation>
+        <translation locale="en">Keyboard tools, shortcuts and text capture.</translation>
     </string>
     <string name="gboard_patches_group_ai_voice_title">
         <translation locale="en">AI &amp; Voice</translation>
     </string>
     <string name="gboard_patches_group_ai_voice_summary">
-        <translation locale="en">AI writing tools, advanced voice typing, and Bluetooth microphone.</translation>
+        <translation locale="en">Writing tools and voice typing extras.</translation>
     </string>
     <string name="gboard_patches_group_keyboard_layout_title">
         <translation locale="en">Keys, Layout &amp; Symbols</translation>
     </string>
     <string name="gboard_patches_group_keyboard_layout_summary">
-        <translation locale="en">Globe key behavior, English uppercase, Zhuyin bottom row, and emoji, sticker, and GIF tab order.</translation>
+        <translation locale="en">Keys, layout, and emoji, sticker and GIF options.</translation>
     </string>
     <string name="gboard_patches_group_keyboard_header_summary">
         <translation locale="en"></translation>
+    </string>
+    <string name="gboard_patches_group_row_unavailable">
+        <translation locale="en">Not in this build: the patch that adds it is not applied.</translation>
     </string>
     <string name="gboard_patches_group_keyboard_empty_title">
         <translation locale="en">No keyboard settings available</translation>
@@ -867,7 +870,7 @@
         <translation locale="en">Clipboard</translation>
     </string>
     <string name="gboard_patches_clipboard_summary">
-        <translation locale="en">Adjusts clipboard retention, item limits, preview lines, metadata labels, order index, columns, and the phone-hosted Web Clipboard.</translation>
+        <translation locale="en">Clipboard history: retention, limits, previews, labels, order and columns.</translation>
     </string>
     <string name="gboard_patches_clipboard_error_title">
         <translation locale="en">Clipboard settings unavailable</translation>
@@ -2763,7 +2766,7 @@
         <translation locale="en">More settings</translation>
     </string>
     <string name="gboard_patches_group_more_summary">
-        <translation locale="en">FTP Server, settings style, backup and restore, and developer options.</translation>
+        <translation locale="en">Extra tools, backup and advanced options.</translation>
     </string>
     <string name="gboard_patches_group_more_empty_title">
         <translation locale="en">No additional settings available</translation>
