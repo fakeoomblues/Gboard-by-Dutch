@@ -399,9 +399,13 @@ private fun MutableClass.replaceStatic(name: String, params: List<String>, regis
     ).toMutable().apply { addInstructions(0, smali) })
 }
 
-private fun parakeetStubRegisters(returnType: String): Int = when (returnType) {
-    "J", "D" -> 2
-    else -> 1
+private fun parakeetStubRegisters(method: Method): Int {
+    // Instance method: the receiver plus every parameter are the incoming registers, and the
+    // stub needs at least one scratch register above them. A dex whose ins_size exceeds
+    // registers_size is rejected wholesale by ART, which hides every class in that file.
+    val incoming = method.parameterTypes.size + 1
+    val scratch = if (method.returnType == "J" || method.returnType == "D") 2 else 1
+    return incoming + scratch
 }
 
 /**
@@ -413,7 +417,7 @@ private fun MutableClass.addStub(method: Method) {
     if (methods.any { it.name == method.name && it.params() == method.params() }) {
         throw PatchException("Parakeet recognizer already implements ${method.sig()}")
     }
-    val implementation = MutableMethodImplementation(parakeetStubRegisters(method.returnType))
+    val implementation = MutableMethodImplementation(parakeetStubRegisters(method))
     when {
         method.returnType == "V" -> implementation.addInstruction(BuilderInstruction10x(Opcode.RETURN_VOID))
         method.returnType == "J" || method.returnType == "D" -> {

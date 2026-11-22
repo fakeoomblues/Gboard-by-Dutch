@@ -11,6 +11,8 @@ import patches.gboard.features.writingtools.gboardAiWritingToolsFeatureMarkerPat
 import patches.gboard.features.writingtools.gboardAiWritingToolsFlagValuePatch
 import patches.gboard.features.betafeatures.gboardBetaFlagFeatureMarkerPatch
 import patches.gboard.features.betafeatures.gboardBetaFlagValuePatch
+import patches.gboard.features.hiddenflags.gboardHiddenFlagsBootstrapPatch
+import patches.gboard.features.hiddenflags.gboardHiddenFlagsFeatureMarkerPatch
 import patches.gboard.shared.gboardPatchesSettingsPatch
 
 /**
@@ -87,5 +89,29 @@ val gboardBetaFeaturesPatch = resourcePatch(
         gboardPatchesSettingsPatch,
         gboardBetaFlagFeatureMarkerPatch,
         gboardBetaFlagValuePatch,
+    )
+}
+
+/**
+ * Hidden flags.
+ *
+ * A screen with one switch per curated 18.8 flag. Each switch writes Gboard's own override entry
+ * (`adfk.o(name)` for the flag, `adfk.h(adiu.OVERRIDE)` for the store), so the value is applied to
+ * the running keyboard directly instead of going through a flag-getter hook. Adding a new boolean
+ * gate only needs a catalog entry.
+ */
+@Suppress("unused")
+val gboardHiddenFlagsPatch = resourcePatch(
+    name = "Hidden flags (18.8)",
+    description = "Adds a Hidden flags screen that forces individual Gboard 18.8 flags through " +
+        "Gboard's own override store: app-specific word biasing, the app-specific suggestion bar " +
+        "and the square search radius.",
+    default = false,
+) {
+    compatibleWith(gboard)
+    dependsOn(
+        gboardPatchesSettingsPatch,
+        gboardHiddenFlagsFeatureMarkerPatch,
+        gboardHiddenFlagsBootstrapPatch,
     )
 }
