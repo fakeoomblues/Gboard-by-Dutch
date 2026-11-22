@@ -132,10 +132,9 @@ val gboardHiddenFlagsPatch = resourcePatch(
  *
  * The client ships in the APK (`AgenticDictationIme`, `libs/genaivoice`) but is gated behind
  * signature-scoped flags a re-signed build never receives. This forces `enable_nga`, the
- * consolidated speech-stack features, split feature-module install, sticky mic and SODA long-form,
- * It is off by default because the engine
- * may still require server eligibility or Google's TTS/Scribe packages, which the marker exposes as
- * package queries.
+ * consolidated speech-stack features, split feature-module install and SODA long-form. It is off by
+ * default because the engine may still require server eligibility or Google's TTS/Scribe packages,
+ * which the marker exposes as package queries.
  */
 @Suppress("unused")
 val gboardAdvancedVoiceTypingPatch = resourcePatch(
