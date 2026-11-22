@@ -7,19 +7,19 @@ import app.morphe.patcher.patch.SupportedAbi
 
 internal const val GBOARD_PACKAGE = "com.google.android.inputmethod.latin"
 
-// Google ships 18.6.3 as separate armeabi-v7a (176071765) and arm64-v8a
-// (176071766) builds whose versionName embeds the ABI, and publishes each
+// Google ships 18.8.0 as separate armeabi-v7a (176124765) and arm64-v8a
+// (176124766) beta builds whose versionName embeds the ABI, and publishes each
 // build in minAPI26 and minAPI32 variants. The lowest supported variant
 // sets the catalog minSdk; the extension targets the same Android 8.0+.
 private fun gboardTargets(experimental: Boolean) = listOf(
     AppTarget(
-        version = "18.6.3.1002251336-release-armeabi-v7a", minSdk = 26,
-        versionCodes = mapOf(SupportedAbi.ARMEABI_V7A to 176071765),
+        version = "18.8.0.1022711984-beta-armeabi-v7a", minSdk = 26,
+        versionCodes = mapOf(SupportedAbi.ARMEABI_V7A to 176124765),
         isExperimental = experimental,
     ),
     AppTarget(
-        version = "18.6.3.1002251336-release-arm64-v8a", minSdk = 26,
-        versionCodes = mapOf(SupportedAbi.ARM64_V8A to 176071766),
+        version = "18.8.0.1022711984-beta-arm64-v8a", minSdk = 26,
+        versionCodes = mapOf(SupportedAbi.ARM64_V8A to 176124766),
         isExperimental = experimental,
     ),
 )

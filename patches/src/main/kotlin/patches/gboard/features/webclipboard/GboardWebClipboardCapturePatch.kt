@@ -26,7 +26,7 @@ import patches.gboard.shared.runtimeabi.RuntimeAbiCatalog
 import patches.gboard.shared.runtimeabi.RuntimeCallEmitter
 import patches.gboard.shared.runtimeabi.RuntimeCallId
 
-private const val LATIN_IME_SERVICE_CLASS = "Lpbk;"
+private const val LATIN_IME_SERVICE_CLASS = "Lafae;"
 private const val INPUT_METHOD_SERVICE_CLASS =
     "Landroid/inputmethodservice/InputMethodService;"
 private const val TARGET_METHOD_NAME = "onCreate"
