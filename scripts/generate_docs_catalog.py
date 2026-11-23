@@ -38,6 +38,7 @@ APP_PAGES = {
     'com.spotify.music': ('spotify', 'entertainment'),
     'com.apple.android.music': ('apple-music', 'entertainment'),
     'deezer.android.app': ('deezer', 'entertainment'),
+    'com.eclipse.android': ('eclipse-music', 'entertainment'),
     'com.aspiro.tidal': ('tidal', 'entertainment'),
     'app.seb3thehacker.gearslip': ('gearslip', 'mobility'),
     'com.google.android.apps.youtube.music': ('youtube-music', 'entertainment'),
