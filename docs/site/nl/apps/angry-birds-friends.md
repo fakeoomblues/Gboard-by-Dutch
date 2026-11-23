@@ -15,6 +15,7 @@ Selecteer het volledige originele APKS-archief in Morphe Manager, inclusief de b
 | **Parked app for Android Auto** | Aan | Voegt de Android Auto geparkte-app-declaratie toe aan het manifest, zodat hosts die de gedocumenteerde detectie volgen het spel zelf op het autoscherm tonen. |
 | **Hide ads** | Aan | Stopt de advertentiebrug van het spel: elk advertentieverzoek meldt de eigen no-fill-fout van het spel, zodat interstitial- en beloningsstromen netjes sluiten en er geen advertentienetwerk wordt benaderd. |
 | **Disable tracking** | Aan | Stopt de advertentie-ID, de app set ID en install-referrer-attributie, zet Google measurement en Firebase Analytics uit en schakelt de advertentie-ID en gebeurtenisupload van Facebook uit. |
+| **Hide paid shop tab** | Aan | Verbergt alleen het betaalde Bird Coins-tabblad en opent Power-ups; Power-ups en Slingshots blijven beschikbaar. |
 
 ## Voor gebruik
 

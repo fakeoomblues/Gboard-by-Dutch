@@ -15,6 +15,7 @@ Select the complete original APKS archive in Morphe Manager, including the base 
 | **Parked app for Android Auto** | On | Adds Android Auto's parked-app declaration to the manifest, so hosts that follow the documented discovery list the game on the car screen by themselves. |
 | **Hide ads** | On | Stops the game's ad bridge: every ad request reports the game's own no-fill error, so interstitial and reward flows close cleanly and no ad network is contacted. |
 | **Disable tracking** | On | Stops the advertising identifier, app set ID and install-referrer attribution, disables Google measurement and Firebase Analytics, and turns off Facebook's advertiser identifier and event upload. |
+| **Hide paid shop tab** | On | Hides only the paid Bird Coins tab and opens Power-ups instead; Power-ups and Slingshots remain available. |
 
 ## Before using
 
