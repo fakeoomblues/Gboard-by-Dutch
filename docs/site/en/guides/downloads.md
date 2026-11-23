@@ -68,6 +68,7 @@ Match the exact app version and build. Select the complete APKS or APKM archive 
 | [Vela Maps](../apps/vela.md) | 0.5.2621 / 46210 | [APK](https://buzzheavier.com/64jger382td4) |
 | [Videoland Android](../apps/videoland.md) | 1.119.2 / 1637 | [APKM](#local-original-inputs) |
 | [Videoland Android TV](../apps/videoland-android-tv.md) | 1.119.2 / 1638 | [APKM](#local-original-inputs) |
+| [Upflix](../apps/upflix.md) | 5.12.10 / 423 | [APKS](#local-original-inputs) |
 | [WuPlay Mobile](../apps/wuplay-mobile.md) | 0.1.9-alpha / 9 | [APK](#local-original-inputs) |
 | [Wuplay Android TV](../apps/wuplay.md) | 0.9.4-beta / 49 | [APK](https://buzzheavier.com/03cd7t0bs8qt) |
 | [Monet Android TV](../apps/monet.md) | 1.1.1 / 135 | Use your own file |
