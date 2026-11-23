@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.100.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.100.0)** · 81 apps · 404 patches
+**Patch bundle [v1.101.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.101.0)** · 82 apps · 406 patches
 
 ### Weather
 
@@ -114,6 +114,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Candy Crush Soda Saga](docs/site/en/apps/candy-crush-soda-saga.md) | Ads · Tracking | 1.330.1 | APKM | 3 |
 | [Deezer](docs/site/en/apps/deezer.md) | Tracking | 9.0.27.3 | APKM | 13 |
 | [Dumpert](docs/site/en/apps/dumpert.md) | Ads · Tracking · Prompts | 5.8.0 | APKS | 3 |
+| [Eclipse Music](docs/site/en/apps/eclipse-music.md) | See guide | 0.6.75 | APK | 2 |
 | [KIJK Android](docs/site/en/apps/kijk.md) | Ads · Tracking · Prompts | 9.8.0 | APK | 3 |
 | [KIJK Android TV](docs/site/en/apps/kijk-android-tv.md) | Ads · Tracking | 7.2.7 | APKS | 3 |
 | [Myspoti](docs/site/en/apps/myspoti.md) | See guide | 2.3.0, 2.4.0, 2.4.1, Any | APK | 3 |

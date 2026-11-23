@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.100.0**
+**Patchbundel: 1.101.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -274,6 +274,17 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Add microG-RE support | Aan | 26.42.4 |
 | Allow custom Android Auto hosts | Aan | 26.42.4 |
+
+## Eclipse Music
+
+[Wat veranderen de patches?](../apps/eclipse-music.md)
+
+`com.eclipse.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Android Auto browse upgrade | Aan | 0.6.75 |
+| Android Auto templated media app | Aan | 0.6.75 |
 
 ## ED
 

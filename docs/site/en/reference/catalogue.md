@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.100.0**
+**Patch bundle: 1.101.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -274,6 +274,17 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Add microG-RE support | On | 26.42.4 |
 | Allow custom Android Auto hosts | On | 26.42.4 |
+
+## Eclipse Music
+
+[What do the patches change?](../apps/eclipse-music.md)
+
+`com.eclipse.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Android Auto browse upgrade | On | 0.6.75 |
+| Android Auto templated media app | On | 0.6.75 |
 
 ## ED
 

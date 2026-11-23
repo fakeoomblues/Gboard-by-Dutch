@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patch bundle: 1.100.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">82 apps</span> · Patch bundle: 1.101.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -468,6 +468,25 @@ hide:
 </details>
 
 [Guide and downloads](apps/easypark-nl.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="eclipse music com.eclipse.android 0.6.75 android auto browse upgrade android auto templated media app" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [Eclipse Music](apps/eclipse-music.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">0.6.75</span></p>
+<p class="dap-app-card__package">com.eclipse.android</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Android Auto browse upgrade <span class="dap-app-card__target">0.6.75</span></li>
+<li>Android Auto templated media app <span class="dap-app-card__target">0.6.75</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/eclipse-music.md){ .dap-app-card__link }
 
 </article>
 

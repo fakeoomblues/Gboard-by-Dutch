@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9a29e2f995175ccd1d1a1f85e26eb0d6c4104c57/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.101.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [9a29e2f99517](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/9a29e2f995175ccd1d1a1f85e26eb0d6c4104c57). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.101.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.100.0...v1.101.0) (2026-11-23)
+
+### ✨ New Features
+
+* **Eclipse Music:** add a templated Android Auto app and a richer media browser ([91ae785](https://gitlab.com/johninnld/nl-morphe-patches/commit/91ae785017e540b98bbb399e8875d81cabd2b7d2))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/28979a88f6e3ba6941fa1182d76211a3f5681bda/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.100.0.**
