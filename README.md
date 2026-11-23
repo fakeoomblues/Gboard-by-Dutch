@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.103.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.103.0)** · 86 apps · 419 patches
+**Patch bundle [v1.104.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.104.0)** · 87 apps · 426 patches
 
 ### Weather
 
@@ -146,6 +146,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [AliExpress](docs/site/en/apps/aliexpress.md) | Compatibility | 8.180.0, 8.180.1 | APK | 10 |
 | [AT4K Launcher](docs/site/en/apps/at4k.md) | Plus/Pro | 1.3 | APK | 1 |
 | [bol](docs/site/en/apps/bol.md) | Tracking | 2026.23.1 | APKS | 5 |
+| [Cronometer](docs/site/en/apps/cronometer.md) | Tracking | 4.57.2 | APKM | 7 |
 | [Fennec](docs/site/en/apps/fennec.md) | See guide | Any | APK | 1 |
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a | APK | 34 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |

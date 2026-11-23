@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">86 apps</span> · Patch bundle: 1.103.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">87 apps</span> · Patch bundle: 1.104.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -354,6 +354,30 @@ hide:
 </details>
 
 [Guide and downloads](apps/candy-crush-soda-saga.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="cronometer com.cronometer.android.gold 4.57.2 disable adjust tracking disable amplitude tracking disable braze tracking disable datadog telemetry disable firebase analytics disable ads disable ads, tracking and gold upsells" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [Cronometer](apps/cronometer.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">4.57.2</span></p>
+<p class="dap-app-card__package">com.cronometer.android.gold</p>
+<details class="dap-app-card__patches">
+<summary>7 patches</summary>
+<ul>
+<li>Disable Adjust tracking <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable Amplitude tracking <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable Braze tracking <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable Datadog telemetry <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable Firebase Analytics <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable ads <span class="dap-app-card__target">4.57.2</span></li>
+<li>Disable ads, tracking and Gold upsells <span class="dap-app-card__target">4.57.2</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/cronometer.md){ .dap-app-card__link }
 
 </article>
 

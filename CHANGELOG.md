@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/682ef76b7b874718a471d4db452dd66e0ec7b986/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.104.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [682ef76b7b87](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/682ef76b7b874718a471d4db452dd66e0ec7b986). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.104.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.103.0...v1.104.0) (2026-11-23)
+
+### ✨ New Features
+
+* **Cronometer:** unlock local Gold features and remove promotions ([682ef76](https://gitlab.com/johninnld/nl-morphe-patches/commit/682ef76b7b874718a471d4db452dd66e0ec7b986))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d6196392cc34405c01b2dc415e0fb91546e359da/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.103.0.**

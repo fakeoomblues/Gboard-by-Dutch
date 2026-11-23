@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.103.0",
+  "version": "1.104.0",
   "patches": [
     {
       "name": "120 refresh rate",
@@ -3396,6 +3396,99 @@
       "options": []
     },
     {
+      "name": "Disable Adjust tracking",
+      "description": "Stops Adjust SDK initialisation and event tracking.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Amplitude tracking",
+      "description": "Stops the Amplitude Flutter plugin's method channel before it records events or flags.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Braze tracking",
+      "description": "Stops Braze plugin attachment and automatic content-card, banner, feature-flag and push subscriptions.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Disable Crashlytics reporter",
       "description": "Stops Titanium's Crashlytics exception reporter. Required together with the ad/tracking patch: the reporter calls FirebaseCrashlytics after that component is removed, which otherwise crashes the app on any JavaScript exception.",
       "default": true,
@@ -3422,6 +3515,68 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Datadog telemetry",
+      "description": "Stops Datadog SDK initialisation (RUM, logs and native crash reports) while preserving Flutter channel replies.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Firebase Analytics",
+      "description": "Stops Firebase Analytics event, user-id and user-property writes from the Flutter plugin.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]
@@ -3704,6 +3859,37 @@
       "options": []
     },
     {
+      "name": "Disable ads",
+      "description": "Stops Google Mobile Ads initialisation and Cronometer's banner/interstitial load paths. No ad request is made; the Dart ad slots remain empty.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Disable ads and tracking",
       "description": "Removes all seven ad placements and the ad SDK bootstrap, the Google UMP consent flow, Firebase Analytics/Crashlytics collection, the advertising ID, Facebook SDK auto-init and third-party IP geolocation. The encrypted Titanium bundle is rewritten and re-encrypted with the app's own key, and the stable device identifier becomes a random per-install UUID.",
       "default": true,
@@ -3730,6 +3916,37 @@
               },
               "isExperimental": false,
               "minSdk": 29,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable ads, tracking and Gold upsells",
+      "description": "Disables selected advertising and telemetry paths, unlocks local Gold controls, and hides Gold promotions, food suggestions, referrals and the persistent first-food tip. Server-backed features still require their native services.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.cronometer.android.gold",
+          "name": "Cronometer",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": null,
+          "signatures": [
+            "38b7962018712892b37e45d7a4ba1228cd9893733260cf799f99f3e34c643052"
+          ],
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "4.57.2",
+              "versionCodes": {
+                "ARM64_V8A": 3399
+              },
+              "isExperimental": false,
+              "minSdk": 26,
               "description": null
             }
           ]

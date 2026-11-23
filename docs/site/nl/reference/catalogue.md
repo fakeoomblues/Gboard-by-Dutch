@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.103.0**
+**Patchbundel: 1.104.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -200,6 +200,22 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 1.330.1 |
 | Hide ads | Aan | 1.330.1 |
 | Parked app for Android Auto | Aan | 1.330.1 |
+
+## Cronometer
+
+[Wat veranderen de patches?](../apps/cronometer.md)
+
+`com.cronometer.android.gold`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable Adjust tracking | Aan | 4.57.2 |
+| Disable Amplitude tracking | Aan | 4.57.2 |
+| Disable Braze tracking | Aan | 4.57.2 |
+| Disable Datadog telemetry | Aan | 4.57.2 |
+| Disable Firebase Analytics | Aan | 4.57.2 |
+| Disable ads | Aan | 4.57.2 |
+| Disable ads, tracking and Gold upsells | Aan | 4.57.2 |
 
 ## De Morgen
 

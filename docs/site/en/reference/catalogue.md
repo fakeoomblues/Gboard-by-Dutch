@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.103.0**
+**Patch bundle: 1.104.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -200,6 +200,22 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 1.330.1 |
 | Hide ads | On | 1.330.1 |
 | Parked app for Android Auto | On | 1.330.1 |
+
+## Cronometer
+
+[What do the patches change?](../apps/cronometer.md)
+
+`com.cronometer.android.gold`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable Adjust tracking | On | 4.57.2 |
+| Disable Amplitude tracking | On | 4.57.2 |
+| Disable Braze tracking | On | 4.57.2 |
+| Disable Datadog telemetry | On | 4.57.2 |
+| Disable Firebase Analytics | On | 4.57.2 |
+| Disable ads | On | 4.57.2 |
+| Disable ads, tracking and Gold upsells | On | 4.57.2 |
 
 ## De Morgen
 
