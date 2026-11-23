@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d6196392cc34405c01b2dc415e0fb91546e359da/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.103.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [d6196392cc34](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/d6196392cc34405c01b2dc415e0fb91546e359da). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.103.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.102.0...v1.103.0) (2026-11-23)
+
+### ✨ New Features
+
+* **Gboard:** enable inline autofill and Smart Compose on 18.8 ([d619639](https://gitlab.com/johninnld/nl-morphe-patches/commit/d6196392cc34405c01b2dc415e0fb91546e359da))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/aee57d40c1938c7b844ae30343969e3bad97906b/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.102.0.**

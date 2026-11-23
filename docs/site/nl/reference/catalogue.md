@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.102.0**
+**Patchbundel: 1.103.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -409,6 +409,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Cursor trackpad mode | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Custom Theme | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Custom branding | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
+| Enable Inline Autofill Suggestions | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Enable OCR / Scan Text | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Frosted Glass | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | G Logo on Spacebar | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
@@ -428,6 +429,7 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Rambler voice typing | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Rounded Keyboard Panel | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Simple Calculator | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
+| Smart Compose | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Toolbar Editing Buttons | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Use Bluetooth microphone | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Web Clipboard | Aan | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |

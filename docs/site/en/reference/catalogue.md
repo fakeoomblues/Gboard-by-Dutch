@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.102.0**
+**Patch bundle: 1.103.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -409,6 +409,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Cursor trackpad mode | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Custom Theme | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Custom branding | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
+| Enable Inline Autofill Suggestions | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Enable OCR / Scan Text | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Frosted Glass | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | G Logo on Spacebar | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
@@ -428,6 +429,7 @@ Check the supported app versions and default setting for each patch. The app pag
 | Rambler voice typing | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Rounded Keyboard Panel | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Simple Calculator | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
+| Smart Compose | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Toolbar Editing Buttons | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Use Bluetooth microphone | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
 | Web Clipboard | On | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a |
