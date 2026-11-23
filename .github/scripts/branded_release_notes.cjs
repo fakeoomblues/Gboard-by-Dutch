@@ -69,8 +69,17 @@ async function generateNotes(pluginConfig, context) {
   // adding a second generator that would return the previous notes a second time.
   // Regeneration after a prepare commit must start from commits, not nextRelease.notes.
   const generator = await import("@semantic-release/release-notes-generator");
-  const notes = await generator.generateNotes(pluginConfig, {...context, commits: scopeCommits(context.commits, context)});
-  return renderNotes(notes, context);
+  const commits = scopeCommits(context.commits, context);
+  const notes = await generator.generateNotes(pluginConfig, {...context, commits});
+  return renderNotes(restoreAppScopeTitles(notes, commits), context);
+}
+
+/** Parenthetical edition labels are display names, rather than conventional-scope delimiters. */
+function restoreAppScopeTitles(notes, commits) {
+  const titles = new Map(commits.filter(commit => commit.appDisplayScope)
+    .map(commit => [commit.appCommitScope, commit.appDisplayScope]));
+  for (const [scope, title] of titles) notes = notes.replaceAll(`* **${scope}:**`, `* **${title}:**`);
+  return notes;
 }
 
 const {execFileSync} = require("node:child_process");
@@ -177,9 +186,12 @@ function scopeCommits(commits, context) {
       ? apps.filter(app => !direct.includes(app) || inferred.includes(app)) : apps;
     if (apps?.length && declared && !declared.length && inferred.length) throw new Error("Release-Apps omits the remaining changed apps");
     const scopes = declared || (inferred.length ? inferred : [match[2] || "General"]);
-    if (scopes.some(scope => !/^[\p{L}\p{N}][\p{L}\p{N} ._:&/-]*$/u.test(scope))) throw new Error("Invalid Release-Apps scope");
-    return [...new Set(scopes)].map(scope => ({...commit, message: commit.message.replace(match[0], `${match[1]}(${scope})${match[3]}: ${match[4]}`)}));
+    const scoped = [...new Set(scopes)].map(title => ({title, scope: title.replace(/ \(Automotive\)$/u, " Automotive")}));
+    if (scoped.some(({scope}) => !/^[\p{L}\p{N}][\p{L}\p{N} ._:&/-]*$/u.test(scope))) throw new Error("Invalid Release-Apps scope");
+    return scoped.map(({title, scope}) => ({...commit,
+      ...(title === scope ? {} : {appDisplayScope: title, appCommitScope: scope}),
+      message: commit.message.replace(match[0], `${match[1]}(${scope})${match[3]}: ${match[4]}`)}));
   });
 }
 
-module.exports = { generateNotes, restorePublicLinks, renderNotes, scopeCommits, appImpact, unreleasedCommitHashes, normalizeAppName };
+module.exports = { generateNotes, restorePublicLinks, renderNotes, restoreAppScopeTitles, scopeCommits, appImpact, unreleasedCommitHashes, normalizeAppName };

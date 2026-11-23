@@ -29,6 +29,8 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [GameSnacks](../apps/gamesnacks.md) | 1.40.827663177 / 40 | [APK](#local-original-inputs) |
 | [Zoom Workplace](../apps/zoom.md) | 7.2.1.43844 / 6702010 | [APKS](#local-original-inputs) |
 | [Home Assistant](../apps/homeassistant.md) | 2026.10.1-full / 24906 | [APKS](#local-original-inputs) |
+| [Home Assistant (Automotive)](../apps/homeassistant-automotive.md) | 2026.11.2-full / 25803 | [APK](#local-original-inputs) |
+| [PlugShare (Automotive)](../apps/plugshare.md) | AAOS v1.8.2 / 100400 | [APK](#local-original-inputs) |
 | [Reolink](../apps/reolink.md) | 4.64.3.20261023 / 796 | [APKM](#local-original-inputs) |
 | [Tuya Smart Life](../apps/tuya.md) | 7.12.6 / 872 | [APKS](#local-original-inputs) |
 | [PdfCraft](../apps/pdfcraft.md) | 0.0.7-beta / 7012 | [APK](#local-original-inputs) |

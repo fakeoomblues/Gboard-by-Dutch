@@ -256,6 +256,23 @@ test("scope punctuation cannot inject Markdown or terminate a conventional scope
   }
 });
 
+test("Automotive edition names retain their title through safe conventional scopes", () => {
+  const wrapper = plugin();
+  const commits = wrapper.scopeCommits([{hash: source,
+    message: "feat: add projected ports\n\nRelease-Apps: Home Assistant (Automotive), PlugShare (Automotive)"}]);
+  assert.deepEqual(commits.map(c => c.message.split("\n")[0]), [
+    "feat(Home Assistant Automotive): add projected ports", "feat(PlugShare Automotive): add projected ports"
+  ]);
+  const notes = "* **Home Assistant Automotive:** add projected ports\n* **PlugShare Automotive:** add projected ports\n";
+  assert.equal(wrapper.restoreAppScopeTitles(notes, commits),
+    "* **Home Assistant (Automotive):** add projected ports\n* **PlugShare (Automotive):** add projected ports\n");
+  assert.equal(wrapper.restoreAppScopeTitles(notes, [{hash: source, message: "fix(General): unrelated"}]), notes);
+  for (const name of ["App): forged (Automotive)", "App **forged** (Automotive)", "App (Other)"]) {
+    assert.throws(() => wrapper.scopeCommits([{hash: source,
+      message: `fix: retain scoped notes\n\nRelease-Apps: ${name}`}]), /Invalid Release-Apps scope/);
+  }
+});
+
 function partialPromotion(run) {
   return releaseRepository(({dir, git, commit}) => {
     const files = Object.fromEntries(['A', 'B'].map(name => [name, `patches/src/main/kotlin/patches/${name.toLowerCase()}/Compatibility.kt`]));

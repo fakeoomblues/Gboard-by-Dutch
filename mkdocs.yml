@@ -210,6 +210,8 @@ nav:
           - apps/cronometer.md
           - apps/gboard.md
           - apps/homeassistant.md
+          - apps/homeassistant-automotive.md
+          - apps/plugshare.md
           - apps/tuya.md
           - apps/reolink.md
           - apps/pdfcraft.md

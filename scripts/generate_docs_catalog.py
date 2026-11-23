@@ -17,6 +17,7 @@ APP_PAGES = {
     'com.overdevs.at4k': ('at4k', 'other'),
     'com.alibaba.aliexpresshd': ('aliexpress', 'other'),
     'io.homeassistant.companion.android': ('homeassistant', 'other'),
+    'com.xatori.Plugshare': ('plugshare', 'other'),
     'com.tuya.smart': ('tuya', 'other'),
     'com.mcu.reolink': ('reolink', 'other'),
     'com.google.android.apps.messaging': ('messages', 'other'),
@@ -102,6 +103,9 @@ APP_PAGES = {
 
 
 def app_page(package):
+    if (package['packageName'] == 'io.homeassistant.companion.android'
+            and package.get('name') == 'Home Assistant (Automotive)'):
+        return 'homeassistant-automotive', 'other'
     mobile = {'nl.uitzendinggemist': 'npo-start', 'nl.rtl.videoland.v2': 'videoland'}
     if package.get('formFactor') == 'MOBILE' and package['packageName'] in mobile:
         return mobile[package['packageName']], 'entertainment'
@@ -116,6 +120,8 @@ def _app_groups(data):
             if package['packageName'] in {'app.morphe.android.apps.youtube.music', 'app.morphe.android.youtube'}:
                 continue
             key = (package['packageName'], package.get('formFactor'))
+            if (package.get('name') or '').endswith(' (Automotive)'):
+                key += ('Automotive',)
             groups.setdefault(key, {'package': package, 'patches': []})['patches'].append((patch, package))
     return groups
 
