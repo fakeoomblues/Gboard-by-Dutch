@@ -53,6 +53,7 @@ APP_PAGES = {
     'com.google.android.apps.maps': ('google-maps', 'mobility'),
     'com.iternio.abrpapp': ('abrp', 'mobility'),
     'com.podimo': ('podimo', 'entertainment'),
+    'com.douglas.upflix': ('upflix', 'entertainment'),
     'com.medium.reader': ('medium', 'news'),
     'nl.bright.pro': ('bright', 'news'),
     'mobi.inthepocket.mediafin.detijd': ('detijd', 'news'),
