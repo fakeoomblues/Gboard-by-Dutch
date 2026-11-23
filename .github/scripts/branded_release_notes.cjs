@@ -177,7 +177,7 @@ function scopeCommits(commits, context) {
       ? apps.filter(app => !direct.includes(app) || inferred.includes(app)) : apps;
     if (apps?.length && declared && !declared.length && inferred.length) throw new Error("Release-Apps omits the remaining changed apps");
     const scopes = declared || (inferred.length ? inferred : [match[2] || "General"]);
-    if (scopes.some(scope => !/^[\p{L}\p{N}][\p{L}\p{N} ._&/-]*$/u.test(scope))) throw new Error("Invalid Release-Apps scope");
+    if (scopes.some(scope => !/^[\p{L}\p{N}][\p{L}\p{N} ._:&/-]*$/u.test(scope))) throw new Error("Invalid Release-Apps scope");
     return [...new Set(scopes)].map(scope => ({...commit, message: commit.message.replace(match[0], `${match[1]}(${scope})${match[3]}: ${match[4]}`)}));
   });
 }
