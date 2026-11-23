@@ -12,8 +12,8 @@ Select the complete original APKS archive in Morphe Manager, including the base 
 
 | Patch | Default | What it does |
 | --- | --- | --- |
-| **Hide ads** | On | Keeps the ad SDK from starting: initialization completes locally, every ad request reports the SDK's own no-fill error and every show reports not-ready, so no ad network or mediation adapter is contacted. |
-| **Disable tracking** | On | Removes the advertising identifier and install-referrer permissions, stops the AppLovin and IronSource launch starters, and turns off Facebook's advertiser identifier and event upload. |
+| **Hide ads** | On | Completes Unity Ads initialization locally and reports no-fill/not-ready for ads, including calls without a listener. Returns no bidding token through either token API. |
+| **Disable tracking** | On | Removes advertising/referrer permissions, disables advertising launch providers and Facebook app-event queues, returns no bidding token, and suppresses game and Unity analytics collection/event entry points. |
 
 ## Before using
 

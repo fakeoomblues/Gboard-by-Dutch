@@ -81,12 +81,18 @@ internal fun applyPaidShopPlan(file: File, plan: PaidShopPlan) {
 
 private val paidShopPlans = mapOf(
     "Angry Birds 2" to PaidShopPlan("fbe919fe3e7845b3b3acb296c29c58f89979fa52555be459911131bde0ed9a0c", 0xa2f9530L, 0xa2fd530L,
-        "3f0000712114811afe5fbda95c9d95163f0000712114811afe5fbda9ad9d95163f0000712114811a01ec01b9fe0f1ef8779e9516fd7bbca9fd030091e00701a9e21300f9001840f9e00000b4e1031faa8c22f297800000b4e1031f2ae2031faad935f297e00741a9e21340f9fd7bc4a83f0000712114811afe0f1ef86e059616fd7bbca9fd030091e00701a9e21300f9002040f9e00000b4e1031faa7922f297800000b4e1031f2ae2031faac635f297e00741a9e21340f9fd7bc4a83f0000712114811afe0f1ef8b4069616", listOf(
+        "3f0000712114811afe5fbda95c9d95163f0000712114811afe5fbda9ad9d95163f0000712114811a01ec01b9fe0f1ef8779e9516fd7bbca9fd030091e00701a9e21300f9001840f9e00000b4e1031faa8c22f297800000b4e1031f2ae2031faad935f297e00741a9e21340f9fd7bc4a83f0000712114811afe0f1ef86e059616fd7bbca9fd030091e00701a9e21300f9002040f9e00000b4e1031faa7922f297800000b4e1031f2ae2031faac635f297e00741a9e21340f9fd7bc4a83f0000712114811afe0f1ef8b40696163000805270ee01b960b640f9589a9516f37bbfa9f30300aa602a40f907000094603240f905000094f37bc1a8c0035fd6001840f901000014400100b4fd7bbfa9fd030091e1031faa5b22f297800000b4e1031f2ae2031faaa835f297fd7bc1a8c0035fd6", listOf(
         PaidShopEdit(".GUIShopScreen.OnTabButtonClicked", 0x4860aa8L, "fe5fbda9f65701a9f44f02a9144303f0", "a2626a15"),
         PaidShopEdit(".GUIShopScreen.SwitchTabs", 0x4860bfcL, "fe5fbda9f65701a9f44f02a9164303f0", "51626a15"),
         PaidShopEdit(".GUIShopScreen.SetVisibleTab", 0x4860f38L, "fe0f1ef8f44f01a9f30300aa00b040f9", "86616a15"),
         PaidShopEdit(".ShopScreenFullscreenWithTabsVariant.RefreshTabButtonsIfCompatible", 0x487ab60L, "fe0f1ef8f44f01a9f30300aa005040f9", "81fa6915"),
         PaidShopEdit(".ShopScreenPopupWithTabsVariant.RefreshTabButtonsIfCompatible", 0x487b0c4L, "fe0f1ef8f44f01a9f40300aa002c40f9", "3bf96915"),
+        PaidShopEdit("GUIShopScreen.Init default Bonus", 0x485ff64L, "60b640f9800b00b4e1031f2ae2031faa", "a6656a15"),
+        PaidShopEdit("GUIShopScreen.Init show Bonus", 0x485ff6cL, "e1031f2ae2031faa609b5c9560b240f9", "21008052"),
+        PaidShopEdit("GUIShopScreen.Init hide paid content", 0x485ffacL, "21008052e2031faa509b5c9561ea41b9", "e1031f2a"),
+        PaidShopEdit("Rovio.Abba.SeasonPass.Client.UI.MainScreen.RewardsTab.RewardsTabView.SetTicketButton", 0x92e63d8L, "fe0f1ef8f44f01a9f30300aa002840f9", "8d4c4014"),
+        PaidShopEdit("Rovio.Abba.SeasonPass.Rewards.UI.Widgets.MilestoneRewards.MilestoneRewardGroupWidget.SetPaidTrackReward", 0x9321accL, "ff0301d1fe1300f9f44f03a9f40300aa", "d85e3f14"),
+        PaidShopEdit("Rovio.Abba.SeasonPass.Rewards.UI.Widgets.MilestoneRewards.MilestoneRewardGroupWidget.SetPaidTrackRewardState", 0x9321b20L, "001840f9400000b403000014fe0f1ff8", "c35e3f14"),
     )),
     "Angry Birds Friends" to PaidShopPlan("fbde51b904b6075448beec73621a0d8f9f093897136b2401013a91cd46697ad3", 0x577ded0L, 0x5781ed0L,
         "3f0000712114811afe0f1df86c8d4217102040b970010035fd7bbfa9fd030091e1031faa82e7ef97800000b4e1031f2ae2031faaf6f3ef97fd7bc1a8c0035fd6fe0f1df884914217", listOf(

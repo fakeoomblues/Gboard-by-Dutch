@@ -6,7 +6,7 @@ import patches.shared.hideRovioPaidShop
 @Suppress("unused")
 val angryBirds2HidePaidShop = resourcePatch(
     name = "Hide paid shop tab",
-    description = "Hides the paid Shop tab and opens Bonus instead. Daily Deals and Bonus remain available.",
+    description = "Hides the paid Shop tab and content, Treasure Pass purchase button and paid reward row. Keeps Bonus, Daily Deals, free rewards and quests.",
     default = true,
 ) {
     compatibleWith(angryBirds2)

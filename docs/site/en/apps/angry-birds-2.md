@@ -15,7 +15,7 @@ Select the complete original APKS archive in Morphe Manager, including the base,
 | **Parked app for Android Auto** | On | Adds Android Auto's parked-app declaration to the manifest, so hosts that follow the documented discovery list the game on the car screen by themselves. |
 | **Hide ads** | On | Stops the game's ad bridge: every ad request reports the game's own no-fill error, so interstitial and reward flows close cleanly and no ad network is contacted. |
 | **Disable tracking** | On | Stops the advertising identifier, app set ID and install-referrer attribution, disables Google measurement, Firebase Analytics, Crashlytics and Sessions upload, turns off Facebook's advertiser identifier and event upload, and empties the crash-report endpoint. |
-| **Hide paid shop tab** | On | Hides only the paid Shop tab and opens Bonus instead; Daily Deals and Bonus remain available. |
+| **Hide paid shop tab** | On | Hides the paid Shop tab and its content even when opened from the gem counter, plus the Treasure Pass purchase button and paid reward row. Bonus, Daily Deals, free rewards and quests remain available. |
 
 ## Before using
 

@@ -12,8 +12,8 @@ Selecteer het volledige originele APKS-archief in Morphe Manager, inclusief de b
 
 | Patch | Standaard | Wat verandert er? |
 | --- | --- | --- |
-| **Hide ads** | Aan | Houdt de advertentie-SDK tegen: de initialisatie rondt lokaal af, elk advertentieverzoek meldt de eigen no-fill-fout van de SDK en elke weergave meldt not-ready, zodat er geen advertentienetwerk of mediation-adapter wordt benaderd. |
-| **Disable tracking** | Aan | Verwijdert de machtigingen voor advertentie-ID en install-referrer, stopt de opstartstarters van AppLovin en IronSource en schakelt de advertentie-ID en gebeurtenisupload van Facebook uit. |
+| **Hide ads** | Aan | Rondt Unity Ads-initialisatie lokaal af en meldt no-fill/not-ready voor advertenties, ook zonder listener. Geeft via beide token-API’s geen biedtoken terug. |
+| **Disable tracking** | Aan | Verwijdert advertentie- en referrerrechten, schakelt advertentieproviders en Facebook-eventwachtrijen uit, geeft geen biedtoken terug en onderdrukt de analytics-verzameling en events van het spel en Unity. |
 
 ## Voor gebruik
 

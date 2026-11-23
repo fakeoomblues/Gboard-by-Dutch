@@ -1,6 +1,8 @@
 package patches.stickman3
 
 import app.morphe.patcher.patch.resourcePatch
+import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import patches.shared.disableComponents
 import patches.shared.removePermissions
 import patches.shared.setMetaData
@@ -8,22 +10,11 @@ import patches.shared.setMetaData
 private const val APPLOVIN_INIT = "com.applovin.sdk.AppLovinInitProvider"
 private const val IRONSOURCE_LIFECYCLE = "com.ironsource.lifecycle.IronsourceLifecycleProvider"
 
-/**
- * The game's tracking surface is entirely in the manifest: the Unity engine talks to its own cloud
- * services from IL2CPP, while the three ad SDKs that ship alongside Unity Ads are wired in here.
- */
-@Suppress("unused")
-val stickman3DisableTracking = resourcePatch(
-    name = "Disable tracking",
-    description = "Removes the advertising identifier and install-referrer permissions, stops " +
-        "AppLovin and IronSource from initializing at launch, and turns off Facebook's advertiser " +
-        "identifier and event upload. Play Billing and Facebook sign-in keep working.",
-    default = true,
-) {
-    compatibleWith(stickman3)
+private val trackingResources = resourcePatch {
     dependsOn(originalInput)
 
     execute {
+        disableStickmanNativeAnalytics(get("lib/arm64-v8a/libil2cpp.so"))
         document("AndroidManifest.xml").use { manifest ->
             removePermissions(
                 manifest,
@@ -40,4 +31,36 @@ val stickman3DisableTracking = resourcePatch(
             setMetaData(manifest, "com.facebook.sdk.AdvertiserIDCollectionEnabled", "false")
         }
     }
+}
+
+/** Stop explicit app events at their queue boundary; retain Facebook authentication APIs. */
+internal val stickmanTrackingGate = bytecodePatch {
+    dependsOn(originalInput, trackingResources, stickmanTokenGate)
+    execute {
+        val queue = mutableClassDefBy("Lcom/facebook/appevents/AppEventQueue;")
+        for ((name, parameters) in listOf(
+            "add" to listOf("Lcom/facebook/appevents/AccessTokenAppIdPair;", "Lcom/facebook/appevents/AppEvent;"),
+            "flush" to listOf("Lcom/facebook/appevents/FlushReason;"),
+            "flushAndWait" to listOf("Lcom/facebook/appevents/FlushReason;"),
+            "persistToDisk" to emptyList(),
+        )) {
+            val method = queue.methods.singleOrNull {
+                it.name == name && it.returnType == "V" && it.parameterTypes == parameters
+            } ?: error("Draw a Stickman Facebook event queue changed: $name")
+            check(method.implementation?.instructions?.count()?.let { it > 1 } == true)
+            method.addInstructions(0, "return-void")
+        }
+    }
+}
+
+@Suppress("unused")
+val stickman3DisableTracking = bytecodePatch(
+    name = "Disable tracking",
+    description = "Removes advertising and install-referrer permissions, stops advertising startup " +
+        "providers, disables Facebook identifier collection and app-event enqueue/upload, and " +
+        "suppresses the game's native analytics queues.",
+    default = true,
+) {
+    compatibleWith(stickman3)
+    dependsOn(stickmanTrackingGate)
 }
