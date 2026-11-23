@@ -1,4 +1,21 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d649ac2d9c4c2669c9ddd76510b33379204f4dd7/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.101.2.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [d649ac2d9c4c](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/d649ac2d9c4c2669c9ddd76510b33379204f4dd7). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.101.2](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.101.1...v1.101.2) (2026-11-23)
+
+### 🐛 Bug Fixes
+
+* **Eclipse Music:** let Back leave Now Playing in the car ([d649ac2](https://gitlab.com/johninnld/nl-morphe-patches/commit/d649ac2d9c4c2669c9ddd76510b33379204f4dd7))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/99c9114f417d60089446638708833bbe98cc26bf/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.101.1.**
