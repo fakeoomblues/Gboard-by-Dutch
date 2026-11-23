@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Overige</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">82 apps</span> · Patchbundel: 1.101.2</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">86 apps</span> · Patchbundel: 1.102.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Overige</p>
@@ -148,6 +148,48 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/aliexpress.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="angry birds 2 com.rovio.baba 26.7.3 disable tracking hide ads hide paid shop tab parked app for android auto" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Angry Birds 2](apps/angry-birds-2.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">26.7.3</span></p>
+<p class="dap-app-card__package">com.rovio.baba</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">26.7.3</span></li>
+<li>Hide ads <span class="dap-app-card__target">26.7.3</span></li>
+<li>Hide paid shop tab <span class="dap-app-card__target">26.7.3</span></li>
+<li>Parked app for Android Auto <span class="dap-app-card__target">26.7.3</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/angry-birds-2.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="angry birds friends com.rovio.angrybirdsfriends 14.9.0 disable tracking hide ads hide paid shop tab parked app for android auto" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Angry Birds Friends](apps/angry-birds-friends.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">14.9.0</span></p>
+<p class="dap-app-card__package">com.rovio.angrybirdsfriends</p>
+<details class="dap-app-card__patches">
+<summary>4 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">14.9.0</span></li>
+<li>Hide ads <span class="dap-app-card__target">14.9.0</span></li>
+<li>Hide paid shop tab <span class="dap-app-card__target">14.9.0</span></li>
+<li>Parked app for Android Auto <span class="dap-app-card__target">14.9.0</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/angry-birds-friends.md){ .dap-app-card__link }
 
 </article>
 
@@ -393,6 +435,25 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="entertainment" data-search="draw a stickman: epic 3 com.hitcents.drawastickmanepic3 1.13.19873 disable tracking hide ads" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [Draw a Stickman: EPIC 3](apps/draw-a-stickman-epic-3.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">1.13.19873</span></p>
+<p class="dap-app-card__package">com.hitcents.drawastickmanepic3</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Disable tracking <span class="dap-app-card__target">1.13.19873</span></li>
+<li>Hide ads <span class="dap-app-card__target">1.13.19873</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/draw-a-stickman-epic-3.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="news" data-search="ds nieuws com.twipemobile.dsmobile 22.0.0 disable tracking hide premium banner hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Nieuws en lezen</p>
 
@@ -577,6 +638,24 @@ hide:
 </details>
 
 [Uitleg en downloads](apps/ftm.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="gamesnacks com.google.android.apps.automotive.gamesnacks 1.40.827663177 parked app for android auto" markdown>
+<p class="dap-app-card__category">Amusement</p>
+
+### [GameSnacks](apps/gamesnacks.md)
+
+<p class="dap-app-card__version">App-versies: <span class="dap-data">1.40.827663177</span></p>
+<p class="dap-app-card__package">com.google.android.apps.automotive.gamesnacks</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Parked app for Android Auto <span class="dap-app-card__target">1.40.827663177</span></li>
+</ul>
+</details>
+
+[Uitleg en downloads](apps/gamesnacks.md){ .dap-app-card__link }
 
 </article>
 

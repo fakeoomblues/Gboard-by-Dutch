@@ -1,4 +1,34 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/aee57d40c1938c7b844ae30343969e3bad97906b/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.102.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [aee57d40c193](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/aee57d40c1938c7b844ae30343969e3bad97906b). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.102.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.101.2...v1.102.0) (2026-11-23)
+
+### 🐛 Bug Fixes
+
+* **Angry Birds 2:** close Stickman privacy gaps and AB2 paid-content entry paths ([db1dff5](https://gitlab.com/johninnld/nl-morphe-patches/commit/db1dff549b8e088c13991b74f09555f4e797a707))
+* **Angry Birds 2:** complete optional consent locally with grants denied ([85e48f1](https://gitlab.com/johninnld/nl-morphe-patches/commit/85e48f13b6a4e77b1bbccbaf835c3324f7c3cdc7))
+* **Angry Birds 2:** repair Rovio bridge returns and block ad SDK startup ([478f020](https://gitlab.com/johninnld/nl-morphe-patches/commit/478f020e8b4384ba3c452d563640ca84beb1f7a3))
+* **Angry Birds Friends:** complete optional consent locally with grants denied ([85e48f1](https://gitlab.com/johninnld/nl-morphe-patches/commit/85e48f13b6a4e77b1bbccbaf835c3324f7c3cdc7))
+* **Angry Birds Friends:** repair Rovio bridge returns and block ad SDK startup ([478f020](https://gitlab.com/johninnld/nl-morphe-patches/commit/478f020e8b4384ba3c452d563640ca84beb1f7a3))
+* **Draw a Stickman: EPIC 3:** close Stickman privacy gaps and AB2 paid-content entry paths ([db1dff5](https://gitlab.com/johninnld/nl-morphe-patches/commit/db1dff549b8e088c13991b74f09555f4e797a707))
+* **Draw a Stickman: EPIC 3:** repair Rovio bridge returns and block ad SDK startup ([478f020](https://gitlab.com/johninnld/nl-morphe-patches/commit/478f020e8b4384ba3c452d563640ca84beb1f7a3))
+* **GameSnacks:** repair Rovio bridge returns and block ad SDK startup ([478f020](https://gitlab.com/johninnld/nl-morphe-patches/commit/478f020e8b4384ba3c452d563640ca84beb1f7a3))
+* **release:** preserve colons in app release scopes ([aee57d4](https://gitlab.com/johninnld/nl-morphe-patches/commit/aee57d40c1938c7b844ae30343969e3bad97906b))
+
+### ✨ New Features
+
+* **Angry Birds 2:** hide only the paid shop tabs ([f9d2537](https://gitlab.com/johninnld/nl-morphe-patches/commit/f9d2537542520dcb797346feaf13eda6f13db6b4))
+* **Angry Birds Friends:** hide only the paid shop tabs ([f9d2537](https://gitlab.com/johninnld/nl-morphe-patches/commit/f9d2537542520dcb797346feaf13eda6f13db6b4))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/d649ac2d9c4c2669c9ddd76510b33379204f4dd7/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.101.2.**

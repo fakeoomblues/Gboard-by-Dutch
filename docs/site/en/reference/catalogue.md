@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.101.2**
+**Patch bundle: 1.102.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -74,6 +74,32 @@ Check the supported app versions and default setting for each patch. The app pag
 | Remove sponsored items | On | 8.180.0, 8.180.1 |
 | Skip splash promotions | On | 8.180.0, 8.180.1 |
 | Spoof signature | On | 8.180.0, 8.180.1 |
+
+## Angry Birds 2
+
+[What do the patches change?](../apps/angry-birds-2.md)
+
+`com.rovio.baba`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 26.7.3 |
+| Hide ads | On | 26.7.3 |
+| Hide paid shop tab | On | 26.7.3 |
+| Parked app for Android Auto | On | 26.7.3 |
+
+## Angry Birds Friends
+
+[What do the patches change?](../apps/angry-birds-friends.md)
+
+`com.rovio.angrybirdsfriends`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 14.9.0 |
+| Hide ads | On | 14.9.0 |
+| Hide paid shop tab | On | 14.9.0 |
+| Parked app for Android Auto | On | 14.9.0 |
 
 ## Apple Music
 
@@ -229,6 +255,17 @@ Check the supported app versions and default setting for each patch. The app pag
 | Remove subscription paywalls | On | 9.0.27.3 |
 | Search and sort playlists | On | 9.0.27.3 |
 
+## Draw a Stickman: EPIC 3
+
+[What do the patches change?](../apps/draw-a-stickman-epic-3.md)
+
+`com.hitcents.drawastickmanepic3`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable tracking | On | 1.13.19873 |
+| Hide ads | On | 1.13.19873 |
+
 ## DS Nieuws
 
 [What do the patches change?](../apps/dsnieuws.md)
@@ -343,6 +380,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Hide ads | On | 2.6.8 |
 | Read full articles | On | 2.6.8 |
 | Skip consent screens | On | 2.6.8 |
+
+## GameSnacks
+
+[What do the patches change?](../apps/gamesnacks.md)
+
+`com.google.android.apps.automotive.gamesnacks`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Parked app for Android Auto | On | 1.40.827663177 |
 
 ## Gboard
 

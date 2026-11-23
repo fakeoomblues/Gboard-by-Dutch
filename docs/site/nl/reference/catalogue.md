@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.101.2**
+**Patchbundel: 1.102.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -74,6 +74,32 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Remove sponsored items | Aan | 8.180.0, 8.180.1 |
 | Skip splash promotions | Aan | 8.180.0, 8.180.1 |
 | Spoof signature | Aan | 8.180.0, 8.180.1 |
+
+## Angry Birds 2
+
+[Wat veranderen de patches?](../apps/angry-birds-2.md)
+
+`com.rovio.baba`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 26.7.3 |
+| Hide ads | Aan | 26.7.3 |
+| Hide paid shop tab | Aan | 26.7.3 |
+| Parked app for Android Auto | Aan | 26.7.3 |
+
+## Angry Birds Friends
+
+[Wat veranderen de patches?](../apps/angry-birds-friends.md)
+
+`com.rovio.angrybirdsfriends`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 14.9.0 |
+| Hide ads | Aan | 14.9.0 |
+| Hide paid shop tab | Aan | 14.9.0 |
+| Parked app for Android Auto | Aan | 14.9.0 |
 
 ## Apple Music
 
@@ -229,6 +255,17 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Remove subscription paywalls | Aan | 9.0.27.3 |
 | Search and sort playlists | Aan | 9.0.27.3 |
 
+## Draw a Stickman: EPIC 3
+
+[Wat veranderen de patches?](../apps/draw-a-stickman-epic-3.md)
+
+`com.hitcents.drawastickmanepic3`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable tracking | Aan | 1.13.19873 |
+| Hide ads | Aan | 1.13.19873 |
+
 ## DS Nieuws
 
 [Wat veranderen de patches?](../apps/dsnieuws.md)
@@ -343,6 +380,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Hide ads | Aan | 2.6.8 |
 | Read full articles | Aan | 2.6.8 |
 | Skip consent screens | Aan | 2.6.8 |
+
+## GameSnacks
+
+[Wat veranderen de patches?](../apps/gamesnacks.md)
+
+`com.google.android.apps.automotive.gamesnacks`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Parked app for Android Auto | Aan | 1.40.827663177 |
 
 ## Gboard
 
