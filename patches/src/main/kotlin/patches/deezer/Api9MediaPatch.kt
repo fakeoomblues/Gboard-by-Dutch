@@ -8,14 +8,8 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
-import app.morphe.patcher.util.proxy.mutableTypes.encodedValue.MutableIntEncodedValue
-import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.builder.instruction.BuilderArrayPayload
-import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
-import com.android.tools.smali.dexlib2.iface.instruction.formats.ArrayPayload
-import com.android.tools.smali.dexlib2.iface.value.IntEncodedValue
-import com.android.tools.smali.dexlib2.immutable.value.ImmutableIntEncodedValue
 import org.w3c.dom.Element
+import patches.shared.relinkExtensionResourceIds
 
 /** Same authenticated dynamic-page repository and support map as phone Home/Explore. */
 internal fun useNativePhonePages2703(method: MutableMethod) {
@@ -101,25 +95,7 @@ val deezerApi9Media = bytecodePatch(
     execute {
         useNativePhonePages2703(exact("LIlIllIIlllIlIIll;", "get", "Ljava/lang/Object;").method)
         // Only our separately packaged classes are relinked, never original app bytecode.
-        for (type in extension.types) {
-            val cls = mutableClassDefBy(type)
-            cls.fields.forEach { field ->
-                val value = field.initialValue as? IntEncodedValue
-                value?.let { linker.ids[it.value] }?.let { field.initialValue = MutableIntEncodedValue(ImmutableIntEncodedValue(it)) }
-            }
-            cls.methods.forEach { method ->
-                val instructions = method.implementation?.instructions ?: return@forEach
-                instructions.withIndex().toList().forEach { (index, instruction) ->
-                    if (instruction.opcode in setOf(Opcode.CONST, Opcode.CONST_HIGH16)) {
-                        val old = (instruction as NarrowLiteralInstruction).narrowLiteral
-                        linker.ids[old]?.let { id -> method.replaceInstruction(index, "const v${(instruction as OneRegisterInstruction).registerA}, $id") }
-                    } else if (instruction is ArrayPayload && instruction.elementWidth == 4) {
-                        method.implementation!!.replaceInstruction(index, BuilderArrayPayload(4,
-                            instruction.arrayElements.map { linker.ids[it.toInt()] ?: it }))
-                    }
-                }
-            }
-        }
+        relinkExtensionResourceIds(extension.types, linker.ids)
         // Native browser admission is supplied by the shared car-host dependency.
     }
 }
