@@ -18,6 +18,7 @@ Gebruik de exacte appversie en build. Selecteer het volledige APKS- of APKM-arch
 | [Buienalarm](../apps/buienalarm.md) | 4.32.0 / 3723 | [APKS](https://buzzheavier.com/9fl1lzedekqp) |
 | [Buienradar](../apps/buienradar.md) | 7.4.8 / 7915 | [APKM](https://www.apkmirror.com/apk/dpg-media/buienradar-weer/buienradar-weer-7-4-8-release/buienradar-weer-7-4-8-4-android-apk-download/) |
 | [Candy Crush Soda Saga](../apps/candy-crush-soda-saga.md) | 1.330.1 / 13300010 | [APKM](#local-original-inputs) |
+| [Cronometer](../apps/cronometer.md) | 4.57.2 / 3399 | [APKM](#local-original-inputs) |
 | [Draw a Stickman: EPIC 3](../apps/draw-a-stickman-epic-3.md) | 1.13.19873 / 19873 | [APKS](#local-original-inputs) |
 | [DS Nieuws](../apps/dsnieuws.md) | 22.0.0 / 2012316104 | [APKS](https://buzzheavier.com/xekgzljrg2lg) |
 | [De Morgen](../apps/demorgen.md) | 7.53.1 / 23136515 | [APKS](https://buzzheavier.com/ci8cm8ebuwf2) |
