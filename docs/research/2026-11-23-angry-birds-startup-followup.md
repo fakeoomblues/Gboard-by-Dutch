@@ -55,3 +55,11 @@ The owner reaffirmed that delivery and acceptance must use an MPP applied throug
 ## Expanded candidate checkpoint
 
 Complete `scripts/local-release/verify.cjs` verification passed after adding the missing game navigation entries. The expanded source now blocks all eight Beacon ad-initialization lambdas with `onComplete(false, "Advertising disabled")` on the existing UI dispatch; it disables seven advertising-only providers and removes only the Unity Ads child of AndroidX Startup. Both tracking resource patches now invoke Privacy Sandbox permission removal. This supersedes the earlier candidate's narrower initialization coverage above. Native telemetry, programmatic Facebook events, identifier consumers and normal Morphe/device acceptance remain open. Verification log: `.tools/artifacts/angry-birds-boot-20261123/angry-birds-verify-coverage-20261123.log`.
+
+## Normal Morphe result and local consent follow-up
+
+The owner reported both games working after applying the review MPP, and supplied screenshots of both advertising consent forms. Package update timestamps were 16:32:32 (Angry Birds 2) and 16:32:03 (Friends). Those observations establish user-reported startup recovery; independent installed-bytecode inspection, ad-flow checks and parked-host acceptance remain open.
+
+Both games call the separate Beacon TCF wrapper's Google UMP update and form-loading APIs. The next candidate replaces that wrapper's five entry points with local opt-out completion: optional grant and legitimate-interest bits are revoked while preserving stored bit-vector lengths, stale TCF/additional-consent receipts are cleared, advertiser consent-mode participation is disabled, and the native listener is completed on the Android UI dispatch. Geographic applicability remains untouched. Status 3 denotes completion of the local decision, not an affirmative grant or a generated CMP receipt. Status remains unknown until local revocation has completed. No UMP request or form API is called through these replaced entries.
+
+The complete verification command passed for this batch. The generated helper DEX regression check covers revoked keys, absence of UMP/network calls in the local completion, UI dispatch and completion after preference application. Normal Morphe reapplication and the absence of forms while gameplay continues remain required device evidence.

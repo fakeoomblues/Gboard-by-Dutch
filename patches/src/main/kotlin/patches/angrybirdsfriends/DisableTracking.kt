@@ -6,6 +6,8 @@ import patches.shared.disableMeasurementAndAttribution
 import patches.shared.setMetaData
 import patches.shared.removeAdServicesPermissions
 import patches.shared.silenceRovioBeaconTracking
+import patches.shared.rovioLocalConsentDex
+import patches.shared.useRovioLocalConsent
 
 private val trackingResources = resourcePatch {
     dependsOn(originalInput)
@@ -23,9 +25,11 @@ private val trackingResources = resourcePatch {
 
 internal val angryBirdsFriendsTrackingGate = bytecodePatch {
     dependsOn(originalInput, trackingResources)
+    extendWith(java.util.function.Supplier { rovioLocalConsentDex() })
 
     execute {
         silenceRovioBeaconTracking("Angry Birds Friends")
+        useRovioLocalConsent("Angry Birds Friends")
     }
 }
 
