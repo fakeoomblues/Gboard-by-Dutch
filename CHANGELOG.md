@@ -1,4 +1,22 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/21c47ad061dcda8607f404183061c251244d5092/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.105.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [21c47ad061dc](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/21c47ad061dcda8607f404183061c251244d5092). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.105.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.104.0...v1.105.0) (2026-11-23)
+
+### ✨ New Features
+
+* **Home Assistant (Automotive):** add Home Assistant and PlugShare Automotive ports ([21c47ad](https://gitlab.com/johninnld/nl-morphe-patches/commit/21c47ad061dcda8607f404183061c251244d5092))
+* **PlugShare (Automotive):** add Home Assistant and PlugShare Automotive ports ([21c47ad](https://gitlab.com/johninnld/nl-morphe-patches/commit/21c47ad061dcda8607f404183061c251244d5092))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/682ef76b7b874718a471d4db452dd66e0ec7b986/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.104.0.**

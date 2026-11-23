@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.104.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.104.0)** · 87 apps · 426 patches
+**Patch bundle [v1.105.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.105.0)** · 89 apps · 429 patches
 
 ### Weather
 
@@ -151,10 +151,12 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Gboard](docs/site/en/apps/gboard.md) | See guide | 18.8.0.1022711984-beta-arm64-v8a, 18.8.0.1022711984-beta-armeabi-v7a | APK | 34 |
 | [GridCraft](docs/site/en/apps/gridcraft.md) | See guide | Any | APK | 1 |
 | [Home Assistant](docs/site/en/apps/homeassistant.md) | See guide | 2026.10.1-full | APKS | 1 |
+| [Home Assistant (Automotive)](docs/site/en/apps/homeassistant-automotive.md) | See guide | 2026.11.2-full | APK | 2 |
 | [LightCraft](docs/site/en/apps/lightcraft.md) | See guide | Any | APK | 1 |
 | [Marktplaats](docs/site/en/apps/marktplaats.md) | Ads · Tracking · Prompts | 16.19.0 | APKS | 5 |
 | [Monet Android TV](docs/site/en/apps/monet.md) | Plus/Pro | 1.1.1 | APK | 4 |
 | [PdfCraft](docs/site/en/apps/pdfcraft.md) | See guide | Any | APK | 1 |
+| [PlugShare (Automotive)](docs/site/en/apps/plugshare.md) | See guide | AAOS v1.8.2 | APK | 1 |
 | [Projectivy Launcher](docs/site/en/apps/projectivy.md) | Tracking · Plus/Pro | 4.73 | APK | 2 |
 | [Reolink](docs/site/en/apps/reolink.md) | Compatibility | 4.64.3.20261023 | APKM | 6 |
 | [Titanium Browser](docs/site/en/apps/titanium.md) | See guide | Any | APK | 1 |

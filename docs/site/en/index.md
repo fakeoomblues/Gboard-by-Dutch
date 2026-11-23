@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">87 apps</span> · Patch bundle: 1.104.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">89 apps</span> · Patch bundle: 1.105.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -908,6 +908,25 @@ hide:
 
 </article>
 
+<article class="dap-app-card" data-category="other" data-search="home assistant (automotive) io.homeassistant.companion.android 2026.11.2-full allow any android auto host android auto" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [Home Assistant (Automotive)](apps/homeassistant-automotive.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">2026.11.2-full</span></p>
+<p class="dap-app-card__package">io.homeassistant.companion.android</p>
+<details class="dap-app-card__patches">
+<summary>2 patches</summary>
+<ul>
+<li>Allow any Android Auto host <span class="dap-app-card__target">2026.11.2-full</span></li>
+<li>Android Auto <span class="dap-app-card__target">2026.11.2-full</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/homeassistant-automotive.md){ .dap-app-card__link }
+
+</article>
+
 <article class="dap-app-card" data-category="news" data-search="humo be.humo.tvgids 7.53.1 7.55.0 disable tracking hide premium banner hide ads read full articles skip consent screens" markdown>
 <p class="dap-app-card__category">News and reading</p>
 
@@ -1315,6 +1334,24 @@ hide:
 </details>
 
 [Guide and downloads](apps/pdfcraft.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="other" data-search="plugshare (automotive) com.xatori.plugshare aaos v1.8.2 android auto" markdown>
+<p class="dap-app-card__category">Other</p>
+
+### [PlugShare (Automotive)](apps/plugshare.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">AAOS v1.8.2</span></p>
+<p class="dap-app-card__package">com.xatori.Plugshare</p>
+<details class="dap-app-card__patches">
+<summary>1 patch</summary>
+<ul>
+<li>Android Auto <span class="dap-app-card__target">AAOS v1.8.2</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/plugshare.md){ .dap-app-card__link }
 
 </article>
 

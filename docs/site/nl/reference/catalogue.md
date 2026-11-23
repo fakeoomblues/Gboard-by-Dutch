@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.104.0**
+**Patchbundel: 1.105.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -568,6 +568,17 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | --- | --- | --- |
 | Allow any Android Auto host | Aan | 2026.10.1-full |
 
+## Home Assistant (Automotive)
+
+[Wat veranderen de patches?](../apps/homeassistant-automotive.md)
+
+`io.homeassistant.companion.android`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Allow any Android Auto host | Aan | 2026.11.2-full |
+| Android Auto | Aan | 2026.11.2-full |
+
 ## Humo
 
 [Wat veranderen de patches?](../apps/humo.md)
@@ -817,6 +828,16 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Patch | Standaard | App-versies |
 | --- | --- | --- |
 | Custom branding | Aan | Alle versies |
+
+## PlugShare (Automotive)
+
+[Wat veranderen de patches?](../apps/plugshare.md)
+
+`com.xatori.Plugshare`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Android Auto | Aan | AAOS v1.8.2 |
 
 ## Podimo
 

@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.104.0**
+**Patch bundle: 1.105.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -568,6 +568,17 @@ Check the supported app versions and default setting for each patch. The app pag
 | --- | --- | --- |
 | Allow any Android Auto host | On | 2026.10.1-full |
 
+## Home Assistant (Automotive)
+
+[What do the patches change?](../apps/homeassistant-automotive.md)
+
+`io.homeassistant.companion.android`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Allow any Android Auto host | On | 2026.11.2-full |
+| Android Auto | On | 2026.11.2-full |
+
 ## Humo
 
 [What do the patches change?](../apps/humo.md)
@@ -817,6 +828,16 @@ Check the supported app versions and default setting for each patch. The app pag
 | Patch | Default | App versions |
 | --- | --- | --- |
 | Custom branding | On | Any |
+
+## PlugShare (Automotive)
+
+[What do the patches change?](../apps/plugshare.md)
+
+`com.xatori.Plugshare`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Android Auto | On | AAOS v1.8.2 |
 
 ## Podimo
 
