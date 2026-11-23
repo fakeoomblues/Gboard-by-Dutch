@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/99c9114f417d60089446638708833bbe98cc26bf/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.101.1.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [99c9114f417d](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/99c9114f417d60089446638708833bbe98cc26bf). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.101.1](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.101.0...v1.101.1) (2026-11-23)
+
+### 🐛 Bug Fixes
+
+* **Gboard:** make Toolbar Editing Buttons and the Incognito toggle work on 18.8 ([f769068](https://gitlab.com/johninnld/nl-morphe-patches/commit/f769068167276366079b4eb067df39e88902dbd2))
+* **Gboard:** point Cursor trackpad mode at the 18.8 preference key ([14b8c09](https://gitlab.com/johninnld/nl-morphe-patches/commit/14b8c09ee0800c0db888e2361cf8f02407ee1d89))
+* **Gboard:** repair Scan Text and AI Writing Tools references for 18.8 ([8e28ef1](https://gitlab.com/johninnld/nl-morphe-patches/commit/8e28ef1c85120c95fa94f3a30a9b8ee19cd5eef1))
+* **Gboard:** spacebar logo, developer options and voice typing extras on 18.8 ([99c9114](https://gitlab.com/johninnld/nl-morphe-patches/commit/99c9114f417d60089446638708833bbe98cc26bf))
+* **Gboard:** stop the clipboard crashing on 18.8 and restore its enhancements ([6593eeb](https://gitlab.com/johninnld/nl-morphe-patches/commit/6593eebc80806e1cfd9efbf9a4c6777342749b5d))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/9a29e2f995175ccd1d1a1f85e26eb0d6c4104c57/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.101.0.**
