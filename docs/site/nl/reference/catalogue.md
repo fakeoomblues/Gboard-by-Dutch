@@ -1,6 +1,6 @@
 # Patchcatalogus
 
-**Patchbundel: 1.99.0**
+**Patchbundel: 1.100.0**
 
 Controleer per patch de ondersteunde app-versies en de standaardinstelling. De app-pagina legt uit wat de patch voor het gebruik verandert.
 
@@ -920,6 +920,18 @@ Controleer per patch de ondersteunde app-versies en de standaardinstelling. De a
 | Disable tracking | Aan | 7.0.16 |
 | Hide ads | Aan | 7.0.16 |
 | Skip consent screens | Aan | 7.0.16 |
+
+## upflix
+
+[Wat veranderen de patches?](../apps/upflix.md)
+
+`com.douglas.upflix`
+
+| Patch | Standaard | App-versies |
+| --- | --- | --- |
+| Disable Crashlytics reporter | Aan | 5.12.10 |
+| Disable Play license check | Aan | 5.12.10 |
+| Disable ads and tracking | Aan | 5.12.10 |
 
 ## Vela Maps
 

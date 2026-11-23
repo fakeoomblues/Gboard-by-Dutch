@@ -38,7 +38,7 @@ hide:
 <button type="button" data-category="other" aria-pressed="false">Other</button>
 </div>
 </div>
-<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">80 apps</span> · Patch bundle: 1.99.0</p>
+<p class="dap-catalogue__status"><span data-app-count aria-live="polite" aria-atomic="true">81 apps</span> · Patch bundle: 1.100.0</p>
 <div class="dap-app-grid" markdown>
 <article class="dap-app-card" data-category="other" data-search="2dehands be.tweedehands.m 16.19.0 disable threatmetrix disable tracking hide ads skip consent screens" markdown>
 <p class="dap-app-card__category">Other</p>
@@ -1482,6 +1482,26 @@ hide:
 </details>
 
 [Guide and downloads](apps/tvgids-nl.md){ .dap-app-card__link }
+
+</article>
+
+<article class="dap-app-card" data-category="entertainment" data-search="upflix com.douglas.upflix 5.12.10 disable crashlytics reporter disable play license check disable ads and tracking" markdown>
+<p class="dap-app-card__category">Entertainment</p>
+
+### [upflix](apps/upflix.md)
+
+<p class="dap-app-card__version">App versions: <span class="dap-data">5.12.10</span></p>
+<p class="dap-app-card__package">com.douglas.upflix</p>
+<details class="dap-app-card__patches">
+<summary>3 patches</summary>
+<ul>
+<li>Disable Crashlytics reporter <span class="dap-app-card__target">5.12.10</span></li>
+<li>Disable Play license check <span class="dap-app-card__target">5.12.10</span></li>
+<li>Disable ads and tracking <span class="dap-app-card__target">5.12.10</span></li>
+</ul>
+</details>
+
+[Guide and downloads](apps/upflix.md){ .dap-app-card__link }
 
 </article>
 

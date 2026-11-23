@@ -1,6 +1,6 @@
 # Patch catalogue
 
-**Patch bundle: 1.99.0**
+**Patch bundle: 1.100.0**
 
 Check the supported app versions and default setting for each patch. The app page explains what each patch changes when using the app.
 
@@ -920,6 +920,18 @@ Check the supported app versions and default setting for each patch. The app pag
 | Disable tracking | On | 7.0.16 |
 | Hide ads | On | 7.0.16 |
 | Skip consent screens | On | 7.0.16 |
+
+## upflix
+
+[What do the patches change?](../apps/upflix.md)
+
+`com.douglas.upflix`
+
+| Patch | Default | App versions |
+| --- | --- | --- |
+| Disable Crashlytics reporter | On | 5.12.10 |
+| Disable Play license check | On | 5.12.10 |
+| Disable ads and tracking | On | 5.12.10 |
 
 ## Vela Maps
 

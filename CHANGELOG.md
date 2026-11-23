@@ -1,4 +1,25 @@
 <!-- dap-release-branding:v1 -->
+![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/28979a88f6e3ba6941fa1182d76211a3f5681bda/docs/site/assets/brand/release-banner.png)
+
+**Release · patch bundle v1.100.0.**
+
+[Source metadata](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/main/patches-bundle.json) · [User guide](https://gitlab.com/johninnld/nl-morphe-patches/-/blob/main/docs/site/en/index.md)
+
+Source: [28979a88f6e3](https://gitlab.com/johninnld/nl-morphe-patches/-/commit/28979a88f6e3ba6941fa1182d76211a3f5681bda). Check each app's target versions in the user guide before patching.
+
+---
+
+## [1.100.0](https://gitlab.com/johninnld/nl-morphe-patches/compare/v1.99.0...v1.100.0) (2026-11-23)
+
+### 🐛 Bug Fixes
+
+* **Upflix:** map Upflix to its catalogue app page ([2907a28](https://gitlab.com/johninnld/nl-morphe-patches/commit/2907a2807193c594675367c21a5cd9ebb6dbace1))
+
+### ✨ New Features
+
+* **Upflix:** remove ads, tracking and premium upsells ([96b153c](https://gitlab.com/johninnld/nl-morphe-patches/commit/96b153c3c1f0867b786c787eaecc617868c58f61))
+
+<!-- dap-release-branding:v1 -->
 ![Dutch App Patches. Dutch apps. Your choices.](https://gitlab.com/johninnld/nl-morphe-patches/-/raw/cc9160a310701728f37ffeca87d3d0fe7236de69/docs/site/assets/brand/release-banner.png)
 
 **Release · patch bundle v1.99.0.**

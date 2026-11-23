@@ -48,7 +48,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 ## App overview
 
 <!-- PATCHES_START SUMMARY -->
-**Patch bundle [v1.99.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.99.0)** · 80 apps · 401 patches
+**Patch bundle [v1.100.0](https://gitlab.com/johninnld/nl-morphe-patches/-/releases/v1.100.0)** · 81 apps · 404 patches
 
 ### Weather
 
@@ -125,6 +125,7 @@ through Shizuku-Next, KingInstaller and Android Auto's app list.
 | [Spotify](docs/site/en/apps/spotify.md) | See guide | 9.2.0.2053 | APKS | 1 |
 | [TIDAL](docs/site/en/apps/tidal.md) | See guide | 2.216.0 | APKM | 1 |
 | [TVgids.nl](docs/site/en/apps/tvgids-nl.md) | Ads · Tracking · Prompts | 7.0.16 | APK | 3 |
+| [upflix](docs/site/en/apps/upflix.md) | Tracking | 5.12.10 | APKS | 3 |
 | [Videoland Android](docs/site/en/apps/videoland.md) | Ads · Tracking · Prompts | 1.119.2 | APKS | 4 |
 | [Videoland Android TV](docs/site/en/apps/videoland-android-tv.md) | Ads · Tracking | 1.119.2 | APKS | 4 |
 | [Wuplay Android TV](docs/site/en/apps/wuplay.md) | See guide | 0.9.4-beta | APK | 1 |
